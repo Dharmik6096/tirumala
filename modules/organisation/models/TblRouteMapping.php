@@ -449,24 +449,28 @@ class TblRouteMapping extends \app\models\ChildModel {
                     $this->addError($attribute, "Please Enter Valid To Dest.");
                 }
             }
-            if (!empty($this->mobile_no)) {
-                $contactModel = new TblContactDetails;
-                $data = $contactModel->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
-                                ->andWhere(['<>', 'module_code', $this->route_code])
-                                ->andWhere(['is_active' => 1])->one();
-                if (!empty($data)) {
-                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken.'));
-                }
-            }
+//            if (!empty($this->mobile_no)) {
+//                $contactModel = new TblContactDetails;
+//                $data = $contactModel->find()->where(['or', ['mobile_no' => $this->mobile_no], ['mobile_no' => \Yii::$app->general->encryptData($this->mobile_no)]])
+//                                ->andWhere(['<>', 'module_code', $this->route_code])
+//                                ->andWhere(['is_active' => 1])->one();
+//                if (!empty($data)) {
+//                    $this->addError($attribute, Yii::t('app/validation', 'Mobile No has already been taken.'));
+//                }
+//            }
         }
     }
 
-    public function setChildTable($model, &$modelSave) {
+    public function setChildTable($model, &$modelSave, &$errors) {
         $model->route_code = $this->getCode();
         $contactDetails = new TblContactDetails;
         $contactDetails->firstname = $model->firstname;
         $contactDetails->mobile_no = $model->mobile_no;
+        $contactDetails->form_validation_type = 'route-import';
         $contactDetails->setModel('routeMapping', $model->route_code);
+        if (!$contactDetails->validate()) {
+            $errors[] = $contactDetails->getErrors();
+        }
         array_push($modelSave, $contactDetails);
     }
 

@@ -43,8 +43,11 @@ use app\modules\bkgprocess\models\TblFtpDetail;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\configuration\models\TblConfigMapping;
+use app\modules\general\models\TblAttachment;
 use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
+use app\modules\organisation\models\TblCustomerDeactive;
+use yii\imagine\Image;
 
 class GeneralFunctions extends Component {
 
@@ -1390,14 +1393,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1483,7 +1486,7 @@ class GeneralFunctions extends Component {
                     $model->ex_code = $customerModelData[0]->customer_code_ex;
                 }
             } else {
-                $model->ex_code = $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT);
+                $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
             return $data = empty($Code) ? '' : $Code;
@@ -1575,6 +1578,7 @@ class GeneralFunctions extends Component {
                 $key_config['ref_code_type'] = $data->ref_code_type;
                 $key_config['ref_code_length'] = $data->ref_code_length;
                 $key_config['ref_code_fix_length'] = $data->ref_code_fix_length;
+//                $key_config['has_prefix'] = $data->has_prefix;
                 //$PatternArray[$data->union_code][$data->pattern_for] = $key_config;
                 $PatternArray[$data->pattern_for] = $key_config;
             }
@@ -1586,7 +1590,7 @@ class GeneralFunctions extends Component {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '') {
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true) {
         $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
@@ -1600,7 +1604,9 @@ class GeneralFunctions extends Component {
                 $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
             } else {
                 if (!empty($model->{$ex_code_key})) {
-                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    if ($conacte) {
+                        $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    }
                     $ex_cnt = $model->find()
                             ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                             ->andWhere([$ex_code_key => $model->{$ex_code_key}])
@@ -1746,7 +1752,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key) {
+    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key, $conacte = true) {
         if (!$model->isNewRecord) {
             $keyPattern = $this->getKeyPattern($table_name);
             if (!empty($keyPattern)) {
@@ -1757,7 +1763,7 @@ class GeneralFunctions extends Component {
                 } else {
                     $old_ex_code = $model->oldAttributes[$ex_code_key];
                     $allow_update = ($old_ex_code === $model->{$ex_code_key}) ? FALSE : TRUE;
-                    if ($allow_update) {
+                    if ($allow_update && $conacte) {
                         $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
                     }
                     if ($allow_update && strlen($model->{$ex_code_key}) != $keyPattern['ex_code_length']) {
@@ -1903,6 +1909,107 @@ class GeneralFunctions extends Component {
         return round($distance, $decimals);
     }
 
+    public function validateDeactivateCustomer($model, $date, $code) {
+        $checkdate = date('Y-m-d', strtotime($date));
+        $memberModel = new TblCustomerDeactive();
+        $records = $memberModel->find()
+                ->where('customer_code=\'' . $code . '\' and customer_type=\'' . $model->customer_type . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                ->count();
+
+        if ($records > 0) {
+            $model->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Customer') . ' Is Deactivated.'));
+            return false;
+        }
+    }
+
+    public function validateExCodes($model, $master_table, $ex_code_key, $cmpare_table, $cmpare_key, $find_model, $unionCode, $update) {
+        $flag = isset(Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique']) ? Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique'] : '';
+        $keyPattern = $this->getKeyPattern($cmpare_table);
+        $MasterKeyPattern = $this->getKeyPattern($master_table);
+        if (!empty($flag) && !empty($keyPattern)) {
+            $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+            $Master_code_reset_on = $MasterKeyPattern['ex_code_reset_on'];
+
+            $model_name = Yii::$app->path->define($find_model);
+            $findModel = new $model_name();
+            if (!empty($model->{$ex_code_key})) {
+                if ($master_table != 'tbl_customer_master') {
+                    $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $MasterKeyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                }
+                $ex_cnt = 0;
+                $main_ex_cnt = 0;
+                if ($master_table == 'tbl_customer_master') {
+                    $prefix = Yii::$app->general->getforeignkey($model->customerTypePre, 'code_prefix');
+                    $code = str_replace($prefix, '', $model->{$ex_code_key});
+                    $code = intval($code);
+                    $main_ex_cnt = $model->find()
+                            ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code])
+                            ->count();
+
+                    $ex_cnt = $findModel->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere(['CAST(' . $cmpare_key . ' as int)' => $code])
+                            ->count();
+                }
+                if ($master_table == 'tbl_dcs') {
+                    $code = intval($model->{$ex_code_key});
+                    $ex_cnt = $findModel->find()
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)' => $code])
+                            ->count();
+//                    var_dump($findModel->createCommand()->getRawSql());
+//                    die;
+                }
+                if ($ex_cnt > 0 || $main_ex_cnt > 0) {
+                    if ($MasterKeyPattern['ex_code_auto'] == 0 || $update) {
+                        $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
+                    } else {
+
+                        if ($master_table == 'tbl_dcs') {
+                            $MasterData = $model->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                                    ->asArray()
+                                    ->one();
+                        }
+                        if ($cmpare_table == 'tbl_dcs') {
+                            $findData = $findModel->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
+                                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                    ->asArray()
+                                    ->one();
+                        }
+                        if ($master_table == 'tbl_customer_master') {
+                            $MasterData = $model->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                                    ->asArray()
+                                    ->one();
+                        }
+                        if ($cmpare_table == 'tbl_customer_master') {
+                            $findData = $findModel->find()
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
+                                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                    ->asArray()
+                                    ->one();
+                        }
+                        $ex_code = 0;
+                        $masterMax = !empty($MasterData) ? $MasterData['ex_code'] : 0;
+                        $cmprMax = !empty($findData) ? $findData['ex_code'] : 0;
+                        $ex_code = ($masterMax >= $cmprMax) ? (int) $masterMax : (int) $cmprMax;
+                        $model->{$ex_code_key} = str_pad(($ex_code), $MasterKeyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+                    }
+                }
+            }
+        }
+    }
+
     public function getSpDropData($sp, $param, $execute = false) {
         $str = '';
         $count = count($param);
@@ -1918,6 +2025,66 @@ class GeneralFunctions extends Component {
         } else {
             return $command->queryAll();
         }
+    }
+
+    public function setAttachment(&$child, $files, $module_code, $module_name) {
+        $filesArray = explode(',', $files);
+        unset($filesArray[0]);
+
+        $auto_inc = 1;
+        foreach ($filesArray as $key => $file) {
+            $file_name = $file;
+            $path = Yii::$app->basePath . '/web/upload/images//' . $file; //Generate your save file path here;
+            $modelAttachment = new TblAttachment();
+            $modelAttachment->attachment_code = (string) Yii::$app->general->getCodeAutoIncrement($modelAttachment, $auto_inc);
+            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . $file_name;
+            $modelAttachment->attachment = $file;
+            $modelAttachment->module_name = $module_name;
+            $modelAttachment->module_code = $module_code;
+            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+            $modelAttachment->remarks = 'Documents';
+            $modelAttachment->attachment_type = $ext;
+            // save thumbnail
+            $imagePath = Yii::getAlias('@webroot') . '/web/upload/images/';
+            $thumbnail_path = $imagePath . 'thumbnail';
+            $thumbnail_base_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/images/' . 'thumbnail';
+            if (Yii::$app->general->checkDirectory($thumbnail_path)) {
+                list($width, $height) = getimagesize($file);
+                $data = Image::thumbnail($file, 60, 60)->save($thumbnail_path . '/' . $file_name, ['quality' => 100]);
+                $modelAttachment->thumbnail = $thumbnail_base_path . '/' . $file_name;
+            }
+            $child[] = $modelAttachment;
+            $auto_inc++;
+        }
+    }
+
+    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
+        $model = new TblAttachment();
+        $model->module_name = $module_name;
+        $model->module_code = $reference_code;
+        $model->remarks = $remarks;
+        $attachment = $model->getData();
+        if ($OnlyData) {
+            return $attachment;
+        }
+
+        if ($attachment) {
+            if ($downloadOnly) {
+                return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
+                            'title' => 'Download',
+                            'download' => $reference_code . $attachment[0]->attachment_type,
+                ]);
+            } else if ($link) {
+                return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
+//                            'title' => 'Download',
+                            'class' => 'image-popup-no-margins',
+                            'download' => $attachment[0]->attachment_type,
+                ]);
+            } else {
+                return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
+            }
+        }
+        return "";
     }
 
 }

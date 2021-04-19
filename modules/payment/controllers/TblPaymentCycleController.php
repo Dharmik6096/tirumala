@@ -489,4 +489,57 @@ class TblPaymentCycleController extends ChildController {
         $this->updateRecords($payment_cycle_code, $id, 'sync_lock_member', 'Sync Lock - Member', 'Sync Unlock - Member');
     }
 
+    public function actionUnionPaymentCycleList() {
+        $out = null;
+
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            $unionCode = $value[0];
+            $paymentcycleModel = new TblPaymentCycle();
+            $list = $paymentcycleModel->UnionPaymentCycles($unionCode);
+            foreach ($list as $key => $r) {
+                $out[] = array('id' => $key,
+                    'name' => $r);
+            }
+            return Json::encode(['output' => $out]);
+            return;
+        }
+        return Json::encode(['output' => '', 'selected' => $selected]);
+    }
+
+    public function actionBulkDataLockUnlock() {
+        $searchModel = new TblPaymentCycleApplicabilitySearch();
+        $dataProvider = $searchModel->datasearch(Yii::$app->request->queryParams);
+        $searchModel->scenario = 'lock-unlock-bulk';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $where['payment_cycle_applicabilty_code'] = $data[0];
+                    $setData = $data[1];
+                    $updateField = $data[2];
+                    $existData = TblPaymentCycleApplicability::find()->where($where)->one();
+                    $historyModel = new TblPaymentCycleApplicabilityHistory();
+                    Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                    $saveModel[] = $historyModel;
+                    $existData->{$updateField} = $setData;
+                    $saveModel[] = $existData;
+                }
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Data Status', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            }
+        }
+
+        return $this->render('_bulk_lock_unlock', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }

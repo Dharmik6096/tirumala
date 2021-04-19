@@ -16,6 +16,7 @@ use app\modules\organisation\models\TblBranch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblBankDetails;
 use app\modules\general\models\TblDepartment;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 /**
  * This is the model class for table "tbl_customer_master".
@@ -52,7 +53,7 @@ use app\modules\general\models\TblDepartment;
 class TblCustomerMaster extends \app\models\ChildModel {
 
     public $same_milk_type, $diff_milk_type;
-    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name;
+    public $contact_person, $local_contact_person, $middle_name, $local_middlename, $surname, $local_surname, $email, $department, $ifsc, $bank_account_no, $route, $beneficiary_name, $prefix, $file_name;
 
     /**
      * @inheritdoc
@@ -68,10 +69,10 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
             [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no'], 'safe'],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name'], 'safe'],
             [['route'], 'required', 'on' => ['importCsv']],
             [['is_active'], 'integer'],
-            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type'], 'safe'],
+            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
             [['is_active'], 'default', 'value' => 1],
             [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
@@ -105,8 +106,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['email'], 'email', 'on' => ['importCsv']],
             [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']],
             [['customer_code'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code');
-                }, 'skipOnEmpty' => false, 'on' => ['update', 'importCsv']],
+                    Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code', FALSE);
+                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv']],
             [['same_milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
@@ -123,6 +124,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['customer_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['customer_code'], function ($attribute, $params) {
+                    $update = FALSE;
+                    if ($this->scenario == 'updateFront') {
+                        $update = TRUE;
+                    }
+                    Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
+                }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
             [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
@@ -202,7 +210,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function getCode() {
-        return Yii::$app->general->setKeyPattern($this, 'tbl_customer_master', 'customer_code_ex', 4);
+        return Yii::$app->general->setKeyPattern($this, 'tbl_customer_master', 'customer_code_ex', 4, '', FALSE);
         // $data = $this->find()->select(["MAX(CONVERT(INT,RIGHT(customer_code,4))) AS customer_code"])->where(['union_code' => $this->union_code])->one();
         // return $this->union_code . str_pad((int) $data['customer_code'] + 1, 4, '0', STR_PAD_LEFT);
     }
@@ -360,6 +368,22 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
         $this->route_code = $this->route;
         $this->route_code = Yii::$app->general->getforeignkey($this->routeRefCode, 'route_code');
+        $prefix = Yii::$app->general->getforeignkey($this->customerTypePre, 'code_prefix');
+        if (empty($this->getErrors())) {
+            $mainExCode = $this->customer_code_ex;
+            if (strstr($this->customer_code_ex, $prefix)) {
+                if (is_numeric(substr($this->customer_code_ex, 0, 1))) {
+                    $this->addError('customer_code_ex', Yii::t('app/validation', $this->getAttributeLabel('customer_code_ex') . ' is invalid'));
+                }
+                $this->customer_code_ex = str_replace($prefix, '', $this->customer_code_ex);
+                if (!is_numeric($this->customer_code_ex)) {
+                    $this->addError('customer_code_ex', Yii::t('app/validation', $this->getAttributeLabel('customer_code_ex') . ' is invalid'));
+                }
+            } elseif (!is_numeric($this->customer_code_ex)) {
+                $this->addError('customer_code_ex', Yii::t('app/validation', $this->getAttributeLabel('customer_code_ex') . ' is invalid'));
+            }
+            $this->customer_code_ex = $mainExCode;
+        }
     }
 
     public function getCustomerCodeList($bmc, $type) {
@@ -502,6 +526,22 @@ class TblCustomerMaster extends \app\models\ChildModel {
 
     public function getRouteRefCode() {
         return $this->hasOne(TblRouteMapping::className(), ['ref_code' => 'route_code']);
+    }
+
+    public function getActiveStatus() {
+        return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'customer_code', 'customer_type' => 'customer_type']);
+    }
+
+    public function getCustomerTypePre() {
+        return $this->hasOne(TblCustomerType::className(), ['union_code' => 'union_code', 'customer_type' => 'customer_type'])->andOnCondition(['tbl_customer_type.is_active' => 1]);
+    }
+
+    public function getMainBankDetails() {
+        return $this->hasOne(TblBankDetails::className(), ['module_code' => 'customer_code'])->where(['tbl_bank_details.module_name' => 'customer', 'tbl_bank_details.is_default' => 1, 'tbl_bank_details.is_active' => 1]);
+    }
+
+    public function getMainContactDetails() {
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
     }
 
 }

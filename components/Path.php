@@ -15,7 +15,7 @@ class Path extends Component {
         ['TblDpuCalibration', 'TblDpuCalibrationSearch', 'TblUserAndroid', 'TblUserProfile'],
         '\\app\modules\collection\models\\' =>
         ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
-            'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory', 'TblCollectionDataAliasReject', 'TblBulkDataImport', 'TblBmcCollectionNotExist', 'TblMilkCollectionNotExists'],
+            'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory', 'TblCollectionDataAliasReject', 'TblBulkDataImport', 'TblBmcCollectionNotExist', 'TblMilkCollectionNotExists', 'TblCollectionPenaltyRate', 'TblCollectionPenaltyRateApplicability', 'TblCollectionPenaltyType'],
         '\\app\modules\geo\models\\' =>
         ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',
@@ -49,7 +49,7 @@ class Path extends Component {
             'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch', 'TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblRouteMapping', 'TblRouteMappingHistory',
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
-            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory'
+            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus'
         ],
         '\\app\modules\details\models\\' =>
         ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],

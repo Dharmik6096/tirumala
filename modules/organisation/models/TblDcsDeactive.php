@@ -30,22 +30,25 @@ use yii\helpers\ArrayHelper;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblDcsDeactive extends \app\models\ChildModel {
+class TblDcsDeactive extends \app\models\ChildModel
+{
 
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_dcs_deactive';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
             [['originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required'],
             [['to_date'], 'required', 'on' => ['activeDCS']],
@@ -57,7 +60,8 @@ class TblDcsDeactive extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'dcs_deactive_code' => Yii::t('app', 'Dcs Deactive Code'),
             'union_code' => Yii::t('app', 'Union'),
@@ -78,48 +82,55 @@ class TblDcsDeactive extends \app\models\ChildModel {
         ];
     }
 
-    public function getUnionCode() {
+    public function getUnionCode()
+    {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getBmcCode() {
+    public function getBmcCode()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getMccPlantCode() {
+    public function getMccPlantCode()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getPlantCode() {
+    public function getPlantCode()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getDcsCode() {
+    public function getDcsCode()
+    {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function validateFromDate($attribute, $params) {
+    public function validateFromDate($attribute, $params)
+    {
         $existDCS = $this->find()
-                ->where(['dcs_code' => $this->dcs_code])
-                ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
-                ->andWhere(['IS', 'to_date', NULL])
-                ->one();
+            ->where(['dcs_code' => $this->dcs_code])
+            ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
+            ->andWhere(['IS', 'to_date', NULL])
+            ->one();
         if (!empty($existDCS)) {
             $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Already Deactivated.'));
             return false;
         }
         $dateData = $this->find()
-                ->where('dcs_code=\'' . $this->dcs_code . '\'')
-                ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
-                ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
-                ->all();
+            ->where('dcs_code=\'' . $this->dcs_code . '\'')
+            ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date))')
+            ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
+            ->all();
         if (!empty($dateData)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
     }
 
-    public function validateToRange($attribute, $params) {
+    public function validateToRange($attribute, $params)
+    {
         $fromDate = date('Y-m-d', strtotime($this->from_date));
         $toDate = date('Y-m-d', strtotime($this->to_date));
         if ($fromDate == $toDate || $fromDate > $toDate) {
@@ -128,24 +139,65 @@ class TblDcsDeactive extends \app\models\ChildModel {
         }
 
         $dateData = $this->find()
-                ->where('dcs_code=\'' . $this->dcs_code . '\'')
-                ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
-                ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
-                ->all();
+            ->where('dcs_code=\'' . $this->dcs_code . '\'')
+            ->andWhere('((\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))')
+            ->andfilterWhere(['!=', 'dcs_deactive_code', $this->dcs_deactive_code])
+            ->all();
         if (!empty($dateData)) {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
     }
 
-    public function getDcsDEactivated($bmc, $dateFilter) {
+    public function getDcsDEactivated($bmc, $dateFilter)
+    {
         $date = date('Y-m-d', strtotime($dateFilter));
         $records = $this->find()
-                ->where('bmc_code=\'' . $bmc . '\'')
-                ->andWhere('((\'' . $date . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
-                ->all();
+            ->where('bmc_code=\'' . $bmc . '\'')
+            ->andWhere('((\'' . $date . '\' between cast(from_date as date)  and case when to_date is null then \'' . date('Y-m-d') . '\' else cast(to_date as date) end))')
+            ->all();
         $value = ArrayHelper::map($records, 'dcs_code', 'dcs_code');
         return $value;
     }
 
+    public function getDeactiveRecords($checkStatus = true, $data = '')
+    {
+        $date = date('Y-m-d');
+        $query = $this->find()
+            ->where(['<=', 'from_date', $date])
+            ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]]);
+        if ($checkStatus) {
+            $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
+        }
+        if (!empty($data) && (!empty($data['organization_code']) && !empty($data['organization_type']))) {
+            if ($data['organization_type'] == 'MCC') {
+                $query->andWhere(['mcc_plant_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'BMC') {
+                $query->andWhere(['bmc_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'VLC') {
+                $query->andWhere(['dcs_code' => $data['organization_code']]);
+            }
+        }
+        $dataList =  $query->orderBy(['dcs_deactive_code' => SORT_ASC])
+            ->all();
+        return $dataList;
+    }
+
+    public function getActiveRecords()
+    {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+            ->where(['data_post_status' => 2])
+            ->andWhere(['<', 'to_date', $date])
+            ->orderBy(['dcs_deactive_code' => SORT_ASC])
+            ->all();
+    }
+
+    public function updateFileStatus($value, $status)
+    {
+        return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['dcs_deactive_code' => $value]);
+    }
 }

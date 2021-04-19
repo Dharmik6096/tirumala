@@ -2,10 +2,10 @@
 
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
-
+use yii\helpers\Url;
+use yii\web\View;
 ?>
 <?php
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -83,7 +83,21 @@ $attribute = [
             return $detail;
         }
     ],
+    [
+        'attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active';
+        },
+    ],
     ['attribute' => 'aadhaar_no'],
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Bank Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -92,19 +106,59 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'update' => true,
+        'update' => function ($url, $model) {
+            $name = $model->customer_name;
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+        },
         'bank-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
         },
         'contact-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
+        },
+        'upload-photos' => function ($url, $model) {
+            $id = $model->customer_code;
+            $type = 'CUSTOMER';
+            $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
+            $url = ['/organisation/tbl-customer-master/import-attachements', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<div id="ImportAttachements"></div>
+<?php
+$script = "
+$(document).ready(function(){
+    $(document).on('click','.upload-photo',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var code= $(this).attr('data-val');
+        var type= $(this).attr('data-name');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/organisation/tbl-customer-master/import-attachements']) . "',
+            data:{'code':code,'type':type},
+            success: function(data) {     
+                $('#ImportAttachements').html(data);
+                $('#ImportAttachementsModel').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+});";
+$this->registerJs($script, View::POS_END, 'customer-grid-index');

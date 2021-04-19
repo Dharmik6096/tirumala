@@ -110,7 +110,6 @@ var initDepdropMs;
 //            $('#w4').append($('#w1-cols-list li'));
 //            $("#w4 li.divider").prev().hide();
 //        });
-
         $('form').on('submit', function (e) {
             var type = $(this).attr('method');
             if (type.toLowerCase() === 'get')

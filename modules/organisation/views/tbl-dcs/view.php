@@ -442,6 +442,15 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'aadhaar_no',
+                                'format' => 'html',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
@@ -489,6 +498,20 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     'model' => $model,
                     'dataProvider' => $cdataProvider,
                     'searchModel' => $csearchModel,
+                ])
+                ?>
+            </div>       
+        </div> 
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'DCS') . ' Deactivate Range' ?></h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('_dcs_deactivate', [
+                    'model' => $model,
+                    'dataProvider' => $ddataProvider,
+                    'searchModel' => $dsearchModel,
                 ])
                 ?>
             </div>       

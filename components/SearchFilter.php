@@ -288,8 +288,23 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
                 'action' => ['list']
             ],
+            'TblCollectionPenaltyRateSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblCustomerDeactiveSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'vendor_type', 'vendor_code'],
+            ],
             'TblVspBillHeadCriteriaSearch' => [
                 'filter' => ['f_union_code'],
+            ],
+            'TblMasterTransferSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'DpuStationDetailSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblBankPaymentLogSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

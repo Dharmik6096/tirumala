@@ -24,7 +24,7 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblAndroidInstallation extends \app\models\ChildModel {
 
-    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $db_version;
+    public $union_code, $plant_code, $mcc_plant_code, $bmc_code, $dcs_code, $db_version, $version_no;
 
     /**
      * @inheritdoc
@@ -40,7 +40,7 @@ class TblAndroidInstallation extends \app\models\ChildModel {
         return [
             [['android_installation_id'], 'required'],
             [['android_installation_id', 'organization_code', 'organization_type', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'version_no'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'db_version'], 'required', 'on' => ['create_portal']],
             [['dcs_code'], 'rateApplicability', 'on' => ['create_portal']],

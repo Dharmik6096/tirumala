@@ -21,12 +21,59 @@ use kartik\grid\GridView;
     </div>
 </div>
 <?php
+$hasBmc = Yii::$app->session->get('hasBMC');
 $script = "
     gridChange();
     visible();
     $('#tblbmccollection-collection_type').change(function(){
         visible();
     });
+    var hasBMC = '" . $hasBmc . "';
+    $('#tblbmccollection-bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        var bmc = $('#tblbmccollection-own_bmc_code').val();
+        $('#tblbmccollection-bmc_code').val(bmc);
+        $('#tblbmccollection-bmc_code').trigger('select2:select');
+        $('#tblbmccollection-bmc_code').trigger('change');
+        if(hasBMC == 0){
+             $('#tblbmccollection-bmc_code').parent('div').parent().hide();  
+        }
+    });
+
+    $(document).ready(function () {
+        pouredBmc();
+    });
+    $(document).on('change', '#tblbmccollection-union_code', function() {  
+          pouredBmc();
+    });
+
+    function pouredBmc(){
+        var union = $('#tblbmccollection-union_code').val();
+        if(union != ''){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['poured-bmc-config']) . "',
+                data: {'union':union},
+                success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                        if(obj.config==1){
+                            $('#tblbmccollection-bmc_code').parent('div').parent().show();
+                        }else{
+                            $('#tblbmccollection-bmc_code').parent('div').parent().hide();
+                        }
+                      }
+                },
+                error:function(data){
+
+                }
+            });
+        }else{
+            $('.milk_quality_type_div').hide();
+            $('#tblmilkcollection-milk_quality_type_code').val(1);
+        }
+    }
+
     function visible(){
         var coll_type = $('#tblbmccollection-collection_type').val();
         if(coll_type == 1 || coll_type == ''){
@@ -49,11 +96,13 @@ $script = "
     });
     $(document).on('change', '#tblbmccollection-bmc_code', function() { 
          gridChange();
-         $('#tblbmccollection-bmc_silos_info_code').val('');
+        $('#tblbmccollection-bmc_silos_info_code').val('');
+        $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
          var bmc = $('#tblbmccollection-bmc_code').val();
         if(setData(bmc)){
         $('#tblbmccollection-bmc_silos_info_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
             $('#tblbmccollection-bmc_silos_info_code').val($('#tblbmccollection-bmc_silos_info_code option:nth-child(2)').val());
+            $('#tblbmccollection-bmc_silos_info_code').trigger('select2:select');
         });
         } 
     });
@@ -110,6 +159,7 @@ $script = "
     
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
+//         $('#tblbmccollection-bmc_code').trigger('change');
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
@@ -137,6 +187,7 @@ $script = "
     
      $('#tblbmccollection-fat').change(function(){
         calculateClr();
+        checkFatRange();
     });
     
     function calculateClr(){
@@ -266,7 +317,35 @@ $script = "
 	    }
 	});
     });
-   
+    $('#tblbmccollection-milk_type_code').change(function(){
+        checkFatRange();
+    });
+    
+    function checkFatRange(){
+        var union = $('#tblbmccollection-union_code').val();
+        var fat = $('#tblbmccollection-fat').val();
+        var milk_type = $('#tblbmccollection-milk_type_code').val();
+        var bmc = $('#tblbmccollection-bmc_code').val();
+            if(union !='' && fat !='' && milk_type !='' && bmc !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'bmc':bmc},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblbmccollection-milk_type_code').val(obj.data);
+                            $('#tblbmccollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
     
 
 ";

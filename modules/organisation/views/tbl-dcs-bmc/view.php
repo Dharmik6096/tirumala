@@ -174,11 +174,16 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
+                                'attribute' => 'rate_calculate_on_merge',
+                                'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
                                 'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

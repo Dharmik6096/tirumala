@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Delete Sale Rate Applicability');
+$this->title = Yii::t('app', 'Delete Milk Purchase Rate Applicability');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

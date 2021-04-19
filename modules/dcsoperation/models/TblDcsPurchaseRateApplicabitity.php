@@ -18,6 +18,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_applicability".
@@ -399,6 +400,10 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
     public function checkDuplicateData() {
         $query = $this->find()->where(['applicable_for' => $this->applicable_for, 'applicable_code' => $this->applicable_code, 'wef_date' => $this->wef_date]);
         return $query->all();
+    }
+
+    public function getMemberPurchaseRateCode() {
+        return $this->hasOne(TblPurchaseRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
 
 }

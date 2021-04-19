@@ -59,6 +59,9 @@ $attribute = [
     ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
     ['attribute' => 'sample_no', 'vAlign' => 'middle'],
     ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
+    ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+            return isset($model->milkQualityCode) ? $model->milkQualityCode->milk_quality_type_name : '';
+        }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty', 'filter' => Html::activeTextInput($searchModel, 'qty', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_qty', $operator, ['class' => 'form-control'])],
     ['attribute' => 'fat', 'filter' => Html::activeTextInput($searchModel, 'fat', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_fat', $operator, ['class' => 'form-control'])],
     ['attribute' => 'snf', 'filter' => Html::activeTextInput($searchModel, 'snf', ['class' => 'form-control wd60']) . Html::activeDropDownList($searchModel, 'operator_snf', $operator, ['class' => 'form-control'])],
@@ -105,6 +108,15 @@ $attribute = [
     ['attribute' => 'device_long', 'filter' => FALSE],
     ['attribute' => 'mob_lat', 'filter' => FALSE],
     ['attribute' => 'mob_long', 'filter' => FALSE],
+    ['label' => 'Sample Date', 'attribute' => 'qlty_time',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->qlty_time, 'php:d-m-Y H:i:s');
+        }],
 ];
 
 

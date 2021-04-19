@@ -10,7 +10,6 @@ use yii\helpers\Url;
 $form = ActiveForm::begin([
             'options' => ['id' => 'master-transfer-form'],
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -48,15 +47,22 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-old_mcc_plant_code', 'old_bmc_code', $model->getAttributeLabel('old_bmc_code')); ?>
         </div>
-        <div class="col-sm-2 DCSFARMER">
+        <div class="col-sm-2 DCSFARMER dcs_code">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-old_bmc_code', 'old_dcs_code', $model->getAttributeLabel('old_dcs_code')); ?>         
         </div>
         <div class="col-sm-2 FARMER">
             <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmastertransfer-old_dcs_code', '', $model->getAttributeLabel('old_member_code'), 'old_member_code', FALSE, 0, [], TRUE); ?>
         </div>
-        <div class="col-sm-2 DCS">
-            <?php //$form->field($model, 'old_route_code')->textInput(['readOnly' => TRUE]) ?>  
+        <div class="col-sm-2 vendor_type">
+            <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('customer_type'), FALSE, 'customer_type'); ?>
         </div>
+        <div class="col-sm-2 vendor_code">
+            <?= Yii::$app->dropdown->customer_code($model, $form, 'tblmastertransfer-old_bmc_code,tblmastertransfer-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
+        </div>
+        <div class="col-sm-2 DCS">
+            <?php //$form->field($model, 'old_route_code')->textInput(['readOnly' => TRUE])  ?>  
+        </div>
+
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO reset_field">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -72,9 +78,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
         </div>
         <!--        <div class="col-sm-2 number-validate FARMER">
-        <?php //$form->field($model, 'ex_member_code')->textInput() ?>
+        <?php //$form->field($model, 'ex_member_code')->textInput()  ?>
                 </div>-->
-        <div class="col-sm-2 DCS">
+        <div class="col-sm-2 DCS route">
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
         </div>
         <div class="col-sm-2 DCSFARMER">
@@ -84,6 +90,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2  UPDATETRANSACTION">
         <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <?= Html::hiddenInput('plant', $model->plant_code, ['id' => 'plant']); ?>
 </div>
 <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -102,15 +109,21 @@ $script = "$(document).ready(function(){
       setvisible();
     });
     $(document).on('change', '#tblmastertransfer-transfer_type', function() {
-      $('#tblmastertransfer-plant_code').val('').trigger('change');
-      $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
-      $('#master-transfer-form .reset_field input').val('');
-      $('#master-transfer-form .reset_field select').val('');
-            setvisible();
-});
+        var plant = $('#plant').val();
+            if(plant !=''){
+                $('#plant').val('');
+            }else{
+                $('#tblmastertransfer-plant_code').trigger('select2:select');
+                $('#tblmastertransfer-plant_code').val('').trigger('change');
+                $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
+                $('#master-transfer-form .reset_field input').val('');
+                $('#master-transfer-form .reset_field select').val('');
+            }
+        setvisible();
+    });
 function setvisible(){
     $('.CURRENTINFO').hide();
-   $('.NEWINFO').hide();
+    $('.NEWINFO').hide();
         $('.UPDATETRANSACTION').hide();
         var master_type = $('#tblmastertransfer-master_type').val();
         var transfer_type = $('#tblmastertransfer-transfer_type').val();
@@ -120,8 +133,22 @@ function setvisible(){
             $('.FARMER').show();
             if(master_type=='DCS'){
                 $('.FARMER').hide();
+                $('.vendor_type').hide();
+                $('.vendor_code').hide();
+                $('.dcs_code').show();
             }else if(master_type=='FARMER'){
                 $('.DCS').hide();
+                $('.vendor_type').hide();
+                $('.vendor_code').hide();
+                $('.dcs_code').show();
+            }else if(master_type=='CUSTOMER'){
+                $('.DCS').hide();
+                $('.FARMER').hide();
+                $('.vendor_type').show();
+                $('.vendor_code').show();
+                $('.route').show();
+                $('.dcs_code').hide();
+                $('#tblmastertransfer-old_dcs_code').val('');
             }
         }
        if(transfer_type!=null && transfer_type!='' && transfer_type!='Loading ...'){
@@ -148,7 +175,7 @@ $('#tblmastertransfer-old_mcc_plant_code').on('change', function() {
      //    $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', true);
        //     $('#tblmastertransfer-new_mcc_plant_code').val(old_mcc).trigger('change');
          //   $('#tblmastertransfer-new_mcc_plant_code').prop('disabled', true);
-        }else if(master_type=='DCS'){
+        }else if(master_type=='DCS' || master_type=='CUSTOMER'){
             if(transfer_type=='MCC'){
             $('#tblmastertransfer-new_mcc_plant_code>option[value!='+old_mcc+']').prop('disabled', false);
             $('#tblmastertransfer-new_mcc_plant_code>option[value='+old_mcc+']').prop('disabled', true);

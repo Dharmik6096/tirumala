@@ -374,6 +374,22 @@ if ($model->is_active == 1) {
                 [
                     'columns' => [
                         [
+                            'attribute' => 'is_verified',
+                            'label' => Yii::t('app', 'Bank Verification'),
+                            'value' => $model->is_verified == 1 ? 'Verified' : ( $model->is_verified == 2 ? 'Reject' : 'Pending'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'is_contact_verified',
+                            'label' => Yii::t('app', 'Contact Verification'),
+                            'value' => $model->is_contact_verified == 1 ? 'Verified' : ( $model->is_contact_verified == 2 ? 'Reject' : 'Pending'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',

@@ -167,7 +167,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             $this->model->is_active = 1;
             $this->model->originating_org_code = Yii::$app->session->get('organizations_code');
             $this->model->originating_org_type = Yii::$app->session->get('organizations_type');
-            $this->model->union_code = Yii::$app->session->get('organizations_code');
+            $this->model->union_code = $this->model->union_code;
 
 //$this->model->scenario = 'create';
             if ($this->model->validate()) {
@@ -237,7 +237,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
                 //check allow to copy member ratechart for milk qlty good
                 if (!empty($sheetTitlearray[1])) {
-                    if (!$allowCopy && strtolower($sheetTitlearray[1] == 'good')) {
+                    if (!$allowCopy) {
                         $allowCopy = TRUE;
                         $rateClass = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
                     }
@@ -256,9 +256,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 }
 
                 //Rate Class only allow for Good
-                if (!empty($sheetTitlearray[2]) && strtolower($sheetTitlearray[1] != 'good')) {
-                    $validSheet = FALSE;
-                }
+//                if (!empty($sheetTitlearray[2]) && strtolower($sheetTitlearray[1] != 'good')) {
+//                    $validSheet = FALSE;
+//                }
             } else {
                 $validSheet = FALSE;
             }
@@ -643,6 +643,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $searchModel = new TblDcsPurchaseRateApplicabititySearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteApplicability';
+        $searchModel->wef_date = !empty($searchModel->wef_date) ? $searchModel->wef_date : NULL;
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -668,7 +669,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     $message = 'Purchase Rate Applicability';
                     $type = 'delete';
                 }
-               
+
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);

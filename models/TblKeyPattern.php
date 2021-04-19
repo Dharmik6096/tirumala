@@ -20,25 +20,23 @@ use Yii;
  * @property string $created_at
  * @property string $created_by
  */
-class TblKeyPattern extends \yii\db\ActiveRecord
-{
+class TblKeyPattern extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_key_pattern';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['pattern_desc', 'pattern_for', 'ex_code_reset_on', 'prefix_field', 'union_code', 'created_by'], 'string'],
             [['ex_code_auto', 'ex_code_length', 'ref_code_type', 'ref_code_length'], 'integer'],
-            [['created_at'], 'safe'],
+            [['created_at', 'has_preffix'], 'safe'],
             [['pattern_for', 'union_code'], 'unique', 'targetAttribute' => ['pattern_for', 'union_code'], 'message' => 'The combination of Pattern For and Union Code has already been taken.'],
         ];
     }
@@ -46,8 +44,7 @@ class TblKeyPattern extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'key_pattern_code' => Yii::t('app', 'Key Pattern Code'),
             'pattern_desc' => Yii::t('app', 'Pattern Desc'),
@@ -63,4 +60,5 @@ class TblKeyPattern extends \yii\db\ActiveRecord
             'created_by' => Yii::t('app', 'Created By'),
         ];
     }
+
 }

@@ -9,7 +9,6 @@ use yii\helpers\Url;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -34,7 +33,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->bmc_society($model, $form, 'tbldcsdeactive-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), false, ''); ?>         
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2', false, '', false); ?>
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, date('d-m-Y')); ?> 
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>

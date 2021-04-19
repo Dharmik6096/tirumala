@@ -42,7 +42,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function rules() {
         return [
             [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate'], 'safe'],
             [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
             [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
         ];
@@ -70,6 +70,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'union_code' => Yii::t('app', 'Union'),
             'reference_code' => Yii::t('app', 'SAP Rate ID'),
+            'ts_rate' => Yii::t('app', 'TS Rate'),
         ];
     }
 
@@ -175,7 +176,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function getRateChartList($union_code) {
         $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
         return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
-                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+                    return !empty($data->description) ? $data->purchase_rate_code . ' (' . $data->description . ')' : $data->purchase_rate_code;
                 });
     }
 

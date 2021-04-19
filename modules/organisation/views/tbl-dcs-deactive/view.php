@@ -9,6 +9,10 @@ $this->title = Yii::$app->label->title('view', 'Society Deactivate');
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
     <div class="panel-body">
         <div class="form-grid">
             <div class="table-responsive">

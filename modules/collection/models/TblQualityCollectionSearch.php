@@ -22,7 +22,8 @@ class TblQualityCollectionSearch extends TblQualityCollection {
             [['uuid', 'date_time_of_collection', 'shift_code', 'quality_datetime', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'device_id', 'version_no', 'originating_org_code', 'originating_org_type', 'milk_analyser_type_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['sample_no', 'retest_count', 'doc_no', 'auto_flag', 'originating_type', 'qlty_auto'], 'integer'],
             [['fat', 'snf', 'clr', 'water'], 'number'],
-            [['operator_snf', 'operator_fat', 'from_date', 'to_date', 'from_shift', 'to_shift', 'bmc_ref_code'], 'safe']
+            [['operator_snf', 'operator_fat', 'from_date', 'to_date', 'from_shift', 'to_shift', 'bmc_ref_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift'], 'required', 'on' => ['delete']]
         ];
     }
 
@@ -91,6 +92,35 @@ class TblQualityCollectionSearch extends TblQualityCollection {
         $query->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
                 ->andFilterWhere(['like', 'tbl_bmc.ref_code', $this->bmc_ref_code]);
         //$query->orderBy(['tbl_quality_collection.date_time_of_collection' => SORT_DESC, 'tbl_bmc.bmc_name' => SORT_ASC, 'tbl_quality_collection.doc_no' => SORT_ASC, 'tbl_quality_collection.sample_no' => SORT_ASC]);
+
+        return $dataProvider;
+    }
+
+    public function deletesearch($params) {
+        $query = TblQualityCollection::find();
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        $query->join('LEFT JOIN', 'tbl_bmc_collection', 'CAST(tbl_bmc_collection.date_time_of_collection as date) = CAST(tbl_quality_collection.date_time_of_collection as date) and tbl_quality_collection.shift_code = tbl_bmc_collection.shift_code and tbl_quality_collection.mcc_plant_code = tbl_bmc_collection.mcc_plant_code and tbl_quality_collection.bmc_code = tbl_bmc_collection.bmc_code and tbl_quality_collection.sample_no = tbl_bmc_collection.sample_no and tbl_quality_collection.doc_no = tbl_bmc_collection.doc_no');
+        $this->load($params);
+
+        if (!empty($this->bmc_code)) {
+            $query->andWhere(['tbl_quality_collection.bmc_code' => $this->bmc_code]);
+        } else {
+            $query->andWhere('0=1');
+        }
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_quality_collection', 'tbl_quality_collection', 'tbl_quality_collection');
+
+        if (!empty($this->from_date) && !empty($this->from_shift)) {
+            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+            $from_date .= ' ' . $from_shift;
+            $query->andFilterWhere(['tbl_quality_collection.date_time_of_collection' => $from_date]);
+        }
+        $query->andWhere(['or', ['is', 'tbl_bmc_collection.data_post_status', NULL], ['=', 'tbl_bmc_collection.data_post_status', '0']]);
 
         return $dataProvider;
     }

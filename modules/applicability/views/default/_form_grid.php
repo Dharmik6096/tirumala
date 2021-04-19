@@ -8,7 +8,7 @@ use kartik\grid\GridView;
 use yii\web\View;
 ?>
 
-<div class="grid-search clearfix">
+<div class="clearfix">
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 

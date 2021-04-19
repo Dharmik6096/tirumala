@@ -86,7 +86,7 @@ class TblAppOrganizationMapping extends \app\models\ChildModel {
     public function getAppOrgData() {
         return $this->find()
                         ->where(['mobile_no' => $this->mobile_no, 'is_active' => 1])
-                        ->one();
+                        ->all();
     }
 
 }

@@ -16,10 +16,15 @@ use yii\helpers\Url;
 use PHPExcel;
 use app\modules\import\controllers\DefaultController;
 use app\modules\import\importData;
+use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\organisation\models\TblDcs;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerDeactive;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
     public $errorPath = '';
 
     public function init() {
@@ -247,6 +252,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection') {
                 $flag = 'milk-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'milk_collection_qlty') {
+                $flag = 'milk-collection-qlty-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'bmc_collection_mapped') {
+                $flag = 'bmc-mapped-collection-bulk';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -272,6 +283,7 @@ class SchedulerController extends ChildController {
                     $model->attributes = $data;
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
+                    $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
                     $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
@@ -405,6 +417,82 @@ class SchedulerController extends ChildController {
             $row->save(FALSE);
             var_dump($ex->getMessage());
         }
+    }
+
+    public function actionDcsSentboxGenerate() {
+        $model = new TblDcsDeactive();
+        $deactiveData = $model->getDeactiveRecords();
+        $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
+
+        $activeData = $model->getActiveRecords();
+        $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
+
+        $CustModel = new TblCustomerDeactive();
+        $deactiveData = $CustModel->getDeactiveRecords();
+
+        $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
+        $activeData = $CustModel->getActiveRecords();
+        $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
+    }
+
+    public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
+        if (!empty($data)) {
+            $ids = array_map(function($e) use ($key) {
+                return $e->{$key};
+            }, $data);
+            $update = $model->updateFileStatus($ids, $u_status);
+            foreach ($data as $row) {
+                $model_name = Yii::$app->path->define($masterModel);
+                $modelMaster = new $model_name();
+                $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
+                if (!empty($existData)) {
+                    $existData->is_active = $status;
+                    $sentboxArray = [];
+                    $encrypt = $modelMaster->encryptModel($existData->attributes);
+                    $existData->setAttributes($encrypt);
+                    if (!empty($existData->customer_type)) {
+                        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
+                    } else {
+                        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
+                    }
+                    foreach ($sentboxArray as $sent) {
+                        $flag = 'UPDATE';
+                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code);
+                        if (!($sentbox->setSentbox($existData, $flag))) {
+                            $row->data_post_status = $error;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'SentBox Entry is not Generated';
+                            $row->save(FALSE);
+                        } else {
+                            $row->data_post_status = $success;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'Sentbox Generated';
+                            $row->save(FALSE);
+                            $statusModel = new TblDcsVendorStatus();
+                            $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
+                            $statusModel->union_code = $existData->union_code;
+                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : 'DCS';
+                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : $existData->dcs_code;
+                            $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
+                            $statusModel->is_active = $status;
+                            if (!empty($existStatus)) {
+                                $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
+                            } else {
+                                $statusModel->save(FALSE);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type, $union) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $union;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

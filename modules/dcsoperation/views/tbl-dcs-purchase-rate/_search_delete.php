@@ -26,7 +26,7 @@ $depend = 'tbldcspurchaserateapplicabititysearch';
     <div class="col-sm-2 height100">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $depend . '-mcc_plant_code', 'bmc_code', 'BMC'); ?>
     </div>
-    <?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('rate_for'), FALSE, 'rate_for', false) ?> 
+    <?= Yii::$app->dropdown->dropdownStatic('rate_cal_for', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('rate_for'), FALSE, 'rate_for', false, 'both') ?> 
 
     <div class="col-sm-2 hide_rate_cal">
         <?= Yii::$app->dropdown->customer_type($model, $form, $depend . '-bmc_code', 'applicable_for', $model->getAttributeLabel('applicable_for'), FALSE); ?>
@@ -37,7 +37,12 @@ $depend = 'tbldcspurchaserateapplicabititysearch';
     <div class="col-sm-2  show_rate_cal">
         <?= Yii::$app->dropdown->bmc_society($model, $form, $depend . '-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
     </div>
-    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', 'form-group', FALSE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dcsRateChart($model, $form, 'tbldcspurchaserateapplicabititysearch-union_code,tbldcspurchaserateapplicabititysearch-rate_for', 'purchase_rate_code', Yii::t('app', 'Rate Id')); ?>
+    </div>
     <?php // if (empty($dataProvider->getModels())) { ?>
     <div class="col-sm-2 mt20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
@@ -49,11 +54,11 @@ $depend = 'tbldcspurchaserateapplicabititysearch';
 <?php
 $script = "
     $('#tbldcspurchaserateapplicabititysearch-rate_for').on('change', function(e){
-        e.preventDefault();
+        // e.preventDefault();
         hideType();
     });
     $('#tbldcspurchaserateapplicabititysearch-bmc_code').on('change', function(e){
-        e.preventDefault();
+        // e.preventDefault();
         hideType();
     });
         
@@ -79,9 +84,9 @@ $script = "
     }
     $(document).ready(function() {
        var flag = $('#tbldcspurchaserateapplicabititysearch-rate_for').val();
-       $('#tbldcspurchaserateapplicabititysearch-rate_for').val('');
+    //    $('#tbldcspurchaserateapplicabititysearch-rate_for').val('');
         $('#tbldcspurchaserateapplicabititysearch-applicable_for').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
-            event.stopImmediatePropagation();
+            // event.stopImmediatePropagation();
             checkData();
 
             $('#tbldcspurchaserateapplicabititysearch-rate_for').val(flag);
@@ -99,6 +104,7 @@ function checkData(){
     } else if(length == 1) {
         $('#'+modelname+'-'+fieldName).val('DCS');
         $('#'+modelname+'-'+fieldName).parent('div').parent().hide();
+        $('#'+modelname+'-'+fieldName).trigger('select2select');
         $('#'+modelname+'-'+fieldName).trigger('change');
     } else {
         $('#'+modelname+'-'+fieldName).parent('div').parent().show();               

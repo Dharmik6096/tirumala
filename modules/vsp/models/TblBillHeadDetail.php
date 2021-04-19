@@ -81,9 +81,14 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['customer_code'], 'required', 'on' => ['importCsv']],
             [['customer_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
+                        $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
                         $customer_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
-                        $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
-                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+                        if (empty($this->dcs_code) && $customer_type == 'DCS' && $billingType == '1') {
+                           
+                        } else {
+                            $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
+                            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+                        }
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
         ];
@@ -207,7 +212,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             if (!array_key_exists($this->bill_head_code, $list)) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
-            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
+            if ($billingType != 1 && $customer_type != 'DCS') {
+                Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+            }
         }
     }
 
