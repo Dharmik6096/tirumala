@@ -48,6 +48,7 @@ use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
+use app\modules\organisation\models\TblCustomerMaster;
 
 class GeneralFunctions extends Component {
 
