@@ -39,21 +39,22 @@ class TblUnits extends ChildModel {
      */
     public function rules() {
         return [
-                [['created_at', 'updated_at', 'short_name'], 'safe'],
-                [['is_active'], 'safe'],
-                [['unit_name', 'union_code'], 'required'],
+            [['created_at', 'updated_at', 'short_name'], 'safe'],
+            [['is_active'], 'safe'],
+            [['unit_name', 'union_code'], 'required'],
 //                [['unit_name', 'short_name'], 'unique'],
             [['unit_name'], 'unique', 'targetAttribute' => ['unit_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['short_name'], 'unique', 'targetAttribute' => ['short_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['unit_name', 'short_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['unit_name'], 'string', 'max' => 20],
-                [['local_name', 'local_short_name'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['short_name'], 'unique', 'targetAttribute' => ['short_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['unit_name', 'short_name'], function ($attribute, $params) {
+            Yii::$app->general->validateName($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['unit_name'], 'string', 'max' => 20],
+            [['local_name', 'local_short_name'], function ($attribute, $params) {
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => false],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['union_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
                 //     [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['updated_by' => 'user_id']],
                 //    [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['created_by' => 'user_id']],
         ];
