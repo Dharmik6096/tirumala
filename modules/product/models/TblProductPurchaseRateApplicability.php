@@ -39,7 +39,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
 
-    public $plant_code, $bmc_code;
+    public $plant_code, $bmc_code, $ex_code;
 
     /**
      * @inheritdoc
@@ -238,7 +238,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
             }
         }
     }
-      public function validateCustomer($model) {
+    public function validateCustomer($model) {
         if (empty($model->applicable_for) || strtoupper($model->applicable_for) == 'DCS') {
             $model->applicable_for = 'DCS';
             $dcs = new TblDcs();
@@ -247,7 +247,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
             $model->applicable_for = strtoupper($model->applicable_for);
             $applicable_code = $this->validateCustomerCode($model);
         }
-
+           
         if (empty($applicable_code)) {
             $model->addError('applicable_code', Yii::t('app/validation', Yii::t('app', 'Applicable Code') . ' is invalid'));
         } else {
@@ -264,7 +264,7 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
             return $data = empty($Code) ? '' : $Code;
         }
     }
-     public function getApplicCustomerType() {
+    public function getApplicCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code'])->andOnCondition(['is_applicability' => 1, 'is_active' => 1]);
     }
 
