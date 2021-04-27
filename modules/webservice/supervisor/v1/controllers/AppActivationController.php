@@ -7,7 +7,7 @@ use app\modules\webservice\models\TblAppActivation;
 use webvimark\modules\UserManagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use Yii;
-
+use app\modules\sms\models\TblAlertTemplate;
 
 class AppActivationController extends ChildController {
 
@@ -38,8 +38,12 @@ class AppActivationController extends ChildController {
 //                $appModel->otp_code = rand(1000, 9999);
                 $appModel->hash_key = Yii::$app->security->generateRandomString(20);
                 $appModel->orignating_timestamp = date('Y-m-d H:i:s');
+//                $templateModel = new TblAlertTemplate();
+//                $templateData = $templateModel->getTemplateData('supervisor_app_otp');
+//                $message = str_replace('{otp}', $appModel->otp_code, $templateData->message);
+
 //                $message = 'Dear Your OTP Pin is ' . $appModel->otp_code . '.Enter this pin to login your account.';
-//                $result = Yii::$app->general->sendsms($appModel->mobile_no, $message);
+//                $result = Yii::$app->general->sendsms($appModel->mobile_no, $message,$templateData->header_info);
                 // $result = '';
                 $appModel->sms_sent = 1;
                 $appModel->is_delete = 0;
@@ -85,7 +89,7 @@ class AppActivationController extends ChildController {
         $data = [];
         $api_list = [];
         $appModelData = $appModel->getActiveRecordData($this->post_data);
-       
+
         if (!empty($appModelData)) {
 //            $master_service_model = new TblAppMasterService();
 //            $master_service_data = $master_service_model->getAllData();
@@ -102,7 +106,6 @@ class AppActivationController extends ChildController {
 //            $data['master_api'] = $api_list;
         }
         return $this->response['data'] = $data;
-        
     }
 
 }

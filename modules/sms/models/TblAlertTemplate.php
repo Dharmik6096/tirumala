@@ -15,21 +15,19 @@ use Yii;
  * @property int $language_code
  * @property string $union_code
  */
-class TblAlertTemplate extends \yii\db\ActiveRecord
-{
+class TblAlertTemplate extends \yii\db\ActiveRecord {
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_alert_template';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['receiver_type', 'message', 'header_info', 'module_type', 'union_code'], 'string'],
             [['language_code'], 'integer'],
@@ -39,8 +37,7 @@ class TblAlertTemplate extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'alert_template_id' => 'Alert Template ID',
             'receiver_type' => 'Receiver Type',
@@ -56,8 +53,16 @@ class TblAlertTemplate extends \yii\db\ActiveRecord
      * {@inheritdoc}
      * @return TblAlertTemplateQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblAlertTemplateQuery(get_called_class());
     }
+
+    public function getTemplateData($module, $receiver = 'SMS', $union = '') {
+        $query = $this->find()->where(['module_type' => $module, 'receiver_type' => $receiver]);
+        if (!empty($union)) {
+            $query->andWhere(['union_code' => $union]);
+        }
+        return $query->one();
+    }
+
 }

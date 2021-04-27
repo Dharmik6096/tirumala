@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\webservice\eipl\v1\V1;
 use app\modules\webservice\emilkprolite\controllers\MasterController;
+use app\modules\sms\models\TblAlertTemplate;
 
 class EmilkProLiteController extends MasterController {
 
@@ -28,11 +29,14 @@ class EmilkProLiteController extends MasterController {
             $modelSave[] = $temp_model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app registration', 'create']);
             if ($transaction == 'customRedirect') {
-                $message = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
+                $message1 = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
                 $sms_data = [];
                 $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
                 $sms_data['module_type'] = 'app_activation';
-                Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('emilk_pro_lite_otp');
+                $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
+                Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
                 foreach ($detail as $key => $subArr) {
                     unset($detail[$key]['master_type']);
                     unset($detail[$key]['master_code']);
