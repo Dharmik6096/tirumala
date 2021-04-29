@@ -299,12 +299,15 @@ class SchedulerController extends ChildController {
                 $sp_param[] = $row->created_by;
                 $sp_param[] = $row->union_code;
                 $sp_result = [];
+                $success_sp_result = [];
                 if ($success > 0) {
                     \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
-                    $sp_result = \Yii::$app->general->getSpData($sp_name . '_ErrorList', [$uuid]);
+                    $success_sp_result = \Yii::$app->general->getSpData($sp_name . '_ErrorList', [$uuid, 'SuccessList']);
+                    $sp_result = \Yii::$app->general->getSpData($sp_name . '_ErrorList', [$uuid, 'ErrorList']);
                 }
                 $error_lines = array_merge($sp_result, $error_lines);
                 $filePath = NULL;
+                $successfilePath = NULL;
                 if (!empty($error_lines)) {
                     $column_header = array_keys($error_lines[0]);
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
@@ -332,6 +335,33 @@ class SchedulerController extends ChildController {
                         $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                     }
                 }
+                if (!empty($success_sp_result)) {
+                    $column_header = array_keys($success_sp_result[0]);
+                    $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
+                    if (Yii::$app->general->checkDirectory($path)) {
+                        $absoluteBaseUrl = Url::base(true);
+                        $objPHPExcel = new PHPExcel();
+                        $sheet = $objPHPExcel->getActiveSheet();
+                        $sheet->fromArray(
+                                $column_header, // The data to set
+                                NULL, // Array values with this value will not be set
+                                'A1'         // Top left coordinate of the worksheet range where
+                                //    we want to set these values (default is A1)
+                        );
+                        $sheet->fromArray(
+                                $success_sp_result, // The data to set
+                                NULL, // Array values with this value will not be set
+                                'A2'         // Top left coordinate of the worksheet range where
+                                //    we want to set these values (default is A1)
+                        );
+                        $successfilePath = $path . 'success_' . $row->file_name;
+                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter->save($successfilePath);
+//                    copy($row->file_path, $path . $row->file_name);
+//                    unlink($row->file_path);
+                        $successfilePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'success_' . $row->file_name;
+                    }
+                }
                 $row->total_count = $total_cnt;
                 $row->error_count = count($error_lines);
                 $row->success_count = $row->total_count - $row->error_count;
@@ -339,6 +369,7 @@ class SchedulerController extends ChildController {
                 $row->response_datetime = date('Y-m-d H:i:s');
                 $row->response_msg = 'File Processed';
                 $row->error_file_path = $filePath;
+                $row->success_file_path = $successfilePath;
                 $row->save(FALSE);
             } else {
                 $row->status = 3;
