@@ -403,7 +403,9 @@ class SchedulerController extends ChildController {
             $import = new DefaultController('', '');
             $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
             $filePath = NULL;
+            $successfilePath = NULL;
             $error_lines = [];
+            $success_lines = [];
             if (!empty($values['allData']['error_lines'])) {
                 $column_header = explode(',', $data['fields']);
                 $column_header[] = 'response_msg';
@@ -433,6 +435,34 @@ class SchedulerController extends ChildController {
                     $filePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'error_' . $row->file_name;
                 }
             }
+            if (!empty($values['allData']['success_lines'])) {
+                $column_header = explode(',', $data['fields']);
+                $success_lines = $values['allData']['success_lines'];
+                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
+                if (Yii::$app->general->checkDirectory($path)) {
+                    $absoluteBaseUrl = Url::base(true);
+                    $objPHPExcel = new PHPExcel();
+                    $sheet = $objPHPExcel->getActiveSheet();
+                    $sheet->fromArray(
+                            $column_header, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A1'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $sheet->fromArray(
+                            $success_lines, // The data to set
+                            NULL, // Array values with this value will not be set
+                            'A2'         // Top left coordinate of the worksheet range where
+                            //    we want to set these values (default is A1)
+                    );
+                    $successfilePath = $path . 'success_' . $row->file_name;
+                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter->save($successfilePath);
+//                    copy($row->file_path, $path . $row->file_name);
+//                    unlink($row->file_path);
+                    $successfilePath = '/web/bulkdata/' . $row->file_type . '/archive/' . 'success_' . $row->file_name;
+                }
+            }
             $row->total_count = !empty($values['allData']['total_cnt']) ? $values['allData']['total_cnt'] : $total_cnt;
             $row->error_count = count($error_lines);
             $row->success_count = $row->total_count - $row->error_count;
@@ -440,6 +470,7 @@ class SchedulerController extends ChildController {
             $row->response_datetime = date('Y-m-d H:i:s');
             $row->response_msg = 'File Processed';
             $row->error_file_path = $filePath;
+            $row->success_file_path = $successfilePath;
             $row->save(FALSE);
         } catch (\Throwable $ex) {
             $row->status = 3;
