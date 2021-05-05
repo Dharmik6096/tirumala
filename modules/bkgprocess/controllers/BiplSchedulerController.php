@@ -105,7 +105,9 @@ class BiplSchedulerController extends ChildController {
                                             $ftp_txn_model->file_status = 1;
                                             $ftp_txn_data = $ftp_txn_model->getExistFileData();
                                             if (empty($ftp_txn_data) && strlen($file) == 12) {
-                                                $local_path = \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
+//                                                $local_path = \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
+                                                $local_path = \Yii::getAlias('@webroot') . '/'. \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
+                                                $local_path = str_replace('//', '/', $local_path);
                                                 if (Yii::$app->general->checkDirectory($local_path)) {
                                                     $ftp->local_path = $local_path;
                                                     if ($ftp->DownloadFile()) {
@@ -337,7 +339,8 @@ class BiplSchedulerController extends ChildController {
                         $crnt_dir = getcwd();
                         $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplCollectionUtilityPath'];
                         chdir($utility_path);
-                        $cmd = 'Bennybdf.exe -i ' . $datafile . ' -o ' . $local_path . '/' . $convertFileName . ' -s , -f';
+//                        $cmd = 'Bennybdf.exe -i ' . $datafile . ' -o ' . $local_path . '/' . $convertFileName . ' -s , -f';
+                        $cmd = './bdf2tpcsv_x86_64-linux_B -i ' . $datafile . ' -o ' . $local_path . '/' . $convertFileName . ' -s "," -f';
                         exec($cmd, $out, $retval);
                         chdir($crnt_dir);
                         $datafile = $local_path . '/' . $convertFileName; //        convert_bipl_file_path;
