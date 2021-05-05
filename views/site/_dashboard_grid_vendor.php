@@ -49,6 +49,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                             <div class="div_grid_block padding_left_0 padding_right_0 padding_top_0 dashboardWidgetDetailPortion col-sm-3">
                                                 <div class="div_grid_block_content">
                                                     <!-- <p class="dash_grid_block_header"><?= Yii::t('app', 'Union') ?></p> -->
+                                                    <h4 class="dash_grid_block_header"><?= $data['bmc_name'] ?></h4>
                                                     <h4 class="dash_grid_block_header"><?= $data['dcs_name'] ?></h4>
                                                     <!-- <h4 class="dash_block_value block_value" id="farmer_rmrd_block_mcc"></h4> -->
                                                 </div>
@@ -92,6 +93,10 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                                             <div class="col-sm-12 dash_grid_block_desc text-center border_right_1 border_top_1"><span class="dash_grid_block_ans"><?= Yii::t('app', 'Amount') ?></span></div>
                                                             <div class="col-sm-12 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_desc_title"><span><?= $data['total_amount'] ?></span></span></div>
                                                         </div>
+                                                        <div class="col-sm-4 padding_left_0 padding_right_0">
+                                                            <div class="col-sm-12 dash_grid_block_desc text-center border_right_1 border_top_1"><span class="dash_grid_block_ans"><?= Yii::t('app', 'TS Rate') ?></span></div>
+                                                            <div class="col-sm-12 dash_grid_block_desc text-center border_right_1"><span class="dash_grid_block_desc_title"><span><?= $data['ts_rate'] ?></span></span></div>
+                                                        </div>
                                                         <div class="col-sm-8">
                                                         </div>
                                                     </div>
@@ -111,12 +116,14 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                             <thead>
                                                 <tr>
                                                     <th class="custom_grid_header">#</th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', $title) ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Avg. FAT') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Avg. SNF') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Avg. Rate') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Amount') ?></th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'TS Rate') ?></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -131,12 +138,14 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                                             $tbl_dcs_model = new TblDcs();
                                                             $tbl_dcs_model->dcs_code = $data['dcs_code'];
                                                             ?>
+                                                            <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_name'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['total_quantity'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgFAT'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgSNF'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['avgRate'] ?></td>
                                                             <td class="number_align custom_grid_normal" ><?= $data['total_amount'] ?></td>
+                                                            <td class="grid_left_align custom_grid_normal" ><?= $data['ts_rate'] ?></td>
                                                         </tr>
                                                         <?php
                                                     }
