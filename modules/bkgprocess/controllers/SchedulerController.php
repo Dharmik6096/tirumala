@@ -21,6 +21,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
+use app\modules\details\models\TblBankDetails;
 
 class SchedulerController extends ChildController {
 
@@ -541,6 +542,13 @@ class SchedulerController extends ChildController {
                                 $existStatus->updateAll(['is_active' => $status, 'updated_at' => date('Y-m-d H:i:s')], ['dcs_vendor_code' => $existStatus->dcs_vendor_code]);
                             } else {
                                 $statusModel->save(FALSE);
+                            }
+                            if ($status == '0' && $statusModel->customer_type == 'DCS') {
+                                $bankModel = new TblBankDetails();
+                                $existbankModel = $bankModel::find()->where(['module_name' => 'society', 'module_code' => $statusModel->customer_code, 'is_active' => 1])->one();
+                                if (!empty($existbankModel)) {
+                                    $existbankModel->updateAll(['is_active' => 0, 'updated_at' => date('Y-m-d H:i:s'), 'updated_by' => 'deactive'], ['module_code' => $statusModel->customer_code]);
+                                }
                             }
                         }
                     }
