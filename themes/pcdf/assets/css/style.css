@@ -4749,3 +4749,7 @@ table.dataTable thead .search_filter input[type="text"] {
     font-weight: 600;
     font-size: 13px;
 }
+
+tr.highlightRow {
+    background: #FCE4E2  !important;
+}

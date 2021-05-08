@@ -41,13 +41,17 @@ $form = ActiveForm::begin([
                             $fromDate = Yii::$app->general->getforeignkey($model->paymentCycle, 'from_date');
                             $applicability = $model->getApplicabiliytData($model, $code, $fromDate);
                             $dispBtn = false;
+                            $headCount = count($head);
+                            $headAppCount = count($head);
                             foreach ($head as $s) {
                                 if (in_array($s->bill_head_code, $applicability)) {
                                     echo "<td>" . 'Yes' . "</td>";
                                 } else {
+                                    $headAppCount--;
                                     $dispBtn = true;
+                                    $class = $headAppCount == 0 ? ' highlightParentRow ' : '';
                                     ?>
-                                    <td>
+                                    <td class="<?= $class ?>">
                                         <div class="">
                                             <?= Html::hiddenInput('dcs', $code, ['class' => 'bill_head_row_' . $key, 'id' => 'dcs']); ?>
                                             <?= Html::hiddenInput('type', $model->customer_type, ['class' => 'bill_head_row_' . $key, 'id' => 'type']); ?>
@@ -181,5 +185,9 @@ $script = "
             return false;
         }
     }
+    
+    $(document).ready(function () {
+        $('.highlightParentRow').closest('tr').addClass('highlightRow');
+    });
       ";
 $this->registerJs($script, View::POS_END, 'bill-head-grid');
