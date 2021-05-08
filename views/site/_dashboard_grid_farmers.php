@@ -33,7 +33,6 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Farmer'));
                                             <thead>
                                                 <tr>
                                                     <th class="custom_grid_header">#</th>
-                                                    <th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
@@ -56,7 +55,6 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Farmer'));
                                                             $tbl_member_model = new TblMember();
                                                             $tbl_member_model->member_code = $data['member_code'];
                                                             ?>
-                                                            <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['member_name'] ?></td>
                                                             <td class="number_align custom_grid_normal"><?= $data['total_quantity'] ?></td>
