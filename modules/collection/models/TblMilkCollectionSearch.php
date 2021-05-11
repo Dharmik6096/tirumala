@@ -29,7 +29,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
             [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
         ];
     }
 
@@ -234,7 +235,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             $query->joinWith(['approvalData']);
         }
         $query->andWhere([
-            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+            'tbl_milk_collection.bmc_code' => $this->bmc_code]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -250,7 +251,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             $query->andFilterWhere(['<=', 'tbl_milk_collection.date_time_of_collection', $to_date]);
         }
 
-        $query->andFilterWhere(['tbl_milk_collection.member_code' => $this->member_code]);
+        $query->andFilterWhere(['tbl_milk_collection.member_code' => $this->member_code])
+                ->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
         if ($flag == 1) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
