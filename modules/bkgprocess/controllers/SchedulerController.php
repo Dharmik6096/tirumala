@@ -22,6 +22,7 @@ use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\details\models\TblBankDetails;
+use app\modules\details\models\TblContactDetails;
 
 class SchedulerController extends ChildController {
 
