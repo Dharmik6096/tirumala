@@ -105,7 +105,7 @@ if (isset($data['url1'])) {
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
                                                 <?php
-                                                $multiple = in_array($value ,$multiArray) ? true : false ; 
+                                                $multiple = in_array($value, $multiArray) ? true : false;
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
@@ -116,7 +116,7 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('bmc_code'))) {
-                                            $multiple = in_array($value ,$multiArray) ? true : false ;
+                                            $multiple = in_array($value, $multiArray) ? true : false;
                                             ?>
                                             <div class="col-sm-3 val_bmc_code">
                                                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
@@ -217,7 +217,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type','type_wise_report','route_type_trans'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -316,9 +316,9 @@ if (isset($data['url1'])) {
 
                                         if (in_array($value, array('report_collection_type'))) {
                                             ?>
-                                                <div class="col-sm-3">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
-                                                </div>
+                                            </div>
                                             <?php
                                         }
                                     }
@@ -328,7 +328,7 @@ if (isset($data['url1'])) {
                                     }
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
-                                    }                                    
+                                    }
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -364,13 +364,13 @@ if (isset($data['url1'])) {
             $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
             ?>
 
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
+            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if(!empty($result)){
+                <?php if (false && !empty($result)) {
                     ?>
                     <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-                    <?php
-                }?>
+                    <?php }
+                    ?>
             </div>
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 
@@ -381,10 +381,9 @@ if (isset($data['url1'])) {
             <?php
             if (!empty($result) && !is_array($result) && !isset($data['custom_report'])) {
                 echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
-            } else if(!empty($result) && isset($data['custom_report'])){
+            } else if (!empty($result) && isset($data['custom_report'])) {
                 echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
-            }
-            else if (!empty($result) && !(isset($data['download_only']))) {
+            } else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {
                     $checkAttr = explode('##', $att);
@@ -426,24 +425,36 @@ if (isset($data['url1'])) {
                 echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
                 echo '<ul class="items">';
                 foreach ($attr as $key => $value) {
-                    echo '<li><input class="toggle-vis" data-column="'.$c++.'" type="checkbox" checked/>'.$value['title'].'</li>';
+                    echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
                 }
                 echo '</ul>';
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
                 // var_dump($dataProvider->getModels());
-                 echo \nullref\datatable\DataTable::widget([
+                echo \nullref\datatable\DataTable::widget([
                     'id' => 'custom_report',
+                    'autoWidth' => true,
+//                    'searching' => true,
                     'data' => $dataProvider->getModels(),
-                    // 'scrollY' => '200px',
-                    'scrollCollapse' => true,
+                    'scrollX' => true,
+                    'scrollY' => '100px',
+                    'scrollCollapse' => false,
                     'paging' => false,
                     'columns' => $attr,
                     'info' => false,
                     'withColumnFilter' => true
                 ]);
+//                echo \nullref\datatable\DataTable::widget([
+//                    'id' => 'custom_report',
+//                    'data' => $dataProvider->getModels(),
+//                    // 'scrollY' => '200px',
+//                    'scrollCollapse' => true,
+//                    'paging' => false,
+//                    'columns' => $attr,
+//                    'info' => false,
+//                    'withColumnFilter' => true
+//                ]);
                 // Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
-
             }
             ?>
         </div>
@@ -456,6 +467,7 @@ $('.mis_report_modal_toggle').on('click', function(){
 });
    
     $(document).ready(function(){  
+        $('.dataTables_scrollBody').resize();
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
             hideFields();
             $(document).on('change','#reportsmodel-store_location_type', function() {
