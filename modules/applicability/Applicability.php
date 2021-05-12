@@ -88,7 +88,8 @@ class Applicability extends \yii\base\Module {
         switch ($preload) {
             case 'dcs':
                 $selected = $this->getDcs($this->top_section);
-                $list = $this->loadUnionDcs($selected, '');
+                $selectedDcs = $this->getDcs($this->top_section, '', true);
+                $list = $this->loadUnionDcs($selectedDcs, '');
                 $list = ArrayHelper::map($list, 'dcs_code', 'dcs_name');
                 $main_field_name = 'dcs_code';
                 $title = Yii::t('app', 'Societies');
@@ -392,7 +393,7 @@ class Applicability extends \yii\base\Module {
         return $filter_data;
     }
 
-    public function getDcs($top_section, $date = '') {
+    public function getDcs($top_section, $date = '', $returnQuery = false) {
         $field_name = $this->field_name;
         if ($this->select_from_all == false)
             $query = $this->model->find()->select('dcs_code')->where([$field_name => $this->field_value]);
@@ -403,9 +404,13 @@ class Applicability extends \yii\base\Module {
         if (!empty($date)) {
             $query->andWhere(['wef_date' => $date]);
         }
-        $values = $query->all();
-        $selected = ArrayHelper::getColumn($values, 'dcs_code');
-        return $selected;
+        if ($returnQuery) {
+            return $query;
+        } else {
+            $values = $query->all();
+            $selected = ArrayHelper::getColumn($values, 'dcs_code');
+            return $selected;
+        }
     }
 
     public function getDcsAlert($union_code, $id) {
@@ -440,7 +445,7 @@ class Applicability extends \yii\base\Module {
         return [0 => $messagestring, 1 => $dcs];
     }
 
-    public function loadUnionDcs($dcs = [], $union_code) {
+    public function loadUnionDcs($dcs = [], $union_code, $returnQuery = false) {
         //var_dump($dcs); exit;
         $dcsList = TblDcs::find()->joinWith(['societyCodes'])->where(['tbl_dcs.union_code' => $union_code, 'is_active' => 1])->andWhere(['not in', 'tbl_dcs.dcs_code', $dcs])->andWhere(['not', ['tbl_society_codes.bmc_code' => 0]])->andWhere(['not', ['tbl_society_codes.bmc_code' => null]]);
         if (!empty(Yii::$app->session->get('Dcs'))) {

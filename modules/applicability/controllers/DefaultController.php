@@ -48,7 +48,8 @@ class DefaultController extends Controller {
         $ratechart = Yii::$app->request->post('ratechart');
         $module->shift_type = Yii::$app->request->post('shift_type');
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
-        $values = $module->getDcs($top_section, $wef_date);
+        $returnQuery = TRUE;
+        $values = $module->getDcs($top_section, $wef_date, $returnQuery);
 
         $dcsalert = [];
         $removedcs = [];
