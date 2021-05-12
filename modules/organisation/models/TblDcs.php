@@ -253,7 +253,7 @@ class TblDcs extends ChildModel
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                 Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-            }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
+            }, 'skipOnEmpty' => false, 'except' => ['importCsv', 'routeMapping']],
             [['ifsc'], 'setBankDetail', 'on' => ['importCsv']],
             [['dcs_type_code'], function ($attribute, $params) {
                 Yii::$app->general->validateGlobalData($this, $attribute, 'dcs_type_code');
