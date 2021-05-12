@@ -236,7 +236,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             $rateCatogory = ["A", "B", "C"];
             if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
                 //check allow to copy member ratechart for milk qlty good
-                if (!empty($sheetTitlearray[1])) {
+                if (!empty($sheetTitlearray[2])) {
                     if (!$allowCopy) {
                         $allowCopy = TRUE;
                         $rateClass = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
