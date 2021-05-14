@@ -136,7 +136,7 @@ class PDF extends TCPDF {
 //                array_push($bill_transaction_am, $bill_transaction);
             }
             if ($value['shift'] == 'PM') {
-                if (empty($bill_transaction_am[$memberCode])) {
+                if (empty($bill_transaction_pm[$memberCode])) {
                     $bill_transaction_pm[$memberCode] = [];
                 }
                 $bill_transaction_pm[$memberCode][$memberDate] = $bill_transaction;
