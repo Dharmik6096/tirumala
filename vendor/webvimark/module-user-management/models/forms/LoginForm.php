@@ -37,14 +37,14 @@ class LoginForm extends Model {
      */
     public function rules() {
         return [
-            [['username', 'password'], 'required'],
-            [['type'], 'required', 'on' => 'non_national'],
-            [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
-            ['rememberMe', 'boolean'],
-            [['organization', 'type', 'state'], 'safe'],
-            ['password', 'validatePassword'],
-            [['db'], 'safe'],
-            ['username', 'validateIP'],
+                [['username', 'password'], 'required'],
+                [['type'], 'required', 'on' => 'non_national'],
+                [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
+                ['rememberMe', 'boolean'],
+                [['organization', 'type', 'state'], 'safe'],
+                ['password', 'validatePassword'],
+                [['db'], 'safe'],
+                ['username', 'validateIP'],
         ];
     }
 
@@ -109,6 +109,29 @@ class LoginForm extends Model {
     }
 
     public function setSession() {
+        try {
+            $model = new \app\models\TblClientPayment();
+            $overDuePayment = $model->getOverDuePayment();
+            if (!empty($overDuePayment)) {
+                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
+                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
+                    'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $overDueDate]);
+                return false;
+            } else {
+                $pendingPayment = $model->getPendingPaymentCount();
+                if (!empty($pendingPayment)) {
+                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
+                }
+            }
+        } catch (UserException $e) {
+            
+        } catch (\yii\db\Exception $e) {
+            
+        } catch (Exception $ex) {
+            
+        }
         $user = User::find()->where(['username' => $this->username, 'is_active' => 1])->one();
 
         if (!isset($user->user_code)) {

@@ -404,6 +404,7 @@ echo GhostMenu::widget([
                                 ['label' => '106 -' . Yii::t('app', 'Member Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-member-date-shift-wise']],
                                 ['label' => '107 -' . Yii::t('app', 'Society Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-society-date-shift-wise']],
                                 ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
+                                ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
                             ]
                         ],
                         [
@@ -423,6 +424,7 @@ echo GhostMenu::widget([
                                 ['label' => '210-' . Yii::t('app', 'Route Wise Collection Summary'), 'url' => ['/misreports/reports/route-wise-collection-summary']],
                                 ['label' => '211-' . Yii::t('app', 'Vendor Wise Collection Summary'), 'url' => ['/misreports/reports/vendor-wise-collection-summary']],
                                 ['label' => '212 -' . Yii::t('app', 'BMC Collection Data'), 'url' => ['/misreports/reports/bmc-collection-data']],
+                                ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
