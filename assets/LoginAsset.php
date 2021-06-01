@@ -23,7 +23,7 @@ class LoginAsset extends AssetBundle
         'themes/pcdf/assets/css/style.css',
     ];
     public $js = [
-        'themes/pcdf/assets/js/liveloader.js',
+        'themes/pcdf/assets/js/liveloaderLogin.js',
         'themes/pcdf/assets/js/style.js',
     ];
     public $depends = [

@@ -4806,3 +4806,20 @@ table.dataTable thead .search_filter input[type="text"] {
 .fixed-table-container tbody tr:first-child{
     margin-top:-1px;
 }
+
+tr.highlightRow {
+    background: #FCE4E2  !important;
+}
+
+.dataTables_scrollBody {
+    max-height: calc(100vH - 210px) !important;
+    height: auto !important;
+}
+
+.dataTables_scrollBody table.dataTable {
+    margin-top: -20px !important;
+}
+
+.dataTables_scrollBody thead tr[role='row']{
+    height: 20px !important
+}
