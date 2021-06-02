@@ -284,6 +284,7 @@ class Applicability extends \yii\base\Module {
                                     $dcsAppModel->attributes = $appModel->attributes;
                                     $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
                                     $dcsAppModel->dcs_code = $appModel->applicable_code;
+                                    $dcsAppModel->union_code = $appModel->union_code;
                                     $dcsAppModel->applicable_for = 'DCS';
                                     $saveModel[] = $dcsAppModel->save();
                                 }
