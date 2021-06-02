@@ -41,6 +41,8 @@ use app\modules\organisation\models\TblDcsDeactiveSearch;
 use app\modules\dcsoperation\models\TblMemberHistory;
 use app\modules\details\models\TblBankDetailsHistory;
 use app\modules\details\models\TblContactDetailsHistory;
+use yii\base\UserException;
+use ReflectionClass;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -188,27 +190,7 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
-                $member = [];
-                if (!empty($this->model->auto_member_create)) {
-                    $config = !empty(Yii::$app->session->get('unionConfig')[$this->model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['no_of_auto_member_create'] : 100;
-                    for ($x = 1; $x <= $config; $x += 1) {
-                        $memberModel = new TblMember();
-                        $memberModel->attributes = $this->model->attributes;
-                        $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
-                        $memberModel->member_code = $this->model->dcs_code . $memberModel->ex_member_code;
-                        $memberModel->ref_code = $memberModel->member_code;
-                        $memberModel->animal_type_code = 1;
-                        $memberModel->address = $this->model->dcs_name;
-                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
-                        $memberModel->member_type_code = '1';
-                        $memberModel->member_name = 'No Name';
-                        $memberModel->gender_code = 1;
-                        $memberModel->caste_category_code = 1;
-                        $memberModel->member_type_code = 1;
-                        array_push($mapList, $memberModel);
-                    }
-                }
-                $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
+                $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (!empty($vendorModel)) {
@@ -1100,6 +1082,84 @@ class TblDcsController extends ChildController {
         }
         $attachment = Yii::$app->general->getAttachment($module_name, $code, TRUE, TRUE);
         return $this->renderAjax('_attachment_popup', ['attachment' => $attachment]);
+    }
+
+    public function saveDcs($model, $childModel, $message) {
+        //var_dump($model);var_dump($childModel);exit;
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $master[] = $model->save();
+            if (!in_array(FALSE, $master)) {
+                foreach ($childModel as $key => $m) {
+                    if ($key != 0 && strpos($childModel[$key - 1]->tableName(), 'history') !== false && $childModel[$key - 1]->operation_type == 'DELETE') {
+                        $master[] = $m->delete();
+                    } else {
+                        $name = (new ReflectionClass($m))->getShortName();
+                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails')
+                            $master[] = $m->save();
+                        else
+                            $master[] = $m->save(FALSE);
+                    }
+                }
+            }
+
+            if (!in_array(FALSE, $master)) {
+                if (!empty($model->auto_member_create)) {
+                    $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
+                    for ($x = 1; $x <= $config; $x += 1) {
+                        $memberModel = new TblMember();
+                        $memberModel->attributes = $model->attributes;
+                        $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
+                        $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        $memberModel->animal_type_code = 1;
+                        $memberModel->address = $model->dcs_name;
+                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+                        $memberModel->member_type_code = '1';
+                        $memberModel->member_name = 'No Name';
+                        $memberModel->gender_code = 1;
+                        $memberModel->caste_category_code = 1;
+                        $memberModel->member_type_code = 1;
+                        $master[] = $memberModel->save();
+                    }
+                }
+            }
+
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            }
+            $child = new ChildModel();
+            foreach ($childModel as $key => $m) { //this code to get validation msgs of child table when matster validation fails
+                if ($key != 0 && strpos($childModel[$key - 1]->tableName(), 'history') !== false && $childModel[$key - 1]->operation_type == 'DELETE') {
+                    
+                } else {
+                    $child->decryptModel($m);
+                    $master[] = $m->validate();
+                }
+            }
+            //exit;
+
+            $model->decryptModel($m);
+            foreach ($childModel as $m) {
+                $child->decryptModel($m);
+            }
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Your transaction is not saved successfully']);
+            return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
     }
 
 }

@@ -47,7 +47,9 @@ class TblDcsDeactive extends \app\models\ChildModel {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
             [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
             [['originating_type'], 'integer'],
-            [['from_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['importCsv']],
+            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['from_date'], 'convertDate', 'on' => ['importCsv']],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
@@ -209,6 +211,20 @@ class TblDcsDeactive extends \app\models\ChildModel {
         $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
         $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->from_date = Yii::$app->controls->view_date($this->from_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->from_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
+        }
     }
 
 }
