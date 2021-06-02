@@ -250,26 +250,7 @@ class DcsImportStrategy extends ARImportStrategy {
                         array_push($modelList, $sourceMapping);
 
                         $model->default_milk_type = $model->milk_type_code;
-                        if (empty($existData) && ($model->auto_member_create == 1)) {
-                            $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
-                            for ($x = 1; $x <= $config; $x += 1) {
-                                $memberModel = new TblMember();
-                                $memberModel->attributes = $model->attributes;
-                                $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
-                                $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
-                                $memberModel->ref_code = $memberModel->member_code;
-                                $memberModel->animal_type_code = 1;
-                                $memberModel->address = $model->dcs_name;
-                                $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
-                                $memberModel->member_type_code = '1';
-                                $memberModel->member_name = 'No Name';
-                                $memberModel->gender_code = 1;
-                                $memberModel->caste_category_code = 1;
-                                $memberModel->member_type_code = 1;
-                                array_push($modelList, $memberModel);
-                            }
-                        }
-                       
+
                         $master[] = $model->save();
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
@@ -280,6 +261,26 @@ class DcsImportStrategy extends ARImportStrategy {
                         if ($this->isActiveRecordUnique($uniqueAttributes)) {
                             $importedPks[] = $model->primaryKey;
                         }
+
+                        if (empty($existData) && ($model->auto_member_create == 1)) {
+                            $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
+                            for ($x = 1; $x <= $config; $x += 1) {
+                                $memberModel = new TblMember();
+                                $memberModel->attributes = $model->attributes;
+                                $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
+                                $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                                $memberModel->animal_type_code = 1;
+                                $memberModel->address = $model->dcs_name;
+                                $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+                                $memberModel->member_type_code = '1';
+                                $memberModel->member_name = 'No Name';
+                                $memberModel->gender_code = 1;
+                                $memberModel->caste_category_code = 1;
+                                $memberModel->member_type_code = 1;
+                                $master[] = $memberModel->save();
+                            }
+                        }
+
                         if (!in_array(FALSE, $master)) {
                             $trans->commit();
                             $count++;
