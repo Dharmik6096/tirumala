@@ -117,6 +117,8 @@ class importData extends \yii\base\Module {
             'milk-collection-qlty-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount', 'scenario' => 'milk_collection_qlty'],
             'bmc-mapped-collection-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'own_bmc_code,bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection_mapped'],
             'dcs-deactive' => ['table_name' => 'tbl_dcs_deactive', 'fields' => 'bmc_code,dcs_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
+            'member-deactive' => ['table_name' => 'tbl_member_deactive', 'fields' => 'dcs_code,member_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
+            'customer-deactive' => ['table_name' => 'tbl_customer_deactive', 'fields' => 'bmc_code,customer_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

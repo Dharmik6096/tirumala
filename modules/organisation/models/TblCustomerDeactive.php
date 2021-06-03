@@ -51,20 +51,29 @@ class TblCustomerDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
-                [['remarks'], 'string'],
-                [['originating_type', 'data_post_status'], 'integer'],
-                [['customer_deactive_code', 'bmc_code'], 'string', 'max' => 12],
-                [['union_code'], 'string', 'max' => 3],
-                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-                [['customer_code', 'customer_type'], 'string', 'max' => 20],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['resp_status', 'resp_desc'], 'string', 'max' => 255],
-                [['to_date'], 'required', 'on' => ['activeCustomer']],
-                [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
-                [['to_date'], 'validateToRange', 'on' => ['activeCustomer']]
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'from_date'], 'required', 'except' => ['importCsv']],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'customer_deactive_code'], 'safe'],
+            [['remarks'], 'string'],
+            [['originating_type', 'data_post_status'], 'integer'],
+//            [['customer_deactive_code', 'bmc_code'], 'string', 'max' => 12],
+            [['union_code'], 'string', 'max' => 3],
+            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+            [['customer_code', 'customer_type'], 'string', 'max' => 20],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['resp_status', 'resp_desc'], 'string', 'max' => 255],
+            [['to_date'], 'required', 'on' => ['activeCustomer']],
+            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['from_date'], 'convertDate', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['bmc_code', 'customer_code', 'from_date'], 'required', 'on' => ['importCsv']],
+            [['from_date'], 'validateFromDate', 'except' => ['activeCustomer']],
+            [['to_date'], 'validateToRange', 'on' => ['activeCustomer']]
         ];
     }
 
@@ -197,6 +206,40 @@ class TblCustomerDeactive extends \app\models\ChildModel {
 
     public function updateFileStatus($value, $status) {
         return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['customer_deactive_code' => $value]);
+    }
+
+    public function setImport($attribute, $params) {
+        $date = date('Y-m-d');
+        $fromDate = date('Y-m-d', strtotime($this->from_date));
+        if ($date > $fromDate) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'From Date') . ' Must not past date'));
+            return false;
+        }
+        $custmr = new TblCustomerMaster();
+        $customer_data = $custmr->validateCustomerRef($this->bmc_code, $this->customer_code);
+        $this->customer_code = $customer_data->customer_code;
+        if (empty($this->customer_code)) {
+            $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+            return false;
+        }
+        $this->customer_type = Yii::$app->general->getforeignkey($this->customerCode, 'customer_type');
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->from_date = Yii::$app->controls->view_date($this->from_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->from_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
+        }
     }
 
 }

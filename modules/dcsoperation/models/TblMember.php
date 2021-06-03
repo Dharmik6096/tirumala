@@ -644,4 +644,9 @@ class TblMember extends ChildModel {
         }
     }
 
+    public function validateRefMember($dcs_code, $memberCode) {
+        return $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1])
+                        ->andWhere(['or', ['member_code' => $memberCode], ['ref_code' => $memberCode]])->one();
+    }
+
 }

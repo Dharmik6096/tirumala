@@ -45,14 +45,20 @@ class TblMemberDeactive extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['member_deactive_code'], 'required'],
-            [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+            [['member_deactive_code'], 'required', 'except' => ['importCsv']],
+            [['member_deactive_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required'],
+            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['from_date'], 'convertDate', 'on' => ['importCsv']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required', 'except' => ['importCsv']],
+            [['dcs_code', 'member_code', 'from_date'], 'required', 'on' => ['importCsv']],
             [['to_date'], 'required', 'on' => ['activeMember']],
             [['from_date'], 'validateFromDate', 'except' => ['activeMember']],
-            [['to_date'], 'validateToRange', 'on' => ['activeMember']]
+            [['to_date'], 'validateToRange', 'on' => ['activeMember']],
+            [['member_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
+            [['member_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
         ];
     }
 
@@ -143,6 +149,48 @@ class TblMemberDeactive extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->from_date = Yii::$app->controls->view_date($this->from_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->from_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        $date = date('Y-m-d');
+        $fromDate = date('Y-m-d', strtotime($this->from_date));
+        if ($date > $fromDate) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'From Date') . ' Must not past date'));
+            return false;
+        }
+
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+            return false;
+        } else {
+            $member = new TblMember();
+            $memberData = $member->validateRefMember($this->dcs_code, $this->member_code);
+            $this->member_code = $memberData->member_code;
+            if (empty($this->member_code)) {
+                $this->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' is invalid'));
+                return false;
+            }
+        }
+        $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
     }
 
 }
