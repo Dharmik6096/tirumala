@@ -23,6 +23,7 @@ use app\modules\general\models\TblRelationship;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use yii\db\Query;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 /**
  * This is the model class for table "tbl_member".
@@ -647,6 +648,10 @@ class TblMember extends ChildModel {
     public function validateRefMember($dcs_code, $memberCode) {
         return $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1])
                         ->andWhere(['or', ['member_code' => $memberCode], ['ref_code' => $memberCode]])->one();
+    }
+
+    public function getActiveStatus() {
+        return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'member_code'])->andOnCondition(['customer_type' => 'Member']);
     }
 
 }

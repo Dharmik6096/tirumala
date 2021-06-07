@@ -59,6 +59,7 @@ class TblMemberDeactive extends \app\models\ChildModel {
             [['to_date'], 'validateToRange', 'on' => ['activeMember']],
             [['member_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
             [['member_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
         ];
     }
 
@@ -191,6 +192,34 @@ class TblMemberDeactive extends \app\models\ChildModel {
         $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
         $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+    }
+
+    public function getDeactiveRecords($checkStatus = true) {
+        $date = date('Y-m-d');
+        $query = $this->find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]]);
+        if ($checkStatus) {
+            $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
+        }
+
+        $dataList = $query->orderBy(['member_deactive_code' => SORT_ASC])
+                ->all();
+        return $dataList;
+    }
+
+    public function getActiveRecords() {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['data_post_status' => 2])
+                ->andWhere(['<', 'to_date', $date])
+                ->orderBy(['member_deactive_code' => SORT_ASC])
+                ->all();
+    }
+
+    public function updateFileStatus($value, $status) {
+        return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['member_deactive_code' => $value]);
     }
 
 }

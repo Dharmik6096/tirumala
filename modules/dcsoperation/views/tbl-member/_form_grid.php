@@ -77,23 +77,29 @@ $attribute = [
     ['attribute' => 'is_contact_verified', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
             return $model->is_contact_verified == 1 ? 'Verified' : ( $model->is_contact_verified == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
+    [
+        'attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
+        'value' => function($model) {
+            return $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active';
+        },
+    ],
 ];
 
 $grid_option = [
     'id' => 'member-grid',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => false,
     'actions' => [
         'update' => function ($url, $model) {
             $name = $model->member_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'view' => true,
         'deactive' => function ($url, $model) {
             $name = $model->member_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
         },

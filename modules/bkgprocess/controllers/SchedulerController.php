@@ -23,6 +23,7 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
+use app\modules\dcsoperation\models\TblMemberDeactive;
 
 class SchedulerController extends ChildController {
 
@@ -497,6 +498,14 @@ class SchedulerController extends ChildController {
         $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
         $activeData = $CustModel->getActiveRecords();
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
+
+
+        $MemberModel = new TblMemberDeactive();
+        $deactiveData = $MemberModel->getDeactiveRecords();
+        $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
+
+        $activeData = $MemberModel->getActiveRecords();
+        $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
 
     public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
@@ -535,8 +544,8 @@ class SchedulerController extends ChildController {
                             $statusModel = new TblDcsVendorStatus();
                             $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
                             $statusModel->union_code = $existData->union_code;
-                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : 'DCS';
-                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : $existData->dcs_code;
+                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : (!empty($existData->member_code) ? 'Member' : 'DCS');
+                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : (!empty($existData->member_code) ? $existData->member_code : $existData->dcs_code);
                             $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
                             $statusModel->is_active = $status;
                             if (!empty($existStatus)) {
