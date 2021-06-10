@@ -12,14 +12,16 @@ use app\modules\payment\models\TblSaleInstallments;
  */
 class TblSaleInstallmentsSearch extends TblSaleInstallments {
 
+    public $member_code;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code',], 'safe'],
-                [['main_amount', 'installment_amount'], 'number'],
-                [['installment_status'], 'integer'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code','bmc_code'], 'safe'],
+            [['main_amount', 'installment_amount'], 'number'],
+            [['installment_status'], 'integer'],
         ];
     }
 
@@ -74,6 +76,36 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
         ]);
 
         $query->andFilterWhere(['like', 'product_sale_code', $this->product_sale_code]);
+
+        return $dataProvider;
+    }
+
+    public function installsearch($params) {
+        $query = TblSaleInstallments::find();
+
+        // add conditions that should always apply here
+        $query->joinWith(['saleCode']);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale_installment');
+        $query->andWhere(['is', 'tbl_product_sale_installment.installment_date', NULL]);
+        $query->andWhere([
+            'tbl_product_sale_installment.bmc_code' => $this->bmc_code,
+            'tbl_product_sale_installment.dcs_code' => $this->dcs_code,
+            'tbl_product_sale_installment.customer_code' => $this->member_code,
+            'tbl_product_sale_installment.customer_type' => 'Member']);
+        // grid filtering conditions
+
 
         return $dataProvider;
     }

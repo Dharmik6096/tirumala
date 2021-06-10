@@ -122,6 +122,10 @@ $tot_amt = array_sum(array_map(function($array) {
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
                     return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
                 },
+                'member-installment' => function ($url, $model) {
+                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
+                    return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
+                },
             ]
         ];
 
@@ -137,6 +141,7 @@ $tot_amt = array_sum(array_map(function($array) {
 </div>
 <div id='bill_head_view'></div>
 <?php ActiveForm::end(); ?>
+<div id='member_installment'></div>
 <div id="recoverOtherMember"></div>
 
 <?php
@@ -478,6 +483,43 @@ $script .= " function SumAmountold()
 //            }, 500);
         }
     } 
+
+    $(document).on('click','.memberinstallments',function(e){
+        var trClass = $(this).closest('tr').attr('class');
+        var payment_cycle_code= $(this).attr('data-payment_cycle_code');
+        var bmc_code= $(this).attr('data-bmc_code');
+        var dcs_code= $(this).attr('data-dcs_code');
+        var member_code= $(this).attr('data-member_code');
+        
+
+        var parent = $(this).parents('tr');
+        var netPay = parseFloat(parent.find('.net-amount').val());
+            MemberInstallment(payment_cycle_code, bmc_code, dcs_code, member_code, netPay);
+    });
+
+    function MemberInstallment(payment_cycle_code, bmc_code, dcs_code, member_code, netPay){
+        if(payment_cycle_code != '' && bmc_code != '' && dcs_code != ''){         
+        $.ajax({
+                type: 'get',
+                url: '" . Url::to(['/payment/tbl-member-payment/member-installment']) . "',
+                data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code, 'member_code': member_code, 'netPay': netPay},
+                beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                },
+                success: function(data) {
+                    $('#member_installment').html(data);
+                    $('#MemberInstallmentModal').modal('toggle');              
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();                                                                  
+                },
+                error: function(data) {  
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                }
+            });
+        }
+    }
  ";
 
 $this->registerJs($script, View::POS_END, 'payment-adjust-script');
