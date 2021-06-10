@@ -277,6 +277,8 @@ class DcsImportStrategy extends ARImportStrategy {
                                 $memberModel->gender_code = 1;
                                 $memberModel->caste_category_code = 1;
                                 $memberModel->member_type_code = 1;
+                                $memberModel->mobile_no = NULL;
+                                $memberModel->pan_no = NULL;
                                 $master[] = $memberModel->save();
                             }
                         }
