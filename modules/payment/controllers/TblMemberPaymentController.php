@@ -159,10 +159,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $model = new TblMemberPaymentAlias();
                 $model->load(Yii::$app->request->post());
                 $modelData = $model->getRecords(false)->all();
-                echo '<pre>';
-                print_r($modelData);
-                echo '</pre>';
-                die;
                 $summaryModel = new TblMemberPaymentSummaryAlias();
                 $summaryModel->attributes = $model->attributes;
                 $summaryModelData = $summaryModel->getRecords(false);
