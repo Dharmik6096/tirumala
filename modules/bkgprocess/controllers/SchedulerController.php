@@ -402,6 +402,7 @@ class SchedulerController extends ChildController {
             $data['import_union_code'] = $row->union_code;
             $data['import_eipl_code'] = $eiplcode;
             $data['import_key_pattern'] = $unionKeyPattern;
+            $data['created_by'] = $row->created_by;
             $import = new DefaultController('', '');
             $values = $import->importCsv($row->file_name, $className, $data, 0, $row->file_type, '/web/bulkdata/' . $row->file_type . '/');
             $filePath = NULL;
