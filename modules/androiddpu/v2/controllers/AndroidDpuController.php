@@ -25,6 +25,7 @@ use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * Default controller for the `vendorapi` module
@@ -285,6 +286,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $model = new TblAndroidInstallationDetails();
             $id_model = $model->getActiveData($data);
             if (!empty($id_model)) {
+                $version_no = !empty($data['content']['version_no']) ? $data['content']['version_no'] : $id_model->version_no;
+                $id_model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'version_no' => $version_no], ['android_installation_details_id' => $id_model->android_installation_details_id]);
                 $mobileNo = !empty($id_model->mobile_no) ? $id_model->mobile_no : '';
                 $detailType = '';
                 $res_data['config'] = [];

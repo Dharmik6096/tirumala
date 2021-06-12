@@ -1,15 +1,33 @@
-var exportThisWithParameter = (function () {  
-    var uri = 'data:application/vnd.ms-excel;base64,',  
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"  xmlns="http://www.w3.org/TR/REC-html40"><head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets> <x:ExcelWorksheet><x:Name>{worksheet}</x:Name> <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions> </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook> </xml><![endif]--></head><body> <table>{table}</table></body></html>',  
-        base64 = function (s) {  
-            return window.btoa(unescape(encodeURIComponent(s)))  
-        },  
-        format = function (s, c) {  
-            return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; })  
-        }  
-    return function (tableID, excelName) {  
-        tableID = document.getElementById(tableID)
-        var ctx = { worksheet: excelName || 'Worksheet', table: tableID.innerHTML } 
-        window.location.href = uri + base64(format(template, ctx))  
-    }  
+var exportThisWithParameter = (function () {
+    var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"  xmlns="http://www.w3.org/TR/REC-html40"><head> <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets> <x:ExcelWorksheet><x:Name>{worksheet}</x:Name> <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions> </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook> </xml><![endif]--></head><body> <table>{table}</table></body></html>',
+            base64 = function (s) {
+                return window.btoa(unescape(encodeURIComponent(s)))
+            },
+            format = function (s, c) {
+                return s.replace(/{(\w+)}/g, function (m, p) {
+                    return c[p];
+                })
+            }
+    return function (tableID, excelName, is_remove = false) {
+//        console.log(tableID);
+//        console.log(is_remove);
+        var table_id = tableID;
+        $('#' + table_id + ' tr ').css('height', 'auto');
+        var htmlData = '';
+        htmlData = htmlData + '<thead>' + $('#' + table_id + ' thead ').eq(0).html() + '</thead>' ;
+        htmlData = htmlData + '<tbody>' + $('#' + table_id + ' tbody ').html() + '</thead>';
+//        if (is_remove) {
+//            var head_input_html = $('#' + table_id + ' thead ').eq(1).html();
+//            $('#' + table_id + ' thead ').eq(1).html('');
+//        }
+        setTimeout(() => {
+            tableID = document.getElementById(tableID)
+            var ctx = {worksheet: excelName || 'Worksheet', table: htmlData}
+            window.location.href = uri + base64(format(template, ctx))
+//            if (is_remove) {
+//                $('#' + table_id + ' thead ').eq(1).html(head_input_html);
+//            }
+        }, 200);
+    }
 })()

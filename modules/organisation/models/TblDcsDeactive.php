@@ -191,7 +191,7 @@ class TblDcsDeactive extends \app\models\ChildModel
 
         return $query = $this->find()
             ->where(['data_post_status' => 2])
-            ->andWhere(['<=', 'to_date', $date])
+            ->andWhere(['<', 'to_date', $date])
             ->orderBy(['dcs_deactive_code' => SORT_ASC])
             ->all();
     }

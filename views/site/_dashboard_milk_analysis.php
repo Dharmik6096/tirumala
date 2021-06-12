@@ -63,7 +63,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                             <th rowspan='2'><?= Yii::t('app', 'BMC') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'CC Collection') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
-                            <th colspan='6'><?= Yii::t('app', 'Vendor Receipts') ?></th>
+                            <th colspan='6'><?= Yii::t('app', 'Bulk Vendor Receipt') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'Total') ?></th>
                             <th colspan='5'><?= Yii::t('app', 'CC Differences') ?></th>
                         </tr>
