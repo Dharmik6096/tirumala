@@ -44,9 +44,9 @@ use app\modules\payment\models\TblMemberPaymentAliasSearch;
 use app\modules\payment\models\TblMemberPaymentHeadSummarySearch;
 use app\modules\payment\models\TblMemberPaymentHeadSearch;
 use app\modules\payment\models\TblSaleInstallmentsSearch;
-use app\models\payment\TblMemberPaymentInstallment;
+use app\modules\payment\models\TblMemberPaymentInstallment;
 use app\modules\payment\models\TblSaleInstallments;
-use app\models\payment\TblMemberPaymentInstallmentHistory;
+use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
