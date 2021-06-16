@@ -301,7 +301,7 @@ class DefaultController extends \app\controllers\ChildController {
         if (isset($model->p_dcs_code) && $model->p_dcs_code == 0 && !empty(Yii::$app->session->get('Dcs'))) {
             $model->p_dcs_code = Yii::$app->session->get('Dcs');
         }
-        $this->type = Yii::$app->request->post('submit');
+        $this->type = Yii::$app->request->post('html');
 // var_dump($model);die;
         if ($this->type != 'tcpdf') {
             $controls = [];
