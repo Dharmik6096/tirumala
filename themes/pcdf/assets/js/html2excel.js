@@ -15,7 +15,7 @@ var exportThisWithParameter = (function () {
         var table_id = tableID;
         $('#' + table_id + ' tr ').css('height', 'auto');
         var htmlData = '';
-        htmlData = htmlData + '<thead>' + $('#' + table_id + ' thead ').eq(0).html() + '</thead>' ;
+        htmlData = htmlData + '<thead>' + $('#' + table_id + ' thead ').eq(0).html() + '</thead>';
         htmlData = htmlData + '<tbody>' + $('#' + table_id + ' tbody ').html() + '</thead>';
 //        if (is_remove) {
 //            var head_input_html = $('#' + table_id + ' thead ').eq(1).html();
@@ -24,7 +24,12 @@ var exportThisWithParameter = (function () {
         setTimeout(() => {
             tableID = document.getElementById(tableID)
             var ctx = {worksheet: excelName || 'Worksheet', table: htmlData}
-            window.location.href = uri + base64(format(template, ctx))
+//            window.location.href = uri + base64(format(template, ctx))
+            var link = document.createElement("a");
+            link.download = excelName + ".xls";
+            link.href = uri + base64(format(template, ctx));
+            link.click();
+            link.remove();
 //            if (is_remove) {
 //                $('#' + table_id + ' thead ').eq(1).html(head_input_html);
 //            }
