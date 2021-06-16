@@ -177,20 +177,35 @@ class ARImportStrategy extends BaseImportStrategy implements ImportInterface {
                     }
                 }
                 $primaryKey = $model->tableSchema->primaryKey[0];
-                $error = ActiveForm::validate($model);
-
                 $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
                 $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
+
+                if (!empty($this->details['setKeyFromExist']) && !empty($findField)) {
+                    $tempModel = $model;
+                    ActiveForm::validate($tempModel);
+                    $findFields = explode(',', $findField);
+                    foreach ($findFields as $val) {
+                        $where[$val] = $tempModel->$val;
+                    }
+                    $existData = $model::find()->where($where)->one();
+                    if (!empty($existData)) {
+                        $updateKeyOfExistData = $this->details['setKeyFromExist'];
+                        $updateKeyOfExistDataArr = explode(',', $updateKeyOfExistData);
+                        foreach ($updateKeyOfExistDataArr as $updateKeyOfExistDataArrKey) {
+                            $model->{$updateKeyOfExistDataArrKey} = $existData->{$updateKeyOfExistDataArrKey};
+                        }
+                    }
+                }
+                $error = ActiveForm::validate($model);
+
+//                $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
+//                $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
                 if (!empty($findField)) {
                     $findFields = explode(',', $findField);
                     foreach ($findFields as $val) {
                         $where[$val] = $model->$val;
                     }
                     $existData = $model::find()->where($where)->one();
-//                    echo "<pre>";
-//                    print_r($existData);
-//                    echo "</pre>";
-//                    die;
                     if (!empty($existData) && !empty($excludeField)) {
                         $excludes = [];
                         $exclude = explode(',', $excludeField);
