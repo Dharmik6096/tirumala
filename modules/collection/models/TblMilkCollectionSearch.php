@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblMilkCollection;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMilkCollectionSearch represents the model behind the search form about `app\modules\collection\models\TblMilkCollection`.
@@ -31,6 +32,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['bulkdeleteMilkCollection']],
         ];
     }
 
@@ -266,6 +268,86 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             return $dataProvider;
         }
 
+        return $dataProvider;
+    }
+
+    public function deletemembersearch($params) {
+        $query = TblMilkCollection::find();
+
+        // add conditions that should always apply here
+        $this->setAttributes($params);
+
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        if ($flag == 1) {
+            $query->joinWith(['approvalData']);
+        }
+        $query->andWhere([
+            'tbl_milk_collection.bmc_code' => $this->bmc_code]);
+
+        $query->andFilterWhere(['tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection]);
+
+        $query->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
+        if ($flag == 1) {
+            $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        return $dataProvider;
+    }
+
+    public function searchdcswisesummary($params) {
+        //var_dump($params); exit;
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'dcs_code' => '',
+                'from_date' => '',
+                'from_shift' => ''
+            ];
+            if (empty($this->dcs_code)) {
+                $this->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+            }
+            $sp_params = array_merge($sp_params, $params['TblMilkCollectionSearch']);
+            $sp_params['dcs_code'] = is_array($params['TblMilkCollectionSearch']['dcs_code']) ? ',' . implode(',', $params['TblMilkCollectionSearch']['dcs_code']) . ',' : $params['TblMilkCollectionSearch']['dcs_code'];
+
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            unset($sp_params['from_shift']);
+
+            $output = \Yii::$app->general->getSpData('Portal_MilkCollection_dcs_wise_summary', $sp_params);
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
         return $dataProvider;
     }
 

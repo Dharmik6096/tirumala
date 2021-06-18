@@ -598,4 +598,112 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
 
+    public function actionBulkDeleteCollection() {
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'bulkdeleteMilkCollection';
+
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
+
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $message = 'Data For Approval';
+                $type = 'create';
+                $deletedata = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($deletedata as $code) {
+                    $exist = explode('###', $code);
+                    $where['dcs_code'] = $exist[0];
+                    $where['date_time_of_collection'] = $exist[1];
+                    $existData = TblMilkCollection::find()->where($where)->all();
+                    foreach ($existData as $delete) {
+                        if (Yii::$app->general->getUnionConfiguration($delete->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $ApprovalModel = new TblCollectionDataAlias();
+                            $ApprovalModel->attributes = $delete->attributes;
+                            $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                            $ApprovalModel->table_name = 'tbl_milk_collection';
+                            $ApprovalModel->action_perform = 'DELETE';
+                            $existApproval = $ApprovalModel->getExistApproval();
+                            if (empty($existApproval)) {
+                                $saveModel[] = $ApprovalModel;
+                            }
+                        } else {
+                            $historyModel = new TblMilkCollectionHistory();
+                            Yii::$app->operation->history($delete, $historyModel, DELETE);
+                            $saveModel[] = $historyModel;
+                            $deleteModel[] = $delete;
+                            $message = 'Milk Collection';
+                            $type = 'delete';
+                        }
+                    }
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+//                }
+            }
+        }
+
+        $dataProvider = $searchModel->searchdcswisesummary(Yii::$app->request->queryParams);
+        return $this->render('dcs_wise_delete', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'configVal' => $configVal,
+        ]);
+    }
+
+    public function actionDeleteMemberWise() {
+        if (Yii::$app->request->post()) {
+            $postData = Yii::$app->request->post()['collectionData'];
+            $saveModel = [];
+            $deleteModel = [];
+            $deletedata = explode(',', $postData);
+            foreach ($deletedata as $code) {
+                $where['milk_collection_code'] = $code;
+                $existData = TblMilkCollection::find()->where($where)->one();
+                if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                    $ApprovalModel = new TblCollectionDataAlias();
+                    $ApprovalModel->attributes = $existData->attributes;
+                    $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                    $ApprovalModel->table_name = 'tbl_milk_collection';
+                    $ApprovalModel->action_perform = 'DELETE';
+                    $saveModel[] = $ApprovalModel;
+                } else {
+                    $historyModel = new TblMilkCollectionHistory();
+                    Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $existData;
+                }
+            }
+            $response = [];
+            $response['status'] = 'error';
+            $response['message'] = 'error';
+            $message = 'Milk Collection';
+            $type = 'delete';
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+            if ($transaction == 'customRedirect') {
+                $response['status'] = 'success';
+            } else {
+                $response['message'] = 'error';
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($response);
+        }
+
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'deleteMilkCollection';
+        $dataProvider = $searchModel->deletemembersearch(Yii::$app->request->queryParams);
+        $redirectUrl = [];
+        $redirectUrl[] = 'delete-member-wise';
+        foreach (Yii::$app->request->get() as $key => $value) {
+            $redirectUrl[$key] = $value;
+        }
+        return $this->renderAjax('_delete_member_wise', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'redirectUrl' => $redirectUrl
+        ]);
+    }
+
 }
