@@ -813,11 +813,13 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $saveModel = [];
             $deleteModel = [];
             if (!empty($existData)) {
-                $historyModel = new TblMemberPaymentInstallmentHistory();
-                Yii::$app->operation->history($existData, $historyModel, 'DELETE');
-                $saveModel[] = $historyModel;
-                $deleteModel[] = $existData;
-                $saveModel[] = $historyModel;
+                foreach ($existData as $delete) {
+                    $historyModel = new TblMemberPaymentInstallmentHistory();
+                    Yii::$app->operation->history($delete, $historyModel, 'DELETE');
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $delete;
+                    $saveModel[] = $historyModel;
+                }
             }
             $details = explode(',', $postData);
             foreach ($details as $data) {
