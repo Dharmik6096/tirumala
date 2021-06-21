@@ -307,21 +307,34 @@ class TblPurchaseRateDetailsController extends \app\controllers\ChildController 
         $objPHPExcel = new PHPExcel();
         $sheetcnt = 0;
         $model = new TblPurchaseRateBased();
-        $RateChart = $model->find()->select(['milk_type_code', 'rate_type_code', 'purchase_rate_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
+        $RateChart = $model->find()->select(['milk_type_code', 'rate_type_code', 'purchase_rate_code', 'milk_quality_type_code', 'rate_class'])->distinct()->where(['purchase_rate_code' => $id])->all();
         foreach ($RateChart as $m) {
             $purchaseDetail = new TblPurchaseRateDetails();
             $milk_type = $m->milk_type_code;
-            $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->distinct()->orderBy('fat')->all();
-            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->distinct()->orderBy('snf')->all();
-            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
+            $quality_type = $m->milk_quality_type_code;
+            $rate_class = $m->rate_class;
+            $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $quality_type, 'rate_class' => $rate_class])->distinct()->orderBy('fat')->all();
+            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $quality_type, 'rate_class' => $rate_class])->distinct()->orderBy('snf')->all();
+            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $quality_type, 'rate_class' => $rate_class])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
             $rowCount = 1;
             $column = 'A';
+            $rate_class = !empty($rate_class) ? ($rate_class == '1' ? 'A' : ($rate_class == '2' ? 'B' : 'C')) : '';
             if ($sheetcnt == 0) {
                 $sheet = $objPHPExcel->getActiveSheet();
-                $sheet->setTitle($m->milkTypeCode->animal_type_name);
+                //$sheet->setTitle($m->milkTypeCode->animal_type_name . '-' . $m->milkQualityTypeCode->milk_quality_type_name);
+                if (!empty($rate_class)) {
+                    $sheet->setTitle($m->milkTypeCode->oldAttributes['animal_type_name'] . '-' . $m->milkQualityTypeCode->oldAttributes['milk_quality_type_name'] . '-' . $rate_class);
+                } else {
+                    $sheet->setTitle($m->milkTypeCode->oldAttributes['animal_type_name'] . '-' . $m->milkQualityTypeCode->oldAttributes['milk_quality_type_name']);
+                }
             } else {
                 $sheet = $objPHPExcel->createSheet();
-                $sheet->setTitle($m->milkTypeCode->animal_type_name);
+                //$sheet->setTitle($m->milkTypeCode->animal_type_name . '-' . $m->milkQualityTypeCode->milk_quality_type_name);
+                if (!empty($rate_class)) {
+                    $sheet->setTitle($m->milkTypeCode->oldAttributes['animal_type_name'] . '-' . $m->milkQualityTypeCode->oldAttributes['milk_quality_type_name'] . '-' . $rate_class);
+                } else {
+                    $sheet->setTitle($m->milkTypeCode->oldAttributes['animal_type_name'] . '-' . $m->milkQualityTypeCode->oldAttributes['milk_quality_type_name']);
+                }
             }
             $sheet->setCellValue($column . $rowCount, $m->rateType->rate_type);
             $column++;

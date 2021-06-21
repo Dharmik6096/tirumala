@@ -455,9 +455,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+//                }
             }
         }
 

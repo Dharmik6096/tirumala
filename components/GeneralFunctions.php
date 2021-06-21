@@ -1929,12 +1929,16 @@ class GeneralFunctions extends Component {
                     $prefix = Yii::$app->general->getforeignkey($model->customerTypePre, 'code_prefix');
                     $code = str_replace($prefix, '', $model->{$ex_code_key});
                     $code = intval($code);
-                    $main_ex_cnt = $model->find()
+                    $q = $model->find()
                             ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
                             ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
-                            ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code])
-                            ->count();
+                            ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code]);
+//                            ->count();
 
+                    if (!empty($model->customer_code)) {
+                        $q->andWhere(['!=', 'tbl_customer_master.customer_code', $model->customer_code]);
+                    }
+                    $main_ex_cnt = $q->count();
                     $ex_cnt = $findModel->find()
                             ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
                             ->andWhere(['CAST(' . $cmpare_key . ' as int)' => $code])
