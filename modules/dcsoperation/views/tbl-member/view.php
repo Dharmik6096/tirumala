@@ -454,5 +454,28 @@ if ($model->is_active == 1) {
             ]);
             ?>
         </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Deactivation Details</h5></div>
+        <div class="form-grid">
+            <?php
+            $attribute = [
+                ['attribute' => 'from_date', 'label' => Yii::t('app', 'From Date'), 'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->from_date);
+                    }, 'filter' => false],
+                ['attribute' => 'to_date', 'label' => Yii::t('app', 'To Date'), 'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->to_date);
+                    }, 'filter' => false],
+                ['attribute' => 'remarks', 'filter' => false],
+            ];
+
+            $grid_option = [
+                'id' => 'detail-list',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+                    // 'actions' => []
+            ];
+
+            echo Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+            ?>
+        </div>
     </div>
 </div>
