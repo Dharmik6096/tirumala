@@ -60,10 +60,12 @@ $society_name = !empty($dataProvider->getModels()) ?
                                     'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                                     'checkboxOptions' => function($model) use ($searchModel, $selectedCheckbox) {
                                         $checked = false;
+                                        $dataVal = 0;
                                         if (in_array($model['product_sale_installment_code'], $selectedCheckbox)) {
                                             $checked = true;
+                                            $dataVal = $model['installment_amount'];
                                         }
-                                        return ['class' => 'checkbox-collection', 'checked' => $checked, 'value' => $model['product_sale_installment_code'] . '###' . $searchModel['payment_cycle_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['customer_code'] . '###' . $model['main_amount'] . '###' . $model['installment_amount'], 'data-installment_amount' => $model['installment_amount']];
+                                        return ['class' => 'checkbox-collection', 'checked' => $checked, 'value' => $model['product_sale_installment_code'] . '###' . $searchModel['payment_cycle_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['customer_code'] . '###' . $model['main_amount'] . '###' . $model['installment_amount'], 'data-installment_amount' => $model['installment_amount'], 'data-existInstallment' => $dataVal];
                                     }],
                                 ['label' => 'Sale Date', 'attribute' => 'invoice_date',
                                     'filterType' => GridView::FILTER_DATE,
@@ -108,6 +110,9 @@ $society_name = !empty($dataProvider->getModels()) ?
 <?php
 $script = "
     var netPay ='$netPay';
+         if(netPay == '' || isNaN(netPay)){
+            netPay = 0;
+        }
         $('#MemberInstallmentModal .kv-panel-before').hide();$('#MemberInstallmentModal .filters').hide();
         $(document).on('click','#delete',function(){
             var paymentData = [];
@@ -116,14 +121,16 @@ $script = "
                 if(this.checked){
                     paymentData.push($(this).val());
                     $(this).attr('data-installment_amount');
-                    paymentAmount= parseFloat(paymentAmount) + parseFloat($(this).attr('data-installment_amount'));
+//                    $(this).attr('data-existInstallment');
+                    paymentAmount= parseFloat(paymentAmount) + parseFloat($(this).attr('data-installment_amount')) - parseFloat($(this).attr('data-existInstallment'));
                 }
             });
             var len = paymentData.length;
-            if(len == 0){
-                bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>" . Yii::t("app", "Please select at least one Installment.") . "</span></div></div>');
-                return false;
-            } else if(paymentAmount > netPay){
+//            if(len == 0){
+//                bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>" . Yii::t("app", "Please select at least one Installment.") . "</span></div></div>');
+//                return false;
+//            } else 
+            if(paymentAmount > netPay){
                 bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>" . Yii::t("app", "Installment Must Not More than NetPay.") . "</span></div></div>');
                 return false;
             } else {
@@ -131,7 +138,7 @@ $script = "
                 $.ajax({
                     type: 'post',
                     url: '" . Url::to($redirectUrl) . "',
-                    data: 'paymentData='+paymentData,
+                    data: 'paymentData='+paymentData+'&netPay='+netPay,
                     success: function(data) {
                          var obj = $.parseJSON(data);
                         if (obj.status == 'success')

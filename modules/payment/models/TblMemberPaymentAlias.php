@@ -293,4 +293,10 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $query;
     }
 
+    public function getExistingData($model) {
+        return $this->find()
+                        ->where(['bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->customer_code, 'payment_cycle_code' => $model->payment_cycle_code])
+                        ->one();
+    }
+
 }

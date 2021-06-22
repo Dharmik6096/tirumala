@@ -224,34 +224,20 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjustmentSummary = [];
             foreach ($adjust_id as $key => $value) {
                 $data = TblMemberPaymentAlias::findOne($adjust_id[$key]);
-                $deductionAmount = 0;
-                if ($processFlag == 'Lock') {
-                    $memberInstallmentModel = new TblMemberPaymentInstallment();
-                    $memberInstallmentData = $memberInstallmentModel->find()->where(['bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code, 'payment_cycle_code' => $data->payment_cycle_code, 'customer_code' => $data->member_code, 'customer_type' => 'Member'])->all();
-                    if (!empty($memberInstallmentData)) {
-                        foreach ($memberInstallmentData as $deduct) {
-                            $deductionAmount = $deductionAmount + $deduct->installment_amount;
-                            $saleModel = new TblSaleInstallments();
-                            $existData = $saleModel->find()->where(['product_sale_installment_code' => $deduct->product_sale_installment_code])->one();
-                            $existData->installment_date = Yii::$app->general->getforeignkey($deduct->paymentCycleCode, 'from_date');
-                            $save_model[] = $existData;
-                        }
-                    }
-                }
                 $oldData = $data->oldAttributes;
                 $holdAmount = !empty($hold_amt[$key]) ? $hold_amt[$key] : 0;
                 $adjustAmount = !empty($adjust_amt[$key]) ? $adjust_amt[$key] : 0;
                 $recovery = !empty($reco[$key]) ? $reco[$key] : 0;
                 $adjust_recovery = !empty($adjust_reco[$key]) ? $adjust_reco[$key] : 0;
                 $addition = !empty($data->total_addition) ? $data->total_addition : 0;
-                $data->total_deduction = (!empty($data->total_deduction) ? $data->total_deduction : 0) + $deductionAmount;
+                $deduction = !empty($data->total_deduction) ? $data->total_deduction : 0;
                 $dcsCode = $data->dcs_code;
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($data, $historyModel, UPDATE);
                 $data->additional_pay = $adjustAmount;
                 $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
-                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery - $deductionAmount;
+                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery;
                 $data->payment_status = $processFlag;
                 $save_model[] = $historyModel;
                 $save_model[] = $data;
@@ -275,7 +261,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $dcsCode = $memberPayment->dcs_code;
                 $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
                 $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
-                $deductionInstallment = !empty($memberPayment->total_deduction) ? $memberPayment->total_deduction : 0;
                 $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
                 $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
                 $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
@@ -287,16 +272,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
                 $summaryData->payment_status = $processFlag;
                 $dcs = $summaryData->dcs_code;
-                $deductionAmountSummary = 0;
-                if ($processFlag == 'Lock') {
-                    $memberInstallmentModel = new TblMemberPaymentInstallment();
-                    $memberInstallmentDataSummary = $memberInstallmentModel->find()->where(['bmc_code' => $summaryData->bmc_code, 'dcs_code' => $summaryData->dcs_code, 'payment_cycle_code' => $summaryData->payment_cycle_code])->all();
-                    if (!empty($memberInstallmentDataSummary)) {
-                        foreach ($memberInstallmentDataSummary as $deduct) {
-                            $deductionAmountSummary = $deductionAmountSummary + $deduct->installment_amount;
-                        }
-                    }
-                }
                 if (!empty($adjustmentSummary[$dcs])) {
                     $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                     $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
@@ -304,8 +279,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
                     $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
                 }
-                $summaryData->total_deduction = $summaryData->total_deduction + $deductionAmountSummary;
-                $summaryData->final_amount = $summaryData->final_amount - $deductionAmountSummary;
                 $save_model[] = $historyModel;
                 $save_model[] = $summaryData;
             }
@@ -810,43 +783,102 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         }
         if (Yii::$app->request->post()) {
             $postData = Yii::$app->request->post()['paymentData'];
+            $netPay = Yii::$app->request->post()['netPay'];
             $saveModel = [];
             $deleteModel = [];
+            $existAmount = 0;
             if (!empty($existData)) {
                 foreach ($existData as $delete) {
                     $historyModel = new TblMemberPaymentInstallmentHistory();
                     Yii::$app->operation->history($delete, $historyModel, 'DELETE');
                     $saveModel[] = $historyModel;
                     $deleteModel[] = $delete;
-                    $saveModel[] = $historyModel;
+                    $existAmount = $existAmount + $delete->installment_amount;
                 }
+                //Alias table update
+                $aliasModel = new TblMemberPaymentAlias();
+                $existAliasData = $aliasModel->getExistingData($delete);
+
+                $aliashistoryModel = new TblMemberPaymentAliasHistory();
+                Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
+                $saveModel[] = $aliashistoryModel;
+
+                $existAliasData->total_deduction = $existAliasData->total_deduction - $existAmount;
+                $existAliasData->final_amount = $existAliasData->final_amount + $existAmount;
+                $existAliasData->net_payable = $existAliasData->net_payable + $existAmount;
+                $saveModel[] = $existAliasData;
+
+                //Summary Alias table update
+                $summryModel = new TblMemberPaymentSummaryAlias();
+                $existSummaryData = $summryModel->getExistingData($delete);
+
+                $summaryhistoryModel = new TblMemberPaymentSummaryAliasHistory();
+                Yii::$app->operation->history($existSummaryData, $summaryhistoryModel, 'UPDATE');
+                $saveModel[] = $summaryhistoryModel;
+
+                $existSummaryData->total_deduction = $existSummaryData->total_deduction - $existAmount;
+                $existSummaryData->final_amount = $existSummaryData->final_amount + $existAmount;
+                $existSummaryData->net_payable = $existSummaryData->net_payable + $existAmount;
+                $saveModel[] = $existSummaryData;
             }
             $details = explode(',', $postData);
-            foreach ($details as $data) {
-                $save = explode('###', $data);
-                $instModel = new TblMemberPaymentInstallment();
-                $instModel->product_sale_installment_code = $save[0];
-                $instModel->payment_cycle_code = $save[1];
-                $instModel->bmc_code = $save[2];
-                $instModel->dcs_code = $save[3];
-                $instModel->customer_code = $save[4];
-                $instModel->customer_type = 'Member';
-                $instModel->main_amount = $save[5];
-                $instModel->installment_amount = $save[6];
-                $instModel->product_sale_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'product_sale_code');
-                $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
-                $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
-                $instModel->mcc_plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'mcc_plant_code');
-                $instModel->plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'plant_code');
-                $instModel->union_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'union_code');
-                $existData = $instModel->getMemberInstallment();
-                $saveModel[] = $instModel;
+
+            $totalAmount = 0;
+            if (!empty($details[0])) {
+                foreach ($details as $data) {
+                    $save = explode('###', $data);
+                    $instModel = new TblMemberPaymentInstallment();
+                    $instModel->product_sale_installment_code = $save[0];
+                    $instModel->payment_cycle_code = $save[1];
+                    $instModel->bmc_code = $save[2];
+                    $instModel->dcs_code = $save[3];
+                    $instModel->customer_code = $save[4];
+                    $instModel->customer_type = 'Member';
+                    $instModel->main_amount = $save[5];
+                    $instModel->installment_amount = $save[6];
+                    $instModel->product_sale_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'product_sale_code');
+                    $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
+                    $instModel->installment_date = Yii::$app->general->getmultiforeignkey($instModel->saleInstallment, ['saleCode'], 'invoice_date');
+                    $instModel->mcc_plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'mcc_plant_code');
+                    $instModel->plant_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'plant_code');
+                    $instModel->union_code = Yii::$app->general->getforeignkey($instModel->saleInstallment, 'union_code');
+                    $existData = $instModel->getExistingData();
+                    $saveModel[] = $instModel;
 //                $saleModel = new TblSaleInstallments();
 //                $existData = $saleModel->find()->where(['product_sale_installment_code' => $instModel->product_sale_installment_code])->one();
 //                $existData->installment_date = Yii::$app->general->getforeignkey($instModel->paymentCycleCode, 'from_date');
 //                $saveModel[] = $existData;
-            }
 
+                    $totalAmount = $totalAmount + $instModel->installment_amount;
+                }
+
+                //Alias table update
+                $aliasModel = new TblMemberPaymentAlias();
+                $existAliasData = $aliasModel->getExistingData($instModel);
+
+                $aliashistoryModel = new TblMemberPaymentAliasHistory();
+                Yii::$app->operation->history($existAliasData, $aliashistoryModel, 'UPDATE');
+                $saveModel[] = $aliashistoryModel;
+
+                $existAliasData->total_deduction = $existAliasData->total_deduction - $existAmount + $totalAmount;
+                $existAliasData->final_amount = $netPay - $totalAmount;
+                $existAliasData->net_payable = $existAmount + $existAliasData->net_payable - $totalAmount;
+
+                $saveModel[] = $existAliasData;
+
+                //Summary Alias table update
+                $summryModel = new TblMemberPaymentSummaryAlias();
+                $existSummaryData = $summryModel->getExistingData($instModel);
+
+                $summaryhistoryModel = new TblMemberPaymentSummaryAliasHistory();
+                Yii::$app->operation->history($existSummaryData, $summaryhistoryModel, 'UPDATE');
+                $saveModel[] = $summaryhistoryModel;
+
+                $existSummaryData->total_deduction = $existSummaryData->total_deduction - $existAmount + $totalAmount;
+                $existSummaryData->final_amount = $existAmount + $existSummaryData->final_amount - $totalAmount;
+                $existSummaryData->net_payable = $existAmount + $existSummaryData->net_payable - $totalAmount;
+                $saveModel[] = $existSummaryData;
+            }
             $response = [];
             $response['status'] = 'error';
             $response['message'] = 'error';

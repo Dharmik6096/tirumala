@@ -102,10 +102,4 @@ class TblMemberPaymentInstallment extends \app\models\ChildModel {
                         ->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'customer_code' => $this->customer_code, 'customer_type' => 'Member', 'payment_cycle_code' => $this->payment_cycle_code])
                         ->all();
     }
-    public function getMemberInstallment() {
-        return $this->find()
-                        ->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'customer_code' => $this->customer_code, 'customer_type' => 'Member', 'payment_cycle_code' => $this->payment_cycle_code])
-                        ->all();
-    }
-
 }
