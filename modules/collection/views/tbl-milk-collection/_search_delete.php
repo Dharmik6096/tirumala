@@ -42,7 +42,12 @@ $multiple = isset($multiple) ? TRUE : FALSE;
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', 'Shift', false, 'from_shift'); ?>
     </div>
-
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
+    </div>
+    <div class="col-sm-2 shift">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
+    </div>
     <div class="col-sm-3 mt23">
         <?= Yii::$app->controls->search(); ?>
     </div>

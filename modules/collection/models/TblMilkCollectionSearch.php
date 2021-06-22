@@ -31,8 +31,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['bulkdeleteMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
+            [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
         ];
     }
 
@@ -299,7 +299,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        $query->orderBy(['tbl_milk_collection.sample_no' => SORT_DESC]);
         return $dataProvider;
     }
 
@@ -316,7 +316,9 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 'bmc_code' => '',
                 'dcs_code' => '',
                 'from_date' => '',
-                'from_shift' => ''
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''
             ];
             if (empty($this->dcs_code)) {
                 $this->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
@@ -325,10 +327,18 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             $sp_params['dcs_code'] = is_array($params['TblMilkCollectionSearch']['dcs_code']) ? ',' . implode(',', $params['TblMilkCollectionSearch']['dcs_code']) . ',' : $params['TblMilkCollectionSearch']['dcs_code'];
 
             $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
             $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
             unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
 
             $output = \Yii::$app->general->getSpData('Portal_MilkCollection_dcs_wise_summary', $sp_params);
+        }
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+
+            $output = [];
         }
         $dataProvider = new ArrayDataProvider();
         if (!empty($output)) {
@@ -349,6 +359,27 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         }
         //var_dump($output); exit;
         return $dataProvider;
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->from_date));
+            $tDate = date('Y-m-d', strtotime($this->to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 10) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 10.'));
+                    return false;
+                }
+            }
+        }
     }
 
 }

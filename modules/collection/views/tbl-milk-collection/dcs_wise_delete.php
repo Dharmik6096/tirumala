@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Delete MPP Collection');
+$this->title = Yii::t('app', 'Bulk Delete Milk Collection');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

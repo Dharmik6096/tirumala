@@ -692,7 +692,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         }
 
         $searchModel = new TblMilkCollectionSearch();
-        $searchModel->scenario = 'deleteMilkCollection';
+        $searchModel->scenario = 'bulkdeleteMilkCollection';
         $dataProvider = $searchModel->deletemembersearch(Yii::$app->request->queryParams);
         $redirectUrl = [];
         $redirectUrl[] = 'delete-member-wise';

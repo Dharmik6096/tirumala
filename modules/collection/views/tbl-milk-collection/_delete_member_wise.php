@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
-                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Delete Milk Collection') ?></h4>
+                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Bulk Delete Milk Collection') ?></h4>
             </div>
             <div class='row pad-10'>
                 <div class="col-md-12">
@@ -40,6 +40,9 @@ use yii\widgets\ActiveForm;
                                         return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                                     }, 'filter' => false],
                                 ['header' => 'Member Code', 'attribute' => 'member_code', 'filter' => false],
+                                ['header' => Yii::t('app', 'Member Code Ex'), 'attribute' => 'member_code', 'value' => function($model) {
+                                        return Yii::$app->general->getforeignkey($model->memberCode, 'ex_member_code');
+                                    }, 'filter' => false],
                                 ['header' => Yii::t('app', 'Member'), 'attribute' => 'member_code', 'value' => function($model) {
                                         return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
                                     }, 'filter' => false],

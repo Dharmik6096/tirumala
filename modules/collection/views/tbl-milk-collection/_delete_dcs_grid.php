@@ -31,6 +31,7 @@ $form = ActiveForm::begin([
                 return ['class' => 'checkbox-collection', 'value' => $model['dcs_code'] . '###' . $model['date_time_of_collection']];
             }],
         ['attribute' => 'dcs_code', 'filter' => FALSE],
+        ['attribute' => 'dcs_ref_code', 'filter' => FALSE],
         ['attribute' => 'dcs_name', 'filter' => FALSE],
         ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
