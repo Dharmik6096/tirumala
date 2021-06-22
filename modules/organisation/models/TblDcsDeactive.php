@@ -157,7 +157,7 @@ class TblDcsDeactive extends \app\models\ChildModel {
         return $value;
     }
 
-    public function getDeactiveRecords($checkStatus = true, $data = '') {
+    public function getDeactiveRecords($checkStatus = true, $data = '', $limit = '') {
         $date = date('Y-m-d');
         $query = $this->find()
                 ->where(['<=', 'from_date', $date])
@@ -177,17 +177,19 @@ class TblDcsDeactive extends \app\models\ChildModel {
             }
         }
         $dataList = $query->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->limit($limit)
                 ->all();
         return $dataList;
     }
 
-    public function getActiveRecords() {
+    public function getActiveRecords($limit) {
         $date = date('Y-m-d');
 
         return $query = $this->find()
                 ->where(['data_post_status' => 2])
                 ->andWhere(['<', 'to_date', $date])
                 ->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->limit($limit)
                 ->all();
     }
 

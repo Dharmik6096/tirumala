@@ -487,25 +487,26 @@ class SchedulerController extends ChildController {
 
     public function actionDcsSentboxGenerate() {
         $model = new TblDcsDeactive();
-        $deactiveData = $model->getDeactiveRecords();
+        $limit = 250;
+        $deactiveData = $model->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
 
-        $activeData = $model->getActiveRecords();
+        $activeData = $model->getActiveRecords($limit);
         $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
 
         $CustModel = new TblCustomerDeactive();
-        $deactiveData = $CustModel->getDeactiveRecords();
+        $deactiveData = $CustModel->getDeactiveRecords(true, '', $limit);
 
         $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
-        $activeData = $CustModel->getActiveRecords();
+        $activeData = $CustModel->getActiveRecords($limit);
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
 
 
         $MemberModel = new TblMemberDeactive();
-        $deactiveData = $MemberModel->getDeactiveRecords();
+        $deactiveData = $MemberModel->getDeactiveRecords(true, $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
 
-        $activeData = $MemberModel->getActiveRecords();
+        $activeData = $MemberModel->getActiveRecords($limit);
         $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
 

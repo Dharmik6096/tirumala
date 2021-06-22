@@ -171,7 +171,7 @@ class TblCustomerDeactive extends \app\models\ChildModel {
         }
     }
 
-    public function getDeactiveRecords($checkStatus = true, $data = '') {
+    public function getDeactiveRecords($checkStatus = true, $data = '', $limit = '') {
         $date = date('Y-m-d');
         $query = $this->find()
                 ->where(['<=', 'from_date', $date])
@@ -191,16 +191,18 @@ class TblCustomerDeactive extends \app\models\ChildModel {
             }
         }
         $data = $query->orderBy(['customer_deactive_code' => SORT_ASC])
+                ->limit($limit)
                 ->all();
         return $data;
     }
 
-    public function getActiveRecords() {
+    public function getActiveRecords($limit) {
         $date = date('Y-m-d');
         return $query = $this->find()
                 ->where(['data_post_status' => 2])
                 ->andWhere(['<', 'to_date', $date])
                 ->orderBy(['customer_deactive_code' => SORT_ASC])
+                ->limit($limit)
                 ->all();
     }
 
