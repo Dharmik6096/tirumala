@@ -1370,6 +1370,8 @@ class GeneralFunctions extends Component {
         } else if ($refCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
