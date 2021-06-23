@@ -323,13 +323,13 @@ $defaultToggle = true;
                                     <div class="modal-footer mt10 col-sm-12">
                                         <?php
                                         if ($param) {
-                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'submit', 'value' => 'html', 'id' => 'html']);
+                                            echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
-                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
-                                            echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'submit', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
+                                            echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
                                         }
                                         ?>
                                         <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>

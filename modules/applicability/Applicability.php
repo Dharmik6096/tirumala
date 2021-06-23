@@ -21,6 +21,9 @@ use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertNotification;
+use PHPExcel;
 
 /**
  * applicability module definition class
@@ -47,7 +50,7 @@ class Applicability extends \yii\base\Module {
     public $default_option = 'dcs';
     public $script = false;
     public $header_title = '';
-    //put your code here
+//put your code here
     protected $generalModel;
     public $bmc_field_name = 'applicable_code';
     public $customer_type_wise_entry = false;
@@ -64,6 +67,8 @@ class Applicability extends \yii\base\Module {
     public $selectedMccCode = [];
     public $selectedBmcCode = [];
     public $selectedRouteCode = [];
+    public $generateMail = false;
+    public $attachment_folder = '/web/alert-data/';
 
     /**
      * @inheritdoc
@@ -74,7 +79,7 @@ class Applicability extends \yii\base\Module {
         $this->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : '';
 
 //        $this->searchModel= new $this->model->className().'Search()';
-        // custom initialization code goes here
+// custom initialization code goes here
     }
 
     protected function customRedirect() {
@@ -88,7 +93,8 @@ class Applicability extends \yii\base\Module {
         switch ($preload) {
             case 'dcs':
                 $selected = $this->getDcs($this->top_section);
-                $list = $this->loadUnionDcs($selected, '');
+                $selectedDcs = $this->getDcs($this->top_section, '', true);
+                $list = $this->loadUnionDcs($selectedDcs, '');
                 $list = ArrayHelper::map($list, 'dcs_code', 'dcs_name');
                 $main_field_name = 'dcs_code';
                 $title = Yii::t('app', 'Societies');
@@ -173,7 +179,8 @@ class Applicability extends \yii\base\Module {
                     'mccList' => $mccList,
                     'selectedMccCode' => $this->selectedMccCode,
                     'selectedBmcCode' => $this->selectedBmcCode,
-                    'selectedRouteCode' => $this->selectedRouteCode
+                    'selectedRouteCode' => $this->selectedRouteCode,
+                    'generateMail' => $this->generateMail,
         ]);
     }
 
@@ -207,7 +214,7 @@ class Applicability extends \yii\base\Module {
         $hasError = false;
         $postData = [];
         if (Yii::$app->request->post()) {
-            //$model->union_code = $this->union_code;
+//$model->union_code = $this->union_code;
             $model->$field_name = $this->field_value;
 
             if ($model->load(Yii::$app->request->post())) {
@@ -220,16 +227,16 @@ class Applicability extends \yii\base\Module {
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
                     $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
                     $toAssign = $model->{$main_field_name};
-                    //$toAssign = array_diff($returnedArray, $model->dcs_code);
-                    //$toRevoke = array_diff($model->dcs_code, $returnedArray);
+//$toAssign = array_diff($returnedArray, $model->dcs_code);
+//$toRevoke = array_diff($model->dcs_code, $returnedArray);
                     $mappingList = [];
                     $errorArr = [];
-                    //var_dump($returnedArray);
-                    //var_dump($model->dcs_code);
+//var_dump($returnedArray);
+//var_dump($model->dcs_code);
                     foreach ($toRevoke as $value) {
                         if (!empty($value)) {
                             try {
-                                //echo $value.'<br/>';
+//echo $value.'<br/>';
                                 $r = new ReflectionClass($this->model->className());
                                 $appModel = $r->newInstanceArgs();
                                 $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
@@ -262,7 +269,7 @@ class Applicability extends \yii\base\Module {
                             unset($appModel->$primaryKey);
                             $appModel->{$main_field_name} = $value;
                             $appModel->$field_name = $this->field_value;
-                            //$appModel->union_code = $this->union_code;  
+//$appModel->union_code = $this->union_code;  
 
                             $appModel->union_code = $this->union_code;
 
@@ -283,6 +290,7 @@ class Applicability extends \yii\base\Module {
                                     $dcsAppModel->attributes = $appModel->attributes;
                                     $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
                                     $dcsAppModel->dcs_code = $appModel->applicable_code;
+                                    $dcsAppModel->union_code = $appModel->union_code;
                                     $dcsAppModel->applicable_for = 'DCS';
                                     $saveModel[] = $dcsAppModel->save();
                                 }
@@ -305,6 +313,9 @@ class Applicability extends \yii\base\Module {
                     $this->selectedRouteCode = [];
                     if (!in_array(FALSE, $saveModel)) {
                         Yii::$app->display->message(true, $this->trans_label, 'create');
+                        if ($this->generateMail) {
+                            $this->GenerateMail($appModel, $toAssign);
+                        }
                         return $this->customRedirect();
                     } else {
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
@@ -392,7 +403,7 @@ class Applicability extends \yii\base\Module {
         return $filter_data;
     }
 
-    public function getDcs($top_section, $date = '') {
+    public function getDcs($top_section, $date = '', $returnQuery = false) {
         $field_name = $this->field_name;
         if ($this->select_from_all == false)
             $query = $this->model->find()->select('dcs_code')->where([$field_name => $this->field_value]);
@@ -403,9 +414,13 @@ class Applicability extends \yii\base\Module {
         if (!empty($date)) {
             $query->andWhere(['wef_date' => $date]);
         }
-        $values = $query->all();
-        $selected = ArrayHelper::getColumn($values, 'dcs_code');
-        return $selected;
+        if ($returnQuery) {
+            return $query;
+        } else {
+            $values = $query->all();
+            $selected = ArrayHelper::getColumn($values, 'dcs_code');
+            return $selected;
+        }
     }
 
     public function getDcsAlert($union_code, $id) {
@@ -440,7 +455,7 @@ class Applicability extends \yii\base\Module {
         return [0 => $messagestring, 1 => $dcs];
     }
 
-    public function loadUnionDcs($dcs = [], $union_code) {
+    public function loadUnionDcs($dcs = [], $union_code, $returnQuery = false) {
         //var_dump($dcs); exit;
         $dcsList = TblDcs::find()->joinWith(['societyCodes'])->where(['tbl_dcs.union_code' => $union_code, 'is_active' => 1])->andWhere(['not in', 'tbl_dcs.dcs_code', $dcs])->andWhere(['not', ['tbl_society_codes.bmc_code' => 0]])->andWhere(['not', ['tbl_society_codes.bmc_code' => null]]);
         if (!empty(Yii::$app->session->get('Dcs'))) {
@@ -505,7 +520,7 @@ class Applicability extends \yii\base\Module {
                         $save_model[] = $model;
                         /* $from_date = clone $end_date;
                           $from_date->modify("+ 1 day"); */
-                        //}
+//}
                     }
                     $transaction = $this->generalModel->appTransaction($save_model, [$this->trans_label, 'create']);
                     if ($transaction !== FALSE) {
@@ -537,15 +552,15 @@ class Applicability extends \yii\base\Module {
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, 'dcs_code');
                     $toRevoke = array_intersect($returnedArray, $model->dcs_code);
                     $toAssign = $model->dcs_code;
-                    //$toAssign = array_diff($returnedArray, $model->dcs_code);
-                    //$toRevoke = array_diff($model->dcs_code, $returnedArray);
+//$toAssign = array_diff($returnedArray, $model->dcs_code);
+//$toRevoke = array_diff($model->dcs_code, $returnedArray);
                     $mappingList = [];
-                    //var_dump($returnedArray);
-                    //var_dump($model->dcs_code);
-                    //var_dump($toRevoke);exit;
+//var_dump($returnedArray);
+//var_dump($model->dcs_code);
+//var_dump($toRevoke);exit;
                     foreach ($toRevoke as $value) {
                         if (!empty($value)) {
-                            //echo $value.'<br/>';
+//echo $value.'<br/>';
                             $r = new ReflectionClass($this->model->className());
                             $appModel = $r->newInstanceArgs();
                             $appModel = $appModel->find()->where(['dcs_code' => $value, $field_name => $this->field_value])->one();
@@ -561,8 +576,8 @@ class Applicability extends \yii\base\Module {
                         $r = new ReflectionClass($this->model->className());
                         $appModel = $r->newInstanceArgs();
                         $data = $model->attributes;
-                        //$appModel->setAttributes($data);
-                        // $appModel->society_vendor_code='';
+//$appModel->setAttributes($data);
+// $appModel->society_vendor_code='';
                         $appModel->dcs_code = $value;
                         $appModel->$field_name = $this->field_value;
 
@@ -596,7 +611,7 @@ class Applicability extends \yii\base\Module {
                             $users = $userModel->findByRole([$map->vendor_code]);
                             foreach ($users as $user) {
                                 if (empty($user->user_type_id) || $user->user_type_id == 7) {
-                                    //TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
+//TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
                                     if (empty($user->user_type_id)) {
                                         $user->user_type_id = 7;
                                         array_push($orgMap, $user);
@@ -608,7 +623,7 @@ class Applicability extends \yii\base\Module {
                                     $modelNew->is_active = $user->is_active;
                                     Yii::$app->operation->defaults($modelNew, INSERT);
                                     array_push($orgMap, $modelNew);
-                                    //$modelNew->save();
+//$modelNew->save();
                                 }
                             }
                             if (strtolower($map->vendor_code) == 'eipl') {
@@ -793,6 +808,126 @@ class Applicability extends \yii\base\Module {
             }
         }
         return $this->customRender();
+    }
+
+    public function GenerateMail($appModel, $toAssign) {
+        if (!empty($toAssign)) {
+            $apiMaster = new TblApiMaster();
+            $apiMaster->receiver_type = 'EMAIL';
+            $apiMasterData = $apiMaster->getAPI();
+            if (!empty($apiMasterData)) {
+                $htmlContent = "";
+                $message = "";
+                $file_name = "";
+                $file_path = "";
+                $this->setHtmlContent($appModel, $toAssign, $htmlContent, $message, $file_name, $file_path);
+                $notificationModel = new TblAlertNotification();
+                $notificationModel->receiver_type = 'EMAIL';
+                $notificationModel->message = $htmlContent;
+                $notificationModel->header_info = $message;
+                $notificationModel->send_status = 0;
+                $notificationModel->content_id = $apiMasterData->api_master_id;
+                $notificationModel->refecence_code = $appModel->purchase_rate_code;
+                $notificationModel->module_type = "Applicability(BMC)";
+                $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                $notificationModel->send_mail = 1;
+                $notificationModel->receiver_detail = 'vinay@everestinstruments.com,it.up@everestinstruments.com';
+                $notificationModel->filename = $file_name;
+                $notificationModel->file_path = $file_path;
+                $notificationModel->has_attachment = 2;
+                $notificationModel->save();
+            }
+        }
+    }
+
+    public function setHtmlContent($appModeldata, $toAssign, &$htmlContent, &$message, &$fileName, &$file_path) {
+        $User = Yii::$app->general->getforeignkey($appModeldata->createdBy, 'name');
+        $wefDate = Yii::$app->controls->view_date($appModeldata->wef_date);
+        $message = 'Applicability given by ' . $User;
+        $baseUrl = Yii::$app->request->baseUrl;
+        $hostUrl = Url::base('http');
+        $hostUrl = str_replace($baseUrl, '', $hostUrl);
+        $htmlContent = '';
+        $unionCode = $appModeldata->union_code . '-' . Yii::$app->general->getforeignkey($appModeldata->unionCode, 'union_name');
+//$htmlContent .= "<table cellpadding='5'  cellspacing='0'><tbody>";
+//$htmlContent .= "<tr>";
+//$htmlContent .= "<td colspan='2'><b>Rate Id: </b>" . $appModeldata->purchase_rate_code . "</td>";
+//$htmlContent .= "</tr>";
+//$htmlContent .= "<tr>";
+//$htmlContent .= "<td colspan='2'><b>WEF Date: </b>" . $wefDate . "</td>";
+//$htmlContent .= "</tr>";
+//$htmlContent .= "</tbody></table>";
+        $htmlContent .= '<br/>';
+        $htmlContent .= "<table cellpadding='5'  cellspacing='0'><thead><tr>";
+        $htmlContent .= "<th style='background: #ddd; text-align: left; border: 1px solid #ccc'>#</th>";
+        $htmlContent .= "<th style='background: #ddd; text-align: left; border: 1px solid #ccc; border-left: 0px'>" . Yii::t('app', 'UNION') . "</th>";
+        $htmlContent .= "<th style='background: #ddd; text-align: left; border: 1px solid #ccc; border-left: 0px'>" . Yii::t('app', 'Rate Id') . "</th>";
+        $htmlContent .= "<th style='background: #ddd; text-align: left; border: 1px solid #ccc; border-left: 0px'>" . Yii::t('app', 'WEF Date') . "</th>";
+        $htmlContent .= "<th style='background: #ddd; text-align: left; border: 1px solid #ccc; border-left: 0px'>" . Yii::t('app', 'Total Applicability') . "</th>";
+        $htmlContent .= "</tr></thead><tbody>";
+
+        $r = new ReflectionClass($this->model->className());
+        $appModel = $r->newInstanceArgs();
+        $data = $this->model->attributes;
+        $appModel->setAttributes($data);
+        $appModel->setAttributes($this->assignStaticData);
+        $primaryKey = $this->model->tableSchema->primaryKey[0];
+        unset($appModel->$primaryKey);
+        $htmlContent .= "<td style='border: 1px solid #ccc; border-top:0px; border-left: 0px'>1</td>";
+        $htmlContent .= "<td style='border: 1px solid #ccc; border-top:0px; border-left: 0px'>" . $unionCode . "</td>";
+        $htmlContent .= "<td style='border: 1px solid #ccc; border-top:0px; border-left: 0px'>" . $appModeldata->purchase_rate_code . "</td>";
+        $htmlContent .= "<td style='border: 1px solid #ccc; border-top:0px; border-left: 0px'>" . $wefDate . "</td>";
+        $htmlContent .= "<td style='border: 1px solid #ccc; border-top:0px; border-left: 0px'>" . count($toAssign) . "</td>";
+        $htmlContent .= "</tbody></table>";
+        $result = [];
+        $output = [];
+        foreach ($toAssign as $value) {
+            $result['union'] = Yii::$app->general->getmultiforeignkey($appModel->purchaseRateCode, ['unionCode'], 'union_name') . '-' . Yii::$app->general->getforeignkey($appModel->purchaseRateCode, 'union_code');
+            $result['bmc'] = Yii::$app->general->getCustomer($appModel, $appModel->applicable_for, FALSE, TRUE, FALSE);
+            $result['rate_id'] = $appModeldata->purchase_rate_code;
+            $result['wef_date'] = $wefDate;
+            $result['shift'] = Yii::$app->general->getforeignkey($appModel->shiftCode, 'shift');
+            $result['applicable_for'] = $appModel->applicable_for;
+            $appModel->applicable_code = $value;
+            $result['applicable_code'] = $value;
+            $result['ref_code'] = Yii::$app->general->getCustomer($appModel, $appModel->applicable_for, false, FALSE, TRUE);
+            $result['ex_code'] = Yii::$app->general->getCustomer($appModel, $appModel->applicable_for, true);
+            $result['applicable_name'] = Yii::$app->general->getCustomer($appModel, $appModel->applicable_for, false, FALSE, FALSE);
+            $output[] = $result;
+        }
+
+        $t = microtime(true);
+        $micro = sprintf("%06d", ($t - floor($t)) * 1000000);
+        $d = new \DateTime(date('Y-m-d H:i:s.' . $micro, $t));
+        $datetime = $d->format("YmdHisu");
+        $fileName = Yii::$app->general->getforeignkey($appModel->purchaseRateCode, 'union_code') . '_' . $appModel->applicable_for . '_' . $datetime . '.xls';
+        $file_path = $this->CreateFile($fileName, $output);
+    }
+
+    public function CreateFile($fileName, $output) {
+        $column_header = array_keys($output[0]);
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->attachment_folder;
+        if (\Yii::$app->general->checkDirectory($path)) {
+            $absoluteBaseUrl = Url::base(true);
+            $objPHPExcel = new PHPExcel();
+            $sheet = $objPHPExcel->getActiveSheet();
+            $sheet->fromArray(
+                    $column_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
+                    //    we want to set these values (default is A1)
+            );
+            $sheet->fromArray(
+                    $output, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
+                    //    we want to set these values (default is A1)
+            );
+            $filePath = $path . $fileName;
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter->save($filePath);
+            return $absoluteBaseUrl . $this->attachment_folder . $fileName;
+        }
     }
 
 }
