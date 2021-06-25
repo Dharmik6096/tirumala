@@ -290,6 +290,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         if ($flag == 1) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
+        $query->orderBy(['tbl_milk_collection.sample_no' => SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
@@ -299,7 +300,6 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->orderBy(['tbl_milk_collection.sample_no' => SORT_DESC]);
         return $dataProvider;
     }
 
