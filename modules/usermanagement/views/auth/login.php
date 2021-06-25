@@ -16,6 +16,20 @@ $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
 ?>
 
+<?php
+$message = '';
+if (Yii::$app->session->hasFlash('success')) {
+    $msg = Yii::$app->session->getFlash('success');
+    if (isset($msg['type']) && $msg['type'] == 'paymentErr') {
+        $message = $msg['message'];
+//        $type = isset($msg['type']) ? $msg['type'] : 'success';
+//        $field = isset($msg['field']) ? $msg['field'] : '';
+//        $hiddenfield = isset($msg['hidden_field']) ? $msg['hidden_field'] : '';
+//        $alertType = $type == 'success' ? 'successbar' : 'errorbar';
+//        Yii::$app->display->show($msg['message'], $alertType, $type, $field, $hiddenfield);
+    }
+}
+?>
 <div class="navbar navbar-fixed-top menu-wrap">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -126,10 +140,10 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <hr>
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/images/'; ?>
                                         <div class="col-sm-6">
-                                            <?= Html::img($image_path.'about_1.jpg', ['class' => 'img-responsive']); ?>
+                                            <?= Html::img($image_path . 'about_1.jpg', ['class' => 'img-responsive']); ?>
                                         </div>
                                         <div class="col-sm-6">
-                                            <?= Html::img($image_path.'about_2.jpg', ['class' => 'img-responsive']); ?>
+                                            <?= Html::img($image_path . 'about_2.jpg', ['class' => 'img-responsive']); ?>
                                         </div>
                                         <h3>About Us</h3>
                                         <p class="text-justify">Everest brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
@@ -149,13 +163,49 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
     </div>
 </div>
 
+<div class="modal fade" id="paymentErr" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="col-sm-12 loginError">
+                    <div class="bg-danger text-center">
+                        <i class="fa fa-times"></i>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-body">
+                <span><?= $message ?></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 <?php
 if (!empty($model->getErrors())) {
     $script = "
         $('#loginModal').modal('show');";
     $this->registerJs($script, View::POS_READY, 'login-code');
 }
+if(!empty($message)) {
+    $scriptOther = "
+        $('#paymentErr').modal('show');";
+    $this->registerJs($scriptOther, View::POS_READY, 'payment-err-login');
+    Yii::$app->getSession()->removeFlash('success');
+}
 $css = <<<CSS
+        .loginError i {
+            font-size: 25px;
+            height: 30px;
+            width: 30px;
+            border: 2px solid #fff;
+            color: #fff;
+            /* line-height: 46px; */
+            border-radius: 50%
+        }
 CSS;
 
 $this->registerCss($css);

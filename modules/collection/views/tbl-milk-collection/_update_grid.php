@@ -19,10 +19,13 @@ $form = ActiveForm::begin([
     <?php
     $attribute = [
         ['attribute' => 'dcs_code', 'header' => Yii::t('app', 'DCS'),
-            'value' => function ($model, $key, $index) use ($form) {
+            'value' => function ($model, $key, $index) use ($form, $config) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']milk_collection_code', ['value' => $model->milk_collection_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']union_code', ['value' => $model->union_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']dcs_code', ['value' => $model->dcs_code]);
+                if (!$config) {
+                    echo Html::activeHiddenInput($model, '[' . $index . ']milk_quality_type_code', ['value' => $model->milk_quality_type_code]);
+                }
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
         ['header' => 'Member Code', 'attribute' => 'member_code', 'filter' => false],
