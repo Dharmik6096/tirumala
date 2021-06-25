@@ -24,8 +24,12 @@ $this->title = 'BIPL Files Process';
         <div class="modal-body">
             <div class="row">
                 <?php echo Html::hiddenInput('TblFtpTxnLog[file_name]', '', ['id' => 'file_name']); ?>
+                <?php echo Html::hiddenInput('TblFtpTxnLog[date_file_name]', '', ['id' => 'date_file_name']); ?>
                 <div class="col-sm-3">
                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->controls->date($model, $form, 'txn_datetime', '', date('Y-m-d'), false, false, false); ?>
                 </div>
                 <div class="col-sm-12">
                     <?=
@@ -47,6 +51,10 @@ $this->title = 'BIPL Files Process';
                                             { 
                                                 var file = $('#file_name').val();
                                                 $('#file_name').val(file+','+data.msg);
+                                                
+                                                var date = $('#date_file_name').val();
+                                                $('#date_file_name').val(date+','+data.datefile);
+                                               
                                                 $('#upload-btn').attr('disabled',false);
                                             } else {
                                                 $(file.previewElement).remove();
@@ -55,10 +63,14 @@ $this->title = 'BIPL Files Process';
                                                 
                                         }",
                             'removedfile' => "function(file){
-                          var file_str = $('#file_name').val();
-                          var res = file_str.replace(file.name,''); 
-                           $('#file_name').val(res);
-                                           }",
+                                var file_str = $('#file_name').val();
+                                var res = file_str.replace(file.name,''); 
+                                $('#file_name').val(res);
+                           
+                                var datefile_str = $('#date_file_name').val();
+                                var reslt = datefile_str.replace(','+file.name,''); 
+                                $('#date_file_name').val(reslt);
+                            }",
                             'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
                         ]
                     ]);
@@ -74,6 +86,32 @@ $this->title = 'BIPL Files Process';
                     'type' => 'POST',
                     'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']),
                     'beforeSend' => new \yii\web\JsExpression('function(data){
+                                            var date = $("#tblftptxnlog-txn_datetime").val();
+                                            var file = $("#date_file_name").val();
+                                           
+                                            if(file == ""){
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select File</span></div></div>", function(result){
+                                                });
+                                                return false;
+                                            }
+                                            if(date == ""){
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Date Cannot be blank</span></div></div>", function(result){
+                                                });
+                                                return false;
+                                            }else{
+                                                var newdate = date.split("-").reverse().join("");
+                                                finalDate = newdate.substring(2, 8);    
+                                            }
+                                            var fileArray = file.split(",");
+                                              $.each(fileArray, function(index, value) {
+                                                finalFile = value.substring(0, 6);
+                                                    if(finalFile != finalDate){
+                                                       bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Must be of selected Date</span></div></div>", function(result){
+                                                       });
+                                                       return false;
+                                                    }
+                                            }); 
+                                           
                                             $("#loadercontent").show();
                                             $("#pageloader").show();
                                     }'),

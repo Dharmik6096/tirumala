@@ -81,7 +81,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             'module_code' => Yii::t('app', 'Module Code'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'union_code' => Yii::t('app', 'Union'),
-            'txn_datetime' => Yii::t('app', 'Txn Datetime'),
+            'txn_datetime' => Yii::t('app', 'Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'local_path' => Yii::t('app', 'Local Path'),
