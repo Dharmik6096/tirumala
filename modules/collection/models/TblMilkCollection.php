@@ -138,7 +138,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['shift_code', 'milk_type_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
             ['shift_code', 'in', 'range' => [1, 2], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', '{attribute} is invalid')],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value', 'received_timestamp'], 'safe'],
+            [['adt_param', 'adt_value', 'received_timestamp', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
             [['member_code'], 'validateUnique', 'on' => ['create']],
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
             [['bmc_code'], function ($attribute, $params) {
@@ -154,6 +154,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['is_rate_recalc'], 'default', 'value' => 0]
         ];
     }
 
