@@ -178,10 +178,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
         // add conditions that should always apply here
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => FALSE,
-        ]);
 
         $query->joinWith(['mccPlantCode.plantCode']);
         $query->andWhere([
@@ -190,21 +186,35 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'tbl_bmc_collection.mcc_plant_code' => $this->mcc_plant_code,
             'tbl_bmc_collection.bmc_code' => $this->bmc_code,
         ]);
+        $query->andWhere(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        } else {
+            $from_date = date('Y-m-d');
+            $from_shift = \Yii::$app->general->getshift(1);
+            $from_date .= ' ' . $from_shift;
         }
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        } else {
+            $to_date = date('Y-m-d');
+            $to_shift = \Yii::$app->general->getshift(2);
+            $to_date .= ' ' . $to_shift;
         }
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_code' => $this->customer_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_type' => $this->customer_type]);

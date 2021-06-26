@@ -194,27 +194,39 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $query = TblMilkCollection::find();
         // add conditions that should always apply here
 
+
+        $query->andWhere([
+            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
         ]);
 
-        $query->andWhere([
-            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+        $query->andWhere(['IS NOT', 'tbl_milk_collection.dcs_code', NULL]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        } else {
+            $from_date = date('Y-m-d');
+            $from_shift = \Yii::$app->general->getshift(1);
+            $from_date .= ' ' . $from_shift;
         }
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        } else {
+            $to_date = date('Y-m-d');
+            $to_shift = \Yii::$app->general->getshift(2);
+            $to_date .= ' ' . $to_shift;
         }
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
 
         $query->andFilterWhere(['member_code' => $this->member_code]);
 
