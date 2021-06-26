@@ -2,6 +2,7 @@
 
 namespace app\modules\misreports\models;
 
+use Yii;
 use yii\base\Model;
 
 class ReportsModel extends Model {
@@ -68,6 +69,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MilkCollectionNotExistsDetail', 'MilkCollectionNotExistsSummary']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['DayWiseQtyDetail', 'DayWiseQtySummary']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
+            [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
         ];
     }
 
@@ -100,6 +102,27 @@ class ReportsModel extends Model {
 
     public function search($params) {
         
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->from_date));
+            $tDate = date('Y-m-d', strtotime($this->to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 15) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 15.'));
+                    return false;
+                }
+            }
+        }
     }
 
 }
