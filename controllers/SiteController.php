@@ -159,8 +159,11 @@ class SiteController extends Controller {
             $end_date = $today_date;
             $start_date = date('Y-m-d', strtotime("-1 months", strtotime($today_date)));
         }
-
-        $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : 'farmer';
+        $defaultWidget = 'farmer';
+        if (Yii::$app->session->get('eiplCode') == 'GYAN') {
+            $defaultWidget = 'rmrd';
+        }
+        $model->widget_type = isset(Yii::$app->request->post('Dashboard')['widget_type']) ? Yii::$app->request->post('Dashboard')['widget_type'] : $defaultWidget;
         $model->mcc_code = isset(Yii::$app->request->post('Dashboard')['mcc_code']) ? Yii::$app->request->post('Dashboard')['mcc_code'] : '';
         $dashboardUserWidgets = new TblDashboardUserWidgets();
         if (Yii::$app->request->post()) {
@@ -953,6 +956,14 @@ class SiteController extends Controller {
                 'name' => 'sp_portal_dashboard_today_vs_yesterday_collection',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
+            'top_dcs_collection' => [
+                'name' => 'sp_portal_dashboard_top_dcs_collection',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'top_rmrd_collection' => [
+                'name' => 'sp_portal_dashboard_top_dcs_collection',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
         ];
         return $array[$sp];
     }
@@ -1380,6 +1391,49 @@ class SiteController extends Controller {
         $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
 //        }
         return $this->renderAjax('bmc_cross_tab', ['output' => $output, 'union_code' => $union]);
+    }
+
+    public function actionTopDcsCollection() {
+        $output = [];
+        $union = '';
+        $data = $_POST;
+        $union = $data['union'];
+        $union_str = 0;
+        $mccc_str = 0;
+
+        if (!empty(Yii::$app->request->post('union'))) {
+            $union_str = Yii::$app->request->post('union');
+        } else if (!empty(Yii::$app->session->get('Unions'))) {
+            $union_str = Yii::$app->session->get('Unions');
+            $union_str = ',' . $union_str . ',';
+        } else {
+            $unionModel = new TblUnions();
+            $union = $unionModel->getActiveUnions();
+            $union_ary = ArrayHelper::getColumn($union, 'union_code');
+            $union_str = implode(',', $union_ary);
+        }
+        if (!empty(Yii::$app->request->post('mcc'))) {
+            $mccc_str = Yii::$app->request->post('mcc');
+        }
+        $type = Yii::$app->request->post('type');
+        $customertype = !empty(Yii::$app->request->post('customer_type')) ? Yii::$app->request->post('customer_type') : ($type == 'rmrd' ? 'DCS' : '');
+
+        $sp_param = [];
+        $rlsData = $this->setRlsData();
+        $sp_name = 'sp_portal_dashboard_top_dcs_collection';
+        $sp_param[] = $union_str; //$data['union'];
+        $sp_param[] = empty($rlsData['plant']) ? '0' : $rlsData['plant'];
+        $sp_param[] = !empty($mccc_str) ? $mccc_str : (empty($rlsData['bmc']) ? $rlsData['bmc'] : 0);
+        $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
+        $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
+        $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' 06:00:00';
+        $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' 18:00:00';
+        $sp_param[] = $type;
+        $sp_param[] = $customertype;
+//        $sp_param[] = '';
+        $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+        return $this->renderAjax('top_dcs_collection', ['output' => $output, 'union_code' => $union, 'customer_tpye' => $customertype]);
     }
 
     public function actionBmcCrossTabDetails() {

@@ -7,22 +7,22 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 <div class="col-sm-12 farmer_rmrd_block">
 
-    <?php $url = Url::to(['site/get-unions', 'date' => $date, 'union_code' => $model->union_code]);?>
+    <?php $url = Url::to(['site/get-rmrd-unions', 'date' => $date, 'union_code' => $model->union_code]); ?>
     <a href="<?= $url ?>" target="_blank">
-    <div class="link_hover_effect">
-        <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
-            <div class="div_dash_block_content">
-                <p class="dash_block_header"><?= Yii::t('app', 'Union') ?></p>
-                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-                <h4 class="dash_block_value block_value" id="farmer_rmrd_block_union">0/0</h4>
+        <div class="link_hover_effect">
+            <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
+                <div class="div_dash_block_content">
+                    <p class="dash_block_header"><?= Yii::t('app', 'Union') ?></p>
+                    <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                    <h4 class="dash_block_value block_value" id="farmer_rmrd_block_union">0/0</h4>
+                </div>
+                <div class="div_dash_block_icon"> <img
+                        src="<?= $imageIconPath . 'company.png' ?>"> </div>
             </div>
-            <div class="div_dash_block_icon"> <img
-                    src="<?= $imageIconPath . 'company.png' ?>"> </div>
         </div>
-    </div>
     </a>
 
-    <?php $url = Url::to(['site/get-mccs', 'date' => $date, 'union_code' => $model->union_code]);?>
+    <?php $url = Url::to(['site/get-rmrd-mccs', 'date' => $date, 'union_code' => $model->union_code]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -35,7 +35,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
         </div>
     </a>
 
-    <?php $url = Url::to(['site/get-dcs', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]);?>
+    <?php $url = Url::to(['site/get-rmrd-dcs', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols ?>">
             <div class="div_dash_block_content">
@@ -70,7 +70,7 @@ $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
                 src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
     </div>
 
-    <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]);?>
+    <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $model->union_code, 'mcc_code' => $model->mcc_code]); ?>
     <a href="<?= $url ?>" target="_blank">
         <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display ?>">
             <div class="div_dash_block_content">
