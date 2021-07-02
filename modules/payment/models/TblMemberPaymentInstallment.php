@@ -2,7 +2,6 @@
 
 namespace app\modules\payment\models;
 
-
 use Yii;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblPaymentCycle;
@@ -102,4 +101,5 @@ class TblMemberPaymentInstallment extends \app\models\ChildModel {
                         ->where(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code, 'customer_code' => $this->customer_code, 'customer_type' => 'Member', 'payment_cycle_code' => $this->payment_cycle_code])
                         ->all();
     }
+
 }

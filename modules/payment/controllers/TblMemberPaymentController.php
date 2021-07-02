@@ -248,6 +248,19 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
                 $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
                 $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
+
+                if ($processFlag == 'Lock') {
+                    $installmentModel = new TblMemberPaymentInstallment();
+                    $existInstallment = $installmentModel->find()->where(['bmc_code' => $data->bmc_code, 'customer_type' => 'Member', 'customer_code' => $data->member_code, 'payment_cycle_code' => $data->payment_cycle_code])->all();
+                    if (!empty($existInstallment)) {
+                        foreach ($existInstallment as $data) {
+                            $saleModel = new TblSaleInstallments();
+                            $existData = $saleModel->find()->where(['product_sale_installment_code' => $data->product_sale_installment_code])->one();
+                            $existData->installment_date = Yii::$app->general->getforeignkey($data->paymentCycleCode, 'from_date');
+                            $save_model[] = $existData;
+                        }
+                    }
+                }
             }
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = Yii::$app->request->get();
@@ -911,6 +924,17 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'selectedCheckbox' => $selectedCheckbox,
                     'netPay' => $netPay,
                     'redirectUrl' => $redirectUrl
+        ]);
+    }
+
+    public function actionViewMemberInstallment() {
+        $instalSearch = new TblSaleInstallmentsSearch();
+        $instalSearch->setAttributes(Yii::$app->request->get());
+        $idataProvider = $instalSearch->viewinstallsearch(Yii::$app->request->queryParams);
+
+        return $this->renderAjax('_member_installment_view', [
+                    'searchModel' => $instalSearch,
+                    'dataProvider' => $idataProvider,
         ]);
     }
 
