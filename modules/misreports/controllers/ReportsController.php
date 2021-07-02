@@ -1652,7 +1652,7 @@ class ReportsController extends \app\controllers\ChildController {
     }
 
     public function downloadData() {
-        $extention = !empty($this->data['extention']) ? $this->data['extention'] : 'xls';
+        $extention = 'xls';
         $header = [
             'mime' => 'application/ms-excel',
             'extension' => $extention,
