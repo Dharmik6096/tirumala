@@ -33,7 +33,7 @@ if (isset($data['url1'])) {
         } else {
             $codeToAppend = $model->getMccCode($model->mcc_code);
         }
-        $this->title = $codeToAppend . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+        $this->title = $codeToAppend . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
