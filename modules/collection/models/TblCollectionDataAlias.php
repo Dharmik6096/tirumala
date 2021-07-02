@@ -334,4 +334,9 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         }
     }
 
+    public function getExistApproval() {
+        return $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'action_perform' => 'DELETE'])
+                        ->one();
+    }
+
 }

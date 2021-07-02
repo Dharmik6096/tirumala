@@ -148,7 +148,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
             [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -165,6 +165,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['is_rate_recalc'], 'default', 'value' => 0]
         ];
     }
 

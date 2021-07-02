@@ -619,6 +619,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Pendrive Sync'), 'url' => ['/syncutility/pendrive-sync/index'], 'active' => ($cntrl == 'pendrive-sync')],
                         ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                         ['label' => Yii::t('app', 'DPU Station Detail'), 'url' => ['/installation/dpu-station-detail/index'], 'active' => ($cntrl == 'dpu-station-detail')],
+                        ['label' => Yii::t('app', 'Bulk Delete Milk Collection'), 'url' => ['/collection/tbl-milk-collection/bulk-delete-collection'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'bulk-delete-collection')],
                     ]
                 ],
                 [

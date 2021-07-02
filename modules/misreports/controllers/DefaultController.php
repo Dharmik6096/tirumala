@@ -514,7 +514,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '219 - Society Summary Report',
             ],
             'VmReportSap' => [
-                'param' => 'union_code,mcc_code:union_code,date:string:shift',
+//                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_VMSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP VM Report',
@@ -523,7 +524,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
             ],
             'WqReportSap' => [
-                'param' => 'union_code,mcc_code:union_code,date:string:shift',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_WQSAPReport',
                 'scenario' => 'SapReport',
                 'title' => 'SAP WQ Report',
@@ -533,7 +534,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
             ],
             'SdReportSap' => [
-                'param' => 'union_code,mcc_code:union_code,date:string:shift',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_MIS_SDSAPReport',
                 'sp_name2' => 'sp_checkDatacompleteness_TMPL',
                 'param2' => 'date:string:shift,union_code,mcc_code',
