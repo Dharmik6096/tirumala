@@ -672,6 +672,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAdvancePm() {
+        $this->report = 'AdvancePm';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1646,6 +1651,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'DayWiseQtySummary',
                 'title' => '213 - Day Wise Qty',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
+            ],
+            'AdvancePm' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_pm_advance',
+                'scenario' => 'AdvancePm',
+                'title' => 'PM Advance',
             ],
         ];
         return $label[$l];
