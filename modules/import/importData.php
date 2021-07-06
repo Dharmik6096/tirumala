@@ -120,6 +120,8 @@ class importData extends \yii\base\Module {
             'dcs-deactive' => ['table_name' => 'tbl_dcs_deactive', 'fields' => 'bmc_code,dcs_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
             'member-deactive' => ['table_name' => 'tbl_member_deactive', 'fields' => 'dcs_code,member_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
             'customer-deactive' => ['table_name' => 'tbl_customer_deactive', 'fields' => 'bmc_code,customer_code,from_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
+            'purchaserateapplicability-bulk' => ['table_name' => 'tbl_product_purchase_rate_applicability','fields' => 'bmc_code,applicable_for,applicable_code,product_purchase_rate_code,wef_date', 'scenario' => 'importCsv'],
+            'product_purchase_rate_bulk' => ['table_name' => 'tbl_product_purchase_rate', 'fields' => 'union_code,product_code,purchase_rate,wef_date', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }
