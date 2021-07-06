@@ -33,6 +33,8 @@ use app\modules\dcsoperation\models\TblMember;
  */
 class TblMemberDeactive extends \app\models\ChildModel {
 
+    public $member;
+
     /**
      * @inheritdoc
      */
@@ -53,13 +55,13 @@ class TblMemberDeactive extends \app\models\ChildModel {
             [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['from_date'], 'convertDate', 'on' => ['importCsv']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'from_date'], 'required', 'except' => ['importCsv']],
-            [['dcs_code', 'member_code', 'from_date'], 'required', 'on' => ['importCsv']],
+            [['dcs_code', 'member', 'from_date'], 'required', 'on' => ['importCsv']],
             [['to_date'], 'required', 'on' => ['activeMember']],
             [['from_date'], 'validateFromDate', 'except' => ['activeMember']],
             [['to_date'], 'validateToRange', 'on' => ['activeMember']],
-            [['member_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
-            [['member_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['member', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
+            [['member'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'member'], 'safe'],
         ];
     }
 
@@ -180,10 +182,8 @@ class TblMemberDeactive extends \app\models\ChildModel {
             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
             return false;
         } else {
-            $member = new TblMember();
-            $memberData = $member->validateRefMember($this->dcs_code, $this->member_code);
-            $this->member_code = $memberData->member_code;
-            if (empty($this->member_code)) {
+            $this->member_code = $this->dcs_code . str_pad(substr($this->member, -4), 4, '0', STR_PAD_LEFT);
+            if (empty($this->memberCode)) {
                 $this->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' is invalid'));
                 return false;
             }
