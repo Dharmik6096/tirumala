@@ -279,6 +279,7 @@ class TblDcs extends ChildModel
                 $this->data_post_status = 0;
             }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
             [['route'], 'required', 'on' => ['importCsv']],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
             [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
             [['dcs_code'], function ($attribute, $params) {
                 $update = FALSE;
@@ -1306,5 +1307,8 @@ class TblDcs extends ChildModel
     public function getMainContactDetails()
     {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'society', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
+    }
+     public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
     }
 }
