@@ -1553,7 +1553,7 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         htmlData = htmlData + '<tbody>';
                         
                         htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td rowspan=\'6\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
+                        htmlData = htmlData + '<td rowspan=\'7\' class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Collection')."</td>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Qty')."</td>';
                         $.each(obj1.res, function(key,value) {
                             htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_qty+'</td>';
@@ -1588,13 +1588,21 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         });
                         htmlData = htmlData + '</tr>';
 
+
+                        htmlData = htmlData + '<tr>';
+                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'No Of Farmers')."</td>';
+                        $.each(obj1.res, function(key,value) {
+                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_no_of_farmers+'</td>';
+                        });
+                        htmlData = htmlData + '</tr>';
+
                         htmlData = htmlData + '<tr>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'CC Count')."</td>';
                         $.each(obj1.res, function(key,value) {
                             htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.cc_count+'</td>';
                         });
                         htmlData = htmlData + '</tr>';
-
+                       
                         // htmlData = htmlData + '<tr>';
                         // htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>".Yii::t('app', 'Online')."</td>';
                         // $.each(obj1.res, function(key,value) {

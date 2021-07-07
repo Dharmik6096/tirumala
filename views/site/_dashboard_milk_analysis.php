@@ -61,7 +61,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                         <tr>
                             <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC') ?></th> -->
                             <th rowspan='2'><?= Yii::t('app', 'BMC') ?></th>
-                            <th colspan='6'><?= Yii::t('app', 'CC Collection') ?></th>
+                            <th colspan='7'><?= Yii::t('app', 'CC Collection') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'Bulk Vendor Receipt') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'Total') ?></th>
@@ -73,6 +73,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                             <th><?= Yii::t('app', 'SNF') ?></th>
                             <th><?= Yii::t('app', 'Rate') ?></th>
                             <th><?= Yii::t('app', 'Amount') ?></th>
+                            <th><?= Yii::t('app', 'No Of Farmers') ?></th>
                             <th><?= Yii::t('app', 'CC Count') ?></th>
                             <!-- <th><?php //Yii::t('app', 'Online') ?></th>
                             <th><?php //Yii::t('app', 'Pendrive') ?></th>
