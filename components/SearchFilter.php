@@ -306,6 +306,9 @@ class SearchFilter {
             'TblBankPaymentLogSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
+            'TblMasterTransferSearch' => [
+                'filter' => ['master_type', 'transfer_type'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

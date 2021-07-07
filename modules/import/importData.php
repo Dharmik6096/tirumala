@@ -34,7 +34,7 @@ class importData extends \yii\base\Module {
             'TblMiscellaneous' => ['table_name' => 'tbl_miscellaneous', 'fields' => 'miscellaneous_name,local_name', 'default_fields' => 'is_active:1', 'increment' => 1],
             'TblDcsTypes' => ['table_name' => 'tbl_dcs_types', 'fields' => 'dcs_type_name,local_name', 'default_fields' => 'is_active:1', 'increment' => 1],
             'TblCasteCategory' => ['table_name' => 'tbl_caste_category', 'fields' => 'caste_category_name,local_name', 'default_fields' => 'is_active:1', 'increment' => 1],
-            'unit' => ['table_name' => 'tbl_units', 'fields' => 'unit_name,local_name,short_name,local_short_name', 'default_fields' => 'is_active:1', 'increment' => 1],
+            'unit' => ['table_name' => 'tbl_units', 'fields' => 'union_code,unit_name,local_name,short_name,local_short_name', 'default_fields' => 'is_active:1', 'increment' => 1],
             'animal-type' => ['table_name' => 'tbl_animal_type', 'fields' => 'animal_type_name,local_name,short_name,is_milch', 'default_fields' => 'is_active:1', 'increment' => 1],
             'milk-quality-type' => ['table_name' => 'tbl_milk_quality_type', 'fields' => 'milk_quality_type_name,local_name', 'default_fields' => 'is_active:1', 'increment' => 1],
             'land-unit' => ['table_name' => 'tbl_land_unit', 'fields' => 'land_unit_name,local_name,land_unit,conversion_factor', 'scenario' => 'importCsv', 'default_fields' => 'is_active:1', 'increment' => 1],

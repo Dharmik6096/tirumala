@@ -266,6 +266,22 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
+                                    if (in_array($value, array('master_type'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', FALSE, FALSE, 'master_type'); ?>
+                                        </div>
+                                    <?php } ?>
+                                      <?php
+                                    if (in_array($value, array('transfer_type'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->transfer_type($model, $form, $field_class . '-master_type', 'transfer_type'); ?>
+                                        </div>
+                                    <?php } ?>   
+                                    <?php
                                     if (in_array($value, array('vendor_code'))) {
                                         $f_cnt++;
                                         $depend_str = $field_class . '-f_bmc_code' . ',' . $field_class . '-vendor_type';
