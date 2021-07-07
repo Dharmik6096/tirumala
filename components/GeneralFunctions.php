@@ -48,6 +48,7 @@ use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
+use app\modules\organisation\models\TblCustomerMaster;
 
 class GeneralFunctions extends Component {
 
@@ -1475,8 +1476,22 @@ class GeneralFunctions extends Component {
         if (strtolower($model->customer_type) != 'dcs') {
             $prefix = $this->getforeignkey($model->customerType, 'code_prefix');
             $length = $this->getforeignkey($model->customerType, 'code_length');
-            $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
-            $Code = $this->getforeignkey($model->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($model->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $model->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $model->customer_type])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $model->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                $Code = $this->getforeignkey($model->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }
