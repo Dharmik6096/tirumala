@@ -29,8 +29,8 @@ use yii\web\JsExpression;
                     ]);
                     ?>
 
-                    <div class="col-sm-4">
-                        <?= Yii::$app->controls->date($model, $form, 'to_date'); ?>
+                    <div class="col-sm-6">
+                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, date('d-m-Y')); ?> 
                     </div>
                     <div class="col-sm-4">
                         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>

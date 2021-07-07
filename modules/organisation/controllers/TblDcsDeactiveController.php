@@ -124,7 +124,8 @@ class TblDcsDeactiveController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $model->load(Yii::$app->request->post());
             $ActiveModel = $this->findModel($model->dcs_deactive_code);
-            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
+//            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
+            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime('-1 day', strtotime($model->to_date))) : NULL;
             $ActiveModel->scenario = 'activeDCS';
             if ($ActiveModel->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$ActiveModel], ['DCS Activated', 'create']);

@@ -35,11 +35,12 @@ $this->title = Yii::t('app', 'Rate Chart');
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="col-sm-12">
-                    <div class="table-responsive table-rate-chart">
-                        <table class="table table-bordered table-striped table-input" id="table">
+                <div class="table-responsive table-rate-chart">
+                    <div id="fixed-table-container" class="table-responsive table-rate-chart fixed-table-container">
+                        <table class="table table-bordered table-striped table-main table-language table-rate-chart" id="table">
                             <?php
                             $cnt = 0;
+                            echo "<thead>";
                             foreach ($fat as $key => $attr) {
                                 if ($key == 0) {
                                     if (count($snf) == 1 && $snf[0]->snf == NULL) {
@@ -52,9 +53,13 @@ $this->title = Yii::t('app', 'Rate Chart');
                                         echo "</tr>";
                                     }
                                 }
+                            }
+                            echo "</thead>";
+                            echo "<tbody>";
+                            foreach ($fat as $key => $attr) {
                                 ?>
                                 <tr>
-                                    <th><?= $attr->fat; ?></th>
+                                <td><?= $attr->fat; ?></td>
                                     <?php
                                     if (count($snf) == 1 && $snf[0]->snf == NULL) {
                                         echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
@@ -71,7 +76,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                                     }
                                     ?>
                                 </tr>
-                            <?php } ?>
+                            <?php } echo "</tbody>"; ?>
 
                         </table>
                     </div>
@@ -125,5 +130,6 @@ $script = "
          }
            
     });
+    var fixedTable1 = fixTable(document.getElementById('fixed-table-container'));
     ";
 $this->registerJs($script, View::POS_END, 'change-manager');

@@ -20,6 +20,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 use yii\imagine\Image;
 use yii\web\UploadedFile;
 use app\modules\general\models\TblAttachment;
+use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -49,8 +50,12 @@ class TblMemberController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblMemberDeactiveSearch();
+        $searchModel->member_code = $id;
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 

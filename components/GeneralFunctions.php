@@ -807,7 +807,7 @@ class GeneralFunctions extends Component {
         return FALSE;
     }
 
-    public function base64url_encode($data){
+    public function base64url_encode($data) {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
@@ -1609,7 +1609,7 @@ class GeneralFunctions extends Component {
                     $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
                 }
             }
-            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as bigint)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
                     ->where(['union_code' => $model->union_code])
                     ->asArray()
                     ->one();
