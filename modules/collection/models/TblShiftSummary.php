@@ -4,6 +4,10 @@ namespace app\modules\collection\models;
 
 use Yii;
 use yii\db\Expression;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_shift_summary".
@@ -37,6 +41,8 @@ use yii\db\Expression;
  */
 class TblShiftSummary extends \app\models\ChildModel {
 
+    public $mcc_code;
+
     /**
      * @inheritdoc
      */
@@ -50,10 +56,11 @@ class TblShiftSummary extends \app\models\ChildModel {
     public function rules() {
         return [
             [['code'], 'required', 'except' => ['androidsync']],
-            [['code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'device_id', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'string'],
-            [['shift_date', 'created_at', 'updated_at', 'sync_timestamp', 'shift_code', 'received_timestamp'], 'safe'],
-            [['avg_fat', 'avg_snf', 'quantity', 'amount'], 'number'],
-            [['type', 'doc_no'], 'integer'],
+            [['code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'device_id', 'created_by', 'updated_by', 'flg_sentbox_entry', 'sync_status'], 'safe'],
+            [['shift_date', 'created_at', 'updated_at', 'sync_timestamp', 'shift_code', 'received_timestamp', 'mcc_code'], 'safe'],
+            [['avg_fat', 'avg_snf', 'quantity', 'amount'], 'safe'],
+            [['type', 'doc_no'], 'safe'],
+            [['code'], 'validateData', 'skipOnEmpty' => false],
         ];
     }
 
@@ -63,12 +70,12 @@ class TblShiftSummary extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'code' => Yii::t('app', 'Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'shift_date' => Yii::t('app', 'Shift Date'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'avg_fat' => Yii::t('app', 'Avg Fat'),
             'avg_snf' => Yii::t('app', 'Avg Snf'),
             'quantity' => Yii::t('app', 'Quantity'),
@@ -110,6 +117,32 @@ class TblShiftSummary extends \app\models\ChildModel {
             $update['check_count'] = new Expression("isnull(check_count,0)+1");
         }
         return $this->updateAll($update, $data);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function validateData($attribute, $params) {
+        if (empty($this->mcc_plant_code) && !empty($this->mcc_code)) {
+            $this->mcc_plant_code = $this->mcc_code;
+        }
+        if (empty($this->mcc_plant_code) && !empty($this->bmc_code) && !empty($this->bmcCode)) {
+            $mcc = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $this->mcc_plant_code = !empty($mcc) && $mcc != 'N/A' ? $mcc : $this->mcc_plant_code;
+        }
     }
 
 }
