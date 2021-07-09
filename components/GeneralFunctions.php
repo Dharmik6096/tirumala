@@ -1714,7 +1714,11 @@ class GeneralFunctions extends Component {
             $ftpDir = $this->getFTPDirStructure($cp_code);
             foreach ($ftpDir as $dir) {
                 $ftp->ftp_path = $ftpData->ftp_path . $dir;
-                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
+                $localDirPath = \Yii::$app->params['biplDirPath'] . $dir;
+                $localDirPath = Yii::$app->basePath . '/' . str_replace(Yii::$app->basePath, '', $localDirPath);
+                $localDirPath = str_replace('\\', '/', $localDirPath);
+                if ($ftp->CreateDirectory() && $this->checkDirectory($localDirPath)) {
+//                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
                     $status = true;
                 } else {
                     $status = false;
