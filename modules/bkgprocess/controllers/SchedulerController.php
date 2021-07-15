@@ -31,6 +31,7 @@ class SchedulerController extends ChildController {
 
     public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
     public $errorPath = '';
+    public $attachment_folder = '/web/alert-data/';
 
     public function init() {
         parent::init();
@@ -646,14 +647,14 @@ class SchedulerController extends ChildController {
         $sp_name = 'sp_mis_society_shift_collection_completed';
         $controls = [];
         $controls['union_code'] = '001';
-        $controls['plant_code'] = '3100';
-        $controls['mcc_plant_code'] = '9760';
+        $controls['plant_code'] = '001005';
+        $controls['mcc_plant_code'] = '001052';
         $controls['bmc_code'] = '0';
         $controls['dcs_code'] = '0';
         $controls['from_date'] = $fromDate;
         $controls['to_date'] = $toDate;
         $result = \Yii::$app->general->getSpData($sp_name, $controls);
-      
+
         if (!empty($result)) {
             $output = $result;
             $datetime = date('dmY');
