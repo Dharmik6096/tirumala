@@ -417,7 +417,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     foreach ($data as $d) {
                         \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type', 'rate_class'], $d)->execute();
                     }
-                    if ($purchaseRate->for_member == 1 && $allowCopy) {
+                    if ($purchaseRate->for_member == 1) {
                         $sp_param = [];
                         $sp_name = 'DB_JOB_PORTAL_Member_Rate_chart';
                         $sp_param[] = $purchaseRate->purchase_rate_code;

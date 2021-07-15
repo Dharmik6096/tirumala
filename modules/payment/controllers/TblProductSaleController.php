@@ -41,7 +41,7 @@ use app\modules\payment\models\TblProductSaleTransactionHistory;
  */
 class TblProductSaleController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-calculation', 'validate-customer'];
+    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate'];
 
     /**
      * Lists all TblProductSale models.

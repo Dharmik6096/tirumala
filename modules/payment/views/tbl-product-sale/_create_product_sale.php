@@ -59,10 +59,10 @@ $type = !empty($type) ? $type : '';
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-sm-1">
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'ex_code')->textInput() ?>
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1 reset_field">
                     <?= Html::activeHiddenInput($model, 'customer_code') ?>
                     <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
                     <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
@@ -133,10 +133,19 @@ $type = !empty($type) ? $type : '';
 //                                                                  $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $(".panel-body").scrollTop(0);
-                                                                    $(".reset_field input").val("");
-                                                                    $(".reset_field select").val("");
-//                                                                    $("#tblproductsale-payment_mode").val("");
-//                                                                    $("#tblproductsaletransaction-product_code").val("");
+                                                                   
+                                                                    $("#create-product-sale-form .reset_field input").val("");
+                                                                    $("#create-product-sale-form .reset_field select").val("");
+                                                                    $("#tblproductsale-payment_mode").val("");
+                                                                    $("#tblproductsale-payment_mode").trigger("select2:select");
+                                                                    $("#tblproductsale-payment_mode").trigger("change");
+                                                                    $("#tblproductsaletransaction-product_code").val("");
+                                                                    $("#tblproductsaletransaction-product_code").trigger("select2:select");
+                                                                    $("#tblproductsaletransaction-product_code").trigger("change");
+                                                                    $("#tblproductsaletransaction-tax_code").val("");
+                                                                    $("#tblproductsaletransaction-tax_code").trigger("select2:select");
+                                                                    $("#tblproductsaletransaction-tax_code").trigger("change");
+//                                                                 
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                         setTimeout(function(){
                                                                             $("#tblbillheaddetail-customer_type").focus();

@@ -392,7 +392,7 @@ class DropDown extends Component {
     }
 
     public function transfer_type($model, $form, $depends, $name = 'transfer_type', $islable = false, $multiple = false, $readonly = false) {
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/transfer-type-list', Yii::t('app', 'Select Type'), $multiple, '', $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/transfer-type-list', Yii::t('app', 'Select Transfer Type'), $multiple, '', $readonly);
     }
 
     public function memberRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false) {
@@ -1192,7 +1192,7 @@ class DropDown extends Component {
             'billing_type' => [
                 'name' => 'billing_type',
                 'prompt' => Yii::t('app', 'Select Billing Type'),
-                'data' => [1 => Yii::t('app', 'Member Paymnet + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
+                'data' => [1 => Yii::t('app', 'Member Payment + VSP Salary'), 2 => Yii::t('app', 'VSP Payment')],
             ],
             'order_on' => [
                 'name' => 'order_on',
@@ -1298,7 +1298,7 @@ class DropDown extends Component {
             'village-code' => ['name' => 'village_code', 'fields' => 'village_code,village_name', 'prompt' => 'Select Village', 'model' => 'TblVillages'],
             'department' => ['name' => 'department', 'fields' => 'department_id,department,local_name', 'prompt' => 'Select Department', 'model' => 'TblDepartment'],
             'customer_type' => ['name' => 'customer_type', 'fields' => 'customer_type,customer_desc', 'prompt' => 'Select Type', 'model' => 'TblCustomerType', 'whereCondition' => ['is_organisation' => 0, 'union_code' => explode(',', Yii::$app->session->get('Unions'))]],
-            'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Type'), 'model' => 'TblTransferType'],
+            'transfer_master_type' => ['name' => 'master_type', 'fields' => 'master_type,master_type_text', 'prompt' => Yii::t('app', 'Select Master Type'), 'model' => 'TblTransferType'],
             'app_type' => ['name' => 'app_type', 'fields' => 'operator_type,api_name', 'prompt' => 'Select Type', 'model' => 'TblApiMaster', 'whereCondition' => ['receiver_type' => 'APP_NOTIFICATION']],
             'general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblGeneralFormula', 'depend' => 'union_code'],
             'default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblBillHeadDefault'],

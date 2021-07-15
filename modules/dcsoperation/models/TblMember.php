@@ -22,6 +22,8 @@ use app\modules\dcsoperation\models\TblMemberDownload;
 use app\modules\general\models\TblRelationship;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
+use yii\db\Query;
+use app\modules\organisation\models\TblDcsVendorStatus;
 
 /**
  * This is the model class for table "tbl_member".
@@ -191,7 +193,7 @@ class TblMember extends ChildModel {
                 [['member_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-                [['rate_class'], 'default', 'value' => '0']
+                [['rate_class'], 'default', 'value' => '0'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -580,6 +582,76 @@ class TblMember extends ChildModel {
 
     public function getTblMember() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3) {
+        $keyPattern = Yii::$app->general->getKeyPattern($table_name);
+        if (!empty($keyPattern)) {
+            $ref_code_length = (int) $keyPattern['ref_code_length'];
+            $ref_code_fix_length = (int) $keyPattern['ref_code_fix_length'];
+            $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
+            //EX Code Auto
+            $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                    ->asArray()
+                    ->one();
+            $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
+
+            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+                    ->where(['union_code' => $model->union_code])
+                    ->asArray()
+                    ->one();
+            $model->auto_code = $data['auto_code'];
+
+            $pk_code = $model->union_code . str_pad(($data['auto_code']), $auto_code_lenght, '0', STR_PAD_LEFT);
+            if ($keyPattern['ref_code_type'] == 0) {
+                $model->ref_code = $pk_code;
+            } else if ($keyPattern['ref_code_type'] == 1) {
+                $prefix_seq = explode(',', $keyPattern['prefix_field']);
+                $ref_code = ($keyPattern['ref_code_length'] > 0 ) ? str_pad($data['ref_code'], $keyPattern['ref_code_length'], '0', STR_PAD_LEFT) : '';
+                $model->ref_code = '';
+                foreach ($prefix_seq as $pre) {
+                    $pre_info = explode(':', $pre);
+                    if (isset($pre_info[1])) {
+                        $t_info = explode('#', $pre_info[0]);
+                        $table_name = $t_info[0];
+                        $where_key = $t_info[1];
+                        $where_val = isset($t_info[2]) ? $t_info[2] : $t_info[1];
+                        $append_field = $pre_info[1];
+                        $query = new Query();
+                        $res = $query->select($append_field)
+                                        ->from($table_name)
+                                        ->where([$where_key => $model->{$where_val}])->one();
+                        if (!empty($res)) {
+                            $model->ref_code .= $res[$append_field];
+                        } else {
+                            $message = 'Ref Code : No Data Found for ' . $table_name . '(' . $where_key . '=' . $model->{$where_val} . ')';
+                            $model->addError('ref_code', $message);
+                            return;
+                        }
+                    } else {
+                        $model->ref_code .= $model->{$pre};
+                    }
+                }
+                $model->ref_code .= $ref_code;
+            } else if ($keyPattern['ref_code_type'] == 2) {
+                $model->ref_code = $pk_code;
+            }
+            $model->ref_code = str_pad(($model->ref_code), $ref_code_fix_length, '0', STR_PAD_LEFT);
+            return $pk_code;
+        } else {
+            $model->addError('auto_code', Yii::t('app/validation', 'Key pattern config missing.'));
+            return;
+        }
+    }
+
+    public function validateRefMember($dcs_code, $memberCode) {
+        return $this->find()->where(['dcs_code' => $dcs_code, 'is_active' => 1])
+                        ->andWhere(['or', ['member_code' => $memberCode], ['ref_code' => $memberCode]])->one();
+    }
+
+    public function getActiveStatus() {
+        return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'member_code'])->andOnCondition(['customer_type' => 'Member']);
     }
 
 }

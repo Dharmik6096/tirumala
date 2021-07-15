@@ -321,6 +321,13 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('product_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {

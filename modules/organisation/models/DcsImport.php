@@ -20,8 +20,8 @@ class DcsImport extends TblDcs {
 
         $rules = [
             [['bmc_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-                }, 'on' => ['importCsv']],
+            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+        }, 'on' => ['importCsv']],
             [['union_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'dcs_name', 'dcs_short_name'], 'required', 'on' => ['customImport']],
             [['dpu_type'], 'required', 'on' => 'importCsv'],
             [['union_code'], 'validateUnionCode'],
@@ -35,8 +35,9 @@ class DcsImport extends TblDcs {
             [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
             [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
             [['dpu_type'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
-                }, 'on' => 'importCsv']
+            Yii::$app->general->validateGlobalStatic($this, $attribute, 'dpu_type');
+        }, 'on' => 'importCsv'],
+            ['auto_member_create', 'in', 'range' => [0, 1], 'on' => ['importCsv'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Create Auto Member either 1 or 0')],
         ];
 
         foreach ($rules as $row) {
@@ -149,5 +150,5 @@ class DcsImport extends TblDcs {
             $this->effective_date = !empty($this->effective_date) ? Yii::$app->controls->view_date($this->effective_date, 'php:Y-m-d') : NULL;
         }
     }
-
+    
 }

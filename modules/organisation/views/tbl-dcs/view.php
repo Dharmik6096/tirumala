@@ -379,7 +379,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
-                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'value' => $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [

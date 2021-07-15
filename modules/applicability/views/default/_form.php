@@ -267,7 +267,7 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-
+    $('.kv-panel-before').hide();
     function checkBoxFilter(val){
         var id = $(val).attr('id');
         var value = $(val).val();

@@ -4749,6 +4749,63 @@ table.dataTable thead .search_filter input[type="text"] {
     font-weight: 600;
     font-size: 13px;
 }
+.fixed-table-container {
+    height: 300px;
+    /*box-sizing: border-box;*/
+    /*border: 1px solid #ccc;*/
+}
+.fixed-table-container table {
+    /*border-collapse: collapse;*/
+    width: 100%;
+}
+.fixed-table-container th,
+.fixed-table-container td {
+    /*  border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;*/
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+
+    /**
+      * Current implementation doesn't work when
+      * cells in a row have different heights
+      */
+    white-space: nowrap !important;
+}
+.fixed-table-container th {
+    background: #eee;
+    /*font-size: 12px;*/
+    /*line-height: 16px;*/
+}
+.fixed-table-container td:first-child {
+    background: #eee;
+    color:  rgb(122, 35, 28) !important;
+    font-weight: 600;
+}
+.fixed-table-container tr:last-child td {
+    border-bottom: 0;
+}
+.fixed-table-container th:last-child,
+.fixed-table-container td:last-child {
+    border-right: 0;
+}
+
+.fixed-table-container tr td, .fixed-table-container tr th{
+    border-top:none !important;
+    border-bottom:none !important
+}
+
+.fixed-table-container tbody tr td:first-child, .fixed-table-container thead tr th:first-child{
+    border-right:0;
+}
+
+.fixed-table-container tbody{
+    margin-left: -1px;
+}
+
+.fixed-table-container tbody tr:first-child{
+    margin-top:-1px;
+}
 
 tr.highlightRow {
     background: #FCE4E2  !important;

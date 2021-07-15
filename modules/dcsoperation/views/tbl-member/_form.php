@@ -350,5 +350,11 @@ $script = "
        var name = $('#tblmember-member_name').val();
        $('#tblmember-beneficiary_name').val(name);
     });
+    
+    $('#tblmember-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
 $this->registerJs($script, View::POS_END, 'union');

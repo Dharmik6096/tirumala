@@ -48,6 +48,7 @@ use app\modules\payment\models\TblPaymentCycleApplicability;
 use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
+use app\modules\organisation\models\TblCustomerMaster;
 
 class GeneralFunctions extends Component {
 
@@ -807,7 +808,7 @@ class GeneralFunctions extends Component {
         return FALSE;
     }
 
-    public function base64url_encode($data){
+    public function base64url_encode($data) {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
@@ -1370,6 +1371,8 @@ class GeneralFunctions extends Component {
         } else if ($refCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'ref_code');
+            } else if (strtolower($type) == 'member') {
+                $name = $this->getforeignkey($model->memberCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
@@ -1473,8 +1476,22 @@ class GeneralFunctions extends Component {
         if (strtolower($model->customer_type) != 'dcs') {
             $prefix = $this->getforeignkey($model->customerType, 'code_prefix');
             $length = $this->getforeignkey($model->customerType, 'code_length');
-            $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
-            $Code = $this->getforeignkey($model->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($model->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $model->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $model->customer_type])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $model->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                $Code = $this->getforeignkey($model->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }
@@ -1607,7 +1624,7 @@ class GeneralFunctions extends Component {
                     $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' can not be blank.'));
                 }
             }
-            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as int)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
+            $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as bigint)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
                     ->where(['union_code' => $model->union_code])
                     ->asArray()
                     ->one();
@@ -1697,7 +1714,11 @@ class GeneralFunctions extends Component {
             $ftpDir = $this->getFTPDirStructure($cp_code);
             foreach ($ftpDir as $dir) {
                 $ftp->ftp_path = $ftpData->ftp_path . $dir;
-                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
+                $localDirPath = \Yii::$app->params['biplDirPath'] . $dir;
+                $localDirPath = Yii::$app->basePath . '/' . str_replace(Yii::$app->basePath, '', $localDirPath);
+                $localDirPath = str_replace('\\', '/', $localDirPath);
+                if ($ftp->CreateDirectory() && $this->checkDirectory($localDirPath)) {
+//                if ($ftp->CreateDirectory() && $this->checkDirectory(\Yii::$app->params['biplDirPath'] . $dir)) {
                     $status = true;
                 } else {
                     $status = false;
