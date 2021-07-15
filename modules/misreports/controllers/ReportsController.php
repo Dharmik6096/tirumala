@@ -677,6 +677,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCcMilkPayment() {
+        $this->report = 'CcMilkPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerFarmPayment() {
+        $this->report = 'FarmerFarmPayment';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1657,6 +1667,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_pm_advance',
                 'scenario' => 'AdvancePm',
                 'title' => 'PM Advance',
+            ],
+            'CcMilkPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_cc_milk_payment',
+                'scenario' => 'CcMilkPayment',
+                'title' => '617 - CC Milk Payment',
+            ],
+            'FarmerFarmPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_farm_payment',
+                'scenario' => 'FarmerFarmPayment',
+                'title' => '618 - Farmer And Farm Payment',
             ],
         ];
         return $label[$l];

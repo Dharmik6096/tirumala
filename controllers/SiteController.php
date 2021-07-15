@@ -852,8 +852,12 @@ class SiteController extends Controller {
         $dcs_str = str_replace(',', '-', $dcs_str);
         $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
+        $customer_type = '';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
+        }
+        if (!empty(Yii::$app->request->post('customer_type'))) {
+            $customer_type = Yii::$app->request->post('customer_type');
         }
         $array = [
             'fed_union' => [
@@ -958,11 +962,11 @@ class SiteController extends Controller {
             ],
             'top_dcs_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type,
             ],
             'top_rmrd_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS',
             ],
         ];
         return $array[$sp];
