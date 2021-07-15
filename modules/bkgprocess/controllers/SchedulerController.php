@@ -596,7 +596,7 @@ class SchedulerController extends ChildController {
 
         if (in_array($today, ['01', '06', '11', '16', '21', '26'])) {
             if ($today == '01') {
-                $fromDate = date("Y-m", strtotime($lastDate)) . '-27' . ' 06:00:00.000';
+                $fromDate = date("Y-m", strtotime($lastDate)) . '-26' . ' 06:00:00.000';
                 $toDate = $lastDate . ' 18:00:00.000';
             } else {
                 $fromDate = date('Y-m-d', strtotime($date . ' -5 day')) . ' 06:00:00.000';
