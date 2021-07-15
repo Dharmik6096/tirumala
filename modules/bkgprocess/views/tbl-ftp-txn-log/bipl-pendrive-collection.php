@@ -102,18 +102,22 @@ $this->title = 'BIPL Files Process';
                                                 var newdate = date.split("-").reverse().join("");
                                                 finalDate = newdate.substring(2, 8);    
                                             }
+                                            var allowSave = true;
                                             var fileArray = file.split(",");
                                               $.each(fileArray, function(index, value) {
                                                 finalFile = value.substring(0, 6);
-                                                    if(finalFile != finalDate){
+                                                    if(allowSave && finalFile != "" && finalFile != undefined && finalFile != finalDate){
                                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Must be of selected Date</span></div></div>", function(result){
                                                        });
-                                                       return false;
+                                                       allowSave = false;
                                                     }
                                             }); 
-                                           
-                                            $("#loadercontent").show();
-                                            $("#pageloader").show();
+                                            if(!allowSave) {
+                                                return false;
+                                            } else {
+                                                $("#loadercontent").show();
+                                                $("#pageloader").show();
+                                            }
                                     }'),
                     'success' => new \yii\web\JsExpression('function(data){                                   
                                             $("#pageloader").hide();
