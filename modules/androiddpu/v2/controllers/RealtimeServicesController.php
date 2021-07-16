@@ -73,11 +73,15 @@ class RealtimeServicesController extends RestController {
 
     public function actionPurchaseRateDetail() {
         $data = $this->post_data;
+        $org_code = $data['organization_code'];
+        $org_type = $data['organization_type'];
+        $dcs_code = !empty($orgDetail['dcs_code']) ? implode(',', $orgDetail['dcs_code']) : '0';
+        $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
         $model = new TblPurchaseRateDetails();
         $model->attributes = $data['content'];
         $model->rate_type = empty($model->rate_type) ? 'MEMBER' : $model->rate_type;
         $model->rate_class = empty($model->rate_class) ? '0' : $model->rate_class;
-        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type, $model->rate_class]);
+        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$model->purchase_rate_code, $model->milk_quality_type_code, $model->milk_type_code, $model->rate_type, $model->rate_class, $dcs_code]);
         if (!empty($res_data)) {
             $res_data = array_column($res_data, 'detail');
         }
