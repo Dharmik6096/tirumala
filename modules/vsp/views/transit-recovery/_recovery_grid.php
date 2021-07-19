@@ -188,7 +188,7 @@ $script = '
         });
 
         var qty_diff_responsibility_value = $(".qty_diff_responsibility-"+row_number+" #dropdown_value").val();
-        var data_append = "<select class=\'dd_qty_diff_responsibility\' id=\'dd_qty_diff_responsibility-"+row_number+"\' name = \'qty_diff_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option></select>"
+        var data_append = "<select class=\'dd_qty_diff_responsibility\' id=\'dd_qty_diff_responsibility-"+row_number+"\' name = \'qty_diff_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'2\'>MCC</option></select>"
         $(".qty_diff_responsibility-"+row_number).html(data_append);
         $("#dd_qty_diff_responsibility-"+row_number).val(qty_diff_responsibility_value);
     });
