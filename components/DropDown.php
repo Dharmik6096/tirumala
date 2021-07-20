@@ -1229,6 +1229,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'In-Active'), '1' => Yii::t('app', 'Active')],
             ],
+            'party_rate_type' => [
+                'name' => 'party_rate_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Qty' => Yii::t('app', 'Qty'), '60/40' => Yii::t('app', '60/40'), '52/48' => Yii::t('app', '52/48')],
+            ],
         ];
         return $records[$l];
     }
