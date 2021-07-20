@@ -240,6 +240,11 @@ if ($model->is_active == 1) {
                             'attribute' => 'total_land',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
+                        [
+                            'attribute' => 'rate_class',
+                            'value' => !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
                     ],
                 ],
                 [

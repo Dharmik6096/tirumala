@@ -83,6 +83,11 @@ $attribute = [
             return $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active';
         },
     ],
+    ['attribute' => 'rate_class',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('rate_class', $searchModel, 'rate_class'),
+        'value' => function ($model) {
+            return !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '';
+        }, 'visible' => FALSE],
 ];
 
 $grid_option = [

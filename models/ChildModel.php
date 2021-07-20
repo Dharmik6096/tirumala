@@ -10,6 +10,7 @@ namespace app\models;
 use yii\base\UserException;
 use app\components\GeneralFunctions;
 use Yii;
+use yii\base\InvalidParamException;
 
 /**
  * Description of childModel

@@ -38,6 +38,7 @@ if ($model->isNewRecord) {
     $type = 'edit';
     $disabled = true;
 }
+$config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'])) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'] : 0;
 ?>
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
@@ -129,6 +130,11 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
+        <?php if ($config == 1) { ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
+            </div>
+        <?php } ?>
     </div>
     <!-- <div class="clearfix"></div>
     <div class="col-sm-12">

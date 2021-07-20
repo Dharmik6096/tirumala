@@ -93,7 +93,10 @@ class MemberImport extends TblMember {
             [['dcs_code'], 'setBankDetail', 'on' => ['importCsv']],
             [['rate_class'], 'default', 'value' => '0'],
             [['dcs_code'], 'setVerified', 'on' => ['importCsv']],
-            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']]
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+            [['rate_class'], function ($attribute, $params) {
+                    !empty($this->rate_class) ? Yii::$app->general->validateGlobalStatic($this, $attribute, 'rate_class') : '';
+                }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
                 /*  [['dob'], function ($attribute, $params) {
                   Yii::$app->general->validateAge($this, $attribute, $params);
                   }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync']],
