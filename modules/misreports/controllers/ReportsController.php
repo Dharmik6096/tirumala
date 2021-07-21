@@ -687,6 +687,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRateApplicabilityDetailsHistory() {
+        $this->report = 'RateApplicabilityDetailsHistory';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1679,6 +1684,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_farmer_farm_payment',
                 'scenario' => 'FarmerFarmPayment',
                 'title' => '618 - Farmer And Farm Payment',
+            ],
+            'RateApplicabilityDetailsHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_rate_applicability_details_history',
+                'scenario' => 'RateApplicabilityDetailsHistory',
+                'title' => '913 - Rate Applicability Details History',
             ],
         ];
         return $label[$l];

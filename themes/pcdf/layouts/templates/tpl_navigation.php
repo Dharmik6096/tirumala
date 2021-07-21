@@ -530,6 +530,7 @@ echo GhostMenu::widget([
                         ['label' => '910-' . Yii::t('app', 'Member Reception Status'), 'url' => ['/misreports/reports/member-reception-status']],
                         ['label' => '911-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/reports/shift-wise-auto-manual']],
                         ['label' => '912-' . Yii::t('app', 'Monthly Comparison Report'), 'url' => ['/misreports/reports/milk-and-bmc-collection-monthly-comparision']],
+                        ['label' => '913-' . Yii::t('app', 'Rate Applicability Detail History'), 'url' => ['/misreports/reports/rate-applicability-details-history']],
                     ]
                 ],
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
