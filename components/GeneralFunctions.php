@@ -1862,6 +1862,21 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function shiftLock($model, $dateParam, $codeParam) {
+        if (!empty($model->$dateParam)) {
+            $showError = !empty($showError) ? $showError : $dateParam;
+
+            $payment_model = new \app\modules\collection\models\TblMccShiftLock();
+            $data = $payment_model->find()
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'date_time_of_collection' => $model->$dateParam, 'data_lock' => 1])
+                    ->one();
+            if (!empty($data)) {
+                $model->addError($showError, "Shift Lock Is Already Lock");
+                return false;
+            }
+        }
+    }
+
     public function validateBMC($model, $attribute) {
         $bmcModel = new TblDcsBmc();
         $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();

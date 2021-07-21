@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
 use kartik\grid\GridView;
+use app\modules\dcsoperation\models\TblPurchaseRate;
 ?>
 <div class="pt5 clearfix large-search">
     <?php echo $this->render('_recalculation_search', ['searchModel' => $searchModel, 'model' => $model, 'rtype' => $rtype]); ?>
@@ -13,7 +14,6 @@ $rec_data = !empty($dataProvider) ? $dataProvider->allModels : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'recalculation-form'],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -80,7 +80,12 @@ if (!empty($rec_data) && $rtype == 'forced') {
                     $shift = explode(' ', $model['wef_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
                     return Yii::$app->controls->view_date($model['wef_date']) . $shift;
                 }, 'filter' => false],
-            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
+//            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
+            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => function($model) {
+                    $modelPurchase = new TblPurchaseRate();
+                    $dcsRate = $modelPurchase->find()->where(['purchase_rate_code' => $model['purchase_rate_code']])->one();
+                    return (!empty($dcsRate) && $model['recalc_for'] == 'Member') ? $model['purchase_rate_code'] . ' (' . $dcsRate->dcs_purchase_rate_code . ')' : $model['purchase_rate_code'];
+                }, 'visible' => true, 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
@@ -96,7 +101,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
     }
     ?>
 
-<div class="form-group pt5">
+    <div class="form-group pt5">
         <?php if (!empty($rec_data)) { ?>
             <span class="btn_show">
                 <?php

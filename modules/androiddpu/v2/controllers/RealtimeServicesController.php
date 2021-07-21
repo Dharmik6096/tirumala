@@ -76,7 +76,7 @@ class RealtimeServicesController extends RestController {
         $org_code = $data['organization_code'];
         $org_type = $data['organization_type'];
         $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
-        $dcs_code = !empty($orgDetail['dcs_code']) ? implode(',', $orgDetail['dcs_code']) : '0';
+        $dcs_code = !empty($orgDetail['dcs_code']) ? ',' . implode(',', $orgDetail['dcs_code']) . ',' : '0';
         $model = new TblPurchaseRateDetails();
         $model->attributes = $data['content'];
         $model->rate_type = empty($model->rate_type) ? 'MEMBER' : $model->rate_type;
