@@ -24,7 +24,7 @@ if (strtotime($fDate) > strtotime($curDate)) {
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
-                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Activate DCS') . $fDate . ':' . $curDate ?></h4>
+                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Activate DCS') ?></h4>
             </div>
 
             <div class='row pad-10'>
