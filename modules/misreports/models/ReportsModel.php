@@ -100,6 +100,7 @@ class ReportsModel extends Model {
             'transporter_code' => \Yii::t('app', 'Transporter'),
             'vehicle_code' => \Yii::t('app', 'Vehicle'),
             'route_type_trans' => \Yii::t('app', 'Route Type'),
+            'member' => \Yii::t('app', 'Member'),
         ];
     }
 

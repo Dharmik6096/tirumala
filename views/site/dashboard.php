@@ -1476,6 +1476,7 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                     htmlData = htmlData + '<td>'+value.cc_avg_snf+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_avg_rate+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_amount+'</td>';
+                    htmlData = htmlData + '<td>'+value.cc_no_of_farmers+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_count+'</td>';
                     // htmlData = htmlData + '<td>'+value.cc_online+'</td>';
                     // htmlData = htmlData + '<td>'+value.cc_pendrive+'</td>';

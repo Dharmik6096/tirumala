@@ -517,7 +517,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $searchModel = new TblProductSaleSearch();
         $searchModel->grid_filter = false;
         $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
-        $message = 'Product Sale to Member';
+        $message = Yii::t('app', 'Product Sale to Member');
         if (Yii::$app->request->post()) {
             return $this->createProductSaleData($model, $detailModel, $message);
         } else {
