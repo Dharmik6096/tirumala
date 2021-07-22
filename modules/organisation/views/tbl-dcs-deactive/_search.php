@@ -9,13 +9,22 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
 /* @var $form yii\widgets\ActiveForm */
+$fDate = !empty($ActiveModel->from_date) ? $ActiveModel->from_date : date('d-m-Y', strtotime('-6 day', strtotime(date('Y-m-d'))));
+$fDate = date('Y-m-d', strtotime('+1 day', strtotime($ActiveModel->from_date)));
+$curDate = date('Y-m-d');
+$curDate = date('Y-m-d', strtotime('-5 day', strtotime($curDate)));
+if (strtotime($fDate) > strtotime($curDate)) {
+    $minDate = date('d-m-Y', strtotime($fDate));
+} else {
+    $minDate = $curDate;
+}
 ?>
 <div class="modal modal-default fade" id="DCSActiveModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
-                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Activate DCS') ?></h4>
+                <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Activate DCS') . $fDate . ':' . $curDate ?></h4>
             </div>
 
             <div class='row pad-10'>
@@ -30,7 +39,7 @@ use yii\web\JsExpression;
                     ?>
 
                     <div class="col-sm-6">
-                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, date('d-m-Y')); ?> 
+                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, $minDate); ?> 
                     </div>
                     <div class="col-sm-6">
                         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>
