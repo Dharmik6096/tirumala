@@ -143,7 +143,8 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
-                    'ActiveModel' => $ActiveModel
+                    'ActiveModel' => $ActiveModel,
+                    'customer_deactive_code' => $customer_deactive_code
         ]);
     }
 

@@ -34,7 +34,7 @@ if (strtotime($fDate) > strtotime($curDate)) {
                                     'class' => 'form-group popup-form',
                                     'id' => 'activate-dcs-form',
                                 ],
-                                'action' => Url::to(['/organisation/tbl-dcs-deactive/activate-dcs'])
+                                'action' => Url::to(['/organisation/tbl-dcs-deactive/activate-dcs', 'dcs_deactive_code' => $dcs_deactive_code])
                     ]);
                     ?>
 
@@ -53,7 +53,7 @@ if (strtotime($fDate) > strtotime($curDate)) {
                                 'label' => Yii::t('app', 'Save'),
                                 'ajaxOptions' => [
                                     'type' => 'POST',
-                                    'url' => Url::to(['activate-dcs']),
+                                    'url' => Url::to(['activate-dcs', 'dcs_deactive_code' => $dcs_deactive_code]),
                                     'beforeSend' => new JsExpression("function(data){
 //                                                $('#loadercontent').show();
 //                                                $('#pageloader').show();
@@ -75,8 +75,13 @@ if (strtotime($fDate) > strtotime($curDate)) {
                                                                     $(".form-group").removeClass("has-error");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                    console.log(data);
                                                                     $.each(data, function(key, val) {
                                                                         $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        $("#"+key).closest(".form-group").removeClass("has-error");
+                                                                        $(".field-"+key+" .help-block").html("");
+                                                                        $(".field-"+key+" .help-block").html(val);
+                                                                        $("#"+key).closest(".form-group").addClass("has-error");
                                                                     });
                                                                     $(".error-summary").show();
                                                                 }
