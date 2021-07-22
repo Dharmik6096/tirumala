@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\web\Response;
+use yii\helpers\Json;
+use kartik\widgets\ActiveForm;
 
 /**
  * TblCustomerDeactiveController implements the CRUD actions for TblCustomerDeactive model.
@@ -143,7 +146,8 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
-                    'ActiveModel' => $ActiveModel
+                    'ActiveModel' => $ActiveModel,
+                    'customer_deactive_code' => $customer_deactive_code
         ]);
     }
 

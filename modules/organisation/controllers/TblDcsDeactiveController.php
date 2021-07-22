@@ -144,7 +144,8 @@ class TblDcsDeactiveController extends \app\controllers\ChildController {
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
-                    'ActiveModel' => $ActiveModel
+                    'ActiveModel' => $ActiveModel,
+                    'dcs_deactive_code' => $dcs_deactive_code
         ]);
     }
 
