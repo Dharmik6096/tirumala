@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\web\Response;
+use yii\helpers\Json;
+use kartik\widgets\ActiveForm;
 
 /**
  * TblCustomerDeactiveController implements the CRUD actions for TblCustomerDeactive model.
