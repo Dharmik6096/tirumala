@@ -120,9 +120,9 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         $model = new TblCustomerDeactive();
         $model->scenario = 'activeCustomer';
         $model->customer_deactive_code = $customer_deactive_code;
+        $ActiveModel = $this->findModel($model->customer_deactive_code);
         if (Yii::$app->request->post()) {
             $model->load(Yii::$app->request->post());
-            $ActiveModel = $this->findModel($model->customer_deactive_code);
 //            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
             $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime('-1 day', strtotime($model->to_date))) : NULL;
             $ActiveModel->scenario = 'activeCustomer';
@@ -143,6 +143,7 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
+                    'ActiveModel' => $ActiveModel
         ]);
     }
 

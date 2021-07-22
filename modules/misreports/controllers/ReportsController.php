@@ -766,8 +766,22 @@ class ReportsController extends \app\controllers\ChildController {
         if (!empty($output)) {
             $attr = '';
             $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecrypt = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecryptCheck = false;
             foreach ($output[0] as $att => $value) {
                 $attr .= "'" . $att . "',";
+                if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {
+                    $dataToDecryptCheck = true;
+                }
+            }
+            if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
+                for ($i = 0; $i < count($output); $i++) {
+                    foreach ($dataToDecrypt as $decKey) {
+                        if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
+                            $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                        }
+                    }
+                }
             }
             $this->dataProvider = new ArrayDataProvider([
                 'allModels' => $output,
@@ -1567,7 +1581,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_shift_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
@@ -1575,7 +1589,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
@@ -1583,7 +1597,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_consolidated_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
