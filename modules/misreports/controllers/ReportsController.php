@@ -692,6 +692,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMissingShift() {
+        $this->report = 'MissingShift';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -1704,6 +1709,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_rate_applicability_details_history',
                 'scenario' => 'RateApplicabilityDetailsHistory',
                 'title' => '913 - Rate Applicability Details History',
+            ],
+            'MissingShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_collection_shift',
+                'scenario' => 'MissingShift',
+                'title' => 'Missing Shift',
             ],
         ];
         return $label[$l];
