@@ -60,7 +60,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                 <thead class="dashboardWidgetDetailPortion">
                         <tr>
                             <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC') ?></th> -->
-                            <th rowspan='2'><?= Yii::t('app', 'BMC') ?></th>
+                            <th rowspan='2'><?= Yii::t('app', 'BMC ') ?></th>
                             <th colspan='7'><?= Yii::t('app', 'CC Collection') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
                             <th colspan='6'><?= Yii::t('app', 'Bulk Vendor Receipt') ?></th>
