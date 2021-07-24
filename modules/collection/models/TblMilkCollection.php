@@ -159,7 +159,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
         ];
     }
 
