@@ -1757,8 +1757,12 @@ class ReportsController extends \app\controllers\ChildController {
                 if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
                     $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
                 }
-                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
-                    echo "<td>" . $value . "</td>";
+                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) != 0 || substr($value, 0, 1) == '.' || substr($value, 0, 2) == '0.')) {
+                    if (substr($value, 0, 1) == '.') {
+                        echo "<td>0" . $value . "</td>";
+                    } else {
+                        echo "<td>" . $value . "</td>";
+                    }
                 } else {
                     echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
                 }
