@@ -2547,7 +2547,7 @@ class SiteController extends Controller {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
             $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $status = !empty($data['widget_for']) ? $data['widget_for'] : '';
+            $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
@@ -2620,7 +2620,7 @@ class SiteController extends Controller {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
             $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $status = !empty($data['widget_for']) ? $data['widget_for'] : '';
+            $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;
