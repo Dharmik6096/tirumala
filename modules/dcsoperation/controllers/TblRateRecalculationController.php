@@ -10,11 +10,16 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\web\Response;
+use yii\helpers\Json;
+use app\modules\payment\models\TblPaymentCycleApplicability;
 
 /**
  * TblRateRecalculationController implements the CRUD actions for TblRateRecalculation model.
  */
 class TblRateRecalculationController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['check-lock-payment'];
 
     /**
      * Lists all TblRateRecalculation models.
@@ -340,6 +345,50 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
             }
         }
         return $this->redirect(['index']);
+    }
+
+    public function actionCheckLockPayment() {
+        $response = [];
+        $response['status'] = 'success';
+        $response['msg'] = '';
+
+        $postData = Yii::$app->request->post()['selection'];
+        $searchData = Yii::$app->request->post()['TblRateRecalculationSearch'];
+
+        foreach ($postData as $detail) {
+            $expload = explode('###', $detail);
+
+            if (!empty(Yii::$app->request->post()['TblRateRecalculation'])) {
+                $fromDate = Yii::$app->formatter->asDate($searchData['from_date'], 'php:Y-m-d');
+                $toDate = Yii::$app->formatter->asDate($searchData['to_date'], 'php:Y-m-d');
+                $type = $expload[1];
+                $for = $expload[2];
+                $name = $expload[3];
+            } else {
+                $fromDate = Yii::$app->formatter->asDate($expload[2], 'php:Y-m-d');
+                $toDate = Yii::$app->formatter->asDate($expload[3], 'php:Y-m-d');
+                $type = $expload[4];
+                $for = $expload[5];
+                $name = $expload[6];
+            }
+            $flagArray = $for == 'Member' ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
+            $payment_model = new TblPaymentCycleApplicability;
+            $data = $payment_model->find()
+                    ->where(['union_code' => $searchData['union_code'], 'applicable_code' => $searchData['bmc_code'], 'applicable_for' => 'BMC', 'applicable_type' => $type])
+                    ->andWhere(['or', ['AND', ['<=', 'CAST(from_date as date)', $fromDate], ['>=', 'CAST(to_date as date)', $fromDate]], ['AND', ['<=', 'CAST(from_date as date)', $toDate], ['>=', 'CAST(to_date as date)', $toDate]]])
+                    ->one();
+
+            if (!empty($data)) {
+                foreach ($flagArray as $flag) {
+                    if ($data->$flag == 1) {
+                        $response['msg'] = 'Payment Cycle is Locked For <b>' . $name . '</b>, Recal For <b>' . $for . '</b>';
+                        $response['status'] = 'error';
+                    }
+                }
+            }
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }
