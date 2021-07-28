@@ -82,6 +82,7 @@ class DcsImportStrategy extends ARImportStrategy {
                     $modelList = [];
                     $deleteModel = [];
                     $model->setModel();
+                    $model->dcs_code = $model->getValidDcs($model->dcs_code);
                     Yii::$app->general->validateBMC($model, 'bmc_code', 'bmc_code');
                     $model->mcc_plant_code = Yii::$app->general->getforeignkey($model->bmcCode, 'mcc_plant_code');
                     $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
