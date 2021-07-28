@@ -16,79 +16,100 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
         <div class="table-responsive">
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'union_code',
                             'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
+                            'attribute' => 'registration_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'transporter_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
                             'attribute' => 'transporter_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
-                            'attribute' => 'local_name',
+                            [
+                            'attribute' => 'vendor_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
-                            'attribute' => 'registration_no',
+                            [
+                            'attribute' => 'billing_type_code',
+                            'value' => Yii::$app->general->getforeignkey($model->billingType, 'billing_type'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'local_name',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'group' => true,
                     'label' => 'Address Details',
                     'rowOptions' => ['class' => 'bg-default']
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'address',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ]
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'district_code',
                             'value' => isset($model->districtCode) ? $model->districtCode->district_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'sub_district_code',
                             'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'village_code',
                             'value' => isset($model->villageCode) ? $model->villageCode->village_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'hamlet_code',
                             'value' => isset($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'pincode',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'phone_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -132,12 +153,12 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
 //                    'columns' => [
 //                        [
 //                            'attribute' => 'bank_code',
-//                            'value' => isset($model->bankCode) ? $model->bankCode->bank_name:'',
+//                            'value' => isset($model->bankCode) ? $model->bankCode->bank_name : '',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                        [
 //                            'attribute' => 'branch_code',
-//                            'value' => isset($model->branchCode) ? $model->branchCode->branch_name:'',
+//                            'value' => isset($model->branchCode) ? $model->branchCode->branch_name : '',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                    ],
@@ -156,56 +177,70 @@ $this->params['menu'][] = Yii::$app->controls->update($model->transporter_code);
 //                ],
                 [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'gstin',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'tds_per',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'pan_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'beneficiary_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
+                            'attribute' => 'agreement_from_date',
+                            'value' => Yii::$app->controls->view_date($model->agreement_from_date),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'agreement_to_date',
+                            'value' => Yii::$app->controls->view_date($model->agreement_to_date),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'agreement_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'declaration',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'security_cheque_no',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'security_amount',
                             'format' => Yii::$app->general->CurrencyFormat(),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',

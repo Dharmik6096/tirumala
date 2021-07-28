@@ -1234,6 +1234,26 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Qty' => Yii::t('app', 'Qty'), '60/40' => Yii::t('app', '60/40'), '52/48' => Yii::t('app', '52/48')],
             ],
+            'vehicle_use_type' => [
+                'name' => 'vehicle_use_type',
+                'prompt' => Yii::t('app', 'Billing Type'),
+                'data' => [0 => Yii::t('app', 'Primary'), 1 => Yii::t('app', 'Secondary'), 2 => Yii::t('app', 'Both')],
+            ],
+            'billing_qty_flag' => [
+                'name' => 'billing_qty_flag',
+                'prompt' => Yii::t('app', 'Select Flag'),
+                'data' => [1 => Yii::t('app', 'Actual QTY'), 2 => Yii::t('app', 'Vehicle Capacity'), 3 => Yii::t('app', 'Higher QTY')],
+            ],
+            'is_single_farmer' => [
+                'name' => 'is_single_farmer',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Yes'), 0 => Yii::t('app', 'No')],
+            ],
+            'place_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['mcc' => Yii::t('app', 'MCC'), 'plant' => Yii::t('app', 'PLANT'), 'vendor' => Yii::t('app', 'VENDOR')],
+            ],
         ];
         return $records[$l];
     }

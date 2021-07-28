@@ -1,7 +1,7 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Vehicle KM Information'));
-$this->params['menu'][] = Yii::$app->controls->add('Vehicle KM Info');
-//$this->params['menu'][] = Yii::$app->controls->import('vehicle-km-info', $this);
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Location Wise KM'));
+$this->params['menu'][] = Yii::$app->controls->add('Location Wise KM');
+$this->params['menu'][] = Yii::$app->controls->import('location-wise-km', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

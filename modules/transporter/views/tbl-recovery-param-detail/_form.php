@@ -1,0 +1,47 @@
+<?php
+
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+
+$readonly = $type == 'create' ? FALSE : TRUE;
+?>
+
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            'validateOnEnter' => TRUE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
+?>
+<?php echo $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblrecoveryparamdetail-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
+    </div>
+    <div class="col-sm-3 number-validate">
+        <?= $form->field($model, 'chilling_cost')->textInput() ?>
+    </div>
+    <div class="col-sm-3 number-validate">
+        <?= $form->field($model, 'incentive_value')->textInput() ?>
+    </div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
+</div>
+
+<?php ActiveForm::end(); ?>
+
+

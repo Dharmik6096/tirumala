@@ -5,20 +5,20 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => FALSE],
-    ['attribute' => 'transporter_code', 'value' => function($model) {
+        }, 'visible' => true],
+        ['attribute' => 'transporter_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
         },
         'filter' => false],
-    ['attribute' => 'vehicle_code', 'value' => function($model) {
+        ['attribute' => 'vehicle_code', 'value' => function($model) {
             return isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '';
         }, 'filter' => false],
-    ['attribute' => 'route_code', 'value' => function($model) {
+        ['attribute' => 'route_code', 'value' => function($model) {
             return isset($model->routeCode) ? $model->routeCode->route_name : '';
         }, 'filter' => false],
-    ['attribute' => 'wef_date',
+        ['attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -27,11 +27,11 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    ['attribute' => 'shift_code', 'filter' => false, 'value' => 'shiftCode.shift'],
-    ['attribute' => 'morning_kms'],
-    ['attribute' => 'evening_kms'],
-//    ['attribute' => 'extra_kms'],
-    ['attribute' => 'total_kms'],
+        ['attribute' => 'shift_code', 'filter' => false, 'value' => 'shiftCode.shift'],
+        ['attribute' => 'morning_kms'],
+        ['attribute' => 'evening_kms'],
+        ['attribute' => 'extra_kms'],
+        ['attribute' => 'total_kms'],
 ];
 
 $grid_option = [

@@ -7,6 +7,9 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblCapacity;
 use app\modules\organisation\models\TblVehicleType;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\transporter\models\TblTransporter;
+use app\modules\transporter\models\TblFuelTypeMaster;
+use app\modules\transporter\models\TblBillingType;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -41,7 +44,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $billing_type, $remarks;
+    public $billing_type, $remarks, $vendor_code, $flag_wef_date, $billing_qty_flag;
 
     public static function tableName() {
         return 'tbl_vehicle_master';
@@ -52,46 +55,78 @@ class TblVehicleMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['pollution_certificate'], function ($attribute, $params) {
+                [['billing_with_capacity'], 'default', 'value' => 0],
+                [['pollution_certificate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => 'importCsv'],
-            [['insurance'], function ($attribute, $params) {
+                [['insurance'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => 'importCsv'],
-            [['billing_method'], function ($attribute, $params) {
+                [['billing_method'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'billing_method');
                 }, 'on' => 'importCsv'],
-            [['fuel_type_code'], function ($attribute, $params) {
+                [['fuel_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'fuel_type_code');
-                }, 'on' => 'importCsv'],
-            [['vehicle_type_code'], function ($attribute, $params) {
+                }, 'on' => ['importCsv', 'customImport']],
+                [['vehicle_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
-                }, 'on' => 'importCsv'],
-            [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required'],
-            [['union_code'], 'required', 'except' => ['importCsv']],
-            [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string'],
-            [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer'],
-            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method'], 'safe'],
-            [['rent', 'average'], 'number', 'min' => 0],
-            [['driver_contact_no'], function ($attribute, $params) {
+                }, 'on' => ['importCsv', 'customImport']],
+                [['vehicle_use_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'vehicle_use_type');
+                }, 'on' => ['importCsv', 'customImport']],
+                [['billing_qty_flag'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'billing_qty_flag');
+                }, 'on' => ['importCsv', 'vehicleWiseFlag']],
+                [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
+                [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_type_code'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
+                [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_type_code'], 'required', 'on' => 'importCsv'],
+                [['vehicle_type_code', 'fuel_type_code', 'capacity_code', 'vehicle_use_type'], 'required', 'except' => ['activation']],
+//                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
+//                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
+            [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
+                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'is_active'], 'integer', 'except' => ['activation']],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'vehicle_code', 'licence_expiry_date', 'bmc_code', 'billing_method', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity', 'flag_wef_date', 'billing_qty_flag'], 'safe'],
+                [['rent', 'average'], 'number', 'min' => 1],
+                [['driver_contact_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['driver_name'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['driver_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['registration_no', 'driving_license_number', 'rc_book_no', 'parsing_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['driving_license_number', 'parsing_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['parsing_no', 'rc_book_no'], 'unique'],
-            [['is_active'], 'default', 'value' => 1],
-            [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
-            [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code'], 'on' => ['importCsv']],
-            [['fuel_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFuelTypeMaster::className(), 'targetAttribute' => ['fuel_type_code' => 'fuel_type_code'], 'on' => ['importCsv']],
-            [['capacity_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCapacity::className(), 'targetAttribute' => ['capacity_code' => 'capacity_code'], 'on' => ['importCsv']],
-            [['wef_date', 'expiry_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['wef_date', 'expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['wef_date', 'expiry_date'], 'convertDate', 'on' => ['importCsv']],
-            [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['registration_no', 'rc_book_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['customImport', 'activation']],
+                [['parsing_no', 'rc_book_no'], 'unique', 'except' => ['activation']],
+                [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'except' => ['activation']],
+                [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code'], 'except' => ['activation']],
+                [['fuel_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFuelTypeMaster::className(), 'targetAttribute' => ['fuel_type_code' => 'fuel_type_code'], 'except' => ['activation']],
+                [['wef_date', 'expiry_date', 'licence_expiry_date', 'flag_wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => ['importCsv', 'customImport']],
+                [['is_active'], 'default', 'value' => 1],
+                [['rent'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return $model->billing_type_code == '1';
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#billing_type_code').val() == '1'; 
+          }", 'except' => ['activation']],
+                [['average'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return $model->billing_type_code == '3';
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#billing_type_code').val() == '3'; 
+          }", 'except' => ['activation']],
+                [['transporter_code'], 'parsingNoValidate', 'on' => ['importCsv']],
+                [['parsing_no'], function ($attribute, $params) {
+                    Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                }, 'except' => ['activation']],
+                [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
+                [['transporter_code'], 'pastDateValidate', 'on' => ['importCsv', 'customImport']],
+                [['flag_wef_date', 'billing_qty_flag'], 'required', 'on' => ['vehicleWiseFlag']],
+                [['capacity_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblCapacity::className(), 'targetAttribute' => ['capacity_code' => 'capacity_code'], 'on' => ['importCsv']],
+                [['wef_date', 'expiry_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date', 'expiry_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date', 'expiry_date'], 'convertDate', 'on' => ['importCsv']],
+                [['transporter_code'], 'importFieldSet', 'on' => ['importCsv']],
 //            [['parsing_no'], function ($attribute, $params) {
 //                    Yii::$app->general->validVehicleNumber($this, $attribute, $params);
 //                }],
@@ -120,8 +155,8 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'rc_book_no' => Yii::t('app', 'RC Book No'),
             'expiry_date' => Yii::t('app', 'Certificate Expiry Date'),
             'licence_expiry_date' => Yii::t('app', 'Licence Expiry Date'),
-            'rent' => Yii::t('app', 'Rent'),
-            'average' => Yii::t('app', 'Average'),
+            'rent' => Yii::t('app', 'Fix Freight'),
+            'average' => Yii::t('app', 'Average (Km/Ltr)'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -129,7 +164,9 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'fuel_type_code' => Yii::t('app', 'Fuel Type'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'billing_method' => Yii::t('app', 'Billing Type'),
+            'billing_type_code' => Yii::t('app', 'Billing Type'),
+            'vehicle_use_type' => Yii::t('app', 'Used for'),
+            'billing_with_capacity' => Yii::t('app', 'Billing With Capacity ?'),
         ];
     }
 
@@ -205,6 +242,61 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 'name' => $value->parsing_no . '/' . $value->vehicleType->vehicle_type_name);
         }
         return $vehicles;
+    }
+
+    public function fieldValidate($attribute, $params) {
+        $this->union_code = Yii::$app->general->getforeignkey($this->transporter, 'union_code');
+        $this->billing_type_code = Yii::$app->general->getforeignkey($this->transporter, 'billing_type_code');
+    }
+
+    public function getBillingType() {
+        return $this->hasOne(TblBillingType::className(), ['billing_type_code' => 'billing_type_code']);
+    }
+
+    public function pastDateValidate($attribute, $params) {
+        $this->licence_expiry_date = ($this->licence_expiry_date == '') ? null : Yii::$app->formatter->asDate($this->licence_expiry_date, DATE_FORMAT);
+        if (!empty($this->licence_expiry_date) && ($this->licence_expiry_date < date('Y-m-d'))) {
+            $this->addError('licence_expiry_date', Yii::t('app/validation', $this->getAttributeLabel('licence_expiry_date') . ' Must be Greater than ' . date('d-m-Y')));
+        }
+    }
+
+    public function parsingNoValidate($attribute, $params) {
+        $this->parsing_no = strtoupper($this->parsing_no);
+    }
+
+    public function setImportChild(&$model, &$modelSave, &$errors) {
+        if (in_array($model->vehicle_use_type, [1, 2])) {
+            $model->scenario = 'vehicleWiseFlag';
+            $childModel = new TblVehicleWiseQtyFlag();
+            $childModel->vehicle_wise_qty_flag_code = Yii::$app->general->getCodeAutoIncrement($childModel);
+            $childModel->vehicle_code = $model->vehicle_code;
+            $childModel->qty_flag = $model->billing_qty_flag;
+            $childModel->wef_date = ($model->flag_wef_date) ? Yii::$app->formatter->asDate($model->flag_wef_date, DATE_FORMAT) : NULL;
+            if (!$model->validate()) {
+                $errors[] = $model->getErrors();
+            }
+            array_push($modelSave, $childModel);
+        }
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+
+        if (in_array($model->vehicle_use_type, [1, 2])) {
+            $model->scenario = 'vehicleWiseFlag';
+            $childModel = new TblVehicleWiseQtyFlag();
+            $childModel->vehicle_code = $model->vehicle_code;
+            $childModel->qty_flag = $model->billing_qty_flag;
+            $childModel->wef_date = ($model->flag_wef_date) ? Yii::$app->formatter->asDate($model->flag_wef_date, DATE_FORMAT) : NULL;
+            $flagData = $childModel->getExistingFlag();
+            if (empty($flagData)) {
+                $childModel->vehicle_wise_qty_flag_code = Yii::$app->general->getCodeAutoIncrement($childModel);
+                array_push($modelSave, $childModel);
+            }
+            if (!$model->validate()) {
+                $errors[] = $model->getErrors();
+            }
+            $model->scenario = 'customImport';
+        }
     }
 
     public function afterSave($insert, $changedAttributes) {

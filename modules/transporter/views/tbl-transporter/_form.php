@@ -18,7 +18,6 @@ if (!empty($_POST)) {
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -43,6 +42,12 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'registration_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-4">
+            <?= $form->field($model, 'vendor_code')->textInput() ?>
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('billing_type_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('billing_type_code'), FALSE); ?>
         </div>
     </div>
     <div class="col-md-6 padding_10_0 theme_border_left theme-box">
@@ -84,13 +89,13 @@ $form = ActiveForm::begin([
             'model' => $contactDetails,
             'form' => $form
         ])
-        ?> <?php }?>
-        <div class="clearfix"></div>
+        ?> <?php } ?>
+    <div class="clearfix"></div>
 
-        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Bank Detail</h4>
-        </div>
-        <?php if($type == 'create'){?>
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+        <h4 class="theme-box-heading">Bank Detail</h4>
+    </div>
+    <?php if ($type == 'create') { ?>
         <?=
         $this->render('../../../details/views/tbl-bank-details/_form', [
             'model' => $bankDetails,
@@ -110,6 +115,12 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'agreement_from_date', '', '', false, false); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'agreement_to_date', '', '', false, false); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'agreement_no')->textInput() ?>
