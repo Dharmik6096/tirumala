@@ -39,7 +39,7 @@ class TblMccWiseTransportationCostHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['tpt_cost_code', 'originating_type'], 'safe'],
+            [['tpt_cost_code', 'originating_type', 'bmc_code'], 'safe'],
             [['union_code', 'mcc_plant_code', 'plant_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'safe'],
             [['primary_tpt_cost'], 'safe'],
             [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],

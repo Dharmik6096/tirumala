@@ -19,10 +19,10 @@ class TblTransporterTimeWisePenaltySearch extends TblTransporterTimeWisePenalty 
      */
     public function rules() {
         return [
-            [['penalty_code', 'originating_type'], 'integer'],
-            [['union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['penalty_amount', 'minute_limit'], 'number'],
-            [['from_date', 'to_date', 'mcc_plant_code', 'plant_code', 'wef_date'], 'safe']
+                [['penalty_code', 'originating_type'], 'integer'],
+                [['union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['penalty_amount', 'minute_limit'], 'number'],
+                [['from_date', 'to_date', 'mcc_plant_code', 'plant_code', 'wef_date', 'bmc_code'], 'safe']
         ];
     }
 
@@ -50,7 +50,7 @@ class TblTransporterTimeWisePenaltySearch extends TblTransporterTimeWisePenalty 
         ]);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_transporter_time_wise_penalty');
+        Yii::$app->general->filterByOrg($query, $this, '', 'tbl_transporter_time_wise_penalty', 'tbl_transporter_time_wise_penalty');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

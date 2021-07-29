@@ -4,18 +4,22 @@ use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => FALSE, 'filter' => false],
-    ['attribute' => 'plant_code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         },
         'filter' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         },
         'filter' => false],
-    ['attribute' => 'wef_date',
+        ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        },
+        'filter' => false],
+        ['attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',

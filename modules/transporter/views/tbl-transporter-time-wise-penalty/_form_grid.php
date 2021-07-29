@@ -15,6 +15,10 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         },
         'filter' => false],
+    ['attribute' => 'bmc_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+        },
+        'filter' => false],
     ['attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

@@ -475,6 +475,10 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-km-info/route-list', 'Select Route', $multiple, $model->$name, $readonly);
     }
 
+    public function places($model, $form, $depends, $name = 'ownmccid', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select') {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -722,7 +726,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1252,7 +1256,7 @@ class DropDown extends Component {
             'place_type' => [
                 'name' => 'Type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['mcc' => Yii::t('app', 'MCC'), 'plant' => Yii::t('app', 'PLANT'), 'vendor' => Yii::t('app', 'VENDOR')],
+                'data' => ['bmc' => Yii::t('app', 'BMC'), 'mcc' => Yii::t('app', 'MCC'), 'plant' => Yii::t('app', 'PLANT'), 'vendor' => Yii::t('app', 'VENDOR')],
             ],
         ];
         return $records[$l];
@@ -1443,7 +1447,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

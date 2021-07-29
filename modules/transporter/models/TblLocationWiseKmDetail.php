@@ -6,7 +6,8 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
-use app\modules\materialmanagement\models\TblCustomerMaster;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_location_wise_km_detail".
@@ -39,46 +40,46 @@ class TblLocationWiseKmDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_type', 'from_dest', 'to_type', 'to_dest', 'union_code', 'created_by', 'updated_by'], 'string'],
-            [['from_type', 'from_dest', 'to_type', 'to_dest', 'union_code', 'wef_date', 'total_kms'], 'required'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['total_kms'], 'number', 'min' => 0],
-            [['is_active'], 'integer'],
-            [['is_active'], 'default', 'value' => 1],
-            [['from_dest'], 'reverseValidate'],
-            [['wef_date'], 'validatePreDate'],
-            ['wef_date', 'unique', 'targetAttribute' => ['wef_date', 'from_type', 'from_dest', 'to_type', 'to_dest'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
-            [['from_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['from_dest' => 'plant_code'], 'when' => function ($model) {
-            return strtolower($model->from_type) == 'plant';
-        }, 'whenClient' => "function (attribute, value) { 
+                [['from_type', 'from_dest', 'to_type', 'to_dest', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['from_type', 'from_dest', 'to_type', 'to_dest', 'union_code', 'wef_date', 'total_kms'], 'required'],
+                [['wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['total_kms'], 'number', 'min' => 0],
+                [['is_active'], 'integer'],
+                [['is_active'], 'default', 'value' => 1],
+                [['from_dest'], 'reverseValidate'],
+                [['wef_date'], 'validatePreDate'],
+                ['wef_date', 'unique', 'targetAttribute' => ['wef_date', 'from_type', 'from_dest', 'to_type', 'to_dest'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
+                [['from_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['from_dest' => 'plant_code'], 'when' => function ($model) {
+                    return strtolower($model->from_type) == 'plant';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tbllocationwisekmdetail-from_type').val() == 'plant'; 
           }", 'on' => ['importCsv']],
-            [['from_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_dest' => 'mcc_plant_code'], 'when' => function ($model) {
-            return strtolower($model->from_type) == 'mcc';
-        }, 'whenClient' => "function (attribute, value) { 
+                [['from_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_dest' => 'mcc_plant_code'], 'when' => function ($model) {
+                    return strtolower($model->from_type) == 'mcc';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tbllocationwisekmdetail-from_type').val() == 'mcc'; 
           }", 'on' => ['importCsv']],
-            [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_dest' => 'mcc_plant_code'], 'when' => function ($model) {
-            return strtolower($model->to_type) == 'mcc';
-        }, 'whenClient' => "function (attribute, value) { 
+                [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_dest' => 'mcc_plant_code'], 'when' => function ($model) {
+                    return strtolower($model->to_type) == 'mcc';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tbllocationwisekmdetail-to_type').val() == 'mcc'; 
           }", 'on' => ['importCsv']],
-            [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['to_dest' => 'plant_code'], 'when' => function ($model) {
-            return strtolower($model->to_type) == 'plant';
-        }, 'whenClient' => "function (attribute, value) { 
+                [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['to_dest' => 'plant_code'], 'when' => function ($model) {
+                    return strtolower($model->to_type) == 'plant';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tbllocationwisekmdetail-to_type').val() == 'plant'; 
           }", 'on' => ['importCsv']],
-            [['to_dest'], 'checkUnique'],
-            [['from_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalStatic($this, $attribute, 'place_type');
-        }, 'on' => 'importCsv'],
-            [['to_type'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalStatic($this, $attribute, 'place_type');
-        }, 'on' => 'importCsv'],
-            [['from_dest'], 'typeFromValidate', 'on' => 'importCsv'],
-            [['to_dest'], 'typeToValidate', 'on' => 'importCsv'],
+                [['to_dest'], 'checkUnique'],
+                [['from_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'place_type');
+                }, 'on' => 'importCsv'],
+                [['to_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'place_type');
+                }, 'on' => 'importCsv'],
+                [['from_dest'], 'typeFromValidate', 'on' => 'importCsv'],
+                [['to_dest'], 'typeToValidate', 'on' => 'importCsv'],
         ];
     }
 
@@ -133,6 +134,14 @@ class TblLocationWiseKmDetail extends \app\models\ChildModel {
         if ($this->from_dest == $this->to_dest && $this->from_type == $this->to_type) {
             $this->addError($attribute, Yii::t('app', 'From Dest. And To Dest. is not Same'));
         }
+    }
+
+    public function getBmcCodeSource() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'from_dest']);
+    }
+
+    public function getBmcCodeDest() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_dest']);
     }
 
     public function getMccPlantCodeSource() {

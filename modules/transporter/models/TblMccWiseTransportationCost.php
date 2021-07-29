@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_mcc_wise_transportation_cost".
@@ -40,10 +41,10 @@ class TblMccWiseTransportationCost extends \app\models\ChildModel {
         return [
             [['union_code', 'mcc_plant_code', 'plant_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
             [['primary_tpt_cost'], 'number'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at', 'bmc_code'], 'safe'],
             [['originating_type'], 'integer'],
             [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
-            [['mcc_plant_code', 'wef_date', 'primary_tpt_cost'], 'required'],
+            [['mcc_plant_code', 'bmc_code', 'wef_date', 'primary_tpt_cost'], 'required'],
             [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
             [['wef_date'], 'unique', 'targetAttribute' => ['wef_date', 'mcc_plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
@@ -70,6 +71,7 @@ class TblMccWiseTransportationCost extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 
@@ -85,6 +87,9 @@ class TblMccWiseTransportationCost extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
     public function setImport($attribute, $params) {
         $this->plant_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'plant_code');
         $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');

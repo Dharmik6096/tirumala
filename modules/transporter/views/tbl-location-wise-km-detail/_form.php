@@ -15,7 +15,7 @@ $disable = ($type == 'create') ? '' : ' disabled';
 $form = ActiveForm::begin([
             'options' => ['id' => 'bmc-form'],
             'validateOnBlur' => FALSE,
-            'validateOnEnter' => TRUE,
+//            'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -23,25 +23,25 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?= Yii::$app->dropdown->dropdownStatic('place_type', $model, $form, 'form-group', 'From Type', $readonly, 'from_type') ?> 
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?= Yii::$app->dropdown->places($model, $form, 'tbllocationwisekmdetail-union_code,tbllocationwisekmdetail-from_type', 'from_dest', $model->getAttributeLabel('from_dest'), FALSE, $readonly); ?> 
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?= Yii::$app->dropdown->dropdownStatic('place_type', $model, $form, 'form-group', 'To Type', $readonly, 'to_type') ?> 
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <?= Yii::$app->dropdown->places($model, $form, 'tbllocationwisekmdetail-union_code,tbllocationwisekmdetail-to_type', 'to_dest', $model->getAttributeLabel('to_dest'), FALSE, $readonly); ?> 
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', '', false, $readonly, true); ?>
     </div>  
-    <div class="col-md-3 number-validate">
+    <div class="col-md-2 number-validate">
         <?= $form->field($model, 'total_kms')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="clearfix"></div>

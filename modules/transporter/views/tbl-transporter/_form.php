@@ -113,9 +113,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'pan_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'beneficiary_name')->textInput() ?>
-    </div>
+    <!--<div class="col-sm-2">-->
+        <?php // $form->field($model, 'beneficiary_name')->textInput() ?>
+    <!--</div>-->
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'agreement_from_date', '', '', false, false); ?>
     </div>

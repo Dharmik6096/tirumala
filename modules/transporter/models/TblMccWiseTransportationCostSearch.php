@@ -22,7 +22,7 @@ class TblMccWiseTransportationCostSearch extends TblMccWiseTransportationCost {
             [['tpt_cost_code', 'originating_type'], 'integer'],
             [['union_code', 'mcc_plant_code', 'plant_code', 'wef_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['primary_tpt_cost'], 'number'],
-            [['from_date', 'to_date'], 'safe']
+            [['from_date', 'to_date', 'bmc_code'], 'safe']
         ];
     }
 

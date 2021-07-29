@@ -36,7 +36,7 @@ class TblTransporterTimeWisePenaltyHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['penalty_code', 'originating_type'], 'safe'],
+            [['penalty_code', 'originating_type', 'bmc_code'], 'safe'],
             [['union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'history_created_by'], 'safe'],
             [['penalty_amount', 'minute_limit'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at', 'operation_type', 'mcc_plant_code', 'plant_code', 'wef_date'], 'safe'],

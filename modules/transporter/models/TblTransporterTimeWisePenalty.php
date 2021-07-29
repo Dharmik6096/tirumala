@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_transporter_time_wise_penalty".
@@ -41,7 +42,7 @@ class TblTransporterTimeWisePenalty extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'mcc_plant_code', 'plant_code', 'wef_date'], 'safe'],
             [['originating_type'], 'integer'],
             [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
-            [['penalty_amount', 'minute_limit', 'mcc_plant_code', 'wef_date'], 'required'],
+            [['penalty_amount', 'minute_limit', 'mcc_plant_code', 'bmc_code', 'wef_date'], 'required'],
             [['minute_limit', 'penalty_amount'], 'number', 'min' => 0],
             [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
             [['minute_limit'], 'unique', 'targetAttribute' => ['minute_limit', 'wef_date', 'mcc_plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
@@ -68,6 +69,7 @@ class TblTransporterTimeWisePenalty extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'plant_code' => Yii::t('app', 'Plant'),
+            'bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 
@@ -75,6 +77,9 @@ class TblTransporterTimeWisePenalty extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
     public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }

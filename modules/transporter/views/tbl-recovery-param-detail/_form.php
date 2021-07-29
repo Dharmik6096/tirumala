@@ -10,7 +10,7 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            'validateOnEnter' => TRUE,
+//            'validateOnEnter' => TRUE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -18,19 +18,19 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tblrecoveryparamdetail-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'chilling_cost')->textInput() ?>
     </div>
-    <div class="col-sm-3 number-validate">
+    <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'incentive_value')->textInput() ?>
     </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
