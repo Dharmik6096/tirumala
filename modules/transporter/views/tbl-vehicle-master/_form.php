@@ -39,7 +39,7 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehiclemaster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
         </div>
         <div class="col-sm-2 <?= $class ?>">
-            <?= Yii::$app->dropdown->dropdown('billing_type_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('billing_type_code'), true); ?>
+            <?= Yii::$app->dropdown->dropdown('billing_type_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('billing_type_code'), false, '', false, false); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('vehicle_type_code', $model, $form, 'form-group col-sm-2', 'Vehicle Type'); ?>
@@ -151,6 +151,8 @@ $script = "
                 if (obj.status == 'success')
                 {
                    $('#tblvehiclemaster-billing_type_code').val(obj.data);
+//                   $('#tblvehiclemaster-billing_type_code').trigger('change');
+//                   $('#tblvehiclemaster-billing_type_code').trigger('select2:select');
                 }else{
                  bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Billing Type is not available for Transporter.') . "</span></div></div>', function(result){
                  setTimeout(function(){

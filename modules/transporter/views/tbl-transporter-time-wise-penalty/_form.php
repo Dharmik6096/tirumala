@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbltransportertimewisepenalty-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblfuelratemaster-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $readonly); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbltransportertimewisepenalty-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $readonly); ?>
     </div>  
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', FALSE); ?>
