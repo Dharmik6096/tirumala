@@ -131,6 +131,9 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
         if ($this->from_date > $this->to_date) {
             $this->addError($attribute, Yii::t('app/validation', 'Invalid Date Range'));
         }
+        if (empty($this->is_weight_manual) && empty($this->is_quality_manual)) {
+            $this->addError('is_quality_manual', Yii::t('app/validation', 'Please Check Any One Check Box'));
+        }
     }
 
     public function getManualData($modelData, $keyParams) {
