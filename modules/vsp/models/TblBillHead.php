@@ -5,6 +5,10 @@ namespace app\modules\vsp\models;
 use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\vsp\models\TblBillHeadDefault;
+use app\modules\organisation\models\TblDcs;
+use yii\helpers\ArrayHelper;
+use app\modules\payment\models\TblPaymentCycle;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_bill_head".
@@ -24,6 +28,8 @@ use app\modules\vsp\models\TblBillHeadDefault;
  */
 class TblBillHead extends \app\models\ChildModel {
 
+    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code;
+
     /**
      * @inheritdoc
      */
@@ -36,7 +42,7 @@ class TblBillHead extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required'],
+            [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
             [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
             [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
             [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code'], 'safe'],
@@ -49,7 +55,14 @@ class TblBillHead extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe']
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
+//            ['customer_type', 'required', 'when' => function ($model) {
+//                    return $model->bill_head_for != 'MEMBER';
+//                }, 'whenClient' => "function (attribute, value) { 
+//              return $('#tblbillhead-bill_head_for').val()!='MEMBER'; 
+//          }", 'on' => ['dcsWiseHead']],
         ];
     }
 
@@ -123,6 +136,42 @@ class TblBillHead extends \app\models\ChildModel {
         return \yii\helpers\ArrayHelper::map($list, 'bill_head_code', function($data) {
                     return isset($data->bill_head_type) ? $data->bill_head_name . ' (' . Yii::$app->dropdown->getRecords('calc_type')['data'][$data->bill_head_type] . ')' : $data->bill_head_name;
                 });
+    }
+
+    public function getBillHead($model) {
+        $query = $this->find()
+                ->where(['is_active' => 1, 'union_code' => $model->union_code, 'bill_head_for' => $model->bill_head_for])
+                ->andWhere(['IN', 'has_slab', ['0', NULL, '']]);
+        return $list = $query->all();
+    }
+
+    public function getDcs($data) {
+        if ($data['customer_type'] == 'DCS') {
+            $dcs = new TblDcs();
+            $query = $dcs->find()->where(['union_code' => $data['union_code'], 'plant_code' => $data['plant_code'], 'mcc_plant_code' => $data['mcc_plant_code'], 'bmc_code' => $data['bmc_code'], 'is_active' => 1]);
+            if (Yii::$app->session->get('Dcs') !== '') {
+                $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+            }
+            return $dcsData = $query->all();
+        } else {
+            $customer = new TblCustomerMaster();
+            $query = $customer->find()->where(['union_code' => $data['union_code'], 'plant_code' => $data['plant_code'], 'mcc_plant_code' => $data['mcc_plant_code'], 'bmc_code' => $data['bmc_code'], 'is_active' => 1, 'customer_type' => $data['customer_type']]);
+            return $dcsData = $query->all();
+        }
+    }
+
+    public function getApplicabiliytData($searchData, $code, $date) {
+        $applicable = new TblBillHeadApplicability();
+        $query = $applicable->find()
+                        ->where(['union_code' => $searchData->union_code, 'bmc_code' => $searchData->bmc_code, 'applicable_code' => $code, 'applicable_for' => $searchData->customer_type, 'bill_head_for' => $searchData->bill_head_for])->all();
+//                        ->andWhere(['<=', 'wef_date', $date])->all();
+
+        return \yii\helpers\ArrayHelper::map($query, 'bill_head_code', 'bill_head_code');
+//        return $list = $query->one();
+    }
+
+    public function getPaymentCycle() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
 }

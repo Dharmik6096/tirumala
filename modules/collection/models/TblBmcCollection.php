@@ -113,7 +113,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code'], 'required', 'on' => ['create', 'update']],
+            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update']],
             [['bmc_silos_info_code'], 'required', 'on' => ['create', 'update']],
             [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
             [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
@@ -148,7 +148,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
             [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
             [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -165,6 +165,12 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+            [['is_rate_recalc'], 'default', 'value' => 0],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
         ];
     }
 
@@ -312,8 +318,22 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = $prefix . str_pad($code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($this->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $this->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $this->customer_type])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $this->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $this->ex_code = !empty($length) ? $prefix . str_pad($code, $length, '0', STR_PAD_LEFT) : '';
+                $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }
@@ -332,7 +352,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function getSampleNo() {
         $data = $this->find()
                 ->select('max(sample_no) as sample_no')
-                ->where(['bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->formatter->asDate($this->date_time_of_collection, DATE_FORMAT)])
+                ->where(['own_bmc_code' => $this->own_bmc_code, 'shift_code' => $this->shift_code, 'CONVERT(date,date_time_of_collection)' => Yii::$app->formatter->asDate($this->date_time_of_collection, DATE_FORMAT)])
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
@@ -388,8 +408,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->qty_time = $datetime;
             $this->date_time_of_testing = $datetime;
             $this->own_mcc_plant_code = $this->mcc_plant_code;
-            $this->own_bmc_code = $this->bmc_code;
-
+//            $this->own_bmc_code = $this->bmc_code;
             //set converted_qty
             $this->qty_mode = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_qty_mode', 'BMC');
             (float) $conversion_const = Yii::$app->general->getUnionConfiguration($this->union_code, 'ltr_to_kg_constant', 'BMC');
@@ -535,11 +554,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             $model->route_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'route_code');
         }
         $model->own_mcc_plant_code = $model->mcc_plant_code;
-        $model->own_bmc_code = $model->bmc_code;
+//        $model->own_bmc_code = $model->bmc_code;
         $model->dt_date = Yii::$app->formatter->asDate($datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($model->shift_code);
         $model->last_edited_type = 'P';
-        $model->own_mcc_plant_code = $model->mcc_plant_code;
-        $model->own_bmc_code = $model->bmc_code;
         $model->sample_no = $model->getSampleNo();
     }
 

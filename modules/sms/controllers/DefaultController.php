@@ -35,6 +35,7 @@ class DefaultController extends Controller {
                             $send = Yii::$app->alertnotification->sendNotification($url, $server_key, $row->receiver_detail, $row->header_info, $row->message, $row->parent_code);
                         } else if ($row->receiver_type == 'EMAIL' && $row->send_mail == 1) {
                             $filename = '';
+                            $filepath = '';
                             $from = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
                             $to = $row->receiver_detail;
                             $cc = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
@@ -45,10 +46,15 @@ class DefaultController extends Controller {
                                 $path = $row->file_path;
                                 $filename = $row->filename . '-' . $row->parent_code . '.pdf';
                                 $attachment = ChildController::printDocument($controls, $path, $filename, 'pdf', 'mail');
+                            } elseif ($row->has_attachment == 2) {
+                                $filename = $row->filename;
+                                $filepath = $row->file_path;
+                                $cc = '';
+                                $attachment = FALSE;
                             } else {
                                 $attachment = FALSE;
                             }
-                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename);
+                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename, $filepath);
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->response_status = $send;

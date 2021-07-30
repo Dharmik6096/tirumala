@@ -463,4 +463,22 @@ return array (
       '@yii/queue/stomp' => $vendorDir . '/yiisoft/yii2-queue/src/drivers/stomp',
     ),
   ),
+  'yiisoft/yii2-imagine' => 
+  array (
+    'name' => 'yiisoft/yii2-imagine',
+    'version' => '2.3.0.0',
+    'alias' => 
+    array (
+      '@yii/imagine' => $vendorDir . '/yiisoft/yii2-imagine/src',
+    ),
+  ),  
+  'nullref/yii2-datatables' => 
+  array (
+    'name' => 'nullref/yii2-datatables',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@nullref/datatable' => $vendorDir . '/nullref/yii2-datatables/src',
+    ),
+  ),
 );

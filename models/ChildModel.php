@@ -10,6 +10,7 @@ namespace app\models;
 use yii\base\UserException;
 use app\components\GeneralFunctions;
 use Yii;
+use yii\base\InvalidParamException;
 
 /**
  * Description of childModel
@@ -143,7 +144,7 @@ class ChildModel extends \yii\db\ActiveRecord {
         return $model;
     }
 
-    private function encryptModel($model) {
+    public function encryptModel($model) {
         $result = array_intersect($this->toEncrypt, array_keys($model));
         foreach ($result as $key => $value) {
             if ($this->hasAttribute($value) && $this->{$value} != '')

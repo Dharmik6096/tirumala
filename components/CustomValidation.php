@@ -33,20 +33,35 @@ class CustomValidation extends Component {
                     ]
                 ],
                 'TblContactDetails' => [
-                    'dcs-create' => [],
-                    'dcs-import' => [],
+                    'dcs-create' => [
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-import' => [
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
                     'default' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                 ],
                 'TblMember' => [
                     'default' => [
                             [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection']],
                             [['bank_account_no'], 'required', 'when' => function ($model) {
-                                return !empty($model->branch_code);
+                                return !empty($model->ifsc);
                             }, 'whenClient' => "function (attribute, value) { 
-                            return $('#tblmember-bank_code').val() != ''; 
+                            return $('#tblmember-ifsc').val() != ''; 
                         }", 'on' => ['importCsv']],
                             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
                                 return $model->is_active;
@@ -92,6 +107,7 @@ class CustomValidation extends Component {
                 'TblContactDetails' => [
                         [['firstname', 'mobile_no'], 'required'],
                         [['mobile_no'], 'required', 'on' => 'additional'],
+                        [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                 ],
                 'TblMember' => [
                         [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
@@ -127,11 +143,25 @@ class CustomValidation extends Component {
                 'TblContactDetails' => [
                     'dcs-create' => [
                             [['firstname'], 'required'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
-                    'dcs-import' => [],
+                    'dcs-import' => [
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
                     'default' => [
                             [['firstname'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                 ],
                 'TblMember' => [
@@ -186,6 +216,52 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
+                    ],
+                ],
+            ],
+            'MMD' => [
+                'TblBankDetails' => [
+                    'default' => [],
+                ],
+                'TblMember' => [
+                    'default' => [
+                            [['max_allowed_qty'], 'number', 'min' => 0.5, 'max' => 15],
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'importCsv']],
+                            [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'importCsv']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblmember-bank_code').val() != ''; 
+                        }", 'on' => ['importCsv']],
+                    ],
+                ],
+            ],
+            'THIRUMALA' => [
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'dcs-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                 ],
             ],

@@ -19,7 +19,6 @@ $selected = Yii::$app->session->get('Unions');
 <?php
 $form = ActiveForm::begin(['id' => 'purchase-rate-form',
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -27,7 +26,10 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
         ]]);
 ?>
 
-<div class="row">                      
+<div class="row">  
+    <div class="col-sm-2" id="union">
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+    </div>
     <div class="col-sm-2 change">
         <?= Yii::$app->dropdown->dropdown('rate_gen_method_code', $model, $form, 'form-group', 'Rate Method'); ?>
     </div>
@@ -39,6 +41,9 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group', 'Shift Applicability'); ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'ts_rate')->textInput() ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>

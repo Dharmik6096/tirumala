@@ -166,30 +166,45 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Bank Details') ?></h4>
             </div>
-        <div class="form-grid">
-            <?=
-            $this->render('../../../details/views/tbl-bank-details/_bank_details', [
-                'model' => $model,
-                'dataProvider' => $bdataProvider,
-                'searchModel' => $bsearchModel,
-            ])
-            ?>
-        </div>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                    'model' => $model,
+                    'dataProvider' => $bdataProvider,
+                    'searchModel' => $bsearchModel,
+                ])
+                ?>
+            </div>
         </div>
 
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Contact Details') ?></h4>
             </div>
-        <div class="form-grid">
-            <?=
-            $this->render('../../../details/views/tbl-contact-details/_contact_details', [
-                'model' => $model,
-                'dataProvider' => $cdataProvider,
-                'searchModel' => $csearchModel,
-            ])
-            ?>
+            <div class="form-grid">
+                <?=
+                $this->render('../../../details/views/tbl-contact-details/_contact_details', [
+                    'model' => $model,
+                    'dataProvider' => $cdataProvider,
+                    'searchModel' => $csearchModel,
+                ])
+                ?>
+            </div>
         </div>
-        </div>
+
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Customer') . ' Deactivate Range' ?></h4>
+            </div>
+            <div class="form-grid">
+                <?=
+                $this->render('_customer_deactivate', [
+                    'model' => $model,
+                    'dataProvider' => $ddataProvider,
+                    'searchModel' => $dsearchModel,
+                ])
+                ?>
+            </div>       
+        </div> 
     </div>
 </div>

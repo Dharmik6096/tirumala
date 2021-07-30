@@ -111,7 +111,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'disabled' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
+            <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'readonly' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
         </div>
         <!--<div class="col-sm-2">-->
         <?= Yii::$app->dropdown->dropdownStatic('dpu_type', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('dpu_type'), false); ?>
@@ -238,6 +238,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">
@@ -376,6 +379,11 @@ $form = ActiveForm::begin([
             $('#tbldcs-milk_type_code').parent('div').removeClass('disabled');
         }
     }
+    $('#tbldcs-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
     $this->registerJs($script, View::POS_END, 'union-select');
 

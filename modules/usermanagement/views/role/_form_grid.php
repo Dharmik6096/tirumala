@@ -53,6 +53,7 @@ $grid_option = [
         'edit' => function($url, $model) {
             $class = $model->checkNotVendor() ? '' : 'link-disable';
             $url = str_replace('edit', 'update', $url);
+            $url = ['/user-management/role/update', 'id' => $model->name];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
             return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
         },

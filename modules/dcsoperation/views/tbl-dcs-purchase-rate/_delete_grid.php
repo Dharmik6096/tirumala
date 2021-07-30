@@ -22,9 +22,10 @@ $this->title = Yii::t('app', 'Delete Bulk Applicability');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox', 'value' => $model['rate_app_code'].'###'.$model['rate_chart_for']];
+                    return ['class' => 'checkbox', 'value' => $model['rate_app_code'] . '###' . $model['rate_chart_for']];
                 }],
             ['attribute' => 'rate_chart_for', 'filter' => false],
+            ['attribute' => 'purchase_rate_code', 'filter' => false, 'label' => Yii::t('app', 'Rate Id')],
             ['attribute' => 'applicable_for', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
                 }, 'filter' => false],
@@ -48,6 +49,12 @@ $this->title = Yii::t('app', 'Delete Bulk Applicability');
                 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }, 'filter' => FALSE],
+            ['attribute' => 'shift_code', 'label' => Yii::t('app', 'Shift'), 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
+                }, 'filter' => false],
+            ['attribute' => 'shift_code', 'label' => Yii::t('app', 'Description'), 'value' => function($model) {
+                    return $model['rate_chart_for'] == 'BMC' ? Yii::$app->general->getforeignkey($model->purchaseRateCode, 'description') : Yii::$app->general->getforeignkey($model->memberPurchaseRateCode, 'description');
+                }, 'filter' => false],
         ];
 
         $grid_option = [

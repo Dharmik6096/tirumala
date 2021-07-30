@@ -20,9 +20,9 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function rules() {
         return [
-                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
-                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-                [['is_installment', 'no_of_installment'], 'integer'],
+            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
+            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
+            [['is_installment', 'no_of_installment'], 'integer'],
         ];
     }
 
@@ -51,8 +51,9 @@ class TblProductSaleSearch extends TblProductSale {
         ]);
 
         $this->load($params);
-        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'memberCode', 'bmcCode', 'bmcCode.tblMccPlant']);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_mcc_plant', 'tbl_product_sale');
+//        $query->joinWith(['dcsCode', 'customerType', 'mainCustomerCode', 'memberCode', 'bmcCode', 'bmcCode.tblMccPlant']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'memberCode', 'bmcCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -110,7 +111,7 @@ class TblProductSaleSearch extends TblProductSale {
         $this->load($params);
         $query->joinWith(['productSaleCode', 'saleInstallments']);
         $query->andWhere(['tbl_product_sale.bmc_code' => $this->bmc_code]);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_product_sale', 'tbl_product_sale', 'tbl_product_sale');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

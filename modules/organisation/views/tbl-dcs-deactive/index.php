@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'DCS Deactivate'));
 $this->params['menu'][] = Yii::$app->controls->add('DCS Deactivate');
+$this->params['menu'][] = Yii::$app->controls->import('dcs-deactive', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

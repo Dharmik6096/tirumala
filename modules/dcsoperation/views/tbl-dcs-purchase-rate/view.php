@@ -53,6 +53,9 @@ $this->title = Yii::t('app', 'Purchase Rates') . ' (' . Yii::t('app', 'BMC') . '
                             'attribute' => 'for_member',
                             'value' => $model->for_member == 1 ? 'YES' : 'NO',
                         ],
+                        [
+                            'attribute' => 'ts_rate',
+                        ],
                         'description',
                         [
                             'attribute' => 'is_active',

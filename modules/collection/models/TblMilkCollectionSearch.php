@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblMilkCollection;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMilkCollectionSearch represents the model behind the search form about `app\modules\collection\models\TblMilkCollection`.
@@ -29,7 +30,9 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
             [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
+            [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
         ];
     }
 
@@ -149,11 +152,11 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $this->load($params);
 //        $query = Collectionfarmer::find();
 
-        $ApprovalData = TblCollectionDataAlias::find()->select(['mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'milk_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Not Verified'")])
+        $ApprovalData = TblCollectionDataAlias::find()->select(['mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Not Verified'")])
                 ->where(['mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'dcs_code' => $this->dcs_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_milk_collection'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
+        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
 
 
         $unionQuery = (new ActiveQuery(TblMilkCollection::className()))->from([
@@ -191,27 +194,39 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $query = TblMilkCollection::find();
         // add conditions that should always apply here
 
+
+        $query->andWhere([
+            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
         ]);
 
-        $query->andWhere([
-            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+        $query->andWhere(['IS NOT', 'tbl_milk_collection.dcs_code', NULL]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        } else {
+            $from_date = date('Y-m-d');
+            $from_shift = \Yii::$app->general->getshift(1);
+            $from_date .= ' ' . $from_shift;
         }
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        } else {
+            $to_date = date('Y-m-d');
+            $to_shift = \Yii::$app->general->getshift(2);
+            $to_date .= ' ' . $to_shift;
         }
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
 
         $query->andFilterWhere(['member_code' => $this->member_code]);
 
@@ -234,7 +249,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             $query->joinWith(['approvalData']);
         }
         $query->andWhere([
-            'tbl_milk_collection.dcs_code' => $this->dcs_code]);
+            'tbl_milk_collection.bmc_code' => $this->bmc_code]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
@@ -250,7 +265,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             $query->andFilterWhere(['<=', 'tbl_milk_collection.date_time_of_collection', $to_date]);
         }
 
-        $query->andFilterWhere(['member_code' => $this->member_code]);
+        $query->andFilterWhere(['tbl_milk_collection.member_code' => $this->member_code])
+                ->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
         if ($flag == 1) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
@@ -265,6 +281,117 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         }
 
         return $dataProvider;
+    }
+
+    public function deletemembersearch($params) {
+        $query = TblMilkCollection::find();
+
+        // add conditions that should always apply here
+        $this->setAttributes($params);
+
+        $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
+        if ($flag == 1) {
+            $query->joinWith(['approvalData']);
+        }
+        $query->andWhere([
+            'tbl_milk_collection.bmc_code' => $this->bmc_code]);
+
+        $query->andFilterWhere(['tbl_milk_collection.date_time_of_collection' => $this->date_time_of_collection]);
+
+        $query->andFilterWhere(['tbl_milk_collection.dcs_code' => $this->dcs_code]);
+        if ($flag == 1) {
+            $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
+        }
+        $query->orderBy(['tbl_milk_collection.sample_no' => SORT_ASC]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        return $dataProvider;
+    }
+
+    public function searchdcswisesummary($params) {
+        //var_dump($params); exit;
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'dcs_code' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''
+            ];
+            if (empty($this->dcs_code)) {
+                $this->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+            }
+            $sp_params = array_merge($sp_params, $params['TblMilkCollectionSearch']);
+            $sp_params['dcs_code'] = is_array($params['TblMilkCollectionSearch']['dcs_code']) ? ',' . implode(',', $params['TblMilkCollectionSearch']['dcs_code']) . ',' : $params['TblMilkCollectionSearch']['dcs_code'];
+
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+
+            $output = \Yii::$app->general->getSpData('Portal_MilkCollection_dcs_wise_summary', $sp_params);
+        }
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+
+            $output = [];
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
+        return $dataProvider;
+    }
+
+    public function validateToDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->from_date));
+            $tDate = date('Y-m-d', strtotime($this->to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 10) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 10.'));
+                    return false;
+                }
+            }
+        }
     }
 
 }

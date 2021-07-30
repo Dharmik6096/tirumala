@@ -51,7 +51,10 @@ $form = ActiveForm::begin([
         if (!empty($keyPattern)) {
             ?>
             <?php if ($readonly || $keyPattern['ex_code_auto'] == 0) { ?>
-                <div class="col-sm-4"> 
+                <div class="col-sm-1 "> 
+                    <?= $form->field($model, 'prefix')->textInput(['readOnly' => true]) ?>
+                </div>
+                <div class="col-sm-3 number-validate"> 
                     <?= $form->field($model, 'customer_code_ex')->textInput() ?>
                 </div>
             <?php } ?>
@@ -84,7 +87,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
-        <div class='pull-left col-sm-12'>
+        <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
@@ -169,6 +172,41 @@ $script = "
     $('#tblbankdetails-ifsc').on('change', function(){
         $('#warning').val(0);
     });
+    $('#tblcustomermaster-customer_type').on('change', function(){
+    $('#tblcustomermaster-prefix').val('');
+        PreffixValue();
+    });
+    $(document).on('change', '#tblcustomermaster-union_code', function() {  
+    $('#tblcustomermaster-prefix').val('');
+        PreffixValue();
+    });
+//    $('#tblcustomermaster-customer_type').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+//       console.log('tset');
+//    });
+    function PreffixValue(){
+        var union = $('#tblcustomermaster-union_code').val();
+        var type = $('#tblcustomermaster-customer_type').val();
+            if(union !='' && type !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['excode-prefix']) . "',
+                    data: {'union_code':union,'type':type},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                        console.log(obj.data);
+                          $('#tblcustomermaster-prefix').val(obj.data);
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
+
+
 ";
 $this->registerJs($script, View::POS_END, 'customer_mastercreate');
 ?>

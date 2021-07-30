@@ -19,13 +19,14 @@ use yii\widgets\ActiveForm;
 use app\modules\collection\models\TblCollectionDataAlias;
 use yii\base\Model;
 use yii\data\ArrayDataProvider;
+use app\modules\organisation\models\TblBmcMilkType;
 
 /**
  * TblBmcCollectionController implements the CRUD actions for TblBmcCollection model.
  */
 class TblBmcCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-dcs', 'validate-rtpl', 'calculate-clr', 'list-grid', 'poured-bmc-config', 'check-fat-range'];
 
     /**
      * Lists all TblBmcCollection models.
@@ -216,6 +217,10 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
             $data = $bmcModel->validateCustomer($union, $dcs, $type);
+            $detail = Yii::$app->general->validateDeactivateCustomer($bmcModel, $date, $data);
+            if ($detail === false) {
+                $data = '';
+            }
             $bmcModel->customer_code = $data;
         } else {
             $model = new TblDcs();
@@ -266,7 +271,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'],$data['dcs_code'], $for);
+            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for);
         } else {
             $code = $bmcModel->dcs_code;
         }
@@ -443,9 +448,9 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+//                }
             }
         }
 
@@ -453,6 +458,70 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionPouredBmcConfig() {
+        $union = Yii::$app->request->post('union');
+        $config = isset(Yii::$app->session->get('unionConfig')[$union]['pouring_bmc_collection']) ? Yii::$app->session->get('unionConfig')[$union]['pouring_bmc_collection'] : 0;
+        return Json::encode(['status' => 'success', 'config' => $config]);
+    }
+
+    public function actionCheckFatRange() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        (float) $fat = Yii::$app->request->post('fat');
+        $union = Yii::$app->request->post('union_code');
+        $bmc = Yii::$app->request->post('bmc');
+        $milk_type = Yii::$app->request->post('milk_type');
+        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_bmc'] : '';
+        $mapping = new TblBmcMilkType();
+        $mapped = $mapping->find()->where(['bmc_code' => $bmc, 'is_active' => 1])->all();
+
+        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+            $type = [];
+            foreach ($mapped as $map) {
+                $type[] = $map->milk_type_code;
+            }
+            //Cow and Buffalo
+            if (in_array(1, $type) && in_array(2, $type)) {
+                if ($range < $fat && $milk_type != 2) {
+                    $response['status'] = 'success';
+                    $response['data'] = 2;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                } elseif ($range >= $fat && $milk_type != 1) {
+                    $response['status'] = 'success';
+                    $response['data'] = 1;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                }
+            }
+            //Cow and Mix
+            if (in_array(1, $type) && in_array(3, $type)) {
+                if ($range < $fat && $milk_type != 3) {
+                    $response['status'] = 'success';
+                    $response['data'] = 3;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                } elseif ($range >= $fat && $milk_type != 1) {
+                    $response['status'] = 'success';
+                    $response['data'] = 1;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                }
+            }
+            //Buffalo and Mix
+            if (in_array(2, $type) && in_array(3, $type)) {
+                if ($range < $fat && $milk_type != 3) {
+                    $response['status'] = 'success';
+                    $response['data'] = 3;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                } elseif ($range >= $fat && $milk_type != 2) {
+                    $response['status'] = 'success';
+                    $response['data'] = 2;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                }
+            }
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
     }
 
 }

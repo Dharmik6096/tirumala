@@ -45,12 +45,21 @@ class TblDcsDeactive extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'remarks', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'dcs_deactive_code', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
             [['originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required'],
+            [['from_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['from_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['from_date'], 'convertDate', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date'], 'required', 'except' => ['importCsv']],
+            [['bmc_code', 'dcs_code', 'from_date'], 'required', 'on' => ['importCsv']],
             [['to_date'], 'required', 'on' => ['activeDCS']],
             [['from_date'], 'validateFromDate', 'except' => ['activeDCS']],
-            [['to_date'], 'validateToRange', 'on' => ['activeDCS']]
+            [['to_date'], 'validateToRange', 'on' => ['activeDCS']],
         ];
     }
 
@@ -146,6 +155,78 @@ class TblDcsDeactive extends \app\models\ChildModel {
                 ->all();
         $value = ArrayHelper::map($records, 'dcs_code', 'dcs_code');
         return $value;
+    }
+
+    public function getDeactiveRecords($checkStatus = true, $data = '', $limit = '') {
+        $date = date('Y-m-d');
+        $query = $this->find()
+                ->where(['<=', 'from_date', $date])
+                ->andWhere(['or', ['>=', 'to_date', $date], ['is', 'to_date', NULL]]);
+        if ($checkStatus) {
+            $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
+        }
+        if (!empty($data) && (!empty($data['organization_code']) && !empty($data['organization_type']))) {
+            if ($data['organization_type'] == 'MCC') {
+                $query->andWhere(['mcc_plant_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'BMC') {
+                $query->andWhere(['bmc_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'VLC') {
+                $query->andWhere(['dcs_code' => $data['organization_code']]);
+            }
+        }
+        $dataList = $query->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->limit($limit)
+                ->all();
+        return $dataList;
+    }
+
+    public function getActiveRecords($limit) {
+        $date = date('Y-m-d');
+
+        return $query = $this->find()
+                ->where(['data_post_status' => 2])
+                ->andWhere(['<', 'to_date', $date])
+                ->orderBy(['dcs_deactive_code' => SORT_ASC])
+                ->limit($limit)
+                ->all();
+    }
+
+    public function updateFileStatus($value, $status) {
+        return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['dcs_deactive_code' => $value]);
+    }
+
+    public function setImport($attribute, $params) {
+        $date = date('Y-m-d');
+        $fromDate = date('Y-m-d', strtotime($this->from_date));
+        if ($date > $fromDate) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'From Date') . ' Must not past date'));
+            return false;
+        }
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->getValidDcs($this->dcs_code, $this->bmc_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+            return false;
+        }
+        $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->from_date = Yii::$app->controls->view_date($this->from_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->from_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
+        }
     }
 
 }

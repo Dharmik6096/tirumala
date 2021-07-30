@@ -17,7 +17,6 @@ $list = array('0' => 'No', '1' => 'Yes');
 $form = ActiveForm::begin([
             'options' => ['id' => 'bmc-coll-form'],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -39,7 +38,10 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmccollection-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
         </div>  
         <div class="col-sm-2 create_fields <?= $disable ?>">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollection-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmccollection-mcc_plant_code', 'own_bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
+        </div>
+        <div class="col-sm-2 create_fields <?= $disable ?>">
+            <?= Yii::$app->dropdown->poured_bmc($model, $form, 'tblbmccollection-own_bmc_code', 'bmc_code', Yii::t('app', 'Poured BMC'), FALSE); ?>
         </div>
         <div class="col-sm-2 rtpl_validate create_fields">
             <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, $readonly, true); ?>
@@ -95,6 +97,10 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1 reset_field">
                         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
                         <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+                    </div>
+                    <div class="col-sm-2 reset_field">
+                        <?php // Html::activeHiddenInput($model, 'milk_collection_code', ['value' => $model->milk_collection_code])  ?>
+                        <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                     </div>
                     <div class="col-sm-3 reset_field">
                         <?= $form->field($model, 'remarks')->textarea() ?>

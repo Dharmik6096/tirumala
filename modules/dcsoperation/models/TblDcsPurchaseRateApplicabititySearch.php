@@ -25,7 +25,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
             //   [['rate_app_code', 'created_at', 'created_by', 'deleted_at', 'deleted_by', 'updated_at', 'updated_by', 'wef_date', 'dcs_code', 'purchase_rate_code', 'union_code'], 'safe'],
             //   [['is_active'], 'boolean'],
             //   [['shift_code'], 'integer'],
-            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code'], 'safe'],
+            [['wef_date', 'applicable_for', 'mcc_name', 'applicable_code', 'applicable_for', 'code_ex', 'shift_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for', 'union_code', 'dcs_code', 'purchase_rate_code'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'rate_for'], 'required', 'on' => ['deleteApplicability']]
         ];
     }
@@ -92,13 +92,17 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
 
     public function deletesearch($params) {
         $this->load($params);
-        $MemberData = TblPurchaseRateApplicability::find()->select(['tbl_purchase_rate_applicability.union_code', 'tbl_purchase_rate_applicability.rate_app_code', 'tbl_purchase_rate_applicability.dcs_code as applicable_code', 'applicable_for' => new Expression("'DCS'"), 'wef_date', 'rate_chart_for' => new Expression("'MEMBER'")])
+        $MemberData = TblPurchaseRateApplicability::find()->select(['tbl_purchase_rate_applicability.union_code', 'tbl_purchase_rate_applicability.rate_app_code', 'tbl_purchase_rate_applicability.dcs_code as applicable_code', 'applicable_for' => new Expression("'DCS'"), 'tbl_purchase_rate_applicability.wef_date', 'rate_chart_for' => new Expression("'MEMBER'"), 'tbl_purchase_rate_applicability.purchase_rate_code', 'tbl_purchase_rate_applicability.shift_code', 'tbl_purchase_rate.description'])
                 ->where(['tbl_dcs.bmc_code' => $this->bmc_code])
                 ->andWhere('\'' . $this->rate_for . '\'=\'member\' or \'' . $this->rate_for . '\'=\'both\'')
-                ->andFilterWhere(['dcs_code' => $this->dcs_code]);
-        $MemberData->joinWith(['dcsCode']);
+                ->andFilterWhere(['tbl_purchase_rate_applicability.dcs_code' => $this->dcs_code, 'tbl_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code]);
+        if (!empty($this->wef_date)) {
+            $MemberData->andFilterWhere(['CAST(tbl_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+        }
 
-        $query = $this->find()->select(['tbl_dcs_purchase_rate_applicability.union_code', 'tbl_dcs_purchase_rate_applicability.rate_app_code', 'tbl_dcs_purchase_rate_applicability.applicable_code', 'tbl_dcs_purchase_rate_applicability.applicable_for', 'tbl_dcs_purchase_rate_applicability.wef_date', 'rate_chart_for' => new Expression("'BMC'")]);
+        $MemberData->joinWith(['dcsCode', 'purchaseRateCode']);
+
+        $query = $this->find()->select(['tbl_dcs_purchase_rate_applicability.union_code', 'tbl_dcs_purchase_rate_applicability.rate_app_code', 'tbl_dcs_purchase_rate_applicability.applicable_code', 'tbl_dcs_purchase_rate_applicability.applicable_for', 'tbl_dcs_purchase_rate_applicability.wef_date', 'rate_chart_for' => new Expression("'BMC'"), 'tbl_dcs_purchase_rate_applicability.purchase_rate_code', 'tbl_dcs_purchase_rate_applicability.shift_code', 'tbl_dcs_purchase_rate.description']);
 
         $query->andWhere('\'' . $this->rate_for . '\'=\'bmc\' or \'' . $this->rate_for . '\'=\'both\'');
 
@@ -109,7 +113,7 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
 
         // add conditions that should always apply here,'
 
-        $query->joinWith(['dcsCode', 'mainCustomerCode']);
+        $query->joinWith(['dcsCode', 'mainCustomerCode', 'purchaseRateCode']);
         if (!empty($this->bmc_code)) {
             $query->andWhere(['or', ['tbl_dcs.bmc_code' => $this->bmc_code], ['tbl_customer_master.bmc_code' => $this->bmc_code]]);
         } else {
@@ -119,7 +123,11 @@ class TblDcsPurchaseRateApplicabititySearch extends TblDcsPurchaseRateApplicabit
         $query->andFilterWhere([
             'tbl_dcs_purchase_rate_applicability.applicable_for' => $this->applicable_for,
             'tbl_dcs_purchase_rate_applicability.applicable_code' => $this->applicable_code,
+            'tbl_dcs_purchase_rate_applicability.purchase_rate_code' => $this->purchase_rate_code,
         ]);
+        if (!empty($this->wef_date)) {
+            $query->andFilterWhere(['CAST(tbl_dcs_purchase_rate_applicability.wef_date as date)' => date('Y-m-d', strtotime($this->wef_date))]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $unionQuery,
             'pagination' => FALSE,

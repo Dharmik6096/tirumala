@@ -4,6 +4,10 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
 use kartik\grid\GridView;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use yii\helpers\Url;
+
+$action = Url::to(['check-lock-payment']);
 ?>
 <div class="pt5 clearfix large-search">
     <?php echo $this->render('_recalculation_search', ['searchModel' => $searchModel, 'model' => $model, 'rtype' => $rtype]); ?>
@@ -13,7 +17,6 @@ $rec_data = !empty($dataProvider) ? $dataProvider->allModels : '';
 $form = ActiveForm::begin([
             'options' => ['id' => 'recalculation-form'],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -33,6 +36,8 @@ if (!empty($rec_data) && $rtype == 'forced') {
 <?= Html::activeHiddenInput($searchModel, 'plant_code') ?>
 <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code') ?>
 <?= Html::activeHiddenInput($searchModel, 'bmc_code') ?>
+<?= Html::activeHiddenInput($searchModel, 'from_date') ?>
+<?= Html::activeHiddenInput($searchModel, 'to_date') ?>
 
 <!--<span class="hide-grid-settings kv-panel-before"></span>-->
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -45,7 +50,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
 //                'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name']];
                 }],
             ['attribute' => 'type', 'filter' => false],
             ['attribute' => 'code', 'filter' => false],
@@ -62,7 +67,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'visible' => $rtype == 'forced' ? false : true,
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for']];
+                    return ['class' => 'checkbox-recalculation', 'value' => $model['code'] . '###' . $model['purchase_rate_code'] . '###' . $model['from_date'] . '###' . $model['to_date'] . '###' . $model['customer_type'] . '###' . $model['recalc_for'] . '###' . $model['name']];
                 }],
             ['attribute' => 'type', 'value' => 'type', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'code', 'value' => 'code', 'vAlign' => 'middle', 'filter' => false],
@@ -80,7 +85,12 @@ if (!empty($rec_data) && $rtype == 'forced') {
                     $shift = explode(' ', $model['wef_date'])[1] == '06:00:00.000000' ? ' (M)' : ' (E)';
                     return Yii::$app->controls->view_date($model['wef_date']) . $shift;
                 }, 'filter' => false],
-            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
+//            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code', 'vAlign' => 'middle', 'filter' => false],
+            ['header' => 'Rate Id', 'attribute' => 'purchase_rate_code', 'value' => function($model) {
+                    $modelPurchase = new TblPurchaseRate();
+                    $dcsRate = $modelPurchase->find()->where(['purchase_rate_code' => $model['purchase_rate_code']])->one();
+                    return (!empty($dcsRate) && $model['recalc_for'] == 'Member') ? $model['purchase_rate_code'] . ' (' . $dcsRate->dcs_purchase_rate_code . ')' : $model['purchase_rate_code'];
+                }, 'visible' => true, 'filter' => false],
             ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'recalc_for', 'value' => 'recalc_for', 'vAlign' => 'middle', 'filter' => false],
@@ -96,7 +106,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
     }
     ?>
 
-<div class="form-group pt5">
+    <div class="form-group pt5">
         <?php if (!empty($rec_data)) { ?>
             <span class="btn_show">
                 <?php
@@ -178,7 +188,33 @@ $script = "
              bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one Collection.</span></div></div>');
                 return false;
             } else {
-            $('#recalculation-form').submit();
+                    var postVspDisbData = $('#recalculation-form').serializeArray();
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . $action . "',
+                        data: postVspDisbData,
+                        dataType: 'json',
+                        success: function(data) {
+                         var obj = $.parseJSON(data);
+                        if (obj.status == 'success') {
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                                $('#recalculation-form').submit();
+                            } else {
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj.msg+\"</span></div></div>\");
+                            }
+                        },
+                        error:function(data){
+                            $('#loadercontent').hide();
+                            $('#pageloader').hide();
+                            return false;
+                                //alert('Your data has not been submitted..Please try again');
+                        }
+                    });
             }
     });
 ";

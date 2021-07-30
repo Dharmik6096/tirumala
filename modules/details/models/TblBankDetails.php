@@ -39,34 +39,36 @@ class TblBankDetails extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
-            [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'additional'],
+                [['branch_code', 'bank_account_no', 'ifsc'], 'required', 'on' => 'bank_selected'],
+                [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'additional'],
             /* [['branch_code', 'bank_account_no', 'ifsc'], 'required','when' => function($model) {
               return !empty($this->bank_code)?true:false;
               }, 'whenClient' => "function (attribute, value) { return $('#tblbankdetails-bank_code').val()!==''}"], */
-            [['detail_code'], 'integer'],
-            [['module_name', 'module_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name'], 'safe'],
+                [['detail_code'], 'integer'],
+                [['module_name', 'module_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'created_by', 'updated_by'], 'string'],
+                [['created_at', 'updated_at', 'is_default', 'is_active', 'beneficiary_name', 'is_verified'], 'safe'],
 //            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
 //            return $model->module_name == $this->module_name;
 //        }],
 //            [['bank_account_no'], 'CheckDuplicate'],
             [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
-            [['bank_account_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => true, 'except' => 'verification'],
+                [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
-                }],
-            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
-            [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
-            [['beneficiary_name'], function ($attribute, $params) {
+                }, 'except' => 'verification'],
+                [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code'], 'except' => 'verification'],
+                [['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code'], 'except' => 'verification'],
+                [['beneficiary_name'], function ($attribute, $params) {
                     $error = Yii::$app->general->validateBeneficiary($this, $attribute, $params);
                     if ($error != NULL) {
                         $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid'));
                     }
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => 'verification'],
+                [['branch_code', 'bank_account_no', 'ifsc', 'bank_code'], 'required', 'on' => 'main_create'],
+                [['is_verified'], 'default', 'value' => 0]
         ];
 
         $client_rules = Yii::$app->customvalidation->getRules('TblBankDetails', $this->form_validation_type);

@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Member Deactivate'));
 $this->params['menu'][] = Yii::$app->controls->add('Member Deactivate');
+$this->params['menu'][] = Yii::$app->controls->import('member-deactive', $this);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

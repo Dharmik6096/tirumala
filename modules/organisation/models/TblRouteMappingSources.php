@@ -309,8 +309,22 @@ class TblRouteMappingSources extends \app\models\ChildModel {
         if (strtolower($model->customer_type) != 'dcs') {
             $prefix = Yii::$app->general->getforeignkey($model->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($model->customerType, 'code_length');
-            $model->dcs_code_ex = $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT);
-            $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($this->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $this->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $this->customer_type])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $this->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $model->dcs_code_ex = $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT);
+                $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }

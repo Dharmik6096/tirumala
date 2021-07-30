@@ -38,18 +38,17 @@ class TblContactDetails extends \app\models\ChildModel {
             [['detail_code'], 'required'],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['detail_code', 'mobile_no'], 'integer'],
-            [['mobile_no'], 'CheckDuplicate'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => 'verification'],
             [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => 'verification'],
             [['local_firstname', 'local_lastname', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
+                }, 'skipOnEmpty' => false, 'except' => 'verification'],
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active'], 'safe'],
+            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified'], 'safe'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

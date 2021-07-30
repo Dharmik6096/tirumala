@@ -37,6 +37,12 @@ use app\modules\general\models\TblDpuIncentiveMaster;
 use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\organisation\models\TblDcsDeactiveSearch;
+use app\modules\dcsoperation\models\TblMemberHistory;
+use app\modules\details\models\TblBankDetailsHistory;
+use app\modules\details\models\TblContactDetailsHistory;
+use yii\base\UserException;
+use ReflectionClass;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -81,11 +87,15 @@ class TblDcsController extends ChildController {
         $csearchModel->module_name = 'society';
         $csearchModel->module_code = $id;
         $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+        $dsearchModel = new TblDcsDeactiveSearch();
+        $dsearchModel->dcs_code = $id;
+        $ddataProvider = $dsearchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $dcsBmc, 'dataProvider' => $dataProvider,
                     'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
+                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
         ]);
     }
 
@@ -180,26 +190,7 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
-                $member = [];
-                if (!empty($this->model->auto_member_create)) {
-                    for ($x = 1; $x <= 100; $x += 1) {
-                        $memberModel = new TblMember();
-                        $memberModel->attributes = $this->model->attributes;
-                        $memberModel->ex_member_code = str_pad($x, 4, '0', STR_PAD_LEFT);
-                        $memberModel->member_code = $this->model->dcs_code . $memberModel->ex_member_code;
-                        $memberModel->ref_code = $memberModel->member_code;
-                        $memberModel->animal_type_code = 1;
-                        $memberModel->address = $this->model->dcs_name;
-                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
-                        $memberModel->member_type_code = '1';
-                        $memberModel->member_name = 'No Name';
-                        $memberModel->gender_code = 1;
-                        $memberModel->caste_category_code = 1;
-                        $memberModel->member_type_code = 1;
-                        array_push($mapList, $memberModel);
-                    }
-                }
-                $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['society', 'create']);
+                $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (!empty($vendorModel)) {
@@ -924,6 +915,251 @@ class TblDcsController extends ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionMasterVerification() {
+        $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
+        $searchModel->scenario = 'verification';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 1;
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+
+                $where = [];
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $modelUsed = $data[1];
+                    if ($modelUsed == 'MEMBER') {
+                        $where['member_code'] = $data[0];
+                        $existData = TblMember::find()->where($where)->one();
+                        $historyModel = new TblMemberHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
+                        $module = $modelUsed == 'DCS' ? 'society' : 'customer';
+                        $code = $data[0];
+                        $existData = TblBankDetails::find()->where(['module_code' => $code, 'module_name' => $module, 'is_default' => 1, 'is_active' => 1])->one();
+                        $historyModel = new TblBankDetailsHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Master Verified', 'create']);
+                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->verificationsearch(Yii::$app->request->queryParams);
+
+        return $this->render('master_verification', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionViewVerification() {
+        $code = !empty(Yii::$app->request->post('code')) ? Yii::$app->request->post('code') : NULL;
+        $type = !empty(Yii::$app->request->post('type')) ? Yii::$app->request->post('type') : NULL;
+        if ($type == 'DCS') {
+            $model = $this->findModel($code);
+        } else if ($type == 'CUSTOMER') {
+            $model = TblCustomerMaster::find()->where(['customer_code' => $code])->one();
+        } elseif ($type == 'MEMBER') {
+            $model = TblMember::find()->where(['member_code' => $code])->one();
+        }
+
+        return $this->renderAjax('verification_view', [
+                    'model' => $model,
+                    'type' => $type,
+        ]);
+    }
+
+    public function actionContactVerification() {
+        $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
+        $searchModel->scenario = 'verification';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 1;
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+
+                $where = [];
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $modelUsed = $data[1];
+                    if ($modelUsed == 'MEMBER') {
+                        $where['member_code'] = $data[0];
+                        $existData = TblMember::find()->where($where)->one();
+                        $historyModel = new TblMemberHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_contact_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
+                        $module = $modelUsed == 'DCS' ? 'society' : 'customer';
+                        $code = $data[0];
+                        $existData = TblContactDetails::find()->where(['module_code' => $code, 'module_name' => $module, 'is_default' => 1, 'is_active' => 1])->one();
+                        $historyModel = new TblContactDetailsHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->is_contact_verified = $status;
+                        $existData->scenario = 'verification';
+                        $saveModel[] = $existData;
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Master Verified', 'create']);
+                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->contactverificationsearch(Yii::$app->request->queryParams);
+
+        return $this->render('contact_verification', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionImportAttachements() {
+        $model = new TblDcs();
+        if (isset($_POST['code'])) {
+            $model->dcs_code = $_POST['code'];
+        }
+        $saveModel = [];
+        if ($model->load(Yii::$app->request->post())) {
+            $files = !empty(Yii::$app->request->post()['TblDcs']['file_name']) ? Yii::$app->request->post()['TblDcs']['file_name'] : '';
+            Yii::$app->general->setAttachment($saveModel, $files, $model->dcs_code, 'TblDcs');
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
+            return $this->redirect(['index']);
+        }
+        return $this->renderAjax('_dcs_attachment_upload_popup', ['model' => $model]);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . str_replace(' ', '_', $file->name);
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function actionGetAttachments() {
+        $type = $_POST['type'];
+        $code = $_POST['code'];
+        $module_name = '';
+        if ($type == 'Member') {
+            $module_name = 'TblMember';
+        }
+        if ($type == 'CUSTOMER') {
+            $module_name = 'TblCustomerMaster';
+        }
+        if ($type == 'DCS') {
+            $module_name = 'TblDcs';
+        }
+        $attachment = Yii::$app->general->getAttachment($module_name, $code, TRUE, TRUE);
+        return $this->renderAjax('_attachment_popup', ['attachment' => $attachment]);
+    }
+
+    public function saveDcs($model, $childModel, $message) {
+        //var_dump($model);var_dump($childModel);exit;
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $master[] = $model->save();
+            if (!in_array(FALSE, $master)) {
+                foreach ($childModel as $key => $m) {
+                    if ($key != 0 && strpos($childModel[$key - 1]->tableName(), 'history') !== false && $childModel[$key - 1]->operation_type == 'DELETE') {
+                        $master[] = $m->delete();
+                    } else {
+                        $name = (new ReflectionClass($m))->getShortName();
+                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails')
+                            $master[] = $m->save();
+                        else
+                            $master[] = $m->save(FALSE);
+                    }
+                }
+            }
+
+            if (!in_array(FALSE, $master)) {
+                if (!empty($model->auto_member_create)) {
+                    $config = !empty(Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['no_of_auto_member_create'] : 100;
+                    for ($x = 1; $x <= $config; $x += 1) {
+                        $memberModel = new TblMember();
+                        $memberModel->attributes = $model->attributes;
+                        $memberModel->setKeyPattern($memberModel, 'tbl_member', 'ex_member_code', 3);
+                        $memberModel->member_code = $model->dcs_code . $memberModel->ex_member_code;
+                        $memberModel->animal_type_code = 1;
+                        $memberModel->address = $model->dcs_name;
+                        $memberModel->no_of_buffalo = $memberModel->no_of_cow_cross = $memberModel->no_of_cow_ind = $memberModel->total_animals = 0;
+                        $memberModel->member_type_code = '1';
+                        $memberModel->member_name = 'No Name';
+                        $memberModel->gender_code = 1;
+                        $memberModel->caste_category_code = 1;
+                        $memberModel->member_type_code = 1;
+                        $master[] = $memberModel->save();
+                    }
+                }
+            }
+
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            }
+            $child = new ChildModel();
+            foreach ($childModel as $key => $m) { //this code to get validation msgs of child table when matster validation fails
+                if ($key != 0 && strpos($childModel[$key - 1]->tableName(), 'history') !== false && $childModel[$key - 1]->operation_type == 'DELETE') {
+                    
+                } else {
+                    $child->decryptModel($m);
+                    $master[] = $m->validate();
+                }
+            }
+            //exit;
+
+            $model->decryptModel($m);
+            foreach ($childModel as $m) {
+                $child->decryptModel($m);
+            }
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Your transaction is not saved successfully']);
+            return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
     }
 
 }

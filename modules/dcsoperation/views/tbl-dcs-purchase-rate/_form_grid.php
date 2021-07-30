@@ -49,6 +49,7 @@ $attribute = [
     ['attribute' => 'for_member', 'value' => function($model) {
             return $model->for_member == 1 ? 'YES' : 'NO';
         }, 'filter' => false],
+    'ts_rate',
     'description',
 ];
 

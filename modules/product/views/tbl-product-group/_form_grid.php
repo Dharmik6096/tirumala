@@ -12,6 +12,7 @@ $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false,],
+    'product_group_code',
     'product_group_name',
 //    'local_name',
     ['attribute' => 'ref_code', 'visible' => false],

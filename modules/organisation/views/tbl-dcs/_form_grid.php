@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -10,10 +9,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
-
 ?>
 <?php
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
     ['attribute' => 'bmc_code', 'value' => function($model) {
@@ -154,6 +151,7 @@ $attribute = [
             return $detail;
         }
     ],
+    ['attribute' => 'aadhaar_no'],
     ['attribute' => 'bipl_code', 'label' => Yii::t('app', 'Reference Code'), 'value' => 'societyCodes.bipl_code', 'filter' => false, 'visible' => false],
     ['attribute' => 'is_name_request', 'value' => function($model) {
             return $model->is_name_request == 0 ? 'Downloaded' : 'Not Downloaded';
@@ -194,18 +192,32 @@ $attribute = [
             return ($model->credit_sale_allow == 1) ? 'Yes' : 'No';
         }, 'visible' => FALSE
     ],
+    [
+        'attribute' => 'is_active', 'label' => Yii::t('app', 'Status'), 'filter' => false,
+        'value' => function($model) {
+            return $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active';
+        },
+    ],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Bank Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Contact Verification'), 'value' => function($model) {
+            $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
+            return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
+        }, 'filter' => false],
 ];
 
 $grid_option = [
     'id' => 'dcs-list',
     'attributes' => $attribute,
-    'active_column' => true,
+    'active_column' => FALSE,
     'actions' => [
         'view' => TRUE,
 //        'update' => true,
         'update' => function ($url, $model) {
             $name = $model->dcs_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
@@ -219,29 +231,29 @@ $grid_option = [
           $subCenter = $model->getMainSubCenter();
           return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
           }, */
-        'deactive' => function ($url, $model) {
-            $name = $model->dcs_name;
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
-            else
-                return false;
-        },
+//        'deactive' => function ($url, $model) {
+//            $name = $model->dcs_name;
+//            $class = ($model->is_active == 1) ? '' : 'link-disable';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
+//            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
+//                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
+//            else
+//                return false;
+//        },
         'bank-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], $options);
         },
         'contact-details' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
         },
         'dpu-inst' => function ($url, $model) {
             $inst_id = $model->getInstallationId();
             if (!$inst_id) {
-                $class = ($model->is_active == 1) ? '' : 'link-disable';
+                $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
                 $url = ['/organisation/tbl-dpu-installation/create', 'id' => $model->dcs_code];
                 $icon = '<i class="fa fa-plus"></i>';
             } else {
@@ -253,7 +265,7 @@ $grid_option = [
             return GhostHtml::a($icon, $url, $options);
         },
         'election-list' => function ($url, $model) {
-            $class = ($model->is_active == 1) ? '' : 'link-disable';
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Election Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-address-card-o"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
         },
@@ -264,7 +276,7 @@ $grid_option = [
                 $name = $model->dcs_name;
                 $icon_class = ($status_id == 1) ? 'fa-ban' : 'fa-flask';
                 $title = ($status_id == 1) ? 'Stop Collection' : 'Start Collection';
-                $class = ($model->is_active == 1) ? '' : 'link-disable';
+                $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => 'society-status ' . $class, 'data-val' => $model->dcs_code . ',' . $status_id . ',' . $name, 'data-name' => $title . ' of "' . $name . '"'];
                 return GhostHtml::a('<i class="fa ' . $icon_class . '"></i>', ['/organisation/tbl-dcs/society-status', 'dcs_code' => $model->dcs_code, 'coll_status' => $status_id], $options);
             }
@@ -273,10 +285,18 @@ $grid_option = [
             if (!empty($model->tblPurchaseRateApplicabilityUnblock) || !empty($model->tblPurchaseRateApplicabilityBlock)) {
                 $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-bar-chart text-danger' : 'fa-bar-chart text-success';
                 $title = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'Un-Block Rate Chart' : 'Block Rate Chart';
-                $class = ($model->is_active == 1) ? '' : 'link-disable';
+                $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class];
                 return GhostHtml::a('<i class="fa ' . $icon_class . '""></i>', $url, $options);
             }
+        },
+        'upload-photos' => function ($url, $model) {
+            $id = $model->dcs_code;
+            $type = 'DCS';
+            $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
+            $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
@@ -287,8 +307,8 @@ $grid_option = [
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<div id='ImportAttachements'></div>
 <?php
-
 $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-dcs',function(e){
@@ -336,5 +356,29 @@ $(document).ready(function(){
         }
       });
     });
+
+    $(document).on('click','.upload-photo',function(e){
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var code= $(this).attr('data-val');
+        var type= $(this).attr('data-name');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/organisation/tbl-dcs/import-attachements']) . "',
+            data:{'code':code,'type':type},
+            success: function(data) {     
+                $('#ImportAttachements').html(data);
+                $('#ImportAttachementsModel').modal('toggle'); 
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+    
 });";
 $this->registerJs($script, View::POS_END, 'dcs-index');
+?>

@@ -107,7 +107,7 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
             $name = date('YmdHis') . rand(1000, 9999) . $file->name;
             if ($file->saveAs($path . $name)) {
-                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name, 'datefile' => $file->name];
             } else {
                 $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
             }

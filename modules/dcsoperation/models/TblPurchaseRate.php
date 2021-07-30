@@ -50,7 +50,7 @@ class TblPurchaseRate extends \app\models\ChildModel {
 //                    $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
 //                    return ($data) ? true : false;
 //                }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
-            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code', 'dcs_purchase_rate_code'], 'safe'],
+            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code', 'dcs_purchase_rate_code', 'ts_rate'], 'safe'],
             [['shift_applicability'], 'integer'],
             [['description', 'originating_org_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -221,10 +221,23 @@ class TblPurchaseRate extends \app\models\ChildModel {
         return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
     }
 
-    public function getRateChartList($union_code) {
+//    public function getRateChartList($union_code) {
+//        $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
+//        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
+//                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+//                });
+//    }
+
+    public function getRateChartList($union_code, $showRef = FALSE) {
         $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
-        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
-                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+        return ArrayHelper::map($data, 'purchase_rate_code', function($data) use ($showRef) {
+                    $code = '';
+                    if ($showRef && !empty($data->dcs_purchase_rate_code)) {
+                        $code = $data->purchase_rate_code . ' / ' . $data->dcs_purchase_rate_code . '(' . (!empty($data->description) ? $data->description : '') . ')';
+                    } else {
+                        $code = $data->purchase_rate_code . ' (' . $data->description . ')';
+                    }
+                    return $code;
                 });
     }
 

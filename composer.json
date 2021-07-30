@@ -43,7 +43,9 @@
         "linslin/yii2-curl": "*",
         "kartik-v/yii2-tabs-x": "1.2.3",
         "yiisoft/yii2-queue": "^2.0@dev",
-        "tecnickcom/tcpdf": "^6.3"
+        "tecnickcom/tcpdf": "^6.3",
+        "yiisoft/yii2-imagine": "^2.0@dev",
+        "nullref/yii2-datatables": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

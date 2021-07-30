@@ -21,13 +21,14 @@ use yii\base\Model;
 use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\organisation\models\TblUnions;
 use app\modules\collection\models\OnlineCollectionModel;
+use app\modules\organisation\models\TblBmcMilkType;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
  */
 class TblMilkCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid'];
+    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'qlty-type-config', 'check-fat-range'];
 
     /**
      * Lists all TblMilkCollection models.
@@ -88,6 +89,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->setModel($this->model);
             $this->model->scenario = 'create';
             $this->model->member_code = $this->model->dcs_code . str_pad($this->model->member_code, 4, '0', STR_PAD_LEFT);
+            $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
+            $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
+            $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
+            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
             if ($this->model->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
@@ -189,9 +194,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->model = new TblMilkCollection();
         $this->model->member_code = $member;
         $rateClass = Yii::$app->general->getforeignkey($this->model->memberCode, 'rate_class');
-        
+
         $data['rate_class'] = empty($rateClass) ? 0 : $rateClass;
-        
+
         $model = new TblPurchaseRateApplicability();
         $model->dcs_code = $data['dcs_code'];
         $model->wef_date = $data['dt_date'];
@@ -301,7 +306,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 return $this->redirect(['repost-sap-data']);
             }
         }
-//        var_dump($searchModel->validate());die;
+        //        var_dump($searchModel->validate());die;
         return $this->render('_repost_sap_data', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider
@@ -344,15 +349,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     public function actionUpdateCollection() {
         $searchModel = new TblMilkCollectionSearch();
         $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
-        $searchModel->scenario = 'deleteMilkCollection';
+        $searchModel->scenario = 'updateMilkCollection';
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
         $type = 'edit';
-
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
+        $config = $configVal == 1 ? TRUE : FALSE;
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
                 $detail->scenario = 'update';
-//                $detail->rtpl = '';
+                //                $detail->rtpl = '';
             }
             $modelData = [];
             Model::loadMultiple($detailModel, Yii::$app->request->post());
@@ -365,7 +371,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
                         if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
@@ -411,6 +417,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'detailModel' => $detailModel,
+                    'config' => $config,
         ]);
     }
 
@@ -418,6 +425,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $searchModel = new TblMilkCollectionSearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteMilkCollection';
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -447,15 +455,16 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
-                }
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+//                }
             }
         }
 
         return $this->render('delete', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'configVal' => $configVal,
         ]);
     }
 
@@ -522,6 +531,178 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'onlineData' => $output,
                     'model' => $model,
                     'defaultToggle' => $defaultToggle
+        ]);
+    }
+
+    public function actionQltyTypeConfig() {
+        $union = Yii::$app->request->post('union');
+        $config = isset(Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$union]['qlty_wise_collection'] : 0;
+        return Json::encode(['status' => 'success', 'config' => $config]);
+    }
+
+    public function actionCheckFatRange() {
+        $response = [];
+        $response['status'] = 'error';
+        $response['data'] = '';
+        (float) $fat = Yii::$app->request->post('fat');
+        $union = Yii::$app->request->post('union_code');
+        $bmc = Yii::$app->request->post('bmc');
+        $milk_type = Yii::$app->request->post('milk_type');
+        $range = isset(Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member']) ? Yii::$app->session->get('unionConfig')[$union]['buf_min_fat_range_member'] : '';
+        $mapping = new TblBmcMilkType();
+        $mapped = $mapping->find()->where(['bmc_code' => $bmc, 'is_active' => 1])->all();
+
+        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+            $type = [];
+            foreach ($mapped as $map) {
+                $type[] = $map->milk_type_code;
+            }
+            //Cow and Buffalo
+            if (in_array(1, $type) && in_array(2, $type)) {
+                if ($range < $fat && $milk_type != 2) {
+                    $response['status'] = 'success';
+                    $response['data'] = 2;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                } elseif ($range >= $fat && $milk_type != 1) {
+                    $response['status'] = 'success';
+                    $response['data'] = 1;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                }
+            }
+            //Cow and Mix
+            if (in_array(1, $type) && in_array(3, $type)) {
+                if ($range < $fat && $milk_type != 3) {
+                    $response['status'] = 'success';
+                    $response['data'] = 3;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                } elseif ($range >= $fat && $milk_type != 1) {
+                    $response['status'] = 'success';
+                    $response['data'] = 1;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Cow');
+                }
+            }
+            //Buffalo and Mix
+            if (in_array(2, $type) && in_array(3, $type)) {
+                if ($range < $fat && $milk_type != 3) {
+                    $response['status'] = 'success';
+                    $response['data'] = 3;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Mix');
+                } elseif ($range >= $fat && $milk_type != 2) {
+                    $response['status'] = 'success';
+                    $response['data'] = 2;
+                    $response['msg'] = Yii::t('app', 'Milk Type Must Buffalo');
+                }
+            }
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($response);
+    }
+
+    public function actionBulkDeleteCollection() {
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'bulkdeleteMilkCollection';
+
+        $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
+
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $deleteModel = [];
+                $message = 'Data For Approval';
+                $type = 'create';
+                $deletedata = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
+                $where = [];
+                foreach ($deletedata as $code) {
+                    $exist = explode('###', $code);
+                    $where['dcs_code'] = $exist[0];
+                    $where['date_time_of_collection'] = $exist[1];
+                    $existData = TblMilkCollection::find()->where($where)->all();
+                    foreach ($existData as $delete) {
+                        if (Yii::$app->general->getUnionConfiguration($delete->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $ApprovalModel = new TblCollectionDataAlias();
+                            $ApprovalModel->attributes = $delete->attributes;
+                            $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                            $ApprovalModel->table_name = 'tbl_milk_collection';
+                            $ApprovalModel->action_perform = 'DELETE';
+                            $existApproval = $ApprovalModel->getExistApproval();
+                            if (empty($existApproval)) {
+                                $saveModel[] = $ApprovalModel;
+                            }
+                        } else {
+                            $historyModel = new TblMilkCollectionHistory();
+                            Yii::$app->operation->history($delete, $historyModel, DELETE);
+                            $saveModel[] = $historyModel;
+                            $deleteModel[] = $delete;
+                            $message = 'Milk Collection';
+                            $type = 'delete';
+                        }
+                    }
+                }
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+//                }
+            }
+        }
+
+        $dataProvider = $searchModel->searchdcswisesummary(Yii::$app->request->queryParams);
+        return $this->render('dcs_wise_delete', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'configVal' => $configVal,
+        ]);
+    }
+
+    public function actionDeleteMemberWise() {
+        if (Yii::$app->request->post()) {
+            $postData = Yii::$app->request->post()['collectionData'];
+            $saveModel = [];
+            $deleteModel = [];
+            $deletedata = explode(',', $postData);
+            foreach ($deletedata as $code) {
+                $where['milk_collection_code'] = $code;
+                $existData = TblMilkCollection::find()->where($where)->one();
+                if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                    $ApprovalModel = new TblCollectionDataAlias();
+                    $ApprovalModel->attributes = $existData->attributes;
+                    $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                    $ApprovalModel->table_name = 'tbl_milk_collection';
+                    $ApprovalModel->action_perform = 'DELETE';
+                    $saveModel[] = $ApprovalModel;
+                } else {
+                    $historyModel = new TblMilkCollectionHistory();
+                    Yii::$app->operation->history($existData, $historyModel, DELETE);
+                    $saveModel[] = $historyModel;
+                    $deleteModel[] = $existData;
+                }
+            }
+            $response = [];
+            $response['status'] = 'error';
+            $response['message'] = 'error';
+            $message = 'Milk Collection';
+            $type = 'delete';
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+            if ($transaction == 'customRedirect') {
+                $response['status'] = 'success';
+            } else {
+                $response['message'] = 'error';
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($response);
+        }
+
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'bulkdeleteMilkCollection';
+        $dataProvider = $searchModel->deletemembersearch(Yii::$app->request->queryParams);
+        $redirectUrl = [];
+        $redirectUrl[] = 'delete-member-wise';
+        foreach (Yii::$app->request->get() as $key => $value) {
+            $redirectUrl[$key] = $value;
+        }
+        return $this->renderAjax('_delete_member_wise', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'redirectUrl' => $redirectUrl
         ]);
     }
 

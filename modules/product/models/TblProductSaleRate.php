@@ -25,6 +25,7 @@ use app\modules\syncutility\models\TblSentbox;
 class TblProductSaleRate extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
+    public $import_union_code, $import_eipl_code, $import_key_pattern;
 
     /**
      * @inheritdoc
@@ -62,6 +63,11 @@ class TblProductSaleRate extends \app\models\ChildModel {
             [['is_member_rate', 'commission'], 'default', 'value' => 0],
             [['commission'], 'validateCommission', 'skipOnEmpty' => false],
             [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code'], 'safe'],
+            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['wef_date'], 'validateDate', 'on' => ['importCsv']],
         ];
     }
 
@@ -192,6 +198,29 @@ class TblProductSaleRate extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function validateDate($attribute, $params) {
+        if (empty($this->getErrors())) {
+            if ($this->wef_date < date('Y-m-d')) {
+                $this->addError($attribute, Yii::t('app/validation', 'Wef Date Must Not Allow Past Date'));
+                return false;
+            }
+        }
     }
 
 }

@@ -1308,7 +1308,11 @@ input[type="hidden"] + .help-block{
 /*Footer*/
 footer{
     background-color: #3B3E47;
-    height:30px;
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 99999;
 } 
 footer a {
     color:#fff !important;
@@ -1843,6 +1847,8 @@ input[type="checkbox"][disabled] + label, input[type="radio"][disabled] + label 
     position: fixed;
     z-index: 9;
     box-shadow:0 0 10px rgba(0,0,0,0.15);
+    overflow: hidden;
+    padding-bottom: 42px;
 }
 
 .setting{
@@ -2323,7 +2329,10 @@ div.crystalstyle{
     overflow-y:scroll;
 } */
 .panel.panel-default{
-    min-height: calc(100vH - 100px);
+    /* min-height: calc(100vH - 100px); */
+    min-height: calc(100vH - 200px);
+    overflow: auto;
+    padding-bottom: 18px;
 }
 .actionButtons{
     position: absolute;
@@ -2336,7 +2345,7 @@ div.crystalstyle{
 #menu_buttons {
     position: absolute;
     top: 105px;
-    z-index: 9;
+    z-index: 99;
     right: 14px;
 }
 
@@ -2370,6 +2379,7 @@ div.crystalstyle{
 
 .report-area .grid-search.search-filter {
     width: calc(100% - 175px) !important;
+    z-index: 9;
 }
 
 .grid-search.search-filter.beforeGridLoad{
@@ -2396,6 +2406,7 @@ div.crystalstyle{
 
 .panel-main > .panel-body {
     min-height: calc(100vH - 180px);
+    /* margin-bottom: 50px; */
 }
 
 .multiselect-container li.active  label.checkbox {
@@ -2455,6 +2466,7 @@ div.crystalstyle{
     max-height: 60px;
     bottom: 0;
     position: absolute;
+    min-height: 100%;
 }
 
 .mt23 {
@@ -3901,6 +3913,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     width: 51%;
     float: right;
     margin-top: -14px;
+    background: #fff;
 }
 
 .right_reverse_max{
@@ -3913,7 +3926,33 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .padding_top_10{
     padding-top: 10px;
 }
+.padding_bottom_25{
+    padding-bottom:25px;
+}
 
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 0 !important;
+}
+
+.table-responsive {
+    /*max-height: 420px;*/
+    overflow-x: auto;
+    max-height: calc(100vH - 227px);
+}
+
+.panel > .table-responsive > .table-bordered > thead > tr > th{
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background-color: #7a231c;
+}
+
+.panel > .table-responsive > .table-bordered > thead tr.filters.skip-export > td {
+    position: sticky;
+    top: 19px;
+    z-index: 9;
+    background-color: #fff;
+}
 .datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-bottom {
     z-index: 9999 !important;
 }
@@ -4227,13 +4266,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .fht-table{
-	border: 0 none;
-	height: auto;
-	width: auto;
-	border-collapse: collapse;
-	border-spacing: 0;
-	/*table-layout: fixed;  Algoritmo de distribucion fijo */
-    /*white-space:nowrap;   Impide los saltos de línea automáticos */
+    border: 0 none;
+    height: auto;
+    width: auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+    /*table-layout: fixed;  Algoritmo de distribucion fijo */
+    /*white-space:nowrap;   Impide los saltos de lÃ­nea automÃ¡ticos */
 }
 
 .fht-table th,.fht-table td {
@@ -4246,53 +4285,53 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 .fht-table-wrapper .fht-fixed-column .fht-tbody,
 .fht-table-wrapper .fht-fixed-body .fht-tbody,
 .fht-table-wrapper .fht-tbody {
-	overflow: hidden;
-	position: relative;
+    overflow: hidden;
+    position: relative;
 }
 
 .fht-table-wrapper .fht-fixed-body .fht-tbody,
 .fht-table-wrapper .fht-tbody {
-	overflow: auto;
+    overflow: auto;
 }
 
 .fht-table-wrapper .fht-table .fht-cell {
-	overflow: hidden;
-	height: 1px;
+    overflow: hidden;
+    height: 1px;
 }
 
 .fht-table-wrapper .fht-fixed-column,
 .fht-table-wrapper .fht-fixed-body {
-	top: 0;
-	left: 0;
-	position: absolute;
+    top: 0;
+    left: 0;
+    position: absolute;
 }
 
 .fht-table-wrapper .fht-fixed-column {
-	z-index: 1;
+    z-index: 1;
 }
 
 .fht-fixed-body .fht-thead table {
-	margin-right: 20px;
-	border: 0 none;
+    margin-right: 20px;
+    border: 0 none;
 }
 
 /*For Examples*/
 
 .custom_report_table {
-	height: 500px;
-	margin-top: 35px;
-	overflow: auto;
-	width: 100%;
-	position: relative;
+    height: 500px;
+    margin-top: 35px;
+    overflow: auto;
+    width: 100%;
+    position: relative;
 }
 
 /*When measures are used in%*/
 /*.custom_report_table {
-	height: 80%;
-	margin: 0 auto;
-	overflow: auto;
-	width: 100%;
-	position: fixed;
+        height: 80%;
+        margin: 0 auto;
+        overflow: auto;
+        width: 100%;
+        position: fixed;
 }*/ 
 
 .custom_grid_header {
@@ -4304,14 +4343,14 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     text-align: center;
 }
 ._Separador{
-	background-color: #fff;
-	height: 12px;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	width: 7px;
+    background-color: #fff;
+    height: 12px;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    width: 7px;
 }
 ._Separador div{
-	width: 4px;
+    width: 4px;
 }
 .custom_grid_normal {
     /*background-color: #fff;*/
@@ -4428,6 +4467,15 @@ td.custom_grid_normal.dynamic_value {
     box-shadow: none;
 }
 
+.select2-container--krajee .select2-selection--multiple {
+    height: 24px !important;
+    min-height: 24px !important;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    /* color: #66778d; */
+    font-size: 12px;
+}
+
 .fht-table-wrapper{
     overflow: auto !important;
 }
@@ -4438,6 +4486,10 @@ td.custom_grid_normal.dynamic_value {
 
 .dataTables_wrapper .dataTables_filter{
     display: none;
+}
+
+.dataTables_wrapper{
+    overflow: auto !important;
 }
 
 .max_h_100-100 .dataTables_wrapper{
@@ -4496,6 +4548,135 @@ table.dataTable tbody tr:nth-child(odd) {
     background-color: #f1f1f1 /*dfedff*/;
 }
 
+.dropdown-check-list {
+    display: inline-block;
+    float: right;
+    z-index: 9;
+}
+
+.dropdown-check-list .anchor {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 3px 15px;
+    /* border: 1px solid #ccc; */
+    background: #7a231c;
+    top: 5px;
+    color: #fff;
+}
+
+/* .dropdown-check-list .anchor:after {
+    position: absolute;
+    content: "";
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    padding: 5px;
+    right: 10px;
+    top: 20%;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+} */
+
+.dropdown-check-list .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.dropdown-check-list ul.items {
+    padding: 2px;
+    display: none;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    position: absolute;
+    z-index: 999;
+    background: #fff;
+    max-width: 250px;
+    right: 0;
+}
+
+.dropdown-check-list ul.items li {
+    list-style: none;
+}
+
+.dropdown-check-list.visible .anchor {
+    color: #0094ff;
+}
+
+.dropdown-check-list.visible .items {
+    display: block;
+}
+
+/* input.select2-search__field{
+    width: auto !important;
+    border: none !important;
+} */
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__rendered {
+    box-sizing: border-box;
+    display: inline-flex;
+    /* line-height: 1.428571429; */
+    list-style: none;
+    margin: 0;
+    overflow-x: auto !important;
+    padding: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice {
+    color: #fff !important;
+    background: #7a231c !important;
+    border: 1px solid #7a231c !important;
+    border-radius: 8px;
+    cursor: default;
+    float: left;
+    margin: 1px 0 4px 2px;
+    padding: 0px 2px;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__choice__remove {
+    float: right;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 2px 0 0 3px;
+    opacity: -3.6 !important;
+}
+
+.fht-table-wrapper{
+    overflow: auto !important;
+}
+
+.fht-thead{
+    width: auto !important;
+}
+
+.select2-selection--multiple .select2-search__field{
+    /* width: auto !important; */
+    border: none !important;
+}
+
+.select2-container--krajee .select2-selection--multiple .select2-selection__clear{
+    margin: 0px 10px 0 10px !important;
+}
+
+.s2-togall-button,
+.s2-togall-button:hover{
+    color: #7a231c;
+}
+
+.s2-togall-button {
+    display: none !important;
+}
 table.dataTable thead .search_filter td {
     background-color: #fff !important;
 }
@@ -4503,4 +4684,142 @@ table.dataTable thead .search_filter td {
 table.dataTable thead .search_filter input[type="text"] {
     max-width: 123px !important;
     border: 1px solid #ccc;
+}
+
+.disable_div{
+    pointer-events:none !important;
+    cursor: not-allowed !important;
+}
+
+.disable_div i{
+    color: #ddd !important;
+}
+
+.active_div{
+    cursor: pointer;
+}
+
+.active_div i{
+    color: #7a231c;
+}
+.sticky-footer-panel{
+    margin-top: 0px;
+    max-height: calc(100vH - 303px);
+}
+.select2-container--krajee .select2-results>.select2-results__options {
+    overflow-x: hidden !important;
+}
+.panel > .table-responsive > .table-bordered > thead{
+    background-color: #fff !important;
+}
+
+.panel > .table-responsive > .table-bordered > thead{
+    background-color: #fff !important;
+}
+
+#collapse1{
+    position: fixed;
+}
+
+.width_50-10 {
+    width: calc(50% - 10px) !important
+}
+.width_70-10 {
+    width: calc(70% - 10px) !important
+}
+.width_30-10 {
+    width: calc(30% - 10px) !important
+}
+
+.width_100 {
+    width: 100%;
+}
+
+.height_115 {
+    height:115px !important;
+}
+
+.dashboard_widget_table tr td {
+    color: #333;
+    font-weight: 500;
+    font-size: 12px;
+}
+.dashboard_widget_table tr td span {
+    color: #111;
+    font-weight: 600;
+    font-size: 13px;
+}
+.fixed-table-container {
+    height: 300px;
+    /*box-sizing: border-box;*/
+    /*border: 1px solid #ccc;*/
+}
+.fixed-table-container table {
+    /*border-collapse: collapse;*/
+    width: 100%;
+}
+.fixed-table-container th,
+.fixed-table-container td {
+    /*  border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;*/
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+
+    /**
+      * Current implementation doesn't work when
+      * cells in a row have different heights
+      */
+    white-space: nowrap !important;
+}
+.fixed-table-container th {
+    background: #eee;
+    /*font-size: 12px;*/
+    /*line-height: 16px;*/
+}
+.fixed-table-container td:first-child {
+    background: #eee;
+    color:  rgb(122, 35, 28) !important;
+    font-weight: 600;
+}
+.fixed-table-container tr:last-child td {
+    border-bottom: 0;
+}
+.fixed-table-container th:last-child,
+.fixed-table-container td:last-child {
+    border-right: 0;
+}
+
+.fixed-table-container tr td, .fixed-table-container tr th{
+    border-top:none !important;
+    border-bottom:none !important
+}
+
+.fixed-table-container tbody tr td:first-child, .fixed-table-container thead tr th:first-child{
+    border-right:0;
+}
+
+.fixed-table-container tbody{
+    margin-left: -1px;
+}
+
+.fixed-table-container tbody tr:first-child{
+    margin-top:-1px;
+}
+
+tr.highlightRow {
+    background: #FCE4E2  !important;
+}
+
+.dataTables_scrollBody {
+    max-height: calc(100vH - 210px) !important;
+    height: auto !important;
+}
+
+.dataTables_scrollBody table.dataTable {
+    margin-top: -20px !important;
+}
+
+.dataTables_scrollBody thead tr[role='row']{
+    height: 20px !important
 }

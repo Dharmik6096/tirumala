@@ -19,7 +19,7 @@ class TblMemberSearch extends TblMember {
      */
     public function rules() {
         return [
-            [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code'], 'safe'],
+            [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'rate_class'], 'safe'],
             [['ex_member_code', 'ref_code'], 'safe'],
         ];
     }
@@ -66,6 +66,7 @@ class TblMemberSearch extends TblMember {
             'tbl_member.is_active' => $this->is_active,
             'tbl_member.payment_mode' => $this->payment_mode,
             'tbl_member.caste_category_code' => $this->caste_category_code,
+            'tbl_member.rate_class' => $this->rate_class,
 //            'milk_quality_type_code' => $this->milk_quality_type_code,
         ]);
 

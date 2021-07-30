@@ -378,5 +378,5 @@ class TblAndroidInstallationController extends \app\controllers\ChildController 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
-
-}
+    
+    }

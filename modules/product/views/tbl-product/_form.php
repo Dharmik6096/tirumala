@@ -14,7 +14,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -27,7 +26,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('product_group_code', $model, $form, '', 'Product Group', false, 'product_group_code'); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('product_group', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('product_group_code')); ?>
     </div>
     <div class="col-sm-2">
         <?php Yii::$app->dropdown->depend_dropdown('unit', $model, $form, 'tblproduct-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('unit_code')); ?>

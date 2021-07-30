@@ -17,6 +17,10 @@ use yii\helpers\Json;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
+use yii\imagine\Image;
+use yii\web\UploadedFile;
+use app\modules\general\models\TblAttachment;
+use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -24,6 +28,7 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 class TblMemberController extends \app\controllers\ChildController {
 
     public $bankDetails;
+    public $freeAccessActions = ['import-file'];
 
     /**
      * Lists all TblMember models.
@@ -45,8 +50,12 @@ class TblMemberController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblMemberDeactiveSearch();
+        $searchModel->member_code = $id;
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -65,13 +74,13 @@ class TblMemberController extends \app\controllers\ChildController {
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-            //var_dump($this->model->unionCode->federationCode);exit();
+//var_dump($this->model->unionCode->federationCode);exit();
             $this->model->member_code = $this->model->getCode();
             $this->setModel();
-            // $dcs = TblDcs::findOne($this->model->dcs_code);
-            // $this->model->state_code = $dcs->state_code;
-            //$this->model->district_code = $dcs->district_code;
-            // $this->model->sub_district_code = $dcs->sub_district_code;
+// $dcs = TblDcs::findOne($this->model->dcs_code);
+// $this->model->state_code = $dcs->state_code;
+//$this->model->district_code = $dcs->district_code;
+// $this->model->sub_district_code = $dcs->sub_district_code;
             $this->model->upload = 0;
             $this->bankDetails->load(Yii::$app->request->post());
             if (!empty($this->model->bank_code)) {
@@ -83,7 +92,7 @@ class TblMemberController extends \app\controllers\ChildController {
             if ($bankValidate == 1 && $_POST['warning'] == '0') {
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
             }
-            if ($bankValidate == 1 && $validate == 1 && $this->model->validate() && empty($this->model->getErrors())) {
+            if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors()) && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['member', 'create']);
@@ -116,11 +125,11 @@ class TblMemberController extends \app\controllers\ChildController {
 
         if (Yii::$app->request->post()) {
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-            //var_dump($this->model);exit();
-            //$dcs = TblDcs::findOne($this->model->dcs_code);
-            // $this->model->state_code = $dcs->state_code;
-            //   $this->model->district_code = $dcs->district_code;
-            //   $this->model->sub_district_code = $dcs->sub_district_code;
+//var_dump($this->model);exit();
+//$dcs = TblDcs::findOne($this->model->dcs_code);
+// $this->model->state_code = $dcs->state_code;
+//   $this->model->district_code = $dcs->district_code;
+//   $this->model->sub_district_code = $dcs->sub_district_code;
             $historyModel = new TblMemberHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
 
@@ -138,6 +147,15 @@ class TblMemberController extends \app\controllers\ChildController {
             if ($bankValidate == 1 && $validate == 1 && $this->model->validate()) {
                 $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
+                $oldAttr = $this->model['oldAttributes'];
+                $adhar_no = Yii::$app->general->decryptData($oldAttr['adhar_no']) !== FALSE ? Yii::$app->general->decryptData($oldAttr['adhar_no']) : $oldAttr['adhar_no'];
+                $pan_no = Yii::$app->general->decryptData($oldAttr['pan_no']) !== FALSE ? Yii::$app->general->decryptData($oldAttr['pan_no']) : $oldAttr['pan_no'];
+                if ($oldAttr['bank_account_no'] != $this->model->bank_account_no || $oldAttr['ifsc'] != $this->model->ifsc || $oldAttr['beneficiary_name'] != $this->model->beneficiary_name || $pan_no != $this->model->pan_no || $adhar_no != $this->model->adhar_no || $oldAttr['voter_id'] != $this->model->voter_id) {
+                    $this->model->is_verified = 0;
+                }
+                if ($oldAttr['hamlet_code'] != $this->model->hamlet_code || $oldAttr['address'] != $this->model->address || $oldAttr['local_address'] != $this->model->local_address || $oldAttr['pincode'] != $this->model->pincode || $oldAttr['mobile_no'] != $this->model->mobile_no || $oldAttr['email'] != $this->model->email) {
+                    $this->model->is_contact_verified = 0;
+                }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['member', 'edit']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -293,6 +311,41 @@ class TblMemberController extends \app\controllers\ChildController {
                     'appInfo' => $appInfo,
                     'alertInfo' => $alertInfo,
         ]);
+    }
+
+    public function actionImportAttachements() {
+        $model = new TblMember();
+        if (isset($_POST['code'])) {
+            $model->member_code = $_POST['code'];
+        }
+        $saveModel = [];
+        if ($model->load(Yii::$app->request->post())) {
+            $files = !empty(Yii::$app->request->post()['TblMember']['file_name']) ? Yii::$app->request->post()['TblMember']['file_name'] : '';
+            Yii::$app->general->setAttachment($saveModel, $files, $model->member_code, 'TblMember');
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Image Uploaded', 'edit']);
+            return $this->redirect(['index']);
+        }
+        return $this->renderAjax('_popup', ['model' => $model]);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
     }
 
 }

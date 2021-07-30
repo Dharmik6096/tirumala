@@ -9,7 +9,6 @@ $form = ActiveForm::begin(['options' => [
                 'class' => 'popup-form',
                 'id' => 'download-sample',
             ], 'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => FALSE,
             'validateOnSubmit' => FALSE,
@@ -87,7 +86,16 @@ $script = "
     $('#download-sample').submit(function() {
     $('#sampleModal').modal('hide');
 });
+        $('#tbldcspurchaseratebased-0-milk_type_code').on('change',function(){
+            $('#tbldcspurchaseratebased-0-rate_type').trigger('change');
+            $('#tbldcspurchaseratebased-0-rate_type').trigger('select2:select');
+        });
+        $('#tbldcspurchaseratebased-0-milk_quality_type_code').on('change',function(){
+            $('#tbldcspurchaseratebased-0-rate_type').trigger('change');
+            $('#tbldcspurchaseratebased-0-rate_type').trigger('select2:select');
+        });
        $('#tbldcspurchaseratebased-0-rate_type').on('change',function(e){
+       console.log('ysy');
         $('#range').empty();       
         var rateType = $('#tbldcspurchaseratebased-0-rate_type :selected').text();     
         var field_before = '<div class=\"col-sm-3\"><div class=\"form-group\">';
@@ -138,7 +146,7 @@ $this->registerJs($script, View::POS_END, 'sample-download');
         };
 
         if (rate == '' || milk == '' || newItem.fat_start == '' || newItem.fat_end == '' || newItem.snf_start == '' || newItem.snf_end == '' || quality == '') {
-            message[cnt] = '<?php echo Yii::t('app\validation','All Fields are required.'); ?>';
+            message[cnt] = '<?php echo Yii::t('app\validation', 'All Fields are required.'); ?>';
             cnt++;
             validate = false;
         } else {
@@ -150,20 +158,20 @@ $this->registerJs($script, View::POS_END, 'sample-download');
             var milk_quality = newItem.milk_quality;
 
             if (fat_end < fat_start) {
-                message[cnt] = '<?php echo Yii::t('app\validation','End Range cannot be less then Start Range'); ?>';
+                message[cnt] = '<?php echo Yii::t('app\validation', 'End Range cannot be less then Start Range'); ?>';
                 cnt++;
                 validate = false;
             } else if (fat_end == fat_start) {
-                message[cnt] = '<?php echo Yii::t('app\validation','End Range and Start Range cannot be same.'); ?>';
+                message[cnt] = '<?php echo Yii::t('app\validation', 'End Range and Start Range cannot be same.'); ?>';
                 cnt++;
                 validate = false;
             }
             if (snf_end < snf_start) {
-                message[cnt] = '<?php echo Yii::t('app\validation','End Range cannot be less then Start Range'); ?>';
+                message[cnt] = '<?php echo Yii::t('app\validation', 'End Range cannot be less then Start Range'); ?>';
                 cnt++;
                 validate = false;
             } else if (snf_end == snf_start) {
-                message[cnt] = '<?php echo Yii::t('app\validation','End Range and Start Range cannot be same.'); ?>';
+                message[cnt] = '<?php echo Yii::t('app\validation', 'End Range and Start Range cannot be same.'); ?>';
                 cnt++;
                 validate = false;
             }
@@ -172,7 +180,7 @@ $this->registerJs($script, View::POS_END, 'sample-download');
                 if (localStorage.getItem('transactionsArray')) {
                     for (i = 0; i < local.length; i++) {
                         if (local[i]['milk_type'] == milk_type && local[i]['milk_quality'] == milk_quality) {
-                            message[cnt] = '<?php echo Yii::t('app\validation','Milk Type already added.'); ?>';
+                            message[cnt] = '<?php echo Yii::t('app\validation', 'Milk Type already added.'); ?>';
                             cnt++;
                             validate = false;
                         }
@@ -199,9 +207,9 @@ $this->registerJs($script, View::POS_END, 'sample-download');
             $('#range_table').val(JSON.stringify(data));
             $('#range').empty();
             $('#error-summary').hide();
-            $('#tbldcspurchaseratebased-0-rate_type').val('');
-            $('#tbldcspurchaseratebased-0-milk_type_code').val('');
-            $('#tbldcspurchaseratebased-0-milk_quality_type_code').val('');
+//            $('#tbldcspurchaseratebased-0-rate_type').val('');
+//            $('#tbldcspurchaseratebased-0-milk_type_code').val('');
+//            $('#tbldcspurchaseratebased-0-milk_quality_type_code').val('');
         } else {
             $('#error-summary ul').html('');
             for (j = 0; j < message.length; j++) {

@@ -36,8 +36,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmemberdeactive-dcs_code', '', Yii::t('app', 'Member')); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2', false, '', false); ?>
+      <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', FALSE, date('d-m-Y')); ?> 
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>

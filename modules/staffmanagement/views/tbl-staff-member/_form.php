@@ -197,6 +197,11 @@ $script = "
             $('#bank-detail *').removeAttr('disabled');
         }
     } 
+     $('#tblstaffmember-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

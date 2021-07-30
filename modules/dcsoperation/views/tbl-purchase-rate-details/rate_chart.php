@@ -23,6 +23,9 @@ $this->title = Yii::t('app', 'Rate Chart');
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', false); ?>
                     </div>
                     <div class="col-sm-2">
+                        <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', false); ?>
+                    </div>
+                    <div class="col-sm-2">
                         <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group padding-right-5', false, false, 'rate_class') ?> 
                     </div>
                     <div class="col-sm-2">
@@ -32,45 +35,50 @@ $this->title = Yii::t('app', 'Rate Chart');
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="col-sm-12">
                 <div class="table-responsive table-rate-chart">
-                    <table class="table table-bordered table-striped table-input" id="table">
-                        <?php
-                        $cnt = 0;
-                        foreach ($fat as $key => $attr) {
-                            if ($key == 0) {
-                                if (count($snf) == 1 && $snf[0]->snf == NULL) {
-                                    echo "<tr><th>" . $attr->rateTypeCode->rate_type . "</th><th>RTPL</th></tr> ";
-                                } else {
-                                    echo "<tr><th class='width100px'>" . $attr->rateTypeCode->rate_type . "</th>";
-                                    foreach ($snf as $s) {
-                                        echo "<th class='width100px'>" . $s->snf . "</th>";
+                    <div id="fixed-table-container" class="table-responsive table-rate-chart fixed-table-container">
+                        <table class="table table-bordered table-striped table-main table-language table-rate-chart" id="table">
+                            <?php
+                            $cnt = 0;
+                            echo "<thead>";
+                            foreach ($fat as $key => $attr) {
+                                if ($key == 0) {
+                                    if (count($snf) == 1 && $snf[0]->snf == NULL) {
+                                        echo "<tr><th>" . $attr->rateTypeCode->rate_type . "</th><th>RTPL</th></tr> ";
+                                    } else {
+                                        echo "<tr><th class='width100px'>" . $attr->rateTypeCode->rate_type . "</th>";
+                                        foreach ($snf as $s) {
+                                            echo "<th class='width100px'>" . $s->snf . "</th>";
+                                        }
+                                        echo "</tr>";
                                     }
-                                    echo "</tr>";
                                 }
                             }
-                            ?>
-                            <tr>
-                                <th><?= $attr->fat; ?></th>
-                                <?php
-                                if (count($snf) == 1 && $snf[0]->snf == NULL) {
-                                    echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
-                                    $cnt++;
-                                } else {
-                                    foreach ($snf as $s) {
-                                        if (isset($rate[$cnt]) && $s->snf == $rate[$cnt]->snf) {
-                                            echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
-                                            $cnt++;
-                                        } else {
-                                            echo "<td></td>";
+                            echo "</thead>";
+                            echo "<tbody>";
+                            foreach ($fat as $key => $attr) {
+                                ?>
+                                <tr>
+                                <td><?= $attr->fat; ?></td>
+                                    <?php
+                                    if (count($snf) == 1 && $snf[0]->snf == NULL) {
+                                        echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
+                                        $cnt++;
+                                    } else {
+                                        foreach ($snf as $s) {
+                                            if (isset($rate[$cnt]) && $s->snf == $rate[$cnt]->snf) {
+                                                echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
+                                                $cnt++;
+                                            } else {
+                                                echo "<td></td>";
+                                            }
                                         }
                                     }
-                                }
-                                ?>
-                            </tr>
-                        <?php } ?>
+                                    ?>
+                                </tr>
+                            <?php } echo "</tbody>"; ?>
 
-                    </table>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -83,6 +91,9 @@ $script = "
         this.form.submit()
     });
     $('#tblpurchaseratedetails-rate_class').on('change', function(e){
+        this.form.submit()
+    });
+    $('#tblpurchaseratedetails-milk_quality_type_code').on('change', function(e){
         this.form.submit()
     });
     $( document ).ready(function() {
@@ -119,5 +130,6 @@ $script = "
          }
            
     });
+    var fixedTable1 = fixTable(document.getElementById('fixed-table-container'));
     ";
 $this->registerJs($script, View::POS_END, 'change-manager');

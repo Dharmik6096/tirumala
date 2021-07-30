@@ -53,11 +53,12 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $this->model = new TblBankDetails();
         $this->viewFile = 'create';
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
+            $this->model->scenario = 'main_create';
+            $this->model->setModel($module, $id, 0);
             if (!$this->model->validate()) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model));
             } else {
-                $this->model->setModel($module, $id, 0);
 
                 $saveTxn = true;
                 $client_code = Yii::$app->session->get('eiplCode');
@@ -170,6 +171,7 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         $historyModel = new TblBankDetailsHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 0;
+        $this->model->is_verified = 0;
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
         if ($transaction !== FALSE) {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
@@ -197,10 +199,12 @@ class TblBankDetailsController extends \app\controllers\ChildController {
         if (!empty($bankDetail)) {
             foreach ($bankDetail as $detail) {
                 $detail->is_default = 0;
+                $detail->is_verified = 0;
                 $detail->save();
             }
         }
         $this->model->is_default = 1;
+        $this->model->is_verified = 0;
 
         $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bank Details', 'edit']);
         if ($transaction !== FALSE) {

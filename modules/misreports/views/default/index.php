@@ -27,7 +27,13 @@ if (isset($data['url1'])) {
     $exportEvents = [];
     if (isset($data['export_title']) && $data['export_title'] && !empty($result)) {
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-        $this->title = $model->getMccCode($model->mcc_code) . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+        $codeToAppend = '';
+        if (!empty($model->bmc_code)) {
+            $codeToAppend = $model->getBmcCode($model->bmc_code);
+        } else {
+            $codeToAppend = $model->getMccCode($model->mcc_code);
+        }
+        $this->title = $codeToAppend . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);
@@ -56,7 +62,6 @@ if (isset($data['url1'])) {
                                         ],
                                         'method' => 'get',
                                         'validateOnBlur' => FALSE,
-                                        
                                         'validateOnChange' => FALSE,
                                         'enableClientValidation' => true,
                                         'validateOnSubmit' => true,
@@ -65,7 +70,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);   ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -203,7 +208,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodelold-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));  ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodelold-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));   ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodelold-union_code,reportsmodelold-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php

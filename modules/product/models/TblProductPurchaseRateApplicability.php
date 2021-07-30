@@ -39,7 +39,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
 
-    public $plant_code, $bmc_code;
+    public $plant_code, $bmc_code, $ex_code;
 
     /**
      * @inheritdoc
@@ -61,6 +61,19 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
 //                [['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'product_code', 'wef_date'], 'message' => 'The combination of Wef Date, Product Code, Applicable Code and Applicable For has already been taken.'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false],
             [['product_purchase_rate_code'], 'validateProductPurchaseRate', 'skipOnEmpty' => false],
+            [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date', 'product_purchase_rate_code'], 'required', 'on' => ['importCsv']],
+            [['bmc_code'], function ($attribute, $params) {
+            Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+        }, 'on' => ['importCsv']],
+            [['applicable_for'], function ($attribute, $params) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
+            Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
+        }, 'on' => ['importCsv']],
+            [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
+            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+            [['applicable_for'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -99,8 +112,8 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
     }
 
-    public function getProductRateCode() {
-        return $this->hasOne(TblProductSaleRate::className(), ['product_rate_code' => 'product_rate_code']);
+    public function getProductPurchaseCode() {
+        return $this->hasOne(TblProductPurchaseRate::className(), ['product_purchase_rate_code' => 'product_purchase_rate_code']);
     }
 
     public function getProductRate() {
@@ -196,4 +209,70 @@ class TblProductPurchaseRateApplicability extends \app\models\ChildModel {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
 
+    public function convertDateDot() {
+        try {
+            $this->wef_date = Yii::$app->controls->view_date($this->wef_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->wef_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? Yii::$app->controls->view_date($this->wef_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        if (empty($this->getErrors())) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'mcc_plant_code');
+
+            $this->wef_date = !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '';
+            if (empty($this->productPurchaseRateCode)) {
+                $this->addError($attribute, Yii::t('app/validation', Yii::t('app', 'product_purchase_rate_code') . '  is invalid.'));
+            } else {
+                $this->product_code = Yii::$app->general->getforeignkey($this->productPurchaseRateCode, 'product_code');
+                $this->purchase_rate = Yii::$app->general->getforeignkey($this->productPurchaseRateCode, 'purchase_rate');
+                $this->validateCustomer($this);
+            }
+        }
+    }
+    public function validateCustomer($model) {
+        if (empty($model->applicable_for) || strtoupper($model->applicable_for) == 'DCS') {
+            $model->applicable_for = 'DCS';
+            $dcs = new TblDcs();
+            $applicable_code = $dcs->validDcs($model->applicable_code, $model->bmc_code);
+        } else {
+            $model->applicable_for = strtoupper($model->applicable_for);
+            $applicable_code = $this->validateCustomerCode($model);
+        }
+           
+        if (empty($applicable_code)) {
+            $model->addError('applicable_code', Yii::t('app/validation', Yii::t('app', 'Applicable Code') . ' is invalid'));
+        } else {
+            $model->applicable_code = $applicable_code;
+        }
+    }
+
+    public function validateCustomerCode($model) {
+        if (strtolower($model->applicable_for) != 'dcs') {
+            $prefix = Yii::$app->general->getforeignkey($model->applicCustomerType, 'code_prefix');
+            $length = Yii::$app->general->getforeignkey($model->applicCustomerType, 'code_length');
+            $model->ex_code = $prefix . str_pad($model->applicable_code, $length, '0', STR_PAD_LEFT);
+            $Code = Yii::$app->general->getforeignkey($model->customerCode, 'customer_code');
+            return $data = empty($Code) ? '' : $Code;
+        }
+    }
+    public function getApplicCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code'])->andOnCondition(['is_applicability' => 1, 'is_active' => 1]);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'applicable_for'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+    }
+
+    public function getMainBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
 }

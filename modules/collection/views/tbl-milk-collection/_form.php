@@ -149,6 +149,7 @@ $script = "
     });
     
      $('#tblmilkcollection-fat').change(function(){
+        checkFatRange();
         calculateClr();
     });
     
@@ -190,10 +191,11 @@ $script = "
         var shift = $('#tblmilkcollection-shift_code').val();
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
-        var milk_quality_type = 1;
+        var milk_quality_type = $('#tblmilkcollection-milk_quality_type_code').val();
+
         var member = $('#tblmilkcollection-member_code').val();
         var member_code = dcs.concat(member);
-        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != ''){
+        if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
@@ -220,6 +222,76 @@ $script = "
             $('#tblmilkcollection-rate_code').val('');
         }
     }
+    $(document).ready(function () {
+        milkQualityType();
+    });
+    $(document).on('change', '#tblmilkcollection-union_code', function() {  
+          milkQualityType();
+    });
+
+    function milkQualityType(){
+        var union = $('#tblmilkcollection-union_code').val();
+        if(union != ''){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['qlty-type-config']) . "',
+                data: {'union':union},
+                success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                        if(obj.config==1){
+                            $('.milk_quality_type_div').show();
+                        }else{
+                            $('.milk_quality_type_div').hide();
+                            $('#tblmilkcollection-milk_quality_type_code').val(1);
+                        }
+                      }else{
+                           $('.milk_quality_type_div').hide();
+                           $('#tblmilkcollection-milk_quality_type_code').val(1);
+                      }
+                },
+                error:function(data){
+
+                }
+            });
+        }else{
+            $('.milk_quality_type_div').hide();
+            $('#tblmilkcollection-milk_quality_type_code').val(1);
+        }
+    }
+
+
+    
+    $('#tblmilkcollection-milk_type_code').change(function(){
+        checkFatRange();
+    });
+    
+    function checkFatRange(){
+        var union = $('#tblmilkcollection-union_code').val();
+        var fat = $('#tblmilkcollection-fat').val();
+        var bmc = $('#tblmilkcollection-bmc_code').val();
+        var milk_type = $('#tblmilkcollection-milk_type_code').val();
+            if(union !='' && fat !='' && milk_type !='' && bmc!=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-fat-range']) . "',
+                    data: {'union_code':union,'fat':fat,'milk_type':milk_type,'bmc':bmc},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
+                            $('#tblmilkcollection-milk_type_code').val(obj.data);
+                            $('#tblmilkcollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

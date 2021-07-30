@@ -91,7 +91,7 @@ class Warning extends Component {
         $code = 1;
         $errMsg = '';
         $client_code = Yii::$app->session->get('eiplCode');
-        if (!empty($client_code) && in_array(strtolower($client_code), ['atmost']) && empty($_POST[$id]) && !empty($model->bank_account_no)) {
+        if (!empty($client_code) && in_array(strtolower($client_code), ['atmost', 'mmd']) && empty($_POST[$id]) && !empty($model->bank_account_no)) {
             $value = $model->getUniqueBankDetails();
             if (!empty($value)) {
                 $errMsg = \Yii::t('app', "Bank Account No has already been taken. Are you sure you want to continue?");
