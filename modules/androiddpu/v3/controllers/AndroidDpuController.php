@@ -26,6 +26,7 @@ use app\modules\installation\models\TblUserDownloadAck;
 use app\modules\installation\models\TblUserAndroid;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
+use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
 
 /**
  * Default controller for the `vendorapi` module
@@ -403,6 +404,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
                     if ($org_type == 'VLC') {
+                        $rangeModel = new TblAllowDcsManualCollectionRange();
                         $detailType = 'society';
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
@@ -419,8 +421,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                         $res_data['config']['collectionBlock'] = !(bool) $collection_status;
                         $res_data['config']['dcsBlock'] = !(bool) $model_data->is_active;
                         $res_data['config']['dispatchMandate'] = $model_data->is_dispatch_mandate > 0 ? true : false; //(bool) $model_data->is_dispatch_mandate;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
                         $config = $model_data->dpuIncentiveMaster;
                         if (!empty($config)) {
                             $att = $config->attributes;
@@ -449,8 +451,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                         $res_data['config']['collectionBlock'] = FALSE;
                         $res_data['config']['dcsBlock'] = FALSE;
                         $res_data['config']['dispatchMandate'] = FALSE;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
                         $res_data['rate']['mPurchaseRateCode'] = "";
                         $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                         $res_data['rate']['ePurchaseRateCode'] = "";

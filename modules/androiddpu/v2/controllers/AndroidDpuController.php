@@ -26,6 +26,7 @@ use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
 
 // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 //use app\modules\installation\models\TblUserDownloadAck;
@@ -36,11 +37,9 @@ use app\modules\organisation\models\TblCustomerMaster;
 /**
  * Default controller for the `vendorapi` module
  */
-class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController
-{
+class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController {
 
-    public function actionRegister()
-    {
+    public function actionRegister() {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
@@ -128,8 +127,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionVerification()
-    {
+    public function actionVerification() {
         $res_data = [];
         // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 //        $saveModel = [];
@@ -276,8 +274,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function getParentDetails(&$res_data, $data)
-    {
+    public function getParentDetails(&$res_data, $data) {
         $code = $data['organization_code'];
         $type = $data['organization_type'];
         $parent_code = '';
@@ -321,8 +318,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['parent_name'] = $parent_name;
     }
 
-    public function actionInitialization()
-    {
+    public function actionInitialization() {
         $db_file = 'everest_amcs.db';
         $res_data = [];
         $data = $this->post_data;
@@ -389,8 +385,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionStartUp()
-    {
+    public function actionStartUp() {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
@@ -426,6 +421,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
                     if ($org_type == 'VLC') {
+                        $rangeModel = new TblAllowDcsManualCollectionRange();
                         $detailType = 'society';
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
@@ -442,8 +438,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['config']['collectionBlock'] = !(bool) $collection_status;
                         $res_data['config']['dcsBlock'] = empty(Yii::$app->general->getforeignkey($model_data->activeStatus, 'is_active')) ? FALSE : TRUE;
                         $res_data['config']['dispatchMandate'] = $model_data->is_dispatch_mandate > 0 ? true : false; //(bool) $model_data->is_dispatch_mandate;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
                         $config = $model_data->dpuIncentiveMaster;
                         if (!empty($config)) {
                             $att = $config->attributes;
@@ -472,8 +468,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['config']['collectionBlock'] = FALSE;
                         $res_data['config']['dcsBlock'] = FALSE;
                         $res_data['config']['dispatchMandate'] = FALSE;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
                         $res_data['rate']['mPurchaseRateCode'] = "";
                         $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                         $res_data['rate']['ePurchaseRateCode'] = "";
@@ -622,8 +618,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $this->response['data'] = $res_data;
         return $this->response;
     }
-    public function DcsSentboxGenerate($post)
-    {
+
+    public function DcsSentboxGenerate($post) {
         $device = $post['device_id'];
         $model = new TblDcsDeactive();
         $deactiveData = $model->getDeactiveRecords(false, $post);
@@ -634,8 +630,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $this->setSentBox($post, $CustModel, $device, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
     }
 
-    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error)
-    {
+    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
         if (!empty($data)) {
             $ids = array_map(function ($e) use ($key) {
                 return $e->{$key};
@@ -680,8 +675,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         }
     }
 
-    private function sentboxModel($code, $type, $union, $device)
-    {
+    private function sentboxModel($code, $type, $union, $device) {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $code;
         $sentbox->source_org_id = $union;
@@ -689,4 +683,5 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $sentbox->device_id = $device;
         return $sentbox;
     }
+
 }
