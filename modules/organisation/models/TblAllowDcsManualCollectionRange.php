@@ -127,9 +127,12 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
     public function checkUnique($attribute, $params) {
 //        $fromdate = Yii::$app->formatter->asDate($this->from_date, 'php:Y-m-d');
 //        $todate = Yii::$app->formatter->asDate($this->to_date, 'php:Y-m-d');
-    
+
         if ($this->from_date > $this->to_date) {
             $this->addError($attribute, Yii::t('app/validation', 'Invalid Date Range'));
+        }
+        if (empty($this->is_weight_manual) && empty($this->is_quality_manual)) {
+            $this->addError('is_quality_manual', Yii::t('app/validation', 'Please Check Any One Check Box'));
         }
     }
 
