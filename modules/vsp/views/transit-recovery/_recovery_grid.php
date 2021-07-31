@@ -17,10 +17,10 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
     ]);
     // va   r_dump($model);die;
     ?>
-    <div class="dynamic_report_table overflow_auto sticky-footer-panel">
+    <div id="fixed-table-container" class="dynamic_report_table overflow_auto sticky-footer-panel fixed-table-container">
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
 
-        <table id="recovery_grid" class="table table-striped">
+        <table id="recovery_grid" class="table table-striped table-input" id="table">
             <?php
             if (!empty($output)) {
                 $show_column = ['mcc_plant_code', 'bmc_code', 'bmc_ref_code', 'bmc_name', 'route_code'];
@@ -270,6 +270,7 @@ $script = '
             $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
         }
     }
+        var fixedTable1 = fixTable(document.getElementById("fixed-table-container"));
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
 ?>
