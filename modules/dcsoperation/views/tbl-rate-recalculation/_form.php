@@ -38,6 +38,8 @@ if (!empty($rec_data) && $rtype == 'forced') {
 <?= Html::activeHiddenInput($searchModel, 'bmc_code') ?>
 <?= Html::activeHiddenInput($searchModel, 'from_date') ?>
 <?= Html::activeHiddenInput($searchModel, 'to_date') ?>
+<?= Html::activeHiddenInput($searchModel, 'from_shift') ?>
+<?= Html::activeHiddenInput($searchModel, 'to_shift') ?>
 
 <!--<span class="hide-grid-settings kv-panel-before"></span>-->
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
