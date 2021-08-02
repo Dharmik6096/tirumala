@@ -12,6 +12,7 @@ use app\modules\collection\models\TblBmcCollectionSearch;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\collection\models\TblMccShiftLockHistory;
+use app\modules\collection\models\TblMccShiftLockStaging;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -38,9 +39,16 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($mcc = '', $date = '', $shift = '') {
+        $this->model = new TblMccShiftLock();
+        $model = $this->model->find()->where(['mcc_plant_code' => $mcc, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $shift])->one();
+        $searchModel = new TblMccShiftLockSearch();
+        $searchModel->shift_lock_code = $model->shift_lock_code;
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -112,6 +120,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $mcc = Yii::$app->request->get()['mcc'];
         $date = Yii::$app->request->get()['date'];
         $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
         $saveModel = [];
         if (!empty($mcc)) {
             $this->model = new TblMccShiftLock();
@@ -120,6 +132,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->mcc_plant_code = $mcc;
             $this->model->date_time_of_collection = $date;
             $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
             $existData = $this->model->getExistData();
             if (!empty($existData)) {
                 $this->model = $this->findModel($existData->shift_lock_code);
@@ -130,6 +146,26 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             }
             $this->model->data_lock = 1;
+
+            $staging = new TblMccShiftLockStaging();
+            $attribute = $this->model->attributes;
+            $staging->setAttributes($attribute);
+            $stagingData = $staging->find()->where(['shift_lock_code' => $this->model->shift_lock_code])->one();
+
+            if (!empty($stagingData)) {
+                $stagingData->setAttributes($attribute);
+                $stagingData->data_post_status = 0;
+                $stagingData->picked_datetime = NULL;
+                $stagingData->response_datetime = NULL;
+                $stagingData->resp_status = NULL;
+                $stagingData->resp_desc = NULL;
+                $saveModel[] = $stagingData;
+            } else {
+                $ConcateDate = date('d', strtotime($date)) . '_' . date('m', strtotime($date)) . '_' . date('y', strtotime($date));
+                $ConcateShift = $shift == 1 ? 'M' : 'E';
+                $staging->staging_code = $this->model->mcc_plant_code . $ConcateDate . $ConcateShift;
+                $saveModel[] = $staging;
+            }
             $saveModel[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
@@ -149,6 +185,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $mcc = Yii::$app->request->get()['mcc'];
         $date = Yii::$app->request->get()['date'];
         $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
         $saveModel = [];
         if (!empty($mcc)) {
             $this->model = new TblMccShiftLock();
@@ -157,6 +197,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->mcc_plant_code = $mcc;
             $this->model->date_time_of_collection = $date;
             $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
             $existData = $this->model->getExistData();
             if (!empty($existData)) {
                 $this->model = $this->findModel($existData->shift_lock_code);

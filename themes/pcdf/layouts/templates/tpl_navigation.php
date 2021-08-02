@@ -109,7 +109,8 @@ echo GhostMenu::widget([
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-analyzer-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                 ['label' => 'Calibration', 'url' => ['/collection/tbl-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                 ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
-                ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($action == 'tbl-mcc-shift-lock')],
+                ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock')],
+                ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -382,6 +383,7 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/reports/dcs-master']],
+                        ['label' => Yii::t('app', 'test'), 'url' => ['/misreports/reports/test-again']],
                         ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/reports/member-master']],
                         ['label' => Yii::t('app', 'Customer Master Register'), 'url' => ['/misreports/reports/customer-master']],
                         ['label' => Yii::t('app', 'Milk Collection Register'), 'url' => ['/misreports/reports/milk-collection-register']],

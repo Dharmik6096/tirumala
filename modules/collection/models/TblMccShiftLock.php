@@ -3,6 +3,8 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_mcc_shift_lock".
@@ -47,6 +49,7 @@ class TblMccShiftLock extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['qty', 'avg_fat', 'avg_snf', 'amount'], 'safe'],
         ];
     }
 
@@ -78,12 +81,20 @@ class TblMccShiftLock extends \app\models\ChildModel {
     }
 
     public function getStatus($data) {
-        $query = $this->find()->select(['data_lock'])->where(['mcc_plant_code' => $data['mcc_plant_code'], 'date_time_of_collection' => $data['date_time_of_collection']])->one();
-        return (!empty($query) && ($query->data_lock == 1)) ? 1 : 0;
+        return $query = $this->find()->where(['mcc_plant_code' => $data['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($data['date_time_of_collection'])), 'shift_code' => $data['shift_code']])->one();
+//        return (!empty($query) && ($query->data_lock == 1)) ? 1 : 0;
     }
 
     public function getExistData() {
-        return $this->find()->where(['mcc_plant_code' => $this->mcc_plant_code, 'date_time_of_collection' => $this->date_time_of_collection])->one();
+        return $this->find()->where(['mcc_plant_code' => $this->mcc_plant_code, 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection)), 'shift_code' => $this->shift_code])->one();
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
 }
