@@ -20,11 +20,12 @@ $attribute = [
 //        'value' => function($model) {
 //            return Yii::$app->controls->view_date($model['date_time_of_collection']);
 //        }, 
-                'filter' => FALSE],
+        'filter' => FALSE],
     ['attribute' => 'shift', 'filter' => false],
     ['attribute' => 'qty', 'filter' => FALSE],
     ['attribute' => 'avgFAT', 'filter' => FALSE],
     ['attribute' => 'avgSNF', 'filter' => FALSE],
+    ['attribute' => 'amount', 'filter' => FALSE],
 ];
 
 $grid_option = [
