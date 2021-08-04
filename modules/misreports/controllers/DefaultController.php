@@ -8,6 +8,7 @@ use Jaspersoft\Client\Client;
 use app\modules\misreports\models\ReportsModelOld;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use PHPExcel;
 
 /**
  * Default controller for the `JasperReports` module
@@ -18,7 +19,7 @@ class DefaultController extends \app\controllers\ChildController {
      * Renders the index view for the module
      * @return string
      */
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '', $fileDownloadArr = [];
 
     public function actionIndex() {
         $model = new ReportsModelOld();
@@ -47,7 +48,7 @@ class DefaultController extends \app\controllers\ChildController {
         if (isset($this->data['export_file_name']) && empty($this->output)) {
             $this->data['export_file_name'] = $this->data['title'];
         }
-        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
 
     public function actionFarmerPaymentReport() {
@@ -442,6 +443,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
         }
 
+        $fileArray = [];
         if (!empty($output)) {
             $attr = '';
             $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
@@ -458,8 +460,20 @@ class DefaultController extends \app\controllers\ChildController {
                     ],
                 ],
             ]);
+            $downLoadArray = [];
+            foreach ($this->output as $detail) {
+                if (empty($downLoadArray[$detail['Plant Code']])) {
+                    $downLoadArray[$detail['Plant Code']] = [];
+                }
+                $downLoadArray[$detail['Plant Code']][] = $detail;
+            }
+            foreach ($downLoadArray as $bmc => $download) {
+                $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
+                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+                $this->downloadData($title, $download, $fileArray);
+            }
+            $this->fileDownloadArr = $fileArray;
         }
-
         if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
             $content = '';
             foreach ($this->output as $dataline) {
@@ -475,6 +489,39 @@ class DefaultController extends \app\controllers\ChildController {
             header('Content-Type: text/plain');
             echo $content;
         }
+    }
+
+    public function downloadData($title, $download, &$fileArray) {
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $download, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $file_name = $title . '.' . 'xls';
+        $path = Yii::$app->basePath . '/web/sap_data_files/';
+        Yii::$app->general->checkDirectory($path);
+        $fileArray[] = $file_name;
+        $fileName = $path . '/' . $file_name;
+        fopen($fileName, "w+");
+        $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
+        $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save($fileName);
     }
 
     /* Reports Configuration */

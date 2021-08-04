@@ -18,6 +18,11 @@ $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
+//echo "<pre>";
+//print_r($fileDownloadArr);
+//echo "</pre>";
+//die;
+$downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
@@ -311,13 +316,42 @@ if (isset($data['url1'])) {
             }
             ?>
         </div>
+        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]); ?>
     </div>
 </div>       
 <?php
+$baseUrl = Yii::$app->request->baseUrl;
+$count = count($fileDownloadArr);
+$timeOutForLoader = ($count * 1000) + 2000;
 $script = "
 $('.mis_report_modal_toggle').on('click', function(){
     $('#mis_report_search_filter').modal('toggle');
-});";
+});
+
+var timeOut = 500;
+$(document).on('click', '.downloadSapFiles', function(e){
+    e.preventDefault();
+    $('#loadercontent').show();
+    $('#pageloader').show();
+    timeOut = 500;
+    var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
+    var downloadFilesJson = '" . $downloadSapFiles . "';
+    var timeOutForLoader = " . $timeOutForLoader . ";
+    var downloadFilesJsonAr = JSON.parse(downloadFilesJson);
+    $.each(downloadFilesJsonAr, function(ind, vl) {
+        setTimeout(() => {
+            window.location.href = baseUrl + vl;
+        }, timeOut);
+        timeOut = timeOut + 1000;
+    });
+    setTimeout(() => {
+        $('#loadercontent').hide();
+        $('#pageloader').hide();
+    }, timeOutForLoader);
+    return false;
+});
+
+";
 
 if ($defaultToggle) {
     $script .= "
