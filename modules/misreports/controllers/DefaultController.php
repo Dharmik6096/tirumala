@@ -460,19 +460,22 @@ class DefaultController extends \app\controllers\ChildController {
                     ],
                 ],
             ]);
-            $downLoadArray = [];
-            foreach ($this->output as $detail) {
-                if (empty($downLoadArray[$detail['Plant Code']])) {
-                    $downLoadArray[$detail['Plant Code']] = [];
+            if (!empty($this->data['sap_download'])) {
+                $downLoadArray = [];
+                foreach ($this->output as $detail) {
+                    $plant = ($model->report_type == 1) ? 'Plant Code' : 'Plant';
+                    if (empty($downLoadArray[$detail[$plant]])) {
+                        $downLoadArray[$detail[$plant]] = [];
+                    }
+                    $downLoadArray[$detail[$plant]][] = $detail;
                 }
-                $downLoadArray[$detail['Plant Code']][] = $detail;
+                foreach ($downLoadArray as $bmc => $download) {
+                    $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+                    $this->downloadData($title, $download, $fileArray);
+                }
+                $this->fileDownloadArr = $fileArray;
             }
-            foreach ($downLoadArray as $bmc => $download) {
-                $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
-                $this->downloadData($title, $download, $fileArray);
-            }
-            $this->fileDownloadArr = $fileArray;
         }
         if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
             $content = '';
@@ -568,7 +571,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => 'SAP VM Report',
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
-                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
             ],
             'WqReportSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -578,7 +582,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
                 'message' => Yii::t('app', 'Sync of data is pending from device.'),
-                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
             ],
             'SdReportSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -590,7 +595,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ'), Yii::t('app', 'SD')],
                 'export_title' => true,
                 'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
-                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true]
+                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
             ],
             'DateBmcCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',

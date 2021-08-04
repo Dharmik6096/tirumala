@@ -18,10 +18,7 @@ $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
-//echo "<pre>";
-//print_r($fileDownloadArr);
-//echo "</pre>";
-//die;
+
 $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
@@ -316,7 +313,11 @@ $downloadSapFiles = json_encode($fileDownloadArr);
             }
             ?>
         </div>
-        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]); ?>
+        <?php
+        if (!empty($fileDownloadArr)) {
+            echo GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+        }
+        ?>
     </div>
 </div>       
 <?php
