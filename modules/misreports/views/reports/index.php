@@ -449,7 +449,8 @@ if (isset($data['url1'])) {
                     'paging' => false,
                     'columns' => $attr,
                     'info' => false,
-                    'withColumnFilter' => true
+                    'withColumnFilter' => true,
+                    'order' => []
                 ]);
 //                echo \nullref\datatable\DataTable::widget([
 //                    'id' => 'custom_report',
