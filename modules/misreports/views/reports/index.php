@@ -316,9 +316,9 @@ if (isset($data['url1'])) {
 
                                         if (in_array($value, array('report_collection_type'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                                <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
-                                            </div>
+                                                </div>
                                             <?php
                                         }
                                         if (in_array($value, array('product_code'))) {
@@ -327,7 +327,7 @@ if (isset($data['url1'])) {
                                                 <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                                             </div>
                                             <?php
-                                        }
+                                    }
                                     }
 
                                     if (isset($data['report_type'])) {
@@ -335,7 +335,7 @@ if (isset($data['url1'])) {
                                     }
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
-                                    }
+                                    }                                    
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -433,7 +433,7 @@ if (isset($data['url1'])) {
                 echo '<ul class="items">';
                 foreach ($attr as $key => $value) {
                     echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
-                }
+            }
                 echo '</ul>';
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
@@ -495,7 +495,7 @@ $('.mis_report_modal_toggle').on('click', function(){
                 $('#custom_report #w'+column_no).parent().show();
             }
             column.visible( ! column.visible() );
-        });
+    });
 
         var checkList = document.getElementById('grid_show_hide_list');
         if(checkList != null){
