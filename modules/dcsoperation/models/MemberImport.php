@@ -37,31 +37,31 @@ class MemberImport extends TblMember {
             [['ifsc', 'pan_no'], 'trim'],
             [['email'], 'email'],
             [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
-                }, 'skipOnEmpty' => TRUE],
+            Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
+        }, 'skipOnEmpty' => TRUE],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'skipOnEmpty' => true],
+            return $this->is_active;
+        }, 'skipOnEmpty' => true],
             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
             [['pan_no'], function ($attribute, $params) {
-                    Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->validatePancard($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['ifsc'], function ($attribute, $params) {
-                    Yii::$app->general->validateIfsc($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->validateIfsc($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['beneficiary_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateBeneficiary($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
+            Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+        }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
             [['voter_id'], 'string', 'max' => 15, 'skipOnEmpty' => true],
             [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true],
             [['hamlet_code'], 'validateHamlet', 'skipOnEmpty' => TRUE],
@@ -79,10 +79,10 @@ class MemberImport extends TblMember {
             [['animal_type_code'], 'in', 'range' => [1, 2, 3], 'skipOnEmpty' => TRUE],
             [['nominee_relation'], 'in', 'range' => [1, 2, 3, 4, 5, 6, 7, 8], 'skipOnEmpty' => TRUE],
             [['bank_account_no'], function ($attribute, $params) {
-                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
-                    if ($error !== TRUE)
-                        $this->addError($attribute, $error);
-                }, 'skipOnEmpty' => TRUE],
+            $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+            if ($error !== TRUE)
+                $this->addError($attribute, $error);
+        }, 'skipOnEmpty' => TRUE],
 //            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //            return $this->is_active;
 //        }, 'skipOnEmpty' => TRUE],
@@ -95,12 +95,13 @@ class MemberImport extends TblMember {
             [['dcs_code'], 'setVerified', 'on' => ['importCsv']],
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
             [['rate_class'], function ($attribute, $params) {
-                    !empty($this->rate_class) ? Yii::$app->general->validateGlobalStatic($this, $attribute, 'rate_class') : '';
-                }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
+            !empty($this->rate_class) ? Yii::$app->general->validateGlobalStatic($this, $attribute, 'rate_class') : '';
+        }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
             [['vendor_code'], 'unique', 'targetAttribute' => ['vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'skipOnEmpty' => true, 'on' => ['importCsv']],
+            return $this->is_active;
+        }, 'skipOnEmpty' => true, 'on' => ['importCsv']],
             [['vendor_code'], 'number', 'on' => ['importCsv']],
+            [['vendor_code'], 'string', 'max' => 10, 'skipOnEmpty' => true],
                 /*  [['dob'], function ($attribute, $params) {
                   Yii::$app->general->validateAge($this, $attribute, $params);
                   }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync']],
