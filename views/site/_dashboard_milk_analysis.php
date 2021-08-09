@@ -64,14 +64,14 @@ $client_code = strtolower($client_code);
             <table id="custom_report_1" class="fht-table table table-striped dashboardMilkAnalysis_grid">
                 <thead class="dashboardWidgetDetailPortion">
                     <tr>
-                        <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC')      ?></th> -->
+                        <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC')        ?></th> -->
                         <th rowspan='2'><?= Yii::t('app', 'BMC ') ?></th>
                         <th colspan='7'><?= Yii::t('app', 'CC Collection') ?></th>
                         <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
                         <?php if ($client_code != 'gyan') { ?>
                             <th colspan='6'><?= Yii::t('app', 'Bulk Vendor Receipt') ?></th>
+                            <th colspan='6'><?= Yii::t('app', 'Total') ?></th>
                         <?php } ?>
-                        <th colspan='6'><?= Yii::t('app', 'Total') ?></th>
                         <th colspan='5'><?= Yii::t('app', 'CC Differences') ?></th>
                     </tr>
                     <tr>
@@ -82,9 +82,9 @@ $client_code = strtolower($client_code);
                         <th><?= Yii::t('app', 'Amount') ?></th>
                         <th><?= Yii::t('app', 'No Of Farmers') ?></th>
                         <th><?= Yii::t('app', 'CC Count') ?></th>
-                        <!-- <th><?php //Yii::t('app', 'Online')      ?></th>
-                        <th><?php //Yii::t('app', 'Pendrive')      ?></th>
-                        <th><?php //Yii::t('app', 'Manual')      ?></th> -->
+                        <!-- <th><?php //Yii::t('app', 'Online')        ?></th>
+                        <th><?php //Yii::t('app', 'Pendrive')        ?></th>
+                        <th><?php //Yii::t('app', 'Manual')        ?></th> -->
 
                         <th><?= Yii::t('app', 'Qty') ?></th>
                         <th><?= Yii::t('app', 'FAT') ?></th>
@@ -99,13 +99,14 @@ $client_code = strtolower($client_code);
                             <th><?= Yii::t('app', 'Rate') ?></th>
                             <th><?= Yii::t('app', 'Amount') ?></th>
                             <th><?= Yii::t('app', 'Count') ?></th>
+
+                            <th><?= Yii::t('app', 'Qty') ?></th>
+                            <th><?= Yii::t('app', 'FAT') ?></th>
+                            <th><?= Yii::t('app', 'SNF') ?></th>
+                            <th><?= Yii::t('app', 'Rate') ?></th>
+                            <th><?= Yii::t('app', 'Amount') ?></th>
+                            <th><?= Yii::t('app', 'Count') ?></th>
                         <?php } ?>
-                        <th><?= Yii::t('app', 'Qty') ?></th>
-                        <th><?= Yii::t('app', 'FAT') ?></th>
-                        <th><?= Yii::t('app', 'SNF') ?></th>
-                        <th><?= Yii::t('app', 'Rate') ?></th>
-                        <th><?= Yii::t('app', 'Amount') ?></th>
-                        <th><?= Yii::t('app', 'Count') ?></th>
 
                         <th><?= Yii::t('app', 'Qty') ?></th>
                         <th><?= Yii::t('app', 'FAT') ?></th>
