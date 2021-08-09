@@ -2054,6 +2054,20 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function generateRandomString() {
+        $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                . '0123456789');
+//                . '0123456789!@#$%^&*()');
+        shuffle($seed); // probably optional since array_is randomized; this may be redundant
+        $rand = '';
+        foreach (array_rand($seed, 8) as $k) {
+            $rand .= $seed[$k];
+        }
+
+        return $rand;
+    }
+
     public function setAttachment(&$child, $files, $module_code, $module_name) {
         $filesArray = explode(',', $files);
         unset($filesArray[0]);
