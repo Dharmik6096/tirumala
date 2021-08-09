@@ -50,7 +50,7 @@ class Path extends Component {
             'TblRoutes', 'TblRoutesHistory', 'TblRoutesLocl', 'TblRoutesSearch', 'TblRouteMappingSources', 'TblRouteMappingSourcesHistory', 'TblRouteMapping', 'TblRouteMappingHistory',
             'TblSubCenter', 'TblSubcenterBm', 'TblSubcenterBmcHistory', 'TblSubCenterHistory', 'TblSubCenterLcal', 'TblSubcenterMiscellaneous', 'TblSubcenterMiscellaneousistory', 'TblSubCenterSearch',
             'TblUnions', 'TblUnionsDistrictMapping', 'TblUnionsDistrictMappingHistory', 'TblUnionsHistory', 'TblUnionsSearch', 'TblDcsConfigHistory', 'TblSocietyCodes', 'TblMccMilkType', 'TblBmcMilkType', 'TblMccMilkTypeHistory', 'TblBmcMilkTypeHistory',
-            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus'
+            'TblCustomerMaster', 'TblBmcSilosInfo', 'TblBmcSilosInfoHistory', 'TblDcsDeactive', 'TblCustomerMasterHistory', 'TblCustomerDeactive', 'TblDcsVendorStatus', 'TblAllowDcsManualCollectionRange'
         ],
         '\\app\modules\details\models\\' =>
         ['TblContactDetails', 'TblContactDetailsHistory', 'TblBankDetails', 'TblBankDetailsHistory'],
@@ -79,7 +79,7 @@ class Path extends Component {
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],
         '\\app\modules\configuration\models\\' =>
         ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory'],
-        '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory', 'TblAppStartup'],
+        '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory', 'TblAppStartup', 'TblAction', 'TblRole', 'TblRoleActionMapping', 'TblUserAndroid', 'TblUserRoleMapping', 'TblUserDownloadAck'],
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail', 'TblVspBillHeadCriteria', 'TblVspBillHeadCriteriaSlabs', 'TblVspBillHeadCriteriaApplicability'],

@@ -75,11 +75,11 @@ class TblUnionsHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active'], 'safe'],
-                [['address', 'city', 'bank_code', 'federation_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'contact_person', 'contact_person_email', 'contact_person_phone_no', 'dcs_short_name', 'dcs_code', 'dcs_code_ex', 'contact_person_mobile_no', 'union_code', 'union_code_ex', 'union_name', 'bank_account_no', 'ifsc', 'contact_person_pan_no', 'village_code', 'upi_no', 'branch_code', 'valid_from'], 'safe'],
-                [['created_at', 'history_created_at', 'registration_date', 'updated_at', 'fax_no', 'upi_no', 'ifsc'], 'safe'],
-                [['is_active', 'local_name', 'local_address', 'gst_no', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create'], 'safe'],
+            [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active'], 'safe'],
+            [['address', 'city', 'bank_code', 'federation_code', 'district_code', 'hamlet_code', 'state_code', 'sub_district_code', 'contact_person', 'contact_person_email', 'contact_person_phone_no', 'dcs_short_name', 'dcs_code', 'dcs_code_ex', 'contact_person_mobile_no', 'union_code', 'union_code_ex', 'union_name', 'bank_account_no', 'ifsc', 'contact_person_pan_no', 'village_code', 'upi_no', 'branch_code', 'valid_from'], 'safe'],
+            [['created_at', 'history_created_at', 'registration_date', 'updated_at', 'fax_no', 'upi_no', 'ifsc'], 'safe'],
+            [['is_active', 'local_name', 'local_address', 'gst_no', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create', 'history_created_by'], 'safe'],
         ];
     }
 

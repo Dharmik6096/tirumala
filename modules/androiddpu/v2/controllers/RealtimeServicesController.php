@@ -14,6 +14,10 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\tankermovement\models\TblVehicleTrip;
+// Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//use app\modules\installation\models\TblAction;
+//use app\modules\installation\models\TblUserDownloadAck;
+// END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 
 class RealtimeServicesController extends RestController {
 
@@ -258,5 +262,64 @@ class RealtimeServicesController extends RestController {
         }
         return $this->response;
     }
+
+    // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//    public function actionUserRoleActionMap() {
+//        $res_data = [];
+//        $res_data['users'] = [];
+//        $res_data['roles'] = [];
+//        $res_data['actions'] = [];
+//        $res_data['roleActionMapping'] = [];
+//        $res_data['userRoleMapping'] = [];
+//        $res_data['ackKey'] = [];
+//        $data = $this->post_data;
+//
+//        $org_code = $data['organization_code'];
+//        $org_type = $data['organization_type'];
+//        $devide_id = $data['device_id'];
+//        $hashKey = $data['token'];
+//        $ackModel = new TblUserDownloadAck();
+//        $orgDetail = $ackModel->getOrgDetail($org_type, $org_code);
+//
+//        $ackModel->hash_key = $hashKey;
+//        $ackModel->device_id = $devide_id;
+//        $existAck = $ackModel->getExistDataAck($org_type);
+//        $role_data = [];
+//        $usr_data = [];
+//        $ackKey = [];
+//        $key = [];
+//        if (!empty($existAck)) {
+//            foreach ($existAck as $ackn) {
+//                $key[] = $ackn->ack_id;
+//                $usr = Yii::$app->general->getSpData('android_user', [$ackn->user_code]);
+//                $role = Yii::$app->general->getSpData('android_user_role_mapp', [$ackn->user_code]);
+//                $usr_data = array_merge($usr_data, $usr);
+//                $role_data = array_merge($role_data, $role);
+//                $ackKey = array_merge($ackKey, $key);
+//            }
+//            $res_data['users'] = $usr_data;
+//            $res_data['actions'] = Yii::$app->general->getSpDropData('android_user_actions', []);
+//            $res_data['roles'] = Yii::$app->general->getSpDropData('android_user_role', []);
+//            $res_data['roleActionMapping'] = Yii::$app->general->getSpDropData('android_user_role_action_mapp', []);
+//            $res_data['userRoleMapping'] = $role_data;
+//            $res_data['ackKey'] = $key;
+//        }
+//
+//        $this->response['data'] = $res_data;
+//
+//        return $this->response;
+//    }
+//
+//    public function actionUserDownloadAcknowledgement() {
+//        $data = $this->post_data;
+//        $res_data = [];
+//        $res_data['message'] = 'User Download Acknowledgement Updated.';
+//        $ackKeys = $data['content']['ack_key'];
+//        $model = new TblUserDownloadAck();
+//        $model->updateAll(['download_date_time' => date('Y-m-d H:i:s'), 'download_pending' => 0], ['ack_id' => $ackKeys]);
+//        $this->response['data'] = $res_data;
+//        return $this->response;
+//    }
+    // END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 
 }
