@@ -16,6 +16,9 @@ use Yii;
  * @property string $fat
  * @property string $snf
  * @property string $water
+ * @property string $qty
+ * @property string $rtpl
+ * @property string $amount
  * @property string $auto_flag
  * @property string $shift_code
  * @property string $date_time_of_collection
@@ -23,6 +26,7 @@ use Yii;
  * @property string $village_code
  * @property integer $sample_no
  * @property string $type_of_data_receive
+ * @property string $purchase_rate_code
  * @property string $error_log
  * @property integer $ack
  * @property string $soc_bmc_flag
@@ -35,11 +39,20 @@ use Yii;
  * @property integer $data_post_status
  * @property string $clr
  * @property string $status
+ * @property integer $qty_mode
+ * @property string $qlty_time
+ * @property string $qty_time
  * @property integer $no_of_can
+ * @property integer $milk_quality_type_code
+ * @property integer $qlty_auto
+ * @property integer $qty_auto
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
+ * @property string $route_code
+ * @property string $bmc_code
+ * @property string $converted_qty
  * @property integer $is_approved
  * @property string $data_post_id
  * @property string $resp_status
@@ -55,17 +68,32 @@ use Yii;
  * @property string $remarks
  * @property string $sync_status
  * @property string $union_code
+ * @property string $plant_code
+ * @property string $mcc_plant_code
+ * @property string $version_no
  * @property string $originating_org_code
  * @property string $originating_org_type
+ * @property integer $converted_qty_mode
+ * @property string $protein
+ * @property string $density
+ * @property string $lactose
+ * @property integer $dcs_payment_cycle_code
+ * @property integer $milk_analyser_type_code
+ * @property integer $ws_code
  * @property string $x_col1
  * @property string $x_col2
  * @property string $x_col3
  * @property string $x_col4
  * @property string $x_col5
+ * @property string $incentive
+ * @property string $deduction
+ * @property string $total_amount
+ * @property string $own_bmc_code
+ * @property string $own_mcc_plant_code
  * @property integer $send_status
  * @property string $response_datetime
- * @property integer $txfarmer_id
- * @property string $data_inserted_from
+ * @property string $adt_param
+ * @property string $adt_value
  * @property integer $is_provisional
  * @property string $device_lat
  * @property string $device_long
@@ -76,6 +104,9 @@ use Yii;
  * @property string $dpu_incentive
  * @property string $dpu_deduction
  * @property string $dpu_total_amount
+ * @property integer $txfarmer_id
+ * @property string $data_inserted_from
+ * @property string $received_timestamp
  * @property integer $is_rate_recalc
  * @property string $purchase_rate_code_old
  */
@@ -93,19 +124,20 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'no_of_can', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'send_status', 'txfarmer_id', 'is_provisional', 'is_rate_recalc'], 'safe'],
-                [['fat', 'snf', 'water', 'clr', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe'],
-                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
+                [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'converted_qty_mode', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'send_status', 'is_provisional', 'txfarmer_id', 'is_rate_recalc'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount'], 'safe'],
+                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime', 'received_timestamp'], 'safe'],
                 [['remarks', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
-                [['member_code'], 'safe'],
-                [['dcs_code'], 'safe'],
+                [['member_code', 'version_no'], 'safe'],
+                [['dcs_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'safe'],
                 [['name'], 'safe'],
-                [['mobile_no', 'sms_mobile', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['mobile_no', 'sms_mobile', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param'], 'safe'],
                 [['auto_flag', 'soc_bmc_flag'], 'safe'],
                 [['shift_code'], 'safe'],
                 [['village_code'], 'safe'],
                 [['type_of_data_receive', 'error_log', 'sms_msgid', 'data_inserted_from'], 'safe'],
-                [['sms_status', 'tag_1', 'tag_2'], 'safe'],
+                [['purchase_rate_code', 'purchase_rate_code_old'], 'safe'],
+                [['sms_status', 'route_code', 'tag_1', 'tag_2', 'own_bmc_code', 'own_mcc_plant_code'], 'safe'],
                 [['sms_errorlog'], 'safe'],
                 [['status'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
@@ -113,7 +145,6 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
                 [['last_edited_type', 'sync_status'], 'safe'],
                 [['union_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['purchase_rate_code_old'], 'safe'],
         ];
     }
 
@@ -131,6 +162,9 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'fat' => Yii::t('app', 'Fat'),
             'snf' => Yii::t('app', 'Snf'),
             'water' => Yii::t('app', 'Water'),
+            'qty' => Yii::t('app', 'Qty'),
+            'rtpl' => Yii::t('app', 'Rtpl'),
+            'amount' => Yii::t('app', 'Amount'),
             'auto_flag' => Yii::t('app', 'Auto Flag'),
             'shift_code' => Yii::t('app', 'Shift Code'),
             'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
@@ -138,6 +172,7 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'village_code' => Yii::t('app', 'Village Code'),
             'sample_no' => Yii::t('app', 'Sample No'),
             'type_of_data_receive' => Yii::t('app', 'Type Of Data Receive'),
+            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
             'error_log' => Yii::t('app', 'Error Log'),
             'ack' => Yii::t('app', 'Ack'),
             'soc_bmc_flag' => Yii::t('app', 'Soc Bmc Flag'),
@@ -150,11 +185,20 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'data_post_status' => Yii::t('app', 'Data Post Status'),
             'clr' => Yii::t('app', 'Clr'),
             'status' => Yii::t('app', 'Status'),
+            'qty_mode' => Yii::t('app', 'Qty Mode'),
+            'qlty_time' => Yii::t('app', 'Qlty Time'),
+            'qty_time' => Yii::t('app', 'Qty Time'),
             'no_of_can' => Yii::t('app', 'No Of Can'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
+            'qlty_auto' => Yii::t('app', 'Qlty Auto'),
+            'qty_auto' => Yii::t('app', 'Qty Auto'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
+            'route_code' => Yii::t('app', 'Route Code'),
+            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'converted_qty' => Yii::t('app', 'Converted Qty'),
             'is_approved' => Yii::t('app', 'Is Approved'),
             'data_post_id' => Yii::t('app', 'Data Post ID'),
             'resp_status' => Yii::t('app', 'Resp Status'),
@@ -170,17 +214,32 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'remarks' => Yii::t('app', 'Remarks'),
             'sync_status' => Yii::t('app', 'Sync Status'),
             'union_code' => Yii::t('app', 'Union Code'),
+            'plant_code' => Yii::t('app', 'Plant Code'),
+            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
+            'version_no' => Yii::t('app', 'Version No'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'converted_qty_mode' => Yii::t('app', 'Converted Qty Mode'),
+            'protein' => Yii::t('app', 'Protein'),
+            'density' => Yii::t('app', 'Density'),
+            'lactose' => Yii::t('app', 'Lactose'),
+            'dcs_payment_cycle_code' => Yii::t('app', 'Dcs Payment Cycle Code'),
+            'milk_analyser_type_code' => Yii::t('app', 'Milk Analyser Type Code'),
+            'ws_code' => Yii::t('app', 'Ws Code'),
             'x_col1' => Yii::t('app', 'X Col1'),
             'x_col2' => Yii::t('app', 'X Col2'),
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'incentive' => Yii::t('app', 'Incentive'),
+            'deduction' => Yii::t('app', 'Deduction'),
+            'total_amount' => Yii::t('app', 'Total Amount'),
+            'own_bmc_code' => Yii::t('app', 'Own Bmc Code'),
+            'own_mcc_plant_code' => Yii::t('app', 'Own Mcc Plant Code'),
             'send_status' => Yii::t('app', 'Send Status'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
-            'txfarmer_id' => Yii::t('app', 'Txfarmer ID'),
-            'data_inserted_from' => Yii::t('app', 'Data Inserted From'),
+            'adt_param' => Yii::t('app', 'Adt Param'),
+            'adt_value' => Yii::t('app', 'Adt Value'),
             'is_provisional' => Yii::t('app', 'Is Provisional'),
             'device_lat' => Yii::t('app', 'Device Lat'),
             'device_long' => Yii::t('app', 'Device Long'),
@@ -191,6 +250,9 @@ class TblMilkCollectionAudit extends \app\models\ChildModel {
             'dpu_incentive' => Yii::t('app', 'Dpu Incentive'),
             'dpu_deduction' => Yii::t('app', 'Dpu Deduction'),
             'dpu_total_amount' => Yii::t('app', 'Dpu Total Amount'),
+            'txfarmer_id' => Yii::t('app', 'Txfarmer ID'),
+            'data_inserted_from' => Yii::t('app', 'Data Inserted From'),
+            'received_timestamp' => Yii::t('app', 'Received Timestamp'),
             'is_rate_recalc' => Yii::t('app', 'Is Rate Recalc'),
             'purchase_rate_code_old' => Yii::t('app', 'Purchase Rate Code Old'),
         ];

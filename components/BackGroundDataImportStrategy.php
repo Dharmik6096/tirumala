@@ -102,7 +102,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
                     $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
                     $error = ActiveForm::validate($model);
-
+                   
                     $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
                     $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
                     if (!empty($findField)) {
@@ -163,6 +163,12 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
                     if ($model->hasAttribute('created_by') && $model->created_by == NULL)
                         $model->created_by = !empty($this->details['created_by']) ? $this->details['created_by'] : NULL;
+                    if ($model->hasAttribute('updated_by') && $model->updated_by == NULL) {
+                        $model->updated_by = !empty($model->created_by) ? $model->created_by : NULL;
+                    }
+                    if (isset($model->hasImport)) {
+                        $model->hasImport = TRUE;
+                    }
                     if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
                         $model->setChildTable($model, $modelList, $errors);
                     }

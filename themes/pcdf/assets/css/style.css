@@ -4823,3 +4823,28 @@ tr.highlightRow {
 .dataTables_scrollBody thead tr[role='row']{
     height: 20px !important
 }
+
+
+.static_header_grid.dynamic_report_table tbody tr td {
+    border: 0.5px solid #ddd !important;
+    border-left: none !important;
+    min-width: 100px;
+}
+.static_header_grid.dynamic_report_table thead tr th {
+    border: 0.5px solid #ddd !important;
+    border-left: none !important;
+    min-width: 100px;
+}
+
+.static_header_grid.dynamic_report_table tbody tr td:first-child {
+    min-width: 30px;
+}
+.static_header_grid.dynamic_report_table thead tr th:first-child {
+    min-width: 30px;
+}
+
+#main_table_for_fix_clone { 
+    position: fixed; 
+    top: 0px; display:none;
+    background-color:white;
+}

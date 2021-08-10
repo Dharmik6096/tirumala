@@ -238,7 +238,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+//            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
@@ -611,7 +611,7 @@ class SchedulerController extends ChildController {
                 $this->setHtmlContent($htmlContent, $message, $file_name, $file_path, $fromDate, $toDate);
                 $from = $apiMasterData->url;
                 $to = $apiMasterData->token;
-                $cc = 'nilesh.gn@everestinstruments.com';
+                $cc = 'vinay@everestinstruments.com';
                 if (!empty($file_name)) {
                     $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $message, $htmlContent, FALSE, $file_name, $file_path);
                     $notificationModel = new TblAlertNotification();

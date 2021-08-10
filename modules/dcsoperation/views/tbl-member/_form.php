@@ -88,9 +88,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= $form->field($model, 'surname')->textInput() ?>
         </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'local_surname')->textInput() ?>
-        </div>
+        <!--        <div class="col-sm-4">
+        <?php // $form->field($model, 'local_surname')->textInput() ?>
+                </div>-->
         <div class="col-sm-4">
             <?= $form->field($model, 'nominee_name')->textInput() ?>
         </div>
@@ -130,6 +130,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
+        <div class="col-sm-4 number-validate">
+            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+        </div>
         <?php if ($config == 1) { ?>
             <div class="col-sm-4">
                 <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
@@ -156,6 +159,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
     <div class="col-sm-4">
     <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
     </div> -->
+
     <div class="col-sm-6 col-md-6 padding_left_0 padding_right_0 clearfix">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Contact Details</h4>
