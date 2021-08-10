@@ -420,8 +420,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $union_code = $orgDetail['union_code'];
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
+                    $rangeModel = new TblAllowDcsManualCollectionRange();
                     if ($org_type == 'VLC') {
-                        $rangeModel = new TblAllowDcsManualCollectionRange();
                         $detailType = 'society';
                         $mcc_bmc_config = FALSE;
                         $current_rate_detail = Yii::$app->general->getSpData('sp_app_amcs_v2_current_rate_detail', [$org_code]);
