@@ -1826,6 +1826,9 @@ class SiteController extends Controller {
                             if (isset($model->is_sentbox)) {
                                 $model->is_sentbox = false;
                             }
+                            if ($model->hasAttribute('originating_type')) {
+                                $model->originating_type = 23;
+                            }
 
                             if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
                                 $model->setTransactionData($model, $json, $childModel);
