@@ -17,10 +17,10 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
     ]);
     // va   r_dump($model);die;
     ?>
-    <div class="dynamic_report_table overflow_auto sticky-footer-panel">
+    <div id="fixed-table-container" class="static_header_grid dynamic_report_table overflow_auto sticky-footer-panel fixed-table-container">
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
-
-        <table id="recovery_grid" class="table table-striped">
+        <!-- main_table_for_fix - id for set sticky header -->
+        <table id="recovery_grid" class="table table-striped table-input" id="table">
             <?php
             if (!empty($output)) {
                 $show_column = ['mcc_plant_code', 'bmc_code', 'bmc_ref_code', 'bmc_name', 'route_code'];
@@ -138,6 +138,8 @@ $this->title = Yii::t('app', 'TS Loss And Shortage');
 </div>
 <div id="AppInformation"></div>
 
+<!--<table id="main_table_for_fix_clone"  class="table table-striped table-input"></table>-->
+
 <?php
 $script = '
 
@@ -167,6 +169,8 @@ $script = '
         var qty_diff_type_value = $(".qty_diff_type-"+row_number+" #dropdown_value").val();
         var data_append_qty_diff = "<select class=\'dd_qty_diff_type\' id=\'dd_qty_diff_type-"+row_number+"\' name = \'qty_diff_type["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Type</option>"
         var union= "' . $model->union_code . '";
+        $("#loadercontent").show();
+        $("#pageloader").show();
         $.ajax({
             type: "post",
             url: "' . Url::to(['/vsp/transit-recovery/get-penalty-type']) . '",
@@ -182,6 +186,16 @@ $script = '
                     $("#dd_qty_diff_type-"+row_number).val(qty_diff_type_value);
                     calculateShortageRecovery(qty_diff_type_value,row_number);
                 }, 200);
+                setTimeout(function(){
+                    fixTable(document.getElementById("fixed-table-container"));
+                }, 400);
+                setTimeout(function(){
+                    $("#recovery_grid thead").find("th").each (function() {
+                        $(this).css("width",$(this).width() + 8)
+                    }); 
+                    $("#loadercontent").hide();
+                    $("#pageloader").hide();
+                }, 600);
             },
             error:function(data){
             }
@@ -270,6 +284,34 @@ $script = '
             $(".total_recovery_incharge-"+row_number).html(total_recovery_incharge_append);
         }
     }
+        var fixedTable1 = fixTable(document.getElementById("fixed-table-container"));
+        setTimeout(function(){
+           $("#recovery_grid thead").find("th").each (function() {
+            $(this).css("width",$(this).width() + 8)
+          }); 
+        }, 400);
+
+//$(document).ready(function () {
+//    console.log($("#recovery_grid"));
+//    var tableOffset = $("#fixed-table-container").offset().top;
+//    console.log($("#fixed-table-container").position().top)
+//    var $header = $("#recovery_grid > thead").clone();
+//    var $fixedHeader = $("#main_table_for_fix_clone").append($header);
+//
+//    $("#fixed-table-container").scroll(function(){
+//        var offset = $(this).scrollTop();
+//        offset = offset + 133.60;
+//console.log("asdasd"+offset);
+//console.log("qweqwe"+tableOffset);
+//        if (offset >= tableOffset && $fixedHeader.is(":hidden")) {
+//            $fixedHeader.show();
+//            $("#main_table_for_fix_clone").css("margin-top", "113.60")
+//        }
+//        else if (offset < tableOffset) {
+//            $fixedHeader.hide();
+//        }
+//    });
+//});
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
 ?>

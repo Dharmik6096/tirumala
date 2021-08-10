@@ -193,6 +193,14 @@ if ($model->is_active == 1) {
                     ],
                 ],
                 [
+                    'columns' => [
+                        [
+                            'attribute' => 'vendor_code',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
                     'group' => true,
                     'label' => 'Animal Details',
                     'rowOptions' => ['class' => 'bg-default']

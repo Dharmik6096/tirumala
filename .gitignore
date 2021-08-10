@@ -40,3 +40,4 @@ installation-identity/*
 web/PDS/**
 web/bulkdata/**
 web/collection-data/**
+web/sap_data_files/**
