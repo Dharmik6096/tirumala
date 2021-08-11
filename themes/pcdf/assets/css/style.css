@@ -4848,3 +4848,6 @@ tr.highlightRow {
     top: 0px; display:none;
     background-color:white;
 }
+.width_100-50 {
+    width: calc(100% - 50px);
+}

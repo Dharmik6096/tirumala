@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  */
@@ -58,6 +57,19 @@ class Grid extends Widget {
                 $dataProvider->sort = ['defaultOrder' => $sort];
             }
         }
+
+        //Start: check allow button for view history
+        $viewHistory = false;
+        if (!empty(Yii::$app->session->get('ViewHistory'))) {
+            if (!empty($table_name)) {
+                $excludes = [];
+                $exclude = explode(',', Yii::$app->session->get('ViewHistory'));
+                if (in_array($table_name, $exclude)) {
+                    $viewHistory = TRUE;
+                }
+            }
+        }//End: check allow button for view history
+
         $refresh_action = \Yii::$app->request->url;
         $grid_option = (Object) $grid_option;
         $this->id = $grid_option->id;
@@ -73,6 +85,9 @@ class Grid extends Widget {
         ];
 
         if (isset($grid_option->actions)) {
+            if ($viewHistory == true) { //allow view history
+                $grid_option->actions['view-history'] = 1;
+            }
             $keys = array_keys($grid_option->actions);
 
             $awidth = '150px';
@@ -140,12 +155,21 @@ class Grid extends Widget {
                             return Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', $options);
                         }
                     },
+                    'view-history' => function ($url, $model)use ($grid_option, $table_name ) {
+                        $callUrl['table_name'] = $table_name;
+                        $primaryKey = $model->tableSchema->primaryKey;
+                        foreach ($primaryKey as $primary) {
+                            $id = $model->$primary;
+                        }
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View History'), 'class' => 'view_history', 'data-table_name' => $table_name, 'data-id' => $id];
+                        return GhostHtml::a_alert('<i class="fa fa-history"></i>', ['/misreports/reports/view-history'], $options);
+                    },
                 ]
             ];
 
             array_push($columns, $action_column);
             foreach ($grid_option->actions as $key => $a) {
-                if (!($key == 'delete' || $key == 'view' || $key === 'update')) {
+                if (!($key == 'delete' || $key == 'view' || $key === 'update' || $key === 'view-history')) {
                     $columns[1]['buttons'][$key] = $a;
                 }
             }
@@ -380,7 +404,7 @@ class Grid extends Widget {
                      }
                  }             
              });  
-}                
+}       
 
 ";
             Yii::$app->view->registerJs($script, View::POS_END, 'verify-data');
@@ -389,3 +413,5 @@ class Grid extends Widget {
     }
 
 }
+?>
+<div id="viewHistoryPopup"></div>

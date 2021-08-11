@@ -697,6 +697,52 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionViewHistory() {
+        $data = [];
+        if (!empty($_POST)) {
+            $data = $_POST;
+        }
+
+        $controls = [];
+        $controls['id'] = $data['id'];
+        $sp_name = 'portal_history_' . $data['table'];
+        $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        $this->output = $output;
+        $model = new ReportsModel();
+        if (!empty($output)) {
+            $attr = '';
+            $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecrypt = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecryptCheck = false;
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+                if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {
+                    $dataToDecryptCheck = true;
+                }
+            }
+            if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
+                for ($i = 0; $i < count($output); $i++) {
+                    foreach ($dataToDecrypt as $decKey) {
+                        if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
+                            $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                        }
+                    }
+                }
+            }
+            $this->dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        return $this->renderAjax('view_history_list', ['result' => $this->output, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
