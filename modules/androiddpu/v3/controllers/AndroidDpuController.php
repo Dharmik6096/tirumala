@@ -451,8 +451,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                         $res_data['config']['collectionBlock'] = FALSE;
                         $res_data['config']['dcsBlock'] = FALSE;
                         $res_data['config']['dispatchMandate'] = FALSE;
-                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
                         $res_data['rate']['mPurchaseRateCode'] = "";
                         $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                         $res_data['rate']['ePurchaseRateCode'] = "";
