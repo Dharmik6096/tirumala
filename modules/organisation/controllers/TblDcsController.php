@@ -43,6 +43,7 @@ use app\modules\details\models\TblBankDetailsHistory;
 use app\modules\details\models\TblContactDetailsHistory;
 use yii\base\UserException;
 use ReflectionClass;
+use app\models\ChildModel;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
