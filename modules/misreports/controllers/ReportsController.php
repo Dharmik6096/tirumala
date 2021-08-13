@@ -829,7 +829,11 @@ class ReportsController extends \app\controllers\ChildController {
             $this->label = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
         }
         if ($model->output_type == 'DOWNLOAD') {
-            $this->downloadData();
+            if ($this->report == 'SapMilkCollectionData') {
+                $this->downloadDataExcel();
+            } else {
+                $this->downloadData();
+            }
         }
     }
 
@@ -1833,6 +1837,47 @@ class ReportsController extends \app\controllers\ChildController {
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();
+    }
+
+    public function downloadDataExcel() {
+        $header = [
+            'mime' => 'application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $this->output, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }
