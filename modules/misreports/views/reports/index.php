@@ -40,7 +40,7 @@ if (isset($data['url1'])) {
         $codeToAppend = $model->getMccCode($model->mcc_code);
         $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
         $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
-        $this->title = $codeToAppend->name . '_' . $model->mcc_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        $this->title = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
         $removeExportType = ['CSV'];
         $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
                 $sheet->getProtection()->setSheet(true);

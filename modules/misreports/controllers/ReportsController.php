@@ -826,7 +826,7 @@ class ReportsController extends \app\controllers\ChildController {
             $codeToAppend = $model->getMccCode($model->mcc_code);
             $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
             $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
-            $this->label = $codeToAppend->name . '_' . $model->mcc_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+            $this->label = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
         }
         if ($model->output_type == 'DOWNLOAD') {
             $this->downloadData();
