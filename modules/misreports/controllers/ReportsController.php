@@ -1847,6 +1847,9 @@ class ReportsController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
+        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
+                ->getNumberFormat()
+                ->setFormatCode('h:mm:ss');
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
           ->setFormatCode(
