@@ -36,6 +36,17 @@ if (isset($data['url1'])) {
     } else if (!empty($data['removeExportType'])) {
         $removeExportType = $data['removeExportType'];
     }
+    if (isset($data['dynamic_label']) && $data['dynamic_label'] && !empty($result)) {
+        $codeToAppend = $model->getMccCode($model->mcc_code);
+        $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
+        $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
+        $this->title = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        $removeExportType = ['CSV'];
+        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+                $sheet->getProtection()->setSheet(true);
+                $sheet->getProtection()->setPassword("password");
+            },];
+    }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
 
     $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
@@ -66,7 +77,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);   ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -231,7 +242,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));   ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));    ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -316,9 +327,9 @@ if (isset($data['url1'])) {
 
                                         if (in_array($value, array('report_collection_type'))) {
                                             ?>
-                                                <div class="col-sm-3">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
-                                                </div>
+                                            </div>
                                             <?php
                                         }
                                         if (in_array($value, array('product_code'))) {
@@ -327,7 +338,7 @@ if (isset($data['url1'])) {
                                                 <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                                             </div>
                                             <?php
-                                    }
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
@@ -335,7 +346,7 @@ if (isset($data['url1'])) {
                                     }
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
-                                    }                                    
+                                    }
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -433,7 +444,7 @@ if (isset($data['url1'])) {
                 echo '<ul class="items">';
                 foreach ($attr as $key => $value) {
                     echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
-            }
+                }
                 echo '</ul>';
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';

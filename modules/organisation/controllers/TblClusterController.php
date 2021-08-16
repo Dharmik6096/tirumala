@@ -60,6 +60,7 @@ class TblClusterController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->contactDetails = new TblContactDetails();
         $this->contactDetails->scenario = 'additional';
+        $this->contactDetails->form_validation_type = 'cluster-create';
         $validate = 1;
 
         if ($this->model->load(Yii::$app->request->post())) {
