@@ -4,6 +4,7 @@ namespace app\modules\misreports\models;
 
 use Yii;
 use yii\base\Model;
+use app\modules\organisation\models\TblMccPlant;
 
 class ReportsModel extends Model {
 
@@ -74,6 +75,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift']],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SapMilkCollectionData']],
         ];
     }
 
@@ -128,6 +130,12 @@ class ReportsModel extends Model {
                 }
             }
         }
+    }
+
+    public function getMccCode($mccCode) {
+        $mccModel = new TblMccPlant();
+        $mccData = $mccModel->find()->where(['mcc_plant_code' => $mccCode])->one();
+        return $mccData;
     }
 
 }

@@ -19,7 +19,7 @@ class ReportsController extends \app\controllers\ChildController {
      * Renders the index view for the module
      * @return string
      */
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '', $label = '';
 
     public function actionIndex() {
         $model = new ReportsModel();
@@ -32,8 +32,10 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
+
                 $this->output = Yii::t('app', 'No Data Available.');
             } else if (isset($this->data['export_file_name'])) {
+
                 $title_data = array_merge($model->attributes, $this->output[0]);
                 $export_file_name = $this->data['export_file_name'];
                 foreach ($title_data as $k => $v) {
@@ -563,6 +565,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapMilkCollectionData() {
+        $this->report = 'SapMilkCollectionData';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -861,8 +868,18 @@ class ReportsController extends \app\controllers\ChildController {
             header('Content-Type: text/plain');
             echo $content;
         }
+        if (isset($this->data['dynamic_label']) && !empty($this->output)) {
+            $codeToAppend = $model->getMccCode($model->mcc_code);
+            $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
+            $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
+            $this->label = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        }
         if ($model->output_type == 'DOWNLOAD') {
-            $this->downloadData();
+            if ($this->report == 'SapMilkCollectionData') {
+                $this->downloadDataExcel();
+            } else {
+                $this->downloadData();
+            }
         }
     }
 
@@ -1762,6 +1779,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MissingShift',
                 'title' => 'Missing Shift',
             ],
+            'SapMilkCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_milk_collection_data',
+                'scenario' => 'SapMilkCollectionData',
+                'title' => '405 - SAP Data Export (HATSUN)',
+                'dynamic_label' => TRUE,
+            ],
         ];
         return $label[$l];
     }
@@ -1775,7 +1799,8 @@ class ReportsController extends \app\controllers\ChildController {
         ];
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
 //        header('Content-Type: text/plain');
         header('Content-Disposition: attachment;filename=' . $fileName);
@@ -1858,6 +1883,50 @@ class ReportsController extends \app\controllers\ChildController {
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();
+    }
+
+    public function downloadDataExcel() {
+        $header = [
+            'mime' => 'application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
+                ->getNumberFormat()
+                ->setFormatCode('h:mm:ss');
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $this->output, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }

@@ -454,6 +454,7 @@ echo GhostMenu::widget([
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/reports/sap-comparision-report']],
                         ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/reports/dispatch-vs-receipt']],
                         ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/cpmilk-sap-report']],
+                        ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                     ]
                 ],
                 [
