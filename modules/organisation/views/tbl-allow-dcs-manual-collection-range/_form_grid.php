@@ -47,7 +47,7 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->from_date);
+            return Yii::$app->controls->view_date($model->to_date);
         },
     ],
     ['attribute' => 'to_shift', 'value' => function($model) {
