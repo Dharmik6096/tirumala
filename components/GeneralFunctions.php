@@ -2128,4 +2128,22 @@ class GeneralFunctions extends Component {
         return "";
     }
 
+    public function getOriginatingType($model, $field) {
+        $value = '';
+        if (isset($model->{$field})) {
+            if ($model->{$field} == 0) {
+                $value = 'Create';
+            } elseif ($model->{$field} == 1) {
+                $value = 'Import';
+            } elseif (in_array($model->{$field}, [11, 12, 21, 23])) {
+                $value = 'Sync';
+            } elseif ($model->{$field} == 3) {
+                $value = 'Auto Entry';
+            } elseif (in_array($model->{$field}, [13, 22])) {
+                $value = 'Pendrive Import';
+            }
+        }
+        return $value;
+    }
+
 }
