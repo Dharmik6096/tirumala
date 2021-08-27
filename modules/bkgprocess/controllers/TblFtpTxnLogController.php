@@ -151,4 +151,16 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionViewCollection($id) {
+        $searchModel = new TblFtpTxnLogSearch();
+        $searchModel->ftp_txn_log_id = $id;
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
+
+        $model = new TblFtpTxnLog();
+        return $this->render('view', [
+                    'model' => $model->findOne($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }

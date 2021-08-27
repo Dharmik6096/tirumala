@@ -828,6 +828,19 @@ class ReportsController extends \app\controllers\ChildController {
             $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
             $this->label = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
         }
+
+        if (isset($this->data['export_file_name']) && !empty($this->output)) {
+            $title_data = array_merge($model->attributes, $this->output[0]);
+            $export_file_name = $this->data['export_file_name'];
+
+            foreach ($title_data as $k => $v) {
+                if ($k == 'from_date') {
+                    $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
+                }
+                $export_file_name = str_replace($k, $v, $export_file_name);
+            }
+            $this->label = $export_file_name;
+        }
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);

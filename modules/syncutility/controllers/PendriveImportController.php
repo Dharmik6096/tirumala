@@ -9,6 +9,7 @@ use app\models\EiplPacketFileLog;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\models\EiplPacketFileLogSearch;
+use app\modules\eipldpu\models\TblEiplPacketProcessSearch;
 
 class PendriveImportController extends \app\controllers\ChildController {
 
@@ -91,6 +92,18 @@ class PendriveImportController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
         }
+    }
+
+    public function actionView($id) {
+        $searchModel = new TblEiplPacketProcessSearch();
+        $searchModel->file_name = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $model = new EiplPacketFileLog();
+        return $this->render('view', [
+                    'model' => $model->findOne($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+        ]);
     }
 
 }
