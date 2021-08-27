@@ -27,6 +27,7 @@ use app\modules\installation\models\TblUserAndroid;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
 use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
+use app\modules\sms\models\TblAlertTemplate;
 
 /**
  * Default controller for the `vendorapi` module
