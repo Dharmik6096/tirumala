@@ -9,6 +9,7 @@ use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblCollectionDataAlias;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblBmcCollectionSearch represents the model behind the search form about `app\modules\collection\models\TblBmcCollection`.
@@ -16,6 +17,7 @@ use yii\db\ActiveQuery;
 class TblBmcCollectionSearch extends TblBmcCollection {
 
     public $from_date, $to_date, $from_shift, $to_shift, $ref_code, $bmc_ref_code;
+    public $f_union_code, $f_plant_code, $f_mcc_code;
 
     /**
      * @inheritdoc
@@ -28,6 +30,8 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code'], 'safe'],
             [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
         ];
     }
 
@@ -91,9 +95,22 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
             'tbl_bmc_collection.doc_no' => $this->doc_no,
             'tbl_bmc_collection.sample_no' => $this->sample_no,
-            'tbl_bmc_collection.originating_type' => $this->originating_type,
+//            'tbl_bmc_collection.originating_type' => $this->originating_type,
             'tbl_bmc_collection.route_code' => $this->route_code,
         ]);
+        if (isset($this->originating_type)) {
+            if ($this->originating_type == 0) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 0]);
+            } elseif ($this->originating_type == 1) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 1]);
+            } elseif ($this->originating_type == 2) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => [11, 12, 21, 23]]);
+            } elseif ($this->originating_type == 3) {
+                $query->where('0=1');
+            } elseif ($this->originating_type == 4) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => [13, 22]]);
+            }
+        }
         $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
@@ -178,10 +195,6 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
         // add conditions that should always apply here
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => FALSE,
-        ]);
 
         $query->joinWith(['mccPlantCode.plantCode']);
         $query->andWhere([
@@ -190,21 +203,35 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'tbl_bmc_collection.mcc_plant_code' => $this->mcc_plant_code,
             'tbl_bmc_collection.bmc_code' => $this->bmc_code,
         ]);
+        $query->andWhere(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
 
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+        } else {
+            $from_date = date('Y-m-d');
+            $from_shift = \Yii::$app->general->getshift(1);
+            $from_date .= ' ' . $from_shift;
         }
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+        } else {
+            $to_date = date('Y-m-d');
+            $to_shift = \Yii::$app->general->getshift(2);
+            $to_date .= ' ' . $to_shift;
         }
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
         $query->andFilterWhere(['tbl_bmc_collection.dcs_code' => $this->dcs_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_code' => $this->customer_code]);
         $query->andFilterWhere(['tbl_bmc_collection.customer_type' => $this->customer_type]);
@@ -257,6 +284,55 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             return $dataProvider;
         }
 
+        return $dataProvider;
+    }
+
+    public function shiftlocksearch($params) {
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'f_union_code' => '',
+                'f_plant_code' => '',
+                'f_mcc_code' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''];
+
+            $sp_params = array_merge($sp_params, $params['TblBmcCollectionSearch']);
+            if (empty($this->f_mcc_code)) {
+                $this->f_mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            $sp_params['f_mcc_code'] = $this->f_mcc_code;
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+            $sp = 'portal_mcc_shift_lock_data';
+            $output = \Yii::$app->general->getSpData($sp, $sp_params);
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
         return $dataProvider;
     }
 

@@ -9,10 +9,10 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'master_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->requestType, 'master_type_text');
-        }, 'visible' => true],
+        }, 'visible' => true,'filter'=>false],
     ['attribute' => 'transfer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->requestType, 'transfer_type_text');
-        }, 'visible' => true],
+        }, 'visible' => true,'filter'=>false],
     ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'filter' => false],

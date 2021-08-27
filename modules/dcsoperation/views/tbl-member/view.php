@@ -193,6 +193,14 @@ if ($model->is_active == 1) {
                     ],
                 ],
                 [
+                    'columns' => [
+                        [
+                            'attribute' => 'vendor_code',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
                     'group' => true,
                     'label' => 'Animal Details',
                     'rowOptions' => ['class' => 'bg-default']
@@ -238,6 +246,11 @@ if ($model->is_active == 1) {
 //                        ],
                         [
                             'attribute' => 'total_land',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                        [
+                            'attribute' => 'rate_class',
+                            'value' => !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
@@ -393,8 +406,8 @@ if ($model->is_active == 1) {
                             'attribute' => 'is_active',
                             'label' => 'Status',
                             'format' => 'html',
-                            'value' => GeneralFunctions::getRecordStatus($model->is_active),
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'value' => $model->is_active == '1' ? (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0 ? 'In Active' : 'Active') : 'In Active',
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
@@ -452,6 +465,29 @@ if ($model->is_active == 1) {
                 ],
                 'container' => ['id' => 'kv-demo'],
             ]);
+            ?>
+        </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Deactivation Details</h5></div>
+        <div class="form-grid">
+            <?php
+            $attribute = [
+                ['attribute' => 'from_date', 'label' => Yii::t('app', 'From Date'), 'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->from_date);
+                    }, 'filter' => false],
+                ['attribute' => 'to_date', 'label' => Yii::t('app', 'To Date'), 'value' => function($model) {
+                        return Yii::$app->controls->view_date($model->to_date);
+                    }, 'filter' => false],
+                ['attribute' => 'remarks', 'filter' => false],
+            ];
+
+            $grid_option = [
+                'id' => 'detail-list',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+                    // 'actions' => []
+            ];
+
+            echo Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
             ?>
         </div>
     </div>

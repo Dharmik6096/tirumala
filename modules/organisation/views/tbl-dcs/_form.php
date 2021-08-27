@@ -281,12 +281,12 @@ $form = ActiveForm::begin([
         <!--<div class="col-sm-3">-->
         <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
         <!--</div>-->
-        <div class="col-sm-2 mt10">
+<!--        <div class="col-sm-2 mt10">
             <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
-        <div class="col-sm-2 mt10">
+        </div>-->
+<!--        <div class="col-sm-2 mt10">
             <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
+        </div>-->
         <div class="col-sm-2 mt10">
             <?= $form->field($model, 'credit_sale_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
@@ -379,6 +379,11 @@ $form = ActiveForm::begin([
             $('#tbldcs-milk_type_code').parent('div').removeClass('disabled');
         }
     }
+    $('#tbldcs-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
     $this->registerJs($script, View::POS_END, 'union-select');
 

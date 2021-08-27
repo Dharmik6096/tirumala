@@ -95,7 +95,7 @@ class AlertNotification {
         return $response;
     }
 
-    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '') {
+    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '') {
         try {
             $to_mail = explode(',', $to_mail);
             $to_mail = array_filter($to_mail, function ($s) {
@@ -113,6 +113,9 @@ class AlertNotification {
                 });
                 $email->setCc($cc);
             }
+            if (!empty($filepath)) {
+                $email->attach($filepath, ['fileName' => $filename]);
+            } else
             if ($attachment) {
                 $email->attachContent($attachment, [
                     'fileName' => $filename,

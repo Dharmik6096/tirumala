@@ -49,6 +49,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                             <div class="div_grid_block padding_left_0 padding_right_0 padding_top_0 dashboardWidgetDetailPortion col-sm-3">
                                                 <div class="div_grid_block_content">
                                                     <!-- <p class="dash_grid_block_header"><?= Yii::t('app', 'Union') ?></p> -->
+                                                    <h4 class="dash_grid_block_header"><?= $data['bmc_name'] ?></h4>
                                                     <h4 class="dash_grid_block_header"><?= $data['dcs_name'] ?></h4>
                                                     <!-- <h4 class="dash_block_value block_value" id="farmer_rmrd_block_mcc"></h4> -->
                                                 </div>
@@ -114,6 +115,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                             <thead>
                                                 <tr>
                                                     <th class="custom_grid_header">#</th>
+                                                    <th class="custom_grid_header"><?= Yii::t('app', 'BMC') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Society') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Farmer') ?></th>
                                                     <th class="custom_grid_header"><?= Yii::t('app', 'Qty') ?></th>
@@ -135,6 +137,7 @@ $mcc_name = !empty(Yii::$app->general->getforeignkey($tbl_plant_model->tblMccPla
                                                             $tbl_dcs_model = new TblDcs();
                                                             $tbl_dcs_model->dcs_code = $data['dcs_code'];
                                                             ?>
+                                                            <td class="grid_left_align custom_grid_normal"><?= $data['bmc_name'] ?></td>
                                                             <td class="grid_left_align custom_grid_normal"><?= $data['dcs_name'] ?></td>
                                                             <?php $url = Url::to(['site/get-farmers', 'date' => $date, 'union_code' => $union, 'mcc_code' => $mcc, 'bmc_code' => $bmc, 'dcs_code' => $data['dcs_code']]); ?>
                                                             <td class="number_align custom_grid_normal href_link_underline"><a href="<?= $url ?>" ><?= $data['total_farmers'] ?></a></td>

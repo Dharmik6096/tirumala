@@ -212,4 +212,5 @@ return [
     'BMC Automation Report' => 'Agency(FCT) Automation Report',
     '601 - BMC Payment' => '601 - Agency(FCT) Payment',
     'BMC Payment' => 'Agency(FCT) Payment',
+    'BMC(FCT)/RCD Shift Summary' => 'Agency(FCT)/RCD Shift Summary',
 ];

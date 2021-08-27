@@ -236,7 +236,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             $rateCatogory = ["A", "B", "C"];
             if ((count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) || (count($sheetTitlearray) == 3 && in_array(strtoupper($sheetTitlearray[2]), $rateCatogory))) {
                 //check allow to copy member ratechart for milk qlty good
-                if (!empty($sheetTitlearray[1])) {
+                if (!empty($sheetTitlearray[2])) {
                     if (!$allowCopy) {
                         $allowCopy = TRUE;
                         $rateClass = !empty($sheetTitlearray[2]) ? (strtoupper($sheetTitlearray[2]) == 'A' ? 1 : (strtoupper($sheetTitlearray[2]) == 'B' ? 2 : (strtoupper($sheetTitlearray[2]) == 'C' ? 3 : 0))) : 0;
@@ -417,13 +417,13 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     foreach ($data as $d) {
                         \Yii::$app->db->createCommand()->batchInsert('tbl_dcs_purchase_rate_details', ['code', 'purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type', 'rate_class'], $d)->execute();
                     }
-                    if ($purchaseRate->for_member == 1 && $allowCopy) {
-                        $sp_param = [];
-                        $sp_name = 'DB_JOB_PORTAL_Member_Rate_chart';
-                        $sp_param[] = $purchaseRate->purchase_rate_code;
-                        $sp_param[] = $rateClass;
-                        \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
-                    }
+                    $sp_param = [];
+                    $sp_name = 'DB_JOB_PORTAL_Member_Rate_chart';
+                    $sp_param[] = $purchaseRate->purchase_rate_code;
+                    $sp_param[] = $rateClass;
+                    $sp_param[] = $purchaseRate->for_member;
+
+                    \Yii::$app->general->getSpData($sp_name, $sp_param, TRUE);
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();
                         return ['status' => 'success', 'url' => \yii\helpers\Url::to(['tbl-dcs-purchase-rate-details/rate-chart', 'id' => $purchaseRate->purchase_rate_code, 'milk_type' => 1, 'milk_quality' => 1])];
@@ -551,35 +551,35 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = [
             'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
-                }],
+            return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+        }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
-                }],
+            return Yii::$app->controls->view_date($model->wef_date);
+        }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
-                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
-                }],
+            return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
+        }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
-                }],
+            return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+        }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
-                }],
+            return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+        }],
             'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
-                    if ($model->applicable_for == 'PLANT') {
-                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-                    } else if ($model->applicable_for == 'MCC') {
-                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                    } else if ($model->applicable_for == 'BMC') {
-                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-                    } else if ($model->applicable_for == 'DCS') {
-                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
-                    } else {
-                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
-                    }
-                }],
+            if ($model->applicable_for == 'PLANT') {
+                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+            } else if ($model->applicable_for == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+            } else if ($model->applicable_for == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            } else if ($model->applicable_for == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+            } else {
+                return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+            }
+        }],
                 //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
         $appModel->actions = ['delete' => ['option' => 'applicable_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
@@ -589,6 +589,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 //        $appModel->dcs_filters = ['MCC' => 'MCC', 'PLANT' => 'PLANT', 'VENDOR' => 'VENDOR'];
         $appModel->dcs_filters = $value;
         $appModel->check_wef_date = true;
+        $appModel->generateMail = true;
         return $appModel->createApp();
     }
 

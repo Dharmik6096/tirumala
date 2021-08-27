@@ -22,7 +22,7 @@ $form = ActiveForm::begin(['options' => [
 <div class="row margin_0">
 
     <div class="modal-body">
-        <div class="col-sm-3">
+        <div class="col-sm-12">
             <?= Yii::$app->dropdown->dropdown('report_code', $model, $form, '', 'Report Name'); ?>
         </div>
         <?php

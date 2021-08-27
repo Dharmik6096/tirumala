@@ -77,7 +77,7 @@ class TblApiMaster extends \yii\db\ActiveRecord {
     }
 
     public function getAPI() {
-        return $this->find()->select(['api_master_id'])
+        return $this->find()
                         ->where(['receiver_type' => $this->receiver_type, 'is_active' => 1])
                         ->andFilterWhere(['operator_type' => $this->operator_type])
                         ->one();

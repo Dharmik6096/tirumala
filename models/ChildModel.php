@@ -10,6 +10,7 @@ namespace app\models;
 use yii\base\UserException;
 use app\components\GeneralFunctions;
 use Yii;
+use yii\base\InvalidParamException;
 
 /**
  * Description of childModel
@@ -22,6 +23,7 @@ class ChildModel extends \yii\db\ActiveRecord {
     private $toEncrypt = ['pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'dob'];
     public $grid_filter = TRUE;
     public $form_validation_type = 'default';
+    public $hasImport = FALSE;
 
     //put your code here
     public function beforeSave($insert) {
@@ -53,7 +55,7 @@ class ChildModel extends \yii\db\ActiveRecord {
                     $this->received_timestamp = date('Y-m-d H:i:s');
                 }
             } else {
-                if ($this->hasAttribute('updated_by'))
+                if ($this->hasAttribute('updated_by') && !$this->hasImport)
                     $this->updated_by = $user;
                 if ($this->hasAttribute('updated_at'))
                     $this->updated_at = date('Y-m-d H:i:s');

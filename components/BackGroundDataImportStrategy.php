@@ -33,6 +33,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
         $importedPks = [];
         $errors = [];
         $error_lines = [];
+        $success_lines = [];
         $count = 0;
         $total_cnt = 0;
         $message = '';
@@ -59,159 +60,168 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
 
             if (!$skipImport) {
                 try {
-                $trans = \Yii::$app->db->beginTransaction();
-                /* @var $model \yii\db\ActiveRecord */
-                $modelList = [];
-                $model = new $this->className;
-                if (!empty($this->scenario))
-                    $model->scenario = $this->scenario;
+                    $trans = \Yii::$app->db->beginTransaction();
+                    /* @var $model \yii\db\ActiveRecord */
+                    $modelList = [];
+                    $model = new $this->className;
+                    if (!empty($this->scenario))
+                        $model->scenario = $this->scenario;
 
-                $uniqueAttributes = [];
-                $addedAttributes = [];
-                foreach ($this->configs as $config) {
-                    if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
-                        $value = call_user_func($config['value'], $row);
+                    $uniqueAttributes = [];
+                    $addedAttributes = [];
+                    foreach ($this->configs as $config) {
+                        if (isset($config['attribute']) && $model->hasAttribute($config['attribute'])) {
+                            $value = call_user_func($config['value'], $row);
 
-                        //Create array of unique attributes
-                        if (isset($config['unique']) && $config['unique']) {
-                            $uniqueAttributes[$config['attribute']] = trim($value);
-                        }
-                        $addedAttributes [] = $config['attribute'];
+                            //Create array of unique attributes
+                            if (isset($config['unique']) && $config['unique']) {
+                                $uniqueAttributes[$config['attribute']] = trim($value);
+                            }
+                            $addedAttributes [] = $config['attribute'];
 
-                        //Set value to the model
-                        $model->setAttribute($config['attribute'], trim($value));
-                    } else if (property_exists($model, $config['attribute'])) {
-                        //Set value to the model of public attribute
-                        $value = call_user_func($config['value'], $row);
-                        $model->{$config['attribute']} = $value;
-                    }
-                }
-
-                if (isset($this->defaultFields)) {
-                    foreach ($this->defaultFields as $default) {
-                        if (isset($default['attribute']) && $model->hasAttribute($default['attribute'])) {
-                            $value = $default['value'];
                             //Set value to the model
-                            $model->setAttribute($default['attribute'], $value);
+                            $model->setAttribute($config['attribute'], trim($value));
+                        } else if (property_exists($model, $config['attribute'])) {
+                            //Set value to the model of public attribute
+                            $value = call_user_func($config['value'], $row);
+                            $model->{$config['attribute']} = $value;
                         }
-                    }
-                }
-                $primaryKey = $model->tableSchema->primaryKey[0];
-                $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
-                $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
-                $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
-                $error = ActiveForm::validate($model);
-               
-                $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
-                $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
-                if (!empty($findField)) {
-                    $findFields = explode(',', $findField);
-                    foreach ($findFields as $val) {
-                        $where[$val] = $model->$val;
                     }
 
-                    $existData = $model::find()->where($where)->one();
-                    if (!empty($existData) && !empty($excludeField)) {
-                        $excludes = [];
-                        $exclude = explode(',', $excludeField);
-                        foreach ($exclude as $val) {
-                            $excludes[] = $val;
+                    if (isset($this->defaultFields)) {
+                        foreach ($this->defaultFields as $default) {
+                            if (isset($default['attribute']) && $model->hasAttribute($default['attribute'])) {
+                                $value = $default['value'];
+                                //Set value to the model
+                                $model->setAttribute($default['attribute'], $value);
+                            }
                         }
-                        $model = $existData;
-                        $model->scenario = 'importCsv';
-                        $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
-                        if (!empty($history)) {
-                            $history = Yii::$app->path->define($history);
+                    }
+                    $primaryKey = $model->tableSchema->primaryKey[0];
+                    $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
+                    $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
+                    $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
+                    $error = ActiveForm::validate($model);
+                   
+                    $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
+                    $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
+                    if (!empty($findField)) {
+                        $findFields = explode(',', $findField);
+                        foreach ($findFields as $val) {
+                            $where[$val] = $model->$val;
                         }
-                        if (is_object($history) || class_exists($history)) {
-                            $historyModel = is_object($history) ? $history : new $history();
-                            \Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
-                            array_push($modelList, $historyModel);
+
+                        $existData = $model::find()->where($where)->one();
+                        if (!empty($existData) && !empty($excludeField)) {
+                            $excludes = [];
+                            $exclude = explode(',', $excludeField);
+                            foreach ($exclude as $val) {
+                                $excludes[] = $val;
+                            }
+                            $model = $existData;
+                            $model->scenario = 'importCsv';
+                            $history = !empty($this->details['historyClass']) ? $this->details['historyClass'] : NULL;
+                            if (!empty($history)) {
+                                $history = Yii::$app->path->define($history);
+                            }
+                            if (is_object($history) || class_exists($history)) {
+                                $historyModel = is_object($history) ? $history : new $history();
+                                \Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                                array_push($modelList, $historyModel);
+                            }
+                            $this->setAttributes($this->configs, $model, $row, $excludes);
+                        } else {
+                            if (isset($this->details['setPk'])) {
+                                $model->{$primaryKey} = \Yii::$app->general->getPrimaryCode($model);
+                            } else if ($this->isIncrement == 1) {
+                                $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
+                            } else if (!isset($this->details['restrict_getCode']) && method_exists($model, 'getCode')) {
+                                $model->{$primaryKey} = $model->getCode();
+                            }
                         }
-                        $this->setAttributes($this->configs, $model, $row, $excludes);
                     } else {
                         if (isset($this->details['setPk'])) {
                             $model->{$primaryKey} = \Yii::$app->general->getPrimaryCode($model);
-                        } else if ($this->isIncrement == 1) {
+                        } elseif ($this->isIncrement == 1) {
                             $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
                         } else if (!isset($this->details['restrict_getCode']) && method_exists($model, 'getCode')) {
                             $model->{$primaryKey} = $model->getCode();
                         }
                     }
-                } else {
-                    if (isset($this->details['setPk'])) {
-                        $model->{$primaryKey} = \Yii::$app->general->getPrimaryCode($model);
-                    } elseif ($this->isIncrement == 1) {
-                        $model->{$primaryKey} = \Yii::$app->general->getCodeAutoIncrement($model);
-                    } else if (!isset($this->details['restrict_getCode']) && method_exists($model, 'getCode')) {
-                        $model->{$primaryKey} = $model->getCode();
+                    if ($model->hasAttribute('is_active')) {
+                        $nm = ucwords(str_replace('_', ' ', 'is_active'));
+                        if (!(preg_match('/^[0-9]*$/', $model->is_active))) {
+                            $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
+                        }
+                        if ($model->is_active != 0 && $model->is_active != 1) {
+                            $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
+                        }
                     }
-                }
-                if ($model->hasAttribute('is_active')) {
-                    $nm = ucwords(str_replace('_', ' ', 'is_active'));
-                    if (!(preg_match('/^[0-9]*$/', $model->is_active))) {
-                        $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
+                    $errors = [];
+                    $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
+                    $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
+                    $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
+                    if ($model->hasAttribute('created_by') && $model->created_by == NULL)
+                        $model->created_by = !empty($this->details['created_by']) ? $this->details['created_by'] : NULL;
+                    if ($model->hasAttribute('updated_by') && $model->updated_by == NULL) {
+                        $model->updated_by = !empty($model->created_by) ? $model->created_by : NULL;
                     }
-                    if ($model->is_active != 0 && $model->is_active != 1) {
-                        $model->addError($model->is_active, $nm . ' must have 0 or 1 value');
+                    if (isset($model->hasImport)) {
+                        $model->hasImport = TRUE;
                     }
-                }
-                $errors = [];
-                $model->import_eipl_code = !empty($this->details['import_eipl_code']) ? $this->details['import_eipl_code'] : '';
-                $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
-                $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
-                if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
-                    $model->setChildTable($model, $modelList, $errors);
-                }
-                if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
-                    $modelList[] = $model;
+                    if (isset($this->saveChild) && $this->saveChild && $model->validate()) {
+                        $model->setChildTable($model, $modelList, $errors);
+                    }
+                    if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
+                        $modelList[] = $model;
 
-                    foreach ($modelList as $modelRow) {
-                        $master[] = $modelRow->save();
-                    }
-                    if (!in_array(FALSE, $master)) {
-                        $trans->commit();
-                        $count++;
+                        foreach ($modelList as $modelRow) {
+                            $master[] = $modelRow->save();
+                        }
+                        if (!in_array(FALSE, $master)) {
+                            $trans->commit();
+                            $count++;
+                            $success_lines[] = $row;
+                        } else {
+                            $trans->rollback();
+                            $message = '';
+                            foreach ($model->getErrors() as $errorkey => $value) {
+                                $message .= $value[0] . '-';
+                            }
+                            $row['response_message'] = $message;
+                            $error_lines[] = $row;
+//                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
+                        }
                     } else {
                         $trans->rollback();
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
                             $message .= $value[0] . '-';
                         }
+
+                        foreach ($errors as $array) {
+                            foreach ($array as $errorkey => $value) {
+                                $message .= $value[0] . '-';
+                            }
+                        }
                         $row['response_message'] = $message;
                         $error_lines[] = $row;
-//                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
-                    }
-                } else {
-                    $trans->rollback();
-                    $message = '';
-                    foreach ($model->getErrors() as $errorkey => $value) {
-                        $message .= $value[0] . '-';
-                    }
-
-                    foreach ($errors as $array) {
-                        foreach ($array as $errorkey => $value) {
-                            $message .= $value[0] . '-';
-                        }
-                    }
-                    $row['response_message'] = $message;
-                    $error_lines[] = $row;
 
 //                    return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message/* ,'error'=>$errors */];
-                }
+                    }
 
-                if ($this->isActiveRecordUnique($uniqueAttributes)) {
-                    $importedPks[] = $model->primaryKey;
-                }
+                    if ($this->isActiveRecordUnique($uniqueAttributes)) {
+                        $importedPks[] = $model->primaryKey;
+                    }
                 } catch (\Throwable $ex) {
                     $trans->rollback();
                     $row['response_message'] = 'Record is incorrect or Already Exist';
                     $error_lines[] = $row;
+                }
             }
         }
-        }
         $total_cnt = count($data) - 1;
-        return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message, 'error_lines' => $error_lines, 'total_cnt' => $total_cnt];
+        return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message, 'error_lines' => $error_lines, 'total_cnt' => $total_cnt, 'success_lines' => $success_lines];
 
         if ($count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];

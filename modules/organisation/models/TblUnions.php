@@ -141,6 +141,8 @@ class TblUnions extends ChildModel {
 //            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['updated_by' => 'user_id']],
             [['gst_no'], 'string', 'min' => 15, 'max' => 15],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create'], 'safe'],
+            [['contact_person_pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+
         ];
     }
 
@@ -493,4 +495,7 @@ class TblUnions extends ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
+     public function setPanNumber($attribute, $params) {
+        $this->contact_person_pan_no = strtoupper($this->contact_person_pan_no);
+    }
 }

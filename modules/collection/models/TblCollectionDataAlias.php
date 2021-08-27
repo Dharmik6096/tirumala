@@ -132,6 +132,11 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $type, $flag);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection']],
         ];
     }
 
@@ -332,6 +337,11 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         if (!empty($txTableData)) {
             $this->addError($attribute, "Record is Already Exist");
         }
+    }
+
+    public function getExistApproval() {
+        return $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'action_perform' => 'DELETE'])
+                        ->one();
     }
 
 }

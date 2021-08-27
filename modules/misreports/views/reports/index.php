@@ -36,6 +36,17 @@ if (isset($data['url1'])) {
     } else if (!empty($data['removeExportType'])) {
         $removeExportType = $data['removeExportType'];
     }
+    if (isset($data['dynamic_label']) && $data['dynamic_label'] && !empty($result)) {
+        $codeToAppend = $model->getMccCode($model->mcc_code);
+        $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
+        $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
+        $this->title = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        $removeExportType = ['CSV'];
+        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+                $sheet->getProtection()->setSheet(true);
+                $sheet->getProtection()->setPassword("password");
+            },];
+    }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
 
     $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
@@ -66,7 +77,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);   ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -105,7 +116,7 @@ if (isset($data['url1'])) {
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
                                                 <?php
-                                                $multiple = in_array($value ,$multiArray) ? true : false ; 
+                                                $multiple = in_array($value, $multiArray) ? true : false;
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
@@ -116,7 +127,7 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('bmc_code'))) {
-                                            $multiple = in_array($value ,$multiArray) ? true : false ;
+                                            $multiple = in_array($value, $multiArray) ? true : false;
                                             ?>
                                             <div class="col-sm-3 val_bmc_code">
                                                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
@@ -217,7 +228,7 @@ if (isset($data['url1'])) {
                                             }
                                         }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type','type_wise_report','route_type_trans'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 
@@ -231,7 +242,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));   ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));    ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -316,9 +327,16 @@ if (isset($data['url1'])) {
 
                                         if (in_array($value, array('report_collection_type'))) {
                                             ?>
-                                                <div class="col-sm-3">
+                                            <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
-                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('product_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                                            </div>
                                             <?php
                                         }
                                     }
@@ -328,7 +346,7 @@ if (isset($data['url1'])) {
                                     }
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
-                                    }                                    
+                                    }
                                     if (!isset($data['output_type'])) {
                                         echo $form->field($model, 'output_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList(['DOWNLOAD' => 'DOWNLOAD', 'VIEW' => 'VIEW']);
                                     }
@@ -364,13 +382,13 @@ if (isset($data['url1'])) {
             $custom_report_class = isset($data['custom_report']) ? 'custom_report_search' : '';
             ?>
 
-            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class?>">
+            <div class="grid-search search-filter searchBtnReport text-right <?= $class ?> <?= $custom_report_class ?>">
                 <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
-                <?php if(!empty($result)){
+                <?php if (!empty($result)) {
                     ?>
-                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>')" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-                    <?php
-                }?>
+                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
+                    <?php }
+                    ?>
             </div>
             <?php if (!empty($result) && !(isset($data['download_only']))) { ?>
 
@@ -381,10 +399,9 @@ if (isset($data['url1'])) {
             <?php
             if (!empty($result) && !is_array($result) && !isset($data['custom_report'])) {
                 echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
-            } else if(!empty($result) && isset($data['custom_report'])){
+            } else if (!empty($result) && isset($data['custom_report'])) {
                 echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
-            }
-            else if (!empty($result) && !(isset($data['download_only']))) {
+            } else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {
                     $checkAttr = explode('##', $att);
@@ -426,24 +443,37 @@ if (isset($data['url1'])) {
                 echo '<span class="anchor"><i class="fa fa-chevron-down"></i></span>';
                 echo '<ul class="items">';
                 foreach ($attr as $key => $value) {
-                    echo '<li><input class="toggle-vis" data-column="'.$c++.'" type="checkbox" checked/>'.$value['title'].'</li>';
+                    echo '<li><input class="toggle-vis" data-column="' . $c++ . '" type="checkbox" checked/>' . $value['title'] . '</li>';
                 }
                 echo '</ul>';
                 echo '</div>';
                 // echo '<a class="toggle-vis" data-column="0">Name</a> - <a class="toggle-vis" data-column="1">Position</a> - <a class="toggle-vis" data-column="2">Office</a> - <a class="toggle-vis" data-column="3">Age</a> - <a class="toggle-vis" data-column="4">Start date</a> - <a class="toggle-vis" data-column="5">Salary</a>';
                 // var_dump($dataProvider->getModels());
-                 echo \nullref\datatable\DataTable::widget([
+                echo \nullref\datatable\DataTable::widget([
                     'id' => 'custom_report',
+                    'autoWidth' => true,
+//                    'searching' => true,
                     'data' => $dataProvider->getModels(),
-                    // 'scrollY' => '200px',
-                    'scrollCollapse' => true,
+                    'scrollX' => true,
+                    'scrollY' => '100px',
+                    'scrollCollapse' => false,
                     'paging' => false,
                     'columns' => $attr,
                     'info' => false,
-                    'withColumnFilter' => true
+                    'withColumnFilter' => true,
+                    'order' => []
                 ]);
+//                echo \nullref\datatable\DataTable::widget([
+//                    'id' => 'custom_report',
+//                    'data' => $dataProvider->getModels(),
+//                    // 'scrollY' => '200px',
+//                    'scrollCollapse' => true,
+//                    'paging' => false,
+//                    'columns' => $attr,
+//                    'info' => false,
+//                    'withColumnFilter' => true
+//                ]);
                 // Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index'], true, $removeExportType, $exportEvents);
-
             }
             ?>
         </div>
@@ -456,6 +486,7 @@ $('.mis_report_modal_toggle').on('click', function(){
 });
    
     $(document).ready(function(){  
+        $('.dataTables_scrollBody').resize();
         if('" . $report . "'=='LocationWiseAssetMovement'|| '" . $report . "'=='LocationWiseAssetSummary'|| '" . $report . "'=='LocationWiseAssetDetail'){
             hideFields();
             $(document).on('change','#reportsmodel-store_location_type', function() {
@@ -475,7 +506,7 @@ $('.mis_report_modal_toggle').on('click', function(){
                 $('#custom_report #w'+column_no).parent().show();
             }
             column.visible( ! column.visible() );
-        });
+    });
 
         var checkList = document.getElementById('grid_show_hide_list');
         if(checkList != null){

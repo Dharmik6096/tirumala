@@ -285,8 +285,11 @@ class SearchFilter {
                 'filter' => ['state', 'district'],
             ],
             'TblFtpTxnLogSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
                 'action' => ['list']
+            ],
+            'TblUserAndroidSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
             'TblCollectionPenaltyRateSearch' => [
                 'filter' => ['f_union_code'],
@@ -305,6 +308,25 @@ class SearchFilter {
             ],
             'TblBankPaymentLogSearch' => [
                 'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
+            'TblMasterTransferSearch' => [
+                'filter' => ['master_type', 'transfer_type'],
+            ],
+            'TblShiftSummarySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblAnalyzerCalibrationSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+            ],
+            'TblAnalyzerCleaningSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+            ],
+            'TblBmcCollectionSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+                'action' => ['index']
+            ],
+            'TblAllowDcsManualCollectionRangeSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

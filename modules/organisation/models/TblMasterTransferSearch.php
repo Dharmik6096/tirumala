@@ -56,6 +56,14 @@ class TblMasterTransferSearch extends TblMasterTransfer {
             return $dataProvider;
         }
 
+        if (!empty($this->master_type)) {
+            $query->andFilterWhere(['like', 'tbl_master_transfer.master_type', $this->master_type]);
+        }
+
+        if (!empty($this->transfer_type)) {
+            $query->andFilterWhere(['like', 'tbl_master_transfer.transfer_type', $this->transfer_type]);
+        }
+
         // grid filtering conditions
         $query->andFilterWhere([
             'wef_date' => !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : NULL,
@@ -64,9 +72,7 @@ class TblMasterTransferSearch extends TblMasterTransfer {
             'response_datetime' => $this->response_datetime,
         ]);
 
-        $query->andFilterWhere(['like', 'tbl_transfer_type.master_type_text', $this->master_type])
-                ->andFilterWhere(['like', 'tbl_transfer_type.transfer_type_text', $this->transfer_type])
-                ->andFilterWhere(['like', 'old_member_code', $this->old_member_code])
+        $query->andFilterWhere(['like', 'old_member_code', $this->old_member_code])
                 ->andFilterWhere(['like', 'new_member_code', $this->new_member_code])
                 ->andFilterWhere(['like', 'old_dcs_code', $this->old_dcs_code])
                 ->andFilterWhere(['like', 'new_dcs_code', $this->new_dcs_code])

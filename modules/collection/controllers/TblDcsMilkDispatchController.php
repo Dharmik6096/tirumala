@@ -229,7 +229,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
             $detail_model = new TblPurchaseRateDetails();
             $detail_model->rate_type_code = $model_data->rate_app_code;
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
-            $rate_type = $detail_model->rateTypeCode->rate_type;
+            $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
             $detail_data = $detail_model->getDispatchPurchasseRateDetailData($data, $rate_type);
 
             if (!empty($detail_data)) {
@@ -305,8 +305,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-
-                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
                         $existData = $this->findModel($detalData->dcs_milk_dispatch_code);
                         if (Yii::$app->general->getUnionConfiguration(Yii::$app->general->getforeignkey($detalData->dcsMilkDispatch, 'union_code'), 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();

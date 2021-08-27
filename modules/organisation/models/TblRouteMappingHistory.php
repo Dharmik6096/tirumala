@@ -52,7 +52,7 @@ class TblRouteMappingHistory extends \yii\db\ActiveRecord {
             [['operation_type', 'route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'safe'],
             [['route_length_kms'], 'safe'],
             [['route_code_ex', 'ref_code', 'vendor_code', 'auto_code'], 'safe'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe']
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'history_created_by'], 'safe']
         ];
     }
 

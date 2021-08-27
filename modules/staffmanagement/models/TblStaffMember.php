@@ -99,26 +99,26 @@ class TblStaffMember extends \app\models\ChildModel {
     public function rules() {
         return [
             [['department'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'department');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'department');
+        }, 'on' => 'importCsv'],
             [['blood_group_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'blood-group');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'blood-group');
+        }, 'on' => 'importCsv'],
             [['gender_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'gender');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'gender');
+        }, 'on' => 'importCsv'],
             [['caste_category_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'caste-category');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'caste-category');
+        }, 'on' => 'importCsv'],
             [['designation_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalData($this, $attribute, 'designation_code');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalData($this, $attribute, 'designation_code');
+        }, 'on' => 'importCsv'],
             [['payment_mode'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
+        }, 'on' => 'importCsv'],
             [['is_on_role'], function ($attribute, $params) {
-                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_on_role');
-                }, 'on' => 'importCsv'],
+            Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_on_role');
+        }, 'on' => 'importCsv'],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'district_code', 'sub_district_code', 'hamlet_code', 'state_code', 'village_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'except' => ['importCsv']],
             [['staff_member_name', 'tenure_from_date', 'ex_staff_member_code', 'gender_code', 'caste_category_code', 'hamlet_code', 'designation_code', 'address', 'payment_mode', 'union_code'], 'required', 'on' => ['importCsv']],
             [['birth_date', 'created_at', 'tenure_from_date', 'tenure_to_date', 'updated_at', 'qualification_code', 'department', 'ex_staff_member_code', 'union_code', 'ifsc', 'pan_no', 'village_code', 'sub_district_code', 'district_code', 'state_code', 'aadhar_card_no', 'is_on_role', 'uan_no', 'esic_no', 'pf_no'], 'safe'],
@@ -137,25 +137,25 @@ class TblStaffMember extends \app\models\ChildModel {
             [['is_active'], 'default', 'value' => 1],
             [['email_id'], 'email'],
             [['mobile_no'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
+            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+        }, 'skipOnEmpty' => true],
             [['staff_member_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateNameWithDash($this, $attribute);
-                }, 'skipOnEmpty' => TRUE],
+            Yii::$app->general->validateNameWithDash($this, $attribute);
+        }, 'skipOnEmpty' => TRUE],
             ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
-                    return $this->is_active;
-                }, 'except' => ['saveCreamyData', 'androidsync']],
+            return $this->is_active;
+        }, 'except' => ['saveCreamyData', 'androidsync']],
             [['bank_account_no'], function ($attribute, $params) {
-                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
-                    if ($error !== TRUE)
-                        $this->addError($attribute, $error);
-                }],
+            $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+            if ($error !== TRUE)
+                $this->addError($attribute, $error);
+        }],
             [['aadhar_card_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharCard($this, $attribute, 'aadhar_card_no');
-                }, 'skipOnEmpty' => TRUE],
+            Yii::$app->general->validateAadharCard($this, $attribute, 'aadhar_card_no');
+        }, 'skipOnEmpty' => TRUE],
             [['address'], function ($attribute, $params) {
-                    Yii::$app->general->validateDescription($this, $attribute);
-                }, 'skipOnEmpty' => TRUE],
+            Yii::$app->general->validateDescription($this, $attribute);
+        }, 'skipOnEmpty' => TRUE],
             [['bank_code', 'branch_code', 'bank_account_no'], 'required', 'when' => function ($model) {
                     return $model->payment_mode == '1';
                 }, 'whenClient' => "function (attribute, value) { 
@@ -172,8 +172,8 @@ class TblStaffMember extends \app\models\ChildModel {
             [['birth_date', 'tenure_from_date'], 'convertDate', 'on' => ['importCsv']],
             [['tenure_from_date'], 'birthDatevalidate'],
             [['branch_code'], function ($attribute, $params) {
-                    Yii::$app->general->validateBranch($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
+            Yii::$app->general->validateBranch($this, $attribute, $params);
+        }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['blood_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBloodgroup::className(), 'targetAttribute' => ['blood_group_code' => 'blood_group_code'], 'on' => ['importCsv']],
@@ -188,10 +188,11 @@ class TblStaffMember extends \app\models\ChildModel {
             [['esic_no'], 'string', 'min' => 10, 'max' => 10],
             [['esic_no', 'uan_no'], 'number'],
             [['pf_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                }, 'skipOnEmpty' => false,],
+            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
+        }, 'skipOnEmpty' => false,],
             //required due to dependency in attendance
-            [['is_on_role'], 'required']
+            [['is_on_role'], 'required'],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
     }
 
@@ -482,5 +483,7 @@ class TblStaffMember extends \app\models\ChildModel {
         $desigModel->attributes = $model->attributes;
         array_push($modelSave, $desigModel);
     }
-
+     public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
+    }
 }

@@ -90,6 +90,9 @@ class SqliteCreate extends Component {
                         }
                         $tables_fields = implode(',', $tables_fields);
                         $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
+                        if ($field['table_name'] == 'tbl_dcs_milk_dispatch_txn') {
+                            $fields = str_replace('tbl_dcs_milk_dispatch_txn.amount', 'tbl_dcs_milk_dispatch_txn.total_amount', $fields);
+                        }
                         $fields = $field['table_name'] . '.' . $fields;
                         $sql = '';
                         if ($field['is_main'] == 1) {

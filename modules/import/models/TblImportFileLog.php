@@ -5,6 +5,7 @@ namespace app\modules\import\models;
 use Yii;
 use yii\db\ActiveQuery;
 use app\modules\organisation\models\TblUnions;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_import_file_log".
@@ -42,9 +43,9 @@ class TblImportFileLog extends \app\models\ChildModel {
     public function rules() {
         return [
             [['file_type', 'file_name', 'file_path', 'union_code', 'created_by', 'updated_by', 'response_msg', 'error_file_path'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'status', 'process_type'], 'safe'],
+            [['total_count', 'success_count', 'error_count', 'status', 'process_type', 'success_file_path'], 'safe'],
             [['created_at', 'updated_at', 'pick_datetime', 'response_datetime'], 'safe'],
-            [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'product_sale', 'product_sale_member', 'sale_rate_applicability', 'product_master', 'product_sale_rate']],
+            [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'product_sale', 'product_sale_member', 'sale_rate_applicability', 'product_master', 'product_sale_rate', 'member_rateclass']],
             [['process_type'], 'default', 'value' => 'SP', 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped']],
         ];
     }
@@ -103,6 +104,10 @@ class TblImportFileLog extends \app\models\ChildModel {
 
     public function updateFileStatus($value) {
         return $this->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['log_id' => $value]);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
 }

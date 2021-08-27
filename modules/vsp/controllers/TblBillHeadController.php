@@ -22,7 +22,7 @@ use app\modules\globalmaster\models\TblCustomerType;
  */
 class TblBillHeadController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['list-dcswise', 'list-unionwise', 'bill-head-list'];
+    public $freeAccessActions = ['list-dcswise', 'list-unionwise', 'bill-head-list', 'save-applicability'];
 
     /**
      * Lists all TblBillHead models.
@@ -265,6 +265,52 @@ class TblBillHeadController extends \app\controllers\ChildController {
             return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
+    }
+
+    public function actionDcsWiseBillHead() {
+        $model = new TblBillHead();
+        $model->scenario = 'dcsWiseHead';
+
+        $dcs = [];
+        $head = [];
+        if (!empty(Yii::$app->request->get('TblBillHead'))) {
+            $data = Yii::$app->request->get('TblBillHead');
+            $model->union_code = $data['union_code'];
+            $model->plant_code = $data['plant_code'];
+            $model->mcc_plant_code = $data['mcc_plant_code'];
+            $model->bmc_code = $data['bmc_code'];
+            $model->customer_type = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
+            $model->payment_cycle_code = !empty($data['payment_cycle_code']) ? $data['payment_cycle_code'] : '';
+            $model->bill_head_for = $data['bill_head_for'];
+            if ($model->validate()) {
+                $head = $model->getBillHead($model);
+                $dcs = $model->getDcs($data);
+            }
+        }
+        return $this->render('dcs_bill_head', [
+                    'model' => $model,
+                    'dcs' => $dcs,
+                    'head' => $head,
+        ]);
+    }
+
+    public function actionSaveApplicability() {
+        $data = Yii::$app->request->post();
+        $saveModel = [];
+        if (!empty($data['bill_head_codes'])) {
+            foreach ($data['bill_head_codes'] as $key => $code) {
+                $model = new TblBillHeadApplicability();
+                $model->setAttributes($data);
+                $model->bill_head_code = $code;
+                $saveModel[] = $model;
+            }
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Applicability', 'create']);
+            if ($transaction == 'customRedirect') {
+                return Json::encode(['status' => 'success']);
+            } else {
+                return Json::encode(['status' => 'error']);
+            }
+        }
     }
 
 }

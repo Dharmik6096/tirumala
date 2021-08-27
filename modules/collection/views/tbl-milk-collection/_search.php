@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\modules\collection\models\TblMilkCollectionSearch */
 /* @var $form yii\widgets\ActiveForm */
+$multiple = isset($multiple) ? TRUE : FALSE;
 ?>
 
 <div class="search-filter large-search">
@@ -29,7 +30,7 @@ use yii\widgets\ActiveForm;
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkcollectionsearch-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
     </div>  
     <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectionsearch-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollectionsearch-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmilkcollectionsearch-dcs_code', '', Yii::t('app', 'Member')); ?>

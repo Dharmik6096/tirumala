@@ -38,6 +38,7 @@ if ($model->isNewRecord) {
     $type = 'edit';
     $disabled = true;
 }
+$config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'])) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'] : 0;
 ?>
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
@@ -45,7 +46,7 @@ if ($model->isNewRecord) {
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Member Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Member Details') ?></h4>
         </div>
         <div class="col-sm-4" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
@@ -87,9 +88,9 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'surname')->textInput() ?>
         </div>
-        <div class="col-sm-4">
-            <?= $form->field($model, 'local_surname')->textInput() ?>
-        </div>
+        <!--        <div class="col-sm-4">
+        <?php // $form->field($model, 'local_surname')->textInput() ?>
+                </div>-->
         <div class="col-sm-4">
             <?= $form->field($model, 'nominee_name')->textInput() ?>
         </div>
@@ -129,6 +130,14 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
+        <div class="col-sm-4 number-validate">
+            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+        </div>
+        <?php if ($config == 1) { ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
+            </div>
+        <?php } ?>
     </div>
     <!-- <div class="clearfix"></div>
     <div class="col-sm-12">
@@ -150,6 +159,7 @@ if ($model->isNewRecord) {
     <div class="col-sm-4">
     <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
     </div> -->
+
     <div class="col-sm-6 col-md-6 padding_left_0 padding_right_0 clearfix">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Contact Details</h4>
@@ -350,5 +360,11 @@ $script = "
        var name = $('#tblmember-member_name').val();
        $('#tblmember-beneficiary_name').val(name);
     });
+    
+    $('#tblmember-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
 $this->registerJs($script, View::POS_END, 'union');
