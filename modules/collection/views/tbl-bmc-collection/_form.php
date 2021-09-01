@@ -154,7 +154,7 @@ $script = "
             qty = 0;
         }
         amount = rtpl * qty;
-        $('#tblbmccollection-amount').val(amount);
+        $('#tblbmccollection-amount').val(amount.toFixed(2));
     }
     
     $(document).on('click','.add-collection',function(e){
