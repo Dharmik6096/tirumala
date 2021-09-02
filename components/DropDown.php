@@ -992,7 +992,7 @@ class DropDown extends Component {
             'originating_type' => [
                 'name' => 'originating_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry')],
+                'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry'), 4 => Yii::t('app', 'Pendrive Import')],
             ],
             'p_organization_type' => [
                 'name' => 'organization_type',
@@ -1233,6 +1233,11 @@ class DropDown extends Component {
                 'name' => 'party_rate_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Qty' => Yii::t('app', 'Qty'), '60/40' => Yii::t('app', '60/40'), '52/48' => Yii::t('app', '52/48')],
+            ],
+            'originating_type_flag' => [
+                'name' => 'originating_type_flag',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Mannual'), 1 => Yii::t('app', 'Excel Import'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'Everest Pendrive'), 21 => Yii::t('app', 'BENNY Online'), 22 => Yii::t('app', 'BENNY Pendrive'), 23 => Yii::t('app', 'AMCS')],
             ],
         ];
         return $records[$l];
