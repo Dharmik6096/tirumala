@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Bank Verification');
             ]
         ];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['bank-verification']);
         ?>
         <div class="panel-footer">
             <?php

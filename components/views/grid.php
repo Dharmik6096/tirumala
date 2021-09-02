@@ -14,8 +14,10 @@ use yii\helpers\Url;
 
 <?php
 
-$script = "
+$script = " 
+
 $(document).ready(function(){
+
     $(document).on('click','.view_history',function(e){
 //    console.log('tset');
         $('#pageloader').show();
@@ -34,15 +36,13 @@ $(document).ready(function(){
                 $('#pageloader').hide();
             },    
             error: function(data) {    
-            console.log('tseasdasdt');
+            alert('asdasd');
                 $('#loadercontent').hide();
                 $('#pageloader').hide();
             }
         });
     });
-});    
-
-$(document).ready(function(){
+    
     $('#" . $id . "').on('click','.delete-record',function(e){
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
