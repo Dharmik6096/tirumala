@@ -120,7 +120,9 @@ class PendriveImportController extends \app\controllers\ChildController {
                             }
                             $packet_config = !empty($dpu_config[$p_len]) ? $dpu_config[$p_len] : FALSE;
                             if ($p_len >= 25 && empty($packet_config)) {
-                                $packet = substr($packet, -1, 0) == '-' ? $packet : $packet . '-';
+                                $dec_text = \Yii::$app->EIPLSecurity->Decrypt($line . '-', $dpu_key, $file->dpu_type);
+                                $packet = ($dec_text) ? $dec_text : $line . '-';
+//                                $packet = substr($packet, -1, 0) == '-' ? $packet : $packet . '-';
                                 $p_len = strlen($packet);
                                 if ($file->dpu_type == 8 && !$header_line) {
                                     $char = preg_match('/^[a-zA-Z ]+$/', substr($packet, 3, 1)) ? TRUE : FALSE;
