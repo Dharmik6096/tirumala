@@ -116,6 +116,9 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $p_len = strlen($packet);
                             if ($file->dpu_type == 8 && !$header_line) {
                                 $char = preg_match('/^[a-zA-Z ]+$/', substr($packet, 3, 1)) ? TRUE : FALSE;
+                                if ($p_len >= 33 && $p_len <= 44) {
+                                    $p_len = 44;
+                                }
                                 $p_len .= ($char) ? '#3' : '#4';
                             }
                             $packet_config = !empty($dpu_config[$p_len]) ? $dpu_config[$p_len] : FALSE;
