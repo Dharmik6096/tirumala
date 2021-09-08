@@ -50,7 +50,9 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->post())) {
             $error_file = [];
             $path = Yii::$app->basePath . '/web/import/collection/';
-            $CollectionData = \Yii::$app->params['biplDirPath'] . 'PORTALPDFILES/';
+//            $CollectionData = \Yii::$app->params['biplDirPath'] . 'PORTALPDFILES/';
+            $CollectionData = Yii::$app->basePath . '/' . \Yii::$app->params['biplDirPath'] . 'PORTALPDFILES/';
+            $CollectionData = str_replace('\\', '/', $CollectionData);
             if (Yii::$app->general->checkDirectory($CollectionData)) {
                 $status = 'success';
                 $files = array_filter(explode(',', $model->file_name));
