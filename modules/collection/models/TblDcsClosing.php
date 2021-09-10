@@ -56,7 +56,7 @@ class TblDcsClosing extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_closing_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'transaction_date', 'to_date', 'to_shift_code', 'milk_type_code', 'qty'], 'required'],
+            [['dcs_closing_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'transaction_date', 'to_date', 'to_shift_code', 'milk_type_code', 'qty'], 'required', 'except' => ['androidsync']],
             [['transaction_date', 'to_date', 'created_at', 'updated_at', 'dcs_code', 'fat', 'snf'], 'safe'],
             [['to_shift_code', 'milk_type_code', 'originating_type'], 'integer'],
             [['qty', 'fat', 'snf', 'water', 'protein'], 'number'],
@@ -64,7 +64,8 @@ class TblDcsClosing extends \app\models\ChildModel {
             [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'dcs_code', 'to_date', 'to_shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
+            [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'dcs_code', 'to_date', 'to_shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
+            [['dcs_code'], 'setHirarchy', 'on' => ['androidsync']],
         ];
     }
 
@@ -130,6 +131,13 @@ class TblDcsClosing extends \app\models\ChildModel {
 
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift_code']);
+    }
+
+    public function setHirarchy($attribute, $params) {
+        $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+        $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+        $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+        $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
     }
 
 }
