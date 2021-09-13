@@ -57,7 +57,7 @@ class TblDcsClosingController extends \app\controllers\ChildController {
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->to_shift_code);
 
             if ($this->model->validate()) {
-                $transaction = $this->generalModel->saveTransaction([$this->model], ['DCS Closing', 'create']);
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['DCS Closing Balance', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->{$transaction}();
                 }
@@ -84,7 +84,7 @@ class TblDcsClosingController extends \app\controllers\ChildController {
             $this->model->transaction_date = !empty($this->model->transaction_date) ? date('Y-m-d H:i:s', strtotime($this->model->transaction_date)) : NULL;
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->to_shift_code);
 
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['DCS Closing', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['DCS Closing Balance', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }

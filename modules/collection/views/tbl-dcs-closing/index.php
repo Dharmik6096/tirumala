@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'DCS Closing'));
-$this->params['menu'][] = Yii::$app->controls->add('DCS Closing');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'DCS Closing Balance'));
+$this->params['menu'][] = Yii::$app->controls->add('DCS Closing Balance');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

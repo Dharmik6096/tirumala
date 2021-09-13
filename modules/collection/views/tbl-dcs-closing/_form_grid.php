@@ -59,7 +59,7 @@ $attribute = [
         }],
     ['attribute' => 'to_shift_code', 'value' => 'shiftCode.shift', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'milk_type_code', 'value' => function($model) {
-            return isset($model->milkType) ? $model->milkType->animal_type_name : '';
+            return Yii::$app->general->getforeignkey($model->milkTypeCode, 'animal_type_name');
         }, 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'qty', 'value' => 'qty', 'vAlign' => 'middle', 'filter' => false],
     ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
