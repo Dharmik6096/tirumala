@@ -127,7 +127,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 //            'tbl_milk_collection.originating_type' => $this->originating_type,
         ]);
         if (isset($this->originating_type)) {
-            if ($this->originating_type == 0) {
+            if ($this->originating_type == 5) {
                 $query->andFilterWhere(['tbl_milk_collection.originating_type' => 0]);
             } elseif ($this->originating_type == 1) {
                 $query->andFilterWhere(['tbl_milk_collection.originating_type' => 1]);
