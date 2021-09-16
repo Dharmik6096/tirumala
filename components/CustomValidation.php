@@ -309,6 +309,7 @@ class CustomValidation extends Component {
                     ],
                     'plant-create' => [
                         [['firstname'], 'required'],
+                        [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
                         [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'mcc-create' => [
