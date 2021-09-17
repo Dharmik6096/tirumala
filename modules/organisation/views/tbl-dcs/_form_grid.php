@@ -206,6 +206,13 @@ $attribute = [
             $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
             return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
+    [
+        'attribute' => 'is_chiller', 'visible' => true,
+        'filter' => Html::activeDropDownList($searchModel, 'is_chiller', [1 => 'Yes', 0 => 'No'], ['class' => 'form-control', 'prompt' => 'Select']),
+        'value' => function($model) {
+            return ($model->is_chiller == 1) ? 'Yes' : 'No';
+        }
+    ],
 ];
 
 $grid_option = [
