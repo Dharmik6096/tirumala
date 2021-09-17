@@ -617,7 +617,7 @@ class GeneralFunctions extends Component {
                 return false;
             }
         }
-        chmod($path, 0777);
+//        chmod($path, 0777);
         return true;
     }
 
