@@ -315,10 +315,12 @@ class CustomValidation extends Component {
                     'mcc-create' => [
                         [['firstname'], 'required'],
                         [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                        [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
                     ],
                     'bmc-create' => [
                         [['firstname'], 'required'],
                         [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                        [['mobile_no'], 'required', 'except' => ['additional', 'verification']],
                     ],
                     'cluster-create' => [
                         [['firstname'], 'required'],
