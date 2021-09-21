@@ -563,6 +563,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
         if (strtolower($modelData->customer_type) == 'dcs') {
+            $modelData->dcs_code = !empty($modelData->dcs_code) ? $modelData->dcs_code : $modelData->customer_code;
             $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
         } else {
             $xclol = Yii::$app->general->getforeignkey($modelData->mainCustomerCode, 'x_col1');
