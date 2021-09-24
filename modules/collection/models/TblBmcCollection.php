@@ -171,6 +171,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
+            [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
         ];
     }
 
@@ -687,6 +688,14 @@ class TblBmcCollection extends \app\models\ChildModel {
         $this->date_time_of_collection = ($this->date_time_of_collection == '') ? null : date('Y-m-d', strtotime($this->date_time_of_collection));
         if (!empty($this->date_time_of_collection) && ($this->date_time_of_collection > date('Y-m-d'))) {
             $this->addError('date_time_of_collection', Yii::t('app/validation', $this->getAttributeLabel('date_time_of_collection') . ' Must be smaller than ' . date('d.m.Y')));
+        }
+    }
+
+    public function validateMinLimit($attribute, $params) {
+        $flag = Yii::$app->general->getforeignkey($this->mccPlantCode, 'has_min_qty_limit');
+        $value = Yii::$app->general->getforeignkey($this->mccPlantCode, 'min_qty_limit');
+        if (strtoupper($this->customer_type) == 'DCS' && $flag == 1 && $value > $this->qty) {
+            $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' Must be greater than ' . $value));
         }
     }
 
