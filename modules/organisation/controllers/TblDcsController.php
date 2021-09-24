@@ -939,7 +939,7 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_verified = $status;
-                        $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        $existData->bank_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
@@ -1008,7 +1008,7 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_contact_verified = $status;
-                        $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
+                        $existData->contact_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {

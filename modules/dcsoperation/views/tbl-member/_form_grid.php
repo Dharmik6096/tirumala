@@ -88,7 +88,8 @@ $attribute = [
         'value' => function ($model) {
             return !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '';
         }, 'visible' => FALSE],
-    ['attribute' => 'remarks', 'filter' => false],
+    ['attribute' => 'bank_remarks', 'filter' => false],
+    ['attribute' => 'contact_remarks', 'filter' => false],
 ];
 
 $grid_option = [
