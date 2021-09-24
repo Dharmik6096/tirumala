@@ -99,7 +99,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'tbl_bmc_collection.route_code' => $this->route_code,
         ]);
         if (isset($this->originating_type)) {
-            if ($this->originating_type == 0) {
+            if ($this->originating_type == 5) {
                 $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 0]);
             } elseif ($this->originating_type == 1) {
                 $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 1]);

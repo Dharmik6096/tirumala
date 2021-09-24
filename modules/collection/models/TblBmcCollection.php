@@ -312,7 +312,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function validateCustomer($union, $code, $type) {
+    public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
             $this->customer_type = $type;
@@ -323,7 +323,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $this->customer_type;
                 $customerModelData = $customerModel->find()
-                        ->where(['customer_type' => $this->customer_type])
+                        ->where(['customer_type' => $this->customer_type, 'bmc_code' => $bmc])
                         ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
                         ->all();
                 if (count($customerModelData) == 1) {

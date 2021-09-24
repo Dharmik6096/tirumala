@@ -25,13 +25,14 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->updated_at);
         }],
+    ['attribute' => 'response_msg', 'visible' => FALSE],
 ];
 $grid_option = [
     'id' => 'pd-file-list',
     'attributes' => $attribute,
     'active_column' => FALSE,
-//    'actions' => [
-//      //  'view' => true,
-//    ]
+    'actions' => [
+        'view' => true,
+    ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

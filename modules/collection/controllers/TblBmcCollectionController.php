@@ -216,7 +216,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $date = Yii::$app->request->post('date');
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
-            $data = $bmcModel->validateCustomer($union, $dcs, $type);
+            $data = $bmcModel->validateCustomer($union, $dcs, $type, $bmc);
             $detail = Yii::$app->general->validateDeactivateCustomer($bmcModel, $date, $data);
             if ($detail === false) {
                 $data = '';
