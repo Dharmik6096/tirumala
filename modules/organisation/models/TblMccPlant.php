@@ -75,6 +75,7 @@ class TblMccPlant extends \app\models\ChildModel {
         }, 'whenClient' => "function (attribute, value) { 
               return $('#tblmccplant-has_min_qty_limit').val() == '1'; 
           }"],
+            [['has_min_qty_limit'], 'default', 'value' => 0,'on' => 'importCsv'],
             [['village_code'], 'string', 'max' => 6],
             [['contact_person'], 'string', 'max' => 100],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
