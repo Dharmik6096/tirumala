@@ -65,17 +65,15 @@ class TblMccPlant extends \app\models\ChildModel {
             [['state_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
             [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code', 'gst_no', 'min_qty_limit', 'has_min_qty_limit'], 'safe'],
             [['capacity'], 'integer'],
-            [['min_qty_limit'], 'integer', 'min' => 1, 'when' => function ($model) {
-            return $model->has_min_qty_limit == 1;
-        }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblmccplant-has_min_qty_limit').val() == '1'; 
-          }"],
+            [['min_qty_limit'], 'integer', 'min' => 1],
             [['min_qty_limit'], 'required', 'when' => function ($model) {
             return $model->has_min_qty_limit == 1;
         }, 'whenClient' => "function (attribute, value) { 
               return $('#tblmccplant-has_min_qty_limit').val() == '1'; 
           }"],
-            [['has_min_qty_limit'], 'default', 'value' => 0,'on' => 'importCsv'],
+            [['has_min_qty_limit'], function ($attribute, $params) {
+            Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+        }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
             [['village_code'], 'string', 'max' => 6],
             [['contact_person'], 'string', 'max' => 100],
             [['created_by', 'updated_by'], 'string', 'max' => 14],

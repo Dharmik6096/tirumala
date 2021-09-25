@@ -9,7 +9,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 $model->is_plant = $model->isNewRecord ? 0 : $model->is_plant;
 $nameWarning = 0;
 $codeWarning = 0;
-$list = array('0' => 'No', '1' => 'Yes');
 if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
@@ -22,7 +21,6 @@ $milkType = $model->getMilkTypes();
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -76,6 +74,7 @@ $form = ActiveForm::begin([
                 <? = $form->field($model, 'mobile_no')->textInput(['maxlength' => true,'class' => 'form-control check_mobile_length']) ?>
             </div>-->
         <div class="col-sm-2">
+
             <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
         </div>
         <div class="col-sm-2">
@@ -92,9 +91,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <?php echo $form->field($model, 'has_min_qty_limit')->dropdownList($list); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Has Min Qty Limit', false, 'has_min_qty_limit', false); ?>    
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2">  
             <?= $form->field($model, 'min_qty_limit')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
