@@ -22,6 +22,7 @@ use app\modules\organisation\models\TblUnionsDistrictMapping;
 use app\modules\geo\models\TblDistricts;
 use app\modules\configuration\models\TblUnionConfigResult;
 use app\modules\dcsaccounting\models\TblFinancialYear;
+use app\modules\general\models\TblViewHistoryTableList;
 
 class LoginForm extends Model {
 
@@ -37,14 +38,14 @@ class LoginForm extends Model {
      */
     public function rules() {
         return [
-                [['username', 'password'], 'required'],
-                [['type'], 'required', 'on' => 'non_national'],
-                [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
-                ['rememberMe', 'boolean'],
-                [['organization', 'type', 'state'], 'safe'],
-                ['password', 'validatePassword'],
-                [['db'], 'safe'],
-                ['username', 'validateIP'],
+            [['username', 'password'], 'required'],
+            [['type'], 'required', 'on' => 'non_national'],
+            [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
+            ['rememberMe', 'boolean'],
+            [['organization', 'type', 'state'], 'safe'],
+            ['password', 'validatePassword'],
+            [['db'], 'safe'],
+            ['username', 'validateIP'],
         ];
     }
 
@@ -177,6 +178,7 @@ class LoginForm extends Model {
         $unionKeyPattern = [];
         $hasBMC = 1;
         $finacialYear = '';
+        $ViewHistory = [];
         switch ($main_org_type) {
 
             case 'PCDF':
@@ -256,6 +258,14 @@ class LoginForm extends Model {
                 $unionKeyPattern = Yii::$app->general->getUnionKeyPattern(explode(',', $union));
                 $finacialModel = new TblFinancialYear;
                 $finacialYear = $finacialModel->getCurrentYear();
+                if (count($name) == 1) {
+                    $tableName = TblViewHistoryTableList::find()->where(['union_code' => explode(',', $union)])->all();
+                    if (count($tableName) > 0) {
+                        $ViewHistory = implode(',', array_map(function($tableName) {
+                                    return $tableName->table_name;
+                                }, $tableName));
+                    }
+                }
                 break;
         }
         $language_code = 'en';
@@ -281,6 +291,7 @@ class LoginForm extends Model {
         Yii::$app->session->set('hasBMC', $hasBMC);
         Yii::$app->session->set('unionKeyPattern', $unionKeyPattern);
         Yii::$app->session->set('financialYear', $finacialYear);
+        Yii::$app->session->set('ViewHistory', $ViewHistory);
         return true;
     }
 

@@ -58,7 +58,7 @@ $this->title = Yii::t('app', 'Contact Verification');
             ]
         ];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['conatct-verification']);
         ?>
         <div class="panel-footer">
             <?php

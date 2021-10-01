@@ -10,9 +10,39 @@ use yii\web\View;
 use yii\widgets\Pjax;
 use yii\helpers\Html;
 use yii\helpers\Url;
+?>
 
-$script = "
+<?php
+
+$script = " 
+
 $(document).ready(function(){
+
+    $(document).on('click','.view_history',function(e){
+//    console.log('tset');
+        $('#pageloader').show();
+        $('#loadercontent').show();
+        var table= $(this).attr('data-table_name');
+        var id= $(this).attr('data-id');
+        $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/misreports/reports/view-history']) . "',
+            data:{'table':table, 'id':id},
+            success: function(data) {   console.log(data);  
+                $('#viewHistoryPopup').html(data);
+                $('#viewHistoryPopupModal').modal('toggle'); 
+                $(window).resize();
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            },    
+            error: function(data) {    
+            alert('asdasd');
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    });
+    
     $('#" . $id . "').on('click','.delete-record',function(e){
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
