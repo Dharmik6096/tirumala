@@ -23,6 +23,7 @@ $attribute = [
     ['attribute' => 'is_verified', 'value' => function($model) {
             return $model->is_verified == 1 ? 'Verified' : ( $model->is_verified == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
+    ['attribute' => 'remarks', 'filter' => false],
 ];
 
 $grid_option = [

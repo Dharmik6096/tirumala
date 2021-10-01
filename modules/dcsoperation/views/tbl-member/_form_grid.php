@@ -88,6 +88,8 @@ $attribute = [
         'value' => function ($model) {
             return !empty($model->rate_class) ? Yii::$app->dropdown->getRecords('rate_class')['data'][$model->rate_class] : '';
         }, 'visible' => FALSE],
+    ['attribute' => 'bank_remarks', 'filter' => false],
+    ['attribute' => 'contact_remarks', 'filter' => false],
 ];
 
 $grid_option = [
@@ -101,21 +103,21 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'view' => true,
-        'deactive' => function ($url, $model) {
+                'view' => true,
+                'deactive' => function ($url, $model) {
             $name = $model->member_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
         },
-        //'delete' => ['option' => 'member_name,member_code,tbl-member/delete'],
-        'block-unblock' => function ($url, $model) {
+                //'delete' => ['option' => 'member_name,member_code,tbl-member/delete'],
+                'block-unblock' => function ($url, $model) {
             $name = $model->member_name;
             $class = '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile App Info', 'class' => 'block-unblock ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-mobile"></i>', ['/dcsoperation/tbl-member/block-unblock'], $options);
         },
-        'upload-photos' => function ($url, $model) {
+                'upload-photos' => function ($url, $model) {
             $id = $model->member_code;
             $type = 'MEMBER';
             $class = ($model->is_verified == 1) ? 'link-disable disabled' : '';
@@ -123,15 +125,15 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], true, ['CSV', 'Excel2007']);
-?>
-<div id="AppInformation"></div>
-<div id="ImportAttachements"></div>
-<?php
-$script = "
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], true, ['CSV', 'Excel2007']);
+        ?>
+        <div id="AppInformation"></div>
+        <div id="ImportAttachements"></div>
+        <?php
+        $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-member',function(e){
     var id= $(this).attr('data-val');
@@ -248,4 +250,5 @@ $(document).ready(function(){
         });
     });
 });";
-$this->registerJs($script, View::POS_END, 'member-index');
+        $this->registerJs($script, View::POS_END, 'member-index');
+        
