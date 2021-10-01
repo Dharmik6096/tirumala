@@ -9,6 +9,15 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
 /* @var $form yii\widgets\ActiveForm */
+$fDate = !empty($ActiveModel->from_date) ? $ActiveModel->from_date : date('d-m-Y', strtotime('-6 day', strtotime(date('Y-m-d'))));
+$fDate = date('Y-m-d', strtotime('+1 day', strtotime($ActiveModel->from_date)));
+$curDate = date('Y-m-d');
+$curDate = date('Y-m-d', strtotime('-5 day', strtotime($curDate)));
+if (strtotime($fDate) > strtotime($curDate)) {
+    $minDate = date('d-m-Y', strtotime($fDate));
+} else {
+    $minDate = $curDate;
+}
 ?>
 <div class="modal modal-default fade" id="DCSActiveModal" role="dialog">
     <div class="modal-dialog">
@@ -25,12 +34,12 @@ use yii\web\JsExpression;
                                     'class' => 'form-group popup-form',
                                     'id' => 'activate-dcs-form',
                                 ],
-                                'action' => Url::to(['/organisation/tbl-dcs-deactive/activate-dcs'])
+                                'action' => Url::to(['/organisation/tbl-dcs-deactive/activate-dcs', 'dcs_deactive_code' => $dcs_deactive_code])
                     ]);
                     ?>
 
                     <div class="col-sm-6">
-                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, date('d-m-Y')); ?> 
+                        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, $minDate); ?> 
                     </div>
                     <div class="col-sm-6">
                         <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>
@@ -44,7 +53,7 @@ use yii\web\JsExpression;
                                 'label' => Yii::t('app', 'Save'),
                                 'ajaxOptions' => [
                                     'type' => 'POST',
-                                    'url' => Url::to(['activate-dcs']),
+                                    'url' => Url::to(['activate-dcs', 'dcs_deactive_code' => $dcs_deactive_code]),
                                     'beforeSend' => new JsExpression("function(data){
 //                                                $('#loadercontent').show();
 //                                                $('#pageloader').show();
@@ -66,8 +75,13 @@ use yii\web\JsExpression;
                                                                     $(".form-group").removeClass("has-error");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                    console.log(data);
                                                                     $.each(data, function(key, val) {
                                                                         $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        $("#"+key).closest(".form-group").removeClass("has-error");
+                                                                        $(".field-"+key+" .help-block").html("");
+                                                                        $(".field-"+key+" .help-block").html(val);
+                                                                        $("#"+key).closest(".form-group").addClass("has-error");
                                                                     });
                                                                     $(".error-summary").show();
                                                                 }

@@ -163,6 +163,11 @@ $script = "
                                 }
             });
     });
+     $('#tbltransporter-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+        return val.toUpperCase();
+    });
+   });
 ";
 $this->registerJs($script, View::POS_END, 'union-select');
 

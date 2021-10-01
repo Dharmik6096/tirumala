@@ -195,6 +195,8 @@ class TblMemberProvisional extends ChildModel {
             [['provisional_member_code'], 'setProvisionalMemberCode', 'on' => 'importCsv'],
             [['dcs_code'], 'setAddressDetail', 'on' => ['importCsv']],
             [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+
         ];
     }
 
@@ -591,5 +593,7 @@ class TblMemberProvisional extends ChildModel {
             $this->pro_ex_member_code = $this->ex_member_code;
         }
     }
-
+     public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
+    }
 }

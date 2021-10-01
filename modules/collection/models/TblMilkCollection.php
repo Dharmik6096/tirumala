@@ -154,7 +154,12 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-            [['is_rate_recalc'], 'default', 'value' => 0]
+            [['is_rate_recalc'], 'default', 'value' => 0],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
         ];
     }
 

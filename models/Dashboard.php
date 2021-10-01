@@ -32,7 +32,7 @@ class Dashboard extends Model {
             // rememberMe must be a boolean value
             //['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            [['date', 'from_date_milk_analysis', 'to_date_milk_analysis'], 'safe'],
+            [['date', 'from_date_milk_analysis', 'to_date_milk_analysis', 'customer_type'], 'safe'],
         ];
     }
 

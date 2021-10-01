@@ -4,14 +4,11 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-
-;
-
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 Url::remember();
 
-$this->title = 'Members';
+$this->title = Yii::t('app', 'Members');
 ?>
 <div class="tbl-member-payment-index">
     <div class="panel panel-default panel-grid panel-main">

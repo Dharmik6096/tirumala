@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
                 }
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
-        ['header' => 'Member Code', 'attribute' => 'member_code', 'filter' => false],
+        ['header' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'filter' => false],
         ['header' => Yii::t('app', 'Member Name'), 'attribute' => 'member_code', 'value' => function ($model, $key, $index) use ($form) {
                 return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
             }, 'filter' => false],

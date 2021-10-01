@@ -102,6 +102,16 @@ class EIPLPacketConfig extends Component {
                     'txflag' => 'pckt=33-3',
                     'farmername' => 'pckt=36-12',
                 ],
+                '27#3' => [
+                    'farmerid' => 'pckt=0-3',
+                    'milktype' => 'pckt=3-1',
+                    'fat' => 'pckt=4-2#fix=.#pckt=6-1',
+                    'snf' => 'pckt=7-2#fix=.#pckt=9-1',
+                    'water' => 'pckt=10-2',
+                    'qty' => 'pckt=12-3#fix=.#pckt=15-2',
+                    'sampletime' => 'pckt=19-2#fix=:#pckt=17-2#fix=:00',
+                    'txflag' => 'pckt=21-3',
+                ],
             /*  '72' => [
               'vlccid' => '0-12',
               'farmerid' => '23-4',

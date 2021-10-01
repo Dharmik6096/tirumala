@@ -49,6 +49,8 @@ class TblPurchaseRateApplicabilitySearch extends TblPurchaseRateApplicability {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE,
+
         ]);
 
         $query->joinWith(['dcsCode', 'shiftCode']);

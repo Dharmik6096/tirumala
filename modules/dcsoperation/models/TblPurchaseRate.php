@@ -221,10 +221,23 @@ class TblPurchaseRate extends \app\models\ChildModel {
         return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
     }
 
-    public function getRateChartList($union_code) {
+//    public function getRateChartList($union_code) {
+//        $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
+//        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
+//                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+//                });
+//    }
+
+    public function getRateChartList($union_code, $showRef = FALSE) {
         $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
-        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
-                    return $data->purchase_rate_code . ' (' . $data->description . ')';
+        return ArrayHelper::map($data, 'purchase_rate_code', function($data) use ($showRef) {
+                    $code = '';
+                    if ($showRef && !empty($data->dcs_purchase_rate_code)) {
+                        $code = $data->purchase_rate_code . ' / ' . $data->dcs_purchase_rate_code . '(' . (!empty($data->description) ? $data->description : '') . ')';
+                    } else {
+                        $code = $data->purchase_rate_code . ' (' . $data->description . ')';
+                    }
+                    return $code;
                 });
     }
 

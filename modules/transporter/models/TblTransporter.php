@@ -130,6 +130,7 @@ class TblTransporter extends \app\models\ChildModel {
                 }, 'on' => ['importCsv']],
             [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
             [['hamlet_code'], 'validateHamlet'],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
     }
 
@@ -399,5 +400,7 @@ class TblTransporter extends \app\models\ChildModel {
     public function getDefaultContactDetail() {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'transporter_code'])->where(['tbl_contact_details.module_name' => 'transporter', 'tbl_contact_details.is_default' => 1]);
     }
-
+    public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
+    }
 }

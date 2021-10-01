@@ -9,6 +9,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\organisation\models\TblCustomerMaster;
+use yii\web\Response;
+use yii\helpers\Json;
+use kartik\widgets\ActiveForm;
 
 /**
  * TblCustomerDeactiveController implements the CRUD actions for TblCustomerDeactive model.
@@ -120,10 +123,11 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         $model = new TblCustomerDeactive();
         $model->scenario = 'activeCustomer';
         $model->customer_deactive_code = $customer_deactive_code;
+        $ActiveModel = $this->findModel($model->customer_deactive_code);
         if (Yii::$app->request->post()) {
             $model->load(Yii::$app->request->post());
-            $ActiveModel = $this->findModel($model->customer_deactive_code);
-            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
+//            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d H:i:s', strtotime($model->to_date)) : NULL;
+            $ActiveModel->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime('-1 day', strtotime($model->to_date))) : NULL;
             $ActiveModel->scenario = 'activeCustomer';
             if ($ActiveModel->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$ActiveModel], ['Customer Activated', 'create']);
@@ -142,6 +146,8 @@ class TblCustomerDeactiveController extends \app\controllers\ChildController {
         }
         return $this->renderAjax('_search', [
                     'model' => $model,
+                    'ActiveModel' => $ActiveModel,
+                    'customer_deactive_code' => $customer_deactive_code
         ]);
     }
 

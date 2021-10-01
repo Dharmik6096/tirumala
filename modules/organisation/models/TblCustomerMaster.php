@@ -544,4 +544,9 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
     }
 
+    public function validateCustomerRef($bmc_code, $customer_code) {
+        return $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1])
+                        ->andWhere(['or', ['customer_code' => $customer_code], ['ref_code' => $customer_code]])->one();
+    }
+
 }

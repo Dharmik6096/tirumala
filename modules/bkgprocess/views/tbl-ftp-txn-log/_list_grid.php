@@ -7,6 +7,8 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+
 ?>
 <?php
 
@@ -47,7 +49,13 @@ $grid_option = [
     'id' => 'ftp-txn-log-a',
     'attributes' => $attribute,
     'active_column' => false,
-  
+    'actions' => [
+        'view-collection' => function ($url, $model) {
+            $class = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Detail', 'class' => 'view-detail ' . $class];
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/bkgprocess/tbl-ftp-txn-log/view-collection', 'id' => $model->ftp_txn_log_id], $options);
+        },
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['list']);

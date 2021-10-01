@@ -77,7 +77,7 @@ class TblUnionsDistrictMapping extends ChildModel
     public function getDistrict($code) {
         $district = new TblFederationsStateMapping();
         $district_list = $district->getFrStates($code->federation_code);
-
+        
         $values = $this->find()->select('district_code')->where(['union_code' => $code->union_code,'is_active'=>1])->asArray()->all();
         $selected = [];
 

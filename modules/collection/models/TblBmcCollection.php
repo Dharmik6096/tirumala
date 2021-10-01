@@ -165,7 +165,12 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-            [['is_rate_recalc'], 'default', 'value' => 0]
+            [['is_rate_recalc'], 'default', 'value' => 0],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
         ];
     }
 
@@ -307,14 +312,28 @@ class TblBmcCollection extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function validateCustomer($union, $code, $type) {
+    public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
-            $this->ex_code = !empty($length) ? $prefix . str_pad($code, $length, '0', STR_PAD_LEFT) : '';
-            $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            $Code = '';
+            if (!empty($prefix) && is_numeric($this->customer_code)) {
+                $customerModel = new TblCustomerMaster();
+                $customerModel->customer_type = $this->customer_type;
+                $customerModelData = $customerModel->find()
+                        ->where(['customer_type' => $this->customer_type, 'bmc_code' => $bmc])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
+                        ->all();
+                if (count($customerModelData) == 1) {
+                    $Code = $customerModelData[0]->customer_code;
+                    $this->ex_code = $customerModelData[0]->customer_code_ex;
+                }
+            } else {
+                $this->ex_code = !empty($length) ? $prefix . str_pad($code, $length, '0', STR_PAD_LEFT) : '';
+                $Code = Yii::$app->general->getforeignkey($this->customerCode, 'customer_code');
+            }
             return $data = empty($Code) ? '' : $Code;
         }
     }

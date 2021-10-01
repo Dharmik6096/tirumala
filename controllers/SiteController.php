@@ -852,8 +852,12 @@ class SiteController extends Controller {
         $dcs_str = str_replace(',', '-', $dcs_str);
         $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
+        $customer_type = '';
         if (!empty(Yii::$app->request->post('widget_type'))) {
             $widget_type = Yii::$app->request->post('widget_type');
+        }
+        if (!empty(Yii::$app->request->post('customer_type'))) {
+            $customer_type = Yii::$app->request->post('customer_type');
         }
         $array = [
             'fed_union' => [
@@ -958,11 +962,11 @@ class SiteController extends Controller {
             ],
             'top_dcs_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=' . $customer_type,
             ],
             'top_rmrd_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS',
             ],
         ];
         return $array[$sp];
@@ -1784,6 +1788,7 @@ class SiteController extends Controller {
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
+            $i = 1;
             if (!empty($modelData)) {
                 foreach ($modelData as $transaction_data) {
                     try {
@@ -1821,6 +1826,9 @@ class SiteController extends Controller {
 
                             if (isset($model->is_sentbox)) {
                                 $model->is_sentbox = false;
+                            }
+                            if ($model->hasAttribute('originating_type')) {
+                                $model->originating_type = 23;
                             }
 
                             if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
@@ -1876,6 +1884,23 @@ class SiteController extends Controller {
                                     $model->scenario = 'androidsync';
                                 }
                             }
+
+                            if ($transaction_data->table_name == 'tbl_dcs_closing') {
+
+                                $model_data = $model->find()->where(['dcs_code' => $model->dcs_code, 'to_date' => $model->to_date, 'to_shift_code' => $model->to_shift_code, 'milk_type_code' => $model->milk_type_code])->one();
+                                if (!empty($model_data)) {
+                                    $model = $model_data;
+                                    $history = $model_name . 'History';
+                                    $historyModel = new $history();
+                                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                    $childModel[] = $historyModel;
+                                    unset($json['dcs_closing_code']);
+                                    $model->setAttributes($json);
+                                    $model->dcs_closing_code = $model_data->dcs_closing_code;
+                                } else {
+                                    $model->dcs_closing_code = (string) Yii::$app->general->getCodeAutoIncrement($model, $i);
+                                }
+                            }
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
@@ -1901,6 +1926,7 @@ class SiteController extends Controller {
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->save();
                     }
+                    $i++;
                 }
             }
         } catch (yii\base\Exception $e) {
@@ -2472,7 +2498,7 @@ class SiteController extends Controller {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
             $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $status = !empty($data['widget_for']) ? $data['widget_for'] : '';
+            $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
@@ -2543,7 +2569,7 @@ class SiteController extends Controller {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
             $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $status = !empty($data['widget_for']) ? $data['widget_for'] : '';
+            $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
             $sp_param[] = $union;
             $sp_param[] = $plant;
             $sp_param[] = $mcc;
@@ -2616,7 +2642,7 @@ class SiteController extends Controller {
             $dcs = isset($data['dcs_code']) ? $data['dcs_code'] : (!empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : '0');
             $plant = isset($data['plant']) ? $data['plant'] : (!empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : '0');
             $date = date('Y-m-d', strtotime($data['date'])) . ' 00:00:00';
-            $status = !empty($data['widget_for']) ? $data['widget_for'] : '';
+            $status = !empty($data['widget_for']) ? $data['widget_for'] : 'rmrd';
 
             $sp_param[] = $union;
             $sp_param[] = $plant;

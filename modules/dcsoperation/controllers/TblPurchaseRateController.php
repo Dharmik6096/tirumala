@@ -532,7 +532,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
             if (!empty($value[0]) && !empty($value[1])) {
                 if (strtolower($value[1]) == 'member') {
                     $RateModel = new TblPurchaseRate();
-                    $list = $RateModel->getRateChartList($value[0]);
+                    $list = $RateModel->getRateChartList($value[0], TRUE);
                 } else {
                     $RateModel = new TblDcsPurchaseRate();
                     $list = $RateModel->getRateChartList($value[0]);

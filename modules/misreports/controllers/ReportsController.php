@@ -19,7 +19,7 @@ class ReportsController extends \app\controllers\ChildController {
      * Renders the index view for the module
      * @return string
      */
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '';
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '', $label = '';
 
     public function actionIndex() {
         $model = new ReportsModel();
@@ -32,8 +32,10 @@ class ReportsController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadReport($model);
             if (empty($this->output)) {
+
                 $this->output = Yii::t('app', 'No Data Available.');
             } else if (isset($this->data['export_file_name'])) {
+
                 $title_data = array_merge($model->attributes, $this->output[0]);
                 $export_file_name = $this->data['export_file_name'];
                 foreach ($title_data as $k => $v) {
@@ -563,6 +565,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapMilkCollectionData() {
+        $this->report = 'SapMilkCollectionData';
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -672,6 +679,31 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAdvancePm() {
+        $this->report = 'AdvancePm';
+        return $this->actionIndex();
+    }
+
+    public function actionCcMilkPayment() {
+        $this->report = 'CcMilkPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionFarmerFarmPayment() {
+        $this->report = 'FarmerFarmPayment';
+        return $this->actionIndex();
+    }
+
+    public function actionRateApplicabilityDetailsHistory() {
+        $this->report = 'RateApplicabilityDetailsHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionMissingShift() {
+        $this->report = 'MissingShift';
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -746,8 +778,22 @@ class ReportsController extends \app\controllers\ChildController {
         if (!empty($output)) {
             $attr = '';
             $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecrypt = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+            $dataToDecryptCheck = false;
             foreach ($output[0] as $att => $value) {
                 $attr .= "'" . $att . "',";
+                if (!$dataToDecryptCheck && !empty($dataToDecrypt) && in_array($att, $dataToDecrypt)) {
+                    $dataToDecryptCheck = true;
+                }
+            }
+            if ($dataToDecryptCheck && !empty($dataToDecrypt)) {
+                for ($i = 0; $i < count($output); $i++) {
+                    foreach ($dataToDecrypt as $decKey) {
+                        if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
+                            $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                        }
+                    }
+                }
             }
             $this->dataProvider = new ArrayDataProvider([
                 'allModels' => $output,
@@ -776,8 +822,31 @@ class ReportsController extends \app\controllers\ChildController {
             header('Content-Type: text/plain');
             echo $content;
         }
+        if (isset($this->data['dynamic_label']) && !empty($this->output)) {
+            $codeToAppend = $model->getMccCode($model->mcc_code);
+            $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
+            $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
+            $this->label = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        }
+
+        if (isset($this->data['export_file_name']) && !empty($this->output)) {
+            $title_data = array_merge($model->attributes, $this->output[0]);
+            $export_file_name = $this->data['export_file_name'];
+
+            foreach ($title_data as $k => $v) {
+                if ($k == 'from_date') {
+                    $v = str_replace('-', '_', Yii::$app->controls->view_date($v));
+                }
+                $export_file_name = str_replace($k, $v, $export_file_name);
+            }
+            $this->label = $export_file_name;
+        }
         if ($model->output_type == 'DOWNLOAD') {
-            $this->downloadData();
+            if ($this->report == 'SapMilkCollectionData') {
+                $this->downloadDataExcel($model);
+            } else {
+                $this->downloadData();
+            }
         }
     }
 
@@ -1475,42 +1544,42 @@ class ReportsController extends \app\controllers\ChildController {
                 'output_type' => ''
             ],
             'RouteWiseFarmerCollection' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_farmer_collection',
                 'scenario' => 'RouteWiseCollection',
                 'title' => '209 - Route Wise Collection',
                 'report_type' => [Yii::t('app', 'Farmer Collection'), Yii::t('app', 'BMC Collection')],
             ],
             'RouteWiseBMCCollection' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_bmc_collection',
                 'scenario' => 'RouteWiseCollection',
                 'title' => '209 - Route Wise Collection',
                 'report_type' => [Yii::t('app', 'Farmer Collection'), Yii::t('app', 'BMC Collection')],
             ],
             'RouteWiseCollectionSummaryFarmerDateShift' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_collection_summary_farmer_date_shift',
                 'scenario' => 'RouteWiseCollectionSummary',
                 'title' => '210 - Route Wise Collection Summary',
                 'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
             ],
             'RouteWiseCollectionSummaryFarmerConsolidate' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_collection_summary_farmer_consolidated',
                 'scenario' => 'RouteWiseCollectionSummary',
                 'title' => '210 - Route Wise Collection Summary',
                 'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
             ],
             'RouteWiseCollectionSummaryBmcDateShift' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_collection_summary_bmc_date_shift',
                 'scenario' => 'RouteWiseCollectionSummary',
                 'title' => '210 - Route Wise Collection Summary',
                 'report_type' => [Yii::t('app', 'Farmer Collection Date Shift Wise'), Yii::t('app', 'Farmer Collection Consolidated'), Yii::t('app', 'BMC Collection Date Shift Wise'), Yii::t('app', 'BMC Collection Consolidated')],
             ],
             'RouteWiseCollectionSummaryBmcConsolidate' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_route_wise_collection_summary_bmc_consolidated',
                 'scenario' => 'RouteWiseCollectionSummary',
                 'title' => '210 - Route Wise Collection Summary',
@@ -1547,7 +1616,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_shift_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
@@ -1555,7 +1624,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_date_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
@@ -1563,7 +1632,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
                 'sp_name' => 'sp_mis_cda_consolidated_gyan',
                 'scenario' => 'SocietyWiseCda',
-                'title' => '207 - Society Wise CDA',
+                'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
@@ -1647,6 +1716,43 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '213 - Day Wise Qty',
                 'report_type' => [Yii::t('app', 'Detail'), Yii::t('app', 'Summary')],
             ],
+            'AdvancePm' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_pm_advance',
+                'scenario' => 'AdvancePm',
+                'title' => 'PM Advance',
+            ],
+            'CcMilkPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_cc_milk_payment',
+                'scenario' => 'CcMilkPayment',
+                'title' => '617 - CC Milk Payment',
+            ],
+            'FarmerFarmPayment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_farm_payment',
+                'scenario' => 'FarmerFarmPayment',
+                'title' => '618 - Farmer And Farm Payment',
+            ],
+            'RateApplicabilityDetailsHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_rate_applicability_details_history',
+                'scenario' => 'RateApplicabilityDetailsHistory',
+                'title' => '913 - Rate Applicability Details History',
+            ],
+            'MissingShift' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_collection_shift',
+                'scenario' => 'MissingShift',
+                'title' => 'Missing Shift',
+            ],
+            'SapMilkCollectionData' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_sap_milk_collection_data',
+                'scenario' => 'SapMilkCollectionData',
+                'title' => '405 - SAP Data Export (HATSUN)',
+                'dynamic_label' => TRUE,
+            ],
         ];
         return $label[$l];
     }
@@ -1660,7 +1766,8 @@ class ReportsController extends \app\controllers\ChildController {
         ];
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
 //        header('Content-Type: text/plain');
         header('Content-Disposition: attachment;filename=' . $fileName);
@@ -1690,6 +1797,12 @@ class ReportsController extends \app\controllers\ChildController {
                 }
                 if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
                     echo "<td>" . $value . "</td>";
+                } else if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) == '.' || (substr($value, 0, 1) == '0' && substr($value, 1, 1) == '.'))) {
+                    if (substr($value, 0, 1) == '.') {
+                        echo "<td>0" . $value . "</td>";
+                    } else {
+                        echo "<td>" . substr($value, 0, 2) . "</td>";
+                    }
                 } else {
                     echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
                 }
@@ -1737,6 +1850,112 @@ class ReportsController extends \app\controllers\ChildController {
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();
+    }
+
+    public function downloadDataExcel($model) {
+        $header = [
+            'mime' => 'application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'];
+//        header('Content-Type: ' . $header['mime']);
+//        $str = "http://stagging.emilkpro.in:8199/export.aspx?q=sp_sap_milk_collection_data ";
+        $str = "http://10.10.20.196:8199/export.aspx?q=sp_sap_milk_collection_data ";
+        $str .= "'" . $model->union_code . "', ";
+        $str .= "'" . $model->plant_code . "', ";
+        $str .= "'" . $model->mcc_code . "', ";
+        $str .= "'" . $model->bmc_code . "', ";
+        $str .= "'" . $model->dcs_code . "', ";
+        $str .= "'" . $model->from_date . "', ";
+        $str .= "'" . $model->to_date . "'";
+        $str .= "&f=" . $fileName . "";
+
+        $serverUrl = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl;
+        $dirPath = Yii::$app->basePath;
+        $savePath = '/web/sapFiles';
+        Yii::$app->general->checkDirectory($dirPath . $savePath);
+        $fp = fopen($dirPath . $savePath . '/' . $fileName, 'w+');
+        //Here is the file we are downloading, replace spaces with %20
+        $ch = curl_init(str_replace(" ", "%20", $str));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+        // write curl response to file
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // get curl response
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+        header('Location: ' . $serverUrl . $savePath . '/' . $fileName);
+        exit();
+//        $curl = curl_init();
+//
+//        curl_setopt_array($curl, array(
+//            CURLOPT_URL => $str,
+//            CURLOPT_RETURNTRANSFER => true,
+//            CURLOPT_ENCODING => '',
+//            CURLOPT_MAXREDIRS => 10,
+//            CURLOPT_TIMEOUT => 0,
+//            CURLOPT_FOLLOWLOCATION => true,
+//            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//            CURLOPT_CUSTOMREQUEST => 'GET',
+//        ));
+//
+//        $response = curl_exec($curl);
+//
+//        curl_close($curl);
+////        echo $str;
+////        die;
+//
+//        ob_start();
+////        header('Location: ' . $str);
+////        header('Content-Disposition: attachment;filename=' . $fileName);
+////        header('Cache-Control: max-age=0');
+//        ob_end_flush();
+//        var_dump($stream);
+//        die;
+//        $header = [
+//            'mime' => 'application/vnd.ms-excel',
+//            'extension' => 'xls',
+//            'writer' => 'Excel2007',
+//        ];
+//        $objPHPExcel = new PHPExcel();
+//        $sheet = $objPHPExcel->getActiveSheet();
+//        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
+//                ->getNumberFormat()
+//                ->setFormatCode('h:mm:ss');
+//        /* $objPHPExcel->getDefaultStyle()
+//          ->getNumberFormat()
+//          ->setFormatCode(
+//          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//          ); */
+//        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+//        /* $file_header = array_map(function($file_header) {
+//          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//          }, array_values($file_header)); */
+//
+//        $sheet->fromArray(
+//                $file_header, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A1'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $sheet->fromArray(
+//                $this->output, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A2'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+//        $fileName = $labelT . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+        exit();
     }
 
 }

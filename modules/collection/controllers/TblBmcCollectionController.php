@@ -107,7 +107,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                 } else {
                     $this->model->dcs_code = NULL;
-                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
                     $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                     $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                 }
@@ -115,7 +115,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->own_bmc_code = $this->model->bmc_code;
             } else {
                 if (strtolower($this->model->customer_type) != 'dcs') {
-                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type);
+                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
                 }
             }
             $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
@@ -216,7 +216,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $date = Yii::$app->request->post('date');
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
-            $data = $bmcModel->validateCustomer($union, $dcs, $type);
+            $data = $bmcModel->validateCustomer($union, $dcs, $type, $bmc);
             $detail = Yii::$app->general->validateDeactivateCustomer($bmcModel, $date, $data);
             if ($detail === false) {
                 $data = '';
@@ -271,7 +271,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
 //        $code = $for == 'MCC' ? $bmcModel->mcc_code : $bmcModel->bmc_code;
         $for = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
         if (strtolower($for) != 'dcs') {
-            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for);
+            $code = $bmcModel->validateCustomer($data['union'], $data['dcs_code'], $for, $data['bmc_code']);
         } else {
             $code = $bmcModel->dcs_code;
         }
@@ -365,7 +365,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'])) {
                         if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;

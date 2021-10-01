@@ -23,11 +23,15 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
+use app\modules\dcsoperation\models\TblMemberDeactive;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertNotification;
 
 class SchedulerController extends ChildController {
 
     public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
     public $errorPath = '';
+    public $attachment_folder = '/web/alert-data/';
 
     public function init() {
         parent::init();
@@ -234,7 +238,7 @@ class SchedulerController extends ChildController {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
-            $update = $model->updateFileStatus($ids);
+//            $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
@@ -486,18 +490,27 @@ class SchedulerController extends ChildController {
 
     public function actionDcsSentboxGenerate() {
         $model = new TblDcsDeactive();
-        $deactiveData = $model->getDeactiveRecords();
+        $limit = 250;
+        $deactiveData = $model->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($model, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
 
-        $activeData = $model->getActiveRecords();
+        $activeData = $model->getActiveRecords($limit);
         $this->setSentBox($model, $activeData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 1, 4, 5, 6);
 
         $CustModel = new TblCustomerDeactive();
-        $deactiveData = $CustModel->getDeactiveRecords();
+        $deactiveData = $CustModel->getDeactiveRecords(true, '', $limit);
 
         $this->setSentBox($CustModel, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
-        $activeData = $CustModel->getActiveRecords();
+        $activeData = $CustModel->getActiveRecords($limit);
         $this->setSentBox($CustModel, $activeData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 1, 4, 5, 6);
+
+
+        $MemberModel = new TblMemberDeactive();
+        $deactiveData = $MemberModel->getDeactiveRecords(true, $limit);
+        $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
+
+        $activeData = $MemberModel->getActiveRecords($limit);
+        $this->setSentBox($MemberModel, $activeData, 'member_deactive_code', 'TblMember', 'member_code', 1, 4, 5, 6);
     }
 
     public function setSentBox($model, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
@@ -536,8 +549,8 @@ class SchedulerController extends ChildController {
                             $statusModel = new TblDcsVendorStatus();
                             $statusModel->dcs_vendor_code = \Yii::$app->general->getCodeAutoIncrement($statusModel);
                             $statusModel->union_code = $existData->union_code;
-                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : 'DCS';
-                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : $existData->dcs_code;
+                            $statusModel->customer_type = !empty($existData->customer_type) ? $existData->customer_type : (!empty($existData->member_code) ? 'Member' : 'DCS');
+                            $statusModel->customer_code = !empty($existData->customer_type) ? $existData->customer_code : (!empty($existData->member_code) ? $existData->member_code : $existData->dcs_code);
                             $existStatus = $statusModel::find()->where(['union_code' => $statusModel->union_code, 'customer_type' => $statusModel->customer_type, 'customer_code' => $statusModel->customer_code])->one();
                             $statusModel->is_active = $status;
                             if (!empty($existStatus)) {
@@ -570,6 +583,110 @@ class SchedulerController extends ChildController {
         $sentbox->source_org_id = $union;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function actionShiftCollectionComplete() {
+        $apiMaster = new TblApiMaster();
+        $apiMaster->receiver_type = 'EMAIL';
+        $apiMasterData = $apiMaster->getAPI();
+
+        $date = date('d-m-Y');
+        $today = date("d", strtotime($date));
+        $lastDate = date('Y-m-d', strtotime('last day of previous month'));
+
+        if (in_array($today, ['01', '06', '11', '16', '21', '26'])) {
+            if ($today == '01') {
+                $fromDate = date("Y-m", strtotime($lastDate)) . '-26' . ' 06:00:00.000';
+                $toDate = $lastDate . ' 18:00:00.000';
+            } else {
+                $fromDate = date('Y-m-d', strtotime($date . ' -5 day')) . ' 06:00:00.000';
+                $toDate = date('Y-m-d', strtotime($date . ' -1 day')) . ' 18:00:00.000';
+            }
+
+            if (!empty($apiMasterData)) {
+                $htmlContent = "";
+                $message = "";
+                $file_name = "";
+                $file_path = "";
+                $this->setHtmlContent($htmlContent, $message, $file_name, $file_path, $fromDate, $toDate);
+                $from = $apiMasterData->url;
+                $to = $apiMasterData->token;
+                $cc = 'vinay@everestinstruments.com';
+                if (!empty($file_name)) {
+                    $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $message, $htmlContent, FALSE, $file_name, $file_path);
+                    $notificationModel = new TblAlertNotification();
+                    $notificationModel->receiver_type = 'EMAIL';
+                    $notificationModel->message = $htmlContent;
+                    $notificationModel->header_info = $message;
+                    $notificationModel->send_status = 1;
+                    $notificationModel->content_id = $apiMasterData->api_master_id;
+                    $notificationModel->module_type = "Alert Mail Report";
+                    $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                    $notificationModel->send_mail = 1;
+                    $notificationModel->receiver_detail = $to;
+                    $notificationModel->filename = $file_name;
+                    $notificationModel->file_path = $file_path;
+                    $notificationModel->save();
+                }
+            }
+        }
+    }
+
+    public function setHtmlContent(&$htmlContent, &$message, &$fileName, &$file_path, $fromDate, $toDate) {
+        $message = 'Society Collection Summary Status (' . Yii::$app->formatter->asDatetime($fromDate . Yii::$app->getTimeZone(), 'php:d-m-Y') . ' To ' . Yii::$app->formatter->asDatetime($toDate . Yii::$app->getTimeZone(), 'php:d-m-Y') . ')';
+        $baseUrl = Yii::$app->request->baseUrl;
+        $hostUrl = Url::base('http');
+        $hostUrl = str_replace($baseUrl, '', $hostUrl);
+        $htmlContent = '<p>Dear Sir, <br/><br/>' . $message;
+        $htmlContent .= '<br/><br/>Detailed report is attached herewith </p>';
+        $htmlContent .= '<br/><br/>';
+        $htmlContent .= '<p>Regards,';
+        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
+
+
+        $sp_name = 'sp_mis_society_shift_collection_completed';
+        $controls = [];
+        $controls['union_code'] = '001';
+        $controls['plant_code'] = '001005';
+        $controls['mcc_plant_code'] = '001052';
+        $controls['bmc_code'] = '0';
+        $controls['dcs_code'] = '0';
+        $controls['from_date'] = $fromDate;
+        $controls['to_date'] = $toDate;
+        $result = \Yii::$app->general->getSpData($sp_name, $controls);
+
+        if (!empty($result)) {
+            $output = $result;
+            $datetime = date('dmY');
+            $fileName = $datetime . '-SocietyCollectionSummary' . '.xls';
+            $file_path = $this->CreateFile($fileName, $output);
+        }
+    }
+
+    public function CreateFile($fileName, $output) {
+        $column_header = array_keys($output[0]);
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->attachment_folder;
+        if (\Yii::$app->general->checkDirectory($path)) {
+            $absoluteBaseUrl = Url::base(true);
+            $objPHPExcel = new PHPExcel();
+            $sheet = $objPHPExcel->getActiveSheet();
+            $sheet->fromArray(
+                    $column_header, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A1'         // Top left coordinate of the worksheet range where
+                    //    we want to set these values (default is A1)
+            );
+            $sheet->fromArray(
+                    $output, // The data to set
+                    NULL, // Array values with this value will not be set
+                    'A2'         // Top left coordinate of the worksheet range where
+                    //    we want to set these values (default is A1)
+            );
+            $filePath = $path . $fileName;
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter->save($filePath);
+            return $absoluteBaseUrl . $this->attachment_folder . $fileName;
+        }
     }
 
 }
