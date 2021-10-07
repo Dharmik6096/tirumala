@@ -53,7 +53,7 @@ use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
  */
 class TblMemberPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-total-recovery'];
+    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list'];
 
     /**
      * Finds the TblMemberPayment model based on its primary key value.
@@ -133,6 +133,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $searchModel = new TblMemberPaymentSummaryAliasSearch();
             $searchModel->attributes = $model->attributes;
             $dataProvider = $searchModel->search([]);
+            $dataProvider->pagination = false;
             $negativeValCount = 0;
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $model->attributes;
@@ -305,6 +306,30 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 return $this->redirect(['index']);
             }
         }
+//        $query = $model->getRecords();
+//        $dataProvider = new ActiveDataProvider([
+//            'query' => $query,
+//            'pagination' => FALSE,
+//        ]);
+
+        $aliasModel = new TblMemberPaymentAlias();
+        $aliasModel->attributes = Yii::$app->request->get();
+        return $this->render('member_payment_adjust', [
+                    'model' => $model,
+                    'aliasModel' => $aliasModel,
+//                    'dataProvider' => $dataProvider,
+                    'negativeValCount' => $negativeValCount
+        ]);
+    }
+
+    public function actionMemberPaymentAdjustList() {
+        $model = new TblMemberPaymentAlias();
+        $model->attributes = Yii::$app->request->get();
+
+        $negativeValCount = 0;
+//        $memberPaymentModel = new TblMemberPaymentAlias();
+//        $memberPaymentModel->attributes = $model->attributes;
+//        $negativeValCount = $memberPaymentModel->getNegativeValCount();
         $query = $model->getRecords();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -313,11 +338,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
         $aliasModel = new TblMemberPaymentAlias();
         $aliasModel->attributes = Yii::$app->request->get();
-        return $this->render('member_payment_adjust', [
+        return $this->renderAjax('member_payment_adjust_list', [
                     'model' => $model,
                     'aliasModel' => $aliasModel,
-                    'dataProvider' => $dataProvider,
-                    'negativeValCount' => $negativeValCount
+                    'dataProvider' => $dataProvider
+//                    'negativeValCount' => $negativeValCount
         ]);
     }
 
