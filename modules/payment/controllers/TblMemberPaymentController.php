@@ -306,8 +306,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 return $this->redirect(['index']);
             }
         }
-        $query = $model->getRecords();
-        $dataProvider = $query->all();
 //        $query = $model->getRecords();
 //        $dataProvider = new ActiveDataProvider([
 //            'query' => $query,
@@ -319,7 +317,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         return $this->render('member_payment_adjust', [
                     'model' => $model,
                     'aliasModel' => $aliasModel,
-                    'dataProvider' => $dataProvider,
+//                    'dataProvider' => $dataProvider,
                     'negativeValCount' => $negativeValCount
         ]);
     }
