@@ -80,86 +80,88 @@ $tot_amt = array_sum(array_map(function($array) {
                     $totalPrevDue = 0;
                     $totalFinalPay = 0;
                     ?>
-                    <?php foreach ($dataProvider as $index => $model) { ?>
+                    <?php foreach ($dataProvider as $index => $m) { ?>
                         <?php
-                        $dcs = $model->dcsCode;
-                        $member = $model->memberCode;
-                        $totalQty = $totalQty + $model->qty;
-                        $totalMilkAmt = $totalMilkAmt + $model->total_amount;
-                        $totalAddition = $totalAddition + $model->total_addition;
-                        $totalDeduction = $totalDeduction + $model->total_deduction;
-                        $totalPrevHold = $totalPrevHold + $model->previous_hold;
-                        $totalPrevDue = $totalPrevDue + $model->previous_due;
-                        $totalFinalPay = $totalFinalPay + $model->net_payable;
+                        $dcs = $m->dcsCode;
+                        $member = $m->memberCode;
+                        $totalQty = $totalQty + $m->qty;
+                        $totalMilkAmt = $totalMilkAmt + $m->total_amount;
+                        $totalAddition = $totalAddition + $m->total_addition;
+                        $totalDeduction = $totalDeduction + $m->total_deduction;
+                        $totalPrevHold = $totalPrevHold + $m->previous_hold;
+                        $totalPrevDue = $totalPrevDue + $m->previous_due;
+                        $totalFinalPay = $totalFinalPay + $m->net_payable;
                         ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
-                            <td><?= $model->dcs_code ?></td>
+                            <td><?= $m->dcs_code ?></td>
                             <td><?= !empty($dcs) ? $dcs->dcs_code_ex : ''; ?></td>
                             <td><?= !empty($dcs) ? $dcs->dcs_name : ''; ?></td>
-                            <td><?= substr($model->member_code, -4) ?></td>
+                            <td><?= substr($m->member_code, -4) ?></td>
                             <td><?= !empty($member) ? $member->member_name : ''; ?></td>
-                            <td><?= $model->kg_fat ?></td>
-                            <td><?= $model->kg_snf ?></td>
-                            <td><?= $model->qty ?></td>
-                            <td><?= $model->total_amount ?></td>
-                            <td><?= $model->total_addition ?></td>
-                            <td><?= $model->total_deduction ?></td>
-                            <td><?= $model->previous_hold ?></td>
-                            <td><?= $model->previous_due ?></td>
-                            <td class='final-amount'><?= $model->net_payable ?></td>
+                            <td><?= $m->kg_fat ?></td>
+                            <td><?= $m->kg_snf ?></td>
+                            <td><?= $m->qty ?></td>
+                            <td><?= $m->total_amount ?></td>
+                            <td><?= $m->total_addition ?></td>
+                            <td><?= $m->total_deduction ?></td>
+                            <td><?= $m->previous_hold ?></td>
+                            <td><?= $m->previous_due ?></td>
+                            <td class='final-amount'><?= $m->net_payable ?></td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
-                                echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $model->member_payment_alias_code]);
-                                echo $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
+                                echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m->member_payment_alias_code]);
+                                echo $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $m->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
                                 ?>
                             </td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
                                 echo Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']);
-                                echo $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $model->additional_pay, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE)
+                                echo $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $m->additional_pay, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE)
                                 ?>
                             </td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
-                                echo Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $model->payment_cycle_code]);
-                                echo Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $model->plant_code]);
-                                echo Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $model->mcc_plant_code]);
-                                echo Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $model->bmc_code]);
-                                echo Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $model->dcs_code]);
-                                echo Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $model->member_code]);
-                                echo $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $model->adjust_recovery])->label(FALSE)
+                                echo Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $m->payment_cycle_code]);
+                                echo Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $m->plant_code]);
+                                echo Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $m->mcc_plant_code]);
+                                echo Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $m->bmc_code]);
+                                echo Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $m->dcs_code]);
+                                echo Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $m->member_code]);
+                                echo $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $m->adjust_recovery])->label(FALSE)
                                 ?>
                             </td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
-                                echo $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $model->recovery])->label(FALSE);
+                                echo $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $m->recovery])->label(FALSE);
                                 ?>
                             </td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
-                                echo $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
+                                echo $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $m->final_amount])->label(FALSE);
                                 ?>
                             </td>
                             <td class="no_padding_input hide_help_block">
                                 <?php
-                                echo $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $model->adjust_remark])->label(FALSE);
+                                echo $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $m->adjust_remark])->label(FALSE);
                                 ?>
                             </td>
                             <td class="action-cell skip-export kv-align-center kv-align-middle">
                                 <?php
-                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
-                                echo GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
+                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $m->payment_cycle_code, 'data-bmc_code' => $m->bmc_code, 'data-dcs_code' => $m->dcs_code, 'data-member_code' => $m->member_code];
+                                echo GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $m->payment_cycle_code, 'bmc_code' => $m->bmc_code, 'dcs_code' => $m->dcs_code, 'member_code' => $m->member_code], $options);
                                 ?>
 
                                 <?php
-                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
-                                echo GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
+                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $m->payment_cycle_code, 'data-bmc_code' => $m->bmc_code, 'data-dcs_code' => $m->dcs_code, 'data-member_code' => $m->member_code];
+                                echo GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $m->payment_cycle_code, 'bmc_code' => $m->bmc_code, 'dcs_code' => $m->dcs_code, 'member_code' => $m->member_code], $options);
                                 ?>
                             </td>
                         </tr>
                     <?php } ?>
-                    <?php if (!empty($dataProvider)) { ?>
+
+                </tbody>
+                <?php if (!empty($dataProvider)) { ?>
                     <tbody class="kv-page-summary-container">
                         <tr class="kv-page-summary warning">
                             <td>&nbsp;</td>
@@ -187,7 +189,6 @@ $tot_amt = array_sum(array_map(function($array) {
                         </tr>
                     </tbody>
                 <?php } ?>
-                </tbody>
             </table>
         </div>
         <?php

@@ -140,15 +140,15 @@ $script .= "
 
     $(window).on('load', function () {
         setTimeout(function(){
-            $('#loadercontent').show();
-            $('#pageloader').show(); 
+//            $('#loadercontent').show();
+//            $('#pageloader').show(); 
         }, 2500);
     });
     $(document).on('ready', function () {       
 //    $(document).ready(function () {              
-        setTimeout(function(){
-            $('#loadercontent').show();
-            $('#pageloader').show(); 
+//        setTimeout(function(){
+//            $('#loadercontent').show();
+//            $('#pageloader').show(); 
             $.ajax({
                 type: 'get',
                 url: '" . Url::to($urlForList) . "',
@@ -177,7 +177,7 @@ $script .= "
                     $('#pageloader').hide();
                 }
             });              
-        },1000);
+//        },1000);
     });
 $(document).on('click','.view-head',function(e){
     var payment_cycle_code= $(this).attr('data-payment_cycle_code');
