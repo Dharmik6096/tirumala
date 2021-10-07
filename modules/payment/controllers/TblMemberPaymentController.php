@@ -133,7 +133,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $searchModel = new TblMemberPaymentSummaryAliasSearch();
             $searchModel->attributes = $model->attributes;
             $dataProvider = $searchModel->search([]);
-            $dataProvider->pagination = false;
+//            $dataProvider->pagination = false;
             $negativeValCount = 0;
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $model->attributes;
