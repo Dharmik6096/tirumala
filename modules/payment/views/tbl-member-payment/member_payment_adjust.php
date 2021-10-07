@@ -140,15 +140,15 @@ $script .= "
 
     $(window).on('load', function () {
         setTimeout(function(){
-//            $('#loadercontent').show();
-//            $('#pageloader').show(); 
+            $('#loadercontent').show();
+            $('#pageloader').show(); 
         }, 2500);
     });
     $(document).on('ready', function () {       
 //    $(document).ready(function () {              
 //        setTimeout(function(){
-//            $('#loadercontent').show();
-//            $('#pageloader').show(); 
+            $('#loadercontent').show();
+            $('#pageloader').show(); 
             $.ajax({
                 type: 'get',
                 url: '" . Url::to($urlForList) . "',
@@ -173,8 +173,8 @@ $script .= "
                     $('#pageloader').hide();                                                                  
                 },
                 error: function(data) {  
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
+//                    $('#loadercontent').hide();
+//                    $('#pageloader').hide();
                 }
             });              
 //        },1000);
