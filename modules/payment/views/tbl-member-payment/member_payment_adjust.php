@@ -139,8 +139,10 @@ $(document).on("click", "#adjust-lock", function(){
 $script .= " 
 
     $(window).on('load', function () {
-        $('#loadercontent').show();
-        $('#pageloader').show(); 
+        setTimeout(function(){
+            $('#loadercontent').show();
+            $('#pageloader').show(); 
+        }, 2000);
     });
     $(document).on('ready', function () {       
 //    $(document).ready(function () {              
