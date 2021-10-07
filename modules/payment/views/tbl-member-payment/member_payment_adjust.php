@@ -138,6 +138,10 @@ $(document).on("click", "#adjust-lock", function(){
 ';
 $script .= " 
 
+    $(window).on('load', function () {
+        $('#loadercontent').show();
+        $('#pageloader').show(); 
+    });
     $(document).on('ready', function () {       
 //    $(document).ready(function () {              
         setTimeout(function(){
