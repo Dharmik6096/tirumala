@@ -331,11 +331,12 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //        $memberPaymentModel->attributes = $model->attributes;
 //        $negativeValCount = $memberPaymentModel->getNegativeValCount();
 //        $query = $model->getRecords();  
-        $query = $model->getSelectedFieldsRecords(); 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => FALSE,
-        ]);
+        $query = $model->getSelectedFieldsRecords();
+        $dataProvider = $query->all();
+//        $dataProvider = new ActiveDataProvider([
+//            'query' => $query,
+//            'pagination' => FALSE,
+//        ]);
 
         $aliasModel = new TblMemberPaymentAlias();
         $aliasModel->attributes = Yii::$app->request->get();
@@ -663,7 +664,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
     public function actionIndex() {
         $searchModel = new TblMemberPaymentSummarySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination = false;
+//        $dataProvider->pagination = false;
 
         return $this->render('index', [
                     'searchModel' => $searchModel,
