@@ -330,7 +330,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //        $memberPaymentModel = new TblMemberPaymentAlias();
 //        $memberPaymentModel->attributes = $model->attributes;
 //        $negativeValCount = $memberPaymentModel->getNegativeValCount();
-        $query = $model->getRecords();
+//        $query = $model->getRecords();  
+        $query = $model->getSelectedFieldsRecords(); 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
