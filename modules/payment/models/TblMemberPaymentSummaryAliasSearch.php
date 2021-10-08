@@ -66,6 +66,7 @@ class TblMemberPaymentSummaryAliasSearch extends TblMemberPaymentSummaryAlias {
                 ->andWhere(['tbl_member_payment_summary_alias.plant_code' => $this->plant_code])
                 ->andWhere(['tbl_member_payment_summary_alias.mcc_plant_code' => $this->mcc_plant_code])
                 ->andWhere(['tbl_member_payment_summary_alias.bmc_code' => $this->bmc_code])
+                ->andFilterWhere(['tbl_member_payment_summary_alias.dcs_code' => $this->dcs_code])
                 ->andWhere(['tbl_member_payment_summary_alias.payment_cycle_code' => $this->payment_cycle_code]);
 
         return $dataProvider;

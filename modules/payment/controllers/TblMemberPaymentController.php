@@ -53,7 +53,7 @@ use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
  */
 class TblMemberPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list'];
+    public $freeAccessActions = ['validate-total-recovery', 'member-payment-adjust-list', 'list-member-payment-summary-data'];
 
     /**
      * Finds the TblMemberPayment model based on its primary key value.
@@ -147,6 +147,144 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionListMemberPaymentSummaryData() {
+        // Farmer Payment Process : Step 2 (Display DCS Wise Data)
+        if (Yii::$app->request->post('TblMemberPaymentAlias')) {
+            $postData = Yii::$app->request->post();
+//            $adjust_id = Yii::$app->request->post('TblMemberPaymentAlias')['member_payment_alias_code'];
+//            $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
+//            $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
+//            $hold_amt = Yii::$app->request->post('TblMemberPaymentAlias')['hold_amount'];
+//            $reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['recovery'] : 0;
+//            $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : 0;
+            $save_model = [];
+            $cnt = 0;
+            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
+            //process_lock_flag
+
+            $summaryModel = new TblMemberPaymentSummaryAlias();
+            $summaryModel->attributes = Yii::$app->request->get();
+            $summaryModelData = $summaryModel->getRecords(false);
+
+            $adjustmentSummary = [];
+//            foreach ($adjust_id as $key => $value) {
+//                $data = TblMemberPaymentAlias::findOne($adjust_id[$key]);
+//                $oldData = $data->oldAttributes;
+//                $holdAmount = !empty($hold_amt[$key]) ? $hold_amt[$key] : 0;
+//                $adjustAmount = !empty($adjust_amt[$key]) ? $adjust_amt[$key] : 0;
+//                $recovery = !empty($reco[$key]) ? $reco[$key] : 0;
+//                $adjust_recovery = !empty($adjust_reco[$key]) ? $adjust_reco[$key] : 0;
+//                $addition = !empty($data->total_addition) ? $data->total_addition : 0;
+//                $deduction = !empty($data->total_deduction) ? $data->total_deduction : 0;
+//                $dcsCode = $data->dcs_code;
+//                $historyModel = new TblMemberPaymentAliasHistory();
+//                Yii::$app->operation->history($data, $historyModel, UPDATE);
+//                $data->additional_pay = $adjustAmount;
+//                $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
+//                $data->hold_amount = $holdAmount;
+//                $data->final_amount = $data->net_payable + $adjustAmount - $holdAmount + $adjust_recovery - $recovery;
+//                $data->payment_status = $processFlag;
+//                $save_model[] = $historyModel;
+//                $save_model[] = $data;
+//                if ($oldData['additional_pay'] != $data->additional_pay) {
+//                    $cnt++;
+//                }
+//                $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
+//                $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
+//                $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
+//                $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
+//
+//                if ($processFlag == 'Lock') {
+//                    $installmentModel = new TblMemberPaymentInstallment();
+//                    $existInstallment = $installmentModel->find()->where(['bmc_code' => $data->bmc_code, 'customer_type' => 'Member', 'customer_code' => $data->member_code, 'payment_cycle_code' => $data->payment_cycle_code])->all();
+//                    if (!empty($existInstallment)) {
+//                        foreach ($existInstallment as $data) {
+//                            $saleModel = new TblSaleInstallments();
+//                            $existData = $saleModel->find()->where(['product_sale_installment_code' => $data->product_sale_installment_code])->one();
+//                            $existData->installment_date = Yii::$app->general->getforeignkey($data->paymentCycleCode, 'from_date');
+//                            $save_model[] = $existData;
+//                        }
+//                    }
+//                }
+//            }
+            $adjust_id = [];
+            $memberPaymentModel = new TblMemberPaymentAlias();
+            $memberPaymentModel->attributes = Yii::$app->request->get();
+            $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
+            foreach ($memberPaymentModelData as $memberPayment) {
+                $historyModel = new TblMemberPaymentAliasHistory();
+                Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
+                $memberPayment->payment_status = $processFlag;
+                $save_model[] = $historyModel;
+                $save_model[] = $memberPayment;
+                $dcsCode = $memberPayment->dcs_code;
+                $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
+                $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
+                $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
+                $recovery = !empty($memberPayment->recovery) ? $memberPayment->recovery : 0;
+                $adjust_recovery = !empty($memberPayment->adjust_recovery) ? $memberPayment->adjust_recovery : 0;
+                $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
+                $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
+                $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
+                $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
+            }
+
+            foreach ($summaryModelData as $summaryData) {
+                $historyModel = new TblMemberPaymentSummaryAliasHistory();
+                Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
+                $summaryData->payment_status = $processFlag;
+                $dcs = $summaryData->dcs_code;
+                if (!empty($adjustmentSummary[$dcs])) {
+                    $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
+                    $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
+                    $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
+                    $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
+                    $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
+                }
+                $save_model[] = $historyModel;
+                $save_model[] = $summaryData;
+            }
+
+            $successMsg = 'Payment adjusted succesfully';
+            if ($processFlag == 'Lock') {
+                $successMsg = Yii::t('app', 'Payment has been Locked Successfully');
+            }
+            $transaction = $this->generalModel->saveTransaction($save_model, [$successMsg, 'info']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
+            }
+
+//            Yii::$app->response->format = Response::FORMAT_JSON;
+//            return Json::encode($record);
+//            if ($transaction !== FALSE && $transaction != 'customRender') {
+//                return $this->redirect(['index']);
+//            }
+        }
+        if (Yii::$app->request->get()) {
+            $model = new TblMemberPaymentAlias();
+//            $model->load(Yii::$app->request->get());
+            $model->attributes = Yii::$app->request->get();
+//            if ($reGenerate == 1) {
+//                $query = $this->getMemberDcsSpData($model, $reGenerate);
+//            }
+            $searchModel = new TblMemberPaymentSummaryAliasSearch();
+            $searchModel->attributes = $model->attributes;
+            $dataProvider = $searchModel->search([]);
+//            $dataProvider->pagination = false;
+            $negativeValCount = 0;
+            $memberPaymentModel = new TblMemberPaymentAlias();
+            $memberPaymentModel->attributes = $model->attributes;
+            $negativeValCount = $memberPaymentModel->getNegativeValCount();
+            return $this->render('process_lock_dcs_payment_data', [
+                        'model' => $model,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'negativeValCount' => $negativeValCount,
+                        'removeCheckBox' => true
+            ]);
+        }
+    }
+
     public function actionListMemberPayment() {
         // Farmer Payment Process : Step 3 (Display Member Wise Data for Adjustment)
         if (Yii::$app->request->post()) {
@@ -189,7 +327,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
                 $dcs_ai = 0;
                 $member_ai = 0;
-                return $this->redirect(['member-payment-adjust', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]);
+                return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]);
             }
         }
         return $this->redirect(\yii\helpers\Url::previous());
@@ -215,7 +353,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : 0;
             $save_model = [];
             $cnt = 0;
-            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
+            $processFlag = 'Process'; //!empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
             //process_lock_flag
 
             $summaryModel = new TblMemberPaymentSummaryAlias();
@@ -302,9 +440,23 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $successMsg = Yii::t('app', 'Payment has been Locked Successfully');
             }
             $transaction = $this->generalModel->saveTransaction($save_model, [$successMsg, 'info']);
-            if ($transaction !== FALSE && $transaction != 'customRender') {
-                return $this->redirect(['index']);
+            if ($transaction == 'customRedirect') {
+                $msg = '';
+//                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'success', 'msg' => $msg];
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'error', 'msg' => $msg];
             }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+//            if ($transaction !== FALSE && $transaction != 'customRender') {
+//                return $this->redirect(['index']);
+//            }
+        } else {
+            $msg = ''; //Yii::$app->getSession()->getFlash('success')['message'];
+            $record = ['status' => 'error', 'msg' => $msg];
+            return Json::encode($record);
         }
 //        $query = $model->getRecords();
 //        $dataProvider = new ActiveDataProvider([
@@ -324,37 +476,35 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     public function actionMemberPaymentAdjustList() {
         $model = new TblMemberPaymentAlias();
-        $model->attributes = Yii::$app->request->get();
-
         $negativeValCount = 0;
 //        $memberPaymentModel = new TblMemberPaymentAlias();
 //        $memberPaymentModel->attributes = $model->attributes;
 //        $negativeValCount = $memberPaymentModel->getNegativeValCount();
 //        $query = $model->getRecords();  
-        $spName = 'sp_portal_member_payment_alias_data';
-        $spParam = [];
-        $spParam[] = $model->payment_cycle_code;
-        $spParam[] = $model->union_code;
-        $spParam[] = $model->plant_code;
-        $spParam[] = $model->mcc_plant_code;
-        $spParam[] = $model->bmc_code;
-        $spParam[] = ',' . implode(',', $model->dcs_code) . ',';
-        $dataProvider = \Yii::$app->general->getSpData($spName, $spParam);
-//        $query = $model->getSelectedFieldsRecords();
-//        $dataProvider = $query->all();
-//        $dataProvider = new ActiveDataProvider([
-//            'query' => $query,
-//            'pagination' => FALSE,
-//        ]);
-
-        $aliasModel = new TblMemberPaymentAlias();
-        $aliasModel->attributes = Yii::$app->request->get();
-        return $this->renderAjax('member_payment_adjust_list', [
-                    'model' => $model,
-                    'aliasModel' => $aliasModel,
-                    'dataProvider' => $dataProvider
-//                    'negativeValCount' => $negativeValCount
-        ]);
+        if (!empty($_POST['payment_cycle_code']) && !empty($_POST['bmc_code']) && !empty($_POST['dcs_code'])) {
+            $model->attributes = $_POST;
+//            $memberPaymentModel = new TblMemberPaymentAlias();
+//            $memberPaymentModel->attributes = $model->attributes;
+//            $negativeValCount = $memberPaymentModel->getNegativeValCount();
+//            $query = $model->getRecords();
+            $spName = 'sp_portal_member_payment_alias_data';
+            $spParam = [];
+            $spParam[] = $_POST['payment_cycle_code'];
+            $spParam[] = $_POST['union_code'];
+            $spParam[] = $_POST['plant_code'];
+            $spParam[] = $_POST['mcc_plant_code'];
+            $spParam[] = $_POST['bmc_code'];
+            $spParam[] = ',' . $_POST['dcs_code'] . ',';
+            $dataProvider = \Yii::$app->general->getSpData($spName, $spParam);
+            $aliasModel = new TblMemberPaymentAlias();
+            $aliasModel->attributes = $_POST;
+            return $this->renderAjax('member_payment_adjust_list', [
+                        'model' => $model,
+                        'aliasModel' => $aliasModel,
+                        'dataProvider' => $dataProvider,
+                        'negativeValCount' => $negativeValCount
+            ]);
+        }
     }
 
     private function getMemberDcsSpData($model, $reGenerate = 0) {
