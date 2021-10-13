@@ -26,15 +26,20 @@ use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
 
+// Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//use app\modules\installation\models\TblUserDownloadAck;
+//use app\modules\installation\models\TblUserAndroid;
+//use app\modules\installation\models\TblUserRoleMapping;
+//use app\modules\installation\models\TblRole;
+// END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 /**
  * Default controller for the `vendorapi` module
  */
-class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController
-{
+class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\AndroidDpuController {
 
-    public function actionRegister()
-    {
+    public function actionRegister() {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['content'])) {
@@ -122,9 +127,12 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionVerification()
-    {
+    public function actionVerification() {
         $res_data = [];
+        // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//        $saveModel = [];
+//        $sendNotificaton = FALSE;
+        // END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
         $data = $this->post_data;
         $content = !empty($data['content']) ? $data['content'] : [];
         $model = new TblAndroidInstallationDetails();
@@ -147,9 +155,110 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             }
             // END: Change is temporary for d2d development which need to be changed after procution: Hardik - 30-10-2020
             $transaction = $this->generalModel->saveTransaction([$model], ['app verification', 'create']);
+            // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//            $saveModel[] = $model;
+//            $ackModel = new TblUserDownloadAck();
+//            $orgDetail = $ackModel->getOrgDetail($org_type, $org_code);
+//
+//            $ackModel->hash_key = $model->hash_key;
+//            $ackModel->device_id = $data['device_id'];
+//            $existAck = $ackModel->getExistData($org_type);
+//            if (!empty($existAck)) {
+//                foreach ($existAck as $exist) {
+//                    $ackModel->updateAll(['download_pending' => 3], ['ack_id' => $exist['ack_id']]);
+//                }
+//            }
+//            $androidUsr = new TblUserAndroid();
+//            $ActiveUser = $androidUsr->getExistData($org_type, $ackModel);
+//            $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
+//            //CHECK MAIN USER EXIST
+//            $username = [$orgCode, $orgCode . '01'];
+//            $user = $androidUsr->getMainExistData($org_type, $ackModel, $username);
+//            if (!empty($user)) {
+//                if (!empty($ActiveUser)) {
+//                    foreach ($ActiveUser as $usrData) {
+//                        $usrAckModel = new TblUserDownloadAck();
+//                        $usrAckModel->attributes = $ackModel->attributes;
+//                        $usrAckModel->user_code = $usrData->user_code;
+//                        $usrAckModel->download_pending = 1;
+//                        $saveModel[] = $usrAckModel;
+//                    }
+//                }
+//            } else {
+//                $sendNotificaton = TRUE;
+//                //SUPERVISOR USER
+//                $orgCode = $org_type == 'VLC' ? $ackModel->dcs_code : ($org_type == 'BMC' ? $ackModel->bmc_code : $ackModel->mcc_plant_code);
+//                $androidUsr = new TblUserAndroid();
+//                $androidUsr->attributes = $ackModel->attributes;
+//                $androidUsr->scenario = 'installation';
+//                $contact = $androidUsr->getContactDetails($org_type, $ackModel);
+//                $androidUsr->user_code = Yii::$app->general->getCodeAutoIncrement($androidUsr);
+//                $androidUsr->name = !empty($contact) ? $contact->firstname : $org_type;
+//                $androidUsr->username = $orgCode . '01';
+//                $androidUsr->password = Yii::$app->general->generateRandomString();
+//                $androidUsr->mobile_no = !empty($contact) ? $contact->mobile_no : '';
+//                $androidUsr->email = !empty($contact) ? $contact->email : '';
+//                $saveModel[] = $androidUsr;
+//                $usrAckModel = new TblUserDownloadAck();
+//                $usrAckModel->attributes = $ackModel->attributes;
+//                $usrAckModel->user_code = $androidUsr->user_code;
+//                $usrAckModel->download_pending = 1;
+//                $saveModel[] = $usrAckModel;
+//                $roleModel = new TblRole();
+//                $roleDetails = $roleModel->getRoleDetails($org_type, 'SUPERVISOR');
+//                if (!empty($roleDetails)) {
+//                    $usrRole = new TblUserRoleMapping();
+//                    $usrRole->user_code = $androidUsr->user_code;
+//                    $usrRole->role_code = $roleDetails->role_code;
+//                    $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+//                    if (empty($existRoleMap)) {
+//                        $saveModel[] = $usrRole;
+//                    }
+//                }
+//                //ADMIN USER
+//                $androidUser = new TblUserAndroid();
+//                $androidUser->attributes = $ackModel->attributes;
+//                $androidUser->scenario = 'installation';
+//                $androidUser->user_code = $usrAckModel->user_code + 1;
+//                $androidUser->name = $org_type == 'VLC' ? 'VLC Admin' : ($org_type == 'BMC' ? 'BMC Admin' : 'BMC Admin');
+//                $androidUser->username = $orgCode;
+//                $androidUser->password = 'am' . $orgCode . 'cs';
+//                $androidUser->mobile_no = '0000000000';
+//                $saveModel[] = $androidUser;
+//                $userAckModel = new TblUserDownloadAck();
+//                $userAckModel->attributes = $ackModel->attributes;
+//                $userAckModel->user_code = $androidUser->user_code;
+//                $userAckModel->download_pending = 1;
+//                $saveModel[] = $userAckModel;
+//                $roleMapDetails = $roleModel->getRoleDetails($org_type, 'ADMIN');
+//                if (!empty($roleMapDetails)) {
+//                    $usrRole = new TblUserRoleMapping();
+//                    $usrRole->user_code = $androidUser->user_code;
+//                    $usrRole->role_code = $roleMapDetails->role_code;
+//                    $existRoleMap = $usrRole::find()->where(['user_code' => $usrRole->user_code, 'role_code' => $usrRole->role_code])->one();
+//                    if (empty($existRoleMap)) {
+//                        $saveModel[] = $usrRole;
+//                    }
+//                }
+//            }
+//
+//            $transaction = $this->generalModel->saveTransaction($saveModel, ['app verification', 'create']);
+            // END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
             if ($transaction !== 'customRedirect') {
                 return FALSE;
             }
+            // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
+//            elseif ($sendNotificaton) {
+//                $pass = (!empty($androidUsr->password) && Yii::$app->general->decryptData($androidUsr->password) !== FALSE) ? Yii::$app->general->decryptData($androidUsr->password) : $androidUsr->password;
+//                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
+//                $sms_data = [];
+//                if (YII_ENV_DEV) {
+//                    
+//                } else {
+//                    Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE);
+//                }
+//            }
+            // END: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
             $androidDpuModel = new TblAndroidInstallationDetails();
             $androidDpuModel->android_installation_details_id = $model->android_installation_details_id;
             $androidDpuModel->android_installation_id = $model->android_installation_id;
@@ -165,8 +274,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function getParentDetails(&$res_data, $data)
-    {
+    public function getParentDetails(&$res_data, $data) {
         $code = $data['organization_code'];
         $type = $data['organization_type'];
         $parent_code = '';
@@ -210,8 +318,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $res_data['parent_name'] = $parent_name;
     }
 
-    public function actionInitialization()
-    {
+    public function actionInitialization() {
         $db_file = 'everest_amcs.db';
         $res_data = [];
         $data = $this->post_data;
@@ -278,8 +385,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         return $this->response;
     }
 
-    public function actionStartUp()
-    {
+    public function actionStartUp() {
         $res_data = [];
         $data = $this->post_data;
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
@@ -314,6 +420,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                 $union_code = $orgDetail['union_code'];
                 $model_data = $orgDetail['model_data'];
                 if (!empty($model_data)) {
+                    $rangeModel = new TblAllowDcsManualCollectionRange();
                     if ($org_type == 'VLC') {
                         $detailType = 'society';
                         $mcc_bmc_config = FALSE;
@@ -331,8 +438,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['config']['collectionBlock'] = !(bool) $collection_status;
                         $res_data['config']['dcsBlock'] = empty(Yii::$app->general->getforeignkey($model_data->activeStatus, 'is_active')) ? FALSE : TRUE;
                         $res_data['config']['dispatchMandate'] = $model_data->is_dispatch_mandate > 0 ? true : false; //(bool) $model_data->is_dispatch_mandate;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $rangeModel->getManualData($model_data, 'is_weight_manual'); // $model_data->is_weight_manual;
+                        $res_data['config']['qualityManual'] = (bool) $rangeModel->getManualData($model_data, 'is_quality_manual'); //$model_data->is_quality_manual;
                         $config = $model_data->dpuIncentiveMaster;
                         if (!empty($config)) {
                             $att = $config->attributes;
@@ -361,8 +468,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['config']['collectionBlock'] = FALSE;
                         $res_data['config']['dcsBlock'] = FALSE;
                         $res_data['config']['dispatchMandate'] = FALSE;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;
+                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;// $rangeModel->getManualData($model_data, 'is_weight_manual'); // 
+                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;// $rangeModel->getManualData($model_data, 'is_quality_manual'); 
                         $res_data['rate']['mPurchaseRateCode'] = "";
                         $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                         $res_data['rate']['ePurchaseRateCode'] = "";
@@ -511,8 +618,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $this->response['data'] = $res_data;
         return $this->response;
     }
-    public function DcsSentboxGenerate($post)
-    {
+
+    public function DcsSentboxGenerate($post) {
         $device = $post['device_id'];
         $model = new TblDcsDeactive();
         $deactiveData = $model->getDeactiveRecords(false, $post);
@@ -523,8 +630,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $this->setSentBox($post, $CustModel, $device, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
     }
 
-    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error)
-    {
+    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
         if (!empty($data)) {
             $ids = array_map(function ($e) use ($key) {
                 return $e->{$key};
@@ -569,8 +675,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         }
     }
 
-    private function sentboxModel($code, $type, $union, $device)
-    {
+    private function sentboxModel($code, $type, $union, $device) {
         $sentbox = new TblSentbox();
         $sentbox->dest_org_id = $code;
         $sentbox->source_org_id = $union;
@@ -578,4 +683,5 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $sentbox->device_id = $device;
         return $sentbox;
     }
+
 }

@@ -42,10 +42,11 @@ $attribute = [
         ],
         //'filter' => Yii::$app->controls->search_date($searchModel, 'registration_date'),
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->from_date);
-        },
+    return Yii::$app->controls->view_date($model->from_date);
+},
 //                'label' => Yii::t('app', 'From Date')
     ],
+    ['attribute' => 'remarks'],
 //    [
 //        'attribute' => 'to_date', 'filter' => true,
 //        'filterType' => GridView::FILTER_DATE,
@@ -68,19 +69,19 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-deactive/view', 'id' => $model->member_code], $options);
         },
-        'active' => function ($url, $model) {
+                'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'member-active ' . $class, 'data-member_deactive_code' => $model->member_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/dcsoperation/tbl-member-deactive/activate-member'], $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<div id="MemberActive"></div>
-<?php
-$script = " $(document).ready(function(){
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        ?>
+        <div id="MemberActive"></div>
+        <?php
+        $script = " $(document).ready(function(){
         $(document).on('click','.member-active',function(e){
 //            $('#pageloader').show();
 //            $('#loadercontent').show();
@@ -102,5 +103,5 @@ $script = " $(document).ready(function(){
             });
         });
     });";
-$this->registerJs($script, View::POS_END, 'member-active');
-?>
+        $this->registerJs($script, View::POS_END, 'member-active');
+        ?>

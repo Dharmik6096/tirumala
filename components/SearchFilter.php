@@ -288,6 +288,9 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
                 'action' => ['list']
             ],
+            'TblUserAndroidSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
             'TblCollectionPenaltyRateSearch' => [
                 'filter' => ['f_union_code'],
             ],
@@ -324,6 +327,12 @@ class SearchFilter {
             ],
             'TblMccShiftLockStagingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblAllowDcsManualCollectionRangeSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblDcsClosingSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

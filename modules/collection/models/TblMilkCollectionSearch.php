@@ -124,8 +124,21 @@ class TblMilkCollectionSearch extends TblMilkCollection {
             'tbl_milk_collection.sample_no' => $this->sample_no,
             'tbl_milk_collection.ack' => $this->ack,
             'tbl_milk_collection.qty_mode' => $this->qty_mode,
-            'tbl_milk_collection.originating_type' => $this->originating_type,
+//            'tbl_milk_collection.originating_type' => $this->originating_type,
         ]);
+        if (isset($this->originating_type)) {
+            if ($this->originating_type == 5) {
+                $query->andFilterWhere(['tbl_milk_collection.originating_type' => 0]);
+            } elseif ($this->originating_type == 1) {
+                $query->andFilterWhere(['tbl_milk_collection.originating_type' => 1]);
+            } elseif ($this->originating_type == 2) {
+                $query->andFilterWhere(['tbl_milk_collection.originating_type' => [11, 12, 21, 23]]);
+            } elseif ($this->originating_type == 3) {
+                $query->where('0=1');
+            } elseif ($this->originating_type == 4) {
+                $query->andFilterWhere(['tbl_milk_collection.originating_type' => [13, 22]]);
+            }
+        }
 
         $query->andFilterWhere(['like', 'tbl_member.member_name', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_milk_collection.name', $this->name])

@@ -64,7 +64,7 @@ class TblMemberDeactiveSearch extends TblMemberDeactive {
             'member_code' => $this->member_code,
             'member_deactive_code' => $this->member_deactive_code,
         ]);
-
+        $query->andFilterWhere(['like', 'remarks', $this->remarks]);
 
 
         return $dataProvider;

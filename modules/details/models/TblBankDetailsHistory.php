@@ -39,7 +39,7 @@ class TblBankDetailsHistory extends \yii\db\ActiveRecord {
         return [
             [['id', 'detail_code', 'firstname', 'lastname', 'surname', 'is_verified'], 'safe'],
             [['module_name', 'module_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'created_by', 'updated_by', 'operation_type'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at', 'is_active', 'is_default'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'is_active', 'is_default', 'history_created_by', 'remarks'], 'safe'],
         ];
     }
 

@@ -277,7 +277,7 @@ class Applicability extends \yii\base\Module {
                             if ($model->hasAttribute('shift_code')) {
                                 $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
                             }
-                            $check = $this->checkDuplicate($appModel);
+                            $check = $this->checkDuplicateCount($appModel);
                             if ($check == 1) {
                                 $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
                                 return $this->customRender();
@@ -928,6 +928,17 @@ class Applicability extends \yii\base\Module {
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $this->attachment_folder . $fileName;
         }
+    }
+
+    public function checkDuplicateCount($model) {
+        $field_name = $this->field_name;
+        $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
+        foreach ($this->fields as $key => $f) {
+            if (in_array('create', $f['view'])) {
+                $query->where([$key => $model->{$key}]);
+            }
+        }
+        return $query->count();
     }
 
 }

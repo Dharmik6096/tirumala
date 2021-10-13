@@ -404,29 +404,29 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'is_weight_manual',
-                                'format' => 'html',
-                                'value' => $model->is_weight_manual == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'is_quality_manual',
-                                'format' => 'html',
-                                'value' => $model->is_quality_manual == 1 ? 'Yes' : 'No',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
                                 'attribute' => 'is_bmc',
                                 'format' => 'html',
                                 'value' => $model->is_bmc == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
+//                            [
+//                                'attribute' => 'is_weight_manual',
+//                                'format' => 'html',
+//                                'value' => $model->is_weight_manual == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
                         ],
                     ],
+//                    [
+//                        'columns' => [
+//                            [
+//                                'attribute' => 'is_quality_manual',
+//                                'format' => 'html',
+//                                'value' => $model->is_quality_manual == 1 ? 'Yes' : 'No',
+//                                'valueColOptions' => ['style' => 'width:30%'],
+//                            ],
+//                        ],
+//                    ],
                     [
                         'columns' => [
                             [
@@ -447,7 +447,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'aadhaar_no',
                                 'format' => 'html',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'is_chiller',
+                                'value' => ($model->is_chiller == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

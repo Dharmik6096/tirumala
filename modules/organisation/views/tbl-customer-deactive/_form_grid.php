@@ -41,9 +41,10 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->from_date);
-        },
+    return Yii::$app->controls->view_date($model->from_date);
+},
     ],
+    ['attribute' => 'remarks'],
 ];
 
 $grid_option = [
@@ -55,19 +56,19 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-customer-deactive/view', 'id' => $model->customer_code], $options);
         },
-        'active' => function ($url, $model) {
+                'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'customer-active ' . $class, 'data-customer_deactive_code' => $model->customer_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-customer-deactive/activate-customer'], $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<div id="CustomerActive"></div>
-<?php
-$script = " $(document).ready(function(){
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        ?>
+        <div id="CustomerActive"></div>
+        <?php
+        $script = " $(document).ready(function(){
         $(document).on('click','.customer-active',function(e){
 //            $('#pageloader').show();
 //            $('#loadercontent').show();
@@ -89,5 +90,5 @@ $script = " $(document).ready(function(){
             });
         });
     });";
-$this->registerJs($script, View::POS_END, 'customer-active');
-?>
+        $this->registerJs($script, View::POS_END, 'customer-active');
+        ?>

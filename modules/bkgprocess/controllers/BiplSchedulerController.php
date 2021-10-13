@@ -106,7 +106,7 @@ class BiplSchedulerController extends ChildController {
                                             $ftp_txn_data = $ftp_txn_model->getExistFileData();
                                             if (empty($ftp_txn_data) && strlen($file) == 12) {
 //                                                $local_path = \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
-                                                $local_path = \Yii::getAlias('@webroot') . '/'. \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
+                                                $local_path = \Yii::getAlias('@webroot') . '/' . \Yii::$app->params['biplDirPath'] . $records['CP_Code'] . '/' . $folder . '/';
                                                 $local_path = str_replace('//', '/', $local_path);
                                                 if (Yii::$app->general->checkDirectory($local_path)) {
                                                     $ftp->local_path = $local_path;
@@ -432,7 +432,7 @@ class BiplSchedulerController extends ChildController {
                         $l_data = explode(",", $fd);
                         $l_cnt = count($l_data);
                         if ($row->module_name == 'TblTankerDispatch') {
-                            $h_cnt+=1;
+                            $h_cnt += 1;
                             unset($l_data[$l_cnt - 1]);
                         }
                         if ($h_cnt == $l_cnt) {
@@ -455,6 +455,9 @@ class BiplSchedulerController extends ChildController {
                                     }
                                     $collectionModel->scenario = 'checkDate';
                                     $collectionModel->attributes = $data;
+                                    if ($collectionModel->hasAttribute('ftp_txn_log_id')) {
+                                        $collectionModel->ftp_txn_log_id = !empty($row->ftp_txn_log_id) ? $row->ftp_txn_log_id : NULL;
+                                    }
                                     $collectionModel->amount = ($collectionModel->amount == 'NA') ? 0 : $collectionModel->amount;
                                     $collectionModel->rate = ($collectionModel->rate == 'NA') ? 0 : $collectionModel->rate;
                                     if (empty($collectionModel->cp_code)) {

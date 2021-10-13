@@ -95,9 +95,22 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'tbl_bmc_collection.qty_mode' => $this->qty_mode,
             'tbl_bmc_collection.doc_no' => $this->doc_no,
             'tbl_bmc_collection.sample_no' => $this->sample_no,
-            'tbl_bmc_collection.originating_type' => $this->originating_type,
+//            'tbl_bmc_collection.originating_type' => $this->originating_type,
             'tbl_bmc_collection.route_code' => $this->route_code,
         ]);
+        if (isset($this->originating_type)) {
+            if ($this->originating_type == 5) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 0]);
+            } elseif ($this->originating_type == 1) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => 1]);
+            } elseif ($this->originating_type == 2) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => [11, 12, 21, 23]]);
+            } elseif ($this->originating_type == 3) {
+                $query->where('0=1');
+            } elseif ($this->originating_type == 4) {
+                $query->andFilterWhere(['tbl_bmc_collection.originating_type' => [13, 22]]);
+            }
+        }
         $query->andFilterWhere(['like', 'tbl_bmc_collection.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_bmc_collection.rtpl', $this->rtpl])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])

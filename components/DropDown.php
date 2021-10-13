@@ -992,7 +992,7 @@ class DropDown extends Component {
             'originating_type' => [
                 'name' => 'originating_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [0 => Yii::t('app', 'Create'), 1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry')],
+                'data' => [1 => Yii::t('app', 'Import'), 2 => Yii::t('app', 'Sync'), 3 => Yii::t('app', 'Auto Entry'), 4 => Yii::t('app', 'Pendrive Import'), 5 => Yii::t('app', 'Create'),],
             ],
             'p_organization_type' => [
                 'name' => 'organization_type',
@@ -1234,6 +1234,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Qty' => Yii::t('app', 'Qty'), '60/40' => Yii::t('app', '60/40'), '52/48' => Yii::t('app', '52/48')],
             ],
+            'originating_type_flag' => [
+                'name' => 'originating_type_flag',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Manual'), 1 => Yii::t('app', 'Excel'), 11 => Yii::t('app', '8-BIT'), 12 => Yii::t('app', '32-BIT'), 13 => Yii::t('app', 'EIPL'), 21 => Yii::t('app', 'BIPL'), 22 => Yii::t('app', 'BIPL'), 23 => Yii::t('app', 'AMCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -1335,6 +1340,7 @@ class DropDown extends Component {
             'report_code' => ['name' => 'report_code', 'fields' => 'report_code,report_name', 'prompt' => 'Select Report', 'model' => 'TblReportList'],
             'depend_tax_code' => ['name' => 'tax_code', 'fields' => 'tax_code,tax_name,', 'prompt' => Yii::t('app', 'Select Tax'), 'model' => 'TblTax', 'depend' => 'union_code'],
             'slab_bill_head' => ['name' => 'bill_head_code', 'fields' => 'bill_head_code,bill_head_name', 'prompt' => 'Select Head', 'model' => 'TblBillHead', 'whereCondition' => ['has_slab' => 1]],
+            'role_code' => ['name' => 'role_code', 'fields' => 'role_code,description', 'prompt' => 'Select Role', 'model' => 'TblRole'],
             'penalty_type' => ['name' => 'penalty_type', 'fields' => 'penalty_type_code,penalty_type,', 'prompt' => Yii::t('app', 'Select Penalty Type'), 'model' => 'TblCollectionPenaltyType', 'depend' => 'union_code'],
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
         ];

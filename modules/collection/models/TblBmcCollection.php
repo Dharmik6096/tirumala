@@ -130,7 +130,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['water'], 'default', 'value' => 0],
             [['doc_no'], 'default', 'value' => 1],
             [['rtpl'], 'number', 'min' => 0],
-            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'update', 'importCsv']],
+            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'importCsv']],
             [['customer_code'], 'setUuid', 'on' => ['create', 'update', 'androidsync', 'importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
@@ -312,7 +312,7 @@ class TblBmcCollection extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function validateCustomer($union, $code, $type) {
+    public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
             $this->customer_type = $type;
@@ -323,7 +323,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $this->customer_type;
                 $customerModelData = $customerModel->find()
-                        ->where(['customer_type' => $this->customer_type])
+                        ->where(['customer_type' => $this->customer_type, 'bmc_code' => $bmc])
                         ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $this->customer_code])
                         ->all();
                 if (count($customerModelData) == 1) {
@@ -563,6 +563,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
         $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
         if (strtolower($modelData->customer_type) == 'dcs') {
+            $modelData->dcs_code = !empty($modelData->dcs_code) ? $modelData->dcs_code : $modelData->customer_code;
             $xclol = Yii::$app->general->getforeignkey($modelData->dcsCode, 'x_col1');
         } else {
             $xclol = Yii::$app->general->getforeignkey($modelData->mainCustomerCode, 'x_col1');

@@ -51,6 +51,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Bulk Notification'), 'url' => ['/sms/tbl-bulk-notification/index'], 'active' => ($cntrl == 'tbl-bulk-notification')],
                 ['label' => Yii::t('app', 'Bank Verification'), 'url' => ['/organisation/tbl-dcs/master-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'master-verification')],
                 ['label' => Yii::t('app', 'Contact Verification'), 'url' => ['/organisation/tbl-dcs/contact-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'contact-verification')],
+                ['label' => Yii::t('app', 'DCS Manual Collection Range'), 'url' => ['/organisation/tbl-allow-dcs-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-dcs-manual-collection-range')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Accounting Master <b class="caret"></b></a>',
@@ -93,6 +94,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                 ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
                 ['label' => Yii::t('app', 'Milk Dispatch - New'), 'url' => ['/collection/tbl-dcs-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-dcs-milk-dispatch')],
+                ['label' => Yii::t('app', 'DCS Closing'), 'url' => ['/collection/tbl-dcs-closing/index'], 'active' => ($cntrl == 'tbl-dcs-closing')],
                 ['label' => Yii::t('app', 'BMC Collection'), 'url' => ['/collection/tbl-bmc-collection/index'], 'active' => ($cntrl == 'tbl-bmc-collection')],
                 ['label' => Yii::t('app', 'Milk Rejection'), 'url' => ['/collection/tbl-milk-reject/index'], 'active' => ($cntrl == 'tbl-milk-reject')],
                 ['label' => Yii::t('app', 'BMC Dispatch'), 'url' => ['/collection/tbl-bmc-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch')], //                ['label' => 'Local Milk Sale', 'url' => ['/collection/tbl-tab-local-sale/index'], 'active' => ($cntrl == 'tbl-tab-local-sale')],
@@ -455,6 +457,7 @@ echo GhostMenu::widget([
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/reports/sap-comparision-report']],
                         ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/reports/dispatch-vs-receipt']],
                         ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/cpmilk-sap-report']],
+                        ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                     ]
                 ],
                 [
@@ -562,6 +565,15 @@ echo GhostMenu::widget([
                         ['label' => 'Mobile Dashboard Permission', 'url' => ['/usermanagement/tbl-eipl-app-widget-mapping/app-widget-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-widget-mapping'),],
                         ['label' => 'Mobile Menu Permission', 'url' => ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], 'active' => ($cntrl == 'tbl-eipl-app-menu-actions'),],
                     ],
+                ],
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">AMCS User <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => 'User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'tbl-user-android')],
+                        ['label' => 'Role', 'url' => ['/installation/tbl-role/index'], 'active' => ($cntrl == 'tbl-role')],
+                        ['label' => 'Action', 'url' => ['/installation/tbl-action/index'], 'active' => ($cntrl == 'tbl-action')],
+                    ]
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],

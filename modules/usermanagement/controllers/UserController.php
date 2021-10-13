@@ -82,7 +82,9 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                             $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                             $tempModelData = $tempModel->getAppTempLogin($id);
                             if (!empty($tempModelData)) {
-                                $delete[] = $tempModelData;
+                                foreach ($tempModelData as $temp) {
+                                    $delete[] = $temp;
+                                }
                             }
                         }
                     }
@@ -118,7 +120,9 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                         $tempModelData = $tempModel->getAppTempLogin($id);
                         if (!empty($tempModelData)) {
-                            $delete[] = $tempModelData;
+                            foreach ($tempModelData as $temp) {
+                                $delete[] = $temp;
+                            }
                         }
                     }
                     if ($model->oldAttributes['allow_app_login'] == 0 && $model->allow_app_login == 1) {
@@ -181,8 +185,10 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                         $tempModel->mobile_no = $model->oldAttributes['mobile_no'];
                         $tempModelData = $tempModel->getAppTempLogin($id);
                         if (!empty($tempModelData)) {
-                            $tempModelData->department = $model->department;
-                            $delete[] = $tempModelData;
+                            foreach ($tempModelData as $temp) {
+                                $temp->department = $model->department;
+                                $delete[] = $temp;
+                            }
                         }
                     }
                 }

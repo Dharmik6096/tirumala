@@ -12,7 +12,7 @@ class BackGroundDataImport extends Model {
     public $bmc_code, $applicable_code, $applicable_for, $purchase_rate_code, $dcs_purchase_rate_code, $wef_date, $shift_code;
     public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment;
     public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
-    public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class;
+    public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code;
 
     function __construct() {
         

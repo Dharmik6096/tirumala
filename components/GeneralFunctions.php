@@ -617,7 +617,7 @@ class GeneralFunctions extends Component {
                 return false;
             }
         }
-        chmod($path, 0777);
+//        chmod($path, 0777);
         return true;
     }
 
@@ -2054,6 +2054,20 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function generateRandomString() {
+        $seed = str_split('abcdefghijklmnopqrstuvwxyz'
+                . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                . '0123456789');
+//                . '0123456789!@#$%^&*()');
+        shuffle($seed); // probably optional since array_is randomized; this may be redundant
+        $rand = '';
+        foreach (array_rand($seed, 8) as $k) {
+            $rand .= $seed[$k];
+        }
+
+        return $rand;
+    }
+
     public function setAttachment(&$child, $files, $module_code, $module_name) {
         $filesArray = explode(',', $files);
         unset($filesArray[0]);
@@ -2112,6 +2126,24 @@ class GeneralFunctions extends Component {
             }
         }
         return "";
+    }
+
+    public function getOriginatingType($model, $field) {
+        $value = '';
+        if (isset($model->{$field})) {
+            if ($model->{$field} == 0) {
+                $value = 'Create';
+            } elseif ($model->{$field} == 1) {
+                $value = 'Import';
+            } elseif (in_array($model->{$field}, [11, 12, 21, 23])) {
+                $value = 'Sync';
+            } elseif ($model->{$field} == 3) {
+                $value = 'Auto Entry';
+            } elseif (in_array($model->{$field}, [13, 22])) {
+                $value = 'Pendrive Import';
+            }
+        }
+        return $value;
     }
 
 }

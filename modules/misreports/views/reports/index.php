@@ -36,6 +36,17 @@ if (isset($data['url1'])) {
     } else if (!empty($data['removeExportType'])) {
         $removeExportType = $data['removeExportType'];
     }
+    if (isset($data['dynamic_label']) && $data['dynamic_label'] && !empty($result)) {
+        $codeToAppend = $model->getMccCode($model->mcc_code);
+        $fromShift = $model->from_shift == 1 ? 'MORNING' : 'EVENING';
+        $toShift = $model->to_shift == 1 ? 'MORNING' : 'EVENING';
+        $this->title = $codeToAppend->name . '_' . $codeToAppend->ref_code . '_' . Yii::$app->controls->view_date($model->from_date, 'php:Y-m-d') . ' to ' . Yii::$app->controls->view_date($model->to_date, 'php:Y-m-d') . '_' . $fromShift . '_' . $toShift;
+        $removeExportType = ['CSV'];
+        $exportEvents = ['onRenderSheet' => function($sheet, $widget) {
+                $sheet->getProtection()->setSheet(true);
+                $sheet->getProtection()->setPassword("password");
+            },];
+    }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
 
     $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
@@ -66,7 +77,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);  ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);   ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -231,7 +242,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));   ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));    ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -449,7 +460,8 @@ if (isset($data['url1'])) {
                     'paging' => false,
                     'columns' => $attr,
                     'info' => false,
-                    'withColumnFilter' => true
+                    'withColumnFilter' => true,
+                    'order' => []
                 ]);
 //                echo \nullref\datatable\DataTable::widget([
 //                    'id' => 'custom_report',
@@ -494,7 +506,7 @@ $('.mis_report_modal_toggle').on('click', function(){
                 $('#custom_report #w'+column_no).parent().show();
             }
             column.visible( ! column.visible() );
-        });
+    });
 
         var checkList = document.getElementById('grid_show_hide_list');
         if(checkList != null){

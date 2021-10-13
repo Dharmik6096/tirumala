@@ -8,6 +8,9 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
+$client_code = \Yii::$app->session->get('eiplCode');
+$client_code = !empty($client_code) ? $client_code : '';
+$client_code = strtolower($client_code);
 $imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
 
 $chart_url = Url::to(['load-chart']);
@@ -154,7 +157,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')    ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -262,7 +265,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')    ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
@@ -292,7 +295,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 <div class="panel panel-default panel-main panel-dashboard mt34">
     <div class="panel-body dashboard_section">
         <div class="row">
-            <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') {  ?>
+            <?php //if (Yii::$app->session->get('organizations_type') !== 'UNION') {   ?>
             <!-- <div class="col-sm-6">
                 <div class="flt">
             <?php
@@ -321,18 +324,18 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
             <div class="clearfix"></div>
             <div class="col-sm-12">
                 <div class="flt">
-            <?php //$this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']);  ?>
+            <?php //$this->render('_dashborad_filter', ['model' => $model, 'id' => 'fed_datewise', 'url' => $chart_url, 'container' => 'fed_datewise_container', 'date_range' => true, 'range2' => false, 'shift' => false, 'type' => 'column', 'title' => 'Datewise Milk Collection']);   ?>
                     <div id="fed_datewise_container" class="cont"></div>
                 </div>
             </div> -->
-            <?php //} else {  ?> 
+            <?php //} else {   ?> 
             <div class="row">
 
 
 
 
             </div>
-            <?php //}  ?>
+            <?php //}   ?>
         </div>
 
         <?php
@@ -404,6 +407,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 
 <?php
 $script = "  
+    var clientCodeForData = '" . $client_code . "';
 $( '.sortable' ).sortable();
 $('.widget_table_setting_btn').click(function(){
     $('#dpu_widget_filter').removeClass('in');
@@ -1493,19 +1497,21 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                     htmlData = htmlData + '<td>'+value.cc_receipt_avg_rate+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_receipt_amount+'</td>';
                     htmlData = htmlData + '<td>'+value.cc_receipt_count+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_qty+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_avg_fat+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_avg_snf+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_avg_rate+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_amount+'</td>';
-                    htmlData = htmlData + '<td>'+value.vendor_count+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_qty+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_avg_fat+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_avg_snf+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_avg_rate+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_amount+'</td>';
-                    htmlData = htmlData + '<td>'+value.total_count+'</td>';
-                    
+                    if(clientCodeForData != 'gyan') {
+                        htmlData = htmlData + '<td>'+value.vendor_qty+'</td>';
+                        htmlData = htmlData + '<td>'+value.vendor_avg_fat+'</td>';
+                        htmlData = htmlData + '<td>'+value.vendor_avg_snf+'</td>';
+                        htmlData = htmlData + '<td>'+value.vendor_avg_rate+'</td>';
+                        htmlData = htmlData + '<td>'+value.vendor_amount+'</td>';
+                        htmlData = htmlData + '<td>'+value.vendor_count+'</td>';
+                        
+                        htmlData = htmlData + '<td>'+value.total_qty+'</td>';
+                        htmlData = htmlData + '<td>'+value.total_avg_fat+'</td>';
+                        htmlData = htmlData + '<td>'+value.total_avg_snf+'</td>';
+                        htmlData = htmlData + '<td>'+value.total_avg_rate+'</td>';
+                        htmlData = htmlData + '<td>'+value.total_amount+'</td>';
+                        htmlData = htmlData + '<td>'+value.total_count+'</td>';
+                    }
                     var var_class = 'negative_value';
                     if(value.diff_qty >= 0){
                         var_class = 'positive_vlaue';
@@ -1674,92 +1680,95 @@ function parseMilkAnalysis(blockDataString,union,mcc,value){
                         });
                         htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>" . Yii::t('app', 'Bulk Vendor Receipts') . "</td>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Qty') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_qty+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                        if(clientCodeForData != 'gyan') {
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>" . Yii::t('app', 'Bulk Vendor Receipts') . "</td>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Qty') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_qty+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'FAT') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_fat+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'FAT') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_fat+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'SNF') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_snf+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'SNF') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_snf+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Rate') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_rate+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Rate') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_avg_rate+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Amount') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_amount+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Amount') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_amount+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Count') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_count+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Count') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.vendor_count+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
+                        
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>" . Yii::t('app', 'Total') . "</td>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Qty') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_qty+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'6\'>" . Yii::t('app', 'Total') . "</td>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Qty') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_qty+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'FAT') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_fat+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'FAT') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_fat+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'SNF') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_snf+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'SNF') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_snf+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Rate') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_rate+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Rate') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_avg_rate+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Amount') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_amount+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Amount') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_amount+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
-                        htmlData = htmlData + '<tr>';
-                        htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Count') . "</td>';
-                        $.each(obj1.res, function(key,value) {
-                            htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_count+'</td>';
-                        });
-                        htmlData = htmlData + '</tr>';
+                            htmlData = htmlData + '<tr>';
+                            htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Count') . "</td>';
+                            $.each(obj1.res, function(key,value) {
+                                htmlData = htmlData + '<td class = \'custom_grid_normal dynamic_value\'>'+value.total_count+'</td>';
+                            });
+                            htmlData = htmlData + '</tr>';
 
+                        }
                         htmlData = htmlData + '<tr>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\' rowspan=\'5\'>" . Yii::t('app', 'CC Differences') . "</td>';
                         htmlData = htmlData + '<td class = \'custom_grid_header header_labels\'>" . Yii::t('app', 'Qty') . "</td>';

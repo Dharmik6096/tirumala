@@ -74,6 +74,7 @@ AppAsset::register($this);
                     <div class="col-sm-12 col-md-12 col-sm-print-12">
                         <?= $content ?>
                     </div>
+                    <div id="viewHistoryPopup"></div>
                     <!--                    <div class="col-sm-3 col-md-2 padding-left-0 hidden-print">
                     <?php require_once('templates/tpl_sidebar.php'); ?>
                                         </div>-->

@@ -57,16 +57,23 @@ if (empty($display_rmrd)) {
         </div>
     </a>
 
-
-    <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?> ">
-        <div class="div_dash_block_content">
-            <p class="dash_block_header"><?= Yii::t('app', 'Bulk Vendor') ?></p>
-            <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
-            <h4 class="dash_block_value block_value" id="farmer_rmrd_block_blk_vendor">0/0</h4>
+    <?php
+    $client_code = \Yii::$app->session->get('eiplCode');
+    $client_code = !empty($client_code) ? $client_code : '';
+    $client_code = strtolower($client_code);
+    if ($client_code != 'gyan') {
+        ?>
+        <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?> ">
+            <div class="div_dash_block_content">
+                <p class="dash_block_header"><?= Yii::t('app', 'Bulk Vendor') ?></p>
+                <p class="dash_block_description"><small>On <?= Yii::$app->controls->view_date($date) ?></small></p>
+                <h4 class="dash_block_value block_value" id="farmer_rmrd_block_blk_vendor">0/0</h4>
+            </div>
+            <div class="div_dash_block_icon"> <img
+                    src="<?= $imageIconPath . 'dcs.png' ?>"> 
+            </div>
         </div>
-        <div class="div_dash_block_icon"> <img
-                src="<?= $imageIconPath . 'dcs.png' ?>"> </div>
-    </div>
+    <?php } ?>
 
 
     <div class="div_dash_block dashboardWidgetDetailPortion <?= $class_cols . ' ' . $display_rmrd ?>">
