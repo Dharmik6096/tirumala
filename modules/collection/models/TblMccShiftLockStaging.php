@@ -102,4 +102,13 @@ class TblMccShiftLockStaging extends \app\models\ChildModel {
         return $this->hasOne(TblMccShiftLock::className(), ['shift_lock_code' => 'shift_lock_code']);
     }
 
+    public function getLockShift($limit = '') {
+        $query = $this->find()
+                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
+                ->limit($limit)
+                ->all();
+
+        return $query;
+    }
+
 }

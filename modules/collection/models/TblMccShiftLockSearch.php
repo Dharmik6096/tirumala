@@ -7,11 +7,16 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblMccShiftLockHistory;
+use yii\db\Expression;
+use yii\db\ActiveQuery;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMccShiftLockSearch represents the model behind the search form about `app\modules\collection\models\TblMccShiftLock`.
  */
 class TblMccShiftLockSearch extends TblMccShiftLock {
+
+    public $from_date, $to_date, $from_shift, $to_shift;
 
     /**
      * @inheritdoc
@@ -20,6 +25,8 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
         return [
             [['shift_lock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'date_time_of_collection', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['data_lock', 'originating_type'], 'integer'],
+            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+            [['from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
         ];
     }
 
@@ -104,6 +111,55 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
             'shift_lock_code' => $this->shift_lock_code,
         ]);
         $query->orderBy('id desc');
+        return $dataProvider;
+    }
+
+    public function shiftlocksearch($params) {
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'f_union_code' => '',
+                'f_plant_code' => '',
+                'f_mcc_code' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''];
+
+            $sp_params = array_merge($sp_params, $params['TblMccShiftLockSearch']);
+            if (empty($this->f_mcc_code)) {
+                $this->f_mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            $sp_params['f_mcc_code'] = $this->f_mcc_code;
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+            $sp = 'portal_mcc_shift_lock_data';
+            $output = \Yii::$app->general->getSpData($sp, $sp_params);
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
         return $dataProvider;
     }
 

@@ -24,7 +24,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblBmcCollectionSearch();
+        $searchModel = new TblMccShiftLockSearch();
         $searchModel->scenario = 'shiftLock';
         $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams);
 
@@ -161,9 +161,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $stagingData->resp_desc = NULL;
                 $saveModel[] = $stagingData;
             } else {
-                $ConcateDate = date('d', strtotime($date)) . '_' . date('m', strtotime($date)) . '_' . date('y', strtotime($date));
-                $ConcateShift = $shift == 1 ? 'M' : 'E';
-                $staging->staging_code = $this->model->mcc_plant_code . $ConcateDate . $ConcateShift;
+                $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
+                $ConcateShift = $shift;
+                $staging->staging_code = $this->model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
                 $saveModel[] = $staging;
             }
             $saveModel[] = $this->model;

@@ -53,7 +53,7 @@ $grid_option = [
                 return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data'], $options);
             }
         },
-        'view-detail' => function ($url, $model) {
+        'view-shift' => function ($url, $model) {
             $lockModel = new TblMccShiftLock();
             $data = $lockModel->getStatus($model);
             $class = !empty($data) ? '' : 'disabled';
