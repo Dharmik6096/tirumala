@@ -98,6 +98,20 @@ $attribute = [
             $flag = Yii::$app->general->getforeignkey($model->mainContactDetails, 'is_contact_verified');
             return $flag == 1 ? 'Verified' : ($flag == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
+    ['label' => 'Bank Verification Remarks', 'visible' => true, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultBankDetail($model->customer_code, 'customer');
+            isset($detail->remarks) ? $detail = $detail->remarks : $detail = '';
+            return $detail;
+        }
+    ],
+    ['label' => 'Contact Verification Remarks', 'visible' => true, 'filter' => false,
+        'value' => function($model) {
+            $detail = Yii::$app->general->getDefaultContactDetail($model->customer_code, 'customer');
+            isset($detail->remarks) ? $detail = $detail->remarks : $detail = '';
+            return $detail;
+        }
+    ],
 ];
 
 $grid_option = [
@@ -112,17 +126,17 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'bank-details' => function ($url, $model) {
+                'bank-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
         },
-        'contact-details' => function ($url, $model) {
+                'contact-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
         },
-        'upload-photos' => function ($url, $model) {
+                'upload-photos' => function ($url, $model) {
             $id = $model->customer_code;
             $type = 'CUSTOMER';
             $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
@@ -130,14 +144,14 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<div id="ImportAttachements"></div>
-<?php
-$script = "
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        ?>
+        <div id="ImportAttachements"></div>
+        <?php
+        $script = "
 $(document).ready(function(){
     $(document).on('click','.upload-photo',function(e){
         $('#pageloader').show();
@@ -161,4 +175,5 @@ $(document).ready(function(){
         });
     });
 });";
-$this->registerJs($script, View::POS_END, 'customer-grid-index');
+        $this->registerJs($script, View::POS_END, 'customer-grid-index');
+        

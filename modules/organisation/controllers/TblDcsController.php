@@ -926,8 +926,9 @@ class TblDcsController extends ChildController {
                 $saveModel = [];
                 $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'verify' ? 1 : 2) : 1;
                 $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
-
+                $msg = $status == 1 ? 'Verified' : 'Rejected';
                 $where = [];
+                $remarkPost = Yii::$app->request->post()['TblCustomerMasterSearch'];
                 foreach ($codes as $code) {
                     $data = explode('###', $code);
                     $modelUsed = $data[1];
@@ -938,6 +939,7 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_verified = $status;
+                        $existData->bank_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
@@ -948,12 +950,13 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_verified = $status;
+                        $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     }
                 }
 
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Master Verified', 'create']);
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Master ' . $msg, 'create']);
                 if ($transaction == 'customRedirect') {
 //                    return $this->redirect(['index']);
                 }
@@ -994,6 +997,7 @@ class TblDcsController extends ChildController {
                 $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
 
                 $where = [];
+                $remarkPost = Yii::$app->request->post()['TblCustomerMasterSearch'];
                 foreach ($codes as $code) {
                     $data = explode('###', $code);
                     $modelUsed = $data[1];
@@ -1004,6 +1008,7 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_contact_verified = $status;
+                        $existData->contact_remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     } else if ($modelUsed == 'DCS' || $modelUsed == 'CUSTOMER') {
@@ -1014,6 +1019,7 @@ class TblDcsController extends ChildController {
                         Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                         $saveModel[] = $historyModel;
                         $existData->is_contact_verified = $status;
+                        $existData->remarks = !empty($remarkPost[$data[0] . '@@' . $data[1]]['remark']) ? $remarkPost[$data[0] . '@@' . $data[1]]['remark'] : '';
                         $existData->scenario = 'verification';
                         $saveModel[] = $existData;
                     }
@@ -1072,13 +1078,13 @@ class TblDcsController extends ChildController {
         $type = $_POST['type'];
         $code = $_POST['code'];
         $module_name = '';
-        if ($type == 'Member') {
+        if (strtoupper($type) == 'MEMBER') {
             $module_name = 'TblMember';
         }
-        if ($type == 'CUSTOMER') {
+        if (strtoupper($type) == 'CUSTOMER') {
             $module_name = 'TblCustomerMaster';
         }
-        if ($type == 'DCS') {
+        if (strtoupper($type) == 'DCS') {
             $module_name = 'TblDcs';
         }
         $attachment = Yii::$app->general->getAttachment($module_name, $code, TRUE, TRUE);

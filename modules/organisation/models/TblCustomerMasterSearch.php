@@ -13,7 +13,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblCustomerMasterSearch extends TblCustomerMaster {
 
-    public $master_type;
+    public $master_type, $remark;
 
     /**
      * @inheritdoc

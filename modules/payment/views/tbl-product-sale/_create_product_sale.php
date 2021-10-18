@@ -395,7 +395,7 @@ $script = "
             success: function(data) {
                 var d=JSON.parse(data);
                 $('#tblproductsaletransaction-rate').val(d.sale_rate);
-                $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
+//                $('#tblproductsaletransaction-rate').attr('data-val', d.sale_rate);
                 $('#tblproductsaletransaction-x_col1').val(d.sale_rate);
                 $('#tblproductsaletransaction-unit_code').val(d.unit_code);
                 $('#tblproductsaletransaction-unit_code').trigger('change');

@@ -73,7 +73,8 @@ class ReportsModel extends Model {
             [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment']],
-            [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
+            [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
+            [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
             [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift']],
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SapMilkCollectionData']],
         ];
@@ -127,6 +128,30 @@ class ReportsModel extends Model {
                 if ($DayCount > 15) {
                     $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 15.'));
                     return false;
+                }
+            }
+        }
+    }
+
+    public function validateDate($attribute, $params) {
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $fDate = date('Y-m-d', strtotime($this->from_date));
+            $tDate = date('Y-m-d', strtotime($this->to_date));
+            if ($tDate < $fDate) {
+                $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
+                return false;
+            } else {
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+
+                $DayCount = $DayCount + 1;
+                if ($DayCount > 30) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Day Difference can not be greater than 30.'));
+                    return false;
+                } else {
+                    return true;
                 }
             }
         }

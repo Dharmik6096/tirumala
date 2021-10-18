@@ -1788,6 +1788,7 @@ class SiteController extends Controller {
             $unique_key = 'x_col1';
             $model = new TblInbox();
             $modelData = $model->getData();
+            $i = 1;
             if (!empty($modelData)) {
                 foreach ($modelData as $transaction_data) {
                     try {
@@ -1883,6 +1884,23 @@ class SiteController extends Controller {
                                     $model->scenario = 'androidsync';
                                 }
                             }
+
+                            if ($transaction_data->table_name == 'tbl_dcs_closing') {
+
+                                $model_data = $model->find()->where(['dcs_code' => $model->dcs_code, 'to_date' => $model->to_date, 'to_shift_code' => $model->to_shift_code, 'milk_type_code' => $model->milk_type_code])->one();
+                                if (!empty($model_data)) {
+                                    $model = $model_data;
+                                    $history = $model_name . 'History';
+                                    $historyModel = new $history();
+                                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                    $childModel[] = $historyModel;
+                                    unset($json['dcs_closing_code']);
+                                    $model->setAttributes($json);
+                                    $model->dcs_closing_code = $model_data->dcs_closing_code;
+                                } else {
+                                    $model->dcs_closing_code = (string) Yii::$app->general->getCodeAutoIncrement($model, $i);
+                                }
+                            }
                             $generalModel = new GeneralModel();
                             $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
@@ -1908,6 +1926,7 @@ class SiteController extends Controller {
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->save();
                     }
+                    $i++;
                 }
             }
         } catch (yii\base\Exception $e) {

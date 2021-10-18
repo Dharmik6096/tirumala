@@ -4,8 +4,6 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-;
-
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 Url::remember();
@@ -15,7 +13,7 @@ $this->title = Yii::t('app', 'Members');
 <div class="tbl-member-payment-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
-<?= $this->title; ?>           
+            <?= $this->title; ?>           
         </div>
 
 
@@ -97,6 +95,10 @@ $this->title = Yii::t('app', 'Members');
                         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
                         return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
                     },
+                    'member-payment-installment' => function ($url, $model) {
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-member-installment', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
+                        return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/view-member-installment', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
+                    },
                 ]
             ];
 
@@ -110,6 +112,7 @@ $this->title = Yii::t('app', 'Members');
 
 
 <div id='bill_head_view'></div>
+<div id='member_installment_view'></div>
 <?php
 $script = " 
 
@@ -144,7 +147,41 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
             }
         });
     }
-}";
+}
+
+$(document).on('click','.view-member-installment',function(e){
+    var payment_cycle_code= $(this).attr('data-payment_cycle_code');
+    var bmc_code= $(this).attr('data-bmc_code');
+    var dcs_code= $(this).attr('data-dcs_code');
+    var member_code= $(this).attr('data-member_code');
+    ViewMemberInstallment(payment_cycle_code, bmc_code, dcs_code, member_code);
+});
+
+function ViewMemberInstallment(payment_cycle_code, bmc_code, dcs_code, member_code){
+    if(payment_cycle_code != '' && bmc_code != '' && dcs_code != ''){         
+    $.ajax({
+            type: 'get',
+            url: '" . Url::to(['/payment/tbl-member-payment/view-member-installment']) . "',
+            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code, 'member_code': member_code},
+            beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+            },
+            success: function(data) {
+                $('#member_installment_view').html(data);
+                $('#MemberInstallmentModel').modal('toggle');              
+                $('#loadercontent').hide();
+                $('#pageloader').hide();                                                                  
+            },
+            error: function(data) {  
+                $('#loadercontent').hide();
+                $('#pageloader').hide();
+            }
+        });
+    }
+}
+";
+
 
 $this->registerJs($script, View::POS_END, 'member-payment-head-script');
 ?>
