@@ -78,6 +78,7 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
                             $requestUrl = \Yii::$app->request->getHostInfo() . Yii::$app->request->url;
                             AjaxSubmitButton::begin([
                                 'label' => Yii::t('app', 'Save'),
+                                'id' => 'recoveryBtn',
                                 'ajaxOptions' => [
                                     'type' => 'POST',
                                     'url' => Url::to(['recovery-adjust']),
