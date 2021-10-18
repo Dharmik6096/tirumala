@@ -52,15 +52,15 @@ class SapDataIntegrationController extends ChildController {
                 $body = [];
                 $loopData = [];
                 $loopDetailData = [];
-//                $value->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $value->staging_code]);
+                $value->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $value->staging_code]);
 
                 $loopData['orderNumber'] = $value->staging_code;
-                $loopData['vendorAccount'] = $value->mcc_plant_code;
+                $loopData['vendorAccount'] = 'VADD00099';
                 $loopData['orderDate'] = date('m-d-Y', strtotime($value->date_time_of_collection));
-                $loopData['companyId'] = '';
+                $loopData['companyId'] = 'MMD';
                 $loopData['sourceSystem'] = '';
 
-                $loopDetailData['itemNumber'] = 'D0003';
+                $loopDetailData['itemNumber'] = 'RM000001';
                 $loopDetailData['quantity'] = $value->qty;
                 $loopDetailData['lineAmount'] = $value->amount;
                 $loopDetailData['locationId'] = 'In_01';
@@ -71,7 +71,7 @@ class SapDataIntegrationController extends ChildController {
                 $body['purchaseOrderLineRequestList']['list'][] = $loopDetailData;
                 $postData = [];
                 $postData = json_encode($body);
-               
+
                 $tokenType = $responseData['token_type'];
                 $token = $responseData['access_token'];
                 $resource = $responseData['resource'];
@@ -81,7 +81,7 @@ class SapDataIntegrationController extends ChildController {
                 $api->header_info = ['Authorization: ' . $tokenType . ' ' . $token];
                 $api->authentication = FALSE;
                 $api->body = $postData;
- 
+
                 $response = $api->ExchangeData();
                 $responseData = json_decode(json_encode($response), false);
 
