@@ -39,6 +39,7 @@ $tot_amt = array_sum(array_map(function($array) {
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
+//                            'action' => Url::to(['list-member-payment-summary-data']),
                             'action' => Url::to(['list-member-payment'])
                 ]);
                 ?>
@@ -51,32 +52,32 @@ $tot_amt = array_sum(array_map(function($array) {
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
                 $attribute = [
-                    ['class' => 'kartik\grid\CheckboxColumn',
+                        ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
                         'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                         'checkboxOptions' => function($model) {
                             return ['value' => $model['dcs_code']];
                         }],
-                    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-                    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+                        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
-                    ['attribute' => 'dcs_code', 'value' => function($model) {
+                        ['attribute' => 'dcs_code', 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                         }],
-                    ['attribute' => 'member_count'],
-                    ['attribute' => 'kg_fat'],
-                    ['attribute' => 'kg_snf'],
-                    ['attribute' => 'qty', 'pageSummary' => true],
-                    ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-                    ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
-                    ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
-                    ['attribute' => 'previous_hold', 'pageSummary' => true],
-                    ['attribute' => 'previous_due', 'pageSummary' => true],
-                    ['attribute' => 'net_payable', 'pageSummary' => true,],
-                    ['attribute' => 'hold_amount', 'pageSummary' => true,],
-                    ['attribute' => 'additional_pay', 'pageSummary' => true,],
-                    ['attribute' => 'final_amount', 'pageSummary' => true,],
+                        ['attribute' => 'member_count'],
+                        ['attribute' => 'kg_fat'],
+                        ['attribute' => 'kg_snf'],
+                        ['attribute' => 'qty', 'pageSummary' => true],
+                        ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
+                        ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
+                        ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
+                        ['attribute' => 'previous_hold', 'pageSummary' => true],
+                        ['attribute' => 'previous_due', 'pageSummary' => true],
+                        ['attribute' => 'net_payable', 'pageSummary' => true,],
+                        ['attribute' => 'hold_amount', 'pageSummary' => true,],
+                        ['attribute' => 'additional_pay', 'pageSummary' => true,],
+                        ['attribute' => 'final_amount', 'pageSummary' => true,],
                 ];
 
                 $grid_option = [
