@@ -136,10 +136,10 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
             $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
             $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
             $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
-            $sp_params['f_mcc_code'] = $this->f_mcc_code;
             unset($sp_params['from_shift']);
             unset($sp_params['to_shift']);
             $sp = 'portal_mcc_shift_lock_data';
+          
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
         }
         $dataProvider = new ArrayDataProvider();

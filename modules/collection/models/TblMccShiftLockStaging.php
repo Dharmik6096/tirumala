@@ -57,7 +57,8 @@ class TblMccShiftLockStaging extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['resp_status', 'resp_desc'], 'safe'],
-            [['data_post_status'], 'default', 'value' => 0]
+            [['data_post_status'], 'default', 'value' => 0],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

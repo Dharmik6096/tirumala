@@ -44,6 +44,14 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->picked_datetime);
         }, 'filter' => false],
+    [
+        'attribute' => 'resp_status',
+        'value' => function($model) {
+
+
+            return $model->resp_status == 1 ? 'SUCCESS' : ($model->resp_status == '0' ? 'ERROR' : '');
+        }, 'filter' => false],
+    ['attribute' => 'resp_desc', 'filter' => false],
     ['attribute' => 'response_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [

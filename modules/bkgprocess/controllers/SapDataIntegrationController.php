@@ -57,13 +57,13 @@ class SapDataIntegrationController extends ChildController {
                 $loopData['orderNumber'] = $value->staging_code;
                 $loopData['vendorAccount'] = 'VADD00099';
                 $loopData['orderDate'] = date('m-d-Y', strtotime($value->date_time_of_collection));
-                $loopData['companyId'] = 'MMD';
+                $loopData['companyId'] = '';
                 $loopData['sourceSystem'] = '';
 
                 $loopDetailData['itemNumber'] = 'RM000001';
                 $loopDetailData['quantity'] = $value->qty;
                 $loopDetailData['lineAmount'] = $value->amount;
-                $loopDetailData['locationId'] = 'In_01';
+                $loopDetailData['locationId'] = '';
                 $loopDetailData['FAT'] = $value->avg_fat;
                 $loopDetailData['SNF'] = $value->avg_snf;
 
@@ -87,9 +87,8 @@ class SapDataIntegrationController extends ChildController {
 
                 if (!empty($responseData)) {
                     $status = $responseData->status;
-                    $resp_status = $responseData->status;
                     $resp_desc = $responseData->statusDescription;
-                    $value->updateAll(['data_post_status' => 2, 'resp_status' => $resp_status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $value->staging_code]);
+                    $value->updateAll(['data_post_status' => 2, 'resp_status' => $status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s'), 'x_col1' => $responseData->guidD365, 'x_col2' => $responseData->fnoOrderNumber], ['staging_code' => $value->staging_code]);
                 }
             }
         }

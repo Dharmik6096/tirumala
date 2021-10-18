@@ -59,6 +59,7 @@ class TblMccShiftLockStagingHistory extends \yii\db\ActiveRecord {
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['resp_status', 'resp_desc'], 'safe'],
             [['operation_type'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
