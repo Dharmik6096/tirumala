@@ -497,16 +497,31 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
 
 ";
 
+$negativeContent = 'no';
+$errMsg = '';
+if (!empty($negativeValCount)) {
+    $negativeContent = 'yes';
+    $errMsg = $errMsg . Yii::t('app', 'Net Payable is negative For Following DCS.');
+    $errMsg = $errMsg . '<ul>';
+    foreach ($negativeValCount as $negativeValCountDcs) {
+        $errMsg = $errMsg . '<li>' . $negativeValCountDcs['dcs_name'] . '(' . $negativeValCountDcs['ref_code'] . ')' . '</li>';
+    }
+    $errMsg = $errMsg . '</ul>';
+}
 $script .= '  
     $(document).on("click", "#adjustDcsData", function(){
 //    $("#adjust").click(function() {
     $(".process_lock_flag").val("Process");
     var negativeVal = "No";
     var message = "' . $message . '";
-    var negativeCount = ' . $negativeValCount . ';
-    if(negativeCount > 0 || negativeVal == "Yes") {
+    var negativeCount = "' . $negativeContent . '";
+    if(negativeVal == "Yes") {
         var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
         bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+    } else if (negativeCount == "yes") {
+        var negativeMsg = "' . $errMsg . '";
+        var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+        bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+negativeMsg+"</span>");
     } else {
         var totalRec=0;
         var totaladjRec=0;

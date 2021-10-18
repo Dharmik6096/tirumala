@@ -274,7 +274,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $negativeValCount = 0;
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = $model->attributes;
-            $negativeValCount = $memberPaymentModel->getNegativeValCount();
+//            $negativeValCount = $memberPaymentModel->getNegativeValCount();
+            $negativeValCount = $memberPaymentModel->getNegativeValDcs();
             return $this->render('process_lock_dcs_payment_data', [
                         'model' => $model,
                         'searchModel' => $searchModel,
