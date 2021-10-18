@@ -215,7 +215,7 @@ function ViewMemberAdjustmentData(payment_cycle_code, union_code, plant_code, mc
 //});
 //$('#adjust-lock-dcs-data').click(function() {
 //    $('.process_lock_flag').val('Lock');
-//    var negativeCount = " . $negativeValCount . ";
+//    var negativeCount = '';
 //    var message = '" . $message . "';
 //        
 //    if(negativeCount > 0) {
