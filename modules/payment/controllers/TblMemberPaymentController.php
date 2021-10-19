@@ -359,7 +359,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
             $summaryModel = new TblMemberPaymentSummaryAlias();
             $summaryModel->attributes = Yii::$app->request->get();
-            $summaryModelData = $summaryModel->getRecords(false);
+            $summaryModelData = $summaryModel->getRecords(true);
 
             $adjustmentSummary = [];
             foreach ($adjust_id as $key => $value) {
@@ -404,7 +404,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             }
             $memberPaymentModel = new TblMemberPaymentAlias();
             $memberPaymentModel->attributes = Yii::$app->request->get();
-            $memberPaymentModelData = $memberPaymentModel->getExceptData($adjust_id);
+            $memberPaymentModelData = []; //$memberPaymentModel->getExceptData($adjust_id);
             foreach ($memberPaymentModelData as $memberPayment) {
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
