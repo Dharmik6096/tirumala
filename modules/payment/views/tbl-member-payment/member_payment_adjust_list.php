@@ -227,6 +227,9 @@ $tot_amt = array_sum(array_map(function($array) {
                                            });
                                            var message = "' . $message . '";
                                            var negativeCount = ' . $negativeValCount . ';
+                                               
+                                            $("#loadercontent").show();
+                                            $("#pageloader").show(); 
                                             if(negativeCount > 0 || negativeVal == "Yes") {
                                                 var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
                                                 bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
@@ -247,6 +250,9 @@ $tot_amt = array_sum(array_map(function($array) {
                                                    totaladjRec=totaladjRec+adjustRec;
                                                });
                                                 if(totalRec != totaladjRec) {
+                                                
+                                                    $("#loadercontent").hide();
+                                                    $("#pageloader").hide(); 
                                                     var dispmessage = "' . Yii::t('app', 'Sum of Adjust Recovery and Sum of Reovery Must be Same.') . '";
                                                     bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispmessage+"</span>");
                                                     return false;
