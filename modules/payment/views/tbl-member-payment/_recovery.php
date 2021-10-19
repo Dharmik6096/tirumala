@@ -116,7 +116,9 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
 //                                                                $("#loadercontent").hide();
 //                                                                $("#pageloader").hide();
                                                                 if (data.status == "success"){ 
-                                                                    location.reload();
+                                                                    bootbox.alert("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-info\"><i class=\"fa fa-info\"></i></div><span>"+data.msg+" </span></div></div>");
+                                                                    $("#recoverOtherMemberModal").modal("toggle"); 
+//                                                                    location.reload();
 //                                                                    window.location = "' . $requestUrl . '";
                                                                     $("#loadercontent").hide();
                                                                     $("#pageloader").hide();
