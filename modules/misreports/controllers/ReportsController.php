@@ -1804,98 +1804,98 @@ class ReportsController extends \app\controllers\ChildController {
     }
 
     public function downloadData() {
-        $extention = 'xls';
-        $header = [
-            'mime' => 'application/ms-excel',
-            'extension' => $extention,
-            'writer' => 'Excel2007',
-        ];
-
-        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
-        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
-//        header('Content-Type: text/plain');
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-//        header("Content-Type: application/xls");
-//        header("Content-Disposition: attachment; filename={$fileName}");
-//        header("Pragma: no-cache");
-//        header("Expires: 0");
-        $Output = $this->output;
-        $schema_insert = '';
-        echo "<table border='1'>";
-        echo "<tr>";
-        foreach ($labelArray as $a) {
-            echo "<td>" . $a . "</td>";
-        }
-        echo "</tr>";
-        foreach ($Output as $row) {
-            echo "<tr>";
-            foreach ($labelArray as $a) {
-                $dispData = '';
-                if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
-                    $dispData = $row[$a];
-                }
-                $value = $dispData;
-                if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
-                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
-                }
-                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
-                    echo "<td>" . $value . "</td>";
-                } else if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) == '.' || (substr($value, 0, 1) == '0' && substr($value, 1, 1) == '.'))) {
-                    if (substr($value, 0, 1) == '.') {
-                        echo "<td>0" . $value . "</td>";
-                    } else {
-                        echo "<td>" . substr($value, 0, 2) . "</td>";
-                    }
-                } else {
-                    echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
-                }
-            }
-            echo "</tr>";
-        }
-        echo "</table>";
-        exit();
-
-
+//        $extention = 'xls';
 //        $header = [
-//            'mime' => '	application/vnd.ms-excel',
-//            'extension' => 'xls',
+//            'mime' => 'application/ms-excel',
+//            'extension' => $extention,
 //            'writer' => 'Excel2007',
 //        ];
-//        $objPHPExcel = new PHPExcel();
-//        $sheet = $objPHPExcel->getActiveSheet();
-//        /* $objPHPExcel->getDefaultStyle()
-//          ->getNumberFormat()
-//          ->setFormatCode(
-//          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-//          ); */
-//        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-//        /* $file_header = array_map(function($file_header) {
-//          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-//          }, array_values($file_header)); */
 //
-//        $sheet->fromArray(
-//                $file_header, // The data to set
-//                NULL, // Array values with this value will not be set
-//                'A1'         // Top left coordinate of the worksheet range where
-////    we want to set these values (default is A1)
-//        );
-//        $sheet->fromArray(
-//                $this->output, // The data to set
-//                NULL, // Array values with this value will not be set
-//                'A2'         // Top left coordinate of the worksheet range where
-////    we want to set these values (default is A1)
-//        );
-//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+//        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+//        $fileName = $labelT . '.' . $header['extension'] .
 //                header('Content-Type: ' . $header['mime']);
+////        header('Content-Type: text/plain');
 //        header('Content-Disposition: attachment;filename=' . $fileName);
 //        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-//        ob_end_clean();
-//        $objWriter->save('php://output');
+////        header("Content-Type: application/xls");
+////        header("Content-Disposition: attachment; filename={$fileName}");
+////        header("Pragma: no-cache");
+////        header("Expires: 0");
+//        $Output = $this->output;
+//        $schema_insert = '';
+//        echo "<table border='1'>";
+//        echo "<tr>";
+//        foreach ($labelArray as $a) {
+//            echo "<td>" . $a . "</td>";
+//        }
+//        echo "</tr>";
+//        foreach ($Output as $row) {
+//            echo "<tr>";
+//            foreach ($labelArray as $a) {
+//                $dispData = '';
+//                if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
+//                    $dispData = $row[$a];
+//                }
+//                $value = $dispData;
+//                if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
+//                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+//                }
+//                if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+//                    echo "<td>" . $value . "</td>";
+//                } else if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) == '.' || (substr($value, 0, 1) == '0' && substr($value, 1, 1) == '.'))) {
+//                    if (substr($value, 0, 1) == '.') {
+//                        echo "<td>0" . $value . "</td>";
+//                    } else {
+//                        echo "<td>" . substr($value, 0, 2) . "</td>";
+//                    }
+//                } else {
+//                    echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
+//                }
+//            }
+//            echo "</tr>";
+//        }
+//        echo "</table>";
 //        exit();
+
+
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $this->output, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
     public function downloadDataExcel($model) {
