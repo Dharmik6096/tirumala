@@ -1888,8 +1888,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'A2'         // Top left coordinate of the worksheet range where
 //    we want to set these values (default is A1)
         );
-        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+        $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);
+//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
