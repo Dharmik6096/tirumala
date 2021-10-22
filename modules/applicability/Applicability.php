@@ -470,7 +470,7 @@ class Applicability extends \yii\base\Module {
         $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
-                $query->where([$key => $model->{$key}]);
+                $query->andWhere([$key => $model->{$key}]);
             }
         }
         return $query->all();
@@ -935,7 +935,7 @@ class Applicability extends \yii\base\Module {
         $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
-                $query->where([$key => $model->{$key}]);
+                $query->andWhere([$key => $model->{$key}]);
             }
         }
         return $query->count();
