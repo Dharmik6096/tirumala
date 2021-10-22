@@ -51,27 +51,27 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['sale_rate', 'product_rate_applicability_code', 'commission', 'ex_code'], 'safe'],
+                [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
+                [['wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['sale_rate', 'product_rate_applicability_code', 'commission', 'ex_code'], 'safe'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
             [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['applicable_for'], function ($attribute, $params) {
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['applicable_for'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->mainBmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-            [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
-            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
-            [['applicable_for'], 'setImport', 'on' => ['importCsv']],
+                [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
+                [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+                [['applicable_for'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -220,8 +220,13 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         $bmc_code = $mcc_code = $plant_code = '';
+        $generateSentbox = false;
         if ($this->applicable_for == 'DCS') {
-            $bmc_code = Yii::$app->general->getforeignkey($this->dcsName, 'bmc_code'); //$this->dcsName->bmc_code;
+            $dpuType = Yii::$app->general->getforeignkey($this->dcsName, 'dpu_type');
+            if ($dpuType == 0 || $dpuType == '0') {
+                $generateSentbox = true;
+                $bmc_code = Yii::$app->general->getforeignkey($this->dcsName, 'bmc_code'); //$this->dcsName->bmc_code;
+            }
         } else if ($this->applicable_for == 'BMC') {
             $bmc_code = $this->applicable_code;
         } else if ($this->applicable_for == 'MCC') {
@@ -232,19 +237,22 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
             $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code'); //$this->customerMasterCode->bmc_code;
             $mcc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'mcc_plant_code'); //$this->customerMasterCode->mcc_plant_code;
         }
-        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
-        if ($this->applicable_for == 'DCS') {
-            $sentboxArray[] = [
-                'code' => $this->applicable_code,
-                'type' => 'VLC'
-            ];
-        }
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+
+        if ($generateSentbox) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
+            if ($this->applicable_for == 'DCS') {
+                $sentboxArray[] = [
+                    'code' => $this->applicable_code,
+                    'type' => 'VLC'
+                ];
+            }
+            foreach ($sentboxArray as $sent) {
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    if (!($sentbox->setSentbox($this, $flag))) {
+                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                    }
                 }
             }
         }
@@ -253,8 +261,13 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
     public function afterDelete() {
         $sentboxArray = [];
         $bmc_code = $mcc_code = $plant_code = '';
+        $generateSentbox = false;
         if ($this->applicable_for == 'DCS') {
-            $bmc_code = Yii::$app->general->getforeignkey($this->dcsName, 'bmc_code');
+            $dpuType = Yii::$app->general->getforeignkey($this->dcsName, 'dpu_type');
+            if ($dpuType == 0 || $dpuType == '0') {
+                $generateSentbox = true;
+                $bmc_code = Yii::$app->general->getforeignkey($this->dcsName, 'bmc_code');
+            }
         } else if ($this->applicable_for == 'BMC') {
             $bmc_code = $this->applicable_code;
         } else if ($this->applicable_for == 'MCC') {
@@ -265,18 +278,20 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
             $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code');
             $mcc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'mcc_plant_code');
         }
-        $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
-        if ($this->applicable_for == 'DCS') {
-            $sentboxArray[] = [
-                'code' => $this->applicable_code,
-                'type' => 'VLC'
-            ];
-        }
-        foreach ($sentboxArray as $sent) {
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, 'DELETE'))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+        if ($generateSentbox) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes($plant_code, $mcc_code, $bmc_code, '', '', false);
+            if ($this->applicable_for == 'DCS') {
+                $sentboxArray[] = [
+                    'code' => $this->applicable_code,
+                    'type' => 'VLC'
+                ];
+            }
+            foreach ($sentboxArray as $sent) {
+                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                    }
                 }
             }
         }
