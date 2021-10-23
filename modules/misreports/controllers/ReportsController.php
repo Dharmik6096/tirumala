@@ -704,6 +704,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCleaningFormat() {
+        $this->report = 'CleaningFormat';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1798,6 +1803,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SapMilkCollectionData',
                 'title' => '405 - SAP Data Export (HATSUN)',
                 'dynamic_label' => TRUE,
+            ],
+            'CleaningFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_cleaning_format',
+                'scenario' => 'CleaningFormat',
+                'title' => '808 - Analyzer PCB Replacement',
             ],
         ];
         return $label[$l];
