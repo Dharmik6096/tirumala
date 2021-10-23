@@ -1808,7 +1808,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_cleaning_format',
                 'scenario' => 'CleaningFormat',
-                'title' => '808 - Analyzer PCB Replacement',
+                'title' => '808 - Cleaning Format',
             ],
         ];
         return $label[$l];
