@@ -514,6 +514,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', '805 - Eko Milk Calibration'), 'url' => ['/misreports/reports/eko-milk-calibration']],
                         ['label' => Yii::t('app', '806 - Calibration Flag'), 'url' => ['/misreports/reports/calibration-flag']],
                         ['label' => Yii::t('app', '807 - Cleaning Flag Bmc'), 'url' => ['/misreports/reports/cleaning-flag-bmc']],
+                        ['label' => Yii::t('app', '808 - Cleaning Format'), 'url' => ['/misreports/reports/cleaning-format']],
                     ]
                 ],
                 [
