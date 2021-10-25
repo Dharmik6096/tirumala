@@ -215,7 +215,7 @@ function ViewMemberAdjustmentData(payment_cycle_code, union_code, plant_code, mc
 //});
 //$('#adjust-lock-dcs-data').click(function() {
 //    $('.process_lock_flag').val('Lock');
-//    var negativeCount = " . $negativeValCount . ";
+//    var negativeCount = '';
 //    var message = '" . $message . "';
 //        
 //    if(negativeCount > 0) {
@@ -541,10 +541,14 @@ $(document).on("click", "#adjust-lock-dcs-data", function(){
     var negativeVal = "No";
     
     var message = "' . $message . '";
-    var negativeCount = ' . $negativeValCount . ';
-    if(negativeCount > 0 || negativeVal == "Yes") {
+    var negativeCount = "' . $negativeContent . '";
+    if(negativeVal == "Yes") {
         var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
         bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+    } else if (negativeCount == "yes") {
+        var negativeMsg = "' . $errMsg . '";
+        var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+        bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+negativeMsg+"</span>");
     } else {
         bootbox.confirm({
             message: "<div class=\"bg-danger\"><i class=\"fa fa-question-circle\"></i></div><span>"+message+"</span>",

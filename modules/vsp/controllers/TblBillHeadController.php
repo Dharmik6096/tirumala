@@ -154,10 +154,10 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
                     return Yii::$app->controls->view_date($model->wef_date);
                 }],
-            'applicable_for' => ['view' => ['grid'], 'value' => function($model) {
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
                 }],
-            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],
