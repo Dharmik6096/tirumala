@@ -231,6 +231,7 @@ class SchedulerController extends ChildController {
     }
 
     public function actionProcessImportFiles() {
+//        var_dump('test');die;
         $model = new TblImportFileLog();
         $model->status = 0;
         $modelData = $model->getPickRecords([], 10);
@@ -264,6 +265,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_mapped') {
                 $flag = 'bmc-mapped-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection') {
+                $flag = 'bmc-collection-allow-bulk';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection_Allow';
+            } else if ($row->file_type == 'milk_collection') {
+                $flag = 'milk-collection-allow-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection_Allow';
             }
             if (!empty($flag)) {
                 $error_lines = [];

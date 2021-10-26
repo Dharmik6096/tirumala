@@ -734,7 +734,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $this->model->shift_code = 1;
         $this->viewFile = 'create';
         $modelSave = [];
-        $message = 'Milk Collection Allow';
+        $message = 'Milk Collection';
         $type = 'create';
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
@@ -750,10 +750,6 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->setModel($this->model);
             $this->model->scenario = 'create_allow';
 
-//            echo "<pre>";
-//            print_r(Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL'));
-//            echo "</pre>";
-//            die;
             $this->model->member_code = $this->model->dcs_code . str_pad($this->model->member_code, 4, '0', STR_PAD_LEFT);
             $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
             $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
@@ -840,7 +836,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
                         $deleteModel[] = $existData;
-                        $message = 'Milk Collection Allow';
+                        $message = 'Milk Collection';
                         $type = 'delete';
                     }
                 }
@@ -856,12 +852,11 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     }
 
     public function actionUpdateCollectionAllow() {
-
         $searchModel = new TblMilkCollectionSearch();
         $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'updateMilkCollection';
         $detailModel = $dataProvider->getModels();
-        $message = 'Milk Collection Allow';
+        $message = 'Milk Collection';
         $type = 'edit';
         $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         $config = $configVal == 1 ? TRUE : FALSE;

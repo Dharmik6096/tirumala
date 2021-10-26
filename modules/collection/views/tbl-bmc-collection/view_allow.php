@@ -5,7 +5,7 @@ use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 use yii\helpers\Url;
 
-$this->title = Yii::$app->label->title('view', 'BMC Collection Allow');
+$this->title = Yii::$app->label->title('view', 'BMC Collection');
 //$this->params['menu'][] = Yii::$app->controls->update($model->milk_collection_code);
 ?>
 <div class="panel panel-default panel-grid panel-main">

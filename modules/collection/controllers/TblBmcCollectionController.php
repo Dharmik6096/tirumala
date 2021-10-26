@@ -670,7 +670,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $master_model[] = $this->model;
 
-            $transaction = $this->generalModel->saveTransaction($master_model, ['BMC Collection Allow', 'edit']);
+            $transaction = $this->generalModel->saveTransaction($master_model, ['BMC Collection', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -685,7 +685,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
         $searchModel->scenario = 'deleteMilkCollection';
         $detailModel = $dataProvider->getModels();
-        $message = 'BMC Collection Allow';
+        $message = 'BMC Collection';
         $type = 'edit';
         if (Yii::$app->request->post()) {
             foreach ($detailModel as $detail) {
@@ -779,7 +779,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         Yii::$app->operation->history($existData, $historyModel, DELETE);
                         $saveModel[] = $historyModel;
                         $deleteModel[] = $existData;
-                        $message = 'BMC Collection Allow';
+                        $message = 'BMC Collection';
                         $type = 'delete';
                     }
                 }

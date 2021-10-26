@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Milk Collection Allow');
+$this->title = Yii::$app->label->title('create', 'Milk Collection');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Delete BMC Collection Allow');
+$this->title = Yii::t('app', 'Delete BMC Collection');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

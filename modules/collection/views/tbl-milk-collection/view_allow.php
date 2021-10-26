@@ -5,7 +5,7 @@ use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 use yii\helpers\Url;
 
-$this->title = Yii::$app->label->title('view', 'Milk Collection Allow');
+$this->title = Yii::$app->label->title('view', 'Milk Collection');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
