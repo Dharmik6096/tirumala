@@ -77,96 +77,96 @@ class TblBmcCollection extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['milk_type_code'], function ($attribute, $params) {
+                [['milk_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
                 }, 'on' => 'importCsv'],
-            [['milk_quality_type_code'], function ($attribute, $params) {
+                [['milk_quality_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
                 }, 'on' => 'importCsv'],
-            [['shift_code'], function ($attribute, $params) {
+                [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-            [['collection_type'], function ($attribute, $params) {
+                [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }, 'on' => 'importCsv'],
-            [['bmc_silos_info_code'], function ($attribute, $params) {
+                [['bmc_silos_info_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'bmc_silos', FALSE, TRUE, ['module_name' => 'BMC', 'module_code' => $this->bmc_code], TRUE);
                 }, 'on' => ['importCsv']],
-            [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
-            [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
-            [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
-            [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
-            [['rtpl', 'amount'], 'trim'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
-            [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
+                [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
+                [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
+                [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
+                [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
+                [['rtpl', 'amount'], 'trim'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
+                [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
                     return $model->collection_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync', 'importCsv']],
-            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create']],
+                [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //                    return $this->shift_code;
 //                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync', 'importCsv']],
-            [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
-            [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update']],
-            [['bmc_silos_info_code'], 'required', 'on' => ['create', 'update']],
-            [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
-            [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv']],
-            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+                [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
+                [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
+                [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
+                [['mcc_plant_code', 'plant_code', 'union_code', 'customer_code', 'customer_type', 'bmc_code', 'own_bmc_code'], 'required', 'on' => ['create', 'update', 'create_allow', 'update_allow']],
+                [['bmc_silos_info_code'], 'required', 'on' => ['create', 'update', 'create_allow', 'update_allow']],
+                [['customer_code', 'bmc_code', 'sample_no'], 'required', 'on' => ['importCsv']],
+                [['clr'], 'number', 'min' => 0, 'on' => ['create', 'update', 'importCsv', 'create_allow', 'update_allow']],
+                [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['customer_code', 'qty', 'fat', 'snf', 'milk_type_code', 'shift_code', 'date_time_of_collection', 'bmc_code', 'milk_quality_type_code', 'customer_type'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnError' => true, 'when' => function($model) {
 //                    return empty($this->getErrors());
 //                }, 'on' => ['create', 'update', 'importCsv']],
             [['rtpl'], function ($attribute, $params) {
                     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_collection_allow_on_zero_rate', 0);
-                }, 'skipOnEmpty' => false, 'on' => ['create', 'update']],
-            [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
-            [['water'], 'default', 'value' => 0],
-            [['doc_no'], 'default', 'value' => 1],
-            [['rtpl'], 'number', 'min' => 0],
-            [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'importCsv']],
-            [['customer_code'], 'setUuid', 'on' => ['create', 'update', 'androidsync', 'importCsv']],
-            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
-            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
-            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'on' => ['create', 'update', 'create_allow', 'update_allow']],
+                [['rtpl', 'amount'], 'default', 'value' => 0, 'except' => ['importCsv']],
+                [['water'], 'default', 'value' => 0],
+                [['doc_no'], 'default', 'value' => 1],
+                [['rtpl'], 'number', 'min' => 0],
+                [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/', 'on' => ['create', 'importCsv', 'create_allow']],
+                [['customer_code'], 'setUuid', 'on' => ['create', 'update', 'androidsync', 'importCsv', 'create_allow', 'update_allow']],
+                [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+                [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
+                [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['bmc_silos_info_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBmcSilosInfo::className(), 'targetAttribute' => ['bmc_silos_info_code' => 'bmc_silos_info_code'], 'on' => ['importCsv']],
-            [['customer_type'], function ($attribute, $params) {
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['bmc_silos_info_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBmcSilosInfo::className(), 'targetAttribute' => ['bmc_silos_info_code' => 'bmc_silos_info_code'], 'on' => ['importCsv']],
+                [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-            [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
-            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['tag_1'], 'default', 'value' => 'X'],
-            [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
-            [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
-            [['bmc_code'], function ($attribute, $params) {
+                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+                [['bmc_code'], 'pastDateValidate', 'on' => 'importCsv'],
+                [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['tag_1'], 'default', 'value' => 'X'],
+                [['adt_param', 'adt_value', 'received_timestamp', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_rate_recalc', 'purchase_rate_code_old'], 'safe'],
+                [['date_time_of_recieve'], 'default', 'value' => date('Y-m-d H:i:s'), 'on' => 'androidsync'],
+                [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc', 'sync_lock_bmc']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['androidsync_coll']],
-            [['customer_code'], 'validateUnique', 'on' => ['create']],
-            [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
-            [['date_time_of_collection'], function ($attribute, $params) {
+                [['customer_code'], 'validateUnique', 'on' => ['create', 'create_allow']],
+                [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
+                [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-            [['is_rate_recalc'], 'default', 'value' => 0],
-            [['bmc_code'], function ($attribute, $params) {
+                [['is_rate_recalc'], 'default', 'value' => 0],
+                [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
                     }
@@ -528,7 +528,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             $this->milkTypeWiseUnique($this, $this, FALSE, TRUE);
 
             Yii::$app->general->validateRateRange($this);
-            if ($flag != 1) {
+            if ($flag != 1 && $this->scenario != 'update_allow') {
                 Yii::$app->general->paymentCycleLock($this, 'date_time_of_collection', 'bmc_code', 'BMC', $this->customer_type, ['data_lock_bmc', 'billing_lock_bmc'], 'milk_type_code');
             }
         }

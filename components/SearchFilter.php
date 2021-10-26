@@ -16,6 +16,7 @@ class SearchFilter {
             ],
             'TblMilkCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+                'action' => ['index-allow', 'index']
             ],
             'TblMilkDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -323,7 +324,7 @@ class SearchFilter {
             ],
             'TblBmcCollectionSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
-                'action' => ['index']
+                'action' => ['index-allow', 'index']
             ],
             'TblMccShiftLockStagingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
