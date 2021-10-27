@@ -64,19 +64,15 @@ class TblMilkCollectionCreamBaseDataSearch extends TblMilkCollectionCreamBaseDat
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs');
 
-        if (!empty($this->from_date) || !empty($this->from_shift)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
 
-        if (!empty($this->to_date) || !empty($this->to_shift)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
-        }
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -103,9 +99,11 @@ class TblMilkCollectionCreamBaseDataSearch extends TblMilkCollectionCreamBaseDat
 
 
         Yii::$app->general->filterByNumber($query, $this, ['rtpl']);
-        if (!empty($this->date_time_of_collection))
+        if (!empty($this->date_time_of_collection)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
-
+        } else {
+            $query->andWhere(['CAST(date_time_of_collection as date)' => Yii::$app->formatter->asDatetime('now', 'php:Y-m-d')]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_milk_collection_cream_base_data.milk_collection_code' => $this->milk_collection_code,
