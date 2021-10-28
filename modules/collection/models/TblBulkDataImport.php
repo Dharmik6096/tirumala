@@ -51,22 +51,22 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
         return [
                 [['customer_type'], 'default', 'value' => 'DCS'],
                 [['bmc_code', 'shift_code', 'sample_no', 'milk_type_code', 'date_time_of_collection', 'fat', 'snf', 'qty'], 'required'],
-                [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_allow']],
-                [['customer_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow']],
+                [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow']],
+                [['customer_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow','bmc_collection_mapped_allow']],
                 [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code'], 'safe'],
                 [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
                 [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
                 [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no'], 'number'],
-                ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'bmc_collection_mapped']],
-                ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_allow', 'bmc_collection_mapped']],
-                ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped']],
+                ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped','bmc_collection_mapped_allow']],
+                ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped','bmc_collection_mapped_allow']],
+                ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped','bmc_collection_mapped_allow']],
                 [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
-                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'bmc_collection_mapped']],
+                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped','bmc_collection_mapped_allow']],
                 [['collection_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'collection_type');
                 }],
-                [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped']],
-                [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty']]
+                [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped','bmc_collection_mapped_allow']],
+                [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty', 'milk_collection_qlty_allow',]]
         ];
     }
 

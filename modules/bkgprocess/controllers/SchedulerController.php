@@ -270,6 +270,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection_allow') {
                 $flag = 'milk-collection-allow-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection_Allow';
+            } else if ($row->file_type == 'milk_collection_qlty_allow') {
+                $flag = 'milk-collection-qlty-allow-bulk';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection_Allow';
+            } else if ($row->file_type == 'bmc_collection_mapped_allow') {
+                $flag = 'bmc-mapped-collection-allow-bulk';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection_Allow';
             }
             if (!empty($flag)) {
                 $error_lines = [];
