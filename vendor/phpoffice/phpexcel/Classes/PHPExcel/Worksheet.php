@@ -2427,7 +2427,8 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
             foreach ($source as $rowData) {
                 $currentColumn = $startColumn;
                 foreach ($rowData as $cellValue) {
-                    $value = $cellValue;
+                    $dispData = $cellValue;
+                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
                     $number = false;
                     if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
                         $number = true;//echo "<td>" . $value . "</td>";
