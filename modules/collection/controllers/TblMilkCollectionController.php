@@ -633,15 +633,12 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             Yii::$app->operation->history($delete, $historyModel, DELETE);
                             $saveModel[] = $historyModel;
                             $deleteModel[] = $delete;
-                            $message = 'Milk Collection Allow';
+                            $message = 'Milk Collection';
                             $type = 'delete';
                         }
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-//                if ($transaction == 'customRedirect') {
-//                    return $this->redirect(['index']);
-//                }
             }
         }
 

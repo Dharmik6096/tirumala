@@ -6,7 +6,6 @@ use kartik\detail\DetailView;
 use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'BMC Collection');
-//$this->params['menu'][] = Yii::$app->controls->update($model->milk_collection_code);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -118,12 +117,10 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                     'columns' => [
                             [
                             'attribute' => 'fat',
-//                            'value' => $model->transporterCode->transporter_name,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
                             'attribute' => 'snf',
-//                            'value' => Yii::$app->controls->view_date($model->wef_date),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],

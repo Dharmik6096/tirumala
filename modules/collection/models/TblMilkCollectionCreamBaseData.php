@@ -151,27 +151,13 @@ class TblMilkCollectionCreamBaseData extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'converted_qty_mode', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'send_status', 'txfarmer_id', 'is_provisional', 'is_rate_recalc'], 'integer'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount', 'scheme_rate', 'actual_rate', 'salt', 'freezing_point', 'temperature'], 'number'],
+                [['milk_type_code', 'sample_no', 'ack', 'data_post_status', 'qty_mode', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'is_approved', 'ftp_txn_log_id', 'originating_type', 'converted_qty_mode', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code', 'send_status', 'txfarmer_id', 'is_provisional', 'is_rate_recalc'], 'safe'],
+                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'adt_value', 'dpu_rtpl', 'dpu_amount', 'dpu_incentive', 'dpu_deduction', 'dpu_total_amount', 'scheme_rate', 'actual_rate', 'salt', 'freezing_point', 'temperature'], 'safe'],
                 [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'created_at', 'updated_at', 'picked_datetime', 'response_datetime'], 'safe'],
-                [['remarks', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'string'],
-                [['member_code', 'version_no', 'scheme_rate_code', 'can_no'], 'string', 'max' => 20],
-                [['dcs_code', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'string', 'max' => 12],
-                [['name'], 'string', 'max' => 100],
-                [['mobile_no', 'sms_mobile', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param', 'batch_no'], 'string', 'max' => 255],
-                [['auto_flag', 'soc_bmc_flag'], 'string', 'max' => 5],
-                [['shift_code'], 'string', 'max' => 30],
-                [['village_code'], 'string', 'max' => 6],
-                [['type_of_data_receive', 'error_log', 'sms_msgid', 'data_inserted_from'], 'string', 'max' => 50],
-                [['purchase_rate_code', 'purchase_rate_code_old'], 'string', 'max' => 11],
-                [['sms_status', 'route_code', 'tag_1', 'tag_2', 'own_bmc_code', 'own_mcc_plant_code'], 'string', 'max' => 10],
-                [['sms_errorlog'], 'string', 'max' => 200],
-                [['status'], 'string', 'max' => 15],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['data_post_id'], 'string', 'max' => 55],
-                [['last_edited_type', 'sync_status'], 'string', 'max' => 1],
-                [['union_code'], 'string', 'max' => 3],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['remarks', 'device_lat', 'device_long', 'last_edited_type', 'sync_status', 'mob_lat', 'mob_long', 'purchase_rate_code', 'purchase_rate_code_old', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['member_code', 'version_no', 'scheme_rate_code', 'can_no', 'village_code', 'type_of_data_receive', 'error_log', 'sms_msgid', 'data_inserted_from'], 'safe'],
+                [['dcs_code', 'bmc_code', 'plant_code', 'status', 'mcc_plant_code', 'name', 'shift_code', 'sms_status', 'route_code', 'tag_1', 'tag_2', 'own_bmc_code', 'own_mcc_plant_code'], 'safe'],
+                [['auto_flag', 'union_code', 'data_post_id', 'sms_errorlog', 'soc_bmc_flag', 'mobile_no', 'sms_mobile', 'created_by', 'updated_by', 'resp_status', 'resp_desc', 'ftp_txn_file_name', 'error_desc', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param', 'batch_no'], 'safe'],
         ];
     }
 
