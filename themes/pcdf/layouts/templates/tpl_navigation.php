@@ -111,7 +111,7 @@ echo GhostMenu::widget([
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-analyzer-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                 ['label' => 'Calibration', 'url' => ['/collection/tbl-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                 ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
-                ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($action == 'tbl-mcc-shift-lock')],
+                ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -514,6 +514,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', '805 - Eko Milk Calibration'), 'url' => ['/misreports/reports/eko-milk-calibration']],
                         ['label' => Yii::t('app', '806 - Calibration Flag'), 'url' => ['/misreports/reports/calibration-flag']],
                         ['label' => Yii::t('app', '807 - Cleaning Flag Bmc'), 'url' => ['/misreports/reports/cleaning-flag-bmc']],
+                        ['label' => Yii::t('app', '808 - Cleaning Format'), 'url' => ['/misreports/reports/cleaning-format']],
                     ]
                 ],
                 [
@@ -648,6 +649,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                         ['label' => Yii::t('app', 'DPU Station Detail'), 'url' => ['/installation/dpu-station-detail/index'], 'active' => ($cntrl == 'dpu-station-detail')],
                         ['label' => Yii::t('app', 'Bulk Delete Milk Collection'), 'url' => ['/collection/tbl-milk-collection/bulk-delete-collection'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'bulk-delete-collection')],
+                        ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
                     ]
                 ],
                 [

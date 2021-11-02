@@ -310,4 +310,18 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
         return $query;
     }
 
+    public function getNegativeValDcs() {
+        $query = $this->find()
+                ->select(['tbl_dcs.dcs_name', 'tbl_member_payment_alias.dcs_code', 'tbl_dcs.ref_code'])
+                ->joinWith(['dcsCode'])
+                ->where(['payment_cycle_code' => $this->payment_cycle_code, 'tbl_member_payment_alias.bmc_code' => $this->bmc_code])
+                ->andWhere(['<', 'final_amount', 0]);
+
+//        if (!empty($this->dcs_code)) {
+//            $query->andWhere(['not in', 'dcs_code', $this->dcs_code]);
+//        }
+
+        return $query->asArray()->all();
+    }
+
 }

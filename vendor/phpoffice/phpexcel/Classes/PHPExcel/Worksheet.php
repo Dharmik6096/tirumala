@@ -2427,16 +2427,40 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
             foreach ($source as $rowData) {
                 $currentColumn = $startColumn;
                 foreach ($rowData as $cellValue) {
+                    $dispData = $cellValue;
+                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+                    $number = false;
+                    if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+                        $number = true;//echo "<td>" . $value . "</td>";
+                    } else if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) == '.' || (substr($value, 0, 1) == '0' && substr($value, 1, 1) == '.'))) {
+                        if (substr($value, 0, 1) == '.') {
+                            $number = true;//echo "<td>0" . $value . "</td>";
+                        } else {
+                            $number = true;//echo "<td>" . substr($value, 0, 2) . "</td>";
+                        }
+                    } else {
+                        $number = false;//echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
+                    }
+
                     if ($strictNullComparison) {
                         if ($cellValue !== $nullValue) {
                             // Set cell value
-                            $this->setCellValueExplicit($currentColumn . $startRow, $cellValue);
+                            if($number || $value == '0') {
+                                $this->setCellValueExplicit($currentColumn . $startRow, $value, PHPExcel_Cell_DataType::TYPE_NUMERIC);
+                            } else {
+                                $this->setCellValueExplicit($currentColumn . $startRow, $value);
+                            }
 //                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
                         }
                     } else {
                         if ($cellValue != $nullValue) {
                             // Set cell value
-                            $this->setCellValueExplicit($currentColumn . $startRow, $cellValue);
+                            
+                            if($number || $value == '0') {
+                                $this->setCellValueExplicit($currentColumn . $startRow, $value, PHPExcel_Cell_DataType::TYPE_NUMERIC);
+                            } else {
+                                $this->setCellValueExplicit($currentColumn . $startRow, $value);
+                            }
 //                            $this->getCell($currentColumn . $startRow)->setValue($cellValue);
                         }
                     }

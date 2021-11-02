@@ -5,6 +5,8 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 3');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date'));
@@ -24,17 +26,12 @@ $tot_amt = array_sum(array_map(function($array) {
             return $array['final_amount'];
         }, $array));
 ?>
-<div class="panel panel-default panel-grid panel-main">
-    <div class="panel-body">      
-        <div class="panel-heading">
-            <?= $this->title . ' (' . $bmc_info . ')' ?>   
-            <div id="total-payment">
-                Total Payable :: <?= $tot_amt; ?>
-            </div>
-        </div>     
+<div class="modal modal-default fade" id="MemberPaymentAdjustmentModel" role="dialog">
+    <div class="modal-dialog width_100-50">
+
         <?php
         $form = ActiveForm::begin([
-                    'id' => 'payment-adjust',
+                    'id' => 'payment-adjust-member',
                     'validateOnBlur' => TRUE,
                     'validateOnChange' => TRUE,
                     'enableClientValidation' => true,
@@ -42,257 +39,254 @@ $tot_amt = array_sum(array_map(function($array) {
                     'action' => $urlForPost
         ]);
         ?>
-        <div class="table-responsive kv-grid-container">
-            <table class="table table-bordered table-hover kv-grid-table kv-table-wrap">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th><?= Yii::t('app', 'DCS Code') ?></th>
-                        <th><?= Yii::t('app', 'Code Ex.') ?></th>
-                        <th><?= Yii::t('app', 'DCS') ?></th>
-                        <th><?= Yii::t('app', 'Member Code') ?></th>
-                        <th><?= Yii::t('app', 'Member') ?></th>
-                        <th><?= Yii::t('app', 'KgFAT') ?></th>
-                        <th><?= Yii::t('app', 'KgSNF') ?></th>
-                        <th><?= Yii::t('app', 'Total Qty') ?></th>
-                        <th><?= Yii::t('app', 'Milk Amount(+)') ?></th>
-                        <th><?= Yii::t('app', 'Addition(+)') ?></th>
-                        <th><?= Yii::t('app', 'Deduction(-)') ?></th>
-                        <th><?= Yii::t('app', 'Previous Hold(+)') ?></th>
-                        <th><?= Yii::t('app', 'Previous Due(-)') ?></th>
-                        <th><?= Yii::t('app', 'Final Pay') ?></th>
-                        <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>
-                        <th><?= Yii::t('app', 'Additional Pay(+)') ?></th>
-                        <th><?= Yii::t('app', 'Adjust Recovery') ?></th>
-                        <th><?= Yii::t('app', 'Recovery') ?></th>
-                        <th><?= Yii::t('app', 'Net Payable') ?></th>
-                        <th><?= Yii::t('app', 'Remarks') ?></th>
-                        <th><?= Yii::t('app', 'Actions') ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $totalQty = 0;
-                    $totalMilkAmt = 0;
-                    $totalAddition = 0;
-                    $totalDeduction = 0;
-                    $totalPrevHold = 0;
-                    $totalPrevDue = 0;
-                    $totalFinalPay = 0;
-                    ?>
-                    <?php foreach ($dataProvider as $index => $m) { ?>
-                        <?php
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    <?= $this->title . ' (' . $bmc_info . ')' ?> 
+                    <div id="total-payment">
+                        Total Payable :: <?= $tot_amt; ?>
+                    </div>
+                </h4>
+            </div>
+            <div class="popup-header bg_white">
+
+                <div class="table-responsive kv-grid-container">
+                    <table class="table table-bordered table-hover kv-grid-table kv-table-wrap">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th><?= Yii::t('app', 'DCS Code') ?></th>
+                                <th><?= Yii::t('app', 'Code Ex.') ?></th>
+                                <th><?= Yii::t('app', 'DCS') ?></th>
+                                <th><?= Yii::t('app', 'Member Code') ?></th>
+                                <th><?= Yii::t('app', 'Member') ?></th>
+                                <th><?= Yii::t('app', 'KgFAT') ?></th>
+                                <th><?= Yii::t('app', 'KgSNF') ?></th>
+                                <th><?= Yii::t('app', 'Total Qty') ?></th>
+                                <th><?= Yii::t('app', 'Milk Amount(+)') ?></th>
+                                <th><?= Yii::t('app', 'Addition(+)') ?></th>
+                                <th><?= Yii::t('app', 'Deduction(-)') ?></th>
+                                <th><?= Yii::t('app', 'Previous Hold(+)') ?></th>
+                                <th><?= Yii::t('app', 'Previous Due(-)') ?></th>
+                                <th><?= Yii::t('app', 'Final Pay') ?></th>
+                                <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>
+                                <th><?= Yii::t('app', 'Additional Pay(+)') ?></th>
+                                <th><?= Yii::t('app', 'Adjust Recovery') ?></th>
+                                <th><?= Yii::t('app', 'Recovery') ?></th>
+                                <th><?= Yii::t('app', 'Net Payable') ?></th>
+                                <th><?= Yii::t('app', 'Remarks') ?></th>
+                                <th><?= Yii::t('app', 'Actions') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $totalQty = 0;
+                            $totalMilkAmt = 0;
+                            $totalAddition = 0;
+                            $totalDeduction = 0;
+                            $totalPrevHold = 0;
+                            $totalPrevDue = 0;
+                            $totalFinalPay = 0;
+                            ?>
+                            <?php foreach ($dataProvider as $index => $m) { ?>
+                                <?php
 //                        $dcs = $m->dcsCode;
 //                        $member = $m->memberCode;
-                        $totalQty = $totalQty + $m['qty'];
-                        $totalMilkAmt = $totalMilkAmt + $m['total_amount'];
-                        $totalAddition = $totalAddition + $m['total_addition'];
-                        $totalDeduction = $totalDeduction + $m['total_deduction'];
-                        $totalPrevHold = $totalPrevHold + $m['previous_hold'];
-                        $totalPrevDue = $totalPrevDue + $m['previous_due'];
-                        $totalFinalPay = $totalFinalPay + $m['net_payable'];
-                        ?>
-                        <tr>
-                            <td><?= $index + 1 ?></td>
-                            <td><?= $m['dcs_code'] ?></td>
-                            <td><?= $m['dcs_code_ex'] ?></td>
-                            <td><?= $m['dcs_name'] ?></td>
-                            <td><?= substr($m['member_code'], -4) ?></td>
-                            <td><?= $m['member_name'] ?></td>
-                            <td><?= $m['kg_fat'] ?></td>
-                            <td><?= $m['kg_snf'] ?></td>
-                            <td><?= $m['qty'] ?></td>
-                            <td><?= $m['total_amount'] ?></td>
-                            <td><?= $m['total_addition'] ?></td>
-                            <td><?= $m['total_deduction'] ?></td>
-                            <td><?= $m['previous_hold'] ?></td>
-                            <td><?= $m['previous_due'] ?></td>
-                            <td class='final-amount'><?= $m['net_payable'] ?></td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m['member_payment_alias_code']]);
-                                echo $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $m['hold_amount'], 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
+                                $totalQty = $totalQty + $m['qty'];
+                                $totalMilkAmt = $totalMilkAmt + $m['total_amount'];
+                                $totalAddition = $totalAddition + $m['total_addition'];
+                                $totalDeduction = $totalDeduction + $m['total_deduction'];
+                                $totalPrevHold = $totalPrevHold + $m['previous_hold'];
+                                $totalPrevDue = $totalPrevDue + $m['previous_due'];
+                                $totalFinalPay = $totalFinalPay + $m['net_payable'];
                                 ?>
-                            </td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']);
-                                echo $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $m['additional_pay'], 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE)
-                                ?>
-                            </td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $m['payment_cycle_code']]);
-                                echo Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $m['plant_code']]);
-                                echo Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $m['mcc_plant_code']]);
-                                echo Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $m['bmc_code']]);
-                                echo Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $m['dcs_code']]);
-                                echo Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $m['member_code']]);
-                                echo $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $m['adjust_recovery']])->label(FALSE)
-                                ?>
-                            </td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $m['recovery']])->label(FALSE);
-                                ?>
-                            </td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $m['final_amount']])->label(FALSE);
-                                ?>
-                            </td>
-                            <td class="no_padding_input hide_help_block">
-                                <?php
-                                echo $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $m['adjust_remark']])->label(FALSE);
-                                ?>
-                            </td>
-                            <td class="action-cell skip-export kv-align-center kv-align-middle">
-                                <?php
-                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $m['payment_cycle_code'], 'data-bmc_code' => $m['bmc_code'], 'data-dcs_code' => $m['dcs_code'], 'data-member_code' => $m['member_code']];
-                                echo GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
-                                ?>
+                                <tr>
+                                    <td><?= $index + 1 ?></td>
+                                    <td><?= $m['dcs_code'] ?></td>
+                                    <td><?= $m['dcs_code_ex'] ?></td>
+                                    <td><?= $m['dcs_name'] ?></td>
+                                    <td><?= substr($m['member_code'], -4) ?></td>
+                                    <td><?= $m['member_name'] ?></td>
+                                    <td><?= $m['kg_fat'] ?></td>
+                                    <td><?= $m['kg_snf'] ?></td>
+                                    <td><?= $m['qty'] ?></td>
+                                    <td><?= $m['total_amount'] ?></td>
+                                    <td><?= $m['total_addition'] ?></td>
+                                    <td><?= $m['total_deduction'] ?></td>
+                                    <td><?= $m['previous_hold'] ?></td>
+                                    <td><?= $m['previous_due'] ?></td>
+                                    <td class='final-amount'><?= $m['net_payable'] ?></td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $m['member_payment_alias_code']]);
+                                        echo $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $m['hold_amount'], 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
+                                        ?>
+                                    </td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo Html::hiddenInput('process_lock_flag_member', 'Process', ['class' => 'process_lock_flag_member']);
+                                        echo $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $m['additional_pay'], 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE)
+                                        ?>
+                                    </td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $m['payment_cycle_code']]);
+                                        echo Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $m['plant_code']]);
+                                        echo Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $m['mcc_plant_code']]);
+                                        echo Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $m['bmc_code']]);
+                                        echo Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $m['dcs_code']]);
+                                        echo Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $m['member_code']]);
+                                        echo $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $m['adjust_recovery']])->label(FALSE)
+                                        ?>
+                                    </td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $m['recovery']])->label(FALSE);
+                                        ?>
+                                    </td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $m['final_amount']])->label(FALSE);
+                                        ?>
+                                    </td>
+                                    <td class="no_padding_input hide_help_block">
+                                        <?php
+                                        echo $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $m['adjust_remark']])->label(FALSE);
+                                        ?>
+                                    </td>
+                                    <td class="action-cell skip-export kv-align-center kv-align-middle">
+                                        <?php
+                                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $m['payment_cycle_code'], 'data-bmc_code' => $m['bmc_code'], 'data-dcs_code' => $m['dcs_code'], 'data-member_code' => $m['member_code']];
+                                        echo GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
+                                        ?>
 
-                                <?php
-                                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $m['payment_cycle_code'], 'data-bmc_code' => $m['bmc_code'], 'data-dcs_code' => $m['dcs_code'], 'data-member_code' => $m['member_code']];
-                                echo GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
-                                ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
+                                        <?php
+                                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $m['payment_cycle_code'], 'data-bmc_code' => $m['bmc_code'], 'data-dcs_code' => $m['dcs_code'], 'data-member_code' => $m['member_code']];
+                                        echo GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
 
-                </tbody>
-                <?php if (!empty($dataProvider)) { ?>
-                    <tbody class="kv-page-summary-container">
-                        <tr class="kv-page-summary warning">
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td><?= $totalQty ?></td>
-                            <td><?= $totalMilkAmt ?></td>
-                            <td><?= $totalAddition ?></td>
-                            <td><?= $totalDeduction ?></td>
-                            <td><?= $totalPrevHold ?></td>
-                            <td><?= $totalPrevDue ?></td>
-                            <td><?= $totalFinalPay ?></td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                            <td>&nbsp;</td>
-                        </tr>
-                    </tbody>
-                <?php } ?>
-            </table>
+                        </tbody>
+                        <?php if (!empty($dataProvider)) { ?>
+                            <tbody class="kv-page-summary-container">
+                                <tr class="kv-page-summary warning">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td><?= $totalQty ?></td>
+                                    <td><?= $totalMilkAmt ?></td>
+                                    <td><?= $totalAddition ?></td>
+                                    <td><?= $totalDeduction ?></td>
+                                    <td><?= $totalPrevHold ?></td>
+                                    <td><?= $totalPrevDue ?></td>
+                                    <td><?= $totalFinalPay ?></td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        <?php } ?>
+                    </table>
+                </div>
+            </div>
+            <div class="panel-footer" >
+                <?php //Yii::$app->controls->save('Confirm', $model);                ?>
+                <?php
+                AjaxSubmitButton::begin([
+                    'label' => Yii::t('app', 'Save'),
+                    'ajaxOptions' => [
+                        'type' => 'POST',
+                        'url' => Url::to($urlForPost),
+                        'beforeSend' => new JsExpression('function(data){
+                                            $(".process_lock_flag_member").val("Process");
+                                            var negativeVal = "No";
+                                            $(".final-amount").each(function() {
+                                                var parent = $(this).parents("tr");
+                                                var final = parseFloat(parent.find(".final-amount").text());
+                                                var netPay = parseFloat(parent.find(".net-amount").val());
+                                                if(final == "" ||  isNaN(final)){
+                                                    final=0;
+                                                }
+                                                if(final < 0){
+                                                    if((!isNaN(netPay) && netPay < 0)) {
+                                                        negativeVal = "Yes";
+                                                    }
+                                                }
+                                           });
+                                           var message = "' . $message . '";
+                                           var negativeCount = ' . $negativeValCount . ';
+                                               
+                                            $("#loadercontent").show();
+                                            $("#pageloader").show(); 
+                                            if(negativeCount > 0 || negativeVal == "Yes") {
+                                                var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+                                                bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+                                            } else {
+                                               var totalRec=0;
+                                               var totaladjRec=0;
+                                               $(".adjust-recovery").each(function() {
+                                                   var parent = $(this).parents("tr");
+                                                   var adjustRec = parseFloat(parent.find(".adjust-recovery").val());
+                                                   var recovery = parseFloat(parent.find(".recovery").val());
+                                                       if(adjustRec == "" ||  isNaN(adjustRec)){
+                                                           adjustRec=0;
+                                                       }
+                                                       if(recovery == "" ||  isNaN(recovery)){
+                                                           recovery=0;
+                                                       }
+                                                   totalRec=totalRec+recovery;
+                                                   totaladjRec=totaladjRec+adjustRec;
+                                               });
+                                                if(totalRec != totaladjRec) {
+                                                
+                                                    $("#loadercontent").hide();
+                                                    $("#pageloader").hide(); 
+                                                    var dispmessage = "' . Yii::t('app', 'Sum of Adjust Recovery and Sum of Reovery Must be Same.') . '";
+                                                    bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispmessage+"</span>");
+                                                    return false;
+                                                } else {
+                                                    $("#loadercontent").show();
+                                                    $("#pageloader").show(); 
+                                                }
+//                                                return false;
+                                            }
+                                        }'),
+                        'success' => new JsExpression('function(data){
+                                                                var obj=$.parseJSON(data);
+                                                                if (obj.status == "success"){ 
+                                                                    location.reload();
+                                                                }else{
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();
+                                                                    bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+obj.msg+"</span>");
+                                                                }
+                                                 }'),
+                    ],
+                    'options' => ['class' => 'btn btn-default btn-raised',
+                        'type' => 'submit'],
+                ]);
+                AjaxSubmitButton::end();
+                ?>
+                <?php // Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'memberPaymentSave']); ?>
+                <?php // Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
+                <?php // Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?> 
+            </div>
         </div>
-        <?php
-//        $attribute = [
-//                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-//                ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-//                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
-//                }],
-//                ['attribute' => 'dcs_code', 'value' => function($model) {
-//                    return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-//                }],
-//                ['attribute' => 'member_code', 'value' => function($model) {
-//                    return substr($model->member_code, -4);
-//                }, 'label' => Yii::t('app', 'Member Code')],
-//                ['attribute' => 'member_code', 'value' => function($model) {
-//                    return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-//                }],
-//                ['attribute' => 'kg_fat'],
-//                ['attribute' => 'kg_snf'],
-//                ['attribute' => 'qty', 'pageSummary' => true],
-//                ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
-//                ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
-//                ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
-//                ['attribute' => 'previous_hold', 'pageSummary' => true],
-//                ['attribute' => 'previous_due', 'pageSummary' => true],
-//                ['attribute' => 'net_payable', 'pageSummary' => true, 'contentOptions' => ['class' => 'final-amount'],],
-//                ['attribute' => 'hold_amount',
-//                'format' => 'raw',
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return Html::activeHiddenInput($model, 'member_payment_alias_code[' . $index . ']', ['class' => 'alis_code', 'value' => $model->member_payment_alias_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
-//                },
-//            ],
-//                ['attribute' => 'additional_pay',
-//                'format' => 'raw',
-//                //  'pageSummary' => true,
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']) . $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $model->additional_pay, 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE);
-//                },
-//            ],
-//                ['attribute' => 'adjust_recovery',
-//                'format' => 'raw',
-//                'visible' => $config,
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                //  'pageSummary' => true,
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $model->payment_cycle_code]) . Html::activeHiddenInput($model, 'plant_code[' . $index . ']', ['class' => 'plant', 'value' => $model->plant_code]) . Html::activeHiddenInput($model, 'mcc_plant_code[' . $index . ']', ['class' => 'mcc', 'value' => $model->mcc_plant_code]) . Html::activeHiddenInput($model, 'bmc_code[' . $index . ']', ['class' => 'bmc', 'value' => $model->bmc_code]) . Html::activeHiddenInput($model, 'dcs_code[' . $index . ']', ['class' => 'dcs', 'value' => $model->dcs_code]) . Html::activeHiddenInput($model, 'member_code[' . $index . ']', ['class' => 'member', 'value' => $model->member_code]) . $form->field($model, 'adjust_recovery[' . $index . ']')->textInput(['class' => 'adjust-recovery form-control number-validate', 'value' => $model->adjust_recovery])->label(FALSE);
-//                },
-//            ],
-//                ['attribute' => 'recovery',
-//                'format' => 'raw',
-//                'visible' => $config,
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                //  'pageSummary' => true,
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return $form->field($model, 'recovery[' . $index . ']')->textInput(['class' => 'recovery form-control', "readOnly" => TRUE, 'value' => $model->recovery])->label(FALSE);
-//                },
-//            ],
-//                ['attribute' => 'final_amount',
-//                'format' => 'raw',
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                //  'pageSummary' => true,
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return $form->field($model, 'final_amount[' . $index . ']')->textInput(['class' => 'net-amount form-control', "disabled" => TRUE, 'value' => $model->final_amount])->label(FALSE);
-//                },
-//            ],
-//                ['attribute' => 'adjust_remark',
-//                'format' => 'raw',
-//                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
-//                'value' => function ($model, $key, $index) use ($form) {
-//                    return $form->field($model, 'adjust_remark[' . $index . ']')->textInput(['value' => $model->adjust_remark])->label(FALSE);
-//                },
-//            ],
-//        ];
-//
-//        $grid_option = [
-//            'id' => 'member-payment-adjust-grid',
-//            'attributes' => $attribute,
-//            'active_column' => false,
-//            'showPageSummary' => true,
-//            'actions' => [
-//                'member-bill-head' => function ($url, $model) {
-//                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
-//                    return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
-//                },
-//                'member-installment' => function ($url, $model) {
-//                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberinstallments', 'data-original-title' => 'Member Installment', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
-//                    return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/payment/tbl-member-payment/member-installment', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
-//                },
-//            ]
-//        ];
-//
-//        Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], false);
-        ?>
-    </div>
-    <div class="panel-footer" >
-        <?php //Yii::$app->controls->save('Confirm', $model);                ?>
-        <?= Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
-        <?= Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?> 
+        <?php ActiveForm::end(); ?>
     </div>
 </div>
-<?php ActiveForm::end(); ?>
 <!--<div id='member_installment'></div>
 <div id="recoverOtherMember"></div>-->
 
@@ -302,9 +296,9 @@ $tot_amt = array_sum(array_map(function($array) {
 $script = " 
 function SumAmount()
  {
- var total = parseFloat(0.00);
-      $('.adjust-amount').each(function() {
-      var adjust =  parseFloat($(this).val());
+    var total = parseFloat(0.00);
+    $('.adjust-amount').each(function() {
+    var adjust =  parseFloat($(this).val());
   if(adjust != '' &&  !isNaN(adjust)){
           total = total + adjust;  
           }
@@ -330,7 +324,7 @@ function SumAmountold()
         total=$tot_amt+total;
  $('#total-payment').html('Total Payable :: '+total.toFixed(2));
  } 
- $('.kv-panel-before').hide();
+// $('.kv-panel-before').hide();
  
 
 $('#loadercontent').hide();
