@@ -1,0 +1,298 @@
+<?php
+
+use yii\helpers\Html;
+use app\components\GeneralFunctions;
+use kartik\detail\DetailView;
+use yii\helpers\Url;
+
+$this->title = Yii::$app->label->title('view', 'BMC Collection');
+?>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Html::a('<i class="fa fa-arrow-left"></i>', Url::previous(), ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'mcc_plant_code',
+                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'bmc_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'bmc_name',
+                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'bmc_silos_info_code',
+                            'value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'customer_type',
+                            'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'customer_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'customer_name',
+                            'label' => Yii::t('app', 'Name'),
+                            'value' => Yii::$app->general->getCustomer($model, $model->customer_type),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'route_name',
+                            'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'date_time_of_collection',
+                            'value' => Yii::$app->controls->view_date($model->date_time_of_collection),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'shift_code',
+                            'value' => isset($model->shiftCode) ? $model->shiftCode->shift : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'milk_type_code',
+                            'value' => isset($model->milkType) ? $model->milkType->animal_type_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'milk_quality_type_code',
+                            'value' => isset($model->milkQualityType) ? $model->milkQualityType->milk_quality_type_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'fat',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'snf',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'clr',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'rtpl',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'qty_mode',
+                            'value' => isset($model->qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->qty_mode] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'converted_qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'amount',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'sample_no',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'type_of_data_receive',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'transporter_code',
+                            'value' => isset($model->transporter) ? $model->transporter->transporter_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'vehicle_code',
+                            'value' => isset($model->vehicle) ? $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'collection_type',
+                            'value' => !empty($model->collection_type) ? Yii::$app->dropdown->getRecords('collection_type')['data'][$model->collection_type] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'route_arrival_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'created_at',
+                            'value' => Yii::$app->controls->view_datetime($model->created_at, 'php:H:i:s'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'tag_1',
+                            'value' => Yii::$app->general->getSapStatus($model->tag_1 . $model->tag_2),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'error_desc',
+                            'value' => $model->error_desc,
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'adt_param',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'adt_value',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'originating_org_type',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            ['attribute' => 'originating_type',
+                            'value' => Yii::$app->general->getStaticDropdownVal('originating_type', $model, 'originating_type'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'dcs_incharge_name',
+                            'value' => !empty(Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')) ? Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->firstname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->lastname . ' ' . Yii::$app->general->getDefaultContactDetail($model->dcs_code, 'society')->surname : 'N/A',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'qlty_time',
+                            'value' => !empty(Yii::$app->controls->view_datetime($model->qlty_time)) ? Yii::$app->controls->view_datetime($model->qlty_time) : 'N/A',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'qty_time',
+                            'value' => !empty(Yii::$app->controls->view_datetime($model->qty_time)) ? Yii::$app->controls->view_datetime($model->qty_time) : 'N/A',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+            ];
+
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
+        </div>
+    </div>
+</div>

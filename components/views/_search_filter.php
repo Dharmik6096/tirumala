@@ -25,7 +25,7 @@ if (!empty($filter_data)) {
                     $method = isset($filter_data['method']) ? $filter_data['method'] : 'get';
                     $filters = $filter_data['filter'];
                     $count = count($filters);
-                    if (!empty($filters) && Yii::$app->controller->action->id == $aciton[0] && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
+                    if (!empty($filters) && in_array(Yii::$app->controller->action->id, $aciton) && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
                         $f_cnt = 0;
                         $form = \yii\widgets\ActiveForm::begin([
                                     'action' => $aciton,
@@ -273,7 +273,7 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdown('transfer_master_type', $model, $form, 'form-group col-sm-2 padding-right-5 padding-left-0', FALSE, FALSE, 'master_type'); ?>
                                         </div>
                                     <?php } ?>
-                                      <?php
+                                    <?php
                                     if (in_array($value, array('transfer_type'))) {
                                         $f_cnt++
                                         ?>
