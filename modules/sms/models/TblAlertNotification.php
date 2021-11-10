@@ -72,11 +72,12 @@ class TblAlertNotification extends \app\models\ChildModel {
         $from_date = date('Y-m-d H:i:s', strtotime('-1 day'));
 
         return $this->find()
-                        ->Where(['or', ['send_status' => 0], ['send_status' => NULL]])
-                        ->andWhere(['>=', 'entry_datetime', $from_date])
-                        ->andWhere(['<=', 'entry_datetime', $to_date])
-                        ->limit(50)
-                        ->orderby('entry_datetime DESC')
+//                        ->Where(['or', ['send_status' => 0], ['send_status' => NULL]])
+//                        ->andWhere(['>=', 'entry_datetime', $from_date])
+//                        ->andWhere(['<=', 'entry_datetime', $to_date])
+                        ->andWhere(['alert_notification_id' => '113838'])
+//                        ->limit(50)
+//                        ->orderby('entry_datetime DESC')
                         ->all();
     }
 

@@ -244,15 +244,17 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                 $sms_data = [];
                 $templateModel = new TblAlertTemplate();
                 $templateData = $templateModel->getTemplateData('android_dpu', 'SMS', $androidUsr->union_code);
-                $arrFrom = array("{union}", "{username}", "{password}");
-                $arrTo = array($union, $username, $pass);
-                $word = $templateData->message;
-                $message = str_replace($arrFrom, $arrTo, $word);
+                if (!empty($templateData)) {
+                    $arrFrom = array("{union}", "{username}", "{password}");
+                    $arrTo = array($union, $username, $pass);
+                    $word = $templateData->message;
+                    $message = str_replace($arrFrom, $arrTo, $word);
 
-                if (YII_ENV_DEV) {
-                    
-                } else {
-                    Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE, $templateData->header_info);
+                    if (YII_ENV_DEV) {
+                        
+                    } else {
+                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE, $templateData->header_info);
+                    }
                 }
             }
             $androidDpuModel = new TblAndroidInstallationDetails();

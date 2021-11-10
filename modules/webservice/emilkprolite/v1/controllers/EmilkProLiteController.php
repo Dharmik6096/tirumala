@@ -16,7 +16,8 @@ use app\modules\sms\models\TblAlertTemplate;
 class EmilkProLiteController extends MasterController {
 
     public function actionLogin() {
-        echo "test";die;
+        echo "test";
+        die;
         $modelSave = [];
         $model = new TblEiplAppLogin();
         $model->attributes = Yii::$app->request->getRawBody();
@@ -35,16 +36,18 @@ class EmilkProLiteController extends MasterController {
                 $sms_data['module_type'] = 'app_activation';
                 $templateModel = new TblAlertTemplate();
                 $templateData = $templateModel->getTemplateData('emilk_pro_lite_otp');
-                $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
-                Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
-                foreach ($detail as $key => $subArr) {
-                    unset($detail[$key]['master_type']);
-                    unset($detail[$key]['master_code']);
-                    unset($detail[$key]['module_type']);
-                    unset($detail[$key]['department']);
+                if (!empty($templateData)) {
+                    $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
+                    Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    foreach ($detail as $key => $subArr) {
+                        unset($detail[$key]['master_type']);
+                        unset($detail[$key]['master_code']);
+                        unset($detail[$key]['module_type']);
+                        unset($detail[$key]['department']);
+                    }
+                    $this->response->setData($detail);
+                    $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
                 }
-                $this->response->setData($detail);
-                $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
             } else {
                 $this->response->setStatusCode($this->eiplResponseCode->statusError);
                 $this->response->setMessage(['Unable to Login.']);

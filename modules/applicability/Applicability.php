@@ -313,27 +313,31 @@ class Applicability extends \yii\base\Module {
                                 if ($contactData) {
                                     $mobilNo = $contactData->mobile_no;
                                 }
-                                $templateModel = new TblAlertTemplate();
-                                $templateData = $templateModel->getTemplateData($type, 'SMS', $appModel->union_code);
-                                $arrFrom = array("{date}", '{' . $type . '}');
-                                $arrTo = array($date, $rate);
-                                $word = $templateData->message;
-                                $message = str_replace($arrFrom, $arrTo, $word);
+                                if (!empty($mobilNo)) {
+                                    $templateModel = new TblAlertTemplate();
+                                    $templateData = $templateModel->getTemplateData($type, 'SMS', $appModel->union_code);
+                                    if (!empty($templateData)) {
+                                        $arrFrom = array("{date}", '{' . $type . '}');
+                                        $arrTo = array($date, $rate);
+                                        $word = $templateData->message;
+                                        $message = str_replace($arrFrom, $arrTo, $word);
 
-                                $notificationmodel = new TblAlertNotification();
-                                $datetime = date('Y-m-d H:i:s');
-                                $notificationmodel->module_type = $type;
-                                $notificationmodel->content_id = 1;
-                                $notificationmodel->receiver_detail = '9879468958'; //$mobilNo;
-                                $notificationmodel->receiver_type = 'SMS';
-                                $notificationmodel->message = $message;
-                                $notificationmodel->send_status = '0';
-                                $notificationmodel->entry_datetime = $datetime;
-                                $notificationmodel->pick_datetime = NULL;
-                                $notificationmodel->response_datetime = NULL;
-                                $notificationmodel->response_status = 0;
-                                $notificationmodel->template_id = $templateData->header_info;
-                                $saveModel[] = $notificationmodel->save();
+                                        $notificationmodel = new TblAlertNotification();
+                                        $datetime = date('Y-m-d H:i:s');
+                                        $notificationmodel->module_type = $type;
+                                        $notificationmodel->content_id = 1;
+                                        $notificationmodel->receiver_detail = $mobilNo;
+                                        $notificationmodel->receiver_type = 'SMS';
+                                        $notificationmodel->message = $message;
+                                        $notificationmodel->send_status = '0';
+                                        $notificationmodel->entry_datetime = $datetime;
+                                        $notificationmodel->pick_datetime = NULL;
+                                        $notificationmodel->response_datetime = NULL;
+                                        $notificationmodel->response_status = 0;
+                                        $notificationmodel->template_id = $templateData->header_info;
+                                        $saveModel[] = $notificationmodel->save();
+                                    }
+                                }
                             }
 
                             $saveModel[] = $appModel->save();

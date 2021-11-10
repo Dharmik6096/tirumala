@@ -37,25 +37,27 @@ class EiplAppController extends MasterController {
             if ($transaction == 'customRedirect') {
                 $templateModel = new TblAlertTemplate();
                 $templateData = $templateModel->getTemplateData('eipl_app_otp');
-                $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
-                
+                if (!empty($templateData)) {
+                    $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
+
 //                $message = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
-                $sms_data = [];
-                $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
-                $sms_data['module_type'] = 'app_activation';
-                if (YII_ENV_DEV) {
-                    //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
-                } else {
-                    Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    $sms_data = [];
+                    $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
+                    $sms_data['module_type'] = 'app_activation';
+                    if (YII_ENV_DEV) {
+                        //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    } else {
+                        Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    }
+                    foreach ($detail as $key => $subArr) {
+                        unset($detail[$key]['master_type']);
+                        unset($detail[$key]['master_code']);
+                        unset($detail[$key]['module_type']);
+                        unset($detail[$key]['department']);
+                    }
+                    $this->response->setData($detail);
+                    $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
                 }
-                foreach ($detail as $key => $subArr) {
-                    unset($detail[$key]['master_type']);
-                    unset($detail[$key]['master_code']);
-                    unset($detail[$key]['module_type']);
-                    unset($detail[$key]['department']);
-                }
-                $this->response->setData($detail);
-                $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
             } else {
                 $this->response->setStatusCode($this->eiplResponseCode->statusError);
                 $this->response->setMessage(['Unable to Login.']);
