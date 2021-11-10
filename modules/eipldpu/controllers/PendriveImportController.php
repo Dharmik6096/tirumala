@@ -116,10 +116,24 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $p_len = strlen($packet);
                             if ($file->dpu_type == 8 && !$header_line) {
                                 $char = preg_match('/^[a-zA-Z ]+$/', substr($packet, 3, 1)) ? TRUE : FALSE;
-                                $p_len.= ($char) ? '#3' : '#4';
+                                if ($p_len >= 33 && $p_len <= 44) {
+                                    $p_len = 44;
+                                }
+                                $p_len .= ($char) ? '#3' : '#4';
+                            }
+                            $packet_config = !empty($dpu_config[$p_len]) ? $dpu_config[$p_len] : FALSE;
+                            if ($p_len >= 25 && empty($packet_config)) {
+                                $dec_text = \Yii::$app->EIPLSecurity->Decrypt($line . '-', $dpu_key, $file->dpu_type);
+                                $packet = ($dec_text) ? $dec_text : $line . '-';
+//                                $packet = substr($packet, -1, 0) == '-' ? $packet : $packet . '-';
+                                $p_len = strlen($packet);
+                                if ($file->dpu_type == 8 && !$header_line) {
+                                    $char = preg_match('/^[a-zA-Z ]+$/', substr($packet, 3, 1)) ? TRUE : FALSE;
+                                    $p_len .= ($char) ? '#3' : '#4';
+                                }
+                                $packet_config = !empty($dpu_config[$p_len]) ? $dpu_config[$p_len] : FALSE;
                             }
                             $header_line = FALSE;
-                            $packet_config = !empty($dpu_config[$p_len]) ? $dpu_config[$p_len] : FALSE;
                             $model = new TblEiplPacketProcess();
                             $model->attributes = $attributes;
                             $model->dcs_code = $model->vlccid;
@@ -147,7 +161,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                                         //$modelSave[] = $model;
                                         $model->rate = (empty($model->rate) && !empty($model->qty)) ? ($model->amt / $model->qty) : $model->rate;
                                         $model->save();
-                                        $success_cnt +=1;
+                                        $success_cnt += 1;
                                     } catch (\Throwable $ex) {
                                         $main_data_model->response_msg = 'Not OK';
                                         $main_data_model->save();
@@ -238,9 +252,9 @@ class PendriveImportController extends \app\controllers\ChildController {
                 $vt = $fc[0];
                 if ($vt == 'pckt') {
                     $pc = explode('-', $fc[1]);
-                    $val.=substr($packet, $pc[0], $pc[1]);
+                    $val .= substr($packet, $pc[0], $pc[1]);
                 } else if ($vt == 'fix') {
-                    $val.=$fc[1];
+                    $val .= $fc[1];
                 }
             }
             $p_data[$k] = $val;

@@ -34,6 +34,7 @@ $attribute = [
     ['attribute' => 'is_contact_verified', 'value' => function($model) {
             return $model->is_contact_verified == 1 ? 'Verified' : ( $model->is_contact_verified == 2 ? 'Reject' : 'Pending');
         }, 'filter' => false],
+    ['attribute' => 'remarks', 'filter' => false],
 ];
 
 $grid_option = [

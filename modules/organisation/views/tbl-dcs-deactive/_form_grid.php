@@ -39,10 +39,11 @@ $attribute = [
         ],
         //'filter' => Yii::$app->controls->search_date($searchModel, 'registration_date'),
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->from_date);
-        },
+    return Yii::$app->controls->view_date($model->from_date);
+},
 //                'label' => Yii::t('app', 'From Date')
     ],
+    ['attribute' => 'remarks'],
 //    [
 //        'attribute' => 'to_date', 'filter' => true,
 //        'filterType' => GridView::FILTER_DATE,
@@ -65,19 +66,19 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-deactive/view', 'id' => $model->dcs_code], $options);
         },
-        'active' => function ($url, $model) {
+                'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'dcs-active ' . $class, 'data-dcs_deactive_code' => $model->dcs_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-dcs-deactive/activate-dcs'], $options);
         },
-    ]
-];
+            ]
+        ];
 
-Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
-?>
-<div id="DCSActive"></div>
-<?php
-$script = " $(document).ready(function(){
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+        ?>
+        <div id="DCSActive"></div>
+        <?php
+        $script = " $(document).ready(function(){
         $(document).on('click','.dcs-active',function(e){
 //            $('#pageloader').show();
 //            $('#loadercontent').show();
@@ -99,5 +100,5 @@ $script = " $(document).ready(function(){
             });
         });
     });";
-$this->registerJs($script, View::POS_END, 'dcs-active');
-?>
+        $this->registerJs($script, View::POS_END, 'dcs-active');
+        ?>

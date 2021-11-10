@@ -3,6 +3,7 @@
 namespace app\modules\collection\models;
 
 use Yii;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_mcc_shift_lock_history".
@@ -55,6 +56,7 @@ class TblMccShiftLockHistory extends \yii\db\ActiveRecord {
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['operation_type'], 'safe'],
+            [['qty', 'avg_fat', 'avg_snf', 'amount'], 'safe'],
         ];
     }
 
@@ -87,6 +89,10 @@ class TblMccShiftLockHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'history_created_by']);
     }
 
 }

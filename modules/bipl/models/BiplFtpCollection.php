@@ -4,6 +4,7 @@ namespace app\modules\bipl\models;
 
 use Yii;
 use app\modules\collection\models\TblProcessedFiles;
+
 /**
  * This is the model class for table "bipl_ftp_collection".
  *
@@ -34,57 +35,55 @@ use app\modules\collection\models\TblProcessedFiles;
  *
  * @property TblProcessedFiles $process
  */
-class BiplFtpCollection extends \yii\db\ActiveRecord
-{
+class BiplFtpCollection extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'bipl_ftp_collection';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['census_code','cp_code','local_code','date','time','milk_type','quantity', 'fat', 'snf', 'awm', 'rate', 'amount', 'shift'],'required'],
-            [['cp_code', 'milk_type', 'extended_code', 'quantity_mode', 'measurement_mode', 'shift', 'census_code', 'mobile', 'given_name', 'fathers_name', 'family_name', 'process_type'], 'string'],
-            [['date', 'time', 'processed_at'], 'safe'],
-            [['quantity', 'fat', 'snf', 'awm', 'amount', 'rate'], 'number','min'=>0],
-            [['process_id'], 'integer'],
-            [['local_code'], 'integer','on'=>'checkDate'],
+                [['census_code', 'cp_code', 'local_code', 'date', 'time', 'milk_type', 'quantity', 'fat', 'snf', 'awm', 'rate', 'amount', 'shift'], 'required'],
+                [['cp_code', 'milk_type', 'extended_code', 'quantity_mode', 'measurement_mode', 'shift', 'census_code', 'mobile', 'given_name', 'fathers_name', 'family_name', 'process_type'], 'string'],
+                [['date', 'time', 'processed_at', 'ftp_txn_log_id'], 'safe'],
+                [['quantity', 'fat', 'snf', 'awm', 'amount', 'rate'], 'number', 'min' => 0],
+                [['process_id'], 'integer'],
+                [['local_code'], 'integer', 'on' => 'checkDate'],
             //[['process_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblProcessedFiles::className(), 'targetAttribute' => ['process_id' => 'process_id']],
-            [['census_code'],function ($attribute, $params) {
+            [['census_code'], function ($attribute, $params) {
                     Yii::$app->general->findCensus($this, $attribute);
-                },'skipOnEmpty'=>true],
-            [['milk_type'],function ($attribute, $params) {
+                }, 'skipOnEmpty' => true],
+                [['milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateBiplMilkType($this, $attribute);
-                },'skipOnEmpty'=>true],
-            ['census_code', 'match', 'pattern' => '/^\d{12}$/i','message'=> Yii::t('app/validation','{attribute} must be numeric and length should be exactly 12'),'skipOnEmpty'=>true],
-            ['date', 'date','format'=>'php:d.m.Y','on'=>'checkDate'],
-            ['time', 'time','format'=>'php:H:i:s'],
-            ['local_code', 'match', 'pattern' => '/^\d{1,4}$/i','message'=> Yii::t('app/validation','{attribute} must be numeric and length should be max 4 digits'),'skipOnEmpty'=>true],
-            [['local_code'],function ($attribute, $params) {
+                }, 'skipOnEmpty' => true],
+                ['census_code', 'match', 'pattern' => '/^\d{12}$/i', 'message' => Yii::t('app/validation', '{attribute} must be numeric and length should be exactly 12'), 'skipOnEmpty' => true],
+                ['date', 'date', 'format' => 'php:d.m.Y', 'on' => 'checkDate'],
+                ['time', 'time', 'format' => 'php:H:i:s'],
+                ['local_code', 'match', 'pattern' => '/^\d{1,4}$/i', 'message' => Yii::t('app/validation', '{attribute} must be numeric and length should be max 4 digits'), 'skipOnEmpty' => true],
+                [['local_code'], function ($attribute, $params) {
                     Yii::$app->general->validateLocalCode($this, $attribute);
-                },'skipOnError'=>true,'skipOnEmpty'=>true],
-            [['mobile'], function ($attribute, $params) {
-                    Yii::$app->general->vaildateMobileNumbers($this, $attribute,$params);
-                },'skipOnEmpty'=> true],
-            [['given_name','family_name', 'fathers_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute,$params);
-                },'skipOnEmpty'=> true],
-            [['measurement_mode', 'quantity_mode'], 'in', 'range' => ['AUTOMATIC','MANUAL']],
-            ['shift', 'in', 'range' => ['M','E']],
+                }, 'skipOnError' => true, 'skipOnEmpty' => true],
+                [['mobile'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['given_name', 'family_name', 'fathers_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['measurement_mode', 'quantity_mode'], 'in', 'range' => ['AUTOMATIC', 'MANUAL']],
+                ['shift', 'in', 'range' => ['M', 'E']],
         ];
     }
+
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'cp_code' => Yii::t('app', 'Cp Code'),
@@ -116,8 +115,7 @@ class BiplFtpCollection extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProcess()
-    {
+    public function getProcess() {
         return $this->hasOne(TblProcessedFiles::className(), ['process_id' => 'process_id']);
     }
 
@@ -125,8 +123,8 @@ class BiplFtpCollection extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return BiplFtpCollectionQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new BiplFtpCollectionQuery(get_called_class());
     }
+
 }

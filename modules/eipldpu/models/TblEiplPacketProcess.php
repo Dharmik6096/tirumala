@@ -4,6 +4,7 @@ namespace app\modules\eipldpu\models;
 
 use Yii;
 use yii\data\ActiveDataProvider;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_eipl_packet_process".
@@ -110,6 +111,10 @@ class TblEiplPacketProcess extends \app\models\ChildModel {
 
     public function getFileName() {
         return $this->hasOne(TblEiplPacketFileLog::className(), ['file_id' => 'file_name']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
 }

@@ -121,7 +121,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'expiry_date' => Yii::t('app', 'Certificate Expiry Date'),
             'licence_expiry_date' => Yii::t('app', 'Licence Expiry Date'),
             'rent' => Yii::t('app', 'Rent'),
-            'average' => Yii::t('app', 'Average'),
+            'average' => Yii::t('app', 'Mileage'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

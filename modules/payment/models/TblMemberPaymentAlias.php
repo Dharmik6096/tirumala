@@ -83,12 +83,12 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
-            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
-            [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery'], 'safe'],
-            [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
-            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_remark', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by'], 'string'],
+                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'is_verified'], 'integer'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at', 'payment_cycle', 'otp_code', 'net_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'old_recovery'], 'safe'],
+                [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
+                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
         ];
     }
@@ -291,6 +291,37 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 ->one();
 
         return $query;
+    }
+
+    public function getExistingData($model) {
+        return $this->find()
+                        ->where(['bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->customer_code, 'payment_cycle_code' => $model->payment_cycle_code])
+                        ->one();
+    }
+
+    public function getSelectedFieldsRecords($checkDcs = true) {
+        $query = $this->find()
+                ->select(['member_payment_alias_code', 'hold_amount', 'additional_pay', 'payment_cycle_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'adjust_recovery', 'recovery', 'adjust_remark', 'kg_fat', 'kg_snf', 'qty', 'total_amount', 'total_addition', 'total_deduction', 'previous_hold', 'previous_due', 'net_payable', 'hold_amount', 'additional_pay', 'adjust_recovery', 'recovery', 'final_amount'])
+                ->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                ->andWhere(['!=', 'payment_status', 'Lock']);
+        if ($checkDcs) {
+            $query->andWhere(['dcs_code' => $this->dcs_code]);
+        }
+        return $query;
+    }
+
+    public function getNegativeValDcs() {
+        $query = $this->find()
+                ->select(['tbl_dcs.dcs_name', 'tbl_member_payment_alias.dcs_code', 'tbl_dcs.ref_code'])
+                ->joinWith(['dcsCode'])
+                ->where(['payment_cycle_code' => $this->payment_cycle_code, 'tbl_member_payment_alias.bmc_code' => $this->bmc_code])
+                ->andWhere(['<', 'final_amount', 0]);
+
+//        if (!empty($this->dcs_code)) {
+//            $query->andWhere(['not in', 'dcs_code', $this->dcs_code]);
+//        }
+
+        return $query->asArray()->all();
     }
 
 }

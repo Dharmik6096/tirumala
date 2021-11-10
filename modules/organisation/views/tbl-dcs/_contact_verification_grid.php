@@ -31,6 +31,13 @@ $this->title = Yii::t('app', 'Contact Verification');
             ['attribute' => 'ex_code'],
             ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
             ['attribute' => 'mobile_no', 'filter' => FALSE],
+            ['attribute' => 'remarks',
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                'value' => function ($model, $key, $index) use ($form, $searchModel) {
+                    return $form->field($searchModel, '[' . $model['code'] . '@@' . $model['verify_for'] . ']remark')->textInput()->label(FALSE);
+                }, 'filter' => false
+            ],
         ];
 
         $grid_option = [

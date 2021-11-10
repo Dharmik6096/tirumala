@@ -447,7 +447,12 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             [
                                 'attribute' => 'aadhaar_no',
                                 'format' => 'html',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'is_chiller',
+                                'value' => ($model->is_chiller == 1) ? 'Yes' : 'No',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

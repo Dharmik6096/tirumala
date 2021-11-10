@@ -229,12 +229,12 @@ class TblDcs extends ChildModel {
             // ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             // [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code', 'is_chiller'], 'safe'],
             [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
             [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow'], 'boolean'],
+            [['is_weight_manual', 'is_quality_manual', 'credit_sale_allow', 'is_chiller'], 'boolean'],
             [['dpu_type', 'is_dispatch_mandate'], 'required', 'on' => ['createDcs', 'updateDcs', 'customImportUpdate', 'routeMapping']],
             [['x_col1'], 'default', 'value' => '1#1'],
             [['dcs_code'], function ($attribute, $params) {
@@ -258,7 +258,7 @@ class TblDcs extends ChildModel {
             [['dcs_type_code'], 'integer'],
             [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['credit_sale_allow'], 'default', 'value' => 0],
+            [['credit_sale_allow', 'is_chiller'], 'default', 'value' => 0],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
             [['dcs_code'], function ($attribute, $params) {
                     ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
