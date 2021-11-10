@@ -47,10 +47,10 @@ class TblSaleInstallments extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['payment_cycle_applicability_code', 'installment_status'], 'integer'],
-            [['dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-            [['main_amount', 'installment_amount'], 'number'],
-            [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code', 'installment_date', 'product_sale_installment_code', 'product_sale_code'], 'safe'],
+                [['payment_cycle_applicability_code', 'installment_status'], 'integer'],
+                [['dcs_code', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['main_amount', 'installment_amount'], 'number'],
+                [['created_at', 'updated_at', 'dcs_payment_cycle_code', 'payment_cycle_code', 'installment_date', 'product_sale_installment_code', 'product_sale_code'], 'safe'],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
                 //[['payment_cycle_applicability_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPaymentCycleApplicability::className(), 'targetAttribute' => ['payment_cycle_applicability_code' => 'payment_cycle_applicability_code']],
@@ -133,6 +133,10 @@ class TblSaleInstallments extends \app\models\ChildModel {
 
     public function getTblPaymentCycleCode() {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getProductSaleInstData($invoice_no) {
+        return $this->find()->where(['product_sale_code' => $invoice_no])->all();
     }
 
 }

@@ -90,4 +90,8 @@ class TblProductStockTransaction extends \app\models\ChildModel {
         ];
     }
 
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
 }
