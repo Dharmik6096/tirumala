@@ -697,6 +697,7 @@ echo GhostMenu::widget([
                             ['label' => 'Import Files Detail', 'url' => ['/import/tbl-import-file-log/index']],
                             ['label' => 'Pendrive Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                             ['label' => 'FTP File Upload', 'url' => ['/bkgprocess/ftp-generate/ftp-milk-collection']],
+                            ['label' => 'Android Import', 'url' => ['/collection/tbl-milk-collection/android-collection']],
                     ]
                 ],
             ],

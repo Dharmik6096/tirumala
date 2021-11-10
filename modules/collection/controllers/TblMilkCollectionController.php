@@ -16,6 +16,8 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\syncutility\models\TblInbox;
+use app\modules\syncutility\models\TblSyncLog;
 use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\collection\models\TblMilkCollectionHistory;
@@ -920,6 +922,104 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'detailModel' => $detailModel,
                     'config' => $config,
         ]);
+    }
+
+    public function actionAndroidCollection() {
+        $model = new TblMilkCollection();
+        if ($model->load(Yii::$app->request->post())) {
+            $error_file = [];
+            $fileName = Yii::$app->request->post()['TblFtpTxnLog']['file_name'];
+            $files = array_filter(explode(',', $fileName));
+            $path = Yii::$app->basePath . '/web/android/';
+            $msg = '';
+            if (Yii::$app->general->checkDirectory($path)) {
+                $file_name = Yii::$app->basePath . '/web/android/' . $files[1];
+                $status = 'success';
+                $cnt = 0;
+                $file_id = [];
+                $saveModel = [];
+                $file_data = file($file_name);
+                $str = '';
+                try {
+                    foreach ($file_data as $key => $value) {
+                        if (trim(substr($value, -2)) == '=') {
+                            $str = trim($str) . trim($value);
+                            $keyA = Yii::$app->general->SetSecurityEncryptionKey('UNION', $model->union_code);
+                            Yii::$app->encrypter->setGlobalPassword($keyA);
+                            $filedata = Yii::$app->general->decryptData(str_replace(' ', '', $str));
+                            $jsonData = (array) json_decode($filedata);
+                            $request = $this->camelCaseToUnderscore($jsonData);
+                            $inbox = new TblInbox();
+                            $inbox->setAttributes($request);
+                            $existData = $inbox->find()->where(['uuid' => $inbox->uuid])->one();
+                            $sync_log = new TblSyncLog();
+                            $existSync = $sync_log->find()->where(['uuid' => $inbox->uuid])->one();
+                            if (empty($existData) && empty($existSync)) {
+                                $saveModel[] = $inbox;
+                            }
+                            $str = '';
+                        } else {
+                            $str = $str . $value;
+                        }
+                    }
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['file uploaded', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $msg = 'Files Uploaded Successfully<br/>';
+                    }
+                } catch (\yii\db\Exception $e) {
+                    $msg .= 'Following files not uploaded' . implode('<br/>', $e);
+                }
+                if (!empty($error_file)) {
+                    $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                }
+            } else {
+                $status = 'error';
+                $msg = 'Error While Save data';
+            }
+            $result = ['status' => $status, 'data' => $msg];
+            return (Json::encode($result));
+        } else {
+            return $this->render('import_collection', ['model' => $model]);
+        }
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/android/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name, 'datefile' => $file->name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function &camelCaseToUnderscore(&$post_data) {
+        if (is_array($post_data)) {
+            $post_data = array_combine(array_map(function($str) {
+                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                    }, array_keys($post_data)), array_values($post_data));
+            foreach ($post_data as $key => $val) {
+                if (is_array($post_data[$key])) {
+                    $arr1 = array_combine(array_map(function($str) {
+                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
+                    $post_data[$key] = $arr1;
+                    $this->camelCaseToUnderscore($post_data[$key]);
+                }
+            }
+            return $post_data;
+        }
+        return $post_data;
     }
 
 }
