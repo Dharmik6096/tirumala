@@ -4851,3 +4851,6 @@ tr.highlightRow {
 .width_100-50 {
     width: calc(100% - 50px);
 }
+.panel > .table-responsive > .table-bordered > thead > tr > th.font_fff {
+    color: #fff !important;
+}

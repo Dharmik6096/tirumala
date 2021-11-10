@@ -60,7 +60,7 @@ class Grid extends Widget {
 
         //Start: check allow button for view history
         $viewHistory = false;
-        if (!empty(Yii::$app->session->get('ViewHistory'))) {
+        if (!empty(Yii::$app->session->get('ViewHistory') && !empty($refresh_action[0]) && $refresh_action[0] == 'index')) {
             if (!empty($table_name)) {
                 $excludes = [];
                 $exclude = explode(',', Yii::$app->session->get('ViewHistory'));
@@ -414,4 +414,3 @@ class Grid extends Widget {
 
 }
 ?>
-<div id="viewHistoryPopup"></div>

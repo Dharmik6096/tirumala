@@ -305,8 +305,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-
-                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->avg_fat != $detalData->oldAttributes['avg_fat'] || $detalData->avg_snf != $detalData->oldAttributes['avg_snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->dispatch_qty != $detalData->oldAttributes['dispatch_qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'])) {
                         $existData = $this->findModel($detalData->dcs_milk_dispatch_code);
                         if (Yii::$app->general->getUnionConfiguration(Yii::$app->general->getforeignkey($detalData->dcsMilkDispatch, 'union_code'), 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();

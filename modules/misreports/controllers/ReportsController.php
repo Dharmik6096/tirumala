@@ -876,7 +876,7 @@ class ReportsController extends \app\controllers\ChildController {
         }
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
-                $this->downloadDataExcel();
+                $this->downloadDataExcel($model);
             } else {
                 $this->downloadData();
             }
@@ -1885,47 +1885,109 @@ class ReportsController extends \app\controllers\ChildController {
 //        exit();
     }
 
-    public function downloadDataExcel() {
+    public function downloadDataExcel($model) {
         $header = [
             'mime' => 'application/vnd.ms-excel',
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
-        $sheet = $objPHPExcel->getActiveSheet();
-        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
-                ->getNumberFormat()
-                ->setFormatCode('h:mm:ss');
-        /* $objPHPExcel->getDefaultStyle()
-          ->getNumberFormat()
-          ->setFormatCode(
-          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
-          ); */
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
-        /* $file_header = array_map(function($file_header) {
-          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
-          }, array_values($file_header)); */
-
-        $sheet->fromArray(
-                $file_header, // The data to set
-                NULL, // Array values with this value will not be set
-                'A1'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
-        $sheet->fromArray(
-                $this->output, // The data to set
-                NULL, // Array values with this value will not be set
-                'A2'         // Top left coordinate of the worksheet range where
-//    we want to set these values (default is A1)
-        );
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
-        $fileName = $labelT . '.' . $header['extension'] .
-                header('Content-Type: ' . $header['mime']);
-        header('Content-Disposition: attachment;filename=' . $fileName);
-        header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        ob_end_clean();
-        $objWriter->save('php://output');
+        $fileName = $labelT . '.' . $header['extension'];
+//        header('Content-Type: ' . $header['mime']);
+//        $str = "http://stagging.emilkpro.in:8199/export.aspx?q=sp_sap_milk_collection_data ";
+        $str = "http://10.10.20.196:8199/export.aspx?q=sp_sap_milk_collection_data ";
+        $str .= "'" . $model->union_code . "', ";
+        $str .= "'" . $model->plant_code . "', ";
+        $str .= "'" . $model->mcc_code . "', ";
+        $str .= "'" . $model->bmc_code . "', ";
+        $str .= "'" . $model->dcs_code . "', ";
+        $str .= "'" . $model->from_date . "', ";
+        $str .= "'" . $model->to_date . "'";
+        $str .= "&f=" . $fileName . "";
+
+        $serverUrl = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl;
+        $dirPath = Yii::$app->basePath;
+        $savePath = '/web/sapFiles';
+        Yii::$app->general->checkDirectory($dirPath . $savePath);
+        $fp = fopen($dirPath . $savePath . '/' . $fileName, 'w+');
+        //Here is the file we are downloading, replace spaces with %20
+        $ch = curl_init(str_replace(" ", "%20", $str));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+        // write curl response to file
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // get curl response
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+        header('Location: ' . $serverUrl . $savePath . '/' . $fileName);
+        exit();
+//        $curl = curl_init();
+//
+//        curl_setopt_array($curl, array(
+//            CURLOPT_URL => $str,
+//            CURLOPT_RETURNTRANSFER => true,
+//            CURLOPT_ENCODING => '',
+//            CURLOPT_MAXREDIRS => 10,
+//            CURLOPT_TIMEOUT => 0,
+//            CURLOPT_FOLLOWLOCATION => true,
+//            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//            CURLOPT_CUSTOMREQUEST => 'GET',
+//        ));
+//
+//        $response = curl_exec($curl);
+//
+//        curl_close($curl);
+////        echo $str;
+////        die;
+//
+//        ob_start();
+////        header('Location: ' . $str);
+////        header('Content-Disposition: attachment;filename=' . $fileName);
+////        header('Cache-Control: max-age=0');
+//        ob_end_flush();
+//        var_dump($stream);
+//        die;
+//        $header = [
+//            'mime' => 'application/vnd.ms-excel',
+//            'extension' => 'xls',
+//            'writer' => 'Excel2007',
+//        ];
+//        $objPHPExcel = new PHPExcel();
+//        $sheet = $objPHPExcel->getActiveSheet();
+//        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
+//                ->getNumberFormat()
+//                ->setFormatCode('h:mm:ss');
+//        /* $objPHPExcel->getDefaultStyle()
+//          ->getNumberFormat()
+//          ->setFormatCode(
+//          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//          ); */
+//        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+//        /* $file_header = array_map(function($file_header) {
+//          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//          }, array_values($file_header)); */
+//
+//        $sheet->fromArray(
+//                $file_header, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A1'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $sheet->fromArray(
+//                $this->output, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A2'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
+//        $fileName = $labelT . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
         exit();
     }
 
