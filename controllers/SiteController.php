@@ -90,7 +90,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -1834,6 +1834,9 @@ class SiteController extends Controller {
                             if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
                                 $model->setTransactionData($model, $json, $childModel);
                             }
+                            if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
+                                $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
+                            }
                             if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
                                 $model->scenario = 'androidsync_coll';
                                 if (!$model->validate()) {
@@ -1902,7 +1905,16 @@ class SiteController extends Controller {
                                 }
                             }
                             $generalModel = new GeneralModel();
-                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+
+                            $masterSave = [];
+                            $masterSave[] = $model;
+                            if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction', 'tbl_product_stock', 'tbl_product_stock_transaction'])) {
+                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
+                                    $masterSave = [];
+                                }
+                            }
+//                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+                            $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
                                 $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
 //                                $transaction_data->error_log = (string) $transaction;
