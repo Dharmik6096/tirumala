@@ -36,11 +36,11 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', FALSE, date('d-m-Y')); ?> 
+        <?= Yii::$app->controls->date($model, $form, 'transaction_date',date('d-m-Y')); ?> 
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'to_date', '', FALSE, date('d-m-Y')); ?> 
+        <?= Yii::$app->controls->date($model, $form, 'to_date', date('d-m-Y')); ?> 
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, false, 'to_shift_code'); ?>

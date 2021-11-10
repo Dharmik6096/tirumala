@@ -282,6 +282,21 @@ class CustomValidation extends Component {
                         [['mobile_no'], 'required', 'on' => 'additional'],
                         [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
+                    'plant-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                        [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'mcc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                        [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
+                    'bmc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                        [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                    ],
                 ],
             ],
             'HATSUN' => [
