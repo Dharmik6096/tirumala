@@ -41,10 +41,10 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate'], 'safe'],
-            [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
-            [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
+                [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
+                [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate'], 'safe'],
+                [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
+                [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
         ];
     }
 
@@ -182,6 +182,10 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
 
     public function getRateRecord() {
         return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
+    }
+
+    public function getPurchaseRateCode() {
+        return $this->hasOne(TblPurchaseRate::className(), ['dcs_purchase_rate_code' => 'purchase_rate_code']);
     }
 
 }
