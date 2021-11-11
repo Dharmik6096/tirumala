@@ -95,7 +95,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
             [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
             [['x_col1'], 'default', 'value' => '1#1'],
-            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex'], 'safe'],
+            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex','sap_vendor_code'], 'safe'],
             [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],

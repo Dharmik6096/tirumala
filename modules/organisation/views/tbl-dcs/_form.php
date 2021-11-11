@@ -179,6 +179,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
         <div class="col-sm-2">
+            <?= $form->field($model, 'sap_vendor_code')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
         </div>
         <div class='pull-left col-sm-4'>
