@@ -4,6 +4,7 @@ namespace app\modules\organisation\controllers;
 
 use Yii;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmcSearch;
 use app\modules\organisation\models\TblDcsBmcHistory;
 use app\modules\details\models\TblContactDetails;
@@ -22,6 +23,7 @@ use app\modules\organisation\models\TblMccPlantGroupMapping;
 use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblBmcSilosInfoSearch;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -394,6 +396,53 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionExportSentbox($id) {
+        $this->model = $this->findModel($id);
+
+        $dcsModel = new TblDcs();
+        $dcsArray = $dcsModel->getSocietys($id);
+
+        $vendorModel = new TblCustomerMaster();
+        $vendorArray = $vendorModel->getvendor($id);
+//        $master = array_merge($dcsArray, $vendorArray);
+        $jsonData = [];
+        foreach ($dcsArray as $dcs) {
+            $operation = !empty($dcs->updated_at) ? 'UPDATE' : 'INSERT';
+            $sentbox = $dcs->sentboxModel($id, 'BMC');
+            $sentboxData = $sentbox->setSentboxDownload($dcs, $operation);
+            $jsonData[] = Json::encode($sentbox->jsonModel($sentboxData), JSON_UNESCAPED_UNICODE);
+        }
+        foreach ($vendorArray as $customer) {
+            $operation = !empty($customer->updated_at) ? 'UPDATE' : 'INSERT';
+            $sentbox = $customer->sentboxModel($id, 'BMC');
+            $sentboxData = $sentbox->setSentboxDownload($customer, $operation);
+            $jsonData[] = Json::encode($sentbox->jsonModel($sentboxData), JSON_UNESCAPED_UNICODE);
+        }
+        $extention = 'txt';
+        $header = [
+            'mime' => 'text/plain',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
+        ];
+
+        $labelT = $id . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+//        header('Content-Type: text/plain');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+//        header("Content-Type: application/xls");
+//        header("Content-Disposition: attachment; filename={$fileName}");
+//        header("Pragma: no-cache");
+//        header("Expires: 0");
+        foreach ($jsonData as $json) {
+            $key = Yii::$app->general->SetSecurityEncryptionKey('UNION', $this->model->union_code);
+            Yii::$app->encrypter->setGlobalPassword($key);
+            echo Yii::$app->general->encryptData($json) . PHP_EOL;
+        }
+        exit();
     }
 
 }

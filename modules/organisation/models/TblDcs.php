@@ -849,26 +849,42 @@ class TblDcs extends ChildModel {
         return $data;
     }
 
+//    public function afterSave($insert, $changedAttributes) {
+//        $sentboxArray = [];
+//        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+//        foreach ($sentboxArray as $sent) {
+//            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+//                if (!($sentbox->setSentbox($this, $flag))) {
+//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+//                }
+//            }
+//        }
+//    }
+
+
     public function afterSave($insert, $changedAttributes) {
+//        $model = new TblMemberDownload();
+//        $model->dcs_code = $this->dcs_code;
+//        $data = $model->getRecord();
+//        if (!empty($data)) {
+//            $model = $data;
+//        }
+//        $model->is_download = 1;
+//        $model->upload_datetime = date('Y-m-d H:i:s');
+//        $model->save();
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
+                if (!($sentbox->setSentboxDownload($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
     }
 
     public function afterDelete() {
@@ -1219,6 +1235,25 @@ class TblDcs extends ChildModel {
 
     public function getAndroidInstallation() {
         return $this->hasOne(TblAndroidInstallation::className(), ['organization_code' => 'ref_code'])->andOnCondition(['organization_type' => 'VLC']);
+    }
+
+    public function getSocietys($bmc_code, $as_array = false) {
+        if (!empty($bmc_code)) {
+            $query = $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1]);
+            if ($as_array)
+                $query->asArray();
+            $dcs = $query->all();
+            return $dcs;
+        }
+        return false;
+    }
+
+    public function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
