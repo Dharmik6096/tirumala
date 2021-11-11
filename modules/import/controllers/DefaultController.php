@@ -56,7 +56,6 @@ class DefaultController extends \app\controllers\ChildController {
     }
 
     public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag, $filepath = '/web/import/') {
-
         try {
 
             if (!empty($data['import_main_class']) && $mappingFlag != 1) {
@@ -81,6 +80,7 @@ class DefaultController extends \app\controllers\ChildController {
                     //return isset($line[$i])?$line[$i]:0;
                 };
             }
+
             $default_value = null;
             if (!empty($data['default_fields'])) {
                 $fields = explode(',', $data['default_fields']);
@@ -108,8 +108,18 @@ class DefaultController extends \app\controllers\ChildController {
                     'delimiter' => ';'
                 ]
             ]));
-            //          print_r($importer);
-            //        exit;
+            $compare_len = TRUE;
+            if (isset($data['validate_length']) && ($data['validate_length'] == false)) {
+                $compare_len = false;
+            }
+
+            if ($compare_len == TRUE) {
+                $rows = count($importer->getData());
+                $validate_rows = isset($data['validate_rows']) ? $data['validate_rows'] : 500;
+                if ($rows > $validate_rows) {
+                    return ['status' => 'error', 'msg' => 'Not Allowed More Then ' . $validate_rows . ' Records'];
+                }
+            }
             /*
               $childDefaultFields = explode(',', $data['child_default_field']);
               foreach($childDefaultFields as $i =>$d){
@@ -144,7 +154,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
                 'file_name' => trim($fileName)
             ]));
-          
+
             return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg'], 'allData' => $primaryKeys];
         } catch (UserException $e) {
             return ['status' => 'error', 'msg' => $e->getMessage()];
