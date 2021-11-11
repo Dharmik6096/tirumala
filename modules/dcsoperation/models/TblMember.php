@@ -462,6 +462,14 @@ class TblMember extends ChildModel {
         return $flag;
     }
 
+    public function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
     public function afterSave($insert, $changedAttributes) {
 //        $model = new TblMemberDownload();
 //        $model->dcs_code = $this->dcs_code;
@@ -475,13 +483,11 @@ class TblMember extends ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
-            if (!in_array(strtolower($sent['type']), ['mcc', 'bmc'])) {
-                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                    if (!($sentbox->setSentbox($this, $flag))) {
-                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
-                    }
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentboxDownload($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
@@ -526,14 +532,6 @@ class TblMember extends ChildModel {
         $this->village_code = Yii::$app->general->getforeignkey($this->dcsCode, 'village_code');
         $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
         $this->federation_code = Yii::$app->general->getforeignkey($this->unionCode, 'federation_code');
-    }
-
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
     }
 
     public function afterDelete() {
