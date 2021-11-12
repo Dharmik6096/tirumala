@@ -408,6 +408,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $vendorArray = $vendorModel->getvendor($id);
 //        $master = array_merge($dcsArray, $vendorArray);
         $jsonData = [];
+        ob_clean();
         foreach ($dcsArray as $dcs) {
             $operation = !empty($dcs->updated_at) ? 'UPDATE' : 'INSERT';
             $sentbox = $dcs->sentboxModel($id, 'BMC');

@@ -1176,6 +1176,7 @@ class TblDcsController extends ChildController {
         $memberArray = $MemberModel->getMembers($id);
 
         $jsonData = [];
+        ob_clean();
         foreach ($memberArray as $member) {
             $operation = !empty($member->updated_at) ? 'UPDATE' : 'INSERT';
             $sentbox = $member->sentboxModel($id, 'VLC');
