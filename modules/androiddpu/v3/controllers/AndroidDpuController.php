@@ -27,6 +27,7 @@ use app\modules\installation\models\TblUserAndroid;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
 use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
+use app\modules\sms\models\TblAlertTemplate;
 
 /**
  * Default controller for the `vendorapi` module
@@ -236,13 +237,24 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
             if ($transaction !== 'customRedirect') {
                 return FALSE;
             } elseif ($sendNotificaton) {
+                $union = Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name');
+                $username = $androidUsr->username;
                 $pass = (!empty($androidUsr->password) && Yii::$app->general->decryptData($androidUsr->password) !== FALSE) ? Yii::$app->general->decryptData($androidUsr->password) : $androidUsr->password;
-                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
+//                $message = 'Welcome to ' . Yii::$app->general->getforeignkey($androidUsr->unionCode, 'union_name') . ',' . PHP_EOL . ' Your user name is ' . $androidUsr->username . ' and password is ' . $pass . ' to login in AMCS application.';
                 $sms_data = [];
-                if (YII_ENV_DEV) {
-                    
-                } else {
-                    Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE);
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('android_dpu', 'SMS', $androidUsr->union_code);
+                if (!empty($templateData)) {
+                    $arrFrom = array("{union}", "{username}", "{password}");
+                    $arrTo = array($union, $username, $pass);
+                    $word = $templateData->message;
+                    $message = str_replace($arrFrom, $arrTo, $word);
+
+                    if (YII_ENV_DEV) {
+                        
+                    } else {
+                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE, $templateData->header_info);
+                    }
                 }
             }
             $androidDpuModel = new TblAndroidInstallationDetails();

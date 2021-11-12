@@ -390,10 +390,11 @@ $script = "
     });
     function addFilterData(ucode, filter_type = '', applicable_for = '', selectAppCode = [])
     {
+        $('#checkAll').prop('checked', false);
         var checkFilter = filter_type.toLowerCase();
         var setClass = 'col-sm-2';
         if(checkFilter == 'bulkven' || checkFilter == 'vlccven' || checkFilter == 'dcs') {
-            $('.selectMccArea').show();
+$('.selectMccArea').show();
             $('.selectBmcArea').show();
             $('.selectRouteArea').show();
             $('.applicableCodeArea').removeClass('col-sm-12');
@@ -541,6 +542,7 @@ $script = "
             });  
     }
     $('#checkAllMccList').click(function (event) {
+        $('#checkAll').prop('checked', false);
         $('.mccCheckboxes').not(':disabled').prop('checked', $(this).is(':checked'));
         setBmcList();
     });
@@ -549,6 +551,9 @@ $script = "
         setBmcList();
     });
     function setBmcList(selectBmc = [],selectAppCode = []){
+        $('#checkAll').prop('checked', false);
+        $('#checkAllBmcList').prop('checked',false);
+        $('.routeCheckboxes').prop('checked',false);
         selectedBmc = [];
         $('.bmcCheckboxes').each(function () {
             if ($(this).is(':checked')) {
@@ -619,6 +624,7 @@ $script = "
     });
     
     function setMccBmcData(){
+        $('#checkAll').prop('checked', false);
         var selectMcc = '" . $selectedMccCode . "';
         var selectBmc = '" . $selectedBmcCode . "';
         var selectRoute = '" . $selectedRouteCode . "';
@@ -638,6 +644,9 @@ $script = "
     }
     
     function setRouteList(selectRoute = [],selectAppCode = []){
+        $('#checkAllRouteList').prop('checked',false);
+        $('.routeCheckboxes').prop('checked',false);
+        $('#checkAll').prop('checked', false);
         selectedRoute = [];
         $('.routeCheckboxes').each(function () {
             if ($(this).is(':checked')) {

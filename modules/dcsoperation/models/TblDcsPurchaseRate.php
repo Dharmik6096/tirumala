@@ -42,9 +42,15 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function rules() {
         return [
             [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate'], 'safe'],
+            [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate', 'rate_type', 'rate_value'], 'safe'],
             [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
             [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
+            [['rate_value'], 'number', 'min' => 1],
+            [['rate_value'], 'required', 'when' => function ($model) {
+                    return $model->rate_type == '1' || $model->rate_type == '2';
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tbldcspurchaserate-rate_type').val() == '1' || $('#tbldcspurchaserate-rate_type').val() == '2'; 
+          }"],
         ];
     }
 

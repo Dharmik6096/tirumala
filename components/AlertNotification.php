@@ -12,7 +12,7 @@ use app\modules\sms\models\TblApiDetail;
 
 class AlertNotification {
 
-    public function sendSms($id, $mob_no, $msg) {
+    public function sendSms($id, $mob_no, $msg, $temp_id = '') {
         $mob_no = (!empty($mob_no) && Yii::$app->general->decryptData($mob_no) !== FALSE) ? Yii::$app->general->decryptData($mob_no) : $mob_no;
         $api = (new TblApiDetail())->getApi($id); //get all api parameters to send sms
         if (!empty($api)) {
@@ -21,7 +21,7 @@ class AlertNotification {
             foreach ($api as $a) {
                 //if {mobileno} found in value then replace it with actual no 
                 //if {msg} found in value then replace it with actual text message                
-                $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : $a['key_value']);
+                $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
                 if (!empty($a['parent_tag'])) {
                     $param[$a['parent_tag']] = [$a['parameter_key'] => $value]; //set parent key to key
                 } else {
@@ -29,6 +29,22 @@ class AlertNotification {
                 }
             }
             $client = new GuzzleHttp\Client();
+            $urlCheck = explode('/', $url);
+            $checkParam = $param;
+            $param = [];
+            foreach ($checkParam as $k => $checkP) {
+                if ($k == 'replace_keys') {
+                    $dat = explode('&', $checkP);
+                    foreach ($dat as $var) {
+                        $v = explode('##', $var);
+                        if (!empty($v[0])) {
+                            $param[$v[0]] = !empty($v[1]) ? $v[1] : '';
+                        }
+                    }
+                } else {
+                    $param[$k] = $checkP;
+                }
+            }
             $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
             $data = $response->getBody(); //get response . guzzle return respone in stream object
             $stream = Psr7\stream_for($data); //convert stream response to string

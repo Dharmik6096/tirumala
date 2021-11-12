@@ -47,6 +47,8 @@ use app\modules\payment\models\TblSaleInstallmentsSearch;
 use app\modules\payment\models\TblMemberPaymentInstallment;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
+use app\modules\sms\models\TblAlertNotification;
+use app\modules\sms\models\TblAlertTemplate;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -650,8 +652,45 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $outstanding->due_amount = $Data->additional_pay;
                         $outstanding->transaction_date = date('Y-m-d');
                         $save_model[] = $outstanding;
-                    }
 
+                        //send sms
+
+                        if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                            $mobilNo = Yii::$app->general->getforeignkey($Data->memberCode, 'mobile_no');
+                            $name = Yii::$app->general->getforeignkey($Data->memberCode, 'member_name');
+                            $dcs_ex = Yii::$app->general->getmultiforeignkey($Data->memberCode, ['dcsCode'], 'dcs_code_ex');
+                            $mcc_ex = Yii::$app->general->getmultiforeignkey($Data->memberCode, ['dcsCode', 'mccPlantCode'], 'mcc_plant_code_ex');
+                            $ex_code = Yii::$app->general->getforeignkey($Data->memberCode, 'ex_member_code');
+                            $f_date = Yii::$app->controls->view_date($Data->from_datetime);
+                            $t_date = Yii::$app->controls->view_date($Data->to_datetime);
+                            $t_date = Yii::$app->controls->view_date($Data->to_datetime);
+                            if (!empty($mobilNo)) {
+                                $templateModel = new TblAlertTemplate();
+                                $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $Data->union_code);
+                                if (!empty($templateData)) {
+                                    $arrFrom = array("{member_name}", "{mcc_code_ex}", "{dcs_code_ex}", "{member_code_ex}", "{from_date}", "{to_date}", "{qty}", "{amt}", "{deduction}", "{net_amount}");
+                                    $arrTo = array(substr($name, 0, 10), $mcc_ex, $dcs_ex, $ex_code, $f_date, $t_date, $Data->qty, $Data->total_amount, $Data->total_deduction, $Data->net_payable);
+                                    $word = $templateData->message;
+                                    $message = str_replace($arrFrom, $arrTo, $word);
+
+                                    $notificationmodel = new TblAlertNotification();
+                                    $datetime = date('Y-m-d H:i:s');
+                                    $notificationmodel->module_type = 'member_payment';
+                                    $notificationmodel->content_id = 1;
+                                    $notificationmodel->receiver_detail = $mobilNo;
+                                    $notificationmodel->receiver_type = 'SMS';
+                                    $notificationmodel->message = $message;
+                                    $notificationmodel->send_status = '0';
+                                    $notificationmodel->entry_datetime = $datetime;
+                                    $notificationmodel->pick_datetime = NULL;
+                                    $notificationmodel->response_datetime = NULL;
+                                    $notificationmodel->response_status = 0;
+                                    $notificationmodel->template_id = $templateData->header_info;
+                                    $save_model[] = $notificationmodel;
+                                }
+                            }
+                        }
+                    }
 
                     $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
                     if ($transaction == 'customRedirect') {
