@@ -934,7 +934,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $msg = '';
             if (Yii::$app->general->checkDirectory($path)) {
                 $file_name = Yii::$app->basePath . '/web/android/' . $files[1];
-                $status = 'success';
+                $status = 'error';
+                $msg = 'Invalid File Uploaded<br/>';
                 $cnt = 0;
                 $file_id = [];
                 $saveModel = [];
@@ -958,13 +959,17 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                                 $saveModel[] = $inbox;
                             }
                             $str = '';
+                            $status = 'success';
+                            $msg = 'Files Uploaded Successfully<br/>';
                         } else {
                             $str = $str . $value;
                         }
                     }
-                    $transaction = $this->generalModel->saveTransaction($saveModel, ['file uploaded', 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $msg = 'Files Uploaded Successfully<br/>';
+                    if (!empty($saveModel)) {
+                        $transaction = $this->generalModel->saveTransaction($saveModel, ['file uploaded', 'create']);
+                        if ($transaction == 'customRedirect') {
+                            $msg = 'Files Uploaded Successfully<br/>';
+                        }
                     }
                 } catch (\yii\db\Exception $e) {
                     $msg .= 'Following files not uploaded' . implode('<br/>', $e);
@@ -977,6 +982,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $msg = 'Error While Save data';
             }
             $result = ['status' => $status, 'data' => $msg];
+            Yii::$app->getSession()->setFlash('success', ['type' => $status,
+                'message' => $msg]);
             return (Json::encode($result));
         } else {
             return $this->render('import_collection', ['model' => $model]);

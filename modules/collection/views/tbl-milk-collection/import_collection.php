@@ -103,20 +103,23 @@ $this->title = 'Import Android Files';
                                             }
                                     }'),
                     'success' => new \yii\web\JsExpression('function(data){                                   
-                                            $("#pageloader").hide();
-                                            $("#loadercontent").hide();
+//                                            $("#pageloader").hide();
+//                                            $("#loadercontent").hide();
                                             var obj1 = $.parseJSON(data);
+//                                            console.log(data);
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
                                                 $("#import-android-files")[0].reset();
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }else{
+                                                window.location.reload();                                           
+                                           }else{
                                                 $("#importModal").modal("toggle");
                                                 $("#import-android-files")[0].reset();
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }
+//                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                                window.location.reload();                                              
+}
                              }'),
                     'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
