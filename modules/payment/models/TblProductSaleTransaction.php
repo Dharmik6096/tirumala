@@ -154,31 +154,39 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         return $this->hasMany(TblSaleInstallments::className(), ['product_sale_code' => 'product_sale_code']);
     }
 
-    public function setTransactionSaveDeleteData($model, $json, &$childModel, &$delete) {
-        if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
+    public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
+        if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
             $loanModel = new TblLoanProductSaleDetails();
             $loanModel->attributes = $model->attributes;
+            $updateData = true;
             if (!empty($model->productSaleCode)) {
                 $productSaleData = $model->productSaleCode;
-                $loanModel->union_code = $productSaleData->union_code;
-                $loanModel->dcs_code = $productSaleData->dcs_code;
-                $loanModel->sale_date_time = $productSaleData->invoice_date;
-                if ($productSaleData->customer_type == 'MEMBER') {
-                    $loanModel->member_code = $productSaleData->customer_code;
-                }
-                $loanModel->product_code = 1;
-                $saleInstModel = new TblSaleInstallments();
-                $saleInstModelData = $saleInstModel->getProductSaleInstData($model->product_sale_code);
-                if (!empty($saleInstModelData)) {
-                    foreach ($saleInstModelData as $saleInstModelRecord) {
-                        $delete[] = $saleInstModelRecord;
+                if (!empty($productSaleData->union_code) && $productSaleData->union_code == '003') {
+                    $updateData = true;
+                    $loanModel->union_code = $productSaleData->union_code;
+                    $loanModel->dcs_code = $productSaleData->dcs_code;
+                    $loanModel->sale_date_time = $productSaleData->invoice_date;
+                    if ($productSaleData->customer_type == 'MEMBER') {
+                        $loanModel->member_code = $productSaleData->customer_code;
                     }
+                    $loanModel->product_code = 1;
+                    $saleInstModel = new TblSaleInstallments();
+                    $saleInstModelData = $saleInstModel->getProductSaleInstData($model->product_sale_code);
+                    if (!empty($saleInstModelData)) {
+                        foreach ($saleInstModelData as $saleInstModelRecord) {
+                            $delete[] = $saleInstModelRecord;
+                        }
+                    }
+                } else {
+                    $updateData = false;
                 }
             }
-            $loanModel->send_status = 0;
-            $loanModel->entry_type = 2;
-            $loanModel->created_by = 'CRON';
-            $childModel[] = $loanModel;
+            if ($updateData) {
+                $loanModel->send_status = 0;
+                $loanModel->entry_type = 2;
+                $loanModel->created_by = 'CRON';
+                $model = $loanModel;
+            }
         }
     }
 
