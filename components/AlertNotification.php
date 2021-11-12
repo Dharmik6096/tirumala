@@ -29,6 +29,22 @@ class AlertNotification {
                 }
             }
             $client = new GuzzleHttp\Client();
+            $urlCheck = explode('/', $url);
+            $checkParam = $param;
+            $param = [];
+            foreach ($checkParam as $k => $checkP) {
+                if ($k == 'replace_keys') {
+                    $dat = explode('&', $checkP);
+                    foreach ($dat as $var) {
+                        $v = explode('##', $var);
+                        if (!empty($v[0])) {
+                            $param[$v[0]] = !empty($v[1]) ? $v[1] : '';
+                        }
+                    }
+                } else {
+                    $param[$k] = $checkP;
+                }
+            }
             $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
             $data = $response->getBody(); //get response . guzzle return respone in stream object
             $stream = Psr7\stream_for($data); //convert stream response to string
