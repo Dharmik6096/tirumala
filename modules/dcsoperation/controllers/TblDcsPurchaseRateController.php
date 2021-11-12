@@ -592,7 +592,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             'generate_sentbox' => function ($url, $model)use ($id) {
                 $class = !empty($model->purchaseRateCode->purchaseRateCode) ? '' : 'disabled';
                 $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
-                return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/export-sentbox', 'id' => $id, 'dcs_code' => $model->applicable_code, 'rate_app_code' => $model->rate_app_code, 'rate_type' => 'MEMBER'], $options);
+                return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/export-sentbox', 'id' => $id, 'dcs_code' => $model->applicable_code, 'rate_type' => 'MEMBER', 'date' => date('Y-m-d', strtotime($model->wef_date))], $options);
             }];
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
@@ -694,7 +694,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionExportSentbox($id, $dcs_code, $rate_app_code, $rate_type) {
+    public function actionExportSentbox($id, $dcs_code, $rate_type, $date) {
         $res_data = [];
         $res_data['purchaseRate'] = NULL;
         $res_data['purchaseRateBased'] = [];
@@ -745,7 +745,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 $bmc_code = $orgDetail['bmc_code'];
                 $mcc_plant_code = $orgDetail['mcc_plant_code'];
                 $plant_code = $orgDetail['plant_code'];
-                $applicability_data = $app_model->getApplicability($rate_app_code);
+                $applicability_data = $app_model->getApplicability($rate->purchase_rate_code, $dcs_code, $date);
                 $applicability_array [] = !empty($applicability_data->attributes) ? $applicability_data->attributes : '';
                 $res_data['purchaseRateApplicabilityMultiple'] = $applicability_array;
             } else {
