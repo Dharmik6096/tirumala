@@ -21,7 +21,6 @@ $milkType = $model->getMilkTypes();
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -34,82 +33,90 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">MCC Details</h4>
         </div>
-    <div class="col-sm-2" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
-    </div>
-    <?= Html::activeHiddenInput($model, 'is_plant') ?>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>
-    </div>
-    <?php
-    $keyPattern = Yii::$app->general->getKeyPattern('tbl_mcc_plant');
-    if (!empty($keyPattern)) {
-        ?>
-        <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
-            <div class="col-sm-2 number-validate">  
-                <?= $form->field($model, 'mcc_plant_code_ex')->textInput(['readonly' => $readonly]) ?>
-            </div>
+        <div class="col-sm-2" id="union">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+        </div>
+        <?= Html::activeHiddenInput($model, 'is_plant') ?>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>
+        </div>
+        <?php
+        $keyPattern = Yii::$app->general->getKeyPattern('tbl_mcc_plant');
+        if (!empty($keyPattern)) {
+            ?>
+            <?php if (!$readonly && $keyPattern['ex_code_auto'] == 0) { ?>
+                <div class="col-sm-2 number-validate">  
+                    <?= $form->field($model, 'mcc_plant_code_ex')->textInput(['readonly' => $readonly]) ?>
+                </div>
+            <?php } ?>
+            <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
+                <div class="col-sm-2 number-validate">  
+                    <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+                </div>
+            <?php } ?>
         <?php } ?>
-        <?php if (!$readonly && $keyPattern['ref_code_type'] == 2) { ?>
-            <div class="col-sm-2 number-validate">  
-                <?= $form->field($model, 'ref_code')->textInput(['readonly' => $readonly]) ?>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->local($model, $form); ?>
+        </div>
+        <!--    <div class="col-sm-2">
+                <? = $form->field($model, 'contact_person')->textInput(['maxlength' => true]) ?>
             </div>
-        <?php } ?>
-    <?php } ?>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->local($model, $form); ?>
-    </div>
-    <!--    <div class="col-sm-2">
-            <? = $form->field($model, 'contact_person')->textInput(['maxlength' => true]) ?>
+            <div class="col-sm-2">
+                <? = $form->field($model, 'local_contact_person_name')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-2">
+                <? = $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-2">
+                <? = $form->field($model, 'mobile_no')->textInput(['maxlength' => true,'class' => 'form-control check_mobile_length']) ?>
+            </div>-->
+        <div class="col-sm-2">
+
+            <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
         </div>
         <div class="col-sm-2">
-            <? = $form->field($model, 'local_contact_person_name')->textInput(['maxlength' => true]) ?>
+
+            <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
         </div>
         <div class="col-sm-2">
-            <? = $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <? = $form->field($model, 'mobile_no')->textInput(['maxlength' => true,'class' => 'form-control check_mobile_length']) ?>
-        </div>-->
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
-    </div>
-    <div class="col-sm-2">  
-        <?= $form->field($model, 'gst_no')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmccplant-union_code,tblmccplant-state_code', 'district_code', 'District', FALSE); ?>
-    </div>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
-    </div>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
-    </div>
-    <?= Html::hiddenInput('from_plant', 0, ['id' => 'mcc']); ?>
+            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
+        </div>
+        <div class="col-sm-2">  
+            <?= $form->field($model, 'gst_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Has Min Qty Limit', false, 'has_min_qty_limit', false); ?>    
+        </div>
+        <div class="col-sm-2">  
+            <?= $form->field($model, 'min_qty_limit')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmccplant-union_code,tblmccplant-state_code', 'district_code', 'District', FALSE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+        </div>
+        <?= Html::hiddenInput('from_plant', 0, ['id' => 'mcc']); ?>
     </div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-        <h4 class="theme-box-heading">Contact Details</h4>
-    </div>
+            <h4 class="theme-box-heading">Contact Details</h4>
+        </div>
         <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
