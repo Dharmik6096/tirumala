@@ -483,11 +483,13 @@ class TblMember extends ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentboxDownload($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+            if (!in_array(strtolower($sent['type']), ['mcc', 'bmc'])) {
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    if (!($sentbox->setSentbox($this, $flag))) {
+                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                    }
                 }
             }
         }
