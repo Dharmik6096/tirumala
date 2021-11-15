@@ -1908,11 +1908,16 @@ class SiteController extends Controller {
 
                             $masterSave = [];
                             $masterSave[] = $model;
-                            if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction', 'tbl_product_stock', 'tbl_product_stock_transaction'])) {
-                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
+                            if (in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
+                                if (!empty($model->union_code) && $model->union_code == '003' && !empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
                                     $masterSave = [];
                                 }
                             }
+//                            else if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction'])) {
+//                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
+//                                    $masterSave = [];
+//                                }
+//                            }
 //                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
                             $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {

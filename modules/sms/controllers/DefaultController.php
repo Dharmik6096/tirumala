@@ -28,7 +28,7 @@ class DefaultController extends Controller {
                     try {
                         $send = '';
                         if ($row->receiver_type == 'SMS') {
-                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message);
+                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message, $row->template_id);
                         } else if ($row->receiver_type == 'APP_NOTIFICATION') {
                             $server_key = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
                             $url = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');

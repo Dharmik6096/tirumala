@@ -24,6 +24,8 @@ use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use PHPExcel;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * applicability module definition class
@@ -293,6 +295,48 @@ class Applicability extends \yii\base\Module {
                                     $dcsAppModel->union_code = $appModel->union_code;
                                     $dcsAppModel->applicable_for = 'DCS';
                                     $saveModel[] = $dcsAppModel->save();
+                                }
+                            }
+
+                            if (!empty($appModel->purchaseRateCode->rate_type)) {
+                                $sms_data = [];
+                                $type = $appModel->purchaseRateCode->rate_type == 1 ? 'increase_rate' : 'decrease_rate';
+
+                                $date = date('d-m-Y', strtotime($appModel->wef_date));
+                                $rate = $appModel->purchaseRateCode->rate_value;
+                                $mobilNo = '';
+                                $moduleName = strtoupper($appModel->applicable_for) == 'DCS' ? 'society' : 'customer';
+                                $contact = new TblContactDetails();
+                                $contactData = $contact->find()
+                                        ->where(['module_code' => $appModel->applicable_code, 'module_name' => $moduleName, 'is_default' => 1, 'is_active' => 1])
+                                        ->one();
+                                if ($contactData) {
+                                    $mobilNo = $contactData->mobile_no;
+                                }
+                                if (!empty($mobilNo)) {
+                                    $templateModel = new TblAlertTemplate();
+                                    $templateData = $templateModel->getTemplateData($type, 'SMS', $appModel->union_code);
+                                    if (!empty($templateData)) {
+                                        $arrFrom = array("{date}", '{' . $type . '}');
+                                        $arrTo = array($date, $rate);
+                                        $word = $templateData->message;
+                                        $message = str_replace($arrFrom, $arrTo, $word);
+
+                                        $notificationmodel = new TblAlertNotification();
+                                        $datetime = date('Y-m-d H:i:s');
+                                        $notificationmodel->module_type = $type;
+                                        $notificationmodel->content_id = 1;
+                                        $notificationmodel->receiver_detail = $mobilNo;
+                                        $notificationmodel->receiver_type = 'SMS';
+                                        $notificationmodel->message = $message;
+                                        $notificationmodel->send_status = '0';
+                                        $notificationmodel->entry_datetime = $datetime;
+                                        $notificationmodel->pick_datetime = NULL;
+                                        $notificationmodel->response_datetime = NULL;
+                                        $notificationmodel->response_status = 0;
+                                        $notificationmodel->template_id = $templateData->header_info;
+                                        $saveModel[] = $notificationmodel->save();
+                                    }
                                 }
                             }
 

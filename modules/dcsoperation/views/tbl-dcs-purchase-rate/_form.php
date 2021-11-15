@@ -45,6 +45,18 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'ts_rate')->textInput() ?>
     </div>
+    <div class="clearfix"></div>
+    <?php
+//    $config = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['member_collection_check'] : '';
+//    if (!empty($config == 1)) {
+    ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('rate_price_type', $model, $form, 'form-group padding-right-5', 'Rate Type', false, 'rate_type') ?> 
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'rate_value')->textInput() ?>
+    </div>
+    <?php // } ?>
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
