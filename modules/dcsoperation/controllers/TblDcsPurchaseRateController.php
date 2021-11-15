@@ -796,9 +796,12 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         }
         rmdir($zipfolder);
         $downlaodPath = $zipfolder . '.zip';
+        $downlaodPath = Url::base('https') . $zipfolder . '.zip';
+        $downlaodPath = Url::base('https') . '/web/export/' . $folerName . '.zip';
         header("Content-type:application/pdf");
         header('Content-Disposition: attachment; filename=' . $folerName . '.zip');
-        readfile($downlaodPath);
+        header('Location: ' . $downlaodPath);
+        exit();
     }
 
     public function getOrgDetail($type, $code, $is_string = TRUE) {
