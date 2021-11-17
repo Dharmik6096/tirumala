@@ -943,7 +943,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $str = '';
                 try {
                     foreach ($file_data as $key => $value) {
-                        if (trim(substr($value, -2)) == '=') {
+                        if (trim(substr($value, -2)) == '=' || strlen($value) <= 35) {
                             $str = trim($str) . trim($value);
                             $keyA = Yii::$app->general->SetSecurityEncryptionKey('UNION', $model->union_code);
                             Yii::$app->encrypter->setGlobalPassword($keyA);
