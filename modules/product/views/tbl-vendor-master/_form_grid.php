@@ -14,7 +14,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $attribute = [
         ['attribute' => 'vendor_name'],
         ['attribute' => 'vendor_code'],
-        ['attribute' => 'adhar_no', 'visible' => true],
+        ['attribute' => 'aadhaar_no', 'visible' => true],
         ['attribute' => 'pan_no'],
 ];
 

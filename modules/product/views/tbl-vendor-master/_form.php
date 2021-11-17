@@ -24,6 +24,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Vendor Details</h4>
         </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => true]) ?>
         </div>
@@ -34,7 +37,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'adhar_no')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'aadhaar_no')->textInput(['maxlength' => true]) ?>
         </div>
     </div>
 

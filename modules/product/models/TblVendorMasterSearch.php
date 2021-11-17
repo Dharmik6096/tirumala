@@ -17,7 +17,7 @@ class TblVendorMasterSearch extends TblVendorMaster {
      */
     public function rules() {
         return [
-                [['vendor_master_code', 'vendor_code', 'vendor_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['vendor_master_code', 'vendor_code', 'vendor_name', 'pan_no', 'aadhaar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['originating_type'], 'integer'],
         ];
     }
@@ -65,7 +65,7 @@ class TblVendorMasterSearch extends TblVendorMaster {
                 ->andFilterWhere(['like', 'vendor_code', $this->vendor_code])
                 ->andFilterWhere(['like', 'vendor_name', $this->vendor_name])
                 ->andFilterWhere(['like', 'pan_no', $this->pan_no])
-                ->andFilterWhere(['like', 'adhar_no', $this->adhar_no])
+                ->andFilterWhere(['like', 'aadhaar_no', $this->aadhaar_no])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])

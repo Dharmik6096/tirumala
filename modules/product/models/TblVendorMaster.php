@@ -12,7 +12,7 @@ use app\modules\details\models\TblContactDetails;
  * @property string $vendor_code
  * @property string $vendor_name
  * @property string $pan_no
- * @property string $adhar_no
+ * @property string $aadhaar_no
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -42,18 +42,18 @@ class TblVendorMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vendor_code', 'vendor_name', 'adhar_no', 'pan_no'], 'required'],
-                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email'], 'safe'],
+                [['vendor_code', 'vendor_name'], 'required'],
+                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'aadhaar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code'], 'safe'],
                 [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
                 [['vendor_code'], 'integer'],
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }],
-                [['adhar_no'], function ($attribute, $params) {
+                [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-                [['pan_no', 'adhar_no', 'vendor_code'], 'unique'],
+                [['pan_no', 'aadhaar_no', 'vendor_code'], 'unique'],
         ];
     }
 
@@ -66,7 +66,7 @@ class TblVendorMaster extends \app\models\ChildModel {
             'vendor_code' => Yii::t('app', 'Vendor Code'),
             'vendor_name' => Yii::t('app', 'Vendor Name'),
             'pan_no' => Yii::t('app', 'Pan No'),
-            'adhar_no' => Yii::t('app', 'Adhar No'),
+            'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),

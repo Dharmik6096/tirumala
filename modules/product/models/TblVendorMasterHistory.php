@@ -12,7 +12,7 @@ use Yii;
  * @property string $vendor_code
  * @property string $vendor_name
  * @property string $pan_no
- * @property string $adhar_no
+ * @property string $aadhaar_no
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
@@ -43,13 +43,13 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['vendor_master_code'], 'safe'],
+                [['vendor_master_code', 'union_code'], 'safe'],
                 [['created_at', 'updated_at', 'history_created_at'], 'safe'],
                 [['originating_type'], 'safe'],
                 [['vendor_master_code'], 'safe'],
                 [['vendor_code'], 'safe'],
                 [['vendor_name'], 'safe'],
-                [['pan_no', 'adhar_no'], 'safe'],
+                [['pan_no', 'aadhaar_no'], 'safe'],
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
                 [['operation_type'], 'safe'],
@@ -66,7 +66,7 @@ class TblVendorMasterHistory extends \yii\db\ActiveRecord {
             'vendor_code' => Yii::t('app', 'Vendor Code'),
             'vendor_name' => Yii::t('app', 'Vendor Name'),
             'pan_no' => Yii::t('app', 'Pan No'),
-            'adhar_no' => Yii::t('app', 'Adhar No'),
+            'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
