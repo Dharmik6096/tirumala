@@ -61,6 +61,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'New Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
             ],
         ],
             [

@@ -25,39 +25,37 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblVendorMaster extends \yii\db\ActiveRecord
-{
+class TblVendorMaster extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vendor_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vendor_master_code'], 'required'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['vendor_master_code'], 'string', 'max' => 30],
-            [['vendor_code'], 'string', 'max' => 20],
-            [['vendor_name'], 'string', 'max' => 225],
-            [['pan_no', 'adhar_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['vendor_code', 'vendor_name', 'adhar_no', 'pan_no'], 'required'],
+                [['vendor_code'], 'integer'],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }],
+                [['adhar_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }],
+                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no'], 'safe'],
+                [['pan_no', 'adhar_no', 'vendor_code'], 'unique'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'vendor_master_code' => Yii::t('app', 'Vendor Master Code'),
             'vendor_code' => Yii::t('app', 'Vendor Code'),
@@ -78,4 +76,5 @@ class TblVendorMaster extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }
