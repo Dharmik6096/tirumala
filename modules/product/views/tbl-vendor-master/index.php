@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Vendor Master'));
 $this->params['menu'][] = Yii::$app->controls->add('vendor');
-//$this->params['menu'][] = Yii::$app->controls->import('product-master-bulk', $this);
+$this->params['menu'][] = Yii::$app->controls->import('vendor-master', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

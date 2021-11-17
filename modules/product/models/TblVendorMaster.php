@@ -3,6 +3,7 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_vendor_master".
@@ -30,6 +31,8 @@ class TblVendorMaster extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
+    public $department, $middle_name, $surname, $local_middlename, $local_surname, $contact_person, $local_contact_person, $mobile_no, $email;
+
     public static function tableName() {
         return 'tbl_vendor_master';
     }
@@ -40,6 +43,8 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['vendor_code', 'vendor_name', 'adhar_no', 'pan_no'], 'required'],
+                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email'], 'safe'],
+                [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
                 [['vendor_code'], 'integer'],
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
@@ -47,7 +52,7 @@ class TblVendorMaster extends \app\models\ChildModel {
                 [['adhar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }],
-                [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'adhar_no'], 'safe'],
+                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
                 [['pan_no', 'adhar_no', 'vendor_code'], 'unique'],
         ];
     }
@@ -75,6 +80,32 @@ class TblVendorMaster extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+
+    public function setChildTable(&$model, &$saveModel, &$errors) {
+        if (!empty($model->mobile_no)) {
+            $contact_model = new TblContactDetails();
+            $contact_model->setModel('vendor', (string) $model->vendor_master_code);
+            $contact_model->mobile_no = $model->mobile_no;
+            $contact_model->email = $model->email;
+            $contact_model->department = $model->department;
+            $contact_model->contact_person = $model->contact_person;
+            $contact_model->firstname = $model->contact_person;
+            $contact_model->local_contact_person = $model->local_contact_person;
+            $contact_model->lastname = $model->middle_name;
+            $contact_model->surname = $model->surname;
+            $contact_model->local_lastname = $model->local_middlename;
+            $contact_model->local_surname = $model->local_surname;
+            $contact_model->mobile_no = $model->mobile_no;
+            if (!$contact_model->validate()) {
+                $errors[] = $contact_model->getErrors();
+            }
+            array_push($saveModel, $contact_model);
+        }
+    }
+
+    public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
     }
 
 }
