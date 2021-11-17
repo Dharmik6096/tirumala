@@ -60,7 +60,7 @@ class TblVendorMasterSearch extends TblVendorMaster {
             'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
         ]);
-
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_vendor_master', 'tbl_vendor_master', 'tbl_vendor_master');
         $query->andFilterWhere(['like', 'vendor_master_code', $this->vendor_master_code])
                 ->andFilterWhere(['like', 'vendor_code', $this->vendor_code])
                 ->andFilterWhere(['like', 'vendor_name', $this->vendor_name])

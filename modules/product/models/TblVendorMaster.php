@@ -4,6 +4,7 @@ namespace app\modules\product\models;
 
 use Yii;
 use app\modules\details\models\TblContactDetails;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_vendor_master".
@@ -49,6 +50,7 @@ class TblVendorMaster extends \app\models\ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
                 [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }],
@@ -106,6 +108,10 @@ class TblVendorMaster extends \app\models\ChildModel {
 
     public function setPanNumber($attribute, $params) {
         $this->pan_no = strtoupper($this->pan_no);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }
