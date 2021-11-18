@@ -75,7 +75,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             'to_type' => Yii::t('app', 'To Type'),
             'to_code' => Yii::t('app', 'To Code'),
             'remarks' => Yii::t('app', 'Remarks'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -83,18 +83,17 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'x_col1' => Yii::t('app', 'X Col1'),
-            'x_col2' => Yii::t('app', 'X Col2'),
-            'x_col3' => Yii::t('app', 'X Col3'),
-            'x_col4' => Yii::t('app', 'X Col4'),
-            'x_col5' => Yii::t('app', 'X Col5'),
+            'from_mcc_plant_code' => Yii::t('app', 'MCC'),
+            'to_mcc_plant_code' => Yii::t('app', 'MCC'),
+            'from_bmc_code' => Yii::t('app', 'BMC'),
+            'to_bmc_code' => Yii::t('app', 'BMC'),
+            'from_dcs_code' => Yii::t('app', 'DCS'),
+            'to_dcs_code' => Yii::t('app', 'DCS'),
         ];
     }
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
-
-   
 
 }

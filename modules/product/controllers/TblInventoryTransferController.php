@@ -7,6 +7,7 @@ use app\modules\product\models\TblInventoryTransfer;
 use app\modules\product\models\TblInventoryTransferTxn;
 use app\modules\product\models\TblInventoryTransferHistory;
 use app\modules\product\models\TblInventoryTransferSearch;
+use app\modules\product\models\TblInventoryTransferTxnSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -54,8 +55,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblInventoryTransfer();
-        $searchModel = new TblInventoryTransferTxn();
-        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        $searchModel = new TblInventoryTransferTxnSearch();
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->get());
         $txModel = new TblInventoryTransferTxn();
         $this->viewFile = 'create';
         $modelSave = [];
@@ -170,9 +171,9 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
     }
 
     public function actionListGrid() {
-        $searchModel = new TblInventoryTransferTxn();
+        $searchModel = new TblInventoryTransferTxnSearch();
         $searchModel->setAttributes(Yii::$app->request->get('TblInventoryTransferTxn'));
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
