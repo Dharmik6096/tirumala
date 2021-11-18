@@ -3,6 +3,10 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\product\models\TblInventoryTransferTxn;
+use yii\db\ActiveQuery;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "tbl_inventory_transfer".
@@ -29,40 +33,39 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblInventoryTransfer extends \yii\db\ActiveRecord
-{
+class TblInventoryTransfer extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public $from_dcs_code, $from_mcc_plant_code, $from_bmc_code, $to_dcs_code, $to_mcc_plant_code, $to_bmc_code;
+
+    public static function tableName() {
         return 'tbl_inventory_transfer';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['inventory_transfer_code'], 'required'],
-            [['inventory_transfer_date', 'created_at', 'updated_at'], 'safe'],
-            [['remarks'], 'string'],
-            [['originating_type'], 'integer'],
-            [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
-            [['from_type', 'from_code', 'to_type', 'to_code'], 'string', 'max' => 50],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['inventory_transfer_code'], 'required'],
+                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code'], 'safe'],
+                [['remarks'], 'string'],
+                [['originating_type'], 'integer'],
+                [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
+                [['from_type', 'from_code', 'to_type', 'to_code'], 'string', 'max' => 50],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'inventory_transfer_code' => Yii::t('app', 'Inventory Transfer Code'),
             'inventory_transfer_no' => Yii::t('app', 'Inventory Transfer No'),
@@ -87,4 +90,11 @@ class TblInventoryTransfer extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+   
+
 }
