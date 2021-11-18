@@ -90,7 +90,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -954,7 +954,8 @@ class SiteController extends Controller {
             ],
             'dashboard_milk_analysis' => [
                 'name' => 'sp_dashboard_milk_analysis',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date_milk_analysis=' . date('Y-m-d') . '|dateshift:from_shift,to_date_milk_analysis=' . date('Y-m-d') . '|dateshift:to_shift',
+//                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date_milk_analysis=' . date('Y-m-d') . '|dateshift:from_shift,to_date_milk_analysis=' . date('Y-m-d') . '|dateshift:to_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
             ],
             'today_vs_yesterday_collection' => [
                 'name' => 'sp_portal_dashboard_today_vs_yesterday_collection',
