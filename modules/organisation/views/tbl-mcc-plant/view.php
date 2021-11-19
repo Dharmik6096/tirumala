@@ -19,38 +19,38 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'plant_code',
                                 'value' => isset($model->plantCode) ? $model->plantCode->name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'mcc_plant_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'mcc_plant_code_ex',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'ref_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'local_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
@@ -60,13 +60,13 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                    'local_name',
                     [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'capacity',
                                 'format' => 'html',
                                 'value' => isset($model->capacity0) ? $model->capacity0->value : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'valid_from',
                                 'value' => Yii::$app->controls->view_date($model->valid_from),
                                 'valueColOptions' => ['style' => 'width:30%'],
@@ -103,11 +103,11 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                    'mobile_no',
                     [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'description',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'union_code',
                                 'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
@@ -117,40 +117,40 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                    'description
                     [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'state_code',
                                 'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'district_code',
                                 'value' => isset($model->districtCode) ? $model->districtCode->district_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'sub_district_code',
                                 'value' => isset($model->subDistrictCode) ? $model->subDistrictCode->sub_district_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'village_code',
                                 'value' => isset($model->villageCode) ? $model->villageCode->village_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'hamlet_code',
                                 'value' => isset($model->hamletCode) ? $model->hamletCode->hamlet_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'label' => 'Milk Type',
                                 'format' => 'html',
                                 'value' => $model->milkType(),
@@ -158,31 +158,40 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'is_weight_manual',
                                 'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                            [
+                                [
                                 'attribute' => 'is_quality_manual',
                                 'value' => isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                    [
+                        [
                         'columns' => [
-                            [
+                                [
                                 'attribute' => 'gst_no',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                            [
+                                [
                                 'attribute' => 'is_active',
                                 'label' => 'Status',
                                 'format' => 'html',
                                 'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'sap_vendor_code',
+                                'format' => 'html',
                                 'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
