@@ -5,6 +5,7 @@ namespace app\modules\product\models;
 use Yii;
 use app\modules\details\models\TblContactDetails;
 use app\modules\organisation\models\TblUnions;
+use app\modules\product\models\TblGrn;
 
 /**
  * This is the model class for table "tbl_vendor_master".
@@ -112,6 +113,16 @@ class TblVendorMaster extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function checkDelete() {
+        $grnModel = new TblGrn();
+        $data = $grnModel->find()->where(['vendor_master_code' => $this->vendor_master_code])->one();
+        if (count($data) > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }
