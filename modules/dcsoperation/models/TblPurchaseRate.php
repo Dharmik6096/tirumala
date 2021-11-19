@@ -41,20 +41,20 @@ class TblPurchaseRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['rate_category',], 'default', 'value' => 'NORMAL'],
-            [['is_default',], 'default', 'value' => '1'],
-            [['is_active',], 'default', 'value' => '1'],
-            [['rate_gen_method_code',], 'default', 'value' => '3', 'on' => ['stellapps']],
-            [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required', 'except' => ['stellapps']],
+                [['rate_category',], 'default', 'value' => 'NORMAL'],
+                [['is_default',], 'default', 'value' => '1'],
+                [['is_active',], 'default', 'value' => '1'],
+                [['rate_gen_method_code',], 'default', 'value' => '3', 'on' => ['stellapps']],
+                [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required', 'except' => ['stellapps']],
 //            ['originating_org_code', 'unique', 'when' => function($model) {
 //                    $data = $this->find()->where(['originating_org_code' => $model->originating_org_code, 'wef_date' => $model->wef_date, 'shift_applicability' => $model->shift_applicability])->andWhere(['<>', 'purchase_rate_code', $model->purchase_rate_code])->one();
 //                    return ($data) ? true : false;
 //                }, 'message' => Yii::t('app/validation', 'Purchase Rate is already created for inserted inputs.')],
             [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id', 'reference_code', 'dcs_purchase_rate_code', 'ts_rate'], 'safe'],
-            [['shift_applicability'], 'integer'],
-            [['description', 'originating_org_code'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['shift_applicability'], 'integer'],
+                [['description', 'originating_org_code'], 'string', 'max' => 255],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
@@ -244,6 +244,11 @@ class TblPurchaseRate extends \app\models\ChildModel {
     public function getValidPurchaseRate($code) {
         $data = $this->find()->select('purchase_rate_code')->where(['or', ['purchase_rate_code' => $code], ['dcs_purchase_rate_code' => $code]])->all();
         return !empty($data) && count($data) == 1 ? $data[0]->purchase_rate_code : '';
+    }
+
+    public function getDcsPurchaseRateCode($code) {
+        $data = $this->find()->select('dcs_purchase_rate_code')->where(['dcs_purchase_rate_code' => $code])->all();
+        return $data;
     }
 
 }
