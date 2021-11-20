@@ -5,21 +5,21 @@ namespace app\modules\product\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\product\models\TblInventoryTransferTxn;
+use app\modules\product\models\TblGrnTxn;
 
 /**
- * TblInventoryTransferTxnSearch represents the model behind the search form about `app\modules\product\models\TblInventoryTransferTxn`.
+ * TblGrnTxnSearch represents the model behind the search form about `app\modules\product\models\TblGrnTxn`.
  */
-class TblInventoryTransferTxnSearch extends TblInventoryTransferTxn {
+class TblGrnTxnSearch extends TblGrnTxn {
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['inventory_transfer_txn_code', 'inventory_transfer_code', 'product_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
-            [['available_stock', 'qty'], 'number'],
+            [['grn_txn_code', 'grn_code', 'product_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'union_code'], 'safe'],
             [['unit_code', 'originating_type'], 'integer'],
+            [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'number'],
         ];
     }
 
@@ -39,7 +39,7 @@ class TblInventoryTransferTxnSearch extends TblInventoryTransferTxn {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblInventoryTransferTxn::find();
+        $query = TblGrnTxn::find();
 
         // add conditions that should always apply here
 
@@ -57,17 +57,21 @@ class TblInventoryTransferTxnSearch extends TblInventoryTransferTxn {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'available_stock' => $this->available_stock,
-            'unit_code' => $this->unit_code,
-            'qty' => $this->qty,
+            'grn_code' => $this->grn_code,
+            'received_qty' => $this->received_qty,
+            'rejected_qty' => $this->rejected_qty,
+            'basic_amount' => $this->basic_amount,
+            'tax' => $this->tax,
+            'gross_amount' => $this->gross_amount,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
         ]);
 
-        $query->andFilterWhere(['like', 'inventory_transfer_txn_code', $this->inventory_transfer_txn_code])
-                ->andFilterWhere(['like', 'inventory_transfer_code', $this->inventory_transfer_code])
+        $query->andFilterWhere(['like', 'grn_txn_code', $this->grn_txn_code])
+                ->andFilterWhere(['like', 'grn_code', $this->grn_code])
                 ->andFilterWhere(['like', 'product_code', $this->product_code])
+                ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
@@ -81,48 +85,31 @@ class TblInventoryTransferTxnSearch extends TblInventoryTransferTxn {
         return $dataProvider;
     }
 
-    public function viewsearch($params) {
-        $query = TblInventoryTransferTxn::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_inventory_transfer_txn', 'tbl_inventory_transfer_txn', 'tbl_inventory_transfer_txn');
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-        // grid filtering conditions
-        $query->andWhere([
-            'inventory_transfer_code' => $this->inventory_transfer_code,
-        ]);
-        return $dataProvider;
-    }
-
     public function createsearch($params) {
-        $query = TblInventoryTransferTxn::find();
+        $query = TblGrnTxn::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
         ]);
 
         $this->load($params);
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
+
         // grid filtering conditions
         $query->andWhere([
-            'inventory_transfer_code' => $this->inventory_transfer_code,
+            'grn_code' => $this->grn_code,
         ]);
+
+
+
         return $dataProvider;
     }
 

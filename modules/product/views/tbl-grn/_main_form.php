@@ -15,7 +15,7 @@ $list = array('0' => 'No', '1' => 'Yes');
 
 <?php
 $form = ActiveForm::begin([
-            'options' => ['id' => 'inventory-transfer-form'],
+            'options' => ['id' => 'grn-form'],
             'validateOnBlur' => FALSE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
@@ -26,69 +26,63 @@ $form = ActiveForm::begin([
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
     <div class="col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Inventory Transfer Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'GRN') ?></h4>
         </div>
-        <div class="col-md-10">
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
-            </div>
-            <div class="col-sm-2 create_fields">
-                <?= $form->field($model, 'inventory_transfer_no')->textInput()->label(Yii::t('app', 'inventory transfer no')) ?>
-            </div>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', false, false, false, true); ?>
-            </div>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->dropdown->dropdownStatic('org_type', $model, $form, 'form-group', $model->getAttributeLabel('from_type'), false, 'from_type', false); ?>
-            </div>
-            <div class="col-sm-2 create_fields" id="from_mcc">
-                <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblinventorytransfer-union_code', 'from_mcc_plant_code', $model->getAttributeLabel('from_mcc_plant_code')); ?>
-            </div>
-            <div class="col-sm-2" id="from_bmc">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblinventorytransfer-from_mcc_plant_code', 'from_bmc_code', $model->getAttributeLabel('from_bmc_code')); ?>
-            </div>
-            <div class="col-sm-2" id="from_dcs">
-                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblinventorytransfer-from_bmc_code', 'from_dcs_code', $model->getAttributeLabel('from_dcs_code'), FALSE, '', FALSE, TRUE); ?>
-            </div>
-            <?= Html::activeHiddenInput($model, 'from_code', ['id' => 'f_code']) ?>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->dropdown->dropdownStatic('org_type', $model, $form, 'form-group', $model->getAttributeLabel('to_type'), false, 'to_type', false); ?>
-            </div>
-            <div class="col-sm-2 create_fields" id="to_mcc">
-                <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblinventorytransfer-union_code', 'to_mcc_plant_code', $model->getAttributeLabel('to_mcc_plant_code')); ?>
-            </div>
-            <div class="col-sm-2 create_fields" id="to_bmc">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblinventorytransfer-to_mcc_plant_code', 'to_bmc_code', $model->getAttributeLabel('to_bmc_code')); ?>
-            </div>
-            <div class="col-sm-2 create_fields" id="to_dcs">
-                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblinventorytransfer-to_bmc_code', 'to_dcs_code', $model->getAttributeLabel('to_dcs_code'), FALSE, '', FALSE, TRUE); ?>
-            </div>
-            <?= Html::activeHiddenInput($model, 'to_code', ['id' => 't_code']) ?>
-            <div class="col-sm-4 create_fields">
-                <?= $form->field($model, 'remarks')->textInput() ?>
-            </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
+        <div class="col-sm-2 create_fields">
+            <?= $form->field($model, 'grn_no')->textInput(['readonly' => TRUE]) ?>
+        </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->controls->date($model, $form, 'grn_date', '', false, false, false, true); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->depend_dropdown('vendor', $model, $form, 'tblgrn-union_code', 'form-group', $model->getAttributeLabel('vendor_master_code'), 'vendor_master_code'); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', false, false, false, true); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
+            <?= $form->field($model, 'invoice_no')->textInput() ?>
+        </div>
+
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
     <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Inventory Transfer Txn Details</h4>
+            <h4 class="theme-box-heading">Product Details</h4>
         </div>
-        <?= $form->field($model, 'inventory_transfer_code')->hiddenInput()->label(FALSE) ?>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblinventorytransfer-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $txModel->getAttributeLabel('product_code'), 'product_code'); ?>
+        <?= $form->field($model, 'grn_code')->hiddenInput()->label(FALSE) ?>
+        <div class="col-sm-2 reset_field">
+            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblgrn-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
         </div>
+
         <div class=" col-sm-2 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>
-        <div class="col-sm-2 create_fields reset_field">
-            <?= $form->field($txModel, 'available_stock')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Available Stock')) ?>
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'rate')->textInput() ?>
         </div>
-        <div class="col-sm-2 create_fields reset_field">
-            <?= $form->field($txModel, 'qty')->textInput()->label(Yii::t('app', 'Quantity')) ?>
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'received_qty')->textInput() ?>
         </div>
-
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'rejected_qty')->textInput() ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($txModel, 'basic_amount')->textInput(['readonly' => TRUE]) ?>
+        </div>
+        <div class="col-sm-1 reset_field number-validate">
+            <?= $form->field($txModel, 'tax')->textInput() ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($txModel, 'gross_amount')->textInput(['readonly' => TRUE]) ?>
+        </div>
 
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
@@ -117,13 +111,12 @@ $form = ActiveForm::begin([
                                                                      
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
-                                                                    $("#tblinventorytransfer-inventory_transfer_code").val(data.pk_code);
+                                                                    $("#tblgrn-grn_code").val(data.pk_code);
                                                                     reloadGrid(data.pk_code);
                                                                     $(".transporter").hide();
-                                                                  
-                                                                    $("#inventory-transfer-form .reset_field input").val("");
-                                                                    $("#inventory-transfer-form .reset_field select").val("");
-                                                                    $("#inventory-transfer-form .reset_field textarea").val("");
+                                                                    $("#grn-form .reset_field input").val("");
+                                                                    $("#grn-form .reset_field select").val("");
+                                                                    $("#grn-form .reset_field textarea").val("");
 
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){

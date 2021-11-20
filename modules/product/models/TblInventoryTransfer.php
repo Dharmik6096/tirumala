@@ -49,16 +49,16 @@ class TblInventoryTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['inventory_transfer_code'], 'required'],
-                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code'], 'safe'],
-                [['remarks'], 'string'],
-                [['originating_type'], 'integer'],
-                [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
-                [['from_type', 'from_code', 'to_type', 'to_code'], 'string', 'max' => 50],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
+            [['inventory_transfer_code'], 'safe'],
+            [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code'], 'safe'],
+            [['remarks'], 'string'],
+            [['originating_type'], 'integer'],
+            [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
+            [['union_code'], 'string', 'max' => 3],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 

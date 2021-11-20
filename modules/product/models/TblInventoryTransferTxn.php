@@ -7,6 +7,7 @@ use Yii;
 use yii\db\ActiveQuery;
 use yii\data\ActiveDataProvider;
 use app\modules\product\models\TblProduct;
+use app\modules\globalmaster\models\TblUnits;
 
 /**
  * This is the model class for table "tbl_inventory_transfer_txn".
@@ -44,14 +45,16 @@ class TblInventoryTransferTxn extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['inventory_transfer_txn_code'], 'required'],
-                [['available_stock', 'qty'], 'number'],
-                [['unit_code', 'originating_type'], 'integer'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['inventory_transfer_txn_code', 'inventory_transfer_code', 'product_code'], 'string', 'max' => 30],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
+            [['inventory_transfer_txn_code', 'union_code'], 'safe'],
+            [['available_stock', 'qty'], 'number'],
+            [['unit_code', 'originating_type'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['inventory_transfer_txn_code', 'inventory_transfer_code', 'product_code'], 'string', 'max' => 30],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['qty'], 'validateQty']
         ];
     }
 
@@ -62,9 +65,9 @@ class TblInventoryTransferTxn extends \yii\db\ActiveRecord {
         return [
             'inventory_transfer_txn_code' => Yii::t('app', 'Inventory Transfer Txn Code'),
             'inventory_transfer_code' => Yii::t('app', 'Inventory Transfer Code'),
-            'product_code' => Yii::t('app', 'Product Code'),
+            'product_code' => Yii::t('app', 'Product'),
             'available_stock' => Yii::t('app', 'Available Stock'),
-            'unit_code' => Yii::t('app', 'Unit Code'),
+            'unit_code' => Yii::t('app', 'Unit'),
             'qty' => Yii::t('app', 'Qty'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -85,66 +88,23 @@ class TblInventoryTransferTxn extends \yii\db\ActiveRecord {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function search($params) {
-        $query = TblInventoryTransferTxn::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andWhere([
-            'inventory_transfer_code' => $this->inventory_transfer_code,
-        ]);
-
-        $query->andWhere(['inventory_transfer_code' => $this->inventory_transfer_code]);
-
-        return $dataProvider;
-    }
-
     public function getInventoryTxnCode() {
         return $this->hasOne(TblInventoryTransferTxn::className(), ['inventory_transfer_code' => 'inventory_transfer_code']);
     }
 
-    public function viewsearch($params) {
-        $query = TblInventoryTransferTxn::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andWhere([
-            'inventory_transfer_code' => $this->inventory_transfer_code,
-        ]);
-
-        $query->andWhere(['inventory_transfer_code' => $this->inventory_transfer_code]);
-
-        return $dataProvider;
-    }
-
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function validateQty($attribute, $params) {
+        if (!empty($this->qty) && $this->qty > $this->available_stock) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' can not be Greater Than Available Stock.'));
+            return false;
+        }
+    }
+
+    public function getUnitCode() {
+        return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
     }
 
 }

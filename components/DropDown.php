@@ -722,7 +722,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1353,6 +1353,7 @@ class DropDown extends Component {
             'role_code' => ['name' => 'role_code', 'fields' => 'role_code,description', 'prompt' => 'Select Role', 'model' => 'TblRole'],
             'penalty_type' => ['name' => 'penalty_type', 'fields' => 'penalty_type_code,penalty_type,', 'prompt' => Yii::t('app', 'Select Penalty Type'), 'model' => 'TblCollectionPenaltyType', 'depend' => 'union_code'],
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
+            'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -1439,7 +1440,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
