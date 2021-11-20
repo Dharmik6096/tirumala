@@ -246,9 +246,4 @@ class TblPurchaseRate extends \app\models\ChildModel {
         return !empty($data) && count($data) == 1 ? $data[0]->purchase_rate_code : '';
     }
 
-    public function getDcsPurchaseRateCode($code) {
-        $data = $this->find()->select('dcs_purchase_rate_code')->where(['dcs_purchase_rate_code' => $code])->all();
-        return $data;
-    }
-
 }
