@@ -269,7 +269,7 @@ $script = "
         var unionCode = $('#tblproductsale-union_code').val();
         var taxCode = $('#tblproductsaletransaction-tax_code').val();
         var amountValue = $('#tblproductsale-amount').val();
-        var rateValue = $('#tblproductsaletransaction-rate').attr('data-val');
+        var rateValue = $('#tblproductsaletransaction-rate').val();
         var discountValue = $('#tblproductsale-discount').val();
         var recQty = $('#tblproductsaletransaction-quantity').val();
         if(isNaN(amountValue)){
