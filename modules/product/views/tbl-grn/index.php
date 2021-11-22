@@ -1,6 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'GRN'));
 $this->params['menu'][] = Yii::$app->controls->add('grn');
+$this->params['menu'][] = Yii::$app->controls->import('grn', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

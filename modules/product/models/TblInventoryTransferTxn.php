@@ -31,7 +31,7 @@ use app\modules\globalmaster\models\TblUnits;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblInventoryTransferTxn extends \yii\db\ActiveRecord {
+class TblInventoryTransferTxn extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
@@ -45,16 +45,18 @@ class TblInventoryTransferTxn extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
-            [['inventory_transfer_txn_code', 'union_code'], 'safe'],
-            [['available_stock', 'qty'], 'number'],
-            [['unit_code', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['inventory_transfer_txn_code', 'inventory_transfer_code', 'product_code'], 'string', 'max' => 30],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['qty'], 'validateQty']
+                [['product_code', 'unit_code', 'qty', 'available_stock'], 'required'],
+                [['inventory_transfer_txn_code', 'union_code'], 'safe'],
+                [['available_stock', 'qty'], 'number'],
+                [['unit_code', 'originating_type'], 'integer'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['inventory_transfer_txn_code', 'inventory_transfer_code', 'product_code'], 'string', 'max' => 30],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['qty'], 'validateQty'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
         ];
     }
 

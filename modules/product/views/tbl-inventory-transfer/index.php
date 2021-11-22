@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Inventory Transfer'));
 $this->params['menu'][] = Yii::$app->controls->add('Inventory');
-//$this->params['menu'][] = Yii::$app->controls->import('vendor-master', $this);
+$this->params['menu'][] = Yii::$app->controls->import('inventory-transfer', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
