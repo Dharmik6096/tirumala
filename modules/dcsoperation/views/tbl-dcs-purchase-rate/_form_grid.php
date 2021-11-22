@@ -51,6 +51,12 @@ $attribute = [
         }, 'filter' => false],
     'ts_rate',
     'description',
+    ['attribute' => 'rate_type',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('rate_price_type', $searchModel, 'rate_type'),
+        'value' => function ($model) {
+            return !empty($model->rate_type) ? Yii::$app->dropdown->getRecords('rate_price_type')['data'][$model->rate_type] : '';
+        }, 'visible' => false],
+    ['attribute' => 'rate_value', 'visible' => false],
 ];
 
 $grid_option = [

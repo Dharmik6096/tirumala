@@ -1181,9 +1181,9 @@ class GeneralFunctions extends Component {
         return strtolower($command['id']);
     }
 
-    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false) {
+    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false, $templateid = '') {
         $content_id = '1';
-        $result = Yii::$app->alertnotification->sendSms($content_id, $mobile, $message);
+        $result = Yii::$app->alertnotification->sendSms($content_id, $mobile, $message, $templateid);
         if ($save_data) {
             $model = new TblAlertNotification();
             $model->setAttributes($sms_data);
@@ -1197,6 +1197,7 @@ class GeneralFunctions extends Component {
             $model->pick_datetime = $datetime;
             $model->response_datetime = $datetime;
             $model->response_status = $result;
+            $model->template_id = $templateid;
             $model->save();
         }
     }

@@ -14,6 +14,7 @@ use app\modules\webservice\eipl\v1\V1;
 //use app\modules\webservice\eipl\models\TblUserAppScheduler;
 use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
 use app\modules\dcsoperation\models\TblShift;
+use app\modules\sms\models\TblAlertTemplate;
 
 class EiplAppController extends MasterController {
 
@@ -26,35 +27,37 @@ class EiplAppController extends MasterController {
         if (!empty($detail)) {
             $temp_model = new TblEiplAppLoginTemp();
             $temp_model->attributes = $model->attributes;
-			if (YII_ENV_DEV) {
-            $temp_model->otp_code ="1234";
+            if (YII_ENV_DEV) {
+                $temp_model->otp_code = "1234";
+            } else {
+                $temp_model->otp_code = rand(1000, 9999);
             }
-			else
-			{
-				$temp_model->otp_code = rand(1000, 9999);
-			}
-			$modelSave[] = $temp_model;
+            $modelSave[] = $temp_model;
             $transaction = $this->generalModel->saveTransaction($modelSave, ['app registration', 'create']);
             if ($transaction == 'customRedirect') {
-                $message = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
-                $sms_data = [];
-                $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
-                $sms_data['module_type'] = 'app_activation';
-				if (YII_ENV_DEV) {
-                //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
-				}
-				else
-				{
-					Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true);
-				}
-                foreach ($detail as $key => $subArr) {
-                    unset($detail[$key]['master_type']);
-                    unset($detail[$key]['master_code']);
-                    unset($detail[$key]['module_type']);
-                    unset($detail[$key]['department']);
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('eipl_app_otp');
+                if (!empty($templateData)) {
+                    $message = str_replace('{otp}', $temp_model->otp_code, $templateData->message);
+
+//                $message = 'Dear Your OTP Pin is ' . $temp_model->otp_code . '.Enter this pin to login your account.';
+                    $sms_data = [];
+                    $sms_data['refecence_code'] = (string) $temp_model->app_login_id;
+                    $sms_data['module_type'] = 'app_activation';
+                    if (YII_ENV_DEV) {
+                        //Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    } else {
+                        Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
+                    }
+                    foreach ($detail as $key => $subArr) {
+                        unset($detail[$key]['master_type']);
+                        unset($detail[$key]['master_code']);
+                        unset($detail[$key]['module_type']);
+                        unset($detail[$key]['department']);
+                    }
+                    $this->response->setData($detail);
+                    $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
                 }
-                $this->response->setData($detail);
-                $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
             } else {
                 $this->response->setStatusCode($this->eiplResponseCode->statusError);
                 $this->response->setMessage(['Unable to Login.']);

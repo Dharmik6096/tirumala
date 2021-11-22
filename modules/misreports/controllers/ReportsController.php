@@ -846,16 +846,36 @@ class ReportsController extends \app\controllers\ChildController {
                     }
                 }
             }
-            $this->dataProvider = new ArrayDataProvider([
+            $dataPro = [];
+            $dataPro = [
                 'allModels' => $output,
-                'pagination' => false,
                 'sort' => [
                     'defaultOrder' => [],
                     'attributes' => [
                         $attr
                     ],
                 ],
-            ]);
+            ];
+            if (!empty($this->data['kartik_grid_view'])) {
+//                $dataPro['pagination'] = ['pageSize' => 500, 'defaultPageSize' => 500];
+            } else {
+                $dataPro['pagination'] = false;
+            }
+            $this->dataProvider = new ArrayDataProvider($dataPro);
+//            $this->dataProvider->refresh();
+//            if (!empty($this->data['kartik_grid_view'])) {
+//                $this->dataProvider->pagination->pageSize = 10;
+//            }
+//            $this->dataProvider = new ArrayDataProvider([
+//                'allModels' => $output,
+//                'pagination' => false,
+//                'sort' => [
+//                    'defaultOrder' => [],
+//                    'attributes' => [
+//                        $attr
+//                    ],
+//                ],
+//            ]);
         }
 
         if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
@@ -1669,7 +1689,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'kartik_grid_view' => 'SocietyWiseCdaTwo'
             ],
             'SocietyWiseCdaDateWiseTwo' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1677,7 +1698,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'kartik_grid_view' => 'SocietyWiseCdaDateWiseTwo'
             ],
             'SocietyWiseCdaConsolidatedTwo' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
@@ -1685,7 +1707,8 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'SocietyWiseCda',
                 'title' => '207 - Society Wise Variance',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'multiArray' => ['mcc_code', 'bmc_code']
+                'multiArray' => ['mcc_code', 'bmc_code'],
+                'kartik_grid_view' => 'SocietyWiseCdaConsolidatedTwo'
             ],
             'MemberData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code',

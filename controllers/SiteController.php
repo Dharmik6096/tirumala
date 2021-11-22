@@ -954,7 +954,8 @@ class SiteController extends Controller {
             ],
             'dashboard_milk_analysis' => [
                 'name' => 'sp_dashboard_milk_analysis',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date_milk_analysis=' . date('Y-m-d') . '|dateshift:from_shift,to_date_milk_analysis=' . date('Y-m-d') . '|dateshift:to_shift',
+//                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date_milk_analysis=' . date('Y-m-d') . '|dateshift:from_shift,to_date_milk_analysis=' . date('Y-m-d') . '|dateshift:to_shift',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
             ],
             'today_vs_yesterday_collection' => [
                 'name' => 'sp_portal_dashboard_today_vs_yesterday_collection',
@@ -1834,6 +1835,9 @@ class SiteController extends Controller {
                             if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
                                 $model->setTransactionData($model, $json, $childModel);
                             }
+                            if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
+                                $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
+                            }
                             if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
                                 $model->scenario = 'androidsync_coll';
                                 if (!$model->validate()) {
@@ -1902,7 +1906,21 @@ class SiteController extends Controller {
                                 }
                             }
                             $generalModel = new GeneralModel();
-                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+
+                            $masterSave = [];
+                            $masterSave[] = $model;
+                            if (in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
+                                if (!empty($model->union_code) && $model->union_code == '003' && !empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
+                                    $masterSave = [];
+                                }
+                            }
+//                            else if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction'])) {
+//                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
+//                                    $masterSave = [];
+//                                }
+//                            }
+//                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
+                            $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
                             if ($transaction != 'customRedirect') {
                                 $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
 //                                $transaction_data->error_log = (string) $transaction;

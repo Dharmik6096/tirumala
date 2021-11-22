@@ -226,7 +226,8 @@ $attribute = [
         'value' => function($model) {
             return ($model->is_chiller == 1) ? 'Yes' : 'No';
         }
-    ]
+    ],
+        ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [
