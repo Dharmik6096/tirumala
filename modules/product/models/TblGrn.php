@@ -37,7 +37,7 @@ class TblGrn extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $product_code, $unit_code, $rate, $received_qty, $tax, $rejected_qty;
+    public $product_code, $unit_code, $rate, $received_qty, $tax, $rejected_qty, $vendor_code;
 
     public static function tableName() {
         return 'tbl_grn';
@@ -48,12 +48,13 @@ class TblGrn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['mcc_plant_code', 'grn_date', 'vendor_master_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
+                [['mcc_plant_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
+                [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
                 [['grn_date', 'mcc_plant_code', 'vendor_master_code', 'invoice_date'], 'required'],
-                [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'safe'],
+                [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code'], 'safe'],
                 [['remarks', 'originating_type', 'union_code'], 'safe'],
                 [['grn_no', 'invoice_no'], 'string', 'max' => 30],
-                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_code'], 'on' => 'importCsv'],
+                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
@@ -187,6 +188,16 @@ class TblGrn extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->grn_date = !empty($this->grn_date) ? Yii::$app->controls->view_date($this->grn_date, 'php:Y-m-d') : NULL;
             $this->invoice_date = !empty($this->invoice_date) ? Yii::$app->controls->view_date($this->invoice_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function checkVendorCode() {
+        $vendor = new TblVendorMaster();
+        $data = $vendor->find()->where(['vendor_code' => $this->vendor_code])->one();
+        if (!empty($data)) {
+            $this->vendor_master_code = $data->vendor_master_code;
+        } else {
+            $this->addError('vendor_master_code', Yii::t('app/validation', $this->getAttributeLabel('vendor_master_code') . ' is invalid'));
         }
     }
 
