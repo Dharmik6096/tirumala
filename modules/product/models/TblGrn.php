@@ -53,10 +53,8 @@ class TblGrn extends \app\models\ChildModel {
                 [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'safe'],
                 [['remarks', 'originating_type', 'union_code'], 'safe'],
                 [['grn_no', 'invoice_no'], 'string', 'max' => 30],
-                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
+                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_code'], 'on' => 'importCsv'],
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
-                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code'], 'on' => 'importCsv'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
                 [['grn_date', 'invoice_date'], 'convertDateDot', 'on' => ['importCsv']],
@@ -119,7 +117,6 @@ class TblGrn extends \app\models\ChildModel {
     public function setChildTable(&$model, &$saveModel, &$errors) {
         if (!empty($model->grn_code)) {
             $txn_model = new TblGrnTxn();
-            array_push($saveModel, $model);
             $txn_model->grn_code = $model->grn_code;
             $txn_model->grn_txn_code = Yii::$app->general->getTransactionCode($txn_model, $txn_model->grn_code);
             $txn_model->product_code = $model->product_code;
@@ -149,7 +146,6 @@ class TblGrn extends \app\models\ChildModel {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existStock, $historyModel, UPDATE);
                     array_push($saveModel, $historyModel);
-//                    $modelSave[] = $historyModel;
                     $stock = $existStock->stock;
                     $existStock->stock = $stock + $qty;
                     $stockModel = $existStock;
@@ -169,7 +165,6 @@ class TblGrn extends \app\models\ChildModel {
                 $stockTxnModel->transaction_type = 'GRN';
                 $stockTxnModel->transaction_date = date('Y-m-d');
                 $stockTxnModel->reference_code = $txn_model->grn_txn_code;
-                $modelSave[] = $stockTxnModel;
                 array_push($saveModel, $stockTxnModel);
             }
         }

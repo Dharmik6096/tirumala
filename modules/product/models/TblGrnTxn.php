@@ -42,19 +42,21 @@ class TblGrnTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_code', 'unit_code', 'rate', 'received_qty', 'basic_amount', 'gross_amount'], 'required'],
-            [['grn_txn_code'], 'safe'],
-            [['unit_code', 'originating_type'], 'integer'],
-            [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['grn_txn_code', 'grn_code', 'product_code'], 'string', 'max' => 30],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['rejected_qty'], 'default', 'value' => 0],
-            [['rejected_qty'], 'number', 'min' => 0],
-            [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1],
+                [['product_code', 'unit_code', 'rate', 'received_qty', 'basic_amount', 'gross_amount'], 'required'],
+                [['grn_txn_code'], 'safe'],
+                [['unit_code', 'originating_type'], 'integer'],
+                [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'number'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['grn_txn_code', 'grn_code', 'product_code'], 'string', 'max' => 30],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['rejected_qty'], 'default', 'value' => 0],
+                [['rejected_qty'], 'number', 'min' => 0],
+                [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
+                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code'], 'on' => 'importCsv'],
         ];
     }
 
