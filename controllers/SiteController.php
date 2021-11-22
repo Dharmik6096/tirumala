@@ -761,6 +761,12 @@ class SiteController extends Controller {
     private function getSpResult($sp_name) {
 
         $post = Yii::$app->request->post('Dashboard');
+        if (!empty($post['mag_from_shift'])) {
+            $post['mav_from_shift'] = $post['mag_from_shift'];
+        }
+        if (!empty($post['mag_to_shift'])) {
+            $post['mav_to_shift'] = $post['mag_to_shift'];
+        }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
         $in_array = explode(',', str_replace(' ', '', $input['input']));
@@ -955,7 +961,8 @@ class SiteController extends Controller {
             'dashboard_milk_analysis' => [
                 'name' => 'sp_dashboard_milk_analysis',
 //                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date_milk_analysis=' . date('Y-m-d') . '|dateshift:from_shift,to_date_milk_analysis=' . date('Y-m-d') . '|dateshift:to_shift',
-                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:from_shift,to_date=' . date('Y-m-d') . '|dateshift:to_shift',
+//                'appendTime' => true,
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,from_date=' . date('Y-m-d') . '|dateshift:mav_from_shift,to_date=' . date('Y-m-d') . '|dateshift:mav_to_shift',
             ],
             'today_vs_yesterday_collection' => [
                 'name' => 'sp_portal_dashboard_today_vs_yesterday_collection',
