@@ -55,8 +55,8 @@ class TblGrnTxn extends \app\models\ChildModel {
                 [['rejected_qty'], 'default', 'value' => 0],
                 [['rejected_qty'], 'number', 'min' => 0],
                 [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
-                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code'], 'on' => 'importCsv'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
+                [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
         ];
     }
 
