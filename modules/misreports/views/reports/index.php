@@ -50,9 +50,13 @@ if (isset($data['url1'])) {
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
 
     $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
+    $reportClass = 'report-area';
+    if (!empty($result) && isset($data['kartik_grid_view'])) {
+        $reportClass = '';
+    }
     ?>
     <div class="panel-body padding-0">
-        <div class="report-area not_ellipsis">
+        <div class="<?= $reportClass ?> not_ellipsis">
             <div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -401,6 +405,42 @@ if (isset($data['url1'])) {
                 echo "<b><p class='text-center mt-50'>" . $result . "</p></b>";
             } else if (!empty($result) && isset($data['custom_report'])) {
                 echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
+            } else if (!empty($result) && isset($data['kartik_grid_view'])) {
+                $attr = [];
+                foreach ($result[0] as $att => $value) {
+                    $checkAttr = explode('##', $att);
+                    $attr_arr = [];
+                    $format = 'raw';
+                    if (in_array($att, ['Quantity', 'FAT', 'CLR', 'SNF'])) {
+                        $format = ['decimal', 2];
+                    }
+//                    $attr_arr['attribute'] = $att;
+                    if (empty($checkAttr[1]) || $checkAttr[0] != $checkAttr[1]) {
+                        $attr_arr = [];
+                        if (!empty($data['to_decrypt']) && in_array($checkAttr[0], $data['to_decrypt'])) {
+                            $attr_arr['value'] = function($model) use ($att) {
+                                return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                            };
+                        }
+
+                        $str = ucwords(str_replace('_', ' ', $att));
+                        $attr_arr['attribute'] = $att;
+                        $attr_arr['label'] = Yii::t('app', $str);
+                        $attr_arr['format'] = $format;
+                        $attr_arr['filter'] = false;
+                        $attr[] = $attr_arr;
+//                    $attr[] = ['attribute' => $att, 'label' => Yii::t('app', $str), 'format' => $format, 'filter' => false];
+                    }
+                }
+                $grid_option = [
+                    'id' => $data['kartik_grid_view'],
+                    'attributes' => $attr,
+                    'active_column' => false,
+                ];
+
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['index']);
+
+//                echo $this->render('_dynamic_report', ['result' => $result, 'model' => $model]);
             } else if (!empty($result) && !(isset($data['download_only']))) {
                 $attr = [];
                 foreach ($result[0] as $att => $value) {

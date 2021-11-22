@@ -16,6 +16,11 @@ $date_range_class = !empty($date_range_class) ? $date_range_class : 'col-sm-3';
 
 $unionCode = !empty($model->union_code) ? $model->union_code : '';
 $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
+$common_class = 'padding-left-5 padding-right-5';
+$model->from_date = Yii::$app->controls->view_date(date('Y-m-d'));
+$model->to_date = Yii::$app->controls->view_date(date('Y-m-d'));
+$model->mag_from_shift = empty($model->mag_from_shift) ? 1 : $model->mag_from_shift;
+$model->mag_to_shift = empty($model->mag_to_shift) ? 2 : $model->mag_to_shift;
 //Yii::$app->controls->view_date($date);
 ?>
 
@@ -33,15 +38,36 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
                             'id' => $id
                 ]);
                 ?>
-                <div class="clearfix pt10"></div>
-                <div class="col-sm-6">
-                    <div class="<?= $date_range_class ?>">
-                        <?php if ($date_range) { ?>
-                            <?= Yii::$app->controls->active_min_max_date($form, $model, 'from_date_milk_analysis', 'to_date_milk_analysis', $range_id_from, $range_id_to); ?>
-                        <?php } ?>
+                <?php if (isset($from_date) && $from_date) { ?>
+                    <div class="<?= $date_picker_class . ' ' . $common_class ?> ">
+                        <?php
+                        echo Yii::$app->controls->date($model, $form, 'from_date', 'form-group ' . $date_picker_class . ' ', false, false, false, false, $from_date_id);
+                        ?>
+                    </div> 
+                <?php } ?>
+                <!--<div class="clearfix"></div>-->
+                <?php if (isset($from_shift) && $from_shift) { ?>
+                    <div class="<?= $shift_class ?> shift  <?= $common_class ?>">
+                        <?php
+                        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'mag_from_shift');
+                        ?>
+                    </div> 
+                <?php } ?>
+                <?php if (isset($to_date) && $to_date) { ?>
+                    <div class="<?= $date_picker_class . ' ' . $common_class ?> ">
+                        <?php
+                        echo Yii::$app->controls->date($model, $form, 'to_date', 'form-group ' . $date_picker_class . ' ', false, false, false, false, $to_date_id);
+                        ?>
                     </div>
-                </div>
-                <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);    ?>
+                <?php } ?>
+                <?php if (isset($to_shift) && $to_shift) { ?>
+                    <div class="<?= $shift_class ?> shift <?= $common_class ?>">
+                        <?php
+                        echo Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group shift', false, false, 'mag_to_shift');
+                        ?>
+                    </div>  
+                <?php } ?>
+                <?php //$form->field($model, 'federation_code', ['options' => ['class' => 'form-group col-sm-2 padding-right-0']])->dropDownList(\app\components\GeneralFunctions::getActiveFederation(), ['prompt' => 'Select Federation'])->label(false);      ?>
                 <div class="col-sm-3 pt5 dashboard_modal_footer">
                     <?= Yii::$app->controls->custombutton('Apply', 'javascript:void(0)', false, $id . ' dashboardSearchButton'); ?>
                 </div>
@@ -64,7 +90,7 @@ $client_code = strtolower($client_code);
             <table id="custom_report_1" class="fht-table table table-striped dashboardMilkAnalysis_grid">
                 <thead class="dashboardWidgetDetailPortion">
                     <tr>
-                        <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC')        ?></th> -->
+                        <!-- <th rowspan='2'><?php //Yii::t('app', 'MCC')                ?></th> -->
                         <th rowspan='2'><?= Yii::t('app', 'BMC ') ?></th>
                         <th colspan='7'><?= Yii::t('app', 'CC Collection') ?></th>
                         <th colspan='6'><?= Yii::t('app', 'BMC Receipts') ?></th>
@@ -82,9 +108,9 @@ $client_code = strtolower($client_code);
                         <th><?= Yii::t('app', 'Amount') ?></th>
                         <th><?= Yii::t('app', 'No Of Farmers') ?></th>
                         <th><?= Yii::t('app', 'CC Count') ?></th>
-                        <!-- <th><?php //Yii::t('app', 'Online')        ?></th>
-                        <th><?php //Yii::t('app', 'Pendrive')        ?></th>
-                        <th><?php //Yii::t('app', 'Manual')        ?></th> -->
+                        <!-- <th><?php //Yii::t('app', 'Online')                           ?></th>
+                        <th><?php //Yii::t('app', 'Pendrive')                           ?></th>
+                        <th><?php //Yii::t('app', 'Manual')                           ?></th> -->
 
                         <th><?= Yii::t('app', 'Qty') ?></th>
                         <th><?= Yii::t('app', 'FAT') ?></th>
