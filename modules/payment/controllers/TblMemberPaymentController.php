@@ -49,6 +49,8 @@ use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblAlertTemplate;
+use app\modules\payment\models\TblMemberPaymentRecovery;
+use app\modules\payment\models\TblMemberPaymentRecoveryHistory;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -961,6 +963,24 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $newRec = !empty($value['recovery']) ? $value['recovery'] : 0;
                     $modelData->recovery = $oldRec + $newRec;
                     $saveModel[] = $modelData;
+                    if (!empty($value['recovery'])) {
+                        $recoveryModel = new TblMemberPaymentRecovery();
+                        $recoveryModel->attributes = $modelData->attributes;
+                        $recoveryModel->from_member_code = $modelData->member_code;
+                        $recoveryModel->for_member_code = $recoverModel->member_code;
+
+                        $existRecovery = $recoveryModel->gerRecovery();
+                        if (!empty($existRecovery)) {
+                            $rhistoryModel = new TblMemberPaymentRecoveryHistory();
+                            Yii::$app->operation->history($existRecovery, $rhistoryModel, UPDATE);
+                            $saveModel[] = $rhistoryModel;
+                            $existRecovery->recovery_amount = $existRecovery->recovery_amount + $value['recovery'];
+                            $saveModel[] = $existRecovery;
+                        } else {
+                            $recoveryModel->recovery_amount = $value['recovery'];
+                            $saveModel[] = $recoveryModel;
+                        }
+                    }
                 }
             }
 
