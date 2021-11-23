@@ -124,7 +124,12 @@ $form = ActiveForm::begin([
                                                                     $("#inventory-transfer-form .reset_field input").val("");
                                                                     $("#inventory-transfer-form .reset_field select").val("");
                                                                     $("#inventory-transfer-form .reset_field textarea").val("");
-
+                                                                    $("#tblinventorytransfertxn-product_code").val("");
+                                                                    $("#tblinventorytransfertxn-product_code").trigger("select2:select");
+                                                                    $("#tblinventorytransfertxn-product_code").trigger("change");
+                                                                    $("#tblinventorytransfertxn-unit_code").val("");
+                                                                    $("#tblinventorytransfertxn-unit_code").trigger("select2:select");
+                                                                    $("#tblinventorytransfertxn-unit_code").trigger("change");
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                   

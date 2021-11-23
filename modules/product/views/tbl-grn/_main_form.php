@@ -117,7 +117,12 @@ $form = ActiveForm::begin([
                                                                     $("#grn-form .reset_field input").val("");
                                                                     $("#grn-form .reset_field select").val("");
                                                                     $("#grn-form .reset_field textarea").val("");
-
+                                                                    $("#tblgrntxn-product_code").val("");
+                                                                    $("#tblgrntxn-product_code").trigger("select2:select");
+                                                                    $("#tblgrntxn-product_code").trigger("change");
+                                                                    $("#tblgrntxn-unit_code").val("");
+                                                                    $("#tblgrntxn-unit_code").trigger("select2:select");
+                                                                    $("#tblgrntxn-unit_code").trigger("change");
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                   

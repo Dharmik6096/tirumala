@@ -35,13 +35,16 @@ use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
 use app\modules\organisation\models\TblDcs;
 use app\modules\payment\models\TblProductSaleHistory;
 use app\modules\payment\models\TblProductSaleTransactionHistory;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransaction;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
 class TblProductSaleController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate'];
+    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock'];
 
     /**
      * Lists all TblProductSale models.
@@ -661,6 +664,41 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     }
                 }
                 if ($model->validate()) {
+                    $fstockModel = new TblProductStock();
+                    $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+                    $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
+                    $fstockModel->setCodes($sale_type, $sale_code);
+                    $fstockModel->product_code = $detailModel->product_code;
+                    $fstockModel->union_code = $model->union_code;
+                    $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+                    $existfromStock = $fstockModel->getExistStock($sale_type);
+
+                    $f_stock = 0;
+                    $qty = $detailModel->quantity;
+                    if (!empty($existfromStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                        $modelSave[] = $historyModel;
+                        $f_stock = $existfromStock->stock;
+                        $existfromStock->stock = $f_stock - $qty;
+                        $fstockModel = $existfromStock;
+                        $child[] = $fstockModel;
+
+                        $i = 1;
+                        $fstockTxnModel = new TblProductStockTransaction();
+                        $fstockTxnModel->attributes = $fstockModel->attributes;
+                        $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                        $fstockTxnModel->old_value = $f_stock;
+                        $fstockTxnModel->new_value = $qty;
+                        $fstockTxnModel->final_value = $fstockModel->stock;
+                        $fstockTxnModel->transaction_type = $txn_type;
+                        $fstockTxnModel->transaction_date = date('Y-m-d');
+                        $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
+                        $child[] = $fstockTxnModel;
+
+                        $i++;
+                    }
+
                     $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
                     if ($transaction == 'customRedirect') {
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -679,6 +717,25 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
             }
+        }
+    }
+
+    public function actionGetAvailableStock() {
+        $product = Yii::$app->request->post('product');
+        $from_type = Yii::$app->request->post('type');
+        $from_code = Yii::$app->request->post('code');
+        $union_code = Yii::$app->request->post('union_code');
+        $sale_type = strtoupper($from_type) == 'MEMBER' ? 'DCS' : 'BMC';
+
+        $stockModel = new TblProductStock();
+        $stockModel->setCodes(strtoupper($sale_type), $from_code);
+        $stockModel->product_code = $product;
+        $stockModel->union_code = $union_code;
+        $existtoStock = $stockModel->getExistStock($sale_type);
+        if (!empty($existtoStock->stock)) {
+            return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
+        } else {
+            return Json::encode(['status' => 'success', 'stock' => 0]);
         }
     }
 

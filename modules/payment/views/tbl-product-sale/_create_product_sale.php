@@ -82,6 +82,9 @@ $type = !empty($type) ? $type : '';
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
                 </div>
                 <div class="col-sm-1 reset_field">
+                    <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
+                </div>
+                <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
                 </div>
                 <div class="col-sm-1 reset_field">
@@ -510,7 +513,60 @@ $script = "
             });
         }
     }
+    $('#tblproductsaletransaction-product_code').on('change', function(){
+        getAvailableStock();
+    });
     
+    $('#tblproductsale-customer_type').on('change', function(){
+        getAvailableStock();
+    });
+    
+    $('#tblproductsale-bmc_code').on('change', function(){
+        getAvailableStock();
+    });
+    
+    $('#tblproductsale-dcs_code').on('change', function(){
+        getAvailableStock();
+    });
+    
+    function getAvailableStock(){
+        var type = $('#tblproductsale-customer_type').val();
+        var product = $('#tblproductsaletransaction-product_code').val();
+        var union = $('#tblproductsale-union_code').val();
+        var code ='';
+        if(type=='member'){
+            var code = $('#tblproductsale-dcs_code').val();
+        }else{
+            var code = $('#tblproductsale-bmc_code').val();
+        }
+       
+        if(setData(type) && setData(code) && setData(product)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-available-stock']) . "',
+                    data: {'product':product,'type':type,'code':code,'union_code':union},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblproductsaletransaction-available_stock').val(obj.stock);
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+        } 
+    
+    }
+    
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }    
 ";
 $this->registerJs($script, View::POS_END, 'create-product-sale-form');
 ?>

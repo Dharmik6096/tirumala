@@ -19,6 +19,9 @@ use app\modules\dcsaccounting\models\TblTaxDetail;
 use app\modules\dcsaccounting\models\TblTaxDepends;
 use app\modules\configuration\models\TblDcsGeneralConfig;
 use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransaction;
 
 /**
  * This is the model class for table "tbl_product_sale".
@@ -49,7 +52,7 @@ class TblProductSale extends \app\models\ChildModel {
     public $payment_cycle_code, $available_credit, $customer_name, $ex_code;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
-    public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code;
+    public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock;
 
     /**
      * @inheritdoc
@@ -72,7 +75,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
             [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code'], 'safe'],
+            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock'], 'safe'],
             [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
             [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
             [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
@@ -117,6 +120,7 @@ class TblProductSale extends \app\models\ChildModel {
             [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']]
         ];
     }
 
@@ -426,7 +430,7 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function setChildTable(&$model, &$modelSave, &$errors) {
         $model->product_sale_code = Yii::$app->general->getUuid();
-     
+
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code);
@@ -661,6 +665,40 @@ class TblProductSale extends \app\models\ChildModel {
                 }
             }
         }
+
+        $fstockModel = new TblProductStock();
+        $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+        $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
+        $fstockModel->setCodes($sale_type, $sale_code);
+        $fstockModel->product_code = $detailModel->product_code;
+        $fstockModel->union_code = $model->union_code;
+        $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+        $existfromStock = $fstockModel->getExistStock($sale_type);
+
+        $f_stock = 0;
+        $qty = $detailModel->quantity;
+        if (!empty($existfromStock)) {
+            $historyModel = new TblProductStockHistory();
+            Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+            $modelSave[] = $historyModel;
+            $f_stock = $existfromStock->stock;
+            $existfromStock->stock = $f_stock - $qty;
+            $fstockModel = $existfromStock;
+            $modelSave[] = $fstockModel;
+
+            $i = 1;
+            $fstockTxnModel = new TblProductStockTransaction();
+            $fstockTxnModel->attributes = $fstockModel->attributes;
+            $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+            $fstockTxnModel->old_value = $f_stock;
+            $fstockTxnModel->new_value = $qty;
+            $fstockTxnModel->final_value = $fstockModel->stock;
+            $fstockTxnModel->transaction_type = $txn_type;
+            $fstockTxnModel->transaction_date = date('Y-m-d');
+            $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
+            $modelSave[] = $fstockTxnModel;
+            $i++;
+        }
     }
 
     public function getMainDcsCode() {
@@ -690,6 +728,20 @@ class TblProductSale extends \app\models\ChildModel {
             }
         } else {
             return TRUE;
+        }
+    }
+
+    public function validateQty($attribute, $param) {
+        $sale_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+        $sale_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
+        $stockModel = new TblProductStock();
+        $stockModel->setCodes(strtoupper($sale_type), $sale_code);
+        $stockModel->product_code = $this->product_code;
+        $stockModel->union_code = $this->union_code;
+        $existtoStock = $stockModel->getExistStock($sale_type);
+        $available_stock = !empty($existtoStock) ? $existtoStock->stock : 0;
+        if ($available_stock < $this->quantity) {
+            $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
         }
     }
 

@@ -134,6 +134,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $existtoStock = $stockModel->getExistStock($this->model->to_type);
 
                 $t_stock = 0;
+                if (FALSE && !empty($existtoStock) && $existtoStock->stock > 0) {
+                    $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
+                    return Json::encode($err);
+                } else
                 if (!empty($existtoStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);

@@ -115,7 +115,7 @@ class TblProductStock extends \app\models\ChildModel {
         if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
-            $query->andFilterWhere(['bmc_code' => $this->bmc_code])
+            $query->andWhere(['bmc_code' => $this->bmc_code])
                     ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'DCS') {
             $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
