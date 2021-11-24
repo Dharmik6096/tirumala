@@ -114,7 +114,7 @@ $form = ActiveForm::begin([
 //                                                                    $(".create_fields input").prop("disabled", true);
                                                                       $(".create_fields").removeClass("disabled");
 //                                                                    $(".create_fields select").prop("disabled", true);                                                                  
-                                                                     
+                                                                      $(".DisableAferAdd").addClass("disabledDiv");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $("#tblinventorytransfer-inventory_transfer_code").val(data.pk_code);

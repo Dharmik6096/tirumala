@@ -70,7 +70,6 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 [['from_type', 'to_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'org_type');
                 }, 'on' => 'importCsv'],
-                [['inventory_transfer_no'], 'unique'],
                 [['from_code'], function ($attribute, $params) {
                     if (strtoupper($this->from_type == 'BMC')) {
                         return Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
@@ -133,12 +132,12 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'from_mcc_plant_code' => Yii::t('app', 'MCC'),
-            'to_mcc_plant_code' => Yii::t('app', 'MCC'),
-            'from_bmc_code' => Yii::t('app', 'BMC'),
-            'to_bmc_code' => Yii::t('app', 'BMC'),
-            'from_dcs_code' => Yii::t('app', 'DCS'),
-            'to_dcs_code' => Yii::t('app', 'DCS'),
+            'from_mcc_plant_code' => Yii::t('app', 'From MCC'),
+            'to_mcc_plant_code' => Yii::t('app', 'To MCC'),
+            'from_bmc_code' => Yii::t('app', 'From BMC'),
+            'to_bmc_code' => Yii::t('app', 'To BMC'),
+            'from_dcs_code' => Yii::t('app', 'From DCS'),
+            'to_dcs_code' => Yii::t('app', 'To DCS'),
         ];
     }
 
@@ -146,16 +145,28 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getMccPlantCode() {
-        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'from_mcc_plant_code']);
+    public function getMccFromCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'from_code']);
     }
 
-    public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'from_bmc_code']);
+    public function getBmcFromCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'from_code']);
     }
 
-    public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'from_dcs_code']);
+    public function getDcsFromCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'from_code']);
+    }
+
+    public function getToMccToCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_code']);
+    }
+
+    public function getBmcToCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_code']);
+    }
+
+    public function getDcsToCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'to_code']);
     }
 
     public function getProductCode() {

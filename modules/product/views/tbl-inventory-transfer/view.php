@@ -17,6 +17,13 @@ $this->title = Yii::$app->label->title('view', 'Inventory Transfer');
         <div class="form-grid">
             <div class="table-responsive">
                 <?php
+                $fkey = strtolower($model->from_type);
+                $tkey = strtolower($model->to_type);
+                $from_key = strtolower($model->from_type) . 'FromCode';
+                $from_field = $model->from_type == 'MCC' ? 'name' : $fkey . '_name';
+                $to_key = strtolower($model->to_type) . 'ToCode';
+                $to_field = $model->to_type == 'MCC' ? 'name' : $tkey . '_name';
+
                 $attributes = [
                         [
                         'columns' => [
@@ -39,6 +46,8 @@ $this->title = Yii::$app->label->title('view', 'Inventory Transfer');
                             ],
                                 [
                                 'attribute' => 'from_code',
+                                'label' => 'From Name',
+                                'value' => Yii::$app->general->getforeignkey($model->$from_key, $from_field),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -51,6 +60,22 @@ $this->title = Yii::$app->label->title('view', 'Inventory Transfer');
                             ],
                                 [
                                 'attribute' => 'to_code',
+                                'label' => 'TO Name',
+                                'value' => Yii::$app->general->getforeignkey($model->$to_key, $to_field),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'from_code',
+                                'value' => Yii::$app->general->getforeignkey($model->$from_key, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'to_code',
+                                'value' => Yii::$app->general->getforeignkey($model->$to_key, 'ref_code'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],

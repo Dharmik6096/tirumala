@@ -45,7 +45,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
-        $searchModel = new TblInventoryTransferTxn();
+        $searchModel = new TblInventoryTransferTxnSearch();
         $searchModel->inventory_transfer_code = $id;
         $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
         return $this->render('view', [

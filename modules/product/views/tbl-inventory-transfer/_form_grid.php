@@ -27,9 +27,43 @@ $attribute = [
             return Yii::$app->controls->view_date($model->inventory_transfer_date);
         }],
         ['attribute' => 'from_type', 'visible' => true],
-        ['attribute' => 'from_code'],
+        ['attribute' => 'from_code', 'value' => function($model) {
+            if ($model->from_type == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+            } else if ($model->from_type == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+            } else if ($model->from_type == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+            }
+        }],
+        ['attribute' => 'from_code', 'label' => 'From Name', 'value' => function($model) {
+            if ($model->from_type == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+            } else if ($model->from_type == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+            } else if ($model->from_type == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+            }
+        }],
         ['attribute' => 'to_type', 'visible' => true],
-        ['attribute' => 'to_code'],
+        ['attribute' => 'to_code', 'value' => function($model) {
+            if ($model->to_type == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->toMccPlantCode, 'ref_code');
+            } else if ($model->to_type == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->toBmcCode, 'ref_code');
+            } else if ($model->to_type == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->toDcsCode, 'ref_code');
+            }
+        }],
+        ['attribute' => 'to_code', 'label' => 'To Name', 'value' => function($model) {
+            if ($model->to_type == 'MCC') {
+                return Yii::$app->general->getforeignkey($model->toMccPlantCode, 'name');
+            } else if ($model->to_type == 'BMC') {
+                return Yii::$app->general->getforeignkey($model->toBmcCode, 'bmc_name');
+            } else if ($model->to_type == 'DCS') {
+                return Yii::$app->general->getforeignkey($model->toDcsCode, 'dcs_name');
+            }
+        }],
         ['attribute' => 'remarks'],
 ];
 
