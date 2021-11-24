@@ -282,21 +282,19 @@ class TblInventoryTransfer extends \app\models\ChildModel {
 
                 $t_stock = 0;
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
-                if ($valid_avl_stock == 1) {
-                    if (!empty($existtoStock) && $existtoStock->stock > 0) {
-                        $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
-                    } else if (!empty($existtoStock)) {
-                        $historyModel = new TblProductStockHistory();
-                        Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
-                        array_push($saveModel, $historyModel);
-                        $t_stock = $existtoStock->stock;
-                        $existtoStock->stock = $t_stock + $qty;
-                        $stockModel = $existtoStock;
-                    } else {
-                        $stockModel->product_stock_code = $stockModel->getCode($i);
-                        $stockModel->stock = $t_stock + $qty;
-                        $stockModel->x_col1 = Yii::$app->general->getUuid();
-                    }
+                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0) {
+                    $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
+                } else if (!empty($existtoStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                    array_push($saveModel, $historyModel);
+                    $t_stock = $existtoStock->stock;
+                    $existtoStock->stock = $t_stock + $qty;
+                    $stockModel = $existtoStock;
+                } else {
+                    $stockModel->product_stock_code = $stockModel->getCode($i);
+                    $stockModel->stock = $t_stock + $qty;
+                    $stockModel->x_col1 = Yii::$app->general->getUuid();
                 }
                 array_push($saveModel, $stockModel);
                 $stockTxnModel = new TblProductStockTransaction();
