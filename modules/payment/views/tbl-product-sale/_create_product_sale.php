@@ -534,7 +534,7 @@ $script = "
         var product = $('#tblproductsaletransaction-product_code').val();
         var union = $('#tblproductsale-union_code').val();
         var code ='';
-        if(type=='member'){
+        if(type=='Member'){
             var code = $('#tblproductsale-dcs_code').val();
         }else{
             var code = $('#tblproductsale-bmc_code').val();
