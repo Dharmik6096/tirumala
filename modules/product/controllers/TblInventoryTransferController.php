@@ -158,7 +158,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $stockTxnModel->old_value = $t_stock;
                 $stockTxnModel->new_value = $qty;
                 $stockTxnModel->final_value = $stockModel->stock;
-                $stockTxnModel->transaction_type = 'INVENTORY TRANSFER';
+                $stockTxnModel->transaction_type = 'INVENTORY RECEIVED';
                 $stockTxnModel->transaction_date = date('Y-m-d');
                 $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
                 $modelSave[] = $stockTxnModel;

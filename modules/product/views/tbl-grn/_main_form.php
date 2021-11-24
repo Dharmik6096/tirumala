@@ -49,7 +49,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'invoice_no')->textInput() ?>
         </div>
-
+        <div class="col-sm-4 create_fields">
+            <?= $form->field($model, 'remarks')->textInput() ?>
+        </div>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
@@ -108,7 +110,7 @@ $form = ActiveForm::begin([
 //                                                                    $(".create_fields input").prop("disabled", true);
                                                                       $(".create_fields").removeClass("disabled");
 //                                                                    $(".create_fields select").prop("disabled", true);                                                                  
-                                                                     
+                                                                       $(".DisableAferAdd").addClass("disabledDiv");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $("#tblgrn-grn_code").val(data.pk_code);
