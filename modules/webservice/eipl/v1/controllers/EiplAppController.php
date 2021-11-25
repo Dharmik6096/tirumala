@@ -49,15 +49,23 @@ class EiplAppController extends MasterController {
                     } else {
                         Yii::$app->general->saveAlertNotification($temp_model->mobile_no, $message, $sms_data, true, $templateData->header_info);
                     }
-                    foreach ($detail as $key => $subArr) {
-                        unset($detail[$key]['master_type']);
-                        unset($detail[$key]['master_code']);
-                        unset($detail[$key]['module_type']);
-                        unset($detail[$key]['department']);
-                    }
-                    $this->response->setData($detail);
-                    $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
+//                    foreach ($detail as $key => $subArr) {
+//                        unset($detail[$key]['master_type']);
+//                        unset($detail[$key]['master_code']);
+//                        unset($detail[$key]['module_type']);
+//                        unset($detail[$key]['department']);
+//                    }
+//                    $this->response->setData($detail);
+//                    $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
                 }
+                foreach ($detail as $key => $subArr) {
+                    unset($detail[$key]['master_type']);
+                    unset($detail[$key]['master_code']);
+                    unset($detail[$key]['module_type']);
+                    unset($detail[$key]['department']);
+                }
+                $this->response->setData($detail);
+                $this->response->setMessage(['OTP Sent successfully and it will be valid for only 5 min.']);
             } else {
                 $this->response->setStatusCode($this->eiplResponseCode->statusError);
                 $this->response->setMessage(['Unable to Login.']);
