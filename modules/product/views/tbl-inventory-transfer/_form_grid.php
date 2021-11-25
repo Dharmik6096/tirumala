@@ -29,39 +29,39 @@ $attribute = [
         ['attribute' => 'from_type', 'visible' => true],
         ['attribute' => 'from_code', 'value' => function($model) {
             if ($model->from_type == 'MCC') {
-                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->mccFromCode, 'ref_code');
             } else if ($model->from_type == 'BMC') {
-                return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->bmcFromCode, 'ref_code');
             } else if ($model->from_type == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->dcsFromCode, 'ref_code');
             }
         }],
         ['attribute' => 'from_code', 'label' => 'From Name', 'value' => function($model) {
             if ($model->from_type == 'MCC') {
-                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                return Yii::$app->general->getforeignkey($model->mccFromCode, 'name');
             } else if ($model->from_type == 'BMC') {
-                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                return Yii::$app->general->getforeignkey($model->bmcFromCode, 'bmc_name');
             } else if ($model->from_type == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                return Yii::$app->general->getforeignkey($model->dcsFromCode, 'dcs_name');
             }
         }],
         ['attribute' => 'to_type', 'visible' => true],
         ['attribute' => 'to_code', 'value' => function($model) {
             if ($model->to_type == 'MCC') {
-                return Yii::$app->general->getforeignkey($model->toMccPlantCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->mccToCode, 'ref_code');
             } else if ($model->to_type == 'BMC') {
-                return Yii::$app->general->getforeignkey($model->toBmcCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->bmcToCode, 'ref_code');
             } else if ($model->to_type == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->toDcsCode, 'ref_code');
+                return Yii::$app->general->getforeignkey($model->dcsToCode, 'ref_code');
             }
         }],
         ['attribute' => 'to_code', 'label' => 'To Name', 'value' => function($model) {
             if ($model->to_type == 'MCC') {
-                return Yii::$app->general->getforeignkey($model->toMccPlantCode, 'name');
+                return Yii::$app->general->getforeignkey($model->mccToCode, 'name');
             } else if ($model->to_type == 'BMC') {
-                return Yii::$app->general->getforeignkey($model->toBmcCode, 'bmc_name');
+                return Yii::$app->general->getforeignkey($model->bmcToCode, 'bmc_name');
             } else if ($model->to_type == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->toDcsCode, 'dcs_name');
+                return Yii::$app->general->getforeignkey($model->DcsToCode, 'dcs_name');
             }
         }],
         ['attribute' => 'remarks'],

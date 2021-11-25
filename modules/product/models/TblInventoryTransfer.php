@@ -157,7 +157,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'from_code']);
     }
 
-    public function getToMccToCode() {
+    public function getMccToCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_code']);
     }
 
@@ -198,13 +198,13 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             $this->unit_code = Yii::$app->general->getforeignkey($this->productCode, 'unit_code');
             if ($this->from_type == 'MCC') {
                 $this->from_mcc_plant_code = $this->from_code;
-                $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');
+                $this->union_code = Yii::$app->general->getforeignkey($this->mccFromCode, 'union_code');
             } else if ($this->from_type == 'BMC') {
                 $this->from_bmc_code = $this->from_code;
-                $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+                $this->union_code = Yii::$app->general->getforeignkey($this->bmcFromCode, 'union_code');
             } else if ($this->from_type == 'DCS') {
                 $this->from_dcs_code = $this->from_code;
-                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+                $this->union_code = Yii::$app->general->getforeignkey($this->dcsFromCode, 'union_code');
             }
             if ($this->to_type == 'MCC') {
                 $this->to_mcc_plant_code = $this->to_code;
