@@ -114,6 +114,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $i = 1;
                 $fstockTxnModel = new TblProductStockTransaction();
                 $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;
@@ -154,6 +156,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $stockTxnModel = new TblProductStockTransaction();
                 $stockTxnModel->attributes = $stockModel->attributes;
+                unset($stockTxnModel->created_at);
+                unset($stockTxnModel->created_by);
                 $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
                 $stockTxnModel->old_value = $t_stock;
                 $stockTxnModel->new_value = $qty;
