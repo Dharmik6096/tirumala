@@ -536,7 +536,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if (Yii::$app->request->post()) {
             $model->load(Yii::$app->request->post());
             $detailModel->load(Yii::$app->request->post());
-            $model->product_sale_code = Yii::$app->general->getPrimaryCode($model);
+            $model->product_sale_code = Yii::$app->general->getUuid();
             $detailModel->product_sale_code = $model->product_sale_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));

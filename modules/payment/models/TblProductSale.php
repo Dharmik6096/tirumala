@@ -424,7 +424,9 @@ class TblProductSale extends \app\models\ChildModel {
         }
     }
 
-    public function setChildTable($model, &$modelSave, &$errors) {
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+        $model->product_sale_code = Yii::$app->general->getUuid();
+     
         $detailModel = new TblProductSaleTransaction();
         $detailModel->attributes = $model->attributes;
         $detailModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($detailModel, $detailModel->product_sale_code);
