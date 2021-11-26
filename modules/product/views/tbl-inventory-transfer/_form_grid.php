@@ -61,7 +61,7 @@ $attribute = [
             } else if ($model->to_type == 'BMC') {
                 return Yii::$app->general->getforeignkey($model->bmcToCode, 'bmc_name');
             } else if ($model->to_type == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->DcsToCode, 'dcs_name');
+                return Yii::$app->general->getforeignkey($model->dcsToCode, 'dcs_name');
             }
         }],
         ['attribute' => 'remarks'],
