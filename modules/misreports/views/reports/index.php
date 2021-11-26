@@ -343,6 +343,13 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('org_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {
@@ -533,6 +540,12 @@ $('.mis_report_modal_toggle').on('click', function(){
                 hideFields();
             });
         }
+        if('" . $report . "'=='StockDetail' || '" . $report . "'=='StockDetailSummary'){
+            hideOrgFields();
+            $(document).on('change','#reportsmodel-org_type', function() {
+                hideOrgFields();
+            });
+        }
         $('.toggle-vis').on('click', function (e) {
             // e.preventDefault();
             // Get the column API object
@@ -603,7 +616,28 @@ $('.mis_report_modal_toggle').on('click', function(){
             $('.cust_type').show();
         }
     }
-
+    function hideOrgFields(){
+        var org_type =  $('#reportsmodel-org_type option:selected').val();
+        $('.val_mcc_code').hide();
+        $('.val_bmc_code').hide();
+        $('.val_dcs_code').hide();
+        $('.val_mcc_code select').val('');
+        $('.val_mcc_code select').trigger('change');
+        $('.val_mcc_code select').trigger('select2:select');
+  
+        if(org_type == 'MCC'){
+            $('.val_mcc_code').show();
+        }else if(org_type =='BMC'){
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+        }
+        else if(org_type =='DCS'){
+            $('.val_mcc_code').show();
+            $('.val_bmc_code').show();
+            $('.val_dcs_code').show();
+        }
+       
+    }
 ";
 
 if ($defaultToggle) {

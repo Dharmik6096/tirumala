@@ -95,6 +95,8 @@ class TblGrnController extends \app\controllers\ChildController {
                 $stockModel = new TblProductStock();
                 $stockModel->attributes = $this->model->attributes;
                 $stockModel->attributes = $txModel->attributes;
+                unset($stockModel->created_at);
+                unset($stockModel->created_by);
                 $existStock = $stockModel->getExistStock('MCC');
                 $stock = 0;
                 $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
@@ -115,6 +117,8 @@ class TblGrnController extends \app\controllers\ChildController {
                 $modelSave[] = $stockModel;
                 $stockTxnModel = new TblProductStockTransaction();
                 $stockTxnModel->attributes = $stockModel->attributes;
+                unset($stockTxnModel->created_at);
+                unset($stockTxnModel->created_by);
                 $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode();
                 $stockTxnModel->old_value = $stock;
                 $stockTxnModel->new_value = $qty;
