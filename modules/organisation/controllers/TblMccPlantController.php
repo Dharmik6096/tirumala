@@ -345,8 +345,9 @@ class TblMccPlantController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) || (isset($parents[1]) && $parents[1] == true)) {
+                $rls = isset($parents[1]) && $parents[1] == 'false' ? 'FALSE' : 'TRUE';
                 $mccs = new TblMccPlant();
-                $data = $mccs->getUnionMCCList($parents[0]);
+                $data = $mccs->getUnionMCCList($parents[0], $rls);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

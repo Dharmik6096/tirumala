@@ -827,7 +827,8 @@ class TblDcsController extends ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
                 $mccs = new TblDcs();
-                $data = $mccs->getBMCDCSList($parents[0]);
+                $rls = isset($parents[1]) && $parents[1] == 'false' ? 'FALSE' : 'TRUE';
+                $data = $mccs->getBMCDCSList($parents[0], $rls);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
