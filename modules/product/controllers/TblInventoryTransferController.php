@@ -5,6 +5,7 @@ namespace app\modules\product\controllers;
 use Yii;
 use app\modules\product\models\TblInventoryTransfer;
 use app\modules\product\models\TblInventoryTransferTxn;
+use app\modules\product\models\TblInventoryTransferTxnHistory;
 use app\modules\product\models\TblInventoryTransferHistory;
 use app\modules\product\models\TblInventoryTransferSearch;
 use app\modules\product\models\TblInventoryTransferTxnSearch;
@@ -16,6 +17,7 @@ use yii\helpers\Json;
 use app\modules\product\models\TblProduct;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockTransaction;
+use app\modules\product\models\TblProductStockTransactionHistory;
 use app\modules\product\models\TblProductStockHistory;
 
 /**
@@ -231,12 +233,41 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
     public function actionDelete() {
         $id = Yii::$app->request->post('id');
         $this->model = $this->findModel($id);
-        $master = [];
+        $saveModel = [];
+        $deleteModel = [];
         if (!empty($this->model)) {
             $historyModel = new TblInventoryTransferHistory();
             $model = new TblInventoryTransferTxn();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
-            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+            $deleteModel[] = $this->model;
+            $saveModel[] = $historyModel;
+            $txn = new TblInventoryTransferTxn();
+            $txModel = $txn->getTransaction($id);
+
+            foreach ($txModel as $key => $value) {
+                $ref_code = $value->inventory_transfer_txn_code;
+                $txnHistory = new TblInventoryTransferTxnHistory();
+                Yii::$app->operation->history($value, $txnHistory, DELETE);
+                $deleteModel[] = $txModel[$key];
+                $saveModel[] = $txnHistory;
+
+                $productTxn = new TblProductStockTransaction();
+                $productTxnmodel = $productTxn->getProductTransactionCode($ref_code);
+                foreach ($productTxnmodel as $key => $value) {
+                    $productTxnHistory = new TblProductStockTransactionHistory();
+                    Yii::$app->operation->history($value, $productTxnHistory, DELETE);
+                    $deleteModel[] = $productTxnmodel[$key];
+                    $saveModel[] = $productTxnHistory;
+                }
+            }
+
+            $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Inventory Transfer', 'delete']);
+
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            }
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
         }

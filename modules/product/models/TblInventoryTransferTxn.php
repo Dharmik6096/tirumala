@@ -109,4 +109,8 @@ class TblInventoryTransferTxn extends \app\models\ChildModel {
         return $this->hasOne(TblUnits::className(), ['unit_code' => 'unit_code']);
     }
 
+    public function getTransaction($id) {
+        return $this->find()->where(['inventory_transfer_code' => $id])->all();
+    }
+
 }
