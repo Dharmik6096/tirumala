@@ -24,23 +24,23 @@ $form = ActiveForm::begin([
 
     <?php
     $attribute = [
-        ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
                 return ['class' => 'checkbox-collection', 'value' => $model['milk_collection_code']];
             }],
-        ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
+            ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
-        ['attribute' => 'customer_code', 'filter' => false],
-        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'filter' => false],
+            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type);
             }, 'filter' => false],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -49,22 +49,22 @@ $form = ActiveForm::begin([
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'value' => function($model) {
+            ['attribute' => 'shift_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => FALSE],
-        ['attribute' => 'sample_no', 'filter' => FALSE],
-        ['attribute' => 'milk_type_code', 'value' => function($model) {
+            ['attribute' => 'sample_no', 'filter' => FALSE],
+            ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
             }, 'filter' => FALSE],
-        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+            ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
             }, 'filter' => FALSE],
-        ['attribute' => 'qty', 'filter' => FALSE],
-        ['attribute' => 'fat', 'filter' => FALSE],
-        ['attribute' => 'snf', 'filter' => FALSE],
-        ['attribute' => 'clr', 'filter' => FALSE],
-        ['attribute' => 'rtpl', 'filter' => FALSE],
-        ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+            ['attribute' => 'qty', 'filter' => FALSE],
+            ['attribute' => 'fat', 'filter' => FALSE],
+            ['attribute' => 'snf', 'filter' => FALSE],
+            ['attribute' => 'clr', 'filter' => FALSE],
+            ['attribute' => 'rtpl', 'filter' => FALSE],
+            ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     ];
 
     $grid_option = [
@@ -79,7 +79,7 @@ $form = ActiveForm::begin([
 </div>
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
-    if (!empty($dataProvider->getModels())) {
+    if (!empty($dataProvider->getModels()) && empty($msg)) {
         echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);
     }
     ?>
