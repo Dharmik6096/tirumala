@@ -71,11 +71,6 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord {
             [['status'], 'string', 'max' => 20],
             [['created_by', 'updated_by', 'originating_org_code'], 'string', 'max' => 14],
             [['flg_sentbox_entry'], 'string', 'max' => 1],
-            [['qty_diff_responsibility'], 'required', 'when' => function ($model) {
-                    return ($model->qty_diff_type != 4);
-                }, 'whenClient' => "function (attribute, value) { 
-              return ($('.dd_qty_diff_type').val() != '4'); 
-          }"],
         ];
     }
 
