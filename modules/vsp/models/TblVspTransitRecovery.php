@@ -48,21 +48,19 @@ use Yii;
  * @property integer $originating_type
  * @property string $originating_org_code
  */
-class TblVspTransitRecovery extends \yii\db\ActiveRecord
-{
+class TblVspTransitRecovery extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vsp_transit_recovery';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['transaction_date', 'from_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
             [['composite_qty', 'composite_fat', 'composite_snf', 'actual_qty', 'actual_fat', 'actual_snf', 'a_c_qty', 'a_c_fat', 'a_c_snf', 'composite_ts', 'actual_ts', 'ts_difference', 'ts_deduction_amount', 'qty_diff', 'shortage_recovery', 'total_recovery_incharge', 'total_recovery_transporter'], 'number'],
@@ -73,14 +71,18 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord
             [['status'], 'string', 'max' => 20],
             [['created_by', 'updated_by', 'originating_org_code'], 'string', 'max' => 14],
             [['flg_sentbox_entry'], 'string', 'max' => 1],
+            [['qty_diff_responsibility'], 'required', 'when' => function ($model) {
+                    return ($model->qty_diff_type != 4);
+                }, 'whenClient' => "function (attribute, value) { 
+              return ($('.dd_qty_diff_type').val() != '4'); 
+          }"],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'vsp_transit_recovery_code' => 'Vsp Transit Recovery Code',
             'union_code' => 'Union Code',
@@ -124,4 +126,12 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord
             'originating_org_code' => 'Originating Org Code',
         ];
     }
+
+    public function getExistData($data) {
+        return $this->find()
+                        ->where('mcc_plant_code=\'' . $data->mcc_plant_code . '\'')
+                        ->andWhere('((\'' . date('Y-m-d', strtotime($data->date_time_of_collection)) . '\' between cast(from_date as date)  and cast(to_date as date)))')
+                        ->count();
+    }
+
 }
