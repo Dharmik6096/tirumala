@@ -49,6 +49,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 class TblDcsBmc extends \app\models\ChildModel {
 
     public $is_sentbox, $milk_type_code;
+    public $toEncrypt = ['password'];
 
     /**
      * @inheritdoc
@@ -62,36 +63,37 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
-            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-            [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code'], 'safe'],
+                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+                [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
+                [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+                [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+                [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'password'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
+                [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['local_name'], function ($attribute, $params) {
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
-            [['mcc_plant_code'], 'setField'],
-            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                [['mcc_plant_code'], 'setField'],
+                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-            [['bmc_code'], function ($attribute, $params) {
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+                [['bmc_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-            [['rate_calculate_on_merge'], 'default', 'value' => 0]
+                [['rate_calculate_on_merge'], 'default', 'value' => 0],
+                [['password'], 'string', 'min' => 8, 'max' => 8],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -443,6 +445,37 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function encryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model));
+        foreach ($result as $key => $value) {
+            if ($this->hasAttribute($value) && $this->{$value} != '')
+                $model[$value] = \Yii::$app->general->encryptData($model[$value]);
+        }
+
+        return $model;
+    }
+
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            $encrypt = $this->encryptModel($this->attributes);
+            $this->setAttributes($encrypt);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function decryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model->attributes));
+        foreach ($result as $key => $value) {
+            $decryptData = \Yii::$app->general->decryptData($model->{$value});
+            if ($decryptData) {
+                $model->{$value} = $decryptData;
+            }
+        }
+        return $model;
     }
 
 }

@@ -49,12 +49,12 @@ class TblDcsBmcHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'is_mcc', 'valid_from'], 'safe'],
-            [['model', 'bmc_code', 'mcc_code', 'bmc_type_code', 'extra_tank_capacity', 'bmc_milk_type', 'capacity', 'manufacturer_code'], 'safe'],
-            [['state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bmc_name', 'union_code', 'local_name'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
-            [['bmc_code_ex', 'ref_code', 'vendor_code', 'auto_code', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
-            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'history_created_by'], 'safe']
+                [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'is_mcc', 'valid_from', 'password'], 'safe'],
+                [['model', 'bmc_code', 'mcc_code', 'bmc_type_code', 'extra_tank_capacity', 'bmc_milk_type', 'capacity', 'manufacturer_code'], 'safe'],
+                [['state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bmc_name', 'union_code', 'local_name'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual'], 'safe'],
+                [['bmc_code_ex', 'ref_code', 'vendor_code', 'auto_code', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
+                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime', 'history_created_by'], 'safe']
         ];
     }
 

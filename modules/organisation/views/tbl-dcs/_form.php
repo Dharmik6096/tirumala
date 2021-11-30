@@ -181,6 +181,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'sap_vendor_code')->textInput(['maxlength' => true]) ?>
         </div>
+                <div class="col-sm-2">
+            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+        </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
         </div>

@@ -228,6 +228,7 @@ $attribute = [
         }
     ],
         ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'password', 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

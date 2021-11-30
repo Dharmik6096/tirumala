@@ -108,6 +108,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('billing_type', $model, $form, 'form-group', $model->getAttributeLabel('billing_type'), false, 'billing_type', false); ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
