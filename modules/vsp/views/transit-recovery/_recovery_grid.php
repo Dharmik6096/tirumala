@@ -213,6 +213,7 @@ $script = '
         var row_number = val[1];
         var dd_value = $("#"+row_id).val();
         calculateInchargeTransport(dd_value,row_number);
+        checkQtyDiffType(row_number);
     });
 
     $(document).on("change", ".dd_qty_diff_type", function(){
@@ -221,7 +222,7 @@ $script = '
         var row_number = val[1];
         var dd_value = $("#"+row_id).val();
         calculateShortageRecovery(dd_value,row_number);
-        checkDeductionAmount(dd_value,row_number);
+        checkDeductionAmount(row_number);
     });
 
     $(document).on("change", ".ts_deduction_amount", function(){
@@ -232,7 +233,7 @@ $script = '
         var dd_value = $("#"+id).val();
         calculateInchargeTransport(dd_value,row_number);
         var dd_qty_diff_type = $("#dd_qty_diff_type-"+row_number).val();
-        checkDeductionAmount(dd_qty_diff_type,row_number);
+        checkDeductionAmount(row_number);
     });
 
     function calculateShortageRecovery(dd_value,row_number){
@@ -316,9 +317,12 @@ $script = '
 //    });
 //});
 
-    function checkDeductionAmount(dd_value,row_number){
+    function checkDeductionAmount(row_number){
         var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
-        if(dd_value == 4 && ts_deduction_amount < 0){
+        var dd_value = $("#dd_qty_diff_type-"+row_number).val();
+        var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
+       
+        if(dd_text == "excess" && ts_deduction_amount < 0){
             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Ts Deduction Amount Must +ve.</span></div></div>", function(result){
             setTimeout(function(){
             $("#ts_deduction_amount_input-"+row_number).focus();},100);
@@ -328,14 +332,33 @@ $script = '
             $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
             return false;
         }
-        if(dd_value == 4){
+        if(dd_text == "excess"){
             $("#dd_qty_diff_responsibility-"+row_number).val(4);
             $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
-        }else if(dd_value != 4 &&  $("#dd_qty_diff_responsibility-"+row_number).val()==4){
+        }else if(dd_text != "excess" &&  $("#dd_qty_diff_responsibility-"+row_number).val()==4){
             $("#dd_qty_diff_responsibility-"+row_number).val(1);
             $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
         }
 
+    }
+    function checkQtyDiffType(row_number){
+        
+        var selectVal = "";
+        $("#dd_qty_diff_type-"+row_number+" > option").each(function() {
+            var textD = this.text;
+                if(textD == "excess") {
+                    selectVal = this.value;
+                }
+        });
+        var dd_qty_diff_value = $("#dd_qty_diff_type-"+row_number).val();
+        var dd_qty_diff_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
+        var dd_resp_value = $("#dd_qty_diff_responsibility-"+row_number).val();
+       
+        if(dd_qty_diff_text != "excess" && dd_resp_value==4){
+            $("#dd_qty_diff_type-"+row_number).val(selectVal);
+            $("#dd_qty_diff_type-"+row_number).trigger("change");
+            return false;
+        }
     }
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
