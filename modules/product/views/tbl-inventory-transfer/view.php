@@ -60,7 +60,7 @@ $this->title = Yii::$app->label->title('view', 'Inventory Transfer');
                             ],
                                 [
                                 'attribute' => 'to_code',
-                                'label' => 'TO Name',
+                                'label' => 'To Name',
                                 'value' => Yii::$app->general->getforeignkey($model->$to_key, $to_field),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
