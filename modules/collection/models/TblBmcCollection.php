@@ -103,7 +103,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                     return $model->collection_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
-          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv']],
+          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update']],
                 [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //                    return $this->shift_code;
@@ -168,10 +168,10 @@ class TblBmcCollection extends \app\models\ChildModel {
                 [['is_rate_recalc'], 'default', 'value' => 0],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
-            [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
+                [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
         ];
     }
 
