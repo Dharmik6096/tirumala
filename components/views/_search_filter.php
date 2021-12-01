@@ -27,6 +27,7 @@ if (!empty($filter_data)) {
                     $count = count($filters);
                     if (!empty($filters) && in_array(Yii::$app->controller->action->id, $aciton) && !in_array(Yii::$app->controller->module->id, ['report', 'jasperreports'])) {
                         $f_cnt = 0;
+                        $aciton = [Yii::$app->controller->action->id];
                         $form = \yii\widgets\ActiveForm::begin([
                                     'action' => $aciton,
                                     'method' => $method,
