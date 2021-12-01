@@ -55,13 +55,14 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdownStatic('org_type', $model, $form, 'form-group', $model->getAttributeLabel('to_type'), false, 'to_type', false); ?>
             </div>
             <div class="col-sm-2 create_fields" id="to_mcc">
-                <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblinventorytransfer-union_code', 'to_mcc_plant_code', $model->getAttributeLabel('to_mcc_plant_code')); ?>
+                <?php echo Html::hiddenInput('rls', 'false', ['id' => 'rls']); ?>
+                <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblinventorytransfer-union_code,rls', 'to_mcc_plant_code', $model->getAttributeLabel('to_mcc_plant_code')); ?>
             </div>
             <div class="col-sm-2 create_fields" id="to_bmc">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblinventorytransfer-to_mcc_plant_code', 'to_bmc_code', $model->getAttributeLabel('to_bmc_code')); ?>
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblinventorytransfer-to_mcc_plant_code,rls', 'to_bmc_code', $model->getAttributeLabel('to_bmc_code')); ?>
             </div>
             <div class="col-sm-2 create_fields" id="to_dcs">
-                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblinventorytransfer-to_bmc_code', 'to_dcs_code', $model->getAttributeLabel('to_dcs_code'), FALSE, '', FALSE, TRUE); ?>
+                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblinventorytransfer-to_bmc_code,rls', 'to_dcs_code', $model->getAttributeLabel('to_dcs_code'), FALSE, '', FALSE, TRUE); ?>
             </div>
             <?= Html::activeHiddenInput($model, 'to_code', ['id' => 't_code']) ?>
             <div class="col-sm-4 create_fields">
