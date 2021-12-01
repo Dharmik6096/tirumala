@@ -40,6 +40,9 @@ $script = "
     $(document).on('change', '#tbldcsmilkdispatch-shift_code', function() {  
         gridChange();
     });
+    $(document).on('change', '#tbldcsmilkdispatch-antibiotic', function() {  
+        gridChange();
+    });
     function gridChange(){
        $('.add-collection').prop('disabled',true);
        $('#milk-dispatch-form .reset_field input').val('');
@@ -49,7 +52,8 @@ $script = "
         var mcc = $('#tbldcsmilkdispatch-mcc_plant_code').val();
         var date = $('#tbldcsmilkdispatch-date_time_of_dispatch').val();
         var shift = $('#tbldcsmilkdispatch-shift_code').val();
-        if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift)){
+        var antibiotic = $('#tbldcsmilkdispatch-antibiotic').val();
+        if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift) && setData(antibiotic)){
             $('.add-collection').removeAttr('disabled');
         } 
         

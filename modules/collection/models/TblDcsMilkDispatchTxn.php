@@ -48,7 +48,7 @@ use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code, $dispatch_type;
-    public $plant_code, $mcc_plant_code, $ref_code;
+    public $plant_code, $mcc_plant_code, $ref_code, $antibiotic;
 
     /**
      * @inheritdoc
@@ -77,7 +77,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
                 [['date_time_of_dispatch'], 'convertDate', 'on' => ['importCsv']],
                 [['dcs_milk_dispatch_code', 'dcs_milk_dispatch_txn_code'], 'safe', 'on' => ['androidsync']],
                 [['dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'safe'],
-                [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount', 'purchase_rate_code', 'rtpl'], 'safe'],
+                [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount', 'purchase_rate_code', 'rtpl', 'antibiotic'], 'safe'],
                 [['dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['created_at', 'updated_at', 'dcs_milk_dispatch_txn_code'], 'safe'],
                 [['dcs_code', 'milk_type_code', 'milk_quality_type_code', 'dispatch_qty', 'avg_fat', 'avg_snf'], 'required', 'on' => ['create', 'update', 'importCsv']],
@@ -88,7 +88,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
                 [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
                 [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
                 [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code', 'received_timestamp'], 'safe'],
-                [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
+                [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'antibiotic'], 'required', 'on' => ['importCsv']],
                 [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
@@ -108,6 +108,9 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['update']],
                 [['dcs_milk_dispatch_code', 'dcs_code'], 'validateCanNo'],
+                [['antibiotic'], function ($attribute, $params) {
+                    !empty($this->antibiotic) ? Yii::$app->general->validateGlobalStatic($this, 'antibiotic', 'antibiotic') : '';
+                }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
         ];
     }
 
@@ -236,6 +239,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         $mainmodel->bmc_code = $model->bmc_code;
         $mainmodel->shift_code = $model->shift_code;
         $mainmodel->date_time_of_dispatch = $model->date_time_of_dispatch;
+        $mainmodel->antibiotic = $model->antibiotic;
         $existMainData = $mainmodel->getExistingData($mainmodel);
         if (empty($existMainData)) {
             $mainmodel->dcs_milk_dispatch_code = Yii::$app->general->getPrimaryCode($mainmodel);
