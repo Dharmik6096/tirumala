@@ -43,7 +43,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 rtpl_validate create_fields">
             <?= Yii::$app->controls->date($model, $form, 'date_time_of_dispatch', '', date('Y-m-d'), false, $readonly, true); ?>
         </div>
-        <div class="col-sm-2 shift rtpl_validate create_fields">
+        <div class="col-sm-1 shift rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
         </div>
         <div class="col-sm-1 create_fields">
