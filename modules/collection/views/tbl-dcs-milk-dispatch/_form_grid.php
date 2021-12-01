@@ -103,7 +103,6 @@ $attribute = [
         }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'water', 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'antibiotic', 'value' => function($model) {
-//            return isset($model->dcsMilkDispatch->antibiotic) ? Yii::$app->dropdown->getRecords('antibiotic')['data'][$model->dcsMilkDispatch->antibiotic] : '';
             return Yii::$app->general->getStaticValue($model->dcsMilkDispatch->antibiotic, 'antibiotic');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('antibiotic', $searchModel, 'antibiotic')],
 ];
