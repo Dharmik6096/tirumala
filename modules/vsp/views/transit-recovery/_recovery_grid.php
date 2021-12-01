@@ -156,7 +156,7 @@ $script = '
         $(".vsp_transit_recovery_code-"+row_number).html(vsp_code_append);
         
         var ts_deduction_amount_value = $(".ts_deduction_amount-"+row_number).html();
-        var ts_deduction_amount_append = "<input type=\'text\' class=\'ts_deduction_amount\' id=\'ts_deduction_amount_input-"+row_number+"\' name=\'ts_deduction_amount["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_deduction_amount_value+"\'> <span>"+ts_deduction_amount_value+"</span>"
+        var ts_deduction_amount_append = "<input type=\'text\' class=\'ts_deduction_amount disp_none\' id=\'ts_deduction_amount_input-"+row_number+"\' name=\'ts_deduction_amount["+vsp_transit_recovery_code_value+"][]\' value=\'"+ts_deduction_amount_value+"\'> <span>"+ts_deduction_amount_value+"</span>"
         $(".ts_deduction_amount-"+row_number).html(ts_deduction_amount_append);    
         $("#ts_deduction_amount_input-"+row_number).val(ts_deduction_amount_value);
 
@@ -184,6 +184,7 @@ $script = '
                 setTimeout(function(){
                     $(".qty_diff_type-"+row_number).html(data_append_qty_diff);
                     $("#dd_qty_diff_type-"+row_number).val(qty_diff_type_value);
+                    $("#dd_qty_diff_type-"+row_number).attr("data-val",qty_diff_type_value);
                     calculateShortageRecovery(qty_diff_type_value,row_number);
                 }, 200);
                 setTimeout(function(){
@@ -202,9 +203,10 @@ $script = '
         });
 
         var qty_diff_responsibility_value = $(".qty_diff_responsibility-"+row_number+" #dropdown_value").val();
-        var data_append = "<select class=\'dd_qty_diff_responsibility\' id=\'dd_qty_diff_responsibility-"+row_number+"\' name = \'qty_diff_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'2\'>MCC</option></select>"
+        var data_append = "<select class=\'dd_qty_diff_responsibility\' id=\'dd_qty_diff_responsibility-"+row_number+"\' name = \'qty_diff_responsibility["+vsp_transit_recovery_code_value+"][]\'><option selected=\'true\' disabled=\'disabled\'>Select Qty Diff Responsibility</option><option value = \'1\'>Center Incharge</option><option value = \'2\'>Transporter</option><option value = \'3\'>MCC</option><option value = \'4\'>NONE</option></select>"
         $(".qty_diff_responsibility-"+row_number).html(data_append);
         $("#dd_qty_diff_responsibility-"+row_number).val(qty_diff_responsibility_value);
+        $("#dd_qty_diff_responsibility-"+row_number).attr("data-val",qty_diff_responsibility_value);
     });
 
     $(document).on("change", ".dd_qty_diff_responsibility", function(){
@@ -212,7 +214,15 @@ $script = '
         var val = row_id.split("-");
         var row_number = val[1];
         var dd_value = $("#"+row_id).val();
-        calculateInchargeTransport(dd_value,row_number);
+        var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
+        var dd2_text =  $("#dd_qty_diff_responsibility-"+row_number+" option:selected").text();
+        if(dd_text == "excess") {
+//            var oldVal = $("#dd_qty_diff_responsibility-"+row_number).attr("data-val");
+            $("#dd_qty_diff_responsibility-"+row_number).val(4);
+        } else {
+            calculateInchargeTransport(dd_value,row_number);
+            checkQtyDiffType(row_number);
+        }
     });
 
     $(document).on("change", ".dd_qty_diff_type", function(){
@@ -221,6 +231,7 @@ $script = '
         var row_number = val[1];
         var dd_value = $("#"+row_id).val();
         calculateShortageRecovery(dd_value,row_number);
+        checkDeductionAmount(row_number);
     });
 
     $(document).on("change", ".ts_deduction_amount", function(){
@@ -230,6 +241,8 @@ $script = '
         var id = "dd_qty_diff_responsibility-"+row_number;
         var dd_value = $("#"+id).val();
         calculateInchargeTransport(dd_value,row_number);
+        var dd_qty_diff_type = $("#dd_qty_diff_type-"+row_number).val();
+        checkDeductionAmount(row_number);
     });
 
     function calculateShortageRecovery(dd_value,row_number){
@@ -258,7 +271,7 @@ $script = '
         }
 
     }
-
+    
     function calculateInchargeTransport(dd_value,row_number){
         var vsp_transit_recovery_code_value = $(".vsp_transit_recovery_code-"+row_number+" input").val();
         // var ts_deduction_amount = parseFloat($(".ts_deduction_amount-"+row_number).html());
@@ -312,6 +325,52 @@ $script = '
 //        }
 //    });
 //});
+
+    function checkDeductionAmount(row_number){
+        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
+        var dd_value = $("#dd_qty_diff_type-"+row_number).val();
+        var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
+        var oldVal = $("#dd_qty_diff_type-"+row_number).attr("data-val");
+       
+        if(dd_text == "excess"){
+            if(ts_deduction_amount < 0) {
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Ts Deduction Amount Must +ve.</span></div></div>", function(result){
+                    setTimeout(function(){
+//                        $("#ts_deduction_amount_input-"+row_number).focus();
+                    },100);
+                });
+                $("#dd_qty_diff_type-"+row_number).val(oldVal);
+            var oldVal2 = $("#dd_qty_diff_responsibility-"+row_number).attr("data-val");
+            $("#dd_qty_diff_responsibility-"+row_number).val(oldVal2);
+            } else {
+                $("#dd_qty_diff_responsibility-"+row_number).val(4);
+                $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
+            }
+        }else if(dd_text != "excess" &&  $("#dd_qty_diff_responsibility-"+row_number).val()==4){
+            $("#dd_qty_diff_responsibility-"+row_number).val(1);
+            $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
+        }
+
+    }
+    function checkQtyDiffType(row_number){
+        
+        var selectVal = "";
+        $("#dd_qty_diff_type-"+row_number+" > option").each(function() {
+            var textD = this.text;
+                if(textD == "excess") {
+                    selectVal = this.value;
+                }
+        });
+        var dd_qty_diff_value = $("#dd_qty_diff_type-"+row_number).val();
+        var dd_qty_diff_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
+        var dd_resp_value = $("#dd_qty_diff_responsibility-"+row_number).val();
+       
+        if(dd_qty_diff_text != "excess" && dd_resp_value==4){
+            $("#dd_qty_diff_type-"+row_number).val(selectVal);
+            $("#dd_qty_diff_type-"+row_number).trigger("change");
+            return false;
+        }
+    }
 ';
 $this->registerJs($script, View::POS_END, 'transit-loss-shortage');
 ?>

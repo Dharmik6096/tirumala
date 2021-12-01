@@ -157,9 +157,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['is_rate_recalc'], 'default', 'value' => 0],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'androidsync_coll']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
         ];
     }
 
