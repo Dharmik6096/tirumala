@@ -1202,7 +1202,7 @@ class DropDown extends Component {
             'loss_responsibility' => [
                 'name' => 'loss_responsibility',
                 'prompt' => Yii::t('app', 'Select TS Loss Responsibility'),
-                'data' => [1 => Yii::t('app', 'Center Incharge'), 2 => Yii::t('app', 'Transporter')],
+                'data' => [1 => Yii::t('app', 'Center Incharge'), 2 => Yii::t('app', 'Transporter'), 3 => Yii::t('app', 'MCC'), 4 => Yii::t('app', 'NONE')],
             ],
             'master_type' => [
                 'name' => 'master_type',

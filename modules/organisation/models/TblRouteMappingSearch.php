@@ -19,10 +19,10 @@ class TblRouteMappingSearch extends TblRouteMapping {
      */
     public function rules() {
         return [
-                [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
-                [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
-                [['route_length_kms'], 'number'],
-                [['route_code_ex', 'ref_code'], 'safe'],
+            [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
+            [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
+            [['route_length_kms'], 'number'],
+            [['route_code_ex', 'ref_code'], 'safe'],
         ];
     }
 
@@ -80,15 +80,15 @@ class TblRouteMappingSearch extends TblRouteMapping {
             $query->andFilterWhere(['tbl_mcc_plant.plant_code' => $this->f_plant_code]);
 
 
-        if (Yii::$app->session->get('MCC') !== '')
-            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+//        if (Yii::$app->session->get('MCC') !== '')
+//            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         if (!empty($this->f_mcc_code)) {
             $query->andFilterWhere(['or', ['tbl_route_mapping.to_dest' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'MCC'], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'BMC']]);
         }
 
 
-        if (Yii::$app->session->get('BMC') !== '')
-            $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+//        if (Yii::$app->session->get('BMC') !== '')
+//            $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         if (!empty($this->f_bmc_code))
             $query->andFilterWhere(['tbl_route_mapping.to_dest' => $this->f_bmc_code]);
 
@@ -97,12 +97,14 @@ class TblRouteMappingSearch extends TblRouteMapping {
         $where_bmc = [];
         if (Yii::$app->session->get('BMC') !== '') {
             $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
+            $where_bmc['tbl_bmc.bmc_code'] = explode(',', Yii::$app->session->get('BMC'));
             $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
         }
 
         $where_mcc = [];
         if (Yii::$app->session->get('MCC') !== '') {
             $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
+            $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
             $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
         }
         $query->andWhere(['or', $where_bmc, $where_mcc]);
