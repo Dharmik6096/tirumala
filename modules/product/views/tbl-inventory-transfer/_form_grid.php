@@ -73,7 +73,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
-        'delete' => ['option' => 'inventory_transfer_no,inventory_transfer_code,tbl-inventory-transfer/delete'],
+//        'delete' => ['option' => 'inventory_transfer_no,inventory_transfer_code,tbl-inventory-transfer/delete'],
     ]
 ];
 

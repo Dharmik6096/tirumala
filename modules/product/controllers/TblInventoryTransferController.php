@@ -237,7 +237,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         $deleteModel = [];
         if (!empty($this->model)) {
             $historyModel = new TblInventoryTransferHistory();
-            $model = new TblInventoryTransferTxn();
             Yii::$app->operation->history($this->model, $historyModel, DELETE);
             $deleteModel[] = $this->model;
             $saveModel[] = $historyModel;
