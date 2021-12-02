@@ -6,6 +6,7 @@ use Yii;
 use app\modules\product\models\TblProduct;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblLoanProductSaleDetails;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -201,6 +202,35 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $this->available_stock));
             }
         }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+
+        if (!empty($this->productSaleCode->customer_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->productSaleCode->customer_code);
+        } else if (!empty($this->productSaleCode->bmc_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->productSaleCode->bmc_code, '', '');
+        } else if (!empty($this->productSaleCode->mcc_plant_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->productSaleCode->mcc_plant_code, '', '', '');
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->productSaleCode->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

@@ -22,6 +22,7 @@ use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_product_sale".
@@ -746,6 +747,34 @@ class TblProductSale extends \app\models\ChildModel {
                 $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
             }
         }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        if (!empty($this->customer_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->customer_code);
+        } else if (!empty($this->bmc_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+        } else if (!empty($this->mcc_plant_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }
