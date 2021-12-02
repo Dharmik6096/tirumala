@@ -31,6 +31,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     public $is_sentbox = TRUE;
     public $saveDeleteChildRecords = TRUE;
     public $available_stock;
+    public $union_code;
 
     /**
      * @inheritdoc
@@ -53,7 +54,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
             [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock'], 'safe'],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
-            [['quantity'], 'validateQty', 'on' => ['saleProduct']]
+            [['quantity'], 'validateQty', 'on' => ['saleProduct']],
+            [['union_code'], 'safe']
         ];
     }
 
@@ -193,8 +195,11 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     }
 
     public function validateQty($attribute, $param) {
-        if ($this->available_stock < $this->quantity) {
-            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $this->available_stock));
+        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
+        if ($config == 1) {
+            if ($this->available_stock < $this->quantity) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $this->available_stock));
+            }
         }
     }
 

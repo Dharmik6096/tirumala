@@ -732,16 +732,19 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validateQty($attribute, $param) {
-        $sale_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
-        $sale_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
-        $stockModel = new TblProductStock();
-        $stockModel->setCodes(strtoupper($sale_type), $sale_code);
-        $stockModel->product_code = $this->product_code;
-        $stockModel->union_code = $this->union_code;
-        $existtoStock = $stockModel->getExistStock($sale_type);
-        $available_stock = !empty($existtoStock) ? $existtoStock->stock : 0;
-        if ($available_stock < $this->quantity) {
-            $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
+        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
+        if ($config == 1) {
+            $sale_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+            $sale_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
+            $stockModel = new TblProductStock();
+            $stockModel->setCodes(strtoupper($sale_type), $sale_code);
+            $stockModel->product_code = $this->product_code;
+            $stockModel->union_code = $this->union_code;
+            $existtoStock = $stockModel->getExistStock($sale_type);
+            $available_stock = !empty($existtoStock) ? $existtoStock->stock : 0;
+            if ($available_stock < $this->quantity) {
+                $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
+            }
         }
     }
 

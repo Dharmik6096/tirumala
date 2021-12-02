@@ -19,6 +19,8 @@ use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductStockTransactionHistory;
 use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductReceipt;
+use app\modules\product\models\TblProductReceiptTransaction;
 
 /**
  * TblInventoryTransferController implements the CRUD actions for TblInventoryTransfer model.
@@ -127,6 +129,32 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $fstockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
                 $modelSave[] = $fstockTxnModel;
 
+                $receipt = new TblProductReceipt();
+                $receipt->product_receipt_code = Yii::$app->general->getCodeAutoIncrement($receipt);
+                $receipt->grn_no = '1234';
+                $receipt->grn_date = date('Y-m-d');
+                $receipt->vendor_type = $this->model->from_type;
+                $receipt->vendor_code = $this->model->from_code;
+                $receipt->union_code = $fstockModel->union_code;
+                $receipt->plant_code = $fstockModel->plant_code;
+                $receipt->mcc_plant_code = $fstockModel->mcc_plant_code;
+                $receipt->bmc_code = $fstockModel->bmc_code;
+                $receipt->dcs_code = $fstockModel->dcs_code;
+                $modelSave[] = $receipt;
+                $receiptTxn = new TblProductReceiptTransaction();
+                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxn);
+                $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
+                $receiptTxn->product_code = $fstockModel->product_code;
+                $receiptTxn->product_code = $fstockModel->product_code;
+                $receiptTxn->received_quantity = '-' . $qty;
+                $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->rejected_quantity = 0;
+                $receiptTxn->rate = 0;
+                $receiptTxn->amount = 0;
+                $receiptTxn->remark = 'INVENTORY TRANSFER';
+                $modelSave[] = $receiptTxn;
+
                 $i++;
 
                 //set to stock
@@ -168,6 +196,32 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $stockTxnModel->transaction_date = date('Y-m-d');
                 $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
                 $modelSave[] = $stockTxnModel;
+
+                $receiptTo = new TblProductReceipt();
+                $receiptTo->product_receipt_code = Yii::$app->general->getCodeAutoIncrement($receiptTo, $i);
+                $receiptTo->grn_no = '1234';
+                $receiptTo->grn_date = date('Y-m-d');
+                $receiptTo->vendor_type = $this->model->to_type;
+                $receiptTo->vendor_code = $this->model->to_code;
+                $receiptTo->union_code = $stockModel->union_code;
+                $receiptTo->plant_code = $stockModel->plant_code;
+                $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
+                $receiptTo->bmc_code = $stockModel->bmc_code;
+                $receiptTo->dcs_code = $stockModel->dcs_code;
+                $modelSave[] = $receiptTo;
+                $receiptTxnTo = new TblProductReceiptTransaction();
+                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxnTo, $i);
+                $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
+                $receiptTxnTo->product_code = $stockModel->product_code;
+                $receiptTxnTo->product_code = $qty;
+                $receiptTxnTo->received_quantity = $stockModel->stock;
+                $receiptTxnTo->requested_quantity = $receiptTxnTo->received_quantity;
+                $receiptTxnTo->dispatched_quantity = $receiptTxnTo->received_quantity;
+                $receiptTxnTo->rejected_quantity = $receiptTxnTo->received_quantity;
+                $receiptTxnTo->rate = 0;
+                $receiptTxnTo->amount = 0;
+                $receiptTxnTo->remark = 'INVENTORY RECEIVED';
+                $modelSave[] = $receiptTxnTo;
 
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {

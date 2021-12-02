@@ -5,6 +5,7 @@ namespace app\modules\product\models;
 use Yii;
 use app\modules\product\models\TblProduct;
 use app\modules\globalmaster\models\TblUnits;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_product_receipt_transaction".
@@ -52,11 +53,11 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
-                [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
+            [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
         ];
     }
 
@@ -96,6 +97,39 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
 
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function getMasterCode() {
+        return $this->hasOne(TblProductReceipt::className(), ['product_receipt_code' => 'product_receipt_code']);
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+
+        if (!empty($this->masterCode->dcs_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->masterCode->dcs_code);
+        } else if (!empty($this->masterCode->bmc_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->masterCode->bmc_code, '', '');
+        } else if (!empty($this->masterCode->mcc_plant_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->masterCode->mcc_plant_code, '', '', '');
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->masterCode->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

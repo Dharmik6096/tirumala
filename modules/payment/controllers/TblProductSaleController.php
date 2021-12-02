@@ -541,6 +541,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $detailModel->load(Yii::$app->request->post());
             $model->product_sale_code = Yii::$app->general->getUuid();
             $detailModel->product_sale_code = $model->product_sale_code;
+            $detailModel->union_code = $model->union_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));
             $model->invoice_date = $saleDate;
@@ -678,7 +679,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     if (!empty($existfromStock)) {
                         $historyModel = new TblProductStockHistory();
                         Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
-                        $modelSave[] = $historyModel;
+                        $child[] = $historyModel;
                         $f_stock = $existfromStock->stock;
                         $existfromStock->stock = $f_stock - $qty;
                         $fstockModel = $existfromStock;
