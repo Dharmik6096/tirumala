@@ -49,7 +49,6 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code, $dispatch_type;
     public $plant_code, $mcc_plant_code, $ref_code, $antibiotic;
-    public $saveChildRecords = TRUE;
 
     /**
      * @inheritdoc
@@ -89,7 +88,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
             [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
             [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code', 'received_timestamp'], 'safe'],
-            [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'antibiotic'], 'required', 'on' => ['importCsv']],
+            [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
@@ -112,6 +111,10 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['antibiotic'], function ($attribute, $params) {
                     !empty($this->antibiotic) ? Yii::$app->general->validateGlobalStatic($this, 'antibiotic', 'antibiotic') : '';
                 }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
+            [['antibiotic'], 'required', 'on' => ['importCsv']],
+            [['antibiotic'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return Yii::$app->session->get('eiplCode') == 'PRABHAT';
+                }, 'on' => ['importCsv']],
         ];
     }
 
@@ -333,17 +336,6 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             $noOfCan = $this->dispatch_qty / 40;
             $noOfCan = ceil($noOfCan);
             $this->nos_of_can = $noOfCan;
-        }
-    }
-
-    public function setTransactionData($model, $json, &$childModel) {
-        $union = Yii::$app->general->getforeignkey($model->dcsMilkDispatch, 'union_code');
-        $antibioticTest = Yii::$app->general->getforeignkey($model->dcsMilkDispatch, 'antibiotic');
-        $p_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_positive', 'PORTAL');
-        $n_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_negative', 'PORTAL');
-
-        if (!empty($model->dcsMilkDispatch) && !empty($antibioticTest)) {
-          
         }
     }
 

@@ -705,4 +705,11 @@ class TblMilkCollection extends \app\models\ChildModel {
         $memberModel->village_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'village_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'village_code') : NULL;
     }
 
+    public function getCollectionData($data) {
+        return $this->find()
+                        ->where(['dcs_code' => $data->dcs_code, 'bmc_code' => $data->bmc_code, 'mcc_plant_code' => $data->mcc_plant_code, 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($data->date_time_of_dispatch)), 'shift_code' => $data->shift_code])
+                        ->andWhere(['or', ['IS', 'antibiotic_sms_sent', NULL], ['antibiotic_sms_sent' => ''], ['antibiotic_sms_sent' => '0']])
+                        ->all();
+    }
+
 }

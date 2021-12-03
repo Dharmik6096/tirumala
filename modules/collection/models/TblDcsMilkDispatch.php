@@ -11,6 +11,8 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\collection\models\TblMilkCollection;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch".
@@ -48,6 +50,8 @@ use app\modules\collection\models\TblCollectionDataAlias;
 class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public $from_date, $to_date, $from_shift, $to_shift, $name, $dcs, $status;
+
+//    public $saveChildRecords = TRUE;
 
     /**
      * @inheritdoc
@@ -174,6 +178,75 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public function getExistingData($data) {
         return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_dispatch, 'shift_code' => $data->shift_code])->one();
+    }
+
+    public function setTransactionData($model) {
+        $union = $model->union_code;
+        $unionData = TblUnions::find()->where(['union_code' => $union, 'is_active' => 1])->one();
+        $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || $eiplCode == 'PRABHAT') {
+            $antibioticTest = $model->antibiotic;
+            (float) $p_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_positive', 'PORTAL');
+            (float) $n_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_negative', 'PORTAL');
+
+            if (!empty($antibioticTest)) {
+                $milkCollection = new TblMilkCollection();
+                $collectionData = $milkCollection->getCollectionData($model);
+
+                $sms_data = [];
+                $templateModel = new TblAlertTemplate();
+                $module = strtolower($antibioticTest) == 'not tested' ? 'antibiotic_not_test' : (strtolower($antibioticTest) == 'ab+' ? 'antibiotic_positive' : 'antibiotic_negative');
+                $templateData = $templateModel->getTemplateData($module, 'SMS', $union);
+                if (!empty($collectionData) && !empty($templateData)) {
+                    foreach ($collectionData as $collection) {
+                        $memberName = Yii::$app->general->getforeignkey($collection->memberCode, 'member_name');
+                        $mobile = Yii::$app->general->getforeignkey($collection->memberCode, 'mobile_no');
+                        $ex_code = Yii::$app->general->getforeignkey($collection->memberCode, 'ex_member_code');
+                        $date = date("d M Y", strtotime($collection->date_time_of_collection));
+                        $shift = $collection->shift_code == 1 ? 'M' : ($collection->shift_code == 2 ? 'E' : $collection->shift_code);
+                        $milk_type = strtoupper(Yii::$app->general->getforeignkey($collection->milkTypeCode, 'short_name'));
+                        (float) $qty = $collection->qty;
+                        (float) $fat = $collection->fat;
+                        (float) $snf = $collection->snf;
+                        (float) $rtpl = $collection->rtpl;
+                        (float) $amount = $collection->amount;
+                        $arrFrom = '';
+                        $arrTo = '';
+
+                        if (!empty($mobile)) {
+                            if (strtolower($antibioticTest) == 'not tested') {
+                                $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}");
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $amount);
+                            } else if (strtoupper($antibioticTest) == 'AB+') {
+                                $flagVal = $p_config * $qty;
+                                $mainAmount = $amount + $flagVal;
+                                $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}", "{flag}", "{cal_val}");
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $mainAmount, $p_config, $flagVal);
+                            } else if (strtoupper($antibioticTest) == 'AB-') {
+                                $flagVal = (float) $n_config * (float) $qty;
+                                $mainAmount = $amount + $flagVal;
+                                $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}", "{flag}", "{cal_val}");
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $mainAmount, $n_config, $flagVal);
+                            }
+                            $word = $templateData->message;
+                            $message = str_replace($arrFrom, $arrTo, $word);
+                            $sms_data['refecence_code'] = (string) $collection->milk_collection_code;
+                            $sms_data['module_type'] = $module;
+//                            if (YII_ENV_DEV) {
+//                                
+//                            } else {
+                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, TRUE, $templateData->header_info);
+                            $collection->updateAll(['antibiotic_sms_sent' => 1], ['milk_collection_code' => $collection->milk_collection_code]);
+//                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $this->setTransactionData($this);
     }
 
 }
