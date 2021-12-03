@@ -178,7 +178,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $saveModel[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if (false && Yii::$app->session->get('eiplCode') == 'MMD') {
+                    if (Yii::$app->session->get('eiplCode') == 'MMD') {
                         $api = new WebApi();
                         $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
                         $api->authentication = FALSE;
