@@ -6,6 +6,10 @@ use Yii;
 use app\modules\product\models\TblProduct;
 use app\modules\globalmaster\models\TblUnits;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockTransaction;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransactionHistory;
 
 /**
  * This is the model class for table "tbl_product_receipt_transaction".
@@ -40,6 +44,7 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
 
     public $uom;
     public $is_sentbox = TRUE;
+    public $saveDeleteChildRecords = TRUE;
 
     /**
      * @inheritdoc
@@ -53,11 +58,11 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
-            [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
+                [['product_receipt_transaction_code'], 'required', 'on' => ['androidsync']],
+                [['product_receipt_transaction_code', 'product_requisition_code', 'requisition_transaction_code', 'product_code', 'product_receipt_code', 'remark', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['requested_quantity', 'dispatched_quantity', 'received_quantity', 'rejected_quantity', 'rate', 'amount', 'discount'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
         ];
     }
 
@@ -130,6 +135,57 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->masterCode->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
+        $manageStock = true;
+        if ($manageStock) {
+            $qty = !empty($model->received_quantity) ? $model->received_quantity : 0;
+            if (!empty($qty) && !empty($model->masterCode)) {
+                $productReceiptData = $model->masterCode;
+                $fstockModel = new TblProductStock();
+                $sale_type = strtoupper($productReceiptData->vendor_type);
+                $sale_code = $productReceiptData->vendor_code;
+                $fstockModel->setCodes($sale_type, $sale_code);
+                $fstockModel->product_code = $model->product_code;
+                $fstockModel->union_code = $productReceiptData->union_code;
+                $txn_type = 'PRODUCT RECEIPT';
+                $existfromStock = $fstockModel->getExistStock($sale_type);
+
+                $f_stock = 0;
+                if (!empty($existfromStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                    $childModel[] = $historyModel;
+                    $f_stock = $existfromStock->stock;
+                    $existfromStock->stock = $f_stock + $qty;
+                    $fstockModel = $existfromStock;
+                } else {
+                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
+                    $fstockModel->stock = $f_stock + $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                }
+
+
+                $i = 1;
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($stockTxnModel->created_at);
+                unset($stockTxnModel->created_by);
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = $txn_type;
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+
+
+                $childModel[] = $fstockModel;
+                $childModel[] = $fstockTxnModel;
+                $i++;
+            }
+        }
     }
 
 }

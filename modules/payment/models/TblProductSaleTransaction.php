@@ -7,6 +7,10 @@ use app\modules\product\models\TblProduct;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblLoanProductSaleDetails;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockTransaction;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransactionHistory;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -47,16 +51,16 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync']],
-            [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync']],
+                [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
             [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync']],
-            [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
-            [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock'], 'safe'],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
+                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock'], 'safe'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
-            [['union_code'], 'safe']
+                [['union_code'], 'safe']
         ];
     }
 
@@ -160,6 +164,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     }
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
+        $manageStock = TRUE;
         if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
             $loanModel = new TblLoanProductSaleDetails();
             $loanModel->attributes = $model->attributes;
@@ -191,6 +196,57 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $loanModel->entry_type = 2;
                 $loanModel->created_by = 'CRON';
                 $model = $loanModel;
+                $manageStock = FALSE;
+            }
+        }
+        if ($manageStock) {
+            $qty = !empty($model->quantity) ? $model->quantity : 0;
+            if (!empty($qty) && !empty($model->productSaleCode)) {
+                $productSaleData = $model->productSaleCode;
+                $fstockModel = new TblProductStock();
+                $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+                $sale_code = strtoupper($productSaleData->customer_type) == 'MEMBER' ? $productSaleData->dcs_code : $productSaleData->bmc_code;
+
+                $fstockModel->setCodes($sale_type, $sale_code);
+                $fstockModel->product_code = $model->product_code;
+                $fstockModel->union_code = $productSaleData->union_code;
+                $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+                $existfromStock = $fstockModel->getExistStock($sale_type);
+
+                $f_stock = 0;
+//                $qty = $model->quantity;
+                if (!empty($existfromStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                    $childModel[] = $historyModel;
+                    $f_stock = $existfromStock->stock;
+                    $existfromStock->stock = $f_stock - $qty;
+                    $fstockModel = $existfromStock;
+//                    $child[] = $fstockModel;
+                } else {
+                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
+                    $fstockModel->stock = $f_stock - $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                }
+
+
+                $i = 1;
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($stockTxnModel->created_at);
+                unset($stockTxnModel->created_by);
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = $txn_type;
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+
+
+                $childModel[] = $fstockModel;
+                $childModel[] = $fstockTxnModel;
+                $i++;
             }
         }
     }
