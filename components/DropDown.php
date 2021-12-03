@@ -1247,7 +1247,7 @@ class DropDown extends Component {
             'antibiotic' => [
                 'name' => 'antibiotic',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'None' => Yii::t('app', 'None')],
+                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'None' => Yii::t('app', 'Not Tested')],
             ],
         ];
         return $records[$l];
