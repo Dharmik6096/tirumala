@@ -1353,6 +1353,8 @@ class DropDown extends Component {
             'role_code' => ['name' => 'role_code', 'fields' => 'role_code,description', 'prompt' => 'Select Role', 'model' => 'TblRole'],
             'penalty_type' => ['name' => 'penalty_type', 'fields' => 'penalty_type_code,penalty_type,', 'prompt' => Yii::t('app', 'Select Penalty Type'), 'model' => 'TblCollectionPenaltyType', 'depend' => 'union_code'],
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
+            'device_code' => ['name' => 'weight_device_code', 'fields' => 'interfacing_device_code,device_name,', 'prompt' => Yii::t('app', 'Select Device'), 'model' => 'TblInterfacingDevice', 'depend' => 'union_code', 'dependArray' => ['device_type']],
+//            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
         ];
         return $label[$l];
     }
