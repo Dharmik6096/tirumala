@@ -17,16 +17,16 @@ $attribute = [
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'plant_code', 'label' => 'Plant', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'mcc_plant_code', 'label' => 'MCC', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'bmc_code', 'label' => 'BMC', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'dcs_code', 'label' => 'DCS', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }],
+        }, 'filter' => false],
         ['attribute' => 'weight_device_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->weightDeviceCode, 'device_name');
         }],
@@ -52,7 +52,6 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/hardwareconfigutation/tbl-interfacing-device-mapping/update', 'id' => $model->interfacing_device_mapping_code], $options);
         },
-//        'update' => true,
         'delete' => ['option' => 'interfacing_device_mapping_code,interfacing_device_mapping_code,tbl-interfacing-device-mapping/delete'],
     ]
 ];

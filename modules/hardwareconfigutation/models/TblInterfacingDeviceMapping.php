@@ -36,7 +36,7 @@ use app\modules\hardwareconfigutation\models\TblInterfacingDevice;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblInterfacingDeviceMapping extends \yii\db\ActiveRecord {
+class TblInterfacingDeviceMapping extends \app\models\ChildModel {
 
     /**
      * @inheritdoc

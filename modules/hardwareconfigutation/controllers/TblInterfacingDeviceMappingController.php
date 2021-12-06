@@ -4,29 +4,18 @@ namespace app\modules\hardwareconfigutation\controllers;
 
 use Yii;
 use app\modules\hardwareconfigutation\models\TblInterfacingDeviceMapping;
+use app\modules\hardwareconfigutation\models\TblInterfacingDeviceMappingHistory;
 use app\modules\hardwareconfigutation\models\TblInterfacingDeviceMappingSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblInterfacingDeviceMappingController implements the CRUD actions for TblInterfacingDeviceMapping model.
  */
 class TblInterfacingDeviceMappingController extends \app\controllers\ChildController {
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all TblInterfacingDeviceMapping models.
@@ -79,15 +68,20 @@ class TblInterfacingDeviceMappingController extends \app\controllers\ChildContro
      * @return mixed
      */
     public function actionUpdate($id) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->interfacing_device_mapping_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblInterfacingDeviceMappingHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Device Mapping', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -96,10 +90,19 @@ class TblInterfacingDeviceMappingController extends \app\controllers\ChildContro
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblInterfacingDeviceMappingHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $this->model->load(Yii::$app->request->post());
+            $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted since it is in use by the system.'];
+        }
 
-        return $this->redirect(['index']);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

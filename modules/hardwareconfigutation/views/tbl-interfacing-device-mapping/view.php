@@ -7,7 +7,7 @@ use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'Device Mapping');
 if (Yii::$app->general->allowUpdateDelete($model)) {
-    $this->params['menu'][] = Yii::$app->controls->update($model->hardware_config_code);
+    $this->params['menu'][] = Yii::$app->controls->update($model->interfacing_device_mapping_code);
 }
 ?>
 <div class="panel panel-default panel-grid panel-main">
@@ -61,7 +61,7 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                         ],
                             [
                             'attribute' => 'weight_device_code',
-//                            'value' => !empty($model->productGroupCode) ? $model->productGroupCode->product_group_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->weightDeviceCode, 'device_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -70,11 +70,12 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                     'columns' => [
                             [
                             'attribute' => 'analyzer_device_code',
-//                            'value' => Yii::$app->general->getforeignkey($model->unitCode, 'unit_name'),
+                            'value' => Yii::$app->general->getforeignkey($model->analyzerDeviceCode, 'device_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
                             'attribute' => 'printer_device_code',
+                            'value' => Yii::$app->general->getforeignkey($model->printerDeviceCode, 'device_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -83,6 +84,7 @@ if (Yii::$app->general->allowUpdateDelete($model)) {
                     'columns' => [
                             [
                             'attribute' => 'display_device_code',
+                            'value' => Yii::$app->general->getforeignkey($model->displayDeviceCode, 'device_name'),
                             'valueColOptions' => ['style' => 'width:80%'],
                         ],
                     ],
