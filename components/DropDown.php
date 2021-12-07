@@ -722,7 +722,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1247,7 +1247,7 @@ class DropDown extends Component {
             'antibiotic' => [
                 'name' => 'antibiotic',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'None' => Yii::t('app', 'Not Tested')],
+                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'Not Tested' => Yii::t('app', 'Not Tested')],
             ],
         ];
         return $records[$l];
@@ -1441,7 +1441,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

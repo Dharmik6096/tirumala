@@ -111,7 +111,6 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             [['antibiotic'], function ($attribute, $params) {
                     !empty($this->antibiotic) ? Yii::$app->general->validateGlobalStatic($this, 'antibiotic', 'antibiotic') : '';
                 }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
-            [['antibiotic'], 'required', 'on' => ['importCsv']],
             [['antibiotic'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->session->get('eiplCode') == 'PRABHAT';
                 }, 'on' => ['importCsv']],
