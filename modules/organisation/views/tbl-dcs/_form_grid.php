@@ -229,6 +229,10 @@ $attribute = [
     ],
         ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'password', 'visible' => false, 'filter' => false],
+        ['attribute' => 'antibiotic_check',
+        'value' => function($model) {
+            return $model->antibiotic_check == 1 ? 'Yes' : 'No';
+        },'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

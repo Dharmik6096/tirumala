@@ -85,6 +85,10 @@ $attribute = [
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge] : '';
         },],
         ['attribute' => 'password', 'visible' => false, 'filter' => false],
+        ['attribute' => 'antibiotic_check',
+        'value' => function($model) {
+            return $model->antibiotic_check == 1 ? 'Yes' : 'No';
+        }, 'visible' => false, 'filter' => false],
 ];
 
 $grid_option = [

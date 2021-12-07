@@ -68,7 +68,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
                 [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
                 [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'password'], 'safe'],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'password', 'antibiotic_check'], 'safe'],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
@@ -94,6 +94,9 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
                 [['rate_calculate_on_merge'], 'default', 'value' => 0],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['antibiotic_check'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

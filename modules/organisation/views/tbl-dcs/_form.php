@@ -181,11 +181,14 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'sap_vendor_code')->textInput(['maxlength' => true]) ?>
         </div>
-                <div class="col-sm-2">
+        <div class="col-sm-2">
             <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
         </div>
         <div class='pull-left col-sm-4'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
