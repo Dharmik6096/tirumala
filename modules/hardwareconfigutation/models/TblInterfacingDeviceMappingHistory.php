@@ -34,39 +34,36 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_at
  */
-class TblInterfacingDeviceMappingHistory extends \yii\db\ActiveRecord
-{
+class TblInterfacingDeviceMappingHistory extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_interfacing_device_mapping_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['interfacing_device_mapping_code'], 'required'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['interfacing_device_mapping_code', 'weight_device_code', 'analyzer_device_code', 'printer_device_code', 'display_device_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['operation_type'], 'string', 'max' => 10],
+                [['interfacing_device_mapping_code'], 'safe'],
+                [['created_at', 'updated_at', 'history_created_at', 'analyzer_device_code_2', 'analyzer_device_code_3', 'analyzer_device_code_4'], 'safe'],
+                [['originating_type'], 'safe'],
+                [['interfacing_device_mapping_code', 'weight_device_code', 'analyzer_device_code', 'printer_device_code', 'display_device_code', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['operation_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'interfacing_device_mapping_code' => Yii::t('app', 'Interfacing Device Mapping Code'),
@@ -96,4 +93,5 @@ class TblInterfacingDeviceMappingHistory extends \yii\db\ActiveRecord
             'history_created_at' => Yii::t('app', 'History Created At'),
         ];
     }
+
 }

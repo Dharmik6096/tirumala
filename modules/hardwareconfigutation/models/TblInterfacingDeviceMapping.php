@@ -50,14 +50,13 @@ class TblInterfacingDeviceMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['interfacing_device_mapping_code'], 'required'],
-                [['created_at', 'updated_at'], 'safe'],
+                [['interfacing_device_mapping_code', 'weight_device_code', 'analyzer_device_code', 'printer_device_code', 'display_device_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'required'],
+                [['created_at', 'updated_at', 'analyzer_device_code_2', 'analyzer_device_code_3', 'analyzer_device_code_4'], 'safe'],
                 [['originating_type'], 'integer'],
                 [['interfacing_device_mapping_code', 'weight_device_code', 'analyzer_device_code', 'printer_device_code', 'display_device_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
                 [['union_code'], 'string', 'max' => 3],
+                [['dcs_code'], 'unique', 'message' => Yii::t('app/validation', '{attribute}  has already been taken..')],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
@@ -69,9 +68,9 @@ class TblInterfacingDeviceMapping extends \app\models\ChildModel {
             'interfacing_device_mapping_code' => Yii::t('app', 'Interfacing Device Mapping Code'),
             'union_code' => Yii::t('app', 'Union Code'),
             'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'Society'),
             'weight_device_code' => Yii::t('app', 'Weight Device'),
             'analyzer_device_code' => Yii::t('app', 'Analyzer Device'),
             'printer_device_code' => Yii::t('app', 'Printer Device'),
