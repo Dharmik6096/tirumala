@@ -276,9 +276,9 @@ class TblDcs extends ChildModel {
                 [['dcs_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-//                [['route'], 'required', 'on' => ['importCsv']],
+                [['route'], 'required', 'on' => ['importCsv']],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-//                [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
+                [['dcs_code'], 'validateRoute', 'on' => ['importCsv']],
                 [['dcs_code'], function ($attribute, $params) {
                     $update = FALSE;
                     if ($this->scenario == 'updateDcs') {
