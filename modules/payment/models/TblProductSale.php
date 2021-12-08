@@ -790,7 +790,7 @@ class TblProductSale extends \app\models\ChildModel {
         if (!empty($data)) {
             $allow_config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['allowed_multi_product_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['allowed_multi_product_sale'] : 0;
             if (empty($allow_config)) {
-                $this->addError('customer_code', 'Product ' . Yii::$app->general->getforeignkey($this->productCode, 'product_name') . ' Is Already Availble..');
+                $this->addError('customer_code', 'Product ' . Yii::$app->general->getforeignkey($this->productCode, 'product_name') . ' Is Already Available..');
             }
         }
     }
