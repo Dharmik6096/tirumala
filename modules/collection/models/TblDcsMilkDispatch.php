@@ -183,8 +183,10 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
     public function setTransactionData($model) {
         $union = $model->union_code;
         $unionData = TblUnions::find()->where(['union_code' => $union, 'is_active' => 1])->one();
+        $dcsData = TblDcs::find()->where(['union_code' => $union, 'dcs_code' => $model->dcs_code])->one();
         $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
-        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || $eiplCode == 'PRABHAT') {
+        $antibioticCheck = !empty($dcsData->antibiotic_check) ? ($dcsData->antibiotic_check) : '';
+        if ((Yii::$app->session->get('eiplCode') == 'PRABHAT' || $eiplCode == 'PRABHAT') && $antibioticCheck == 1) {
             $antibioticTest = $model->antibiotic;
             (float) $p_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_positive', 'PORTAL');
             (float) $n_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_negative', 'PORTAL');
