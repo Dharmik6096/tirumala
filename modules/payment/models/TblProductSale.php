@@ -323,7 +323,8 @@ class TblProductSale extends \app\models\ChildModel {
                     $amt = !empty($this->amount_due) ? $this->amount_due : 0;
                     $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
                     $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
-                    if ($due > $availableCredit) {
+                    $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['check_credit_limit']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['check_credit_limit'] : '';
+                    if ($config == 1 && $due > $availableCredit) {
                         $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
                         return false;
                     }
