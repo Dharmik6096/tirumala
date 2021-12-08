@@ -128,6 +128,7 @@ class importData extends \yii\base\Module {
             'bmc-collection-allow-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection_allow'],
             'milk-collection-qlty-allow-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount', 'scenario' => 'milk_collection_qlty_allow'],
             'bmc-mapped-collection-allow-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'own_bmc_code,bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection_mapped_allow'],
+            'user-android' => ['table_name' => 'tbl_user_android', 'fields' => 'org_type,org_code,name,username,password,repeat_password,mobile_no,role_code,email,is_active', 'increment' => 1, 'scenario' => 'importCsv', 'save_child' => true],
         ];
         return $label[$l];
     }
