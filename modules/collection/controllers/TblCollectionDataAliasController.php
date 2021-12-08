@@ -44,12 +44,16 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             } else if ($action == 'UPDATE') {
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
-                                $existMainData->attributes = $existData->attributes;
-                                $saveModel[] = $existMainData;
+                                if (!empty($existMainData)) {
+                                    $existMainData->attributes = $existData->attributes;
+                                    $saveModel[] = $existMainData;
+                                }
                             } else if ($action == 'DELETE') {
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
-                                $deleteModel[] = $existMainData;
+                                if (!empty($existMainData)) {
+                                    $deleteModel[] = $existMainData;
+                                }
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
