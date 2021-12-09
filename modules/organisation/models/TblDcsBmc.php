@@ -460,16 +460,6 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $model;
     }
 
-    public function beforeSave($insert) {
-        if (parent::beforeSave($insert)) {
-            $encrypt = $this->encryptModel($this->attributes);
-            $this->setAttributes($encrypt);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function decryptModel($model) {
         $result = array_intersect($this->toEncrypt, array_keys($model->attributes));
         foreach ($result as $key => $value) {

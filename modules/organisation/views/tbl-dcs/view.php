@@ -465,7 +465,6 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                                 [
                                 'attribute' => 'password',
-                                'value' => !empty($model->password) ? Yii::$app->general->decryptData($model->password) : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
