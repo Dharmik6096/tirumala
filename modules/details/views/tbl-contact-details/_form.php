@@ -1,5 +1,8 @@
-<?php 
+<?php
+
 use yii\helpers\Html;
+
+$mail_info = !empty($mail_info) ? $mail_info : FALSE;
 ?>
 
 <!--<div class="col-sm-3">
@@ -36,3 +39,15 @@ use yii\helpers\Html;
     <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
     <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
 </div>
+<?php if ($mail_info) { ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email_to')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email_cc')->textInput() ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'email_bcc')->textInput() ?>
+    </div>
+<?php } ?>
+

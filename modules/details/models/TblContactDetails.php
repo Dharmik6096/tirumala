@@ -48,7 +48,10 @@ class TblContactDetails extends \app\models\ChildModel {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
             [['module_name', 'module_code', 'contact_person', 'email', 'local_contact_person', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks'], 'safe'],
+            [['created_at', 'updated_at', 'department', 'lastname', 'surname', 'is_default', 'is_active', 'is_verified', 'is_contact_verified', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
+            [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
+                    Yii::$app->general->validateEmail($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => 'verification'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -81,6 +84,9 @@ class TblContactDetails extends \app\models\ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'department' => Yii::t('app', 'Department'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'email_to' => Yii::t('app', 'Email To'),
+            'email_cc' => Yii::t('app', 'Email CC'),
+            'email_bcc' => Yii::t('app', 'Email BCC'),
         ];
     }
 
