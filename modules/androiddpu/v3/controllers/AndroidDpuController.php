@@ -265,7 +265,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                     if (YII_ENV_DEV) {
                         
                     } else {
-                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE, $templateData->header_info);
+                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, TRUE, $templateData->header_info);
                     }
                 }
             }

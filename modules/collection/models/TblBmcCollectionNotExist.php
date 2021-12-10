@@ -101,21 +101,19 @@ use Yii;
  * @property string $response_datetime
  * @property string $data_inserted_from
  */
-class TblBmcCollectionNotExist extends \app\models\ChildModel
-{
+class TblBmcCollectionNotExist extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bmc_collection_not_exist';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['milk_type_code', 'sample_no', 'ack', 'collection_type', 'milk_quality_type_code', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_times_no', 'data_post_status', 'doc_no', 'ftp_txn_log_id', 'converted_qty_mode', 'bmc_silos_info_code', 'data_import_code'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'density', 'clr', 'lactose', 'protein', 'converted_qty', 'converted_can', 'adt_value'], 'safe'],
@@ -138,15 +136,14 @@ class TblBmcCollectionNotExist extends \app\models\ChildModel
             [['originating_type', 'last_edited_type', 'sync_status'], 'safe'],
             [['union_code'], 'safe'],
             [['vehicle_no', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['purchase_rate_code', 'recalculated_code'], 'safe'],
+            [['purchase_rate_code', 'recalculated_code', 'antibiotic'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'milk_collection_code' => Yii::t('app', 'Milk Collection Code'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
@@ -243,4 +240,5 @@ class TblBmcCollectionNotExist extends \app\models\ChildModel
             'data_inserted_from' => Yii::t('app', 'Data Inserted From'),
         ];
     }
+
 }

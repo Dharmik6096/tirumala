@@ -79,7 +79,7 @@ class TblQualityCollectionHistory extends \yii\db\ActiveRecord {
             [['version_no', 'milk_analyser_type_code'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'adt_param'], 'safe'],
-            [['operation_type'], 'safe'],
+            [['operation_type', 'antibiotic'], 'safe'],
         ];
     }
 
