@@ -136,7 +136,10 @@ class TblMccShiftLockStagingController extends \app\controllers\ChildController 
                     $shiftLockData->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $shiftLockData->staging_code]);
 
                     $loopData['orderNumber'] = $shiftLockData->staging_code;
-                    $loopData['vendorAccount'] = 'VADD00099';
+
+                    $mccVendor = Yii::$app->general->getforeignkey($shiftLockData->mccPlantCode, 'vendor_code');
+                    $loopData['vendorAccount'] = !empty($mccVendor) ? $mccVendor : 'VADD00099';
+//                    $loopData['vendorAccount'] = 'VADD00099';
                     $loopData['orderDate'] = date('m-d-Y', strtotime($shiftLockData->date_time_of_collection));
                     $loopData['companyId'] = '';
                     $loopData['sourceSystem'] = '';
