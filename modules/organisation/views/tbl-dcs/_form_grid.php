@@ -232,7 +232,8 @@ $attribute = [
         ['attribute' => 'antibiotic_check',
         'value' => function($model) {
             return $model->antibiotic_check == 1 ? 'Yes' : 'No';
-        },'visible' => false, 'filter' => false],
+        }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [

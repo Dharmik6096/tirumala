@@ -190,6 +190,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
         </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
+        </div>
         <div class='pull-left col-sm-4'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>

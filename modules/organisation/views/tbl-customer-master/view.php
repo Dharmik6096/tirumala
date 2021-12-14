@@ -147,6 +147,14 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                         ],
                     ],
                 ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'x_col2',
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget
