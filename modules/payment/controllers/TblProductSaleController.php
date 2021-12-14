@@ -38,6 +38,8 @@ use app\modules\payment\models\TblProductSaleTransactionHistory;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblMilkCollection;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -738,6 +740,63 @@ class TblProductSaleController extends \app\controllers\ChildController {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {
             return Json::encode(['status' => 'success', 'stock' => 0]);
+        }
+    }
+
+    public function actionSetAvailableCredit() {
+        $type = Yii::$app->request->post('type');
+        $code = Yii::$app->request->post('code');
+        $union = Yii::$app->request->post('union');
+        $bmc = Yii::$app->request->post('bmc');
+        $date = Yii::$app->request->post('date');
+        $pay_mode = Yii::$app->request->post('pay_mode');
+        $amount_due = Yii::$app->request->post('amount_due');
+        $no_of_installment = Yii::$app->request->post('noi');
+        if (!empty($date) && $pay_mode == 1) {
+
+            $model = new TblPaymentCycleApplicability();
+            $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
+            $model->applicable_code = $bmc;
+            $model->applicable_for = 'BMC';
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+            if (!empty($modelData)) {
+
+                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                $saledAmount = 0;
+                $where = [];
+                $where = ['payment_mode' => $pay_mode, 'customer_type' => $type, 'customer_code' => $code];
+                $model = new TblProductSale();
+                $data = $model->find()
+                        ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
+                        ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
+                        ->andWhere($where)
+                        ->one();
+                if (!empty($data->amount_due)) {
+                    $saledAmount = $data->amount_due;
+                }
+                $model = new TblBmcCollection();
+                $collWhere = [];
+                $collWhere = ['customer_type' => $type, 'customer_code' => $code];
+                if (strtolower($type) == 'member') {
+                    $model = new TblMilkCollection();
+                    $collWhere = ['member_code' => $code];
+                }
+
+                $modelData = $model->find()
+                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                        ->andWhere($collWhere)
+                        ->one();
+                $creditAmount = 0;
+                if (!empty($modelData->amount)) {
+                    $creditAmount = $modelData->amount;
+                }
+                $availableCredit = $creditAmount - $saledAmount;
+                return Json::encode(['status' => 'success', 'credit' => $availableCredit]);
+            } else {
+                return Json::encode(['status' => 'error', 'credit' => 0]);
+            }
         }
     }
 
