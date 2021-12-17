@@ -1254,6 +1254,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['consecutive' => Yii::t('app', 'consecutive'), 'non-consecutive' => Yii::t('app', 'non-consecutive')],
             ],
+            'send_status' => [
+                'name' => 'send_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
+            ],
         ];
         return $records[$l];
     }

@@ -151,6 +151,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Requisition'), 'url' => ['/product/tbl-product-requisition/index'], 'active' => ($cntrl == 'tbl-product-requisition')],
                     ['label' => Yii::t('app', 'Product Dispatch With Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 1], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') != 0),],
                     ['label' => Yii::t('app', 'Product Dispatch Without Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
+                    ['label' => Yii::t('app', 'Loan Product Sale Details'), 'url' => ['/payment/tbl-loan-product-sale-details/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-loan-product-sale-details') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
             ],
         ],
             [
