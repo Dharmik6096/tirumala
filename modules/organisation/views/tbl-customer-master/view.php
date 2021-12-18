@@ -150,6 +150,18 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                     [
                     'columns' => [
                             [
+                            'attribute' => 'ts_code_m',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'ts_code_e',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'x_col2',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],

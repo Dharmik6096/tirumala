@@ -482,6 +482,18 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'ts_code_m',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'ts_code_e',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget

@@ -173,7 +173,7 @@ class TblDcs extends ChildModel {
                     ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
             ],
-                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check'], 'safe'],
+                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e'], 'safe'],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
             //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -230,7 +230,7 @@ class TblDcs extends ChildModel {
             // ['dcs_code_ex', 'unique', 'targetAttribute' => ['dcs_code_ex', 'bmc_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['saveCreamyData']],
             // [['dcs_code_ex'], 'number'],
             [['is_active'], 'default', 'value' => 1],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code', 'is_chiller','x_col2'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dispatch_mandate', 'is_weight_manual', 'is_quality_manual', 'same_milk_type', 'diff_milk_type', 'with_member_rate', 'ref_code', 'is_chiller', 'x_col2'], 'safe'],
                 [['is_dispatch_mandate', 'is_live'], 'default', 'value' => 0],
                 [['is_dispatch_mandate'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_dispatch_mandate');
@@ -294,6 +294,8 @@ class TblDcs extends ChildModel {
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
+                [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
+                [['ts_code_m', 'ts_code_e'], 'number']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
