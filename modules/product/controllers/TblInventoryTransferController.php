@@ -145,7 +145,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxn);
                 $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
                 $receiptTxn->product_code = $fstockModel->product_code;
-                $receiptTxn->product_code = $fstockModel->product_code;
                 $receiptTxn->received_quantity = '-' . $qty;
                 $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
                 $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
@@ -213,7 +212,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxnTo, $i);
                 $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                 $receiptTxnTo->product_code = $stockModel->product_code;
-                $receiptTxnTo->product_code = $qty;
                 $receiptTxnTo->received_quantity = $stockModel->stock;
                 $receiptTxnTo->requested_quantity = $receiptTxnTo->received_quantity;
                 $receiptTxnTo->dispatched_quantity = $receiptTxnTo->received_quantity;
