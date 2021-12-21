@@ -156,4 +156,10 @@ class TblContactDetails extends \app\models\ChildModel {
                         ->all();
     }
 
+    public function getContactDetail() {
+        return $this->find()
+                        ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name, 'is_default' => 1, 'is_active' => 1])
+                        ->one();
+    }
+
 }
