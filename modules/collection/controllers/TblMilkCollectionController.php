@@ -426,6 +426,71 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
     public function actionDeleteCollection() {
         $searchModel = new TblMilkCollectionSearch();
         $dataProvider = $searchModel->deletesearch(Yii::$app->request->queryParams);
+        $msg = '';
+        if (!empty($searchModel->from_date) && !empty($searchModel->from_shift) && !empty($searchModel->from_date) && !empty($searchModel->to_shift)) {
+            $from_date = date('Y-m-d', strtotime($searchModel->from_date));
+            $from_shift = \Yii::$app->general->getshift($searchModel->from_shift);
+            $from_date .= ' ' . $from_shift;
+            $to_date = date('Y-m-d', strtotime($searchModel->to_date));
+            $to_shift = \Yii::$app->general->getshift(strtoupper($searchModel->to_shift));
+            $to_date .= ' ' . $to_shift;
+
+            $sp_param = [];
+            $sp_param[] = $searchModel->union_code;
+            $sp_param[] = $searchModel->plant_code;
+            $sp_param[] = $searchModel->bmc_code;
+            $sp_param[] = 'BMC';
+            $sp_param[] = 'DCS';
+            $sp_param[] = $from_date;
+            $sp_param[] = $to_date;
+            $sp_name = 'sp_validate_payment_cycle_lock_collection';
+            $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+            $type = 'success';
+            $a = [];
+            $msg = '';
+            if (!empty($output)) {
+                $type = 'error';
+                $msg = Yii::t('app', 'Payment Cycle Locked for Following BMC.');
+                $msg .= '<ul>';
+                foreach ($output as $fcK => $fcVal) {
+                    $mccCode = $fcVal['bmcCode'];
+                    if (!in_array($mccCode, $a)) {
+                        $a[] = $mccCode;
+                        $msg .= '<li>' . $fcVal['bmc'] . '</li>';
+                    }
+                }
+                $msg .= '</ul>';
+            } else {
+                $sp_param = [];
+                $sp_param[] = $searchModel->union_code;
+                $sp_param[] = $searchModel->plant_code;
+                $sp_param[] = $searchModel->mcc_plant_code;
+                $sp_param[] = $from_date;
+                $sp_param[] = $to_date;
+                $sp_name = 'sp_validate_mcc_shift_lock_collection';
+                $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+                $type = 'success';
+                $msg = '';
+                $a = [];
+                if (!empty($output)) {
+                    $type = 'error';
+                    $msg = Yii::t('app', 'Shift Locked for Following MCC.');
+                    $msg .= '<ul>';
+                    foreach ($output as $fcK => $fcVal) {
+                        $mccCode = $fcVal['mccCode'];
+                        if (!in_array($mccCode, $a)) {
+                            $a[] = $mccCode;
+                            $msg .= '<li>' . $fcVal['mcc'] . '</li>';
+                        }
+                    }
+                    $msg .= '</ul>';
+                }
+            }
+        }
+        if (!empty($msg)) {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $msg]);
+        }
         $searchModel->scenario = 'deleteMilkCollection';
         $configVal = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['qlty_wise_collection'] : 0;
         if (Yii::$app->request->post()) {
@@ -467,6 +532,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'configVal' => $configVal,
+                    'msg' => $msg
         ]);
     }
 

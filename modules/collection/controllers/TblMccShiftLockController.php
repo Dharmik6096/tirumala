@@ -14,6 +14,7 @@ use yii\web\Response;
 use app\modules\collection\models\TblMccShiftLockHistory;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\components\WebApi;
+use app\modules\vsp\models\TblVspTransitRecovery;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -138,106 +139,117 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->avg_snf = $snf;
             $this->model->amount = $amount;
             $existData = $this->model->getExistData();
-            if (!empty($existData)) {
-                $this->model = $this->findModel($existData->shift_lock_code);
-                $historyModel = new TblMccShiftLockHistory();
-                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-                $saveModel[] = $historyModel;
-            } else {
-                $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $Recovery = TRUE;
+            if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                $recoveryModel = new TblVspTransitRecovery();
+                $existRecovery = $recoveryModel->getExistData($this->model);
+                $Recovery = $existRecovery > 0 ? TRUE : FALSE;
             }
-            $this->model->data_lock = 1;
+            if ($Recovery) {
+                if (!empty($existData)) {
+                    $this->model = $this->findModel($existData->shift_lock_code);
+                    $historyModel = new TblMccShiftLockHistory();
+                    Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                } else {
+                    $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+                }
+                $this->model->data_lock = 1;
 
-            $staging = new TblMccShiftLockStaging();
-            $attribute = $this->model->attributes;
-            $staging->setAttributes($attribute);
-            $stagingData = $staging->find()->where(['shift_lock_code' => $this->model->shift_lock_code])->one();
+                $staging = new TblMccShiftLockStaging();
+                $attribute = $this->model->attributes;
+                $staging->setAttributes($attribute);
+                $stagingData = $staging->find()->where(['shift_lock_code' => $this->model->shift_lock_code])->one();
 
-            if (!empty($stagingData)) {
-                $stagingData->setAttributes($attribute);
-                $stagingData->data_post_status = 0;
-                $stagingData->picked_datetime = NULL;
-                $stagingData->response_datetime = NULL;
-                $stagingData->resp_status = NULL;
-                $stagingData->resp_desc = NULL;
-                $saveModel[] = $stagingData;
-            } else {
-                $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
-                $ConcateShift = $shift;
-                $staging->staging_code = $this->model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
-                $saveModel[] = $staging;
-            }
-            $saveModel[] = $this->model;
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
-            if ($transaction == 'customRedirect') {
-                if (Yii::$app->session->get('eiplCode') == 'MMD') {
-                    $api = new WebApi();
-                    $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
-                    $api->authentication = FALSE;
-                    $bodyData = [
-                        'grant_type' => 'client_credentials',
-                        'client_id' => '20e569c1-4277-462b-b32c-01fc8516b4a8',
-                        'client_secret' => '4wD7Q~o~2sb6uJY77edU7GBNPHDHFs0KFCxz3',
-                        'resource' => 'https://mmd-test.sandbox.operations.dynamics.com'
-                    ];
-                    $api->body = json_encode($bodyData);
-                    $api->header_info = ['Cookie: buid=0.ASoAH-0RLP8NuUaU6Yy-g3F0FxUAAAAAAAAAwAAAAAAAAAAqAAA.AQABAAEAAAD--DLA3VO7QrddgJg7WevrvVFNQrKzy_CROckT6gVKweNqD3cIE_2e6sZvqDLziOl8pO63n7RLdlIlGAuwxD62Enrb1pzwLrCCeemK4klCumlwbqCg2J9DH0skWUTDYnkgAA; esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr6ffEbthd6xIgF9p_ALeJBUHpIFF8fjoU4RbhU6__vXSrMIrFkvh22Pkix_9Le-2mYya7B8dKnuUP_rbwfpzClwoS9Ky7NfwLUT_ZHQKSykQ94qj7dGTJP5ADjUi---2djJon1PEOjTv7Y6o3MstQTGOfn3_UANRXj-6c84mvRDIgAA; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd; fpc=AmO0_u8SW0RBlh7R1d1Hu_TyqFelAQAAACCE-NgOAAAAMek5pAEAAACJhPjYDgAAAA'];
+                if (!empty($stagingData)) {
+                    $stagingData->setAttributes($attribute);
+                    $stagingData->data_post_status = 0;
+                    $stagingData->picked_datetime = NULL;
+                    $stagingData->response_datetime = NULL;
+                    $stagingData->resp_status = NULL;
+                    $stagingData->resp_desc = NULL;
+                    $saveModel[] = $stagingData;
+                } else {
+                    $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
+                    $ConcateShift = $shift;
+                    $staging->staging_code = $this->model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
+                    $saveModel[] = $staging;
+                }
+                $saveModel[] = $this->model;
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                        $api = new WebApi();
+                        $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
+                        $api->authentication = FALSE;
+                        $bodyData = [
+                            'grant_type' => 'client_credentials',
+                            'client_id' => '20e569c1-4277-462b-b32c-01fc8516b4a8',
+                            'client_secret' => '4wD7Q~o~2sb6uJY77edU7GBNPHDHFs0KFCxz3',
+                            'resource' => 'https://mmd-test.sandbox.operations.dynamics.com'
+                        ];
+                        $api->body = json_encode($bodyData);
+                        $api->header_info = ['Cookie: buid=0.ASoAH-0RLP8NuUaU6Yy-g3F0FxUAAAAAAAAAwAAAAAAAAAAqAAA.AQABAAEAAAD--DLA3VO7QrddgJg7WevrvVFNQrKzy_CROckT6gVKweNqD3cIE_2e6sZvqDLziOl8pO63n7RLdlIlGAuwxD62Enrb1pzwLrCCeemK4klCumlwbqCg2J9DH0skWUTDYnkgAA; esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr6ffEbthd6xIgF9p_ALeJBUHpIFF8fjoU4RbhU6__vXSrMIrFkvh22Pkix_9Le-2mYya7B8dKnuUP_rbwfpzClwoS9Ky7NfwLUT_ZHQKSykQ94qj7dGTJP5ADjUi---2djJon1PEOjTv7Y6o3MstQTGOfn3_UANRXj-6c84mvRDIgAA; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd; fpc=AmO0_u8SW0RBlh7R1d1Hu_TyqFelAQAAACCE-NgOAAAAMek5pAEAAACJhPjYDgAAAA'];
 
-                    $response = $api->SapDataIntegration();
-                    $responseData = json_decode(json_encode($response), true);
+                        $response = $api->SapDataIntegration();
+                        $responseData = json_decode(json_encode($response), true);
 
-                    if (!empty($responseData['token_type']) && !empty($responseData['resource']) && !empty($responseData['access_token'])) {
-                        $shiftLock = new TblMccShiftLockStaging();
-                        $shiftLockData = $shiftLock->getLockShift(10);
+                        if (!empty($responseData['token_type']) && !empty($responseData['resource']) && !empty($responseData['access_token'])) {
+                            $shiftLock = new TblMccShiftLockStaging();
+                            $shiftLockData = $shiftLock->getLockShift(10);
 
-                        foreach ($shiftLockData as $key => $value) {
-                            $body = [];
-                            $loopData = [];
-                            $loopDetailData = [];
-                            $value->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $value->staging_code]);
+                            foreach ($shiftLockData as $key => $value) {
+                                $body = [];
+                                $loopData = [];
+                                $loopDetailData = [];
+                                $value->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $value->staging_code]);
 
-                            $loopData['orderNumber'] = $value->staging_code;
-                            $loopData['vendorAccount'] = 'VADD00099';
-                            $loopData['orderDate'] = date('m-d-Y', strtotime($value->date_time_of_collection));
-                            $loopData['companyId'] = '';
-                            $loopData['sourceSystem'] = '';
+                                $loopData['orderNumber'] = $value->staging_code;
+                                $mccVendor = Yii::$app->general->getforeignkey($value->mccPlantCode, 'vendor_code');
+                                $loopData['vendorAccount'] = !empty($mccVendor) ? $mccVendor : 'VADD00099';
+                                $loopData['orderDate'] = date('m-d-Y', strtotime($value->date_time_of_collection));
+                                $loopData['companyId'] = '';
+                                $loopData['sourceSystem'] = '';
 
-                            $loopDetailData['itemNumber'] = 'RM000001';
-                            $loopDetailData['quantity'] = $value->qty;
-                            $loopDetailData['lineAmount'] = $value->amount;
-                            $loopDetailData['locationId'] = '';
-                            $loopDetailData['FAT'] = $value->avg_fat;
-                            $loopDetailData['SNF'] = $value->avg_snf;
+                                $loopDetailData['itemNumber'] = 'RM000001';
+                                $loopDetailData['quantity'] = $value->qty;
+                                $loopDetailData['lineAmount'] = $value->amount;
+                                $loopDetailData['locationId'] = '';
+                                $loopDetailData['FAT'] = $value->avg_fat;
+                                $loopDetailData['SNF'] = $value->avg_snf;
 
-                            $body['purchaseOrderHeaderRequest'] = $loopData;
-                            $body['purchaseOrderLineRequestList']['list'][] = $loopDetailData;
-                            $postData = [];
-                            $postData = json_encode($body);
+                                $body['purchaseOrderHeaderRequest'] = $loopData;
+                                $body['purchaseOrderLineRequestList']['list'][] = $loopDetailData;
+                                $postData = [];
+                                $postData = json_encode($body);
 
-                            $tokenType = $responseData['token_type'];
-                            $token = $responseData['access_token'];
-                            $resource = $responseData['resource'];
-                            $request_url = $resource . '/api/services/TECServiceGroup/TECServices/savePurchaseOrder';
+                                $tokenType = $responseData['token_type'];
+                                $token = $responseData['access_token'];
+                                $resource = $responseData['resource'];
+                                $request_url = $resource . '/api/services/TECServiceGroup/TECServices/savePurchaseOrder';
 
-                            $api->serverUrl = $request_url;
-                            $api->header_info = ['Authorization: ' . $tokenType . ' ' . $token];
-                            $api->authentication = FALSE;
-                            $api->body = $postData;
+                                $api->serverUrl = $request_url;
+                                $api->header_info = ['Authorization: ' . $tokenType . ' ' . $token];
+                                $api->authentication = FALSE;
+                                $api->body = $postData;
 
-                            $response = $api->ExchangeData();
-                            $responseData = json_decode(json_encode($response), false);
+                                $response = $api->ExchangeData();
+                                $responseData = json_decode(json_encode($response), false);
 
-                            if (!empty($responseData)) {
-                                $status = $responseData->status;
-                                $resp_desc = $responseData->statusDescription;
-                                $value->updateAll(['data_post_status' => 2, 'resp_status' => $status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s'), 'x_col1' => $responseData->guidD365, 'x_col2' => $responseData->fnoOrderNumber], ['staging_code' => $value->staging_code]);
+                                if (!empty($responseData)) {
+                                    $status = $responseData->status;
+                                    $resp_desc = $responseData->statusDescription;
+                                    $value->updateAll(['data_post_status' => 2, 'resp_status' => $status, 'resp_desc' => $resp_desc, 'response_datetime' => date('Y-m-d H:i:s'), 'x_col1' => $responseData->guidD365, 'x_col2' => $responseData->fnoOrderNumber], ['staging_code' => $value->staging_code]);
+                                }
                             }
                         }
                     }
+                    $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
+                } else {
+                    $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
                 }
-                $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
             } else {
-                $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
+                $record = ['status' => 'success', 'msg' => 'Transit Reovery Not Availbale.'];
             }
         }
         Yii::$app->getSession()->setFlash('success');

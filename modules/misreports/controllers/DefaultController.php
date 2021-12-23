@@ -464,10 +464,12 @@ class DefaultController extends \app\controllers\ChildController {
                 $downLoadArray = [];
                 foreach ($this->output as $detail) {
                     $plant = ($model->report_type == 1) ? 'Plant Code' : 'Plant';
-                    if (empty($downLoadArray[$detail[$plant]])) {
-                        $downLoadArray[$detail[$plant]] = [];
+                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                        if (empty($downLoadArray[$detail[$plant]])) {
+                            $downLoadArray[$detail[$plant]] = [];
+                        }
+                        $downLoadArray[$detail[$plant]][] = $detail;
                     }
-                    $downLoadArray[$detail[$plant]][] = $detail;
                 }
                 foreach ($downLoadArray as $bmc => $download) {
                     $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
