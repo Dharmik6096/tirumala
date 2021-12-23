@@ -51,7 +51,7 @@ use app\modules\product\models\TblProduct;
  */
 class TblProductSale extends \app\models\ChildModel {
 
-    public $payment_cycle_code, $available_credit, $customer_name, $ex_code;
+    public $payment_cycle_code, $available_credit, $customer_name, $ex_code, $avl_credit;
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock;
@@ -77,7 +77,7 @@ class TblProductSale extends \app\models\ChildModel {
                 [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
                 [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock'], 'safe'],
+                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit'], 'safe'],
                 [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
                 [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
                 [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
@@ -168,6 +168,7 @@ class TblProductSale extends \app\models\ChildModel {
             'payment_mode' => Yii::t('app', 'Payment Type'),
             'ex_code' => Yii::t('app', 'Code'),
             'customer_name' => Yii::t('app', 'Name'),
+            'avl_credit' => Yii::t('app', 'Available Credit'),
         ];
     }
 
