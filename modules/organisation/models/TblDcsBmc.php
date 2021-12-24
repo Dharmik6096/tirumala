@@ -49,6 +49,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 class TblDcsBmc extends \app\models\ChildModel {
 
     public $is_sentbox, $milk_type_code;
+    public $toEncrypt = ['password'];
 
     /**
      * @inheritdoc
@@ -67,7 +68,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
                 [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
                 [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code'], 'safe'],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check'], 'safe'],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
@@ -92,7 +93,11 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['bmc_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-                [['rate_calculate_on_merge'], 'default', 'value' => 0]
+                [['rate_calculate_on_merge'], 'default', 'value' => 0],
+                [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['antibiotic_check'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -444,6 +449,27 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function encryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model));
+        foreach ($result as $key => $value) {
+            if ($this->hasAttribute($value) && $this->{$value} != '')
+                $model[$value] = \Yii::$app->general->encryptData($model[$value]);
+        }
+
+        return $model;
+    }
+
+    public function decryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model->attributes));
+        foreach ($result as $key => $value) {
+            $decryptData = \Yii::$app->general->decryptData($model->{$value});
+            if ($decryptData) {
+                $model->{$value} = $decryptData;
+            }
+        }
+        return $model;
     }
 
 }

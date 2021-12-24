@@ -219,7 +219,8 @@ class TblMccPlantController extends \app\controllers\ChildController {
                     'id' => $id,
                     'module' => 'mccPlant',
                     'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider
+                    'dataProvider' => $dataProvider,
+                    'mail_info' => TRUE
         ]);
     }
 

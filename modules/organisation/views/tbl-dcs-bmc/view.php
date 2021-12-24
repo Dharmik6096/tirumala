@@ -190,9 +190,22 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'password',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'antibiotic_check',
+                                'value' => isset($model->antibiotic_check) ? Yii::$app->dropdown->getRecords('is_type')['data'][$model->antibiotic_check] : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
                                 'attribute' => 'sap_vendor_code',
                                 'format' => 'html',
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],

@@ -123,7 +123,8 @@ $form = ActiveForm::begin([
         <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
-            'form' => $form
+            'form' => $form,
+            'mail_info' => TRUE
         ])
         ?>
 

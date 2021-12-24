@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
+use app\modules\installation\models\TblUserDownloadAck;
 
 /**
  * This is the model class for table "tbl_user_android".
@@ -58,23 +59,32 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation']],
-            [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['username'], 'unique'],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['name', 'username', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-            [['email'], 'string', 'max' => 128],
-            [['device_id'], 'string', 'max' => 500],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['email'], 'email'],
-            [['mobile_no'], function ($attribute, $params) {
+                [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation', 'importCsv']],
+                [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
+                [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no','device_id'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['username'], 'unique'],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['name', 'username', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['email'], 'string', 'max' => 128],
+                [['device_id'], 'string', 'max' => 500],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['email'], 'email'],
+                [['org_code'], 'setData', 'on' => 'importCsv'],
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"],
-            [['is_active'], 'default', 'value' => 1]
+                [['repeat_password'], 'compare', 'compareAttribute' => 'password', 'message' => "Passwords don't match"],
+                [['is_active'], 'default', 'value' => 1],
+                [['bmc_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
+                }, 'on' => ['importCsv']],
+                [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'on' => ['importCsv']],
+                [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => ['importCsv']],
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['role_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRole::className(), 'targetAttribute' => ['role_code' => 'role_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -280,6 +290,50 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
         }
         $user = $query->all();
         return $user;
+    }
+
+    public function setChildTable(&$model, &$modelSave, &$errors) {
+        if (!empty($model)) {
+            $model->union_code = Yii::$app->general->getforeignkey($model->mccCode, 'union_code');
+            $ackModel = new TblUserDownloadAck();
+            $ackModel->attributes = $model->attributes;
+            $ackModel->download_pending = 1;
+            $ackModel->union_code = $model->union_code;
+            array_push($modelSave, $ackModel);
+
+            if (!empty($model->role_code)) {
+                $map = new TblUserRoleMapping();
+                $map->role_code = $model->role_code;
+                $map->user_code = $model->user_code;
+                array_push($modelSave, $map);
+            }
+            if (!$ackModel->validate()) {
+                $errors[] = $ackModel->getErrors();
+            }
+        }
+    }
+
+    public function setData() {
+        if (!empty($this->org_type)) {
+            if (strtoupper($this->org_type) == 'VLC') {
+                $this->dcs_code = $this->org_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+                $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+                $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+                $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            } else if (strtoupper($this->org_type) == 'BMC') {
+                $this->bmc_code = $this->org_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
+                $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+                $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            } else if (strtoupper($this->org_type) == 'MCC') {
+                $this->mcc_plant_code = $this->org_code;
+                $this->union_code = Yii::$app->general->getforeignkey($this->mccCode, 'union_code');
+                $this->plant_code = Yii::$app->general->getforeignkey($this->mccCode, 'plant_code');
+            } else {
+                $this->addError('org_type', Yii::t('app/validation', 'Invalide Org Type'));
+            }
+        }
     }
 
 }

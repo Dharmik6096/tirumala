@@ -12,19 +12,19 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
  */
 class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
-    public $destination_type, $challan_no, $destination_code;
+    public $destination_type, $challan_no, $destination_code, $antibiotic;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
-            [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
-            [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
-            [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'date_time_of_dispatch'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkDispatch']],
+                [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
+                [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
+                [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
+                [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'date_time_of_dispatch', 'antibiotic'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkDispatch']],
         ];
     }
 
@@ -93,6 +93,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
             'avg_clr' => $this->avg_clr,
             'water' => $this->water,
             'total_amount' => $this->total_amount,
+            'tbl_dcs_milk_dispatch.antibiotic' => $this->antibiotic,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_dcs_milk_dispatch.challan_no', $this->challan_no])

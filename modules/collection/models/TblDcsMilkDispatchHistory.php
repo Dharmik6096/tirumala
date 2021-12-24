@@ -55,7 +55,7 @@ class TblDcsMilkDispatchHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['dcs_milk_dispatch_code', 'challan_no', 'destination_code', 'vehicle_no', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks', 'history_created_by', 'operation_type'], 'safe'],
+            [['dcs_milk_dispatch_code', 'challan_no', 'destination_code', 'vehicle_no', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks', 'history_created_by', 'operation_type','antibiotic'], 'safe'],
             [['date_time_of_dispatch', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['shift_code', 'dispatch_type', 'originating_type', 'destination_type', 'received_timestamp'], 'safe'],
         ];

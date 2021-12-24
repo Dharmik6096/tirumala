@@ -39,7 +39,7 @@ class TblContactDetailsHistory extends \yii\db\ActiveRecord {
         return [
             [['id', 'detail_code', 'department', 'is_verified'], 'safe'],
             [['module_name', 'module_code', 'firstname', 'lastname', 'surname', 'email', 'mobile_no', 'local_firstname', 'local_lastname', 'local_surname', 'created_by', 'updated_by', 'operation_type', 'firstname', 'lastname', 'surname', 'local_firstname', 'local_lastname', 'local_surname'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at', 'is_active', 'is_default', 'history_created_by', 'remarks'], 'safe'],
+            [['created_at', 'updated_at', 'history_created_at', 'is_active', 'is_default', 'history_created_by', 'remarks', 'email_to', 'email_cc', 'email_bcc'], 'safe'],
         ];
     }
 

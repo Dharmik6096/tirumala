@@ -102,6 +102,9 @@ $attribute = [
             return isset($model->converted_qty_mode) ? Yii::$app->dropdown->getRecords('p_ltr_kg')['data'][$model->converted_qty_mode] : '';
         }, 'filter' => false, 'visible' => FALSE],
     ['attribute' => 'water', 'filter' => false, 'visible' => FALSE],
+    ['attribute' => 'antibiotic', 'value' => function($model) {
+            return Yii::$app->general->getStaticValue($model->dcsMilkDispatch->antibiotic, 'antibiotic');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('antibiotic', $searchModel, 'antibiotic')],
 ];
 
 $grid_option = [

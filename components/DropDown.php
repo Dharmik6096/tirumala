@@ -722,7 +722,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1244,6 +1244,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'Increase Rate'), 2 => Yii::t('app', 'Decrease Rate')],
             ],
+            'antibiotic' => [
+                'name' => 'antibiotic',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'Not Tested' => Yii::t('app', 'Not Tested')],
+            ],
+            'collection' => [
+                'name' => 'collection',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['consecutive' => Yii::t('app', 'consecutive'), 'non-consecutive' => Yii::t('app', 'non-consecutive')],
+            ],
+            'send_status' => [
+                'name' => 'send_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
+            ],
         ];
         return $records[$l];
     }
@@ -1348,6 +1363,8 @@ class DropDown extends Component {
             'role_code' => ['name' => 'role_code', 'fields' => 'role_code,description', 'prompt' => 'Select Role', 'model' => 'TblRole'],
             'penalty_type' => ['name' => 'penalty_type', 'fields' => 'penalty_type_code,penalty_type,', 'prompt' => Yii::t('app', 'Select Penalty Type'), 'model' => 'TblCollectionPenaltyType', 'depend' => 'union_code'],
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
+            'device_code' => ['name' => 'weight_device_code', 'fields' => 'interfacing_device_code,device_name,', 'prompt' => Yii::t('app', 'Select Device'), 'model' => 'TblInterfacingDevice', 'depend' => 'union_code', 'dependArray' => ['device_type']],
+//            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
         ];
         return $label[$l];
     }
@@ -1434,7 +1451,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

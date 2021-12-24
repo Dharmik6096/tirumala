@@ -77,6 +77,7 @@ class ReportsModel extends Model {
                 [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift', 'CleaningFormat']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SapMilkCollectionData']],
+                [['from_date', 'to_date'], 'required', 'on' => ['AlertNotification']],
         ];
     }
 

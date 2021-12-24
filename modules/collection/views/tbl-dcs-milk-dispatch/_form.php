@@ -22,6 +22,7 @@ use kartik\grid\GridView;
 </div>
 <?php
 $script = "
+    var eiplCode = '" . Yii::$app->session->get('eiplCode') . "';
     gridChange();
    
     $(document).on('change', '#tbldcsmilkdispatch-plant_code', function() {  
@@ -37,8 +38,13 @@ $script = "
     $(document).on('change', '#tbldcsmilkdispatch-date_time_of_dispatch', function() {  
         gridChange();
     });
-    $(document).on('change', '#tbldcsmilkdispatch-shift_code', function() {  
-        gridChange();
+    $(document).on('change', '#tbldcsmilkdispatch-shift_code', function() { 
+            gridChange();
+    });
+    $(document).on('change', '#tbldcsmilkdispatch-antibiotic', function() {  
+        if(eiplCode =='PRABHAT'){
+            gridChange();
+        }
     });
     function gridChange(){
        $('.add-collection').prop('disabled',true);
@@ -49,9 +55,16 @@ $script = "
         var mcc = $('#tbldcsmilkdispatch-mcc_plant_code').val();
         var date = $('#tbldcsmilkdispatch-date_time_of_dispatch').val();
         var shift = $('#tbldcsmilkdispatch-shift_code').val();
-        if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift)){
-            $('.add-collection').removeAttr('disabled');
-        } 
+        var antibiotic = $('#tbldcsmilkdispatch-antibiotic').val();
+        if(eiplCode =='PRABHAT'){
+            if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift) && setData(antibiotic)){
+                $('.add-collection').removeAttr('disabled');
+            } 
+        } else{
+            if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift)){
+                $('.add-collection').removeAttr('disabled');
+            } 
+        }
         
     }
     function setData(field = ''){

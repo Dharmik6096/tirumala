@@ -7,6 +7,8 @@ use yii\helpers\Url;
 
 //Url::remember();
 $form_validation_type = !empty($form_validation_type) ? $form_validation_type : 'default';
+$mail_info = !empty($mail_info) ? $mail_info : ($module == 'mccPlant' ? TRUE : FALSE);
+
 $url = Url::to(['/details/tbl-contact-details/create', 'module' => $module, 'id' => $id, 'form_validation_type' => $form_validation_type]);
 $this->title = Yii::$app->label->title('create', 'Contact Detail');
 ?>
@@ -18,7 +20,6 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
         $form = ActiveForm::begin([
                     'action' => $url,
                     'validateOnBlur' => false,
-                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -30,31 +31,32 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
             $this->render('_form', [
                 'model' => $model,
                 'form' => $form,
+                'mail_info' => $mail_info,
             ])
             ?>
             <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
-                            <?= Yii::$app->controls->reset(); ?>
-                            <?= Yii::$app->controls->cancel($model); ?>
-                        </div>
-                    </div>
-                </div>
-                <?php ActiveForm::end(); ?>
-                <div class="row">
-            <div class="form-grid">
-                        <?=
-                        $this->render('_form_grid', [
-                            'dataProvider' => $dataProvider,
-                            'searchModel' => $searchModel,
-                        ])
-                        ?>
-                    </div>
+                    <?= Yii::$app->controls->reset(); ?>
+                    <?= Yii::$app->controls->cancel($model); ?>
                 </div>
             </div>
         </div>
-        <?php
-        $script = "
+        <?php ActiveForm::end(); ?>
+        <div class="row">
+            <div class="form-grid">
+                <?=
+                $this->render('_form_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+$script = "
      $('.edit-record').on('click',function(event){       
         var id= $(this).attr('data-val');
         editContactDetail(id);
@@ -83,5 +85,5 @@ $this->title = Yii::$app->label->title('create', 'Contact Detail');
             }
     };
 ";
-        $this->registerJs($script, View::POS_END, 'panel-before-hide');
-        ?>
+$this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>

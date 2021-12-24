@@ -701,4 +701,109 @@ class SchedulerController extends ChildController {
         }
     }
 
+    public function actionAdulteratedMilk() {
+        $apiMaster = new TblApiMaster();
+        $apiMaster->receiver_type = 'EMAIL';
+        $apiMasterData = $apiMaster->getAPI();
+
+        if (!empty($apiMasterData)) {
+
+            $message = 'ADULTERATED MILK COLLECTION AT MCC';
+            $sp_name = 'portal_sp_adultrated_milk';
+            $controls = [];
+            $controls['date'] = date('Y-m-d');
+            $Output = \Yii::$app->general->getSpData($sp_name, $controls);
+            $mccWiseArray = [];
+            if (!empty($Output)) {
+
+                foreach ($Output as $result) {
+                    $mccCode = $result['mcc_plant_code'];
+                    if (empty($mccWiseArray[$mccCode])) {
+                        $mccWiseArray[$mccCode] = [];
+                    }
+                    $mccWiseArray[$mccCode][] = $result;
+                }
+                if (!empty($mccWiseArray)) {
+
+                    foreach ($mccWiseArray as $mccData) {
+                        $htmlContent = "";
+                        $this->setAdulteratedMilkHtmlContent($htmlContent, $mccData);
+                        $from = $apiMasterData->url;
+                        $contactModel = new TblContactDetails();
+                        $contactModel->module_code = $mccData[0]['mcc_plant_code'];
+                        $contactModel->module_name = 'mccPlant';
+                        $contactData = $contactModel->getContactDetail();
+                        if (!empty($contactData) && !empty($contactData->email_to)) {
+                            $to = $contactData->email_to;
+                            $cc = $contactData->email_cc;
+                            $bcc = $contactData->email_bcc;
+
+                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $message, $htmlContent, FALSE, '', '', $bcc);
+                            $notificationModel = new TblAlertNotification();
+                            $notificationModel->receiver_type = 'EMAIL';
+                            $notificationModel->message = $htmlContent;
+                            $notificationModel->header_info = $message;
+                            $notificationModel->send_status = 1;
+                            $notificationModel->content_id = $apiMasterData->api_master_id;
+                            $notificationModel->module_type = "Adultration Mail";
+                            $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                            $notificationModel->send_mail = 1;
+                            $notificationModel->receiver_detail = $to;
+                            $notificationModel->filename = NULL;
+                            $notificationModel->file_path = NULL;
+                            $notificationModel->save();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function setAdulteratedMilkHtmlContent(&$htmlContent, &$Output) {
+
+        $labelArray = !empty($Output) ? array_keys($Output[0]) : [];
+        $htmlContent .= "<table cellpadding='5'  cellspacing='0'><tbody>";
+        $htmlContent .= "<tr>";
+        $htmlContent .= "<td colspan='2'><b>ADULTERATED MILK REPORT</b></td>";
+        $htmlContent .= "</tr>";
+        $htmlContent .= "</tbody></table>";
+        $htmlContent .= '<p>Dear AM, <br/>';
+        $htmlContent .= '<br/><br/>Please find below details of adulterated milk collected with deviation at your MCC. </p>';
+        $htmlContent .= '<br/>';
+
+        $htmlContent .= "<table border='1'>";
+        $htmlContent .= "<tr>";
+        foreach ($labelArray as $a) {
+            if ($a != 'mcc_plant_code') {
+                $htmlContent .= "<td>" . $a . "</td>";
+            }
+        }
+        $htmlContent .= "</tr>";
+        foreach ($Output as $row) {
+            $htmlContent .= "<tr>";
+            foreach ($labelArray as $a) {
+                if ($a != 'mcc_plant_code') {
+                    $dispData = '';
+                    if (isset($row[$a]) && $row[$a] != '' && $row[$a] != null) {
+                        $dispData = $row[$a];
+                    }
+                    $value = $dispData;
+                    if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+                        $htmlContent .= "<td>" . $value . "</td>";
+                    } else if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && (substr($value, 0, 1) == '.' || (substr($value, 0, 1) == '0' && substr($value, 1, 1) == '.'))) {
+                        if (substr($value, 0, 1) == '.') {
+                            $htmlContent .= "<td>0" . $value . "</td>";
+                        } else {
+                            $htmlContent .= "<td>" . substr($value, 0, 2) . "</td>";
+                        }
+                    } else {
+                        $htmlContent .= "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
+                    }
+                }
+            }
+            $htmlContent .= "</tr>";
+        }
+        $htmlContent .= "</table>";
+    }
+
 }
