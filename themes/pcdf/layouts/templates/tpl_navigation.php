@@ -61,6 +61,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
             ],
         ],
             [
@@ -152,6 +153,14 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Dispatch With Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 1], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') != 0),],
                     ['label' => Yii::t('app', 'Product Dispatch Without Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
                     ['label' => Yii::t('app', 'PM Advance'), 'url' => ['/payment/tbl-loan-product-sale-details/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-loan-product-sale-details') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
+                    [
+                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
+                            ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
+                    ]
+                ],
             ],
         ],
             [
@@ -543,6 +552,15 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Trend') . '<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
+                    ]
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Inventory') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Stock Summary'), 'url' => ['/misreports/reports/stock-summary']],
+                            ['label' => Yii::t('app', 'Stock Detail'), 'url' => ['/misreports/reports/stock-detail']],
+                            ['label' => Yii::t('app', 'Stock Detail Summary'), 'url' => ['/misreports/reports/stock-detail-summary']],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

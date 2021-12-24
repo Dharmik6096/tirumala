@@ -709,6 +709,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionStockSummary() {
+        $this->report = 'StockSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionStockDetail() {
+        $this->report = 'StockDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionStockDetailSummary() {
+        $this->report = 'StockDetailSummary';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1843,6 +1858,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_alert_notification_list',
                 'scenario' => 'AlertNotification',
                 'title' => 'Alert Notification',
+            ],
+            'StockSummary' => [
+                'param' => 'union_code,mcc_code:union_code,product_code,p_date:string',
+                'sp_name' => 'sp_product_stock_summary',
+                'scenario' => 'StockSummary',
+                'title' => 'Stock Summary',
+            ],
+            'StockDetail' => [
+                'param' => 'org_type,union_code,mcc_code:union_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_product_stock_detail',
+                'scenario' => 'StockDetail',
+                'title' => 'Stock Detail',
+            ],
+            'StockDetailSummary' => [
+                'param' => 'org_type,union_code,mcc_code:union_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_product_stock_detail_summary',
+                'scenario' => 'StockDetailSummary',
+                'title' => 'Stock Detail Summary',
             ],
         ];
         return $label[$l];

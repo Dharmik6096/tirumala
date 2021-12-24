@@ -422,4 +422,12 @@ class TblMccPlant extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getValidMcc($mcc) {
+        $data = $this->find()->select('mcc_plant_code')->where(['mcc_plant_code' => $mcc])->andWhere(['is_active' => 1])->all();
+        if (empty($data)) {
+            $data = $this->find()->select('mcc_plant_code')->where(['or', ['mcc_plant_code' => $mcc], ['mcc_plant_code_ex' => $mcc], ['ref_code' => $mcc]])->andWhere(['is_active' => 1])->all();
+        }
+        return !empty($data) && count($data) == 1 ? $data[0]->mcc_plant_code : '';
+    }
+
 }

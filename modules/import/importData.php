@@ -129,6 +129,9 @@ class importData extends \yii\base\Module {
             'milk-collection-qlty-allow-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,dcs_code,member_code,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount', 'scenario' => 'milk_collection_qlty_allow'],
             'bmc-mapped-collection-allow-bulk' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'own_bmc_code,bmc_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time', 'scenario' => 'bmc_collection_mapped_allow'],
             'user-android' => ['table_name' => 'tbl_user_android', 'fields' => 'org_type,org_code,name,username,password,repeat_password,mobile_no,role_code,email,is_active', 'increment' => 1, 'scenario' => 'importCsv', 'save_child' => true],
+            'vendor-master' => ['table_name' => 'tbl_vendor_master', 'fields' => 'union_code,vendor_code,vendor_name,pan_no,aadhaar_no,contact_person,local_contact_person,middle_name,local_middlename,surname,local_surname,email,mobile_no,department', 'save_child' => true, 'scenario' => 'importCsv'],
+            'grn' => ['table_name' => 'tbl_grn', 'fields' => 'grn_date,vendor_code,mcc_plant_code,invoice_no,invoice_date,product_code,rate,received_qty,rejected_qty,tax', 'save_child' => true, 'scenario' => 'importCsv'],
+            'inventory-transfer' => ['table_name' => 'tbl_inventory_transfer', 'fields' => 'inventory_transfer_no,inventory_transfer_date,from_type,from_code,to_type,to_code,remarks,product_code,qty', 'save_child' => true, 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

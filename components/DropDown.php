@@ -1259,6 +1259,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Pending'), 1 => Yii::t('app', 'Picked'), 2 => Yii::t('app', 'Success'), 3 => Yii::t('app', 'Error')],
             ],
+            'org_type' => [
+                'name' => 'org_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -1365,6 +1370,7 @@ class DropDown extends Component {
             'product_group' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name,local_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup', 'depend' => 'union_code'],
             'device_code' => ['name' => 'weight_device_code', 'fields' => 'interfacing_device_code,device_name,', 'prompt' => Yii::t('app', 'Select Device'), 'model' => 'TblInterfacingDevice', 'depend' => 'union_code', 'dependArray' => ['device_type']],
 //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
+            'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
