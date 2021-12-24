@@ -7,7 +7,6 @@ use yii\web\View;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -17,12 +16,12 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-3" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form,'union_code','Union'); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
     <div class="col-sm-3">
         <?php Yii::$app->dropdown->depend_dropdown('bmc', $model, $form, 'tblroutes-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'BMC'); ?>
     </div>
-   <div class="col-sm-3">
+    <div class="col-sm-3">
         <?= $form->field($model, 'route_name')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-3">
@@ -48,6 +47,9 @@ $form = ActiveForm::begin([
         $form->field($model, 'return_time')->widget(\yii\widgets\MaskedInput::className(), [
             'mask' => '99:99',])->label('Return Time (24 Hrs)')
         ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
     </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->active($model, $form); ?>

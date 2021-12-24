@@ -6,6 +6,7 @@ use Yii;
 use app\models\TblUsers;
 use yii\helpers\ArrayHelper;
 use app\models\ChildModel;
+
 /**
  * This is the model class for table "tbl_routes".
  *
@@ -48,25 +49,26 @@ class TblRoutes extends ChildModel {
      */
     public function rules() {
         return [
-            [['route_code','union_code', 'federation_code', 'route_name','vehicle_type_code','bmc_code'], 'required'],
-            [['route_code', 'route_name'], 'unique','message'=>'{attribute} has already been taken.'],
-            [['route_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateName($this, $attribute,$params);
-                },'skipOnEmpty'=> false],
-             [['local_name'], function ($attribute, $params) {
-                Yii::$app->general->vaildateLocalField($this, $attribute,$params);
-            },'skipOnEmpty'=> false],
-            [['start_time','return_time'],'timeValidation'],
-            [['start_time'],'rangeValidation'],
-            [['capacity'], 'integer', 'max' => 1000, 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1'],
-            [['capacity', 'vehicle_type_code'], 'integer'],
-            [[ 'is_active','created_at', 'updated_at', 'union_code','federation_code','route_length_kms'], 'safe'],
-            [['route_name'], 'string', 'max' => 255],
-            [['route_length_kms'], 'integer','message'=> Yii::t('app/validation', '{attribute} must be a digit. e.g. "15"')],
-            [['return_time', 'start_time', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['union_code'], 'string', 'max' => 3],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code']],
+                [['route_code', 'union_code', 'federation_code', 'route_name', 'vehicle_type_code', 'bmc_code'], 'required'],
+                [['route_code', 'route_name'], 'unique', 'message' => '{attribute} has already been taken.'],
+                [['route_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['local_name'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['start_time', 'return_time'], 'timeValidation'],
+                [['start_time'], 'rangeValidation'],
+                [['capacity'], 'integer', 'max' => 1000, 'min' => 1, 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "01".'), 'tooBig' => '{attribute} Should be less than 999', 'tooSmall' => '{attribute} Should be greater than 1'],
+                [['capacity', 'vehicle_type_code'], 'integer'],
+                [['is_active', 'created_at', 'updated_at', 'union_code', 'federation_code', 'route_length_kms', 'sap_vendor_code'], 'safe'],
+                [['route_name'], 'string', 'max' => 255],
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['route_length_kms'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "15"')],
+                [['return_time', 'start_time', 'created_by', 'updated_by'], 'string', 'max' => 14],
+                [['union_code'], 'string', 'max' => 3],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code']],
         ];
     }
 
@@ -74,8 +76,8 @@ class TblRoutes extends ChildModel {
 
         if (!empty($this->$attribute)) {
             $starttime = explode(':', $this->$attribute);
-            if($starttime[0]>23 || $starttime[1]>59){
-                $this->addError($attribute, $this->getAttributeLabel($attribute).' is not valid.');
+            if ($starttime[0] > 23 || $starttime[1] > 59) {
+                $this->addError($attribute, $this->getAttributeLabel($attribute) . ' is not valid.');
                 return false;
             }
         }
@@ -86,8 +88,8 @@ class TblRoutes extends ChildModel {
         if (!empty($this->start_time) && !empty($this->return_time)) {
             $starttime = explode(':', $this->start_time);
             $return_time = explode(':', $this->return_time);
-            if($starttime[0]>$return_time[0] || ($starttime[0]==$return_time[0] && $starttime[1]>$return_time[1])){
-                $this->addError($attribute, $this->getAttributeLabel($attribute).' can not be greater then Return Time.');
+            if ($starttime[0] > $return_time[0] || ($starttime[0] == $return_time[0] && $starttime[1] > $return_time[1])) {
+                $this->addError($attribute, $this->getAttributeLabel($attribute) . ' can not be greater then Return Time.');
                 return false;
             }
         }
@@ -154,6 +156,7 @@ class TblRoutes extends ChildModel {
     public function getVehicleType() {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -175,34 +178,36 @@ class TblRoutes extends ChildModel {
     public static function find() {
         return new TblRoutesQuery(get_called_class());
     }
+
     public function getDcsCodes() {
         return $this->hasMany(TblDcs::className(), ['route_code' => 'route_code']);
     }
+
     public function getActiveRoutes() {
         $value = $this->find()->where(['is_active' => 1])->all();
         return ArrayHelper::map($value, 'route_code', 'route_name');
     }
-    
-    public function getTblDcsBmc(){
+
+    public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code'])->andwhere(['tbl_bmc.is_active' => 1]);
     }
 
-    public function getCode(){
-        $data=  $this->find()->select(["MAX(CONVERT(bigint,route_code)) as route_code"])->one();       
-        return str_pad(((int)$data['route_code']+1),8,'0',STR_PAD_LEFT);
-        
+    public function getCode() {
+        $data = $this->find()->select(["MAX(CONVERT(bigint,route_code)) as route_code"])->one();
+        return str_pad(((int) $data['route_code'] + 1), 8, '0', STR_PAD_LEFT);
     }
 
-    public  function getRoutes($unionCode){
-         $route = $this->find()->where(['union_code'=>$unionCode,'is_active'=>1])->all();
-         $route = ArrayHelper::map($route, 'route_code', 'route_name');
-         asort($route,SORT_NATURAL | SORT_FLAG_CASE);
-         return $route;
-     }
-     
-    public function route($bmc_code){
+    public function getRoutes($unionCode) {
+        $route = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1])->all();
+        $route = ArrayHelper::map($route, 'route_code', 'route_name');
+        asort($route, SORT_NATURAL | SORT_FLAG_CASE);
+        return $route;
+    }
+
+    public function route($bmc_code) {
         $data = $this->find()->where(['bmc_code' => $bmc_code])->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'route_code', 'route_name');
         return $array;
     }
+
 }
