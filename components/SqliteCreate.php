@@ -105,7 +105,17 @@ class SqliteCreate extends Component {
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
                                 } else {
                                     $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
-                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in ($whereKeyField)";
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
+                                    $whereKey = $field['key_field'];
+                                    if ($tableName == 'tbl_member') {
+                                        $currDate = date('Y-m-d');
+                                        if ($field['key_field'] == 'dcs_code') {
+                                            $whereKey = 'tbl_member.' . $field['key_field'];
+                                        }
+                                        $sql .= ' left join tbl_member_deactive md on md.member_code = tbl_member.member_code and (\'' . $currDate . '\' between CAST(md.from_date as date) and CAST(ISNULL(md.to_date, getdate()) as date)) ';
+                                        $sql = str_replace('tbl_member.is_active', ' CASE WHEN md.from_date is null THEN tbl_member.is_active ELSE 0 END as is_active ', $sql);
+                                    }
+                                    $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
                                 }
                             }
                         } else {
@@ -115,6 +125,10 @@ class SqliteCreate extends Component {
                         if (!empty($sql) && in_array($tableName, ['tbl_purchase_rate_applicability', 'tbl_purchase_rate', 'tbl_purchase_rate_based', 'tbl_purchase_rate_details'])) {
                             $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
                             $sql .= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in ($whereKeyField)" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= \'' . $current_date . '\' order by wef_date DESC)';
+                        }
+                        if ($tableName == 'tbl_member') {
+                            echo $sql;
+                            die('adasd');
                         }
                         if (!empty($sql)) {
                             $cmd = $this->export_db->createCommand($sql);
