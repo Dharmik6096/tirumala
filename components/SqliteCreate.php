@@ -126,10 +126,6 @@ class SqliteCreate extends Component {
                             $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
                             $sql .= ' and tbl_purchase_rate_applicability.is_active=1 and tbl_purchase_rate_applicability.wef_date >= (select TOP(1) wef_date from tbl_purchase_rate_applicability where ' . $field['key_field'] . " in ($whereKeyField)" . '  and tbl_purchase_rate_applicability.is_active=1 and CAST(wef_date as date) <= \'' . $current_date . '\' order by wef_date DESC)';
                         }
-                        if ($tableName == 'tbl_member') {
-                            echo $sql;
-                            die('adasd');
-                        }
                         if (!empty($sql)) {
                             $cmd = $this->export_db->createCommand($sql);
                             $dataReader = $cmd->queryAll();
