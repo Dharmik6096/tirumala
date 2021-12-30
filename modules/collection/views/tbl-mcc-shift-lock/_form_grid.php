@@ -48,7 +48,7 @@ $grid_option = [
                 $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data'], $options);
             } else {
-                $class = !empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
+                $class = ''; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
                 $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'UN-LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data'], $options);
             }
