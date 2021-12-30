@@ -221,17 +221,17 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                         if (!empty($mobile)) {
                             if (strtolower($antibioticTest) == 'not tested') {
                                 $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}");
-                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $amount);
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, bcdiv($amount));
                             } else if (strtoupper($antibioticTest) == 'AB+') {
                                 $flagVal = $p_config * $qty;
                                 $mainAmount = $amount + $flagVal;
                                 $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}", "{flag}", "{cal_val}");
-                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $mainAmount, $p_config, $flagVal);
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, bcdiv($mainAmount), $p_config, bcdiv($flagVal));
                             } else if (strtoupper($antibioticTest) == 'AB-') {
                                 $flagVal = (float) $n_config * (float) $qty;
                                 $mainAmount = $amount + $flagVal;
                                 $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}", "{flag}", "{cal_val}");
-                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, $mainAmount, $n_config, $flagVal);
+                                $arrTo = array($memberName, $ex_code, $date, $shift, $milk_type, $qty, $fat, $snf, $rtpl, bcdiv($mainAmount), $n_config, bcdiv($flagVal));
                             }
                             $word = $templateData->message;
                             $message = str_replace($arrFrom, $arrTo, $word);
