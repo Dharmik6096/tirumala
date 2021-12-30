@@ -15,6 +15,7 @@ use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblBmcCollectionHistory;
 use app\modules\collection\models\TblDcsMilkDispatch;
 use app\modules\collection\models\TblDcsMilkDispatchTxn;
+use app\modules\collection\models\TblMilkCollectionHistory;
 
 /**
  * TblCollectionDataAliasController implements the CRUD actions for TblCollectionDataAlias model.
@@ -45,6 +46,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
+                                    $historyModel = new TblMilkCollectionHistory();
+                                    Yii::$app->operation->history($existMainData, $historyModel, 'UPDATE');
+                                    $saveModel[] = $historyModel;
                                     $existMainData->attributes = $existData->attributes;
                                     $saveModel[] = $existMainData;
                                 }
@@ -52,6 +56,9 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                 $MainModel = new TblMilkCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
+                                    $historyModel = new TblMilkCollectionHistory();
+                                    Yii::$app->operation->history($existMainData, $historyModel, 'DELETE');
+                                    $saveModel[] = $historyModel;
                                     $deleteModel[] = $existMainData;
                                 }
                             }
@@ -135,12 +142,25 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                             } else if ($action == 'UPDATE') {
                                 $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
-                                $existMainData->attributes = $existData->attributes;
-                                $saveModel[] = $existMainData;
+                                if (!empty($existMainData)) {
+                                    $historyModel = new TblBmcCollectionHistory();
+                                    Yii::$app->operation->history($existMainData, $historyModel, 'UPDATE');
+                                    $saveModel[] = $historyModel;
+                                    $existMainData->attributes = $existData->attributes;
+                                    $saveModel[] = $existMainData;
+                                }
+//                                $existMainData->attributes = $existData->attributes;
+//                                $saveModel[] = $existMainData;
                             } else if ($action == 'DELETE') {
                                 $MainModel = new TblBmcCollection();
                                 $existMainData = $MainModel->getExistingCollection($existData);
-                                $deleteModel[] = $existMainData;
+                                if (!empty($existMainData)) {
+                                    $historyModel = new TblBmcCollectionHistory();
+                                    Yii::$app->operation->history($existMainData, $historyModel, 'DELETE');
+                                    $saveModel[] = $historyModel;
+                                    $deleteModel[] = $existMainData;
+                                }
+//                                $deleteModel[] = $existMainData;
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
