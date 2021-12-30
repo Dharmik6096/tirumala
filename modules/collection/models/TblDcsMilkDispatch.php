@@ -206,7 +206,8 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                     foreach ($collectionData as $collection) {
                         $memberName = Yii::$app->general->getforeignkey($collection->memberCode, 'member_name');
                         $mobile = Yii::$app->general->getforeignkey($collection->memberCode, 'mobile_no');
-                        $ex_code = Yii::$app->general->getforeignkey($collection->memberCode, 'ex_member_code');
+                        $farmerCode = Yii::$app->general->getforeignkey($collection->memberCode, 'farmer_code');
+                        $excode = Yii::$app->general->getforeignkey($collection->memberCode, 'ex_member_code');
                         $date = date("d M Y", strtotime($collection->date_time_of_collection));
                         $shift = $collection->shift_code == 1 ? 'M' : ($collection->shift_code == 2 ? 'E' : $collection->shift_code);
                         $milk_type = strtoupper(Yii::$app->general->getforeignkey($collection->milkTypeCode, 'short_name'));
@@ -217,7 +218,8 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                         (float) $amount = $collection->amount;
                         $arrFrom = '';
                         $arrTo = '';
-
+                        $ex_code = !empty($farmerCode) ? $farmerCode : $excode;
+                     
                         if (!empty($mobile)) {
                             if (strtolower($antibioticTest) == 'not tested') {
                                 $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}");
