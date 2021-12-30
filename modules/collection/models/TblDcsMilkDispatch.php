@@ -13,6 +13,7 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\collection\models\TblMilkCollection;
+use app\modules\sms\models\TblApiMaster;
 
 /**
  * This is the model class for table "tbl_dcs_milk_dispatch".
@@ -182,15 +183,17 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public function setTransactionData($model) {
         $union = $model->union_code;
+        $apiData = TblApiMaster::find()->where(['union_code' => $union, 'receiver_type' => 'SMS', 'is_active' => 1])->one();
         $unionData = TblUnions::find()->where(['union_code' => $union, 'is_active' => 1])->one();
         $dcsData = TblDcs::find()->where(['union_code' => $union, 'dcs_code' => $model->dcs_code])->one();
         $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
         $antibioticCheck = !empty($dcsData->antibiotic_check) ? ($dcsData->antibiotic_check) : '';
         if ((Yii::$app->session->get('eiplCode') == 'PRABHAT' || $eiplCode == 'PRABHAT') && $antibioticCheck == 1) {
             $antibioticTest = $model->antibiotic;
-            (float) $p_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_positive', 'PORTAL');
-            (float) $n_config = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_negative', 'PORTAL');
-
+            $pconfig = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_positive', 'PORTAL');
+            $nconfig = Yii::$app->general->getUnionConfiguration($union, 'antibiotic_negative', 'PORTAL');
+            $p_config = !empty($pconfig) ? (float) $pconfig : 0;
+            $n_config = !empty($nconfig) ? (float) $nconfig : 0;
             if (!empty($antibioticTest)) {
                 $milkCollection = new TblMilkCollection();
                 $collectionData = $milkCollection->getCollectionData($model);
@@ -234,10 +237,11 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                             $message = str_replace($arrFrom, $arrTo, $word);
                             $sms_data['refecence_code'] = (string) $collection->milk_collection_code;
                             $sms_data['module_type'] = $module;
+                            $content_id = !empty($apiData->api_master_id) ? $apiData->api_master_id : '';
 //                            if (YII_ENV_DEV) {
 //                                
 //                            } else {
-                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, TRUE, $templateData->header_info);
+                            Yii::$app->general->saveAlertNotification($mobile, $message, $sms_data, TRUE, $templateData->header_info, $content_id);
                             $collection->updateAll(['antibiotic_sms_sent' => 1], ['milk_collection_code' => $collection->milk_collection_code]);
 //                            }
                         }
@@ -249,9 +253,9 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-        if ($flag == 'INSERT') {
-            $this->setTransactionData($this);
-        }
+//        if ($flag == 'INSERT') {
+        $this->setTransactionData($this);
+//        }
     }
 
 }
