@@ -130,7 +130,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $fstockTxnModel;
 
                 $receipt = new TblProductReceipt();
-                $receipt->product_receipt_code = Yii::$app->general->getCodeAutoIncrement($receipt);
+                $receipt->product_receipt_code = Yii::$app->general->getPrimaryCode($receipt);
                 $receipt->grn_no = '1234';
                 $receipt->grn_date = date('Y-m-d');
                 $receipt->vendor_type = $this->model->from_type;
@@ -142,7 +142,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receipt->dcs_code = $fstockModel->dcs_code;
                 $modelSave[] = $receipt;
                 $receiptTxn = new TblProductReceiptTransaction();
-                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxn);
+                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
                 $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
                 $receiptTxn->product_code = $fstockModel->product_code;
                 $receiptTxn->received_quantity = '-' . $qty;
@@ -197,7 +197,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $stockTxnModel;
 
                 $receiptTo = new TblProductReceipt();
-                $receiptTo->product_receipt_code = Yii::$app->general->getCodeAutoIncrement($receiptTo, $i);
+                $receiptTo->product_receipt_code = Yii::$app->general->getPrimaryCode($receiptTo);
                 $receiptTo->grn_no = '1234';
                 $receiptTo->grn_date = date('Y-m-d');
                 $receiptTo->vendor_type = $this->model->to_type;
@@ -209,7 +209,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receiptTo->dcs_code = $stockModel->dcs_code;
                 $modelSave[] = $receiptTo;
                 $receiptTxnTo = new TblProductReceiptTransaction();
-                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getCodeAutoIncrement($receiptTxnTo, $i);
+                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTo, $receiptTxnTo->product_receipt_code, $i);
                 $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                 $receiptTxnTo->product_code = $stockModel->product_code;
                 $receiptTxnTo->received_quantity = $stockModel->stock;
