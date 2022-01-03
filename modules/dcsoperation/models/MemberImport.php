@@ -19,7 +19,7 @@ use app\modules\organisation\models\TblBanksDistrictsMapping;
 
 class MemberImport extends TblMember {
 
-    public $import_union_code, $import_eipl_code, $sap_farmer_code;
+    public $import_union_code, $import_eipl_code;
 
     public function rules() {
         $main_rules = [
