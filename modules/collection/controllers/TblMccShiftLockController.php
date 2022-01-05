@@ -308,4 +308,178 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionIndexOther() {
+        $searchModel = new TblMccShiftLockSearch();
+        $searchModel->scenario = 'shiftLock';
+        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_other');
+
+        return $this->render('index_other', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage) {
+        $saveModel = [];
+        $model = new TblMccShiftLock();
+        $model->mcc_plant_code = $mcc;
+        $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
+        $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
+        $model->date_time_of_collection = $date;
+        $model->shift_code = $shift;
+        $model->qty = $qty;
+        $model->avg_fat = $fat;
+        $model->avg_snf = $snf;
+        $model->amount = $amount;
+        $model->{$updateField} = $val;
+        $modelData = $model->getExistData();
+        $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
+
+        if (!empty($modelData)) {
+            $historyModel = new TblMccShiftLockHistory();
+            Yii::$app->operation->history($modelData, $historyModel, UPDATE);
+            $modelData->{$updateField} = $val;
+            $saveModel[] = $historyModel;
+            if ($modelData->bmc_lock == 1 && $modelData->member_lock == 1 && $modelData->product_sale_lock) {
+                $modelData->data_lock = 1;
+            }
+            $saveModel[] = $modelData;
+        } else {
+            $model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($model);
+            $saveModel[] = $model;
+        }
+
+        $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
+        }
+        return $this->redirect(['index-other']);
+    }
+
+    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
+    }
+
+    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
+    }
+
+    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    }
+
+    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC');
+    }
+
+    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member');
+    }
+
+    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    }
+
+    public function actionLockDataOther() {
+        $union = Yii::$app->request->get()['union'];
+        $plant = Yii::$app->request->get()['plant'];
+        $mcc = Yii::$app->request->get()['mcc'];
+        $date = Yii::$app->request->get()['date'];
+        $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
+        $saveModel = [];
+        if (!empty($mcc)) {
+            $this->model = new TblMccShiftLock();
+            $this->model->union_code = $union;
+            $this->model->plant_code = $plant;
+            $this->model->mcc_plant_code = $mcc;
+            $this->model->date_time_of_collection = $date;
+            $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
+            $this->model->bmc_lock = $amount;
+            $this->model->amount = $amount;
+            $this->model->amount = $amount;
+            $existData = $this->model->getExistData();
+
+            if (!empty($existData)) {
+                $this->model = $this->findModel($existData->shift_lock_code);
+                $historyModel = new TblMccShiftLockHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+            } else {
+                $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            }
+            $this->model->data_lock = 1;
+            $this->model->bmc_lock = 1;
+            $this->model->member_lock = 1;
+            $this->model->product_sale_lock = 1;
+            $saveModel[] = $this->model;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
+            }
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionUnlockOther() {
+        $union = Yii::$app->request->get()['union'];
+        $plant = Yii::$app->request->get()['plant'];
+        $mcc = Yii::$app->request->get()['mcc'];
+        $date = Yii::$app->request->get()['date'];
+        $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
+        $saveModel = [];
+        if (!empty($mcc)) {
+            $this->model = new TblMccShiftLock();
+            $this->model->union_code = $union;
+            $this->model->plant_code = $plant;
+            $this->model->mcc_plant_code = $mcc;
+            $this->model->date_time_of_collection = $date;
+            $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
+            $existData = $this->model->getExistData();
+            if (!empty($existData)) {
+                $this->model = $this->findModel($existData->shift_lock_code);
+                $historyModel = new TblMccShiftLockHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+            } else {
+                $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            }
+            $this->model->data_lock = 0;
+            $this->model->bmc_lock = 0;
+            $this->model->member_lock = 0;
+            $this->model->product_sale_lock = 0;
+            $saveModel[] = $this->model;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'DATA UN-LOCK Successfully.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'DATA Not UN-LOCK Successfully.'];
+            }
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }

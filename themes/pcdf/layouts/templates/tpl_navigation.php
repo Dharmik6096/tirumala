@@ -112,7 +112,8 @@ echo GhostMenu::widget([
                 ['label' => 'Cleaning', 'url' => ['/collection/tbl-analyzer-cleaning/index'], 'active' => ($cntrl == 'tbl-ma-cleaning')],
                     ['label' => 'Calibration', 'url' => ['/collection/tbl-analyzer-calibration/index'], 'active' => ($cntrl == 'tbl-ma-calibration')],
                     ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
-                    ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock')],
+                    ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
+                    ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
