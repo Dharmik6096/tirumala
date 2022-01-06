@@ -99,7 +99,10 @@ class SqliteCreate extends Component {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
                             } else {
-                                if ($field['key_field'] == 'to_dest') {
+                                if ($field['table_name'] == 'tbl_payment_cycle_applicability') {
+                                    $whereKeyField = $bmc_code;
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in ($whereKeyField) AND tbl_payment_cycle_applicability.applicable_type = 'DCS' AND tbl_payment_cycle_applicability.applicable_for = 'BMC' ";
+                                } else if ($field['key_field'] == 'to_dest') {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
