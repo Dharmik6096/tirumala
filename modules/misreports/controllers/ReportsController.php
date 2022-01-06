@@ -704,8 +704,23 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
-    public function actionCleaningFormat() {
-        $this->report = 'CleaningFormat';
+    public function actionAlertNotification() {
+        $this->report = 'AlertNotification';
+        return $this->actionIndex();
+    }
+
+    public function actionStockSummary() {
+        $this->report = 'StockSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionStockDetail() {
+        $this->report = 'StockDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionStockDetailSummary() {
+        $this->report = 'StockDetailSummary';
         return $this->actionIndex();
     }
 
@@ -919,6 +934,11 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->downloadData();
             }
         }
+    }
+
+    public function actionCleaningFormat() {
+        $this->report = 'CleaningFormat';
+        return $this->actionIndex();
     }
 
     /* Reports Configuration */
@@ -1384,7 +1404,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_dcs_master_register',
                 'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
-                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No'],
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No', 'password', 'password'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
@@ -1832,6 +1852,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_cleaning_format',
                 'scenario' => 'CleaningFormat',
                 'title' => '808 - Cleaning Format',
+            ],
+            'AlertNotification' => [
+                'param' => 'from_date:string,to_date:string',
+                'sp_name' => 'sp_alert_notification_list',
+                'scenario' => 'AlertNotification',
+                'title' => 'Alert Notification',
+            ],
+            'StockSummary' => [
+                'param' => 'union_code,mcc_code:union_code,product_code,p_date:string',
+                'sp_name' => 'sp_product_stock_summary',
+                'scenario' => 'StockSummary',
+                'title' => 'Stock Summary',
+            ],
+            'StockDetail' => [
+                'param' => 'org_type,union_code,mcc_code:union_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_product_stock_detail',
+                'scenario' => 'StockDetail',
+                'title' => 'Stock Detail',
+            ],
+            'StockDetailSummary' => [
+                'param' => 'org_type,union_code,mcc_code:union_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_product_stock_detail_summary',
+                'scenario' => 'StockDetailSummary',
+                'title' => 'Stock Detail Summary',
             ],
         ];
         return $label[$l];

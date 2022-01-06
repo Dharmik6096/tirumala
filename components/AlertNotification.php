@@ -111,7 +111,7 @@ class AlertNotification {
         return $response;
     }
 
-    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '') {
+    public function sendEmail($from, $to_mail, $cc, $subject, $body, $attachment = FALSE, $filename = '', $filepath = '', $bcc = '') {
         try {
             $to_mail = explode(',', $to_mail);
             $to_mail = array_filter($to_mail, function ($s) {
@@ -128,6 +128,13 @@ class AlertNotification {
                     return filter_var($s, FILTER_VALIDATE_EMAIL);
                 });
                 $email->setCc($cc);
+            }
+            if (!empty($bcc)) {
+                $bcc = explode(',', $bcc);
+                $bcc = array_filter($bcc, function ($s) {
+                    return filter_var($s, FILTER_VALIDATE_EMAIL);
+                });
+                $email->setBcc($bcc);
             }
             if (!empty($filepath)) {
                 $email->attach($filepath, ['fileName' => $filename]);

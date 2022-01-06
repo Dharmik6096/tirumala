@@ -3,6 +3,12 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_product_stock".
@@ -44,11 +50,11 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_stock_code'], 'required', 'on' => ['androidsync']],
-                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['stock'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['product_stock_code'], 'required', 'on' => ['androidsync']],
+            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['stock'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
         ];
     }
 
@@ -83,5 +89,114 @@ class TblProductStock extends \app\models\ChildModel {
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getExistStock($type) {
+        $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
+        if (strtoupper($type) == 'MCC') {
+            $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $this->bmc_code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS') {
+            $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
+        }
+        return $query->one();
+    }
+
+    public function getCode($autoInc = 1) {
+        $primaryKey = 'product_stock_code';
+        $orgCode = 'MCC-' . $this->mcc_plant_code . '-';
+        $len = strlen($orgCode);
+        $val = $this->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+    public function setCodes($type, $code) {
+        if (strtoupper($type) == 'MCC') {
+            $this->mcc_plant_code = $code;
+            $this->plant_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'plant_code');
+        } elseif (strtoupper($type) == 'BMC') {
+            $this->bmc_code = $code;
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+        } elseif (strtoupper($type) == 'DCS') {
+            $this->dcs_code = $code;
+            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+        }
+    }
+
+//    public function afterSave($insert, $changedAttributes) {
+//        $sentboxArray = [];
+//        if (!empty($this->dcs_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+//        } else if (!empty($this->bmc_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+//        } else if (!empty($this->mcc_plant_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+//        }
+//        foreach ($sentboxArray as $sent) {
+//            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+//                if (!($sentbox->setSentbox($this, $flag))) {
+//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+//                }
+//            }
+//        }
+//    }
+
+//    private function sentboxModel($code, $type) {
+//        $sentbox = new TblSentbox();
+//        $sentbox->dest_org_id = $code;
+//        $sentbox->source_org_id = $this->union_code;
+//        $sentbox->dest_org_type = $type;
+//        return $sentbox;
+//    }
+
+//    public function afterDelete() {
+//        $sentboxArray = [];
+//        if (!empty($this->dcs_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+//        } else if (!empty($this->bmc_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+//        } else if (!empty($this->mcc_plant_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+//        } foreach ($sentboxArray as $sent) {
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+//                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+//                }
+//            }
+//        }
+//    }
 
 }

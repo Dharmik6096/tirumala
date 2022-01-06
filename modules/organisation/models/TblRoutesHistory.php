@@ -31,98 +31,94 @@ use Yii;
  * @property TblUsers $deletedBy
  * @property TblUsers $createdBy
  */
-class TblRoutesHistory extends \yii\db\ActiveRecord
-{
+class TblRoutesHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_routes_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_at','created_by','updated_by', 'operation_type', 'history_created_at', 'updated_at','is_active','bmc_code'], 'safe'],
-            [['route_length_kms','capacity', 'vehicle_type_code', 'return_time','route_code', 'vehicle_type_code','route_name', 'start_time','union_code','local_name'], 'safe'],
+                [['created_at', 'created_by', 'updated_by', 'operation_type', 'history_created_at', 'updated_at', 'is_active', 'bmc_code', 'sap_vendor_code'], 'safe'],
+                [['route_length_kms', 'capacity', 'vehicle_type_code', 'return_time', 'route_code', 'vehicle_type_code', 'route_name', 'start_time', 'union_code', 'local_name'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
-            /*'id' => Yii::t('app', 'ID'),
-            'capacity' => Yii::t('app', 'Capacity'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'history_created_at' => Yii::t('app', 'History Created At'),
-            'is_active' => Yii::t('app', 'Is Active'),
-            'operation_type' => Yii::t('app', 'Operation Type'),
-            'return_time' => Yii::t('app', 'Return Time'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'route_length_kms' => Yii::t('app', 'Route Length Kms'),
-            'route_name' => Yii::t('app', 'Route Name'),
-            'start_time' => Yii::t('app', 'Start Time'),
-            'updated_at' => Yii::t('app', 'Updated At'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'vehical_type_code' => Yii::t('app', 'Vehical Type'),*/
+                /* 'id' => Yii::t('app', 'ID'),
+                  'capacity' => Yii::t('app', 'Capacity'),
+                  'created_at' => Yii::t('app', 'Created At'),
+                  'history_created_at' => Yii::t('app', 'History Created At'),
+                  'is_active' => Yii::t('app', 'Is Active'),
+                  'operation_type' => Yii::t('app', 'Operation Type'),
+                  'return_time' => Yii::t('app', 'Return Time'),
+                  'route_code' => Yii::t('app', 'Route Code'),
+                  'route_length_kms' => Yii::t('app', 'Route Length Kms'),
+                  'route_name' => Yii::t('app', 'Route Name'),
+                  'start_time' => Yii::t('app', 'Start Time'),
+                  'updated_at' => Yii::t('app', 'Updated At'),
+                  'created_by' => Yii::t('app', 'Created By'),
+                  'union_code' => Yii::t('app', 'Union Code'),
+                  'updated_by' => Yii::t('app', 'Updated By'),
+                  'vehical_type_code' => Yii::t('app', 'Vehical Type'), */
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVehicleType()
-    {
+    public function getVehicleType() {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
- /*   public function getUpdatedBy()
-    {
-        return $this->hasOne(TblUsers::className(), ['user_id' => 'updated_by']);
-    }*/
+    /*   public function getUpdatedBy()
+      {
+      return $this->hasOne(TblUsers::className(), ['user_id' => 'updated_by']);
+      } */
 
     /**
      * @return \yii\db\ActiveQuery
      */
- /*   public function getDeletedBy()
-    {
-        return $this->hasOne(TblUsers::className());
-    }*/
+    /*   public function getDeletedBy()
+      {
+      return $this->hasOne(TblUsers::className());
+      } */
 
     /**
      * @return \yii\db\ActiveQuery
      */
-/*    public function getCreatedBy()
-    {
-        return $this->hasOne(TblUsers::className(), ['user_id' => 'created_by']);
-    }
-*/
+    /*    public function getCreatedBy()
+      {
+      return $this->hasOne(TblUsers::className(), ['user_id' => 'created_by']);
+      }
+     */
+
     /**
      * @inheritdoc
      * @return TblRoutesHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblRoutesHistoryQuery(get_called_class());
     }
+
 }

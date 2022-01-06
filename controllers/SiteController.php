@@ -90,7 +90,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -396,7 +396,8 @@ class SiteController extends Controller {
             $i = 8;
             $j = 1;
             for ($i = 8; $i < count($data); $i++) {
-                if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
+//                if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
+                if (!empty($data[$i + 1]) && (!empty($_POST['depdrop_parents'][$j]) || (isset($_POST['depdrop_parents'][$j]) && $_POST['depdrop_parents'][$j] == 0) )) {
                     $depend_value = explode('###', $_POST['depdrop_parents'][$j]);
                     $where[$data[$i + 1]] = $depend_value;
                     $j++;

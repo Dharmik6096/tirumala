@@ -61,6 +61,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tax'), 'url' => ['/dcsaccounting/tbl-tax/index'], 'active' => ($cntrl == 'tbl-tax')],
                     ]
                 ],
+                    ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
             ],
         ],
             [
@@ -151,6 +152,15 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Product Requisition'), 'url' => ['/product/tbl-product-requisition/index'], 'active' => ($cntrl == 'tbl-product-requisition')],
                     ['label' => Yii::t('app', 'Product Dispatch With Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 1], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') != 0),],
                     ['label' => Yii::t('app', 'Product Dispatch Without Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
+                    ['label' => Yii::t('app', 'PM Advance'), 'url' => ['/payment/tbl-loan-product-sale-details/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-loan-product-sale-details') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
+                    [
+                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
+                            ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
+                    ]
+                ],
             ],
         ],
             [
@@ -544,6 +554,15 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
                     ]
                 ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Inventory') . '<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Stock Summary'), 'url' => ['/misreports/reports/stock-summary']],
+                            ['label' => Yii::t('app', 'Stock Detail'), 'url' => ['/misreports/reports/stock-detail']],
+                            ['label' => Yii::t('app', 'Stock Detail Summary'), 'url' => ['/misreports/reports/stock-detail-summary']],
+                    ]
+                ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
@@ -627,6 +646,29 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'RMRD Collection (VSP)'), 'url' => ['/sms/manual-notification/rmrd-collection-vsp']],
                             ]
                         ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Configuration<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Delete Utility<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Bulk Delete Milk Collection'), 'url' => ['/collection/tbl-milk-collection/bulk-delete-collection'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'bulk-delete-collection')],
+                                    ['label' => Yii::t('app', 'Milk Collection Cream Base Data'), 'url' => ['/collection/tbl-milk-collection-cream-base-data/index'], 'active' => ($cntrl == 'tbl-milk-collection-cream-base-data' && in_array($action, ['index', 'create', 'view', 'update']))],
+                            ]
+                        ],
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Shift Lock Exception<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Milk Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-milk-collection/index-allow'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
+                                    ['label' => Yii::t('app', 'BMC Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-bmc-collection/index-allow'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index-allow')],
+                            ]
+                        ],
                             ['label' => Yii::t('app', 'Collection Pendrive File'), 'url' => ['/misreports/reports/collection-pendrive-file']],
                             ['label' => Yii::t('app', 'FAT/SNF Threshold'), 'url' => ['/general/tbl-fat-snf-threshold/index'], 'active' => ($cntrl == 'tbl-fat-snf-threshold')],
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],
@@ -649,22 +691,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                             ['label' => Yii::t('app', 'DPU Station Detail'), 'url' => ['/installation/dpu-station-detail/index'], 'active' => ($cntrl == 'dpu-station-detail')],
                             ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
-                            [
-                            'options' => ['class' => 'dropdown-submenu'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Delete Utility<b class="caret"></b></a>',
-                            'items' => [
-                                    ['label' => Yii::t('app', 'Bulk Delete Milk Collection'), 'url' => ['/collection/tbl-milk-collection/bulk-delete-collection'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'bulk-delete-collection')],
-                                    ['label' => Yii::t('app', 'Milk Collection Cream Base Data'), 'url' => ['/collection/tbl-milk-collection-cream-base-data/index'], 'active' => ($cntrl == 'tbl-milk-collection-cream-base-data' && in_array($action, ['index', 'create', 'view', 'update']))],
-                            ]
-                        ],
-                            [
-                            'options' => ['class' => 'dropdown-submenu'],
-                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Shift Lock Exception<b class="caret"></b></a>',
-                            'items' => [
-                                    ['label' => Yii::t('app', 'Milk Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-milk-collection/index-allow'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
-                                    ['label' => Yii::t('app', 'BMC Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-bmc-collection/index-allow'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index-allow')],
-                            ]
-                        ],
+                            ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports')],
                     ]
                 ],
                     [

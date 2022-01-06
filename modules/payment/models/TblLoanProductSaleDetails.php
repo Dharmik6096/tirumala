@@ -2,6 +2,10 @@
 
 namespace app\modules\payment\models;
 
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblUnions;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\product\models\TblProduct;
 use Yii;
 
 /**
@@ -29,6 +33,8 @@ class TblLoanProductSaleDetails extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
+    public $dcs_name, $member_name;
+
     public static function tableName() {
         return 'tbl_loan_product_sale_details';
     }
@@ -39,8 +45,8 @@ class TblLoanProductSaleDetails extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by', 'resp_desc'], 'string'],
-                [['product_code', 'entry_type', 'send_status'], 'integer'],
-                [['sale_date_time', 'created_at', 'updated_at', 'response_datetime', 'picked_datetime'], 'safe'],
+                [['product_code', 'entry_type', 'send_status'], 'string'],
+                [['sale_date_time', 'created_at', 'updated_at', 'response_datetime', 'picked_datetime', 'txfarmer_id', 'txfarmer_id', 'send_status', 'dcs_name', 'member_name', 'received_timestamp'], 'safe'],
                 [['amount'], 'number'],
                 [['send_status'], 'required'],
         ];
@@ -67,7 +73,24 @@ class TblLoanProductSaleDetails extends \app\models\ChildModel {
             'response_datetime' => Yii::t('app', 'Response Datetime'),
             'picked_datetime' => Yii::t('app', 'Picked Datetime'),
             'resp_desc' => Yii::t('app', 'Resp Desc'),
+            'received_timestamp' => Yii::t('app', 'Received Time'),
         ];
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
     }
 
 }

@@ -27,6 +27,8 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
+use app\modules\organisation\models\TblUnions;
+use app\modules\hardwareconfigutation\models\TblInterfacingDeviceMapping;
 
 // Start: Commented as need to allow both v2(old) and v3(with user module): Hardik - 27-07-2021
 //use app\modules\installation\models\TblUserDownloadAck;
@@ -107,8 +109,17 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         //                        if (!empty($andoidIdDetailModelData)) {
                         //                            $res_data['message'] = 'Mobile Number already registered.';
                         //                        } else {
+
+                        $unionData = TblUnions::find()->where(['union_code' => $model_data[0]->union_code, 'is_active' => 1])->one();
+                        $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
+
+                        if ($eiplCode == 'PRABHAT' && !empty($model_data[0]->password)) {
+                            $andoidIdDetailModel->otp_code = $model_data[0]->password;
+                        } else {
+                            $andoidIdDetailModel->otp_code = 1234;
+                        }
+
                         $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
-                        $andoidIdDetailModel->otp_code = 1234;
                         $andoidIdDetailModel->is_active = 0;
                         $andoidIdDetailModel->is_expired = 0;
                         $master[] = $andoidIdDetailModel;
@@ -140,6 +151,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
         $model->otp_code = $content['otp_code'];
         $model->imei_no = $data['imei'];
         $model = $model->getData();
+        $msgstr = 'OTP';
+        if (strlen($content['otp_code']) > 4) {
+            $msgstr = 'Password';
+        }
         if (!empty($model)) {
             $model->is_active = 1;
             $model->sync_key = rand(1000, 9999);
@@ -264,11 +279,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
             $androidDpuModel->android_installation_id = $model->android_installation_id;
             $detailsId = $androidDpuModel->getRecords();
             $androidDpuModel->updateAll(['sync_active' => 0], ['android_installation_id' => $model->android_installation_id, 'android_installation_details_id' => $detailsId]);
-            $res_data['message'] = 'OTP Verified.';
+            $res_data['message'] = $msgstr . ' Verified.';
             $res_data['sync_key'] = (string) $model->sync_key;
             $this->getParentDetails($res_data, $data);
         } else {
-            $res_data['message'] = 'OTP Not Verified.';
+            $res_data['message'] = $msgstr . ' Not Verified.';
         }
         $this->response['data'] = $res_data;
         return $this->response;
@@ -468,8 +483,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v1\controllers\Androi
                         $res_data['config']['collectionBlock'] = FALSE;
                         $res_data['config']['dcsBlock'] = FALSE;
                         $res_data['config']['dispatchMandate'] = FALSE;
-                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual;// $rangeModel->getManualData($model_data, 'is_weight_manual'); // 
-                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual;// $rangeModel->getManualData($model_data, 'is_quality_manual'); 
+                        $res_data['config']['weightManual'] = (bool) $model_data->is_weight_manual; // $rangeModel->getManualData($model_data, 'is_weight_manual'); // 
+                        $res_data['config']['qualityManual'] = (bool) $model_data->is_quality_manual; // $rangeModel->getManualData($model_data, 'is_quality_manual'); 
                         $res_data['rate']['mPurchaseRateCode'] = "";
                         $res_data['rate']['mPurchaseRateCodeBlock'] = "";
                         $res_data['rate']['ePurchaseRateCode'] = "";

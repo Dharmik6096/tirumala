@@ -35,13 +35,18 @@ use app\modules\payment\models\TblProductSaleTaxCalculatedHistory;
 use app\modules\organisation\models\TblDcs;
 use app\modules\payment\models\TblProductSaleHistory;
 use app\modules\payment\models\TblProductSaleTransactionHistory;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransaction;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblMilkCollection;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
  */
 class TblProductSaleController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate'];
+    public $freeAccessActions = ['get-calculation', 'validate-customer', 'load-rate', 'get-available-stock'];
 
     /**
      * Lists all TblProductSale models.
@@ -538,6 +543,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $detailModel->load(Yii::$app->request->post());
             $model->product_sale_code = Yii::$app->general->getUuid();
             $detailModel->product_sale_code = $model->product_sale_code;
+            $detailModel->union_code = $model->union_code;
+            $model->product_code = $detailModel->product_code;
 //            $model->sale_type = 'DCS';
             $saleDate = date('Y-m-d', strtotime($model->invoice_date));
             $model->invoice_date = $saleDate;
@@ -661,6 +668,41 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     }
                 }
                 if ($model->validate()) {
+                    $fstockModel = new TblProductStock();
+                    $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+                    $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
+                    $fstockModel->setCodes($sale_type, $sale_code);
+                    $fstockModel->product_code = $detailModel->product_code;
+                    $fstockModel->union_code = $model->union_code;
+                    $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+                    $existfromStock = $fstockModel->getExistStock($sale_type);
+
+                    $f_stock = 0;
+                    $qty = $detailModel->quantity;
+                    if (!empty($existfromStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                        $child[] = $historyModel;
+                        $f_stock = $existfromStock->stock;
+                        $existfromStock->stock = $f_stock - $qty;
+                        $fstockModel = $existfromStock;
+                        $child[] = $fstockModel;
+
+                        $i = 1;
+                        $fstockTxnModel = new TblProductStockTransaction();
+                        $fstockTxnModel->attributes = $fstockModel->attributes;
+                        $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                        $fstockTxnModel->old_value = $f_stock;
+                        $fstockTxnModel->new_value = $qty;
+                        $fstockTxnModel->final_value = $fstockModel->stock;
+                        $fstockTxnModel->transaction_type = $txn_type;
+                        $fstockTxnModel->transaction_date = date('Y-m-d');
+                        $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
+                        $child[] = $fstockTxnModel;
+
+                        $i++;
+                    }
+
                     $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
                     if ($transaction == 'customRedirect') {
                         $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -678,6 +720,82 @@ class TblProductSaleController extends \app\controllers\ChildController {
             } else {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(array_merge(ActiveForm::validate($model), ActiveForm::validate($detailModel)));
+            }
+        }
+    }
+
+    public function actionGetAvailableStock() {
+        $product = Yii::$app->request->post('product');
+        $from_type = Yii::$app->request->post('type');
+        $from_code = Yii::$app->request->post('code');
+        $union_code = Yii::$app->request->post('union_code');
+        $sale_type = strtoupper($from_type) == 'MEMBER' ? 'DCS' : 'BMC';
+
+        $stockModel = new TblProductStock();
+        $stockModel->setCodes(strtoupper($sale_type), $from_code);
+        $stockModel->product_code = $product;
+        $stockModel->union_code = $union_code;
+        $existtoStock = $stockModel->getExistStock($sale_type);
+        if (!empty($existtoStock->stock)) {
+            return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
+        } else {
+            return Json::encode(['status' => 'success', 'stock' => 0]);
+        }
+    }
+
+    public function actionSetAvailableCredit() {
+        $type = Yii::$app->request->post('type');
+        $code = Yii::$app->request->post('code');
+        $union = Yii::$app->request->post('union');
+        $bmc = Yii::$app->request->post('bmc');
+        $date = Yii::$app->request->post('date');
+        $pay_mode = Yii::$app->request->post('pay_mode');
+        $amount_due = Yii::$app->request->post('amount_due');
+        $no_of_installment = Yii::$app->request->post('noi');
+        if (!empty($date) && $pay_mode == 1) {
+
+            $model = new TblPaymentCycleApplicability();
+            $model->applicable_type = strtolower($type) == 'member' ? 'DCS' : $type;
+            $model->applicable_code = $bmc;
+            $model->applicable_for = 'BMC';
+            $modelData = $model->getApplicablePaymentCycle(date('Y-m-d', strtotime($date)));
+            if (!empty($modelData)) {
+
+                $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                $saledAmount = 0;
+                $where = [];
+                $where = ['payment_mode' => $pay_mode, 'customer_type' => $type, 'customer_code' => $code];
+                $model = new TblProductSale();
+                $data = $model->find()
+                        ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
+                        ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
+                        ->andWhere($where)
+                        ->one();
+                if (!empty($data->amount_due)) {
+                    $saledAmount = $data->amount_due;
+                }
+                $model = new TblBmcCollection();
+                $collWhere = [];
+                $collWhere = ['customer_type' => $type, 'customer_code' => $code];
+                if (strtolower($type) == 'member') {
+                    $model = new TblMilkCollection();
+                    $collWhere = ['member_code' => $code];
+                }
+
+                $modelData = $model->find()
+                        ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                        ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                        ->andWhere($collWhere)
+                        ->one();
+                $creditAmount = 0;
+                if (!empty($modelData->amount)) {
+                    $creditAmount = $modelData->amount;
+                }
+                $availableCredit = $creditAmount - $saledAmount;
+                return Json::encode(['status' => 'success', 'credit' => $availableCredit]);
+            } else {
+                return Json::encode(['status' => 'error', 'credit' => 0]);
             }
         }
     }

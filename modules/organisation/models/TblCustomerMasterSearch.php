@@ -20,11 +20,11 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
      */
     public function rules() {
         return [
-            [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code', 'ref_code', 'aadhaar_no', 'master_type'], 'safe'],
-            [['is_active', 'originating_type'], 'integer'],
-            [['bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
-            [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['verification']]
+                [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code', 'ref_code', 'aadhaar_no', 'master_type'], 'safe'],
+                [['is_active', 'originating_type'], 'integer'],
+                [['bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
+                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['verification']]
         ];
     }
 
@@ -61,6 +61,7 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
             'tbl_customer_master.customer_type' => $this->customer_type,
             'tbl_customer_master.is_active' => $this->is_active,
             'tbl_customer_master.route_code' => $this->route_code,
+            'tbl_customer_master.x_col2' => $this->x_col2,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_customer_master.customer_code', $this->customer_code])

@@ -3,6 +3,7 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_product_stock_transaction".
@@ -92,6 +93,71 @@ class TblProductStockTransaction extends \app\models\ChildModel {
 
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function getCode($autoInc = 1) {
+        $primaryKey = 'product_stock_transaction_code';
+        $orgCode = 'MCC-' . $this->mcc_plant_code . '-';
+        $len = strlen($orgCode);
+        $val = $this->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code1 = (int) $val[$primaryKey] + $autoInc;
+        $value = $orgCode . $code1;
+
+        return $value;
+    }
+
+//    public function afterSave($insert, $changedAttributes) {
+//        $sentboxArray = [];
+//        if (!empty($this->dcs_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+//        } else if (!empty($this->bmc_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+//        } else if (!empty($this->mcc_plant_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+//        }
+//        foreach ($sentboxArray as $sent) {
+//            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+//                if (!($sentbox->setSentbox($this, $flag))) {
+//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+//                }
+//            }
+//        }
+//    }
+
+//    private function sentboxModel($code, $type) {
+//        $sentbox = new TblSentbox();
+//        $sentbox->dest_org_id = $code;
+//        $sentbox->source_org_id = $this->union_code;
+//        $sentbox->dest_org_type = $type;
+//        return $sentbox;
+//    }
+
+//    public function afterDelete() {
+//        $sentboxArray = [];
+//        if (!empty($this->dcs_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+//        } else if (!empty($this->bmc_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+//        } else if (!empty($this->mcc_plant_code)) {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+//        }
+//        foreach ($sentboxArray as $sent) {
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+//                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+//                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+//                }
+//            }
+//        }
+//    }
+
+    public function getProductTransactionCode($id) {
+        return $this->find()->where(['reference_code' => $id])->all();
     }
 
 }

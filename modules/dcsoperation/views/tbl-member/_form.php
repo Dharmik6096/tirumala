@@ -133,6 +133,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
         </div>
+        <div class="col-sm-4 number-validate">
+            <?= $form->field($model, 'sap_farmer_code')->textInput() ?>
+        </div>
         <?php if ($config == 1) { ?>
             <div class="col-sm-4">
                 <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
