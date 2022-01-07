@@ -155,6 +155,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                     $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
                 }
                 $this->model->data_lock = 1;
+                $this->model->bmc_lock = 1;
+                $this->model->member_lock = 1;
+                $this->model->product_sale_lock = 1;
 
                 $staging = new TblMccShiftLockStaging();
                 $attribute = $this->model->attributes;
@@ -295,6 +298,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             }
             $this->model->data_lock = 0;
+            $this->model->bmc_lock = 0;
+            $this->model->member_lock = 0;
+            $this->model->product_sale_lock = 0;
             $saveModel[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
