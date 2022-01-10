@@ -247,7 +247,10 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $query = TblBmcCollection::find()->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
         // add conditions that should always apply here
 
-        $query->joinWith(['mccPlantCode.plantCode', 'approvalData']);
+        $query->joinWith(['mccPlantCode.plantCode']);
+//        $query->joinWith(['mccPlantCode.plantCode', 'approvalData']);
+        // remove join of approvalData and add static left join due to issue of 2100 Parameter issue - Hardik : 10-01-2022
+        $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
         $query->andWhere([
             'tbl_bmc_collection.bmc_code' => $this->bmc_code]);
 
