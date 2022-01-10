@@ -62,8 +62,6 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
             'tbl_customer_master.is_active' => $this->is_active,
             'tbl_customer_master.route_code' => $this->route_code,
             'tbl_customer_master.x_col2' => $this->x_col2,
-            'tbl_customer_master.ts_code_m' => $this->ts_code_m,
-            'tbl_customer_master.ts_code_e' => $this->ts_code_e,
         ]);
 
         $query->andFilterWhere(['like', 'tbl_customer_master.customer_code', $this->customer_code])
@@ -73,7 +71,9 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 ->andFilterWhere(['like', 'tbl_customer_master.gst_no', $this->gst_no])
                 ->andFilterWhere(['like', 'tbl_customer_master.sap_code', $this->sap_code])
                 ->andFilterWhere(['like', 'tbl_customer_master.refference_code', $this->refference_code])
-                ->andFilterWhere(['like', 'tbl_customer_master.aadhaar_no', $this->aadhaar_no]);
+                ->andFilterWhere(['like', 'tbl_customer_master.aadhaar_no', $this->aadhaar_no])
+                ->andFilterWhere(['like', 'tbl_customer_master.ts_code_m', $this->ts_code_m])
+                ->andFilterWhere(['like', 'tbl_customer_master.ts_code_e', $this->ts_code_e]);
 
         return $dataProvider;
     }

@@ -76,8 +76,6 @@ class TblDcsSearch extends TblDcs {
             'tbl_dcs.dpu_type' => $this->dpu_type,
             'tbl_dcs.is_chiller' => $this->is_chiller,
             'tbl_dcs.x_col2' => $this->x_col2,
-            'tbl_dcs.ts_code_m' => $this->ts_code_m,
-            'tbl_dcs.ts_code_e' => $this->ts_code_e,
         ]);
 
         if (!empty($this->registration_date))
@@ -110,7 +108,9 @@ class TblDcsSearch extends TblDcs {
                 ->andFilterWhere(['like', 'tbl_dcs.village_code', $this->village_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'tbl_contact_details.mobile_no', $this->mobile_no])
-                ->andFilterWhere(['like', 'aadhaar_no', $this->aadhaar_no]);
+                ->andFilterWhere(['like', 'aadhaar_no', $this->aadhaar_no])
+                ->andFilterWhere(['like', 'tbl_dcs.ts_code_m', $this->ts_code_m])
+                ->andFilterWhere(['like', 'tbl_dcs.ts_code_e', $this->ts_code_e]);
 
         return $dataProvider;
     }
