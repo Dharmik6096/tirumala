@@ -115,7 +115,7 @@ $attribute = [
         ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'ts_code_m', 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'ts_code_m', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'ts_code_e', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [
