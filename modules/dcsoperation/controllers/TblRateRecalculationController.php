@@ -361,7 +361,7 @@ class TblRateRecalculationController extends \app\controllers\ChildController {
         $toDate = Yii::$app->formatter->asDate($searchData['to_date'], 'php:Y-m-d') . ' ' . Yii::$app->general->getshift($searchData['to_shift']);
         $lockData = $payment_model->find()
                 ->where(['mcc_plant_code' => $searchData['mcc_plant_code'], 'data_lock' => 1])
-                ->andWhere("CAST(date_time_of_collection as date) between '$fromDate' and '$toDate' ")
+                ->andWhere("date_time_of_collection between '$fromDate' and '$toDate' ")
                 ->one();
         if (!empty($lockData)) {
             $date = Yii::$app->formatter->asDate($lockData->date_time_of_collection, 'php:d-m-Y');

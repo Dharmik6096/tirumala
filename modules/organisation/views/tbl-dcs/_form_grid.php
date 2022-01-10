@@ -235,7 +235,7 @@ $attribute = [
         }, 'visible' => false, 'filter' => false],
         ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'ts_code_m', 'filter' => FALSE, 'visible' => FALSE],
-        ['attribute' => 'ts_code_m', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'ts_code_e', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [
