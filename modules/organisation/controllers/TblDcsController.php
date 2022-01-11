@@ -191,6 +191,11 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val) . '0';
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $this->model->cutoff = $val . strtoupper($milkType);
+                }
                 $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -265,6 +270,9 @@ class TblDcsController extends ChildController {
         if (empty($this->model->vendor)) {
             $this->model->vendor = 'NA';
             $oldVendor = 'NA';
+        }
+        if (!empty($this->model->cutoff_val) && !empty($this->model->lower_milk_type)) {
+            $this->model->cutoff = 1;
         }
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsHistory();
@@ -376,6 +384,11 @@ class TblDcsController extends ChildController {
                             FileHelper::createDirectory($path);
                         }
                     }
+                }
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val) . '0';
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $this->model->cutoff = $val . strtoupper($milkType);
                 }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $mappingList, ['society', 'edit']);
                 if ($transaction !== FALSE) {

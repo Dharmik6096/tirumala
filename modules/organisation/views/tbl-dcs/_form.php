@@ -107,9 +107,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
         </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-        </div>
+
         <div class="col-sm-2">
             <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor', 'readonly' => (!empty($model->vendor) && $model->vendor != 'NA' && $readonly)]); ?>
         </div>
@@ -334,6 +332,19 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt10">
             <?= $form->field($model, 'is_chiller', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'cutoff', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'cutoff_val')->textInput() ?>
+        </div>
     </div>
 
     <?php // if ($type == 'create') {  ?>
@@ -405,6 +416,69 @@ $form = ActiveForm::begin([
         return val.toUpperCase();
     });
    });
+   
+    $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
+    $('#tbldcs-lower_milk_type').parent('div').addClass('disabledDiv');
+    $('#tbldcs-cutoff_val').parent('div').addClass('disabledDiv');
+    
+    cutoffdisabled();
+    cutoffValDisabled();
+
+    $('#tbldcs-milk_type_code').click(function(){
+        cutoffdisabled();  
+//        lowerMilkTypeVal();  
+    });
+    
+    function lowerMilkTypeVal(){
+        $('#tbldcs-lower_milk_type option').removeAttr('disabled'); 
+        var milktype = $('#tbldcs-milk_type_code').val();
+//        console.log(typeof milktype);
+//        console.log(typeof Object.values(milktype));
+//        console.log(Object.values(milktype).includes('2'));
+//        console.log(Object.values(milktype).includes('3'));
+        var remove = 1;
+        if(milktype.length == 2) {
+            if(!Object.values(milktype).includes('2')) {
+                remove = 2;
+            } else if(!Object.values(milktype).includes('3')) {
+                remove = 3;
+            }
+//            console.log(milktype.indexOf('2'));
+//            console.log(milktype.indexOf(2));
+//            console.log(milktype.indexOf('3'));
+//            console.log(milktype.indexOf(3));
+//            console.log(remove);
+            $('#tbldcs-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
+            $('#tbldcs-lower_milk_type').trigger('change');
+            $('#tbldcs-lower_milk_type').trigger('select2:select');
+        }
+    }
+    function cutoffdisabled(){
+        var len = $('#tbldcs-milk_type_code').val().length;
+        if(len ==2){
+            $('#tbldcs-cutoff').parent('div').removeClass('disabledDiv');
+        }else{
+            $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
+            $('#tbldcs-cutoff').prop('checked',false);
+        }
+    }
+
+    $('#tbldcs-cutoff').click(function(){
+        cutoffValDisabled();   
+    });
+
+    function cutoffValDisabled(){
+        if($('#tbldcs-cutoff').is(':checked')) {
+            $('#tbldcs-lower_milk_type').parent('div').removeClass('disabledDiv');
+            $('#tbldcs-cutoff_val').parent('div').removeClass('disabledDiv');
+        } else {
+            $('#tbldcs-cutoff_val').val('');
+            $('#tbldcs-lower_milk_type').val('');
+            $('#tbldcs-lower_milk_type').trigger('select2:select');
+            $('#tbldcs-lower_milk_type').parent('div').addClass('disabledDiv');
+            $('#tbldcs-cutoff_val').parent('div').addClass('disabledDiv');
+        }
+    }
 ";
     $this->registerJs($script, View::POS_END, 'union-select');
 

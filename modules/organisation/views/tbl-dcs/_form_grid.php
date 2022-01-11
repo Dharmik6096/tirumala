@@ -236,6 +236,11 @@ $attribute = [
         ['attribute' => 'x_col2', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'ts_code_m', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'ts_code_e', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cutoff', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'lower_milk_type', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->lowerMilkType, 'animal_type_name');
+        }, 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'cutoff_val', 'filter' => FALSE, 'visible' => FALSE],
 ];
 
 $grid_option = [
