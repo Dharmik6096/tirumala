@@ -303,6 +303,10 @@ class TblDcs extends ChildModel {
                 },
                 'whenClient' => "function (attribute, value) { return $('#tbldcs-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']
             ],
+                [['cutoff_val'], function ($attribute, $params) {
+                    Yii::$app->general->validOneDigitDecimal($this, $attribute, $params);
+                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                [['cutoff_val'], 'default', 'value' => '0000'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
