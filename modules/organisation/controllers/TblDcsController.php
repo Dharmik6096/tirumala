@@ -191,10 +191,13 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                $this->model->cutoff = '0000';
                 if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
-                    $val = str_replace('.', '', $this->model->cutoff_val) . '0';
+                    $val = str_replace('.', '', $this->model->cutoff_val) . '000';
+                    $val = substr($val, 0, 3);
                     $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
-                    $this->model->cutoff = $val . strtoupper($milkType);
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
@@ -385,10 +388,13 @@ class TblDcsController extends ChildController {
                         }
                     }
                 }
+                $this->model->cutoff = '0000';
                 if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
-                    $val = str_replace('.', '', $this->model->cutoff_val) . '0';
+                    $val = str_replace('.', '', $this->model->cutoff_val) . '000';
+                    $val = substr($val, 0, 3);
                     $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
-                    $this->model->cutoff = $val . strtoupper($milkType);
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $mappingList, ['society', 'edit']);
                 if ($transaction !== FALSE) {

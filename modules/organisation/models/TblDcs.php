@@ -292,6 +292,7 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 9.9, 'skipOnEmpty' => true],
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
@@ -300,7 +301,7 @@ class TblDcs extends ChildModel {
                 [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) {
                     return $model->cutoff == 1;
                 },
-                'whenClient' => "function (attribute, value) { return !$('#tbldcs-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']
+                'whenClient' => "function (attribute, value) { return $('#tbldcs-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']
             ],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);

@@ -407,8 +407,15 @@ $form = ActiveForm::begin([
     function milktypedisabled(){
         if($('#tbldcs-milk_type_auto').is(':checked')) {
             $('#tbldcs-milk_type_code').parent('div').addClass('disabled');
+            $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
+            $('#tbldcs-cutoff').prop('checked',false);
+            $('#tbldcs-lower_milk_type').val('');
+            $('#tbldcs-lower_milk_type').trigger('change');
+            $('#tbldcs-lower_milk_type').trigger('select2:select');
+            $('#tbldcs-cutoff_val').val('');
         } else {
             $('#tbldcs-milk_type_code').parent('div').removeClass('disabled');
+            cutoffdisabled();
         }
     }
     $('#tbldcs-pan_no').on('input', function(evt) {
@@ -426,7 +433,7 @@ $form = ActiveForm::begin([
 
     $('#tbldcs-milk_type_code').click(function(){
         cutoffdisabled();  
-//        lowerMilkTypeVal();  
+        lowerMilkTypeVal();  
     });
     
     function lowerMilkTypeVal(){
@@ -449,22 +456,33 @@ $form = ActiveForm::begin([
 //            console.log(milktype.indexOf(3));
 //            console.log(remove);
             $('#tbldcs-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
-            $('#tbldcs-lower_milk_type').trigger('change');
-            $('#tbldcs-lower_milk_type').trigger('select2:select');
+            var select2Instance = $('#tbldcs-lower_milk_type').data('select2');
+            var resetOptions = select2Instance.options.options;
+            $('#tbldcs-lower_milk_type').select2('destroy').select2(resetOptions);
+//            $('#tbldcs-lower_milk_type').trigger('select2:select');
         }
     }
     function cutoffdisabled(){
-        var len = $('#tbldcs-milk_type_code').val().length;
-        if(len ==2){
+        var lenCheck = $('#tbldcs-milk_type_code').val();
+        var len = 0;
+        if(lenCheck != null && lenCheck != undefined){
+            len = lenCheck.length;
+        }
+        if(len == 2){
             $('#tbldcs-cutoff').parent('div').removeClass('disabledDiv');
         }else{
             $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
             $('#tbldcs-cutoff').prop('checked',false);
+            $('#tbldcs-lower_milk_type').val('');
+            $('#tbldcs-lower_milk_type').trigger('change');
+            $('#tbldcs-lower_milk_type').trigger('select2:select');
+            $('#tbldcs-cutoff_val').val('');
         }
     }
 
     $('#tbldcs-cutoff').click(function(){
-        cutoffValDisabled();   
+        cutoffValDisabled();  
+        lowerMilkTypeVal();  
     });
 
     function cutoffValDisabled(){
