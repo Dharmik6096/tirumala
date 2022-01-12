@@ -197,7 +197,7 @@ class TblDcsController extends ChildController {
                     $val = str_pad($val, 3, '0', STR_PAD_LEFT);
                     $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
                     $cutOffVal = $val . strtoupper($milkType);
-                    $this->model->cutoff = $cutOffVal;
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
@@ -394,7 +394,7 @@ class TblDcsController extends ChildController {
                     $val = str_pad($val, 3, '0', STR_PAD_LEFT);
                     $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
                     $cutOffVal = $val . strtoupper($milkType);
-                    $this->model->cutoff = $cutOffVal;
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $mappingList, ['society', 'edit']);
                 if ($transaction !== FALSE) {
