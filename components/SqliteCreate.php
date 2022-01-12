@@ -98,6 +98,19 @@ class SqliteCreate extends Component {
                         if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
+
+                                if (in_array($tableName, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
+                                    $whereMccStock = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
+                                    $whereBmcStock = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $whereDcsStock = !empty($dcs_code) ? $dcs_code : '\'\'';
+                                    if (strtolower($org_type) == 'mcc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.bmc_code is null  and $tableName.dcs_code is null ";
+                                    } else if (strtolower($org_type) == 'bmc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code is null ";
+                                    } else if (strtolower($org_type) == 'vlc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code   in ($whereDcsStock) ";
+                                    }
+                                }
                             } else {
                                 if ($field['key_field'] == 'to_dest') {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
