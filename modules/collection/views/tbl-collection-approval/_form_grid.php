@@ -50,7 +50,7 @@ $attribute = [
         'attribute' => 'is_approve',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_approve'),
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve] : 'No';
+            return ($model->is_approve == 1) ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }],
 ];
 

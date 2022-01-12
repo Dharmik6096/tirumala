@@ -43,7 +43,7 @@ $this->title = Yii::$app->label->title('view', 'Manual Collection Approval');
                             ],
                                 [
                                 'attribute' => 'is_approve',
-                                'value' => isset($model->is_approve) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve] : 'No',
+                                'value' => ($model->is_approve == 1) ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],

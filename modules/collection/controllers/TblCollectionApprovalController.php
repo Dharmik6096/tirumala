@@ -39,6 +39,7 @@ class TblCollectionApprovalController extends \app\controllers\ChildController {
 
     public function actionApproveCollection($id) {
         $this->model = $this->findModel($id);
+        $this->model->scenario = 'approve';
         if ($this->model->load(Yii::$app->request->post())) {
             $historyModel = new TblCollectionApprovalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
