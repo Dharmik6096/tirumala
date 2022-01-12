@@ -97,21 +97,26 @@ class TblCollectionApproval extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-        if ($this->originating_org_type == 'VLC') {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->userAndroidCode->dcs_code, '');
-        } else {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->userAndroidCode->bmc_code, '', '');
-        }
-        foreach ($sentboxArray as $sent) {
+//        if ($this->originating_org_type == 'VLC') {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', $this->userAndroidCode->dcs_code, '');
+//        } else if ($this->originating_org_type == 'BMC') {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->userAndroidCode->bmc_code, '', '');
+//        } else if ($this->originating_org_type == 'MCC') {
+//            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->userAndroidCode->mcc_plant_code, '', '', '');
+//        }
+//        foreach ($sentboxArray as $sent) {
+        if (!empty($this->originating_org_code) && !empty($this->originating_org_type)) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
 
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+//            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {
                     throw new UserException("SentBox Entry is not created so transaction is rollback!");
                 }
             }
         }
+//        }
     }
 
     private function sentboxModel($code, $type) {
