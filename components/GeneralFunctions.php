@@ -1902,9 +1902,9 @@ class GeneralFunctions extends Component {
     }
 
     function validOneDigitDecimal($model, $attribute, $params) {
-        $pattern = "/^[0-9]{1}[.][0-9]{1}$/";
+        $pattern = "/^[0-9]{2}[.][0-9]{1}$/";
         if (!preg_match($pattern, $model->$attribute)) {
-            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be between 0.1 to 9.9'));
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be between 0.1 to 99.9'));
             return false;
         }
 

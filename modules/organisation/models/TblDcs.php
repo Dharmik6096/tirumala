@@ -292,7 +292,7 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
-                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 9.9, 'skipOnEmpty' => true],
+                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true],
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
