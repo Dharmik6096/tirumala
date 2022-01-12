@@ -12,9 +12,9 @@ use yii\web\View;
 $attribute = [
         [
         'attribute' => 'collection_type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('milk_collection_type', $searchModel, 'collection_type'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('approval_collection_type', $searchModel, 'collection_type'),
         'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('milk_collection_type')['data'][$model->collection_type]) ? Yii::$app->dropdown->getRecords('milk_collection_type')['data'][$model->collection_type] : '';
+            return isset(Yii::$app->dropdown->getRecords('approval_collection_type')['data'][$model->collection_type]) ? Yii::$app->dropdown->getRecords('approval_collection_type')['data'][$model->collection_type] : '';
         }],
         ['label' => 'Date', 'attribute' => 'date',
         'filterType' => GridView::FILTER_DATE,
@@ -33,27 +33,25 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userAndroidCode, 'name');
         }],
-        ['attribute' => 'approved_by', 'filter' => false, 'visible' => false],
-        ['label' => 'Approve Date', 'attribute' => 'date',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
+        ['attribute' => 'approved_by',
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->approve_date);
-        }, 'filter' => false, 'visible' => false],
-        ['label' => 'Allow Till Date', 'attribute' => 'date',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }],
+        ['label' => 'Approve Date', 'attribute' => 'approve_date',
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->allow_till_date);
-        }, 'filter' => false, 'visible' => false],
-        ['attribute' => 'valid_hours', 'filter' => false, 'visible' => false],
-        ['attribute' => 'is_approve', 'filter' => false, 'visible' => false],
+            return Yii::$app->controls->view_datetime($model->approve_date);
+        }, 'filter' => false],
+        ['label' => 'Allow Till Date', 'attribute' => 'allow_till_date',
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->allow_till_date);
+        }, 'filter' => false],
+        ['attribute' => 'valid_hours'],
+        [
+        'attribute' => 'is_approve',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_approve'),
+        'value' => function($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve] : 'No';
+        }],
 ];
 
 $grid_option = [

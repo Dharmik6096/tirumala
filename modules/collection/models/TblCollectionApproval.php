@@ -46,6 +46,7 @@ class TblCollectionApproval extends \app\models\ChildModel {
      */
     public function rules() {
         return [
+                [['valid_hours'], 'required'],
                 [['date', 'approve_date', 'allow_till_date', 'created_at', 'updated_at'], 'safe'],
                 [['shift_code', 'collection_type', 'is_approve', 'valid_hours', 'originating_type'], 'integer'],
                 [['uuid'], 'string', 'max' => 255],

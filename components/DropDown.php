@@ -1264,8 +1264,8 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'DCS' => Yii::t('app', 'DCS')],
             ],
-            'milk_collection_type' => [
-                'name' => 'milk_collection_type',
+            'approval_collection_type' => [
+                'name' => 'approval_collection_type',
                 'prompt' => Yii::t('app', 'Select Collection Type'),
                 'data' => [1 => Yii::t('app', 'Milk Collection'), 2 => Yii::t('app', 'BMC Collection')],
             ],

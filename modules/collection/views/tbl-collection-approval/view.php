@@ -7,7 +7,7 @@ use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 
-$this->title = Yii::$app->label->title('view', 'Collection Approve');
+$this->title = Yii::$app->label->title('view', 'Manual Collection Approval');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -38,12 +38,12 @@ $this->title = Yii::$app->label->title('view', 'Collection Approve');
                         'columns' => [
                                 [
                                 'attribute' => 'collection_type',
-                                'value' => isset($model->collection_type) ? Yii::$app->dropdown->getRecords('milk_collection_type')['data'][$model->collection_type] : '',
+                                'value' => isset($model->collection_type) ? Yii::$app->dropdown->getRecords('approval_collection_type')['data'][$model->collection_type] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
                                 'attribute' => 'is_approve',
-                                'value' => isset($model->is_approve) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve] : '',
+                                'value' => isset($model->is_approve) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_approve] : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
@@ -67,13 +67,13 @@ $this->title = Yii::$app->label->title('view', 'Collection Approve');
                                 [
                                 'attribute' => 'approve_date',
                                 'format' => 'html',
-                                'value' => Yii::$app->controls->view_date($model->approve_date),
+                                'value' => Yii::$app->controls->view_datetime($model->approve_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                                 [
                                 'attribute' => 'allow_till_date',
                                 'format' => 'html',
-                                'value' => Yii::$app->controls->view_date($model->allow_till_date),
+                                'value' => Yii::$app->controls->view_datetime($model->allow_till_date),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],

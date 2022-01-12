@@ -12,12 +12,11 @@ use app\modules\collection\models\TblCollectionApproval;
  */
 class TblCollectionApprovalSearch extends TblCollectionApproval {
 
-    /**
-     * @inheritdoc
-     */
+    public $from_date, $to_date;
+
     public function rules() {
         return [
-                [['uuid', 'date', 'code', 'requested_by', 'approved_by', 'approve_date', 'allow_till_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'collection_type'], 'safe'],
+                [['uuid', 'date', 'code', 'requested_by', 'approved_by', 'approve_date', 'allow_till_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_type', 'originating_org_code', 'collection_type', 'from_date', 'to_date'], 'safe'],
                 [['shift_code', 'collection_type', 'is_approve', 'valid_hours', 'originating_type'], 'integer'],
         ];
     }
@@ -45,8 +44,7 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['userAndroidCode']);
-
+        $query->joinWith(['userAndroidCode', 'userCode']);
 
         $this->load($params);
 
@@ -61,9 +59,20 @@ class TblCollectionApprovalSearch extends TblCollectionApproval {
         if (!empty($this->date)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_collection_approval.date, 126)', date('Y-m-d', strtotime($this->date))]);
         }
-        // grid filtering conditions
 
-        $query->andFilterWhere(['like', 'tbl_user_android.name', $this->requested_by]);
+        if ((!empty($this->from_date)) && ((!empty($this->to_date)))) {
+            $query->andFilterWhere(['between', 'date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))]);
+        }
+
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'tbl_collection_approval.valid_hours' => $this->valid_hours,
+            'tbl_collection_approval.is_approve' => $this->is_approve
+        ]);
+
+        $query->andFilterWhere(['like', 'tbl_user_android.name', $this->requested_by])
+                ->andFilterWhere(['like', 'user.name', $this->approved_by]);
 
 
         return $dataProvider;

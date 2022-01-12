@@ -7,7 +7,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Collection Approval'));
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Manual Collection Approval'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
