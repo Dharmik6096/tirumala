@@ -117,8 +117,14 @@ class SqliteCreate extends Component {
                                         }
                                         $sql .= ' left join tbl_member_deactive md on md.member_code = tbl_member.member_code and (\'' . $currDate . '\' between CAST(md.from_date as date) and CAST(ISNULL(md.to_date, getdate()) as date)) ';
                                         $sql = str_replace('tbl_member.is_active', ' CASE WHEN md.from_date is null THEN tbl_member.is_active ELSE 0 END as is_active ', $sql);
+                                        if ($org_type == 'BMC') {
+                                            $sql .= ' inner join tbl_dcs d on d.dcs_code = tbl_member.dcs_code and d.is_bmc = 1 ';
+                                        }
                                     }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
+                                    if ($tableName == 'tbl_member') {
+                                        
+                                    }
                                 }
                             }
                         } else {
