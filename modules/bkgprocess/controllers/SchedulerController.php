@@ -26,10 +26,12 @@ use app\modules\details\models\TblContactDetails;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\eipldpu\models\TblEiplPacketFileLog;
+use app\modules\eipldpu\controllers\PendriveImportController;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-bulk-eipl-files'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -804,6 +806,31 @@ class SchedulerController extends ChildController {
             $htmlContent .= "</tr>";
         }
         $htmlContent .= "</table>";
+    }
+
+    public function actionProcessBulkEiplFiles() {
+        $model = new TblEiplPacketFileLog();
+        $model->file_status = 0;
+        $model->status = 0;
+        $modelData = $model->getPendingData();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->file_id;
+            }, $modelData);
+            $model->updateFileStatus($ids);
+            $file_id = implode(',', $ids);
+            PendriveImportController::actionProcessFiles($file_id);
+
+            $model->file_status = 2;
+            $model->status = 2;
+            $modelData = $model->getPendingData($ids);
+            if (!empty($modelData)) {
+                $ids = array_map(function($e) {
+                    return $e->file_id;
+                }, $modelData);
+                PendriveImportController::savePacketData($ids);
+            }
+        }
     }
 
 }

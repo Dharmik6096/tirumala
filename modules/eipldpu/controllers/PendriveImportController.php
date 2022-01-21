@@ -11,7 +11,7 @@ use app\modules\eipldpu\models\TblEiplPacketProcessSearch;
 
 class PendriveImportController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['import-file', 'process-files'];
+    public $freeAccessActions = ['import-file', 'process-files', 'import-zip'];
 
     public function actionCreate() {
         $model = new TblEiplPacketFileLog();
@@ -149,7 +149,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                             if (!empty($packet_config)) {
                                 if (!isset($packet_config['savelog'])) {
                                     try {
-                                        $data_array = $this->PacketData($packet, $packet_config);
+                                        $data_array = self::PacketData($packet, $packet_config);
                                         $model->attributes = $data_array;
                                         $model->dcs_code = $model->vlccid;
                                         $model->main_table = 1;
@@ -169,7 +169,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                                     }
                                 } else {
                                     unset($packet_config['savelog']);
-                                    $data_array = $this->PacketData($packet, $packet_config);
+                                    $data_array = self::PacketData($packet, $packet_config);
                                     $attributes = array_merge($attributes, $data_array);
                                     continue;
                                 }
@@ -182,7 +182,11 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $cnt++;
                         }
                         fclose($fh);
-                        $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . 'archive/';
+                        if (!empty($file->zip_name)) {
+                            $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $file->dcs_code . '/archive/';
+                        } else {
+                            $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . 'archive/';
+                        }
                         Yii::$app->general->checkDirectory($CollectionData);
                         if (copy($file->file_path, $CollectionData . $file->file_name)) {
                             unlink($file->file_path);
@@ -215,7 +219,11 @@ class PendriveImportController extends \app\controllers\ChildController {
         $model = new TblEiplPacketProcess();
         $model->file_name = $file_id;
         $dataProvider = $model->getFileData();
-        return $this->render('file_preview', ['model' => $model, 'dataProvider' => $dataProvider]);
+        try {
+            return $this->render('file_preview', ['model' => $model, 'dataProvider' => $dataProvider]);
+        } catch (\Throwable $ex) {
+            return '';
+        }
     }
 
     public function actionImportFile() {
@@ -320,6 +328,127 @@ class PendriveImportController extends \app\controllers\ChildController {
             }
         }
         return FALSE;
+    }
+
+    public function actionAddZip() {
+        $model = new TblEiplPacketFileLog();
+        if ($model->load(Yii::$app->request->post())) {
+            $zipPath = Yii::$app->basePath . '/web/import/collection/zip/';
+            $ExtractPath = $zipPath . explode('.', $model->file_name)[0];
+            $zipPath .= $model->file_name;
+            if (!is_dir($ExtractPath)) {
+                $oldmask = umask(0);
+                Yii::$app->general->checkDirectory($ExtractPath, '0777');
+                umask($oldmask);
+            } else {
+                $files = glob($ExtractPath . '*'); // get all file names
+                foreach ($files as $file) { // iterate files
+                    if (is_file($file))
+                        unlink($file); // delete file
+                }
+            }
+
+            if (Yii::$app->general->ZipOperation($zipPath, FALSE, $ExtractPath)) {
+                $status = '';
+                $msg = '';
+                $folders = scandir($ExtractPath);
+                $main_folder = '';
+                foreach ($folders as $folder) {
+                    if (in_array($folder, array(".", "..")))
+                        continue;
+                    $main_folder = $folder;
+                }
+                if (!empty($main_folder) && is_dir($ExtractPath . '/' . $main_folder)) {
+                    $sub_folder = $ExtractPath . '/' . $main_folder . '/';
+                    $dcs_folder = scandir($sub_folder);
+                    $cnt = 0;
+                    $file_id = [];
+                    $error_file = [];
+
+                    foreach ($dcs_folder as $folder) {
+                        if (in_array($folder, array(".", "..")))
+                            continue;
+                        $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $folder . '/';
+                        if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
+                            if ($dh = opendir($sub_folder . $folder)) {
+                                while (($file = readdir($dh)) !== false) {
+                                    if (strtoupper(pathinfo($file, PATHINFO_EXTENSION)) == 'EIP') {
+                                        $status = 'success';
+                                        try {
+                                            $old_path = $sub_folder . $folder . '/' . $file;
+                                            $file_path = $CollectionData . $file;
+                                            if (copy($old_path, $file_path)) {
+                                                $file_log = new TblEiplPacketFileLog ();
+                                                $file_log->attributes = $model->attributes;
+                                                $file_log->zip_name = $model->file_name;
+                                                $file_log->file_path = str_replace('\\', '/', $file_path);
+                                                $file_log->file_name = $file;
+                                                $file_log->file_status = 0;
+                                                $file_log->source_type = 1;
+                                                $file_log->status = 0;
+                                                $file_log->dpu_type = $this->validateFileName($file_log->file_name);
+                                                $file_log->dcs_code = $folder;
+                                                if ($file_log->save(FALSE)) {
+                                                    $file_id[] = $file_log->file_id;
+                                                    $cnt++;
+                                                    unlink($old_path);
+                                                } else {
+                                                    $error_file[] = $file;
+                                                }
+                                            } else {
+                                                $error_file[] = $file;
+                                            }
+                                        } catch (\Throwable $ex) {
+                                            $status = 'error';
+                                            $msg = 'Error While Save data';
+                                        }
+                                    } else {
+                                        $status = 'error';
+                                        $msg = 'Error While Save data';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Yii::$app->general->RemoveDirectory($ExtractPath);
+                    $msg = $cnt . ' Files Uploaded Successfully<br/>';
+                    if (!empty($error_file)) {
+                        $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                    }
+                } else {
+                    $status = 'error';
+                    $msg = 'Empty Zip Found';
+                }
+            } else {
+                $status = 'error';
+                $msg = 'Error While Zip Extract';
+            }
+            $result = ['status' => $status, 'data' => $msg];
+            echo (Json::encode($result));
+        } else {
+            return $this->render('import_zip', ['model' => $model]);
+        }
+    }
+
+    public function actionImportZip() {
+        $path = Yii::$app->basePath . '/web/import/collection/zip/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = Yii::$app->session->get('UserCode') . '_' . date('Ymdhis') . '.zip';
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
     }
 
 }

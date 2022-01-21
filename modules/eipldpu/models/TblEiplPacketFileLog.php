@@ -38,9 +38,9 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['dcs_code', 'file_path', 'file_name', 'created_by', 'updated_by', 'union_code'], 'safe'],
-            [['file_status', 'total_record', 'processed_record', 'source_type', 'status'], 'safe'],
-            [['created_at', 'updated_at', 'pick_datetime'], 'safe'],
+                [['dcs_code', 'file_path', 'file_name', 'created_by', 'updated_by', 'union_code'], 'safe'],
+                [['file_status', 'total_record', 'processed_record', 'source_type', 'status'], 'safe'],
+                [['created_at', 'updated_at', 'pick_datetime', 'zip_name'], 'safe'],
         ];
     }
 
@@ -69,6 +69,20 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
 
     public function getUnionDpuConfig() {
         return $this->hasOne(TblUnionDpuConfig::className(), ['union_code' => 'union_code'])->where(['dpu_type' => $this->dpu_type]);
+    }
+
+    public function getPendingData($file_id = []) {
+        $query = $this->find()
+                ->where(['file_status' => $this->file_status, 'status' => $this->status])
+                ->andWhere(['!=', 'zip_name', '']);
+        if (!empty($file_id)) {
+          $query->andWhere(['file_id'=>$file_id]);
+        }
+        return $query->limit(25)->all();
+    }
+
+    public function updateFileStatus($ids) {
+        return $this->updateAll(['status' => 1, 'updated_at' => date('Y-m-d H:i:s'), 'pick_datetime' => date('Y-m-d H:i:s')], ['file_id' => $ids]);
     }
 
 }
