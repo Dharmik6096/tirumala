@@ -387,7 +387,7 @@ class PendriveImportController extends \app\controllers\ChildController {
                                                 $file_log->source_type = 1;
                                                 $file_log->status = 0;
                                                 $file_log->dpu_type = $this->validateFileName($file_log->file_name);
-                                                $file_log->dcs_code = $folder;
+                                                $file_log->dcs_code = substr($folder, -12);
                                                 if ($file_log->save(FALSE)) {
                                                     $file_id[] = $file_log->file_id;
                                                     $cnt++;
