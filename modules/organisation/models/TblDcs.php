@@ -1246,4 +1246,20 @@ class TblDcs extends ChildModel {
         return $model;
     }
 
+    public function getDpuTypeWiseDCS($bmcCode = [], $dpuType = 0, $RLS = 'TRUE') {
+        $query = $this->find()->alias('t')
+                ->select(['t.dcs_code', 't.dcs_name', 't.ref_code','dpu_type'=>'count(m.member_code)'])
+                ->leftJoin('tbl_member m', 'm.dcs_code=t.dcs_code')
+                ->where(['t.is_active' => 1, 't.dpu_type' => $dpuType]);
+        if (!empty($bmcCode))
+            $query->andWhere(['t.bmc_code' => $bmcCode]);
+        if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['t.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        $query->groupBy('t.dcs_code,t.dcs_name,t.ref_code');
+
+
+        return $query->all();
+    }
+
 }

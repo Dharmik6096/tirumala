@@ -17,7 +17,7 @@ class EIPLSecurity extends Component {
         $this->iv = mcrypt_create_iv($this->iv_size, MCRYPT_RAND);
     }
 
-    function Encrypt($plaintext, $dpu_key = NULL) {
+    function Encrypt($plaintext, $dpu_key = NULL, $dpu_type = 8) {
         $this->key = pack('H*', $dpu_key);
         $this->setDpuKey();
         $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
