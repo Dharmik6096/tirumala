@@ -214,10 +214,11 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $existfromStock = $fstockModel->getExistStock($sale_type);
 
                 $f_stock = 0;
+                $i = 1;
 //                $qty = $model->quantity;
                 if (!empty($existfromStock)) {
                     $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                    Yii::$app->operation->history($existfromStock, $historyModel, 'UPDATE');
                     $childModel[] = $historyModel;
                     $f_stock = $existfromStock->stock;
                     $existfromStock->stock = $f_stock - $qty;
@@ -229,12 +230,10 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                     $fstockModel->x_col1 = Yii::$app->general->getUuid();
                 }
 
-
-                $i = 1;
                 $fstockTxnModel = new TblProductStockTransaction();
                 $fstockTxnModel->attributes = $fstockModel->attributes;
-                unset($stockTxnModel->created_at);
-                unset($stockTxnModel->created_by);
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;
