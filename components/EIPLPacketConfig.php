@@ -132,7 +132,7 @@ class EIPLPacketConfig extends Component {
             '32' => [
                 '144' => [
                     'vlccid' => 'pckt=3-15',
-                    'shift' => 'pckt=127-1',
+//                    'shift' => 'pckt=127-1',
                     'dtdate' => 'pckt=67-6',
                     'farmerid' => 'pckt=19-4',
                     'milktype' => 'pckt=24-1',
@@ -150,7 +150,7 @@ class EIPLPacketConfig extends Component {
                 ],
                 '160' => [
                     'vlccid' => 'pckt=3-15',
-                    'shift' => 'pckt=127-1',
+//                    'shift' => 'pckt=127-1',
                     'dtdate' => 'pckt=67-6',
                     'farmerid' => 'pckt=19-4',
                     'milktype' => 'pckt=24-1',

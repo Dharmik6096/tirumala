@@ -102,6 +102,8 @@ class PendriveImportController extends \app\controllers\ChildController {
                             $attributes['dtdate'] = substr($dateshift, 0, 6);
                             $attributes['shift'] = substr($dateshift, 6, 1);
                             $header_line = TRUE;
+                        } else if ($file->dpu_type == 32) {
+                            $attributes['shift'] = substr($dateshift, 6, 1);
                         }
                         $modelSave = [];
                         while ($line = fgets($fh)) {
