@@ -282,7 +282,10 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $ratefile = \Yii::getAlias('@webroot') . '/' . $ratefile;
         //$path=$path;
         //echo '<br/>rfgb '.$ratefile.' '.$path;
-        exec('rfgb ' . $ratefile . ' ' . $path);
+        $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplRateUtilityPath'];
+        $command = 'cd ' . $utility_path . ' && ./rfgB-32 ' . $ratefile . ' ' . $path;
+//        exec('rfgb ' . $ratefile . ' ' . $path);
+        exec('cd ' . $utility_path . ' && ./rfgB-32 ' . $ratefile . ' ' . $path);
         //exit;
         return;
     }

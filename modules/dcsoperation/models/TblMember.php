@@ -422,8 +422,12 @@ class TblMember extends ChildModel {
         chdir(Yii::$app->params['biplMemberUtilityPath']);
         //$file=\Yii::getAlias('@webroot').'/'.Yii::$app->params['biplMemberUtilityPath'].'/VFSD_EXAMPLE.csv';
         $path = $path . '/myvendor.ven';
+
+        $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplMemberUtilityPath'];
+        $command = 'cd ' . $utility_path . ' && ./milkven_cmd_x86_64-linux_B -i ' . $file . ' -o ' . $path;
         //echo 'milkvendor_cmd_i386-win32_B.exe -i '.$file.' -o '.$path;
-        exec('milkvendor_cmd_i386-win32_B.exe -i ' . $file . ' -o ' . $path);
+//        exec('milkvendor_cmd_i386-win32_B.exe -i ' . $file . ' -o ' . $path);
+        exec('cd ' . $utility_path . ' && ./milkven_cmd_x86_64-linux_B -i ' . $file . ' -o ' . $path);
         //exit;
         return;
     }

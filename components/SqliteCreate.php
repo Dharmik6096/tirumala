@@ -98,8 +98,24 @@ class SqliteCreate extends Component {
                         if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
                                 $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;
+
+                                if (in_array($tableName, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
+                                    $whereMccStock = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
+                                    $whereBmcStock = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $whereDcsStock = !empty($dcs_code) ? $dcs_code : '\'\'';
+                                    if (strtolower($org_type) == 'mcc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.bmc_code is null  and $tableName.dcs_code is null ";
+                                    } else if (strtolower($org_type) == 'bmc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code is null ";
+                                    } else if (strtolower($org_type) == 'vlc') {
+                                        $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code   in ($whereDcsStock) ";
+                                    }
+                                }
                             } else {
-                                if ($field['key_field'] == 'to_dest') {
+                                if ($field['table_name'] == 'tbl_payment_cycle_applicability') {
+                                    $whereKeyField = $bmc_code;
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where ' . $field['key_field'] . " in ($whereKeyField) AND tbl_payment_cycle_applicability.applicable_type = 'DCS' AND tbl_payment_cycle_applicability.applicable_for = 'BMC' ";
+                                } else if ($field['key_field'] == 'to_dest') {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
@@ -114,8 +130,14 @@ class SqliteCreate extends Component {
                                         }
                                         $sql .= ' left join tbl_member_deactive md on md.member_code = tbl_member.member_code and (\'' . $currDate . '\' between CAST(md.from_date as date) and CAST(ISNULL(md.to_date, getdate()) as date)) ';
                                         $sql = str_replace('tbl_member.is_active', ' CASE WHEN md.from_date is null THEN tbl_member.is_active ELSE 0 END as is_active ', $sql);
+                                        if ($org_type == 'BMC') {
+                                            $sql .= ' inner join tbl_dcs d on d.dcs_code = tbl_member.dcs_code and d.is_bmc = 1 ';
+                                        }
                                     }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
+                                    if ($tableName == 'tbl_member') {
+                                        
+                                    }
                                 }
                             }
                         } else {
