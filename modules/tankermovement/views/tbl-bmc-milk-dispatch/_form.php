@@ -253,11 +253,11 @@ $script .= "
             $('#purchase-detial').html('');
             $('#transactions-from').html('');
             $('#transactions-detial').html('');  
-//           if(bmc_milk_dispatch_code == ''){
-//            CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code)
-//            }else{
+           if(bmc_milk_dispatch_code == ''){
+            CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code)
+            }else{
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);
-//            }
+            }
         }      
     });
     
