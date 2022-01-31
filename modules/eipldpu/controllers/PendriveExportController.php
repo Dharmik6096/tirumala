@@ -66,14 +66,15 @@ class PendriveExportController extends \app\controllers\ChildController {
                                     $text .= $d['line_text'] . PHP_EOL;
                                     $enc_text .= \Yii::$app->EIPLSecurity->Encrypt($d['line_text'], $dpu_key, $model->dpu_type) . PHP_EOL;
                                 }
-                                $file = "NAME.txt";
+                                Yii::$app->general->checkDirectory($this->folder_path);
+                                $file = $this->folder_path . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis') . '.txt';
                                 $txt = fopen($file, "w");
-                                fwrite($txt, $text);
-                                //fwrite($txt, $enc_text);
+                                ($model->is_encrypted == 1) ? fwrite($txt, $enc_text) : fwrite($txt, $text);
                                 fclose($txt);
 
+                                ob_clean();
                                 header('Content-Description: File Transfer');
-                                header('Content-Disposition: attachment; filename=' . basename($file));
+                                header('Content-Disposition: attachment; filename=NAME.txt');
                                 header('Cache-Control: must-revalidate');
                                 header('Pragma: public');
                                 header('Content-Length: ' . filesize($file));
@@ -108,8 +109,7 @@ class PendriveExportController extends \app\controllers\ChildController {
                                     }
                                     $text = $d['line_text'] . PHP_EOL;
                                     $enc_text = \Yii::$app->EIPLSecurity->Encrypt($d['line_text'], $dpu_key, $model->dpu_type) . PHP_EOL;
-                                    fwrite($txt, $text);
-                                    //fwrite($txt, $enc_text);
+                                    ($model->is_encrypted == 1) ? fwrite($txt, $enc_text) : fwrite($txt, $text);
                                 }
                                 if (isset($txt)) {
                                     fclose($txt);

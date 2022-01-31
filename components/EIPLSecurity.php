@@ -18,12 +18,20 @@ class EIPLSecurity extends Component {
     }
 
     function Encrypt($plaintext, $dpu_key = NULL, $dpu_type = 8) {
-        $this->key = pack('H*', $dpu_key);
-        $this->setDpuKey();
-        $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
-        $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext, MCRYPT_MODE_ECB, $this->iv);
-        $ciphertext = $ciphertext;
-        $ciphertext_base64 = base64_encode($ciphertext);
+        if ($dpu_type == 32) {
+            $key = pack('H*', $dpu_key);
+            $iv = pack('H*', "00000000000000000000000000000000");
+            $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "?");
+            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $plaintext, MCRYPT_MODE_CBC, $iv);
+            $ciphertext_base64 = base64_encode($ciphertext);
+        } else {
+            $this->key = pack('H*', $dpu_key);
+            $this->setDpuKey();
+            $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
+            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext, MCRYPT_MODE_ECB, $this->iv);
+            $ciphertext_base64 = base64_encode($ciphertext);
+        }
+
         return $ciphertext_base64;
     }
 

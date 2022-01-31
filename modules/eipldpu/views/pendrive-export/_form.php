@@ -8,7 +8,6 @@ use yii\helpers\Url;
 $url = Url::to(['/eipldpu/pendrive-export/load-society']);
 ?>
 
-
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
@@ -37,6 +36,9 @@ $form = ActiveForm::begin([
     </div>
     <div id='dputype'>
         <?= Yii::$app->dropdown->dropdownStatic('EIPL_dpu_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('dpu_type'), FALSE, 'dpu_type') ?> 
+    </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'is_encrypted', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
     <div class="clearfix"></div>
 
@@ -83,6 +85,8 @@ $form = ActiveForm::begin([
 $script = "
      $('.singledcs').hide();
      $('.multidcs').hide();
+     $('#tbleiplmasterfilelog-dpu_type').find('option[value=0]').remove();
+
     $('#tbleiplmasterfilelog-bmc_code,#tbleiplmasterfilelog-dcs_code,#tbleiplmasterfilelog-file_type,#tbleiplmasterfilelog-dpu_type').on('change',function(){
         var bmc_code  = $('#tbleiplmasterfilelog-bmc_code').val();
         var file_type = $('#tbleiplmasterfilelog-file_type').val();
@@ -95,8 +99,7 @@ $script = "
        {
         $('.singledcs').hide();
         $('.multidcs').show();
-       // $('#tbleiplmasterfilelog-dpu_type').prop('disabled', false);
-        $('#dputype').prop('disabled',false);
+       
         if(dpu_type !='' && dpu_type !=null)
         {
             $('#dcs_code_multi-list').empty();
@@ -138,10 +141,8 @@ $script = "
                                             $('#dcs_code_multi-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"TblEiplMasterFileLog[dcs_code_multi][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
                                         });                                    
                                 }else{
-                                $('#tbleiplmasterfilelog-dpu_type').val(obj1.data).trigger('change.select2');
-                                //$('#tbleiplmasterfilelog-dpu_type').prop('disabled', true);
-                                $('#dputype').prop('disabled',true);
-                                }
+                                    $('#tbleiplmasterfilelog-dpu_type').val(obj1.data).trigger('change.select2');
+                                  }
                             }
                                             $('#loadercontent').hide();
                                             $('#pageloader').hide();
@@ -179,6 +180,12 @@ $script = "
             }
         });
     }
+ $(document).on('click', '.dcs-checklist',function(event){
+      event.stopPropagation();
+      $('#checkAll').prop('checked', false);
+   });
+       
+
 ";
 $this->registerJs($script, View::POS_END, 'eipl-master-export');
 

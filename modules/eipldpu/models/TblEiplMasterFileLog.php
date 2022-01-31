@@ -26,7 +26,7 @@ use app\modules\organisation\models\TblUnionDpuConfig;
  */
 class TblEiplMasterFileLog extends \app\models\ChildModel {
 
-    public $dcs_code_multi;
+    public $dcs_code_multi, $is_encrypted;
 
     /**
      * @inheritdoc
@@ -44,7 +44,7 @@ class TblEiplMasterFileLog extends \app\models\ChildModel {
                 [['dcs_code_multi'], 'required', 'on' => ['MEMBER']],
                 [['dcs_code'], 'required', 'on' => ['RATE']],
                 [['file_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['dpu_type', 'originating_type'], 'safe'],
+                [['dpu_type', 'originating_type', 'is_encrypted'], 'safe'],
                 [['created_at', 'updated_at', 'dcs_code_multi'], 'safe'],
         ];
     }
@@ -70,6 +70,7 @@ class TblEiplMasterFileLog extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'is_encrypted' => Yii::t('app', 'Is Encrypted'),
         ];
     }
 
