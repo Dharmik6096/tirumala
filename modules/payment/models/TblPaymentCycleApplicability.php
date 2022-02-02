@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\payment\models\TblPaymentCycle;
+use app\modules\syncutility\models\TblSentbox;
 
 /**
  * This is the model class for table "tbl_payment_cycle_applicability".
@@ -52,11 +53,11 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_code', 'applicable_type'], 'required'],
-            [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
-            [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
-            [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by'], 'safe'],
-            [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
+                [['applicable_code', 'applicable_type'], 'required'],
+                [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
+                [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
 //                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
         ];
     }
@@ -217,6 +218,55 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
                         ->where(['payment_cycle_code' => $this->payment_cycle_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'applicable_type' => $this->applicable_type])
                         ->andWhere($where)
                         ->count();
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+        $applicableFor = $this->applicable_for;
+        if ($applicableFor == 'DCS') {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
+        } else if ($applicableFor == 'MCC') {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->applicable_code);
+        } else {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->applicable_code);
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
+    public function afterDelete() {
+        $sentboxArray = [];
+        $applicableFor = $this->applicable_for;
+        if ($applicableFor == 'DCS') {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
+        } else if ($applicableFor == 'MCC') {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->applicable_code);
+        } else {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->applicable_code);
+        }
+        foreach ($sentboxArray as $sent) {
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, 'DELETE'))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
     }
 
 }
