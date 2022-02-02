@@ -326,15 +326,15 @@ $script = '
 //    });
 //});
 
-    function checkDeductionAmount(row_number){
-        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
+        function checkDeductionAmount(row_number){
+//        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
         var dd_value = $("#dd_qty_diff_type-"+row_number).val();
         var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
         var oldVal = $("#dd_qty_diff_type-"+row_number).attr("data-val");
-       
+        var qty_diff = $(".qty_diff-"+row_number).text();       
         if(dd_text == "excess"){
-            if(ts_deduction_amount < 0) {
-                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Ts Deduction Amount Must +ve.</span></div></div>", function(result){
+            if(qty_diff < 0) {
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Must +ve.</span></div></div>", function(result){
                     setTimeout(function(){
 //                        $("#ts_deduction_amount_input-"+row_number).focus();
                     },100);
