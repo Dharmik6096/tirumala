@@ -408,91 +408,112 @@ class DefaultController extends \app\controllers\ChildController {
             }
             $controls[$value] = $model->{$value};
         }
-        $sp_name = $this->data['sp_name'];
-        $output = \Yii::$app->general->getSpData($sp_name, $controls);
-        $this->output = $output;
+//        validateReport
 
-        if (!empty($this->data['sp_name2'])) {
-            $controls = [];
-            $param = explode(',', $this->data['param2']);
-            foreach ($param as $key => $value) {
-                $value_array = explode(':', $value);
-                $value = $value_array[0];
-                if (isset($value_array[1]) && $value_array[1] == 'string') {
-                    $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
-                    if (isset($value_array[2])) {
-                        $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
-                        $model->{$value} .= ' ' . $shift . '.000';
-                    }
+        $validateReport = true;
+        if (!empty($this->data['validateReport'])) {
+            $sp_nameValidate = $this->data['validateReport'];
+            $outputData = \Yii::$app->general->getSpData($sp_nameValidate, $controls);
+            if (!empty($outputData) && count($outputData) > 0) {
+                $validateReport = false;
+                $validationMsg = '';
+                $header = !empty($outputData[0]['errorHeader']) ? $outputData[0]['errorHeader'] : '';
+                $validationMsg .= $header;
+                foreach ($outputData as $key => $outputD) {
+                    $errMsg = !empty($outputD['errorContent']) ? $outputD['errorContent'] : '';
+                    $validationMsg .= '<br/>' . $errMsg;
                 }
-                $controls[$value] = $model->{$value};
-            }
-            $sp_name2 = $this->data['sp_name2'];
-            $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
-            $invalid = false;
-            foreach ($second_output as $key => $value) {
-                if ($value['Pending'] > 0) {
-                    $invalid = true;
-                    break;
-                }
-            }
-            if ($invalid) {
-                $this->message = !empty($this->data['message']) ? $this->data['message'] : '';
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => $this->message]);
+                    'message' => $validationMsg]);
             }
         }
+        if ($validateReport) {
+            $sp_name = $this->data['sp_name'];
+            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+            $this->output = $output;
 
-        $fileArray = [];
-        if (!empty($output)) {
-            $attr = '';
-            $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
-            foreach ($output[0] as $att => $value) {
-                $attr .= "'" . $att . "',";
-            }
-            $this->dataProvider = new ArrayDataProvider([
-                'allModels' => $output,
-                'pagination' => false,
-                'sort' => [
-                    'defaultOrder' => [],
-                    'attributes' => [
-                        $attr
-                    ],
-                ],
-            ]);
-            if (!empty($this->data['sap_download'])) {
-                $downLoadArray = [];
-                foreach ($this->output as $detail) {
-                    $plant = ($model->report_type == 1) ? 'Plant Code' : 'Plant';
-                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
-                        if (empty($downLoadArray[$detail[$plant]])) {
-                            $downLoadArray[$detail[$plant]] = [];
+            if (!empty($this->data['sp_name2'])) {
+                $controls = [];
+                $param = explode(',', $this->data['param2']);
+                foreach ($param as $key => $value) {
+                    $value_array = explode(':', $value);
+                    $value = $value_array[0];
+                    if (isset($value_array[1]) && $value_array[1] == 'string') {
+                        $model->{$value} = !empty($model->{$value}) ? date('Y-m-d', strtotime($model->{$value})) : date('Y-m-d');
+                        if (isset($value_array[2])) {
+                            $shift = !empty($model->{$value_array[2]}) ? \Yii::$app->general->getshift($model->{$value_array[2]}) : '00:00:00';
+                            $model->{$value} .= ' ' . $shift . '.000';
                         }
-                        $downLoadArray[$detail[$plant]][] = $detail;
+                    }
+                    $controls[$value] = $model->{$value};
+                }
+                $sp_name2 = $this->data['sp_name2'];
+                $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
+                $invalid = false;
+                foreach ($second_output as $key => $value) {
+                    if ($value['Pending'] > 0) {
+                        $invalid = true;
+                        break;
                     }
                 }
-                foreach ($downLoadArray as $bmc => $download) {
-                    $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
-                    $this->downloadData($title, $download, $fileArray);
-                }
-                $this->fileDownloadArr = $fileArray;
-            }
-        }
-        if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
-            $content = '';
-            foreach ($this->output as $dataline) {
-                if (!empty($dataline['Dataline'])) {
-                    $content .= $dataline['Dataline'] . PHP_EOL;
+                if ($invalid) {
+                    $this->message = !empty($this->data['message']) ? $this->data['message'] : '';
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => $this->message]);
                 }
             }
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Description: File Transfer');
-            header('Content-Disposition: attachment; filename=farmerpaymentreport.txt');
-            header('Content-Length: ' . strlen($content));
-            header('Content-Type: text/plain');
-            echo $content;
+
+            $fileArray = [];
+            if (!empty($output)) {
+                $attr = '';
+                $decryptParam = !empty($this->data['to_decrypt']) ? $this->data['to_decrypt'] : [];
+                foreach ($output[0] as $att => $value) {
+                    $attr .= "'" . $att . "',";
+                }
+                $this->dataProvider = new ArrayDataProvider([
+                    'allModels' => $output,
+                    'pagination' => false,
+                    'sort' => [
+                        'defaultOrder' => [],
+                        'attributes' => [
+                            $attr
+                        ],
+                    ],
+                ]);
+                if (!empty($this->data['sap_download'])) {
+                    $downLoadArray = [];
+                    foreach ($this->output as $detail) {
+                        $plant = ($model->report_type == 1) ? 'Plant Code' : 'Plant';
+                        if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                            if (empty($downLoadArray[$detail[$plant]])) {
+                                $downLoadArray[$detail[$plant]] = [];
+                            }
+                            $downLoadArray[$detail[$plant]][] = $detail;
+                        }
+                    }
+                    foreach ($downLoadArray as $bmc => $download) {
+                        $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
+                        $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+                        $this->downloadData($title, $download, $fileArray);
+                    }
+                    $this->fileDownloadArr = $fileArray;
+                }
+            }
+            if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
+                $content = '';
+                foreach ($this->output as $dataline) {
+                    if (!empty($dataline['Dataline'])) {
+                        $content .= $dataline['Dataline'] . PHP_EOL;
+                    }
+                }
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Description: File Transfer');
+                header('Content-Disposition: attachment; filename=farmerpaymentreport.txt');
+                header('Content-Length: ' . strlen($content));
+                header('Content-Type: text/plain');
+                echo $content;
+            }
         }
     }
 
@@ -586,6 +607,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'message' => Yii::t('app', 'Sync of data is pending from device.'),
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
+                'validateReport' => 'rpt_MIS_WQSAPReport_validate'
             ],
             'SdReportSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
