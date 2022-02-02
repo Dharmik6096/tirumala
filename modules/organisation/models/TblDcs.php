@@ -112,7 +112,7 @@ class TblDcs extends ChildModel {
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
     public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route, $beneficiary_name;
     public $operation, $verifie_for, $file_name;
-    public $toEncrypt = ['password'];
+    public $toEncrypt = ['password', 'pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob'];
 
     /**
      * @inheritdoc
