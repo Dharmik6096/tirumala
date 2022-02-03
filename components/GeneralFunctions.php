@@ -1863,14 +1863,14 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function shiftLock($model, $dateParam, $codeParam, $showError = '') {
+    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock') {
         if (!empty($model->$dateParam)) {
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
             $showError = !empty($showError) ? $showError : $dateParam;
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, 'data_lock' => 1])
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
