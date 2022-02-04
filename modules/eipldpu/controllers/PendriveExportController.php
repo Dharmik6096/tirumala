@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcs;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 /**
  * PendriveExportController implements the CRUD actions for TblEiplMasterFileLog model.
@@ -17,7 +18,7 @@ use yii\helpers\Json;
 class PendriveExportController extends \app\controllers\ChildController {
 
     protected $folder_path;
-    public $freeAccessActions = ['load-society'];
+    public $freeAccessActions = ['load-society', 'view-rate'];
 
     public function init() {
         parent::init();
@@ -125,7 +126,13 @@ class PendriveExportController extends \app\controllers\ChildController {
                             Yii::$app->display->message(TRUE, 'No Data Available.', 'info');
                         }
                     } else if ($model->file_type == 'RATE') {
-                        
+                        $result = \Yii::$app->db->createCommand("{CALL eipldpu_rate_file(:dcs_code,:dpu_type)}")
+                                ->bindValue(':dcs_code', $model->dcs_code)
+                                ->bindValue(':dpu_type', $model->dpu_type);
+                        $data = $result->queryAll();
+                        if (!empty($data)) {
+                            
+                        }
                     }
                 } else {
                     Yii::$app->display->message(TRUE, 'DPU Key Not Available.', 'info');
@@ -154,6 +161,14 @@ class PendriveExportController extends \app\controllers\ChildController {
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $dcs_list]);
+    }
+
+    public function actionViewRate() {
+        $rate_id = Yii::$app->request->post('rate_id');
+        $url = Url::to(['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $rate_id, 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1]);
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode(['status' => 'success', 'data' => $url]);
     }
 
     /**

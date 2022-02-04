@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $url = Url::to(['/eipldpu/pendrive-export/load-society']);
+$rate_url = Url::to(['/eipldpu/pendrive-export/view-rate']);
 ?>
 
 <?php
@@ -32,10 +33,20 @@ $form = ActiveForm::begin([
     </div>
     <?= Yii::$app->dropdown->dropdownStatic('process_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('file_type'), FALSE, 'file_type') ?> 
     <div class="col-sm-2 singledcs">
-        <?= Yii::$app->dropdown->depend_dropdown('bmc-dcs', $model, $form, 'tbleiplmasterfilelog-bmc_code', '', $model->getAttributeLabel('dcs_code'), 'dcs_code', FALSE, 1, explode(',', Yii::$app->session->get('Dcs')), false); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('bmc-dcs', $model, $form, 'tbleiplmasterfilelog-bmc_code', '', $model->getAttributeLabel('dcs_code').' *', 'dcs_code', FALSE, 1, explode(',', Yii::$app->session->get('Dcs')), false); ?>
     </div>
     <div id='dputype'>
         <?= Yii::$app->dropdown->dropdownStatic('EIPL_dpu_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('dpu_type'), FALSE, 'dpu_type') ?> 
+    </div>
+    <div class="col-sm-2 singledcs">
+        <div class="col-sm-8"> 
+            <?= Html::activeHiddenInput($model, 'rate_type', ['value' => 'member']) ?>
+            <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbleiplmasterfilelog-union_code,tbleiplmasterfilelog-rate_type', 'rate_id', $model->getAttributeLabel('rate_id').' *'); ?>
+        </div>
+        <div class="col-sm-1 mt20"> 
+            <?= Html::a(Yii::t('app', 'View'), '#', ['class' => 'view-rate btn btn-danger']); ?>
+        </div>
+
     </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_encrypted', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -70,7 +81,7 @@ $form = ActiveForm::begin([
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->save(Yii::t('app', 'Download'), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
@@ -85,6 +96,8 @@ $form = ActiveForm::begin([
 $script = "
      $('.singledcs').hide();
      $('.multidcs').hide();
+     $('.view-rate').addClass('disabled');
+
      $('#tbleiplmasterfilelog-dpu_type').find('option[value=0]').remove();
 
     $('#tbleiplmasterfilelog-bmc_code,#tbleiplmasterfilelog-dcs_code,#tbleiplmasterfilelog-file_type,#tbleiplmasterfilelog-dpu_type').on('change',function(){
@@ -184,8 +197,29 @@ $script = "
       event.stopPropagation();
       $('#checkAll').prop('checked', false);
    });
+    
+ $('#tbleiplmasterfilelog-rate_id').on('change',function(){
+        var rate_id  = $('#tbleiplmasterfilelog-rate_id').val();
+        if(rate_id !='' && rate_id !=null)
+        {
+         $('.view-rate').removeClass('disabled');
+        } else {
+        $('.view-rate').addClass('disabled');
+        }
+    }); 
+ $(document).on('click', '.view-rate',function(event){
+             var rate_id  = $('#tbleiplmasterfilelog-rate_id').val();
+             $.ajax({
+                        type: 'post',
+                        url: '{$rate_url}',
+                        data: {'rate_id':rate_id},  
+                        success: function(data) {
+                            var obj = $.parseJSON(data);
+                                window.open(obj.data, '_blank');
+                         }                     
+            });  
+   });
        
-
 ";
 $this->registerJs($script, View::POS_END, 'eipl-master-export');
 

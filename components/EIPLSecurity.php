@@ -27,8 +27,8 @@ class EIPLSecurity extends Component {
         } else {
             $this->key = pack('H*', $dpu_key);
             $this->setDpuKey();
-            $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, " ");
-            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext, MCRYPT_MODE_ECB, $this->iv);
+            $plaintext = str_pad($plaintext, (floor(strlen($plaintext) / 16) + 1) * 16, "=");
+            $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, $plaintext.' ', MCRYPT_MODE_ECB, $this->iv);
             $ciphertext_base64 = base64_encode($ciphertext);
         }
 
