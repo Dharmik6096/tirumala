@@ -265,6 +265,8 @@ class TblDcsController extends ChildController {
         if (empty($this->model->vendor)) {
             $this->model->vendor = 'NA';
             $oldVendor = 'NA';
+        } else {
+            $oldVendor = 'NA';
         }
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsHistory();
@@ -351,6 +353,10 @@ class TblDcsController extends ChildController {
                 if ($oldVendor == 'NA' && $this->model->vendor != 'NA') {
                     $vendorModel = new TblSocietyVendor();
                     $vendorModel->dcs_code = $this->model->dcs_code;
+                    $vendorModelData = $vendorModel->find()->where(['dcs_code' => $this->model->dcs_code])->one();
+                    if (!empty($vendorModelData)) {
+                        $vendorModel = $vendorModelData;
+                    }
                     $vendorModel->vendor_code = $this->model->vendor;
                     array_push($mappingList, $vendorModel);
                     $userModel = new User();
