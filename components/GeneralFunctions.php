@@ -1397,14 +1397,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -1863,14 +1863,14 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function shiftLock($model, $dateParam, $codeParam, $showError = '') {
+    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock') {
         if (!empty($model->$dateParam)) {
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
             $showError = !empty($showError) ? $showError : $dateParam;
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, 'data_lock' => 1])
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
@@ -2175,6 +2175,22 @@ class GeneralFunctions extends Component {
             if ($error || $sameEmail) {
                 $model->addError($attribute, $err_msg);
             }
+        }
+    }
+
+    public function RemoveDirectory($dir) {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir . "/" . $object) == "dir")
+                        $this->RemoveDirectory($dir . "/" . $object);
+                    else
+                        unlink($dir . "/" . $object);
+                }
+            }
+            reset($objects);
+            rmdir($dir);
         }
     }
 

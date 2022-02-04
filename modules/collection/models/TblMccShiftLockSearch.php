@@ -23,10 +23,10 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
      */
     public function rules() {
         return [
-            [['shift_lock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'date_time_of_collection', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['data_lock', 'originating_type'], 'integer'],
-            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_mcc_code'], 'safe'],
+                [['shift_lock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'date_time_of_collection', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['data_lock', 'originating_type'], 'integer'],
+                [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_mcc_code'], 'safe'],
         ];
     }
 
@@ -114,7 +114,7 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
         return $dataProvider;
     }
 
-    public function shiftlocksearch($params) {
+    public function shiftlocksearch($params, $sp = 'portal_mcc_shift_lock_data') {
         $this->load($params);
 
         $output = [];
@@ -139,7 +139,7 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
             $sp_params['f_mcc_code'] = $this->f_mcc_code;
             unset($sp_params['from_shift']);
             unset($sp_params['to_shift']);
-            $sp = 'portal_mcc_shift_lock_data';
+
 
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
         }

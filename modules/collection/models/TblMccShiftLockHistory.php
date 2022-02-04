@@ -46,17 +46,17 @@ class TblMccShiftLockHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['date_time_of_collection', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['data_lock', 'originating_type'], 'safe'],
-            [['shift_lock_code'], 'safe'],
-            [['union_code'], 'safe'],
-            [['plant_code', 'mcc_plant_code'], 'safe'],
-            [['shift_code'], 'safe'],
-            [['created_by', 'updated_by', 'history_created_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['operation_type'], 'safe'],
-            [['qty', 'avg_fat', 'avg_snf', 'amount'], 'safe'],
+                [['date_time_of_collection', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['data_lock', 'originating_type'], 'safe'],
+                [['shift_lock_code'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code'], 'safe'],
+                [['shift_code'], 'safe'],
+                [['created_by', 'updated_by', 'history_created_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['operation_type'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'amount', 'bmc_lock', 'member_lock', 'product_sale_lock'], 'safe'],
         ];
     }
 
