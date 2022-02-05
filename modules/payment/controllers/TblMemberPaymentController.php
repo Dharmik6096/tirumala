@@ -945,6 +945,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust = $postData['adjust_recovery'];
             unset($postData['member_payment_alias_code']);
             unset($postData['adjust_recovery']);
+            unset($postData['recovery_dcs']);
             $recoverModel = $model->find()->where(['member_payment_alias_code' => $pkCode])->one();
             if (!empty($recoverModel)) {
                 $historyModel = new TblMemberPaymentAliasHistory();
@@ -962,6 +963,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $oldRec = !empty($value['old_recovery']) ? $value['old_recovery'] : 0;
                     $newRec = !empty($value['recovery']) ? $value['recovery'] : 0;
                     $modelData->recovery = $oldRec + $newRec;
+                    $modelData->final_amount = $modelData->final_amount - $newRec;
                     $saveModel[] = $modelData;
                 }
             }
@@ -982,10 +984,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $aliasmodel->attributes = Yii::$app->request->get();
         $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
-
+        $dcs = $model->getRecoverDcs();
+        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+                    return $dcs['dcs_name'] . '(' . $dcs['ref_code'] . ')';
+                });
         return $this->renderAjax('_recovery', [
                     'recoverMember' => $recoverMember,
                     'aliasmodel' => $aliasmodel,
+                    'recoverDcs' => $recoverDcs
         ]);
     }
 
