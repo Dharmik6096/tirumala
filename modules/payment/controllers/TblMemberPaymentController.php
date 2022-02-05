@@ -278,12 +278,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $memberPaymentModel->attributes = $model->attributes;
 //            $negativeValCount = $memberPaymentModel->getNegativeValCount();
             $negativeValCount = $memberPaymentModel->getNegativeValDcs();
+            $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
             return $this->render('process_lock_dcs_payment_data', [
                         'model' => $model,
                         'searchModel' => $searchModel,
                         'dataProvider' => $dataProvider,
                         'negativeValCount' => $negativeValCount,
-                        'removeCheckBox' => true
+                        'removeCheckBox' => true,
+                        'negativeDcsCode' => $negativeDcsCode
             ]);
         }
     }

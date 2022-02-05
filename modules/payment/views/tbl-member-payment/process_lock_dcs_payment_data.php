@@ -95,7 +95,14 @@ $tot_amt = array_sum(array_map(function($array) {
                     ]
                 ];
 
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
+                $rowOptions = function ($model) use ($negativeDcsCode) {
+                    $rowcolor = '';
+                    if (in_array($model->dcs_code, $negativeDcsCode)) {
+                        $rowcolor = 'danger';
+                    }
+                    return ['class' => $rowcolor];
+                };
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
                 <div class="col-md-12" >
                     <?php if (!empty($dataProvider->getModels())) { ?>
