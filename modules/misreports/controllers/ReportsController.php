@@ -724,6 +724,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRecoveryFromOtherMember() {
+        $this->report = 'RecoveryFromOtherMember';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1876,6 +1881,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_product_stock_detail_summary',
                 'scenario' => 'StockDetailSummary',
                 'title' => 'Stock Detail Summary',
+            ],
+            'RecoveryFromOtherMember' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,payment_cycle_code:default:dcs',
+                'sp_name' => 'sp_recovery_from_other_member',
+                'scenario' => 'RecoveryFromOtherMember',
+                'title' => '619 - Recovery From Other Member',
             ],
         ];
         return $label[$l];
