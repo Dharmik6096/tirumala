@@ -93,6 +93,7 @@ class ReportsModel extends Model {
               return $('#reportsmodel-org_type').val() == 'DCS';
           }", 'on' => ['StockDetail']],
                 [['union_code', 'org_type', 'from_date', 'to_date'], 'required', 'on' => ['StockDetailSummary']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['RecoveryFromOtherMember']],
         ];
     }
 
