@@ -32,7 +32,7 @@ $adjust_recovery = abs($model->net_payable);
                                 ],
                                 'action' => Url::to(['/payment/tbl-vsp-payment/add-recovery', 'code' => $model->vsp_payment_code])
                     ]);
-                    echo $form->errorSummary($model); 
+                    echo $form->errorSummary($model);
                     ?>
                     <div class="row">
                         <div class="table-responsive">
@@ -58,7 +58,7 @@ $adjust_recovery = abs($model->net_payable);
                                                 <td><?= Yii::$app->general->getCustomer($data, $data->customer_type) ?></td>
                                                 <td class="recovery-amount"><?= $data->recovery ?></td>
                                                 <td class="old-recovery"><?= empty($data->old_recovery) ? 0.00 : $data->old_recovery ?></td>
-                                                <td><?= Html::activeHiddenInput($data, '[' . $index . ']vsp_payment_code', ['value' => $data->vsp_payment_code]) . $form->field($data, '[' . $index . ']new_recovery')->textInput(['value' => empty($data->old_recovery) ? 0.00 : $data->old_recovery, 'class' => 'number-validate new-recovery cal-recovery form-control',])->label(FALSE); ?></td>
+                                                <td class="no_padding_input hide_help_block"><?= Html::activeHiddenInput($data, '[' . $index . ']vsp_payment_code', ['value' => $data->vsp_payment_code]) . $form->field($data, '[' . $index . ']new_recovery')->textInput(['value' => empty($data->old_recovery) ? 0.00 : $data->old_recovery, 'class' => 'number-validate new-recovery cal-recovery form-control',])->label(FALSE); ?></td>
                                                 <td class="total-recovery"><?= $data->recovery ?></td>
                                             </tr>
                                             <?php
@@ -74,7 +74,6 @@ $adjust_recovery = abs($model->net_payable);
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12 top-bottom-15 padding-50">
                             <?php
-                            $requestUrl = \Yii::$app->request->getHostInfo() . Yii::$app->request->url;
                             AjaxSubmitButton::begin([
                                 'label' => Yii::t('app', 'Save'),
                                 'id' => 'recoveryBtn',
@@ -84,20 +83,17 @@ $adjust_recovery = abs($model->net_payable);
                                     'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 if (data.status == "success"){ 
-                                                                    bootbox.alert("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-info\"><i class=\"fa fa-info\"></i></div><span>"+data.msg+" </span></div></div>");
-                                                                    $("#RecoveryModal").modal("toggle"); 
-                                                                    $("#loadercontent").hide();
-                                                                    $("#pageloader").hide();
-                                                                    $(".help-block").text("");
-                                                                    $(".form-group").removeClass("has-error");         
-                                                                    $(".error-summary").hide();
-                                                                    $(".error-summary li").remove();
-                                                                }else{
+                                                                    bootbox.alert("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-info\"><i class=\"fa fa-info\"></i></div><span>"+data.msg+" </span></div></div>", function(){
+                                                                          location.reload(); 
+                                                                    });
+                                                                 }else{
                                                                     $(".form-group").removeClass("has-error");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     $.each(data, function(key, val) {
+                                                                        if(key=="msg" && key != null){   
                                                                         $(".error-summary ul").append("<li>"+val+"</li>");
+                                                                        }
                                                                     });
                                                                     $(".error-summary").show();
                                                                    
