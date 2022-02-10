@@ -14,7 +14,7 @@ $adjust_recovery = abs($model->net_payable);
 ?>
 <div class="modal modal-default fade" id="RecoveryModal" role="dialog">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content panel">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel">
@@ -23,7 +23,7 @@ $adjust_recovery = abs($model->net_payable);
                     ?>
                 </h4>
             </div>
-            <div class='row pad-10'>
+            <div class='panel-body row pad-10'>
                 <div class="col-md-12">
                     <?php
                     $form = ActiveForm::begin(['options' => [
@@ -58,7 +58,7 @@ $adjust_recovery = abs($model->net_payable);
                                                 <td><?= Yii::$app->general->getCustomer($data, $data->customer_type) ?></td>
                                                 <td class="recovery-amount"><?= $data->recovery ?></td>
                                                 <td class="old-recovery"><?= empty($data->old_recovery) ? 0.00 : $data->old_recovery ?></td>
-                                                <td class="no_padding_input hide_help_block"><?= Html::activeHiddenInput($data, '[' . $index . ']vsp_payment_code', ['value' => $data->vsp_payment_code]) . $form->field($data, '[' . $index . ']new_recovery')->textInput(['value' => empty($data->old_recovery) ? 0.00 : $data->old_recovery, 'class' => 'number-validate new-recovery cal-recovery form-control',])->label(FALSE); ?></td>
+                                                <td class="input-group-addon no_padding_input hide_help_block"><?= Html::activeHiddenInput($data, '[' . $index . ']vsp_payment_code', ['value' => $data->vsp_payment_code]) . $form->field($data, '[' . $index . ']new_recovery')->textInput(['value' => empty($data->old_recovery) ? 0.00 : $data->old_recovery, 'class' => 'number-validate new-recovery cal-recovery form-control',])->label(FALSE); ?></td>
                                                 <td class="total-recovery"><?= $data->recovery ?></td>
                                             </tr>
                                             <?php

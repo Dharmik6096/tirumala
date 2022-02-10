@@ -17,8 +17,7 @@ $final_amt = array_sum(array_map(function($array) {
             return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'] + $array['adjust_amount'] - $array['hold_amount'];
         }, $array));
 
-$recovery_from_other_vendor = (isset(Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
-$recovery_from_other_vendor = TRUE;
+$recovery_from_other_vendor = ($model->billing_type != 'remuneration' && isset(Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
 
 $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
         Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
@@ -153,7 +152,7 @@ $script = "$('#adjust').click(function() {
                     $('#pageloader').hide();
                     data_ok=0;
                     bootbox.alert(
-                    \"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Net Payable should not be less than final amount.</span></div></div>\",function(){
+                    \"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Net Payable should not be Negative.</span></div></div>\",function(){
                         bootbox.hideAll();
                     });
                     return false; 
@@ -206,10 +205,17 @@ $script .= " $('.cal-amount').on('blur',function(){
         if(hold == '' ||  isNaN(hold)){
         hold=0;
         }
+        if(adjust_recovery == '' ||  isNaN(adjust_recovery)){
+        adjust_recovery=0;
+        }
+        if(recovery == '' ||  isNaN(recovery)){
+        recovery=0;
+        }        
+
         var net = final + adjust - hold + adjust_recovery - recovery;  
          parent.find('.net-amount').val(net.toFixed(2));
        if(net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
+         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be Negative.</span>',function(){
                 bootbox.hideAll();
                     $('#'+id).focus().select();
             });
