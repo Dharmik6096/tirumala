@@ -326,7 +326,7 @@ $script = '
 //    });
 //});
 
-        function checkDeductionAmount(row_number){
+     function checkDeductionAmount(row_number){
 //        var ts_deduction_amount = parseFloat($("#ts_deduction_amount_input-"+row_number).val());
         var dd_value = $("#dd_qty_diff_type-"+row_number).val();
         var dd_text =  $("#dd_qty_diff_type-"+row_number+" option:selected").text();
@@ -334,7 +334,7 @@ $script = '
         var qty_diff = $(".qty_diff-"+row_number).text();       
         if(dd_text == "excess"){
             if(qty_diff < 0) {
-                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Must +ve.</span></div></div>", function(result){
+                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Type should be not excess</span></div></div>", function(result){
                     setTimeout(function(){
 //                        $("#ts_deduction_amount_input-"+row_number).focus();
                     },100);
@@ -346,8 +346,13 @@ $script = '
                 $("#dd_qty_diff_responsibility-"+row_number).val(4);
                 $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
             }
-        }else if(dd_text != "excess" &&  $("#dd_qty_diff_responsibility-"+row_number).val()==4){
-            $("#dd_qty_diff_responsibility-"+row_number).val(1);
+        }else if(dd_text != "excess" && qty_diff > 0){
+            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Diff Type should be excess</span></div></div>", function(result){
+                    setTimeout(function(){
+//                        $("#ts_deduction_amount_input-"+row_number).focus();
+                    },100);
+                });
+            $("#dd_qty_diff_responsibility-"+row_number).val(4);
             $("#dd_qty_diff_responsibility-"+row_number).trigger("change");
         }
 
