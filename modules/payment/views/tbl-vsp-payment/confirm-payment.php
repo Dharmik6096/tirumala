@@ -13,9 +13,10 @@ if (!empty($searchModel)) {
     $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
             Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
             (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
-                    Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
+            Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
 }
 $title = ($searchModel->billing_type == 'remuneration' ? Yii::t('app', 'Remuneration Payment Disburse : Step 2') : Yii::t('app', 'Vendor Payment Disburse : Step 2') ) . ' ' . ' (' . $bmc_info . ')';
+$recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$searchModel->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
 ?>
 <div class="tbl-member-payment-index">
     <div class="panel panel-default panel-grid panel-main">
@@ -61,51 +62,59 @@ $title = ($searchModel->billing_type == 'remuneration' ? Yii::t('app', 'Remunera
                       ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name',
                       'label' => Yii::t('app', 'DCS')
                       ], */
-                    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-                    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+                        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                         }, 'filter' => false],
-                    ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+                        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                             return Yii::$app->general->getCustomer($model, $model->customer_type);
                         }],
-                    ['attribute' => 'is_verified',
+                        ['attribute' => 'is_verified',
                         'value' => function($model) {
                             return ($model->is_verified == 0) ? 'Not Verified' : ($model->is_verified == 1 ? 'Verified' : 'Rejected');
                         }
                     ],
-                    ['attribute' => 'bank_name'],
-                    ['attribute' => 'branch_name'],
-                    ['attribute' => 'bank_account_no'],
-                    ['attribute' => 'ifsc'],
-                    ['attribute' => 'amount', 'pageSummary' => true, 'value' => 'amount',
+                        ['attribute' => 'bank_name'],
+                        ['attribute' => 'branch_name'],
+                        ['attribute' => 'bank_account_no'],
+                        ['attribute' => 'ifsc'],
+                        ['attribute' => 'amount', 'pageSummary' => true, 'value' => 'amount',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'addition', 'pageSummary' => true, 'value' => 'addition',
+                        ['attribute' => 'addition', 'pageSummary' => true, 'value' => 'addition',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'deduction', 'pageSummary' => true, 'value' => 'deduction',
+                        ['attribute' => 'deduction', 'pageSummary' => true, 'value' => 'deduction',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'previous_hold', 'pageSummary' => true, 'value' => 'previous_hold',
+                        ['attribute' => 'previous_hold', 'pageSummary' => true, 'value' => 'previous_hold',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'previous_due', 'pageSummary' => true, 'value' => 'previous_due',
+                        ['attribute' => 'previous_due', 'pageSummary' => true, 'value' => 'previous_due',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'hold_amount', 'pageSummary' => true, 'value' => 'hold_amount',
+                        ['attribute' => 'hold_amount', 'pageSummary' => true, 'value' => 'hold_amount',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'adjust_amount', 'pageSummary' => true, 'value' => 'adjust_amount',
+                        ['attribute' => 'adjust_amount', 'pageSummary' => true, 'value' => 'adjust_amount',
                         'hAlign' => Yii::$app->general->ColoumnAlign(),
                         'format' => Yii::$app->general->CurrencyFormat(),
                     ],
-                    ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => function($model) {
+                        ['attribute' => 'adjust_recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
+                        'hAlign' => Yii::$app->general->ColoumnAlign(),
+                        'format' => Yii::$app->general->CurrencyFormat()
+                    ],
+                        ['attribute' => 'recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
+                        'hAlign' => Yii::$app->general->ColoumnAlign(),
+                        'format' => Yii::$app->general->CurrencyFormat()
+                    ],
+                        ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => function($model) {
                             //return round($model->final_pay);
                             return $model->final_pay;
                         },
