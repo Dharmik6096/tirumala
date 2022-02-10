@@ -214,15 +214,16 @@ $script .= " $('.cal-amount').on('blur',function(){
 
         var net = final + adjust - hold + adjust_recovery - recovery;  
          parent.find('.net-amount').val(net.toFixed(2));
-       if(net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be Negative.</span>',function(){
-                bootbox.hideAll();
-                    $('#'+id).focus().select();
-            });
-            return false;
-        } else {                   
-          SumAmount();    
-       }
+         SumAmount(); 
+//       if(net != '' && net < 0){
+//         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be Negative.</span>',function(){
+//                bootbox.hideAll();
+//                    $('#'+id).focus().select();
+//            });
+//            return false;
+//        } else {                   
+//          SumAmount();    
+//       }
     });";
 $script .= " function SumAmount()
  {
