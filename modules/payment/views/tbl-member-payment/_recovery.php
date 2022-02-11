@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 use yii\web\View;
+use kartik\widgets\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblProject */
@@ -39,6 +40,16 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
                     <div class="row">
                         <div class="table-responsive">
                             <table class="table table-bordered web_theme_table table-striped table-main table-language">
+                                <thead> 
+                                    <tr>
+                                        <td colspan="2">    
+                                            <?php
+                                            echo $form->field($aliasmodel, 'recovery_dcs')->widget(Select2::classname(), [
+                                                'data' => $recoverDcs, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select DCS']]
+                                            )->label(FALSE);
+                                            ?></td>
+                                    </tr>
+                                </thead>
                                 <thead>
                                     <tr><?= Html::activeHiddenInput($aliasmodel, 'member_payment_alias_code', ['id' => 'Code']); ?> 
                                     <tr><?= Html::activeHiddenInput($aliasmodel, 'adjust_recovery', ['id' => 'adjustRecovery']); ?> 
@@ -145,7 +156,7 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
                             AjaxSubmitButton::end();
                             ?>
 
-                            <?php // Html::resetButton('Reset', ['class' => 'btn btn-primary']) ?>
+                            <?php // Html::resetButton('Reset', ['class' => 'btn btn-primary'])   ?>
                         </div>
                     </div>
                 </div>
@@ -158,6 +169,44 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
 <?php
 $script = "
     var AdjustRec = '" . $aliasmodel->adjust_recovery . "';
-        $('.new_recovery').val('');
+      $('.new_recovery').val('');
+   $('#tblmemberpaymentalias-recovery_dcs').on('change',function(){
+        var recovery_dcs  = $('#tblmemberpaymentalias-recovery_dcs').val();
+        if(recovery_dcs !='' && recovery_dcs !=null)
+        {  
+        var adjustRecovery = '" . $aliasmodel->adjust_recovery . "';
+        var dcs = '" . $aliasmodel->dcs_code . "';
+        var plant = '" . $aliasmodel->plant_code . "';
+        var mcc = '" . $aliasmodel->mcc_plant_code . "';
+        var bmc = '" . $aliasmodel->bmc_code . "';
+        var payment_cycle_code = '" . $aliasmodel->payment_cycle_code . "';
+        var member = '" . $aliasmodel->member_code . "';
+        var alis_code = '" . $aliasmodel->member_payment_alias_code . "';
+        var recovery_dcs= $('#tblmemberpaymentalias-recovery_dcs').val();
+      
+           $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['/payment/tbl-member-payment/recovery-adjust']) . "',
+                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery,'recovery_dcs':recovery_dcs},
+                        beforeSend:function(data) {
+                                $('#loadercontent').show();
+                                $('#pageloader').show();
+                        },                        
+                        success: function(data) {     
+                                $('#recoverOtherMember').html(data);
+                                $('#recoverOtherMemberModal').modal('toggle');    
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                        },    
+                        error: function(data) {    
+                                $('#loadercontent').hide();
+                                $('#pageloader').hide();
+                            }
+                        });
+        }
+    }); 
+     
+
+
       ";
 $this->registerJs($script, View::POS_END, date('ymdhis'));

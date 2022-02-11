@@ -124,16 +124,16 @@ class TblProductSale extends \app\models\ChildModel {
                 [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
                 [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
                 [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
-                [['bmc_code'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
-                        $flag = strtolower($this->customer_type) == 'member' ? 'member_lock' : 'bmc_lock';
-                        Yii::$app->general->shiftLock($this, 'invoice_date', 'mcc_plant_code', '', $flag);
-                    }
-                }, 'skipOnEmpty' => TRUE, 'when' => function() {
-                    return ($this->payment_mode == 1);
-                }, 'whenClient' => "function (attribute, value) { 
-              return $('#tblproductsale-payment_mode').val() == 1; 
-          }", 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+                /*    [['bmc_code'], function ($attribute, $params) {
+                  if (empty($this->getErrors())) {
+                  $flag = strtolower($this->customer_type) == 'member' ? 'member_lock' : 'bmc_lock';
+                  Yii::$app->general->shiftLock($this, 'invoice_date', 'mcc_plant_code', '', $flag);
+                  }
+                  }, 'skipOnEmpty' => TRUE, 'when' => function() {
+                  return ($this->payment_mode == 1);
+                  }, 'whenClient' => "function (attribute, value) {
+                  return $('#tblproductsale-payment_mode').val() == 1;
+                  }", 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']], */
         ];
     }
 
