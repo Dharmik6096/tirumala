@@ -295,7 +295,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getCustomerCode() {
-        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'customer_code_ex' => $this->ex_code]);
     }
 
     public function getMainCustomerCode() {
@@ -317,6 +317,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
+			$this->bmc_code = $bmc;
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
