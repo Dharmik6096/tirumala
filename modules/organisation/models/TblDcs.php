@@ -292,6 +292,8 @@ class TblDcs extends ChildModel {
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['cutoff'], 'default', 'value' => 0],
+                [['cutoff_val'], 'default', 'value' => 0.1],
                 [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true],
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
@@ -305,8 +307,7 @@ class TblDcs extends ChildModel {
             ],
                 [['cutoff_val'], function ($attribute, $params) {
                     Yii::$app->general->validOneDigitDecimal($this, $attribute, $params);
-                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                [['cutoff_val'], 'default', 'value' => '0000'],
+                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
