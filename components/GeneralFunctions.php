@@ -1488,7 +1488,9 @@ class GeneralFunctions extends Component {
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
                     $model->ex_code = $customerModelData[0]->customer_code_ex;
-                }
+                } else {
+					$Code = $model->customer_code;
+				}
             } else {
                 //$model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
 				$model->ex_code = $model->customer_code;
