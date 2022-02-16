@@ -21,6 +21,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_bmc_collection".
@@ -317,7 +318,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
-			$this->bmc_code = $bmc;
+            $this->bmc_code = $bmc;
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
@@ -700,6 +701,10 @@ class TblBmcCollection extends \app\models\ChildModel {
         if (strtoupper($this->customer_type) == 'DCS' && $flag == 1 && $value > $this->qty) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' Must be greater than ' . $value));
         }
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
 }
