@@ -33,15 +33,14 @@ $form = ActiveForm::begin([
     </div>
     <?= Yii::$app->dropdown->dropdownStatic('process_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('file_type'), FALSE, 'file_type') ?> 
     <div class="col-sm-2 singledcs">
-        <?= Yii::$app->dropdown->depend_dropdown('bmc-dcs', $model, $form, 'tbleiplmasterfilelog-bmc_code', '', $model->getAttributeLabel('dcs_code').' *', 'dcs_code', FALSE, 1, explode(',', Yii::$app->session->get('Dcs')), false); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('bmc-dcs', $model, $form, 'tbleiplmasterfilelog-bmc_code', '', $model->getAttributeLabel('dcs_code') . ' *', 'dcs_code', FALSE, 1, explode(',', Yii::$app->session->get('Dcs')), false); ?>
     </div>
     <div id='dputype'>
         <?= Yii::$app->dropdown->dropdownStatic('EIPL_dpu_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('dpu_type'), FALSE, 'dpu_type') ?> 
     </div>
     <div class="col-sm-2 singledcs">
         <div class="col-sm-8"> 
-            <?= Html::activeHiddenInput($model, 'rate_type', ['value' => 'member']) ?>
-            <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbleiplmasterfilelog-union_code,tbleiplmasterfilelog-rate_type', 'rate_id', $model->getAttributeLabel('rate_id').' *'); ?>
+            <?= Yii::$app->dropdown->DpuRateChart($model, $form, 'tbleiplmasterfilelog-dcs_code', 'rate_id', $model->getAttributeLabel('rate_id') . ' *'); ?>
         </div>
         <div class="col-sm-1 mt20"> 
             <?= Html::a(Yii::t('app', 'View'), '#', ['class' => 'view-rate btn btn-danger']); ?>

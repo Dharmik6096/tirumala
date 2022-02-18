@@ -65,37 +65,18 @@ class PendriveExportController extends \app\controllers\ChildController {
                                 $enc_text = '';
                                 foreach ($data as $d) {
                                     $text .= $d['line_text'] . PHP_EOL;
-                                    $enc_text .= \Yii::$app->EIPLSecurity->Encrypt($d['line_text'], $dpu_key, $model->dpu_type) . PHP_EOL;
+                                    $enc_text .= \Yii::$app->EIPLSecurity->Encrypt($d['line_text'], $dpu_key, $model->dpu_type, ' ') . PHP_EOL;
                                 }
                                 Yii::$app->general->checkDirectory($this->folder_path);
-                                $file = $this->folder_path . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis') . '.txt';
+                                $file = $this->folder_path . 'MEMBER_' . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis') . '.txt';
                                 $txt = fopen($file, "w");
                                 ($model->is_encrypted == 1) ? fwrite($txt, $enc_text) : fwrite($txt, $text);
                                 fclose($txt);
-
-                                ob_clean();
-                                header('Content-Description: File Transfer');
-                                header('Content-Disposition: attachment; filename=NAME.txt');
-                                header('Cache-Control: must-revalidate');
-                                header('Pragma: public');
-                                header('Content-Length: ' . filesize($file));
-                                header("Content-Type: text/plain");
-                                readfile($file);
-                                exit;
+                                $this->DownloadFile($file, 'NAME.txt', filesize($file));
                             } elseif ($model->dpu_type == 32) {
-                                $folder_name = Yii::$app->session->get('UserCode') . '_' . date('Ymdhis');
+                                $folder_name = 'MEMBER_' . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis');
                                 $folder_path = $this->folder_path . $folder_name . '/';
-                                if (!is_dir($folder_path)) {
-                                    $oldmask = umask(0);
-                                    mkdir($folder_path, 0777, TRUE);
-                                    umask($oldmask);
-                                } else {
-                                    $files = glob($folder_path . '*'); // get all file names
-                                    foreach ($files as $file) { // iterate files
-                                        if (is_file($file))
-                                            unlink($file); // delete file
-                                    }
-                                }
+                                Yii::$app->general->CreateDirectory($folder_path);
                                 $text = '';
                                 $enc_text = '';
                                 foreach ($data as $d) {
@@ -115,7 +96,6 @@ class PendriveExportController extends \app\controllers\ChildController {
                                 if (isset($txt)) {
                                     fclose($txt);
                                 }
-
                                 Yii::$app->general->ZipOperation($this->folder_path . $folder_name, TRUE, '', '', '*', 'zip', FALSE);
                                 Yii::$app->general->RemoveDirectory($folder_path);
                                 header('Content-Disposition: attachment; filename=' . $folder_name . '.zip');
@@ -126,12 +106,39 @@ class PendriveExportController extends \app\controllers\ChildController {
                             Yii::$app->display->message(TRUE, 'No Data Available.', 'info');
                         }
                     } else if ($model->file_type == 'RATE') {
-                        $result = \Yii::$app->db->createCommand("{CALL eipldpu_rate_file(:dcs_code,:dpu_type)}")
-                                ->bindValue(':dcs_code', $model->dcs_code)
-                                ->bindValue(':dpu_type', $model->dpu_type);
-                        $data = $result->queryAll();
-                        if (!empty($data)) {
-                            
+                        $ratedetail = explode('-', $model->rate_id);
+                        $model->rate_id = $ratedetail[0];
+                        if ($model->dpu_type == 8) {
+                            $result = \Yii::$app->db->createCommand("{CALL eipldpu_rate_file(:dpu_type,:rate_id,:milk_type_code)}")
+                                    ->bindValue(':dpu_type', $model->dpu_type)
+                                    ->bindValue(':rate_id', $model->rate_id)
+                                    ->bindValue(':milk_type_code', 1);
+                            $crate = $result->queryAll();
+                            $result = \Yii::$app->db->createCommand("{CALL eipldpu_rate_file(:dpu_type,:rate_id,:milk_type_code)}")
+                                    ->bindValue(':dpu_type', $model->dpu_type)
+                                    ->bindValue(':rate_id', $model->rate_id)
+                                    ->bindValue(':milk_type_code', 2);
+                            $nrate = $result->queryAll();
+                            $nrate = empty($nrate) ? $crate : $nrate;
+                            $crate = empty($crate) ? $nrate : $crate;
+                            if (!empty($crate)) {
+                                $model->save();
+                                $folder_name = 'RATE_' . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis');
+                                $folder_path = $this->folder_path . $folder_name . '/';
+                                Yii::$app->general->CreateDirectory($folder_path);
+                                $hline = str_pad('j000000' . $ratedetail[1], 32, 0, STR_PAD_RIGHT);
+                                $file = $folder_path . "crate.txt";
+                                $this->CreateRateFile8Bit($file, $crate, $model, $dpu_key, $hline);
+                                $file = $folder_path . "nrate.txt";
+                                $this->CreateRateFile8Bit($file, $nrate, $model, $dpu_key, $hline);
+                                Yii::$app->general->ZipOperation($this->folder_path . $folder_name, TRUE, '', '', '*', 'zip', FALSE);
+                                Yii::$app->general->RemoveDirectory($folder_path);
+                                header('Content-Disposition: attachment; filename=' . $folder_name . '.zip');
+                                readfile($this->folder_path . $folder_name . '.zip');
+                                exit;
+                            } else {
+                                Yii::$app->display->message(TRUE, 'No Data Available.', 'info');
+                            }
                         }
                     }
                 } else {
@@ -164,8 +171,8 @@ class PendriveExportController extends \app\controllers\ChildController {
     }
 
     public function actionViewRate() {
-        $rate_id = Yii::$app->request->post('rate_id');
-        $url = Url::to(['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $rate_id, 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1]);
+        $rate_id = explode('-', Yii::$app->request->post('rate_id'));
+        $url = Url::to(['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $rate_id[0], 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1]);
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode(['status' => 'success', 'data' => $url]);
@@ -184,6 +191,50 @@ class PendriveExportController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function CreateRateFile8Bit($file, $ratedata, $model, $dpu_key, $first_line) {
+        $txt = fopen($file, "w");
+        ($model->is_encrypted == 1) ? fwrite($txt, \Yii::$app->EIPLSecurity->Encrypt($first_line, $dpu_key, $model->dpu_type) . PHP_EOL) : fwrite($txt, $first_line . PHP_EOL);
+        foreach ($ratedata as $r) {
+            $snf = substr(str_replace('.', '', '0' . number_format($r['snf'], 1)), -3);
+            $fx = 'j';
+            $line = '';
+            $fatrtpl = explode(',', $r['fatrtpl']);
+            $totalcnt = count($fatrtpl);
+            $i = 0;
+            $cnt = 1;
+            foreach ($fatrtpl as $d) {
+                $fr = explode('=', $d);
+                $ft = $fr[0];
+                $rt = $fr[1];
+                $fat = substr(str_replace('.', '', '0' . number_format($ft, 1)), -3);
+                $rtpl = substr(str_replace('.', '', '00' . number_format($rt, 2)), -4);
+                $line .= $snf . $fat . $rtpl;
+                if ($i == 2 || $cnt == $totalcnt) {
+                    $line = 'j' . $line . '0';
+                    $line = str_pad($line, 32, 0, STR_PAD_RIGHT);
+                    ($model->is_encrypted == 1) ? fwrite($txt, \Yii::$app->EIPLSecurity->Encrypt($line, $dpu_key, $model->dpu_type) . PHP_EOL) : fwrite($txt, $line . PHP_EOL);
+                    $i = -1;
+                    $line = '';
+                }
+                $i++;
+                $cnt++;
+            }
+        }
+        fclose($txt);
+    }
+
+    public function DownloadFile($file, $fname, $fsize) {
+        ob_clean();
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename=' . $fname);
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . $fsize);
+        header("Content-Type: text/plain");
+        readfile($file);
+        exit;
     }
 
 }
