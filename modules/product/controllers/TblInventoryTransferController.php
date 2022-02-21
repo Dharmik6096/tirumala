@@ -212,10 +212,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
                 $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                 $receiptTxnTo->product_code = $stockModel->product_code;
-                $receiptTxnTo->received_quantity = $stockModel->stock;
-                $receiptTxnTo->requested_quantity = $receiptTxnTo->received_quantity;
-                $receiptTxnTo->dispatched_quantity = $receiptTxnTo->received_quantity;
-                $receiptTxnTo->rejected_quantity = $receiptTxnTo->received_quantity;
+                $receiptTxnTo->received_quantity = $qty;
+                $receiptTxnTo->requested_quantity = $qty;
+                $receiptTxnTo->dispatched_quantity = $qty;
+                $receiptTxnTo->rejected_quantity = 0;
                 $receiptTxnTo->rate = 0;
                 $receiptTxnTo->amount = 0;
                 $receiptTxnTo->remark = 'INVENTORY RECEIVED';
