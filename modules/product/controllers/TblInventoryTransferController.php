@@ -209,7 +209,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $receiptTo->dcs_code = $stockModel->dcs_code;
                 $modelSave[] = $receiptTo;
                 $receiptTxnTo = new TblProductReceiptTransaction();
-                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTo, $receiptTxnTo->product_receipt_code, $i);
+                $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
                 $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
                 $receiptTxnTo->product_code = $stockModel->product_code;
                 $receiptTxnTo->received_quantity = $stockModel->stock;
