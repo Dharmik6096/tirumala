@@ -433,7 +433,11 @@ class DropDown extends Component {
 
     public function union_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, $model->$name, $readonly);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {

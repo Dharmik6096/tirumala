@@ -406,7 +406,7 @@ class DefaultController extends \app\controllers\ChildController {
                     $model->{$value} .= ' ' . $shift . '.000';
                 }
             }
-            $controls[$value] = $model->{$value};
+            $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
         }
 //        validateReport
 
@@ -445,7 +445,7 @@ class DefaultController extends \app\controllers\ChildController {
                             $model->{$value} .= ' ' . $shift . '.000';
                         }
                     }
-                    $controls[$value] = $model->{$value};
+                    $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
                 }
                 $sp_name2 = $this->data['sp_name2'];
                 $second_output = \Yii::$app->general->getSpData($sp_name2, $controls);
@@ -596,6 +596,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'export_title' => true,
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
             'WqReportSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -607,7 +608,8 @@ class DefaultController extends \app\controllers\ChildController {
                 'message' => Yii::t('app', 'Sync of data is pending from device.'),
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
-                'validateReport' => 'rpt_MIS_WQSAPReport_validate'
+                'validateReport' => 'rpt_MIS_WQSAPReport_validate',
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
             'SdReportSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -621,6 +623,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'message' => Yii::t('app', 'Data is incomplete, please check dashboard BMC Wise Data Receipt Status.'),
                 'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
             'DateBmcCollection' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
