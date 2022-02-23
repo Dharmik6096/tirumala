@@ -507,6 +507,7 @@ echo GhostMenu::widget([
                             ['label' => '617-' . Yii::t('app', 'CC Milk Payment'), 'url' => ['/misreports/reports/cc-milk-payment']],
                             ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
                             ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
+                            ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
                     ]
                 ],
                     [

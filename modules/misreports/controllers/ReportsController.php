@@ -946,6 +946,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRecoveryFromDifferentVendor() {
+        $this->report = 'RecoveryFromDifferentVendor';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     private function getLabels($l) {
@@ -1887,6 +1892,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_recovery_from_other_member',
                 'scenario' => 'RecoveryFromOtherMember',
                 'title' => '619 - Recovery From Other Member',
+            ],
+            'RecoveryFromDifferentVendor' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_recovery_from_different_vendor',
+                'scenario' => 'RecoveryFromDifferentVendor',
+                'title' => '620 - Recovery From Different Vendor',
             ],
         ];
         return $label[$l];
