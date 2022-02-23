@@ -205,7 +205,10 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $productSaleData = $model->productSaleCode;
                 $fstockModel = new TblProductStock();
                 $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
-                $sale_code = strtoupper($productSaleData->customer_type) == 'MEMBER' ? $productSaleData->dcs_code : $productSaleData->bmc_code;
+                $sale_code = $productSaleData->bmc_code;
+                if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
+                    $sale_code = !empty($productSaleData->memberCode) ? $productSaleData->memberCode->dcs_code : $sale_code;
+                }
 
                 $fstockModel->setCodes($sale_type, $sale_code);
                 $fstockModel->product_code = $model->product_code;
