@@ -38,6 +38,9 @@ $form = ActiveForm::begin([
     <div id='dputype'>
         <?= Yii::$app->dropdown->dropdownStatic('EIPL_dpu_type', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('dpu_type'), FALSE, 'dpu_type') ?> 
     </div>
+    <div class='ratedigit'>
+        <?= Yii::$app->dropdown->dropdownStatic('rate_digit', $model, $form, 'form-group col-sm-2 padding-left-5 padding-right-5', $model->getAttributeLabel('rate_digit') . ' *', FALSE, 'rate_digit') ?> 
+    </div>
     <div class="col-sm-2 singledcs">
         <div class="col-sm-8"> 
             <?= Yii::$app->dropdown->DpuRateChart($model, $form, 'tbleiplmasterfilelog-dcs_code', 'rate_id', $model->getAttributeLabel('rate_id') . ' *'); ?>
@@ -95,6 +98,7 @@ $form = ActiveForm::begin([
 $script = "
      $('.singledcs').hide();
      $('.multidcs').hide();
+     $('.ratedigit').hide();
      $('.view-rate').addClass('disabled');
 
      $('#tbleiplmasterfilelog-dpu_type').find('option[value=0]').remove();
@@ -111,6 +115,8 @@ $script = "
        {
         $('.singledcs').hide();
         $('.multidcs').show();
+        $('.ratedigit').hide();
+
        
         if(dpu_type !='' && dpu_type !=null)
         {
@@ -122,6 +128,8 @@ $script = "
        {
         $('.singledcs').show();
         $('.multidcs').hide();
+        $('.ratedigit').hide();
+
         if(dcs_code !='' && dcs_code !=null)
         {
                     addSociety(dcs_code,dpu_type,file_type);
@@ -130,6 +138,7 @@ $script = "
     }else{
      $('.singledcs').hide();
      $('.multidcs').hide();
+     $('.ratedigit').hide();
     }
 
     });
@@ -154,6 +163,9 @@ $script = "
                                         });                                    
                                 }else{
                                     $('#tbleiplmasterfilelog-dpu_type').val(obj1.data).trigger('change.select2');
+                                    if(obj1.data==32){
+                                         $('.ratedigit').show();
+                                    }
                                   }
                             }
                                             $('#loadercontent').hide();

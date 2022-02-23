@@ -139,6 +139,28 @@ class PendriveExportController extends \app\controllers\ChildController {
                             } else {
                                 Yii::$app->display->message(TRUE, 'No Data Available.', 'info');
                             }
+                        } elseif ($model->dpu_type == 32) {
+                            $result = \Yii::$app->db->createCommand("{CALL eipldpu_rate_file(:dpu_type,:rate_id,:milk_type_code)}")
+                                    ->bindValue(':dpu_type', $model->dpu_type)
+                                    ->bindValue(':rate_id', $model->rate_id)
+                                    ->bindValue(':milk_type_code', 1);
+                            $rate = $result->queryAll();
+                            if (!empty($rate)) {
+                                $model->save();
+                                $folder_name = 'RATE_' . Yii::$app->session->get('UserCode') . '_' . date('Ymdhis');
+                                $folder_path = $this->folder_path . $folder_name . '/';
+                                $shift = substr($ratedetail[1], -1);
+                                $file_path = substr($ratedetail[1], 0, 6) . (($shift == 0) ? 'M' : 'E') . '/';
+                                Yii::$app->general->CreateDirectory($folder_path . $file_path);
+                                $this->CreateRateFile32Bit($folder_path . $file_path, $rate, $model, $dpu_key);
+                                Yii::$app->general->ZipOperation($this->folder_path . $folder_name, TRUE, '', '', '*', 'zip', FALSE);
+                                Yii::$app->general->RemoveDirectory($folder_path);
+                                header('Content-Disposition: attachment; filename=' . $folder_name . '.zip');
+                                readfile($this->folder_path . $folder_name . '.zip');
+                                exit;
+                            } else {
+                                Yii::$app->display->message(TRUE, 'No Data Available.', 'info');
+                            }
                         }
                     }
                 } else {
@@ -221,6 +243,55 @@ class PendriveExportController extends \app\controllers\ChildController {
                 $i++;
                 $cnt++;
             }
+        }
+        fclose($txt);
+    }
+
+    public function CreateRateFile32Bit($folder_path, $ratedata, $model, $dpu_key) {
+        $a = 0;
+        $new_file = TRUE;
+        foreach ($ratedata as $r) {
+            if ($new_file) {
+                if (isset($txt)) {
+                    fclose($txt);
+                }
+                $file = $folder_path . $r['file_name'];
+                $txt = fopen($file, "w");
+                $cutoff_len = $r['cutoff_len'];
+                $next_line_len = $cutoff_len * $model->rate_digit;
+                $min_fat = substr(str_replace('.', '', '00' . number_format($r['min_fat'], 2)), -4);
+                $max_fat = substr(str_replace('.', '', '00' . number_format($r['max_fat'], 2)), -4);
+                $min_snf = substr(str_replace('.', '', '00' . number_format($r['min_snf'], 2)), -4);
+                $max_snf = substr(str_replace('.', '', '00' . number_format($r['max_snf'], 2)), -4);
+                $r_p = $min_fat . $max_fat . $min_snf . $max_snf . $model->rate_digit;
+                $l_p = ($next_line_len + 2) . substr(str_replace('.', '', '00' . number_format(($r['max_snf'] - ($cutoff_len / 10)), 2)), -4);
+                $len = strlen($r_p) + strlen($l_p);
+                $m_p = $len + strlen($len);
+                $first_line = $r_p . $m_p . $l_p;
+                ($model->is_encrypted == 1) ? fwrite($txt, \Yii::$app->EIPLSecurity->Encrypt($first_line, $dpu_key, $model->dpu_type) . PHP_EOL) : fwrite($txt, $first_line . PHP_EOL);
+            }
+            $line = '';
+            $rtpl = explode(',', $r['rtpl']);
+            $totalcnt = count($rtpl);
+            $i = 1;
+            $cnt = 1;
+            foreach ($rtpl as $d) {
+                $line .= ($model->rate_digit == 4) ? substr(str_replace('.', '', '00' . number_format($d, 2)), -4) : substr(str_replace('.', '', '00' . number_format($d, 3)), -5);
+                if ($i == (int) $cutoff_len || $cnt == $totalcnt) {
+                    $line = str_pad($line, $next_line_len, 0, STR_PAD_RIGHT);
+                    ($model->is_encrypted == 1) ? fwrite($txt, \Yii::$app->EIPLSecurity->Encrypt($line, $dpu_key, $model->dpu_type) . PHP_EOL) : fwrite($txt, $line . PHP_EOL);
+                    $i = 0;
+                    $line = '';
+                }
+                $i++;
+                $cnt++;
+            }
+            if (isset($ratedata[$a + 1]) && $ratedata[$a]['file_name'] != $ratedata[$a + 1]['file_name']) {
+                $new_file = TRUE;
+            } else {
+                $new_file = FALSE;
+            }
+            $a++;
         }
         fclose($txt);
     }
