@@ -204,12 +204,21 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
             if (!empty($qty) && !empty($model->productSaleCode)) {
                 $productSaleData = $model->productSaleCode;
                 $fstockModel = new TblProductStock();
-                $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
-                $sale_code = $productSaleData->bmc_code;
-                if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
-                    $sale_code = !empty($productSaleData->memberCode) ? $productSaleData->memberCode->dcs_code : $sale_code;
+                if ($model->originating_org_type != 'PORTAL') {
+                    $sale_type = $model->originating_org_type;
+                    $sale_code = $model->originating_org_code;
+                } else {
+//                    $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+                    $sale_type = 'BMC';
+                    $sale_code = $productSaleData->bmc_code;
+                    if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
+                        if ($model->originating_org_type == 'DCS') {
+                            $sale_type = 'DCS';
+//                        $sale_code = !empty($productSaleData->memberCode) ? $productSaleData->memberCode->dcs_code : $sale_code;
+                            $sale_code = !empty($model->originating_org_code) ? $model->originating_org_code : $sale_code;
+                        }
+                    }
                 }
-
                 $fstockModel->setCodes($sale_type, $sale_code);
                 $fstockModel->product_code = $model->product_code;
                 $fstockModel->union_code = $productSaleData->union_code;
