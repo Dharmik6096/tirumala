@@ -42,10 +42,11 @@ class TblInbox extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['uuid'], 'required'],
-            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
-            [['sequence_no'], 'integer'],
-            [['posting_timestamp', 'sync_timestamp', 'device_id', 'error_timestamp'], 'safe'],
+                [['uuid'], 'required'],
+                [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no'], 'string'],
+                [['sequence_no'], 'integer'],
+                [['posting_timestamp', 'sync_timestamp', 'device_id', 'error_timestamp', 'data_post_status'], 'safe'],
+                [['data_post_status'], 'default', 'value' => 0]
         ];
     }
 
@@ -90,6 +91,7 @@ class TblInbox extends \yii\db\ActiveRecord {
         $query = $this->find()
                 ->joinWith(['syncPriority'])
                 ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
+                ->andWhere(['or', ['tbl_inbox.data_post_status' => NULL], ['tbl_inbox.data_post_status' => ''], ['tbl_inbox.data_post_status' => 0]])
                 ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
                 ->limit(50);
 

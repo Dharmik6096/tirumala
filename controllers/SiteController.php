@@ -1799,6 +1799,8 @@ class SiteController extends Controller {
             $modelData = $model->getData();
             $i = 1;
             if (!empty($modelData)) {
+                $update_ids = array_column($modelData, 'uuid');
+                $model->updateAll(['data_post_status' => 1], ['id' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $delete = [];
@@ -1933,10 +1935,12 @@ class SiteController extends Controller {
                                 $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
 //                                $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
                                 if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
                                     $inbox_constraint = new TblInboxConstraint();
                                     $inbox_constraint->attributes = $transaction_data->attributes;
                                     $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
+                                    $inbox_constraint->data_post_status = 3;
                                     $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
                                 } else {
                                     $transaction_data->save();
@@ -1945,11 +1949,13 @@ class SiteController extends Controller {
                         } else {
                             $transaction_data->error_log = Json::encode($model->getErrors());
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
                             $transaction_data->save();
                         }
                     } catch (\Throwable $ex) {
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                        $transaction_data->data_post_status = 3;
                         $transaction_data->save();
                     }
                     $i++;
