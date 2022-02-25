@@ -808,8 +808,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $saveModel[] = $historyModel;
                             $existData->attributes = $detalData->attributes;
                             $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $can_par_ltr = Yii::$app->general->getUnionConfiguration($approvalModel->union_code, 'can_per_ltr', 'BMC');
-                            $approvalModel->no_of_can = round($approvalModel->qty / $can_par_ltr);
+                            $can_par_ltr = Yii::$app->general->getUnionConfiguration($existData->union_code, 'can_per_ltr', 'BMC');
+                            $existData->no_of_can = round($existData->qty / $can_par_ltr);
                             $saveModel[] = $existData;
                         }
                     }
