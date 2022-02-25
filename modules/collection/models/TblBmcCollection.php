@@ -174,6 +174,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
                 [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
                 [['antibiotic'], 'safe'],
+                [['bmc_code'], 'setNoOfCan'],
         ];
     }
 
@@ -705,6 +706,15 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
+    public function setNoOfCan() {
+        if (empty($this->getErrors())) {
+            $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
+            if (!empty($configCanParLtr)) {
+                $this->no_of_can = round($this->qty / $configCanParLtr);
+            }
+        }
     }
 
 }

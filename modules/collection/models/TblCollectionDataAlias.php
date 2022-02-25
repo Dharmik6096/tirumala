@@ -142,6 +142,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'bmc_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['BmcCollection']],
+                [['bmc_code'], 'setNoOfCan'],
         ];
     }
 
@@ -347,6 +348,15 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function getExistApproval() {
         return $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'action_perform' => 'DELETE'])
                         ->one();
+    }
+
+    public function setNoOfCan() {
+        if (empty($this->getErrors())) {
+            $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
+            if (!empty($configCanParLtr)) {
+                $this->no_of_can = round($this->qty / $configCanParLtr);
+            }
+        }
     }
 
 }
