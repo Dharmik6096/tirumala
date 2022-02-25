@@ -128,8 +128,10 @@ class DcsImportStrategy extends ARImportStrategy {
 
                     if (empty($model->getErrors()) && $model->validate()) {
                         $societyVendor = $model->societyVendors;
-                        if (!empty($societyVendor)) {
-                            $model->vendor = $societyVendor->vendor_code;
+                        if (empty($model->vendor)) {
+                            if (!empty($societyVendor)) {
+                                $model->vendor = $societyVendor->vendor_code;
+                            }
                         } else {
                             $vendorModel = new TblSocietyVendor();
                             $vendorModel->dcs_code = $model->dcs_code;
