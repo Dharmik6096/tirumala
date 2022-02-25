@@ -125,10 +125,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
                 $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
                 $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
-                $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'can_per_ltr', 'BMC');
-                if (!empty($configCanParLtr)) {
-                    $this->model->no_of_can = round($this->model->qty / $configCanParLtr);
-                }
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
                     $approvalModel->attributes = $this->model->attributes;
@@ -386,10 +382,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_bmc_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $configCanParLtr = Yii::$app->general->getUnionConfiguration($approvalModel->union_code, 'can_per_ltr', 'BMC');
-                            if (!empty($configCanParLtr)) {
-                                $approvalModel->no_of_can = round($approvalModel->qty / $configCanParLtr);
-                            }
                             $saveModel[] = $approvalModel;
                             $message = 'Data For Approval';
                             $type = 'create';
@@ -400,10 +392,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $saveModel[] = $historyModel;
                             $existData->attributes = $detalData->attributes;
                             $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $configCanParLtr = Yii::$app->general->getUnionConfiguration($existData->union_code, 'can_per_ltr', 'BMC');
-                            if (!empty($configCanParLtr)) {
-                                $existData->no_of_can = round($existData->qty / $configCanParLtr);
-                            }
                             $saveModel[] = $existData;
                         }
                     }
@@ -699,10 +687,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
                 $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
                 $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
-                $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'can_per_ltr', 'BMC');
-                if (!empty($configCanParLtr)) {
-                    $this->model->no_of_can = round($this->model->qty / $configCanParLtr);
-                }
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
                     $approvalModel->attributes = $this->model->attributes;
@@ -804,10 +788,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $approvalModel->table_name = 'tbl_bmc_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $configCanParLtr = Yii::$app->general->getUnionConfiguration($approvalModel->union_code, 'can_per_ltr', 'BMC');
-                            if (!empty($configCanParLtr)) {
-                                $approvalModel->no_of_can = round($approvalModel->qty / $configCanParLtr);
-                            }
                             $saveModel[] = $approvalModel;
                             $message = 'Data For Approval';
                             $type = 'create';
@@ -818,10 +798,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $saveModel[] = $historyModel;
                             $existData->attributes = $detalData->attributes;
                             $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
-                            $configCanParLtr = Yii::$app->general->getUnionConfiguration($existData->union_code, 'can_per_ltr', 'BMC');
-                            if (!empty($configCanParLtr)) {
-                                $existData->no_of_can = round($existData->qty / $configCanParLtr);
-                            }
                             $saveModel[] = $existData;
                         }
                     }

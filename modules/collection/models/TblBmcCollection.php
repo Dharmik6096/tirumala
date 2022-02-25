@@ -173,6 +173,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
                 [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
                 [['antibiotic'], 'safe'],
+                [['bmc_code'], 'setNoOfCan'],
         ];
     }
 
@@ -317,7 +318,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
-			$this->bmc_code = $bmc;
+            $this->bmc_code = $bmc;
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
@@ -699,6 +700,15 @@ class TblBmcCollection extends \app\models\ChildModel {
         $value = Yii::$app->general->getforeignkey($this->mccPlantCode, 'min_qty_limit');
         if (strtoupper($this->customer_type) == 'DCS' && $flag == 1 && $value > $this->qty) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' Must be greater than ' . $value));
+        }
+    }
+
+    public function setNoOfCan() {
+        if (empty($this->getErrors())) {
+            $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
+            if (!empty($configCanParLtr)) {
+                $this->no_of_can = round($this->qty / $configCanParLtr);
+            }
         }
     }
 
