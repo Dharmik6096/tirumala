@@ -1800,7 +1800,7 @@ class SiteController extends Controller {
             $i = 1;
             if (!empty($modelData)) {
                 $update_ids = array_column($modelData, 'uuid');
-                $model->updateAll(['data_post_status' => 1], ['id' => $update_ids]);
+                $model->updateAll(['data_post_status' => 1], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $delete = [];
