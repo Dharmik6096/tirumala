@@ -45,17 +45,17 @@ class TblMemberPaymentInstallment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['main_amount', 'installment_amount'], 'number'],
-            [['installment_date', 'created_at', 'updated_at'], 'safe'],
-            [['payment_cycle_code', 'originating_type'], 'integer'],
-            [['product_sale_installment_code'], 'string', 'max' => 35],
-            [['product_sale_code'], 'string', 'max' => 30],
-            [['customer_type', 'customer_code'], 'string', 'max' => 20],
-            [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
-            [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['main_amount', 'installment_amount'], 'number'],
+                [['installment_date', 'created_at', 'updated_at'], 'safe'],
+                [['payment_cycle_code', 'originating_type'], 'integer'],
+                [['product_sale_installment_code'], 'safe'],
+                [['product_sale_code'], 'safe'],
+                [['customer_type', 'customer_code'], 'string', 'max' => 20],
+                [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
+                [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
