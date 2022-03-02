@@ -354,7 +354,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
             if (!empty($configCanParLtr)) {
-                $this->no_of_can = round($this->qty / $configCanParLtr);
+                $this->no_of_can = ceil($this->qty / $configCanParLtr);
             }
         }
     }
