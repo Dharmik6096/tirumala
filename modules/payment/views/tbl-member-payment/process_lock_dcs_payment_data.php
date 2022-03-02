@@ -465,6 +465,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(oldRec == '' || isNaN(oldRec)){
             oldRec = 0;
         }
+        oldRec = 0;
         var netPay = oldRec + recovery;
         if(netPay > net){
             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Recovery Not More Than Net Pay.</span></div></div>');
