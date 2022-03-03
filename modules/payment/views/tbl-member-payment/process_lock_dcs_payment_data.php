@@ -164,6 +164,15 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
 }
 
 
+var payCode = '';
+var uniCode = '';
+var plantCode = '';
+var mccPlantCode = '';
+var bmcCode = '';
+var dcsCode = '';
+function ViewMemberAdjustmentDataAfterPopupSave(){
+    ViewMemberAdjustmentData(payCode, uniCode, plantCode, mccPlantCode, bmcCode, dcsCode);
+}
 
 $(document).on('click','.view-head-pencil',function(e){
     var payment_cycle_code= $(this).attr('data-payment_cycle_code');
@@ -172,6 +181,12 @@ $(document).on('click','.view-head-pencil',function(e){
     var mcc_plant_code= $(this).attr('data-mcc_plant_code');
     var bmc_code= $(this).attr('data-bmc_code');
     var dcs_code= $(this).attr('data-dcs_code');
+    payCode = payment_cycle_code;
+    uniCode = union_code;
+    plantCode = plant_code;
+    mccPlantCode = mcc_plant_code;
+    bmcCode = bmc_code;
+    dcsCode = dcs_code;
     ViewMemberAdjustmentData(payment_cycle_code, union_code, plant_code, mcc_plant_code, bmc_code, dcs_code);
 });
 
@@ -450,6 +465,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(oldRec == '' || isNaN(oldRec)){
             oldRec = 0;
         }
+        oldRec = 0;
         var netPay = oldRec + recovery;
         if(netPay > net){
             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Recovery Not More Than Net Pay.</span></div></div>');

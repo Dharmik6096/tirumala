@@ -137,6 +137,7 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
                                                                     $(".form-group").removeClass("has-error");         
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                    ViewMemberAdjustmentDataAfterPopupSave();
                                                                 }else{
 //                                                                    $("#pageloader").hide();
 //                                                                    $(".help-block").text("");

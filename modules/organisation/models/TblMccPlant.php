@@ -404,12 +404,14 @@ class TblMccPlant extends \app\models\ChildModel {
 
     public function getUnionMCCList($unionCode, $RLS = 'TRUE') {
         $value = $this->getUnionMCC($unionCode, $RLS);
-        $value = ArrayHelper::map($value, 'mcc_plant_code', 'name');
+        $value = ArrayHelper::map($value, 'mcc_plant_code', function ($value) {
+                    return $value->name . ' - ' . $value->ref_code;
+                });
         return $value;
     }
 
     public function getUnionMCC($unionCode = [], $RLS = 'TRUE') {
-        $query = $this->find()->select(['mcc_plant_code', 'name'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['mcc_plant_code', 'name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($unionCode))
             $query->andWhere(['union_code' => $unionCode]);
         if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
