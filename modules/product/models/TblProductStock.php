@@ -50,11 +50,11 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_stock_code'], 'required', 'on' => ['androidsync']],
-            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['stock'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
+                [['product_stock_code'], 'required', 'on' => ['androidsync']],
+                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['stock'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
         ];
     }
 
@@ -117,7 +117,7 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
                     ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
-        } elseif (strtoupper($type) == 'DCS') {
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }
         return $query->one();
@@ -145,7 +145,7 @@ class TblProductStock extends \app\models\ChildModel {
             $this->bmc_code = $code;
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
-        } elseif (strtoupper($type) == 'DCS') {
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $this->dcs_code = $code;
             $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
@@ -172,7 +172,6 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
-
 //    private function sentboxModel($code, $type) {
 //        $sentbox = new TblSentbox();
 //        $sentbox->dest_org_id = $code;
@@ -180,7 +179,6 @@ class TblProductStock extends \app\models\ChildModel {
 //        $sentbox->dest_org_type = $type;
 //        return $sentbox;
 //    }
-
 //    public function afterDelete() {
 //        $sentboxArray = [];
 //        if (!empty($this->dcs_code)) {
@@ -198,5 +196,4 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
-
 }
