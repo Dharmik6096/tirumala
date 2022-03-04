@@ -165,7 +165,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
         $manageStock = TRUE;
-        if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
+        if (!empty($model->product_code) && !empty($model->productCode->dpu_product_code) && $model->productCode->dpu_product_code == '994') {
             $loanModel = new TblLoanProductSaleDetails();
             $loanModel->attributes = $model->attributes;
             $updateData = true;
@@ -201,7 +201,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         }
         if ($manageStock) {
             $qty = !empty($model->quantity) ? $model->quantity : 0;
-            if (!empty($qty) && !empty($model->productSaleCode)) {
+            if (!empty($qty) && !empty($model->productSaleCode->product_sale_code)) {
                 $productSaleData = $model->productSaleCode;
                 $fstockModel = new TblProductStock();
                 if ($model->originating_org_type != 'PORTAL') {
