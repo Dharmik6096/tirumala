@@ -85,6 +85,7 @@ class TblDcsPurchaseRateApplicabitity extends \app\models\ChildModel {
 //[['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
 //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+            [['applicable_code'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'wef_date', 'shift_code'], 'message' => Yii::t('app/validation', 'Record Is Already Exist For DCS Applicability'), 'on' => ['importCsv']],
         ];
     }
 

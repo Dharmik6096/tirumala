@@ -79,6 +79,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                 [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
                 [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
                 [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
+                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code'], 'message' => Yii::t('app/validation', 'Record Is Already Exist For Member Applicability'), 'on' => ['importCsv']],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
@@ -370,19 +371,45 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             $this->setDCSRateModel($model, $errors);
         } else {
             if (!empty($model->dcs_purchase_rate_code) && empty($model->purchase_rate_code)) {
-                $this->setDCSRateModel($model, $errors);
-            } elseif (!empty($model->dcs_purchase_rate_code) && !empty($model->purchase_rate_code)) {
-                $purchaseModel = new TblDcsPurchaseRateApplicabitity();
-                $purchaseModel->attributes = $model->attributes;
-                $purchaseModel->purchase_rate_code = $model->dcs_purchase_rate_code;
-                $purchaseModel->applicable_code = $model->applicable_code;
-                $purchaseModel->applicable_for = $model->applicable_for;
-                $purchaseModel->union_code = $model->union_code;
-                $purchaseModel->dcs_code = NULL;
-                if (!$purchaseModel->validate()) {
-                    $errors[] = $purchaseModel->getErrors();
+                $memberRateModel = new TblPurchaseRate();
+                $data = $memberRateModel->getDcsPurchaseRateCode($model->dcs_purchase_rate_code);
+                if (!empty($data)) {
+                    $model->purchase_rate_code = $data->purchase_rate_code;
+                    $purchaseModel = new TblDcsPurchaseRateApplicabitity();
+                    $purchaseModel->attributes = $model->attributes;
+                    $purchaseModel->purchase_rate_code = $model->dcs_purchase_rate_code;
+                    $purchaseModel->applicable_code = $model->applicable_code;
+                    $purchaseModel->applicable_for = $model->applicable_for;
+                    $purchaseModel->union_code = $model->union_code;
+                    $purchaseModel->dcs_code = NULL;
+                    $purchaseModel->scenario = 'importCsv';
+                    if (!$purchaseModel->validate()) {
+                        $errors[] = $purchaseModel->getErrors();
+                    }
+                    array_push($modelSave, $purchaseModel);
+                } else {
+                    $this->setDCSRateModel($model, $errors);
                 }
-                array_push($modelSave, $purchaseModel);
+            } elseif (!empty($model->dcs_purchase_rate_code) && !empty($model->purchase_rate_code)) {
+                $memberRateModel = new TblPurchaseRate();
+                $data = $memberRateModel->getDcsPurchaseRateCode($model->dcs_purchase_rate_code);
+                if (!empty($data)) {
+                    $model->purchase_rate_code = $data->purchase_rate_code;
+                    $purchaseModel = new TblDcsPurchaseRateApplicabitity();
+                    $purchaseModel->attributes = $model->attributes;
+                    $purchaseModel->purchase_rate_code = $model->dcs_purchase_rate_code;
+                    $purchaseModel->applicable_code = $model->applicable_code;
+                    $purchaseModel->applicable_for = $model->applicable_for;
+                    $purchaseModel->union_code = $model->union_code;
+                    $purchaseModel->dcs_code = NULL;
+                    $purchaseModel->scenario = 'importCsv';
+                    if (!$purchaseModel->validate()) {
+                        $errors[] = $purchaseModel->getErrors();
+                    }
+                    array_push($modelSave, $purchaseModel);
+                } else {
+                    $this->setDCSRateModel($model, $errors);
+                }
             }
         }
     }
@@ -501,6 +528,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $purchaseModel->applicable_for = $postData->applicable_for;
         $purchaseModel->union_code = $postData->union_code;
         $purchaseModel->dcs_code = NULL;
+        $purchaseModel->scenario = 'importCsv';
         if (!$purchaseModel->validate()) {
             $errors[] = $purchaseModel->getErrors();
         }
