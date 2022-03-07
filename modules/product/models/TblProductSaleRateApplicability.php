@@ -228,12 +228,16 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
                 $bmc_code = Yii::$app->general->getforeignkey($this->dcsName, 'bmc_code'); //$this->dcsName->bmc_code;
             }
         } else if ($this->applicable_for == 'BMC') {
+            $generateSentbox = true;
             $bmc_code = $this->applicable_code;
         } else if ($this->applicable_for == 'MCC') {
+            $generateSentbox = true;
             $mcc_code = $this->applicable_code;
         } else if ($this->applicable_for == 'PLANT') {
+            $generateSentbox = true;
             $plant_code = $this->applicable_code;
         } else {
+            $generateSentbox = true;
             $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code'); //$this->customerMasterCode->bmc_code;
             $mcc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'mcc_plant_code'); //$this->customerMasterCode->mcc_plant_code;
         }
