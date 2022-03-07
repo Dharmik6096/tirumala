@@ -15,6 +15,7 @@ use app\modules\collection\models\TblMccShiftLockHistory;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\components\WebApi;
 use app\modules\vsp\models\TblVspTransitRecovery;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -365,10 +366,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection');
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
     }
 
     public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
     }
 
@@ -486,6 +489,25 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function generateFTPFile($mcc, $date, $shift, $module_name) {
+        $date .= ' ' . \Yii::$app->general->getshift($shift);
+        $model = new TblMccShiftLock();
+        $model->mcc_plant_code = $mcc;
+        $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
+        $data_array = [];
+        $data_array['module_name'] = $module_name;
+        $data_array['module_code'] = $mcc;
+        $data_array['mcc_plant_code'] = $mcc;
+        $data_array['union_code'] = $model->union_code;
+        $data_array['applicable_date'] = $date;
+        $data_array['shift_code'] = $shift;
+        $data_array['bmc_code'] = '0';
+        $data_array['from_date'] = $date;
+        $data_array['to_date'] = $date;
+        $ftp_model = new TblFtpTxnLog();
+        $ftp_model->exportData($data_array);
     }
 
 }

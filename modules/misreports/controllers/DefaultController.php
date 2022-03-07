@@ -9,6 +9,7 @@ use app\modules\misreports\models\ReportsModelOld;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use PHPExcel;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
 
 /**
  * Default controller for the `JasperReports` module
@@ -48,6 +49,7 @@ class DefaultController extends \app\controllers\ChildController {
         if (isset($this->data['export_file_name']) && empty($this->output)) {
             $this->data['export_file_name'] = $this->data['title'];
         }
+        $model->upload_ftp_file = '0';
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
 
@@ -494,6 +496,9 @@ class DefaultController extends \app\controllers\ChildController {
                     foreach ($downLoadArray as $bmc => $download) {
                         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
                         $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
+                        if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
+                            $this->uploadFTPData($title, $download, $model, $bmc);
+                        }
                         $this->downloadData($title, $download, $fileArray);
                     }
                     $this->fileDownloadArr = $fileArray;
@@ -548,6 +553,21 @@ class DefaultController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
+    }
+
+    public function uploadFTPData($title, $output, $model, $bmc) {
+        $data_array = [];
+        $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection' : 'TblMilkCollection';
+        $data_array['module_code'] = $bmc;
+        $data_array['mcc_plant_code'] = $bmc;
+        $data_array['union_code'] = $model->union_code;
+        $data_array['applicable_date'] = $model->from_date;
+        $data_array['shift_code'] = $model->from_shift;
+        $data_array['bmc_code'] = NULL;
+        $data_array['from_date'] = $model->from_date;
+        $data_array['to_date'] = $model->to_date;
+        $ftp_model = new TblFtpTxnLog();
+        $ftp_model->exportData($data_array, $title, $output);
     }
 
     /* Reports Configuration */
