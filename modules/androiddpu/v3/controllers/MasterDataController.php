@@ -73,6 +73,7 @@ class MasterDataController extends \app\modules\androiddpu\v2\controllers\Master
                     $model = new TblInbox();
                     $model->setAttributes($transaction_data);
                     $model->sync_timestamp = date('Y-m-d H:i:s');
+                    $model->posting_timestamp = date('Y-m-d H:i:s');
                     $modelData = $model->findOne($model->uuid);
                     $syncModel = new TblSyncLog();
                     $syncModel->uuid = $model->uuid;
