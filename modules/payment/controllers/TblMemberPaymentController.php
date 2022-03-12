@@ -155,6 +155,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         // Farmer Payment Process : Step 2 (Display DCS Wise Data)
         if (Yii::$app->request->post('TblMemberPaymentAlias')) {
             $postData = Yii::$app->request->post();
+            $getParam = Yii::$app->request->post('TblMemberPaymentAlias');
+            $getParam['dcs_code'] = json_decode($getParam['dcs_code']);
 //            $adjust_id = Yii::$app->request->post('TblMemberPaymentAlias')['member_payment_alias_code'];
 //            $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
 //            $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
@@ -167,7 +169,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             //process_lock_flag
 
             $summaryModel = new TblMemberPaymentSummaryAlias();
-            $summaryModel->attributes = Yii::$app->request->get();
+            $summaryModel->attributes = $getParam;
             $summaryModelData = $summaryModel->getRecords(false);
 
             $adjustmentSummary = [];
@@ -213,7 +215,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            }
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
-            $memberPaymentModel->attributes = Yii::$app->request->get();
+            $memberPaymentModel->attributes = $getParam;
             $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
             foreach ($memberPaymentModelData as $memberPayment) {
                 $historyModel = new TblMemberPaymentAliasHistory();
@@ -263,11 +265,10 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            if ($transaction !== FALSE && $transaction != 'customRender') {
 //                return $this->redirect(['index']);
 //            }
-        }
-        if (Yii::$app->request->get()) {
+            // if (Yii::$app->request->get()) {
             $model = new TblMemberPaymentAlias();
 //            $model->load(Yii::$app->request->get());
-            $model->attributes = Yii::$app->request->get();
+            $model->attributes = $getParam;
 //            if ($reGenerate == 1) {
 //                $query = $this->getMemberDcsSpData($model, $reGenerate);
 //            }
@@ -281,6 +282,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            $negativeValCount = $memberPaymentModel->getNegativeValCount();
             $negativeValCount = $memberPaymentModel->getNegativeValDcs();
             $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
+            $model->dcs_code = json_encode($model->dcs_code);
             return $this->render('process_lock_dcs_payment_data', [
                         'model' => $model,
                         'searchModel' => $searchModel,
@@ -289,6 +291,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         'removeCheckBox' => true,
                         'negativeDcsCode' => $negativeDcsCode
             ]);
+            //   }
         }
     }
 
@@ -328,13 +331,37 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     return $this->redirect(['index']);
                 }
             } else {
+                /*  $model = new TblMemberPaymentAlias();
+                  $model->load(Yii::$app->request->post());
+                  $data = Yii::$app->request->post();
+                  $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
+                  $dcs_ai = 0;
+                  $member_ai = 0;
+                  return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]); */
+
                 $model = new TblMemberPaymentAlias();
                 $model->load(Yii::$app->request->post());
                 $data = Yii::$app->request->post();
+                $model->dcs_code = json_decode($model->dcs_code);
                 $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
-                $dcs_ai = 0;
-                $member_ai = 0;
-                return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]);
+                $searchModel = new TblMemberPaymentSummaryAliasSearch();
+                $searchModel->attributes = $model->attributes;
+                $dataProvider = $searchModel->search([]);
+                $dataProvider->pagination = false;
+                $negativeValCount = 0;
+                $memberPaymentModel = new TblMemberPaymentAlias();
+                $memberPaymentModel->attributes = $model->attributes;
+                $negativeValCount = $memberPaymentModel->getNegativeValDcs();
+                $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
+                $model->dcs_code = json_encode($model->dcs_code);
+                return $this->render('process_lock_dcs_payment_data', [
+                            'model' => $model,
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $dataProvider,
+                            'negativeValCount' => $negativeValCount,
+                            'removeCheckBox' => true,
+                            'negativeDcsCode' => $negativeDcsCode
+                ]);
             }
         }
         return $this->redirect(\yii\helpers\Url::previous());

@@ -39,7 +39,7 @@ $tot_amt = array_sum(array_map(function($array) {
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
-//                            'action' => Url::to(['list-member-payment-summary-data'])
+                            'action' => Url::to(['list-member-payment-summary-data'])
 //                            'action' => Url::to(['list-member-payment'])
                 ]);
                 ?>
@@ -49,6 +49,7 @@ $tot_amt = array_sum(array_map(function($array) {
                 <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
                 <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
+                <?= Html::activeHiddenInput($model, 'dcs_code'); ?>
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
                 $attribute = [
