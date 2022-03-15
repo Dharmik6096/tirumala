@@ -23,16 +23,16 @@ class Bkgprocess extends \yii\base\Module {
 
     public static function FTPProcess() {
         return [
-            'TblMilkCollection' => [
-                'ext' => '.csv',
-                'param' => 'union_code,mcc_plant_code,bmc_code,from_date,to_date',
-                'sp_name' => 'rpt_MIS_SDSAPReport',
-                'export_title' => 'mcc_plant_code+_+SD+_+applicable_date:date+_+shift_code',
-                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/'
-            ],
+            /* 'TblMilkCollection' => ['ext' => '.xlsx',
+              'param' => 'union_code,mcc_code:union_code,date:string:shift',
+              'sp_name' => 'rpt_MIS_WQSAPReport',
+              'sp_name2' => 'sp_checkDatacompleteness_BMC',
+              'param2' => 'union_code,mcc_code,date:string:shift',
+              'export_title' => true,
+              'module_name' => 'TblMilkCollection'], */
             'TblBmcCollection' => [
                 'ext' => '.csv',
-                'param' => 'union_code,mcc_plant_code,bmc_code,from_date,to_date',
+                'param' => 'union_code,mcc_plant_code,applicable_date',
                 'sp_name' => 'rpt_MIS_WQSAPReport',
                 'sp_check_data' => 'sp_checkDatacompleteness_BMC',
                 'param2' => 'union_code,mcc_plant_code,shift_date:date:shift_code',
