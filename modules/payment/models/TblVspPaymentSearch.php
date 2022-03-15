@@ -19,9 +19,9 @@ class TblVspPaymentSearch extends TblVspPayment {
      */
     public function rules() {
         return [
-            [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount'], 'safe'],
-            [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay'], 'number'],
+                [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+                [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'number'],
         ];
     }
 
@@ -91,7 +91,9 @@ class TblVspPaymentSearch extends TblVspPayment {
                 ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_remark', $this->adjust_remark])
                 ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
                 ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-                ->andFilterWhere(['like', 'tbl_vsp_payment.status', $this->status]);
+                ->andFilterWhere(['like', 'tbl_vsp_payment.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_recovery', $this->adjust_recovery])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.recovery', $this->recovery]);
         //$query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
 
         return $dataProvider;

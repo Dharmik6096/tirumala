@@ -49,6 +49,8 @@ use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblMemberPaymentInstallmentHistory;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblAlertTemplate;
+use app\modules\payment\models\TblMemberPaymentRecovery;
+use app\modules\payment\models\TblMemberPaymentRecoveryHistory;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -278,12 +280,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $memberPaymentModel->attributes = $model->attributes;
 //            $negativeValCount = $memberPaymentModel->getNegativeValCount();
             $negativeValCount = $memberPaymentModel->getNegativeValDcs();
+            $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
             return $this->render('process_lock_dcs_payment_data', [
                         'model' => $model,
                         'searchModel' => $searchModel,
                         'dataProvider' => $dataProvider,
                         'negativeValCount' => $negativeValCount,
-                        'removeCheckBox' => true
+                        'removeCheckBox' => true,
+                        'negativeDcsCode' => $negativeDcsCode
             ]);
         }
     }
@@ -943,6 +947,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust = $postData['adjust_recovery'];
             unset($postData['member_payment_alias_code']);
             unset($postData['adjust_recovery']);
+            unset($postData['recovery_dcs']);
             $recoverModel = $model->find()->where(['member_payment_alias_code' => $pkCode])->one();
             if (!empty($recoverModel)) {
                 $historyModel = new TblMemberPaymentAliasHistory();
@@ -960,7 +965,26 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $oldRec = !empty($value['old_recovery']) ? $value['old_recovery'] : 0;
                     $newRec = !empty($value['recovery']) ? $value['recovery'] : 0;
                     $modelData->recovery = $oldRec + $newRec;
+                    $modelData->final_amount = $modelData->final_amount - $newRec;
                     $saveModel[] = $modelData;
+                    if (!empty($value['recovery'])) {
+                        $recoveryModel = new TblMemberPaymentRecovery();
+                        $recoveryModel->attributes = $modelData->attributes;
+                        $recoveryModel->from_member_code = $modelData->member_code;
+                        $recoveryModel->for_member_code = $recoverModel->member_code;
+
+                        $existRecovery = $recoveryModel->gerRecovery();
+                        if (!empty($existRecovery)) {
+                            $rhistoryModel = new TblMemberPaymentRecoveryHistory();
+                            Yii::$app->operation->history($existRecovery, $rhistoryModel, UPDATE);
+                            $saveModel[] = $rhistoryModel;
+                            $existRecovery->recovery_amount = $existRecovery->recovery_amount + $value['recovery'];
+                            $saveModel[] = $existRecovery;
+                        } else {
+                            $recoveryModel->recovery_amount = $value['recovery'];
+                            $saveModel[] = $recoveryModel;
+                        }
+                    }
                 }
             }
 
@@ -980,10 +1004,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $aliasmodel->attributes = Yii::$app->request->get();
         $aliasmodel->adjust_recovery = Yii::$app->request->get()['adjust_recovery'];
         $aliasmodel->member_payment_alias_code = Yii::$app->request->get()['member_payment_alias_code'];
-
+        $dcs = $model->getRecoverDcs();
+        $recoverDcs = ArrayHelper::map($dcs, 'dcs_code', function($dcs) {
+                    return $dcs['dcs_name'] . '(' . $dcs['ref_code'] . ')';
+                });
         return $this->renderAjax('_recovery', [
                     'recoverMember' => $recoverMember,
                     'aliasmodel' => $aliasmodel,
+                    'recoverDcs' => $recoverDcs
         ]);
     }
 

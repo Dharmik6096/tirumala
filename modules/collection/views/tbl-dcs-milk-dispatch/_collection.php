@@ -17,7 +17,6 @@ $list = array('0' => 'No', '1' => 'Yes');
 $form = ActiveForm::begin([
             'options' => ['id' => 'milk-dispatch-form'],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -44,9 +43,14 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 rtpl_validate create_fields">
             <?= Yii::$app->controls->date($model, $form, 'date_time_of_dispatch', '', date('Y-m-d'), false, $readonly, true); ?>
         </div>
-        <div class="col-sm-2 shift rtpl_validate create_fields">
+        <div class="col-sm-1 shift rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
         </div>
+        <?php if (Yii::$app->session->get('eiplCode') == 'PRABHAT') { ?>
+            <div class="col-sm-1 create_fields">
+                <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', 'Antibiotic', $readonly, 'antibiotic') ?> 
+            </div>
+        <?php } ?>
         <div class="col-sm-1 padding_top_20 Button disabled mb25 ml15">
             <button type="button" class="add-collection btn btn-default apply-shortcut ml15 "><?= Yii::t('app', 'Add Dispatch') ?></button>
         </div>

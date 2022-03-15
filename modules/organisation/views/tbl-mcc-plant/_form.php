@@ -111,6 +111,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
         </div>
+        <div class="col-sm-2">  
+            <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
+        </div>
         <?= Html::hiddenInput('from_plant', 0, ['id' => 'mcc']); ?>
     </div>
     <?php if ($type == 'create') { ?>
@@ -120,7 +123,8 @@ $form = ActiveForm::begin([
         <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
-            'form' => $form
+            'form' => $form,
+            'mail_info' => TRUE
         ])
         ?>
 

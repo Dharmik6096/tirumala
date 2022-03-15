@@ -21,6 +21,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\configuration\models\TblUnionRatechartRange;
+use app\modules\dcsoperation\models\TblMember;
 
 /**
  * This is the model class for table "tbl_bmc_collection".
@@ -168,10 +169,12 @@ class TblBmcCollection extends \app\models\ChildModel {
                 [['is_rate_recalc'], 'default', 'value' => 0],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'bmc_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
                 [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
+                [['antibiotic'], 'safe'],
+                [['bmc_code'], 'setNoOfCan'],
         ];
     }
 
@@ -294,7 +297,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getCustomerCode() {
-        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'customer_code_ex' => $this->ex_code]);
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_type' => 'customer_type'])->andwhere(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code, 'customer_code_ex' => $this->ex_code]);
     }
 
     public function getMainCustomerCode() {
@@ -316,6 +319,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     public function validateCustomer($union, $code, $type, $bmc) {
         if (!empty($code) && strtolower($type) != 'dcs') {
             $this->union_code = $union;
+            $this->bmc_code = $bmc;
             $this->customer_type = $type;
             $prefix = Yii::$app->general->getforeignkey($this->customerType, 'code_prefix');
             $length = Yii::$app->general->getforeignkey($this->customerType, 'code_length');
@@ -697,6 +701,19 @@ class TblBmcCollection extends \app\models\ChildModel {
         $value = Yii::$app->general->getforeignkey($this->mccPlantCode, 'min_qty_limit');
         if (strtoupper($this->customer_type) == 'DCS' && $flag == 1 && $value > $this->qty) {
             $this->addError('qty', Yii::t('app/validation', $this->getAttributeLabel('qty') . ' Must be greater than ' . $value));
+        }
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
+    public function setNoOfCan() {
+        if (empty($this->getErrors())) {
+            $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
+            if (!empty($configCanParLtr)) {
+                $this->no_of_can = ceil($this->qty / $configCanParLtr);
+            }
         }
     }
 

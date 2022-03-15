@@ -69,7 +69,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
                 [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name'], 'safe'],
+                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e'], 'safe'],
                 [['route'], 'required', 'on' => ['importCsv']],
                 [['is_active'], 'integer'],
                 [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
@@ -95,7 +95,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
                 [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
                 [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
                 [['x_col1'], 'default', 'value' => '1#1'],
-                [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code'], 'safe'],
+                [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2'], 'safe'],
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
@@ -135,6 +136,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
+                [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
+                [['ts_code_m', 'ts_code_e'], 'number']
         ];
     }
 
@@ -165,7 +168,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'sap_code' => Yii::t('app', 'Sap Code'),
             'refference_code' => Yii::t('app', 'Refference Code'),
             'x_col1' => Yii::t('app', 'X Col1'),
-            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col2' => Yii::t('app', 'Collection'),
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
@@ -558,6 +561,12 @@ class TblCustomerMaster extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function maxDigits($attribute) {
+        if (strlen($attribute) > 10) {
+            $this->addError($attribute, 'must contain maximum 10 digits.');
+        }
     }
 
 }

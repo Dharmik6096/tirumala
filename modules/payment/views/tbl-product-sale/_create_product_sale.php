@@ -71,6 +71,9 @@ $type = !empty($type) ? $type : '';
                 <div class="col-sm-1 reset_field">
                     <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
                 </div>
+                <div class="col-sm-1 avlCredit reset_field">
+                    <?= $form->field($model, 'avl_credit')->textInput(['readOnly' => true]) ?>
+                </div>
                 <div class="col-sm-1 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
@@ -80,6 +83,9 @@ $type = !empty($type) ? $type : '';
                 </div>
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
+                </div>
+                <div class="col-sm-1 reset_field">
+                    <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
                 </div>
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
@@ -362,9 +368,11 @@ $script = "
         setNoOfInstallment();
     });
     function setNoOfInstallment(){
+        $('.avlCredit').hide();
         $('.noOfInstallment').hide();
         if($('#tblproductsale-payment_mode').val() == 1) {
             $('.noOfInstallment').show();
+            $('.avlCredit').show();
         }
     }
     function setRate(){
@@ -510,7 +518,107 @@ $script = "
             });
         }
     }
+    $('#tblproductsaletransaction-product_code').on('change', function(){
+        getAvailableStock();
+    });
     
+    $('#tblproductsale-customer_type').on('change', function(){
+        getAvailableStock();
+    });
+    
+    $('#tblproductsale-bmc_code').on('change', function(){
+        getAvailableStock();
+    });
+    
+    $('#tblproductsale-dcs_code').on('change', function(){
+        getAvailableStock();
+    });
+
+    function getAvailableStock(){
+        var type = $('#tblproductsale-customer_type').val();
+        var product = $('#tblproductsaletransaction-product_code').val();
+        var union = $('#tblproductsale-union_code').val();
+        var code ='';
+        if(type=='Member'){
+            var code = $('#tblproductsale-dcs_code').val();
+        }else{
+            var code = $('#tblproductsale-bmc_code').val();
+        }
+       
+        if(setData(type) && setData(code) && setData(product)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['get-available-stock']) . "',
+                    data: {'product':product,'type':type,'code':code,'union_code':union},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblproductsaletransaction-available_stock').val(obj.stock);
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+        } 
+    
+    }
+    $('#tblproductsale-payment_mode').on('change', function(){
+            if($('#tblproductsale-payment_mode').val() == 1) {
+        setAvailableCredit();
+        }
+    });
+    function setAvailableCredit(){
+        var type = $('#tblproductsale-customer_type').val();
+        var date = $('#tblproductsale-invoice_date').val();
+           var union = $('#tblproductsale-union_code').val();
+           var bmc =   $('#tblproductsale-bmc_code').val();
+           var pay_mode=$('#tblproductsale-payment_mode').val();
+           var amount_due=$('#tblproductsale-amount_due').val();
+           var noi=$('#tblproductsale-no_of_installment').val();
+
+
+        var code ='';
+        if(type=='Member'){
+            var code = $('#tblproductsale-dcs_code').val();
+        }else{
+            var code = $('#tblproductsale-bmc_code').val();
+        }
+
+        if(setData(date) && setData(type) && setData(code)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['set-available-credit']) . "',
+                    data: {'date':date,'type':type,'code':code,'union':union,'bmc':bmc,'pay_mode':pay_mode,'amount_due':amount_due,'noi':noi},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        console.log(data);
+                        if (obj.status == 'success')
+                        {
+                           $('#tblproductsale-avl_credit').val(obj.credit);
+                        }else{
+   bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Payment Cycle aplicability not available for Sale Date.') . "</span></div></div>', function(result){
+                       setTimeout(function(){
+                                $('#tblproductsale-ex_code').focus();
+                            },100);
+                        });                         
+}
+                    },
+                    error:function(data){
+
+                    }
+                });
+        } 
+    
+    }
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined && field != 'Loading ...'){
+            return true;
+        }else {
+            return false;
+        }
+    }    
 ";
 $this->registerJs($script, View::POS_END, 'create-product-sale-form');
 ?>

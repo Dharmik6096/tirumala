@@ -1181,8 +1181,8 @@ class GeneralFunctions extends Component {
         return strtolower($command['id']);
     }
 
-    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false, $templateid = '') {
-        $content_id = '1';
+    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false, $templateid = '', $content_id = '1') {
+//        $content_id = '1';
         $result = Yii::$app->alertnotification->sendSms($content_id, $mobile, $message, $templateid);
         if ($save_data) {
             $model = new TblAlertNotification();
@@ -1482,15 +1482,18 @@ class GeneralFunctions extends Component {
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $model->customer_type;
                 $customerModelData = $customerModel->find()
-                        ->where(['customer_type' => $model->customer_type])
+                        ->where(['customer_type' => $model->customer_type, 'bmc_code' => $model->bmc_code])
                         ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
                         ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
                     $model->ex_code = $customerModelData[0]->customer_code_ex;
+                } else {
+                    $Code = $model->customer_code;
                 }
             } else {
-                $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                //$model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                $model->ex_code = $model->customer_code;
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
             return $data = empty($Code) ? '' : $Code;
@@ -1531,7 +1534,7 @@ class GeneralFunctions extends Component {
         $orgCode = 'PORTAL-' . $organizations_code . '-';
         $len = strlen($orgCode);
         $val = $model->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
@@ -1863,14 +1866,14 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function shiftLock($model, $dateParam, $codeParam, $showError = '') {
+    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock') {
         if (!empty($model->$dateParam)) {
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
             $showError = !empty($showError) ? $showError : $dateParam;
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, 'data_lock' => 1])
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
@@ -2145,6 +2148,67 @@ class GeneralFunctions extends Component {
             }
         }
         return $value;
+    }
+
+    public function validateEmail($model, $attribute, $params, $check_char = false) {
+        if (!empty($model->$attribute)) {
+            $model->$attribute = trim($model->$attribute, ",");
+            $error = false;
+            $err_msg = '';
+            $existEmail = [];
+            $sameEmail = false;
+            $emails = explode(',', $model->$attribute);
+            foreach ($emails as $email) {
+                if (in_array($email, $existEmail)) {
+                    $sameEmail = true;
+                }
+                $existEmail[] = $email;
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $error = true;
+                    $err_msg = empty($err_msg) ? $err_msg . $email : $err_msg . ',' . $email;
+                }
+            }
+            if ($error) {
+                $err_msg = $err_msg . ' ' . Yii::t('app', 'is Invalid.');
+            }
+            if ($sameEmail) {
+                $msg = Yii::t('app', 'Please remove duplicate emails.');
+                $err_msg = empty($err_msg) ? $msg : $err_msg . ' ' . $msg;
+            }
+            if ($error || $sameEmail) {
+                $model->addError($attribute, $err_msg);
+            }
+        }
+    }
+
+    public function RemoveDirectory($dir) {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir . "/" . $object) == "dir")
+                        $this->RemoveDirectory($dir . "/" . $object);
+                    else
+                        unlink($dir . "/" . $object);
+                }
+            }
+            reset($objects);
+            rmdir($dir);
+        }
+    }
+
+    public function CreateDirectory($folder_path) {
+        if (!is_dir($folder_path)) {
+            $oldmask = umask(0);
+            mkdir($folder_path, 0777, TRUE);
+            umask($oldmask);
+        } else {
+            $files = glob($folder_path . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file))
+                    unlink($file); // delete file
+            }
+        }
     }
 
 }

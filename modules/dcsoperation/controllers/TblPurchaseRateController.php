@@ -31,7 +31,7 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 class TblPurchaseRateController extends \app\controllers\ChildController {
 
     public $purchaseModel;
-    public $freeAccessActions = ['chart-list', 'get-org-rate'];
+    public $freeAccessActions = ['chart-list', 'get-org-rate', 'dpu-chart-list'];
 
     /**
      * Lists all TblPurchaseRate models.
@@ -564,6 +564,22 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                 foreach ($list as $key => $r) {
                     $out[] = array('id' => $key,
                         'name' => $r);
+                }
+            }
+            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+    }
+
+    public function actionDpuChartList() {
+        $out = NULL;
+        if (isset($_POST['depdrop_parents'])) {
+            $value = $_POST['depdrop_parents'];
+            if (!empty($value[0])) {
+                $list = \Yii::$app->general->getSpData('eipldpu_rate_list', [$value[0]]);
+                foreach ($list as $d) {
+                    $out[] = array('id' => $d['id'],
+                        'name' => $d['name']);
                 }
             }
             echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);

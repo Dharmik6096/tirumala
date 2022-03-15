@@ -132,7 +132,7 @@ class TblMilkCollectionNotExists extends \app\models\ChildModel {
             [['data_post_id'], 'safe'],
             [['last_edited_type', 'sync_status'], 'safe'],
             [['union_code'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'antibiotic'], 'safe'],
         ];
     }
 

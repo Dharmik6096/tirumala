@@ -6,6 +6,11 @@ use Yii;
 use app\modules\product\models\TblProduct;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblLoanProductSaleDetails;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\product\models\TblProductStock;
+use app\modules\product\models\TblProductStockTransaction;
+use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblProductStockTransactionHistory;
 
 /**
  * This is the model class for table "tbl_product_sale_details".
@@ -30,6 +35,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
     public $saveDeleteChildRecords = TRUE;
+    public $available_stock;
+    public $union_code;
 
     /**
      * @inheritdoc
@@ -49,9 +56,11 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
             [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync']],
                 [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
-                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code'], 'safe'],
+                [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock'], 'safe'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
+            [['quantity'], 'validateQty', 'on' => ['saleProduct']],
+                [['union_code'], 'safe']
         ];
     }
 
@@ -155,7 +164,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     }
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
-        if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
+        $manageStock = TRUE;
+        if (!empty($model->product_code) && !empty($model->productCode->dpu_product_code) && $model->productCode->dpu_product_code == '994') {
             $loanModel = new TblLoanProductSaleDetails();
             $loanModel->attributes = $model->attributes;
             $updateData = true;
@@ -186,8 +196,108 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $loanModel->entry_type = 2;
                 $loanModel->created_by = 'CRON';
                 $model = $loanModel;
+                $manageStock = FALSE;
             }
         }
+        if ($manageStock) {
+            $qty = !empty($model->quantity) ? $model->quantity : 0;
+            if (!empty($qty) && !empty($model->productSaleCode->product_sale_code)) {
+                $productSaleData = $model->productSaleCode;
+                $fstockModel = new TblProductStock();
+                if ($model->originating_org_type != 'PORTAL') {
+                    $sale_type = $model->originating_org_type;
+                    $sale_code = $model->originating_org_code;
+                } else {
+//                    $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+                    $sale_type = 'BMC';
+                    $sale_code = $productSaleData->bmc_code;
+                    if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
+                        if ($model->originating_org_type == 'DCS') {
+                            $sale_type = 'DCS';
+//                        $sale_code = !empty($productSaleData->memberCode) ? $productSaleData->memberCode->dcs_code : $sale_code;
+                            $sale_code = !empty($model->originating_org_code) ? $model->originating_org_code : $sale_code;
+                        }
+                    }
+                }
+                $fstockModel->setCodes($sale_type, $sale_code);
+                $fstockModel->product_code = $model->product_code;
+                $fstockModel->union_code = $productSaleData->union_code;
+                $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+                $existfromStock = $fstockModel->getExistStock($sale_type);
+
+                $f_stock = 0;
+                $i = 1;
+//                $qty = $model->quantity;
+                if (!empty($existfromStock)) {
+                    $historyModel = new TblProductStockHistory();
+                    Yii::$app->operation->history($existfromStock, $historyModel, 'UPDATE');
+                    $childModel[] = $historyModel;
+                    $f_stock = $existfromStock->stock;
+                    $existfromStock->stock = $f_stock - $qty;
+                    $fstockModel = $existfromStock;
+//                    $child[] = $fstockModel;
+                } else {
+                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
+                    $fstockModel->stock = $f_stock - $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                }
+
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = $txn_type;
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+
+
+                $childModel[] = $fstockModel;
+                $childModel[] = $fstockTxnModel;
+                $i++;
+            }
+        }
+    }
+
+    public function validateQty($attribute, $param) {
+        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
+        if ($config == 1) {
+            if ($this->available_stock < $this->quantity) {
+                $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $this->available_stock));
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes) {
+        $sentboxArray = [];
+
+        if (!empty($this->productSaleCode->customer_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->productSaleCode->customer_code);
+        } else if (!empty($this->productSaleCode->bmc_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->productSaleCode->bmc_code, '', '');
+        } else if (!empty($this->productSaleCode->mcc_plant_code)) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->productSaleCode->mcc_plant_code, '', '', '');
+        }
+        foreach ($sentboxArray as $sent) {
+            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                if (!($sentbox->setSentbox($this, $flag))) {
+                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->productSaleCode->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
 }

@@ -9,6 +9,9 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\bkgprocess\models\TblFileCreator;
 use yii\db\ActiveQuery;
 use app\modules\organisation\models\TblDcs;
+use app\modules\bkgprocess\Bkgprocess;
+use app\components\FTPConnection;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -58,11 +61,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_status', 'status'], 'default', 'value' => 0],
-            [['txn_type'], 'default', 'value' => 'EIPL'],
-            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'string'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'integer'],
-            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
+                [['file_status', 'status'], 'default', 'value' => 0],
+                [['txn_type'], 'default', 'value' => 'EIPL'],
+                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
         ];
     }
 
@@ -110,17 +113,63 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return new TblFtpTxnLogQuery(get_called_class());
     }
 
-    public function generateFiles($output, $FTPProcess, $data) {
-        $name_formate = explode('+', $FTPProcess['export_title']);
-        $fileName = '';
-        foreach ($name_formate as $k => $v) {
-            $name_part_array = explode(':', $v);
-            $name_part = $name_part_array[0];
-            $val = isset($data->{$name_part}) ? $data->{$name_part} : $name_part;
-            if (isset($name_part_array[1]) && $name_part_array[1] == 'date') {
-                $val = str_replace('-', '_', Yii::$app->controls->view_date($val));
+    public function exportData($data_array, $title = '', $output = []) {
+        $data = new TblFileCreator();
+        $data->attributes = $data_array;
+        $txn = new TblFtpTxnLog();
+        $FTPProcess = Bkgprocess::FTPProcess()[$data->module_name];
+        if (empty($output)) {
+            $param = explode(',', $FTPProcess['param']);
+            $controls = [];
+            foreach ($param as $key => $val) {
+                $controls[$val] = $data_array[$val];
             }
-            $fileName .= $val;
+            $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+            $downLoadArray = [];
+            foreach ($output as $detail) {
+                $plant = ($data_array['module_name'] == 'TblBmcCollection') ? 'Plant Code' : 'Plant';
+                if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                    if (empty($downLoadArray[$detail[$plant]])) {
+                        $downLoadArray[$detail[$plant]] = [];
+                    }
+                    $downLoadArray[$detail[$plant]][] = $detail;
+                }
+            }
+            foreach ($downLoadArray as $bmc => $download) {
+                $report_type = ($data_array['module_name'] == 'TblBmcCollection') ? 'WQ' : 'SD';
+                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                $txn->ref_code = $bmc;
+                $bmc_data = $txn->bmcCode;
+                if (!empty($bmc_data)) {
+                    $data->module_code = $bmc_data->bmc_code;
+                    $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+                }
+                $this->generateFiles($download, $FTPProcess, $data, TRUE, $title);
+            }
+        } else {
+            $txn->ref_code = $data_array['module_code'];
+            $bmc_data = $txn->bmcCode;
+            if (!empty($bmc_data)) {
+                $data->module_code = $bmc_data->bmc_code;
+                $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+            }
+            $this->generateFiles($output, $FTPProcess, $data, TRUE, $title);
+        }
+    }
+
+    public function generateFiles($output, $FTPProcess, $data, $ftp_upload = FALSE, $title = '') {
+        $name_formate = explode('+', $FTPProcess['export_title']);
+        $fileName = $title;
+        if (empty($fileName)) {
+            foreach ($name_formate as $k => $v) {
+                $name_part_array = explode(':', $v);
+                $name_part = $name_part_array[0];
+                $val = isset($data->{$name_part}) ? $data->{$name_part} : $name_part;
+                if (isset($name_part_array[1]) && $name_part_array[1] == 'date') {
+                    $val = str_replace('-', '_', Yii::$app->controls->view_date($val));
+                }
+                $fileName .= $val;
+            }
         }
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
@@ -133,7 +182,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fwrite($txt_file, implode(',', $line) . PHP_EOL);
             }
             fclose($txt_file);
-            return $this->saveLog($data, $filePath, $fileName, count($output));
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload);
         }
         return FALSE;
         /** csv generate * */
@@ -178,7 +227,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
@@ -193,6 +242,40 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
+            if ($ftp_upload) {
+                $ftp = new FTPConnection();
+                $ftp->ftp_type = $ftp_file->ftp_type;
+                $ftp->ftp_host = $ftp_file->ftp_host;
+                $ftp->ftp_username = $ftp_file->ftp_username;
+                $ftp->ftp_password = $ftp_file->ftp_password;
+                $ftp->ftp_port = $ftp_file->ftp_port;
+                $ftp->conn_init = FALSE;
+                $ftp->conn_close = FALSE;
+                $ftp->make_dir = FALSE;
+                $connection = $ftp->ConnectServer();
+                $ftp_file->status = 3;
+                $ftp_file->file_status = 0;
+                if ($connection) {
+                    $ftp_path = explode('/', $ftp_file->file_path);
+                    unset($ftp_path[count($ftp_path) - 1]);
+                    $ftp_path = implode('/', $ftp_path);
+                    $local_path = explode('/', $ftp_file->local_path);
+                    unset($local_path[count($local_path) - 1]);
+                    $local_path = implode('/', $local_path);
+                    $file_name = $ftp_file->file_name;
+                    $ftp->ftp_path = $ftp_path;
+                    $ftp->local_path = $local_path . '/';
+                    $ftp->file_name = $file_name;
+                    if ($ftp->UploadFile()) {
+                        $ftp_file->status = 2;
+                        $ftp_file->file_status = 1;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                            'message' => \Yii::t('app', 'FTP Files Uploaded Successfully.')]);
+                    }
+                    $ftp->CloseConnection();
+                }
+            }
+
             if ($ftp_file->save()) {
                 $model_name = Yii::$app->path->define($data->module_name);
                 $model = new $model_name();
@@ -262,6 +345,10 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['ref_code' => 'ref_code']);
     }
 
 }

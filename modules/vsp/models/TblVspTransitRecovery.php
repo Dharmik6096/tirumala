@@ -122,9 +122,10 @@ class TblVspTransitRecovery extends \yii\db\ActiveRecord {
         ];
     }
 
-    public function getExistData($data) {
+   public function getExistData($data) {
+        $status = 'Lock';
         return $this->find()
-                        ->where('mcc_plant_code=\'' . $data->mcc_plant_code . '\'')
+                        ->where('mcc_plant_code=\'' . $data->mcc_plant_code . '\' and status=\'' . $status . '\'')
                         ->andWhere('((\'' . date('Y-m-d', strtotime($data->date_time_of_collection)) . '\' between cast(from_date as date)  and cast(to_date as date)))')
                         ->count();
     }

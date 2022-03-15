@@ -157,9 +157,11 @@ class TblMilkCollection extends \app\models\ChildModel {
                 [['is_rate_recalc'], 'default', 'value' => 0],
                 [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
+                [['antibiotic_sms_sent'], 'safe'],
+                [['antibiotic_sms_sent'], 'default', 'value' => 0],
         ];
     }
 
@@ -701,6 +703,24 @@ class TblMilkCollection extends \app\models\ChildModel {
         $memberModel->sub_district_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'sub_district_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'sub_district_code') : NULL;
         $memberModel->hamlet_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'hamlet_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'hamlet_code') : NULL;
         $memberModel->village_code = !empty(Yii::$app->general->getforeignkey($model->dcsCode, 'village_code')) ? Yii::$app->general->getforeignkey($model->dcsCode, 'village_code') : NULL;
+    }
+
+    public function getCollectionData($data) {
+        $fromDate = $data->date_time_of_dispatch;
+        $toDate = $data->date_time_of_dispatch;
+
+        if ($data->shift_code == 2) {
+            $fromDate = date('Y-m-d', strtotime($data->date_time_of_dispatch)) . '' . ' 06:00:00';
+        } else
+        if ($data->shift_code == 1) {
+            $fromDate = date('Y-m-d', strtotime($data->date_time_of_dispatch . ' -1 day')) . '' . ' 18:00:00';
+        }
+        return $this->find()
+                        ->where(['dcs_code' => $data->dcs_code, 'bmc_code' => $data->bmc_code, 'mcc_plant_code' => $data->mcc_plant_code])
+                        ->andWhere(['>=', 'date_time_of_collection', $fromDate])
+                        ->andWhere(['<=', 'date_time_of_collection', $toDate])
+                        ->andWhere(['or', ['IS', 'antibiotic_sms_sent', NULL], ['antibiotic_sms_sent' => ''], ['antibiotic_sms_sent' => '0']])
+                        ->all();
     }
 
 }

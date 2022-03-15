@@ -15,6 +15,7 @@ use app\modules\collection\models\TblMccShiftLockHistory;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\components\WebApi;
 use app\modules\vsp\models\TblVspTransitRecovery;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -155,6 +156,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                     $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
                 }
                 $this->model->data_lock = 1;
+                $this->model->bmc_lock = 1;
+                $this->model->member_lock = 1;
+                $this->model->product_sale_lock = 1;
 
                 $staging = new TblMccShiftLockStaging();
                 $attribute = $this->model->attributes;
@@ -182,11 +186,17 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                         $api = new WebApi();
                         $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
                         $api->authentication = FALSE;
+//                        $bodyData = [
+//                            'grant_type' => 'client_credentials',
+//                            'client_id' => '20e569c1-4277-462b-b32c-01fc8516b4a8',
+//                            'client_secret' => '4wD7Q~o~2sb6uJY77edU7GBNPHDHFs0KFCxz3',
+//                            'resource' => 'https://mmd-test.sandbox.operations.dynamics.com'
+//                        ];
                         $bodyData = [
                             'grant_type' => 'client_credentials',
-                            'client_id' => '20e569c1-4277-462b-b32c-01fc8516b4a8',
-                            'client_secret' => '4wD7Q~o~2sb6uJY77edU7GBNPHDHFs0KFCxz3',
-                            'resource' => 'https://mmd-test.sandbox.operations.dynamics.com'
+                            'client_id' => '1ebf2967-31cd-48aa-a95d-47872d9c1660',
+                            'client_secret' => 'wSz7Q~.xR387Nc4bpNLaIQeJucLqv7.4a0Z5b',
+                            'resource' => 'https://mmd-prd.operations.dynamics.com'
                         ];
                         $api->body = json_encode($bodyData);
                         $api->header_info = ['Cookie: buid=0.ASoAH-0RLP8NuUaU6Yy-g3F0FxUAAAAAAAAAwAAAAAAAAAAqAAA.AQABAAEAAAD--DLA3VO7QrddgJg7WevrvVFNQrKzy_CROckT6gVKweNqD3cIE_2e6sZvqDLziOl8pO63n7RLdlIlGAuwxD62Enrb1pzwLrCCeemK4klCumlwbqCg2J9DH0skWUTDYnkgAA; esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr6ffEbthd6xIgF9p_ALeJBUHpIFF8fjoU4RbhU6__vXSrMIrFkvh22Pkix_9Le-2mYya7B8dKnuUP_rbwfpzClwoS9Ky7NfwLUT_ZHQKSykQ94qj7dGTJP5ADjUi---2djJon1PEOjTv7Y6o3MstQTGOfn3_UANRXj-6c84mvRDIgAA; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd; fpc=AmO0_u8SW0RBlh7R1d1Hu_TyqFelAQAAACCE-NgOAAAAMek5pAEAAACJhPjYDgAAAA'];
@@ -206,7 +216,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 
                                 $loopData['orderNumber'] = $value->staging_code;
                                 $mccVendor = Yii::$app->general->getforeignkey($value->mccPlantCode, 'vendor_code');
-                                $loopData['vendorAccount'] = !empty($mccVendor) ? $mccVendor : 'VADD00099';
+                                $loopData['vendorAccount'] = !empty($mccVendor) ? $mccVendor : '';
                                 $loopData['orderDate'] = date('m-d-Y', strtotime($value->date_time_of_collection));
                                 $loopData['companyId'] = '';
                                 $loopData['sourceSystem'] = '';
@@ -289,6 +299,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             }
             $this->model->data_lock = 0;
+            $this->model->bmc_lock = 0;
+            $this->model->member_lock = 0;
+            $this->model->product_sale_lock = 0;
             $saveModel[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
@@ -300,6 +313,201 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionIndexOther() {
+        $searchModel = new TblMccShiftLockSearch();
+        $searchModel->scenario = 'shiftLock';
+        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_other');
+
+        return $this->render('index_other', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage) {
+        $saveModel = [];
+        $model = new TblMccShiftLock();
+        $model->mcc_plant_code = $mcc;
+        $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
+        $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
+        $model->date_time_of_collection = $date;
+        $model->shift_code = $shift;
+        $model->qty = $qty;
+        $model->avg_fat = $fat;
+        $model->avg_snf = $snf;
+        $model->amount = $amount;
+        $model->{$updateField} = $val;
+        $modelData = $model->getExistData();
+        $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
+
+        if (!empty($modelData)) {
+            $historyModel = new TblMccShiftLockHistory();
+            Yii::$app->operation->history($modelData, $historyModel, UPDATE);
+            $modelData->{$updateField} = $val;
+            $saveModel[] = $historyModel;
+            if ($modelData->bmc_lock == 1 && $modelData->member_lock == 1 && $modelData->product_sale_lock) {
+                $modelData->data_lock = 1;
+            }
+            $saveModel[] = $modelData;
+        } else {
+            $model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($model);
+            $saveModel[] = $model;
+        }
+
+        $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
+        }
+        return $this->redirect(['index-other']);
+    }
+
+    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection');
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
+    }
+
+    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
+    }
+
+    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    }
+
+    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC');
+    }
+
+    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member');
+    }
+
+    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    }
+
+    public function actionLockDataOther() {
+        $union = Yii::$app->request->get()['union'];
+        $plant = Yii::$app->request->get()['plant'];
+        $mcc = Yii::$app->request->get()['mcc'];
+        $date = Yii::$app->request->get()['date'];
+        $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
+        $saveModel = [];
+        if (!empty($mcc)) {
+            $this->model = new TblMccShiftLock();
+            $this->model->union_code = $union;
+            $this->model->plant_code = $plant;
+            $this->model->mcc_plant_code = $mcc;
+            $this->model->date_time_of_collection = $date;
+            $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
+            $this->model->bmc_lock = $amount;
+            $this->model->amount = $amount;
+            $this->model->amount = $amount;
+            $existData = $this->model->getExistData();
+
+            if (!empty($existData)) {
+                $this->model = $this->findModel($existData->shift_lock_code);
+                $historyModel = new TblMccShiftLockHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+            } else {
+                $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            }
+            $this->model->data_lock = 1;
+            $this->model->bmc_lock = 1;
+            $this->model->member_lock = 1;
+            $this->model->product_sale_lock = 1;
+            $saveModel[] = $this->model;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
+            }
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionUnlockOther() {
+        $union = Yii::$app->request->get()['union'];
+        $plant = Yii::$app->request->get()['plant'];
+        $mcc = Yii::$app->request->get()['mcc'];
+        $date = Yii::$app->request->get()['date'];
+        $shift = Yii::$app->request->get()['shift'];
+        $qty = Yii::$app->request->get()['qty'];
+        $fat = Yii::$app->request->get()['fat'];
+        $snf = Yii::$app->request->get()['snf'];
+        $amount = Yii::$app->request->get()['amount'];
+        $saveModel = [];
+        if (!empty($mcc)) {
+            $this->model = new TblMccShiftLock();
+            $this->model->union_code = $union;
+            $this->model->plant_code = $plant;
+            $this->model->mcc_plant_code = $mcc;
+            $this->model->date_time_of_collection = $date;
+            $this->model->shift_code = $shift;
+            $this->model->qty = $qty;
+            $this->model->avg_fat = $fat;
+            $this->model->avg_snf = $snf;
+            $this->model->amount = $amount;
+            $existData = $this->model->getExistData();
+            if (!empty($existData)) {
+                $this->model = $this->findModel($existData->shift_lock_code);
+                $historyModel = new TblMccShiftLockHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+            } else {
+                $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            }
+            $this->model->data_lock = 0;
+            $this->model->bmc_lock = 0;
+            $this->model->member_lock = 0;
+            $this->model->product_sale_lock = 0;
+            $saveModel[] = $this->model;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
+            if ($transaction == 'customRedirect') {
+                $record = ['status' => 'success', 'msg' => 'DATA UN-LOCK Successfully.'];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'DATA Not UN-LOCK Successfully.'];
+            }
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function generateFTPFile($mcc, $date, $shift, $module_name) {
+        $date .= ' ' . \Yii::$app->general->getshift($shift);
+        $model = new TblMccShiftLock();
+        $model->mcc_plant_code = $mcc;
+        $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
+        $data_array = [];
+        $data_array['module_name'] = $module_name;
+        $data_array['module_code'] = $mcc;
+        $data_array['mcc_plant_code'] = $mcc;
+        $data_array['union_code'] = $model->union_code;
+        $data_array['applicable_date'] = $date;
+        $data_array['shift_code'] = $shift;
+        $data_array['bmc_code'] = '0';
+        $data_array['from_date'] = $date;
+        $data_array['to_date'] = $date;
+        $ftp_model = new TblFtpTxnLog();
+        $ftp_model->exportData($data_array);
     }
 
 }

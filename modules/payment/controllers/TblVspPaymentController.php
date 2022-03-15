@@ -29,6 +29,7 @@ use app\modules\vsp\models\TblMemberPaymentAllow;
 use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
 use yii\helpers\Url;
+use app\modules\payment\models\TblVspPaymentRecovery;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -202,6 +203,14 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $data['from_shift'] = $paymentCycle->from_shift;
         $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($paymentCycle->to_date));
         $data['to_shift'] = $paymentCycle->to_shift;
+        /* delete recovery data */
+        Yii::$app->db->createCommand("delete from tbl_vsp_payment_recovery
+where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and customer_type = :customer_type")
+                ->bindValue(':payment_cycle_code', $model->payment_cycle_code)
+                ->bindValue(':bmc_code', $model->bmc_code)
+                ->bindValue(':customer_type', $model->customer_type)
+                ->execute();
+        /* delete recovery data */
         return Yii::$app->ClientPaymentConfig->processPayment('vsp_payment', $data);
         /*
           $result = \Yii::$app->db->createCommand("{CALL sp_vsp_payment (:union_code,:from_date,:from_shift,:to_date,:to_shift,:payment_cycle_code,:bmc_code,:customer_type)}")
@@ -916,6 +925,78 @@ where dcs_code IN (:dcs_code) and dcs_payment_cycle_code = :dcs_payment_cycle_co
         } else {
             echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
+    }
+
+    public function actionAddRecovery() {
+        $model = $this->findModel(Yii::$app->request->get()['code']);
+        if (Yii::$app->request->post()) {
+            $process = FALSE;
+            $postData = Yii::$app->request->post()['TblVspPayment'];
+            $total_amount = (float) abs($model->net_payable);
+            $total_recovery = (float) array_sum(array_column($postData, 'new_recovery'));
+            if ($total_recovery <= $total_amount) {
+                $saveModel = [];
+                $deleteModel = [];
+                foreach ($postData as $data) {
+                    $is_delete = FALSE;
+                    $record = TblVspPayment::findOne($data['vsp_payment_code']);
+                    $rec_model = TblVspPaymentRecovery::find()
+                            ->where(['payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type,
+                                'from_customer_code' => $record->customer_code, 'for_customer_code' => $model->customer_code])
+                            ->one();
+                    $old_rec = 0.00;
+                    $new_rec = !empty($data['new_recovery']) ? $data['new_recovery'] : 0.00;
+                    if (!empty($rec_model)) {
+                        $old_rec = $rec_model->recovery_amount;
+                        $rec_model->recovery_amount = $new_rec;
+                        $is_delete = ($new_rec == 0.00) ? TRUE : FALSE;
+                    } else if (!empty($new_rec) && $new_rec != 0.00) {
+                        $rec_model = new TblVspPaymentRecovery();
+                        $rec_model->attributes = $model->attributes;
+                        $rec_model->for_customer_code = $model->customer_code;
+                        $rec_model->from_customer_code = $record->customer_code;
+                        $rec_model->recovery_amount = $new_rec;
+                        $rec_model->created_at = $rec_model->created_by = $model->updated_at = $rec_model->updated_by = $rec_model->originating_org_code = $rec_model->originating_org_type = $rec_model->originating_type = NULL;
+                    }
+                    if ($old_rec != $new_rec) {
+                        $process = TRUE;
+                        $record->final_pay = $record->final_pay + $old_rec - $new_rec;
+                        $record->recovery = $record->recovery - $old_rec + $new_rec;
+                        $saveModel[] = $record;
+                        if ($is_delete) {
+                            $deleteModel[] = $rec_model;
+                        } else {
+                            $saveModel[] = $rec_model;
+                        }
+                    }
+                }
+                if ($process) {
+                    $model->final_pay = $model->final_pay - $model->adjust_recovery + $total_recovery;
+                    $model->adjust_recovery = $total_recovery;
+                    $saveModel[] = $model;
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Adjust Recovery', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'success', 'msg' => $msg];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'msg' => $msg];
+                    }
+                } else {
+                    $msg = Yii::t('app', 'No Changes found in data.');
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::t('app', 'Sum Of New Recovery must not be grater than Total Amount.');
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+        $recoveryData = $model->getRecoveryRecords();
+        return $this->renderAjax('add-recovery', [
+                    'model' => $model,
+                    'recoveryData' => $recoveryData]);
     }
 
 }

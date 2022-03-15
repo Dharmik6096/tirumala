@@ -90,7 +90,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                    [
+                        [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -396,7 +396,8 @@ class SiteController extends Controller {
             $i = 8;
             $j = 1;
             for ($i = 8; $i < count($data); $i++) {
-                if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
+//                if (!empty($data[$i + 1]) && !empty($_POST['depdrop_parents'][$j])) {
+                if (!empty($data[$i + 1]) && (!empty($_POST['depdrop_parents'][$j]) || (isset($_POST['depdrop_parents'][$j]) && $_POST['depdrop_parents'][$j] == 0) )) {
                     $depend_value = explode('###', $_POST['depdrop_parents'][$j]);
                     $where[$data[$i + 1]] = $depend_value;
                     $j++;
@@ -1798,6 +1799,8 @@ class SiteController extends Controller {
             $modelData = $model->getData();
             $i = 1;
             if (!empty($modelData)) {
+                $update_ids = array_column($modelData, 'uuid');
+                $model->updateAll(['data_post_status' => 1], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $delete = [];
@@ -1932,10 +1935,12 @@ class SiteController extends Controller {
                                 $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
 //                                $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
                                 if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
                                     $inbox_constraint = new TblInboxConstraint();
                                     $inbox_constraint->attributes = $transaction_data->attributes;
                                     $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
+                                    $inbox_constraint->data_post_status = 3;
                                     $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
                                 } else {
                                     $transaction_data->save();
@@ -1944,11 +1949,13 @@ class SiteController extends Controller {
                         } else {
                             $transaction_data->error_log = Json::encode($model->getErrors());
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
                             $transaction_data->save();
                         }
                     } catch (\Throwable $ex) {
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                        $transaction_data->data_post_status = 3;
                         $transaction_data->save();
                     }
                     $i++;

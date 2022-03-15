@@ -34,18 +34,19 @@ class TransitRecoveryController extends \app\controllers\ChildController {
         $clientSp = isset($clientData['spName']) ? $clientData['spName'] : 'sp_process_ts_loss_shortage_calculation';
         $btn_status = 'Generated';
         if (Yii::$app->request->post()) {
-            if(Yii::$app->request->post('submitBtn') == 'unlock'){
+            $userCode = Yii::$app->session->get('UserCode');
+            $date = date('Y-m-d H:i:s');
+            if (Yii::$app->request->post('submitBtn') == 'unlock') {
                 $btn_status = 'Unlock';
             }
-            if(Yii::$app->request->post('submitBtn') != 'unlock'){
+            if (Yii::$app->request->post('submitBtn') != 'unlock') {
                 $update_status = 'Generated';
                 if (Yii::$app->request->post('submitBtn') === 'save_lock') {
                     $status = 'Lock';
-                }
-                else {
+                } else {
                     $status = 'Processed';
                 }
-                $save_model =[];
+                $save_model = [];
                 $historyModel = [];
                 $post_data = Yii::$app->request->post();
                 $transist_model_update_all = new TblVspTransitRecovery();
@@ -55,39 +56,39 @@ class TransitRecoveryController extends \app\controllers\ChildController {
                 $model_filter['from_date'] = date('Y-m-d H:i:s', strtotime($model_filter['from_date'] . ' ' . $from_shift));
                 $model_filter['to_date'] = date('Y-m-d H:i:s', strtotime($model_filter['to_date'] . ' ' . $to_shift));
                 $condition = ['and',
-                    ['union_code'=>$model_filter['union_code']],
-                    ['plant_code'=>$model_filter['plant_code']],
-                    ['mcc_plant_code'=>$model_filter['mcc_plant_code']],
-                    ['bmc_code'=>$model_filter['bmc_code']],
-                    ['>=','from_date',$model_filter['from_date']],
-                    ['<=','to_date',$model_filter['to_date']],
-                    ['status' => $update_status],
-                    // ['order_on'=>$model_filter['order_on']],
+                        ['union_code' => $model_filter['union_code']],
+                        ['plant_code' => $model_filter['plant_code']],
+                        ['mcc_plant_code' => $model_filter['mcc_plant_code']],
+                        ['bmc_code' => $model_filter['bmc_code']],
+                        ['>=', 'from_date', $model_filter['from_date']],
+                        ['<=', 'to_date', $model_filter['to_date']],
+                        ['status' => $update_status],
+                        // ['order_on'=>$model_filter['order_on']],
                 ];
-                $trans = $transist_model_update_all->updateAll(['status' => $status],$condition);
-                if(isset($post_data['vsp_transit_recovery_code'])){
+                $trans = $transist_model_update_all->updateAll(['status' => $status, 'updated_by' => $userCode, 'updated_at' => date('Y-m-d H:i:s', strtotime($date))], $condition);
+                if (isset($post_data['vsp_transit_recovery_code'])) {
                     foreach ($post_data['vsp_transit_recovery_code'] as $key => $value) {
                         $transist_model = new TblVspTransitRecovery();
                         $transist_model = $transist_model->find()->where(['vsp_transit_recovery_code' => $value])->one();
-                        if(isset($post_data['ts_loss_responsibility'][$value])){
+                        if (isset($post_data['ts_loss_responsibility'][$value])) {
                             $transist_model->ts_loss_responsibility = $post_data['ts_loss_responsibility'][$value][0];
                         }
-                        if(isset($post_data['qty_diff_type'][$value])){
+                        if (isset($post_data['qty_diff_type'][$value])) {
                             $transist_model->qty_diff_type = $post_data['qty_diff_type'][$value][0];
                         }
-                        if(isset($post_data['qty_diff_responsibility'][$value])){
+                        if (isset($post_data['qty_diff_responsibility'][$value])) {
                             $transist_model->qty_diff_responsibility = $post_data['qty_diff_responsibility'][$value][0];
                         }
-                        if(isset($post_data['shortage_recovery'][$value])){
+                        if (isset($post_data['shortage_recovery'][$value])) {
                             $transist_model->shortage_recovery = $post_data['shortage_recovery'][$value][0];
                         }
-                        if(isset($post_data['total_recovery_incharge'][$value])){
+                        if (isset($post_data['total_recovery_incharge'][$value])) {
                             $transist_model->total_recovery_incharge = $post_data['total_recovery_incharge'][$value][0];
                         }
-                        if(isset($post_data['total_recovery_transporter'][$value])){
+                        if (isset($post_data['total_recovery_transporter'][$value])) {
                             $transist_model->total_recovery_transporter = $post_data['total_recovery_transporter'][$value][0];
                         }
-                        if(isset($post_data['ts_deduction_amount'][$value])){
+                        if (isset($post_data['ts_deduction_amount'][$value])) {
                             $transist_model->ts_deduction_amount = $post_data['ts_deduction_amount'][$value][0];
                         }
                         $transist_model->status = $status;
@@ -99,7 +100,7 @@ class TransitRecoveryController extends \app\controllers\ChildController {
                 if ($transaction == 'customRedirect' && $status == 'Lock') {
                     // var_dump($trans);die;
                     // $this->redirect(['transit-loss-shortage']);
-                            return $this->render($clientRender, [
+                    return $this->render($clientRender, [
                                 'model' => $model,
                                 'modelData' => $modelData,
                                 'dataProvider' => $this->dataProvider,
@@ -113,7 +114,7 @@ class TransitRecoveryController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->queryParams) && $model->validate()) {
             $this->LoadData(Yii::$app->request->queryParams, $clientSp, $btn_status);
         }
-        
+
 
         if (!empty($this->output)) {
             foreach ($this->output as $d) {
@@ -158,7 +159,7 @@ class TransitRecoveryController extends \app\controllers\ChildController {
 //                if($btn_status == 'Unlock'){
 //                    $execute = true;
 //                }
-                $output = \Yii::$app->general->getSpData($sp, $sp_params,$execute);
+                $output = \Yii::$app->general->getSpData($sp, $sp_params, $execute);
 //                if($btn_status === 'Unlock'){
 //                    Yii::$app->getSession()->setFlash('success', ['type' => 'success', 'message' => Yii::t('app', 'Transit Data Recovery Unlocked')]);
 //                    $this->redirect(['transit-loss-shortage']);
@@ -195,31 +196,31 @@ class TransitRecoveryController extends \app\controllers\ChildController {
         return !empty($data[$clientCode]) ? $data[$clientCode] : [];
     }
 
-    public function actionGetPenaltyType(){
+    public function actionGetPenaltyType() {
         $union_code = $_POST['union'];
         $penalty_model = new TblCollectionPenaltyType();
         $penalty_model = $penalty_model->find()->where(['union_code' => $union_code])->all();
 
         $data = ArrayHelper::map($penalty_model, function($penalty_model) {
-            return (string) $penalty_model->penalty_type_code;
-        }, 'penalty_type');
+                    return (string) $penalty_model->penalty_type_code;
+                }, 'penalty_type');
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if(!empty($data)){
-            return ['status' => 'success', 'res' => $data];   
+        if (!empty($data)) {
+            return ['status' => 'success', 'res' => $data];
         }
         return ['status' => 'error', 'res' => []];
     }
 
-    public function actionGetPenaltyRate(){
+    public function actionGetPenaltyRate() {
         $dcs_code = $_POST['dcs_code'];
         $from_date = date('Y-m-d', strtotime($_POST['from_date']));
         $qty_diff_type = $_POST['qty_diff_type'];
 
         $penalty_rate_applicability = new TblCollectionPenaltyRateApplicability();
-        $penalty_rate_applicability = $penalty_rate_applicability->find()->where('cast(wef_date as date) <= \''.$from_date.'\'')->andWhere(['applicable_code' => $dcs_code])->andWhere(['penalty_type' => $qty_diff_type])->orderBy('wef_date DESC')->one();
+        $penalty_rate_applicability = $penalty_rate_applicability->find()->where('cast(wef_date as date) <= \'' . $from_date . '\'')->andWhere(['applicable_code' => $dcs_code])->andWhere(['penalty_type' => $qty_diff_type])->orderBy('wef_date DESC')->one();
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if(!empty($penalty_rate_applicability)){
+        if (!empty($penalty_rate_applicability)) {
             return ['status' => 'success', 'res' => $penalty_rate_applicability->penalty_rate];
         }
         return ['status' => 'error', 'res' => []];

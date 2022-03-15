@@ -113,6 +113,7 @@ class TblDcs extends ChildModel {
     public $same_milk_type, $diff_milk_type, $rate_chart_member, $with_member_rate;
     public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route, $beneficiary_name;
     public $operation, $verifie_for, $file_name;
+    public $toEncrypt = ['password', 'pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob'];
 
     /**
      * @inheritdoc
@@ -173,7 +174,8 @@ class TblDcs extends ChildModel {
                     ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
             ],
-                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code'], 'safe'],
+                [['is_active', 'created_at', 'milk_type_code', 'destination_code', 'destination_type', 'effective_date', 'registration_date', 'updated_at', 'villages', 'branch_code', 'route_code', 'federation_code', 'upi_no', 'hamlet_code', 'secretory_info', 'gst_no', 'fssi', 'organisation_type_code', 'scheme_type_code', 'is_registered', 'street1', 'street2', 'valid_from', 'bipl_code', 'vendor', 'data_post_status', 'bmc_code', 'mcc_plant_code', 'plant_code', 'is_name_request', 'rate_flag', 'dpu_type', 'rate_chart_member', 'is_live', 'dcs_code_ex', 'ref_code', 'credit_sale_allow', 'default_milk_type', 'milk_type_auto', 'auto_member_create', 'beneficiary_name', 'operation', 'file_name', 'aadhaar_no', 'sap_vendor_code', 'antibiotic_check', 'ts_code_m', 'ts_code_e'], 'safe'],
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             //[['destination_code'],'bmcValidate','skipOnEmpty'=> false],
             //            [['effective_date', 'valid_from'],'validateDate'],
             [['address', 'dcs_name'], 'string', 'max' => 500],
@@ -260,7 +262,7 @@ class TblDcs extends ChildModel {
                 [['dcs_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsTypes::className(), 'targetAttribute' => ['dcs_type_code' => 'dcs_type_code'], 'on' => ['importCsv']],
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 [['credit_sale_allow', 'is_chiller'], 'default', 'value' => 0],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'password'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
                     ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],
@@ -290,6 +292,12 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                [['password'], 'string', 'min' => 8, 'max' => 8],
+                [['antibiotic_check'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
+                }, 'on' => ['importCsv']],
+                [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
+                [['ts_code_m', 'ts_code_e'], 'number']
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -398,6 +406,7 @@ class TblDcs extends ChildModel {
             'f_bmc_code' => Yii::t('app', 'BMC'),
             'f_union_code' => Yii::t('app', 'Union'),
             'ref_code' => Yii::t('app', 'Code'),
+            'x_col2' => Yii::t('app', 'Collection'),
         ];
     }
 
@@ -1230,6 +1239,43 @@ class TblDcs extends ChildModel {
         $sentbox->source_org_id = $this->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function encryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model));
+        foreach ($result as $key => $value) {
+            if ($this->hasAttribute($value) && $this->{$value} != '')
+                $model[$value] = \Yii::$app->general->encryptData($model[$value]);
+        }
+
+        return $model;
+    }
+
+    public function decryptModel($model) {
+        $result = array_intersect($this->toEncrypt, array_keys($model->attributes));
+        foreach ($result as $key => $value) {
+            $decryptData = \Yii::$app->general->decryptData($model->{$value});
+            if ($decryptData) {
+                $model->{$value} = $decryptData;
+            }
+        }
+        return $model;
+    }
+
+    public function getDpuTypeWiseDCS($bmcCode = [], $dpuType = 0, $RLS = 'TRUE') {
+        $query = $this->find()->alias('t')
+                ->select(['t.dcs_code', 't.dcs_name', 't.ref_code', 'dpu_type' => 'count(m.member_code)'])
+                ->leftJoin('tbl_member m', 'm.dcs_code=t.dcs_code')
+                ->where(['t.is_active' => 1, 't.dpu_type' => $dpuType]);
+        if (!empty($bmcCode))
+            $query->andWhere(['t.bmc_code' => $bmcCode]);
+        if (Yii::$app->session->get('Dcs') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['t.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+        }
+        $query->groupBy('t.dcs_code,t.dcs_name,t.ref_code');
+
+
+        return $query->all();
     }
 
 }

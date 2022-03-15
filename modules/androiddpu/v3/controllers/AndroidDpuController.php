@@ -28,6 +28,7 @@ use app\modules\installation\models\TblUserRoleMapping;
 use app\modules\installation\models\TblRole;
 use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
 use app\modules\sms\models\TblAlertTemplate;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * Default controller for the `vendorapi` module
@@ -102,8 +103,15 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
 //                        if (!empty($andoidIdDetailModelData)) {
 //                            $res_data['message'] = 'Mobile Number already registered.';
 //                        } else {
+                        $unionData = TblUnions::find()->where(['union_code' => $model_data[0]->union_code, 'is_active' => 1])->one();
+                        $eiplCode = !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
+
+                        if ($eiplCode == 'PRABHAT' && !empty($model_data[0]->password)) {
+                            $andoidIdDetailModel->otp_code = $model_data[0]->password;
+                        } else {
+                            $andoidIdDetailModel->otp_code = 1234;
+                        }
                         $andoidIdDetailModel->hash_key = Yii::$app->security->generateRandomString(20);
-                        $andoidIdDetailModel->otp_code = 1234;
                         $andoidIdDetailModel->is_active = 0;
                         $andoidIdDetailModel->is_expired = 0;
                         $master[] = $andoidIdDetailModel;
@@ -133,6 +141,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
         $model->otp_code = $content['otp_code'];
         $model->imei_no = $data['imei'];
         $model = $model->getData();
+        $msgstr = 'OTP';
+        if (strlen($content['otp_code']) > 4) {
+            $msgstr = 'Password';
+        }
         if (!empty($model)) {
             $model->is_active = 1;
             $model->sync_key = rand(1000, 9999);
@@ -253,7 +265,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                     if (YII_ENV_DEV) {
                         
                     } else {
-                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, FALSE, $templateData->header_info);
+                        Yii::$app->general->saveAlertNotification($androidUsr->mobile_no, $message, $sms_data, TRUE, $templateData->header_info);
                     }
                 }
             }
@@ -262,11 +274,11 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
             $androidDpuModel->android_installation_id = $model->android_installation_id;
             $detailsId = $androidDpuModel->getRecords();
             $androidDpuModel->updateAll(['sync_active' => 0], ['android_installation_id' => $model->android_installation_id, 'android_installation_details_id' => $detailsId]);
-            $res_data['message'] = 'OTP Verified.';
+            $res_data['message'] = $msgstr . ' Verified.';
             $res_data['sync_key'] = (string) $model->sync_key;
             $this->getParentDetails($res_data, $data);
         } else {
-            $res_data['message'] = 'OTP Not Verified.';
+            $res_data['message'] = $msgstr . ' Not Verified.';
         }
         $this->response['data'] = $res_data;
         return $this->response;

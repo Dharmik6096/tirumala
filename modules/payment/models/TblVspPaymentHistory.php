@@ -46,11 +46,11 @@ class TblVspPaymentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['operation_type', 'dcs_code', 'union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
-            [['history_created_at', 'created_at', 'updated_at'], 'safe'],
-            [['vsp_payment_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'customer_code', 'customer_type'], 'safe'],
-            [['vsp_payment_code', 'payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay'], 'safe'],
+                [['operation_type', 'dcs_code', 'union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
+                [['history_created_at', 'created_at', 'updated_at'], 'safe'],
+                [['vsp_payment_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'customer_code', 'customer_type'], 'safe'],
+                [['vsp_payment_code', 'payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'safe'],
         ];
     }
 
