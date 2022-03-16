@@ -38,7 +38,8 @@ class Bkgprocess extends \yii\base\Module {
                 'param2' => 'union_code,mcc_plant_code,shift_date:date:shift_code',
                 'export_title' => 'mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
                 'summary_model' => 'TblShiftSummary',
-                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/'
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
+                'ftp_path' => 'WQ/Inbound'
             ],
         ];
     }

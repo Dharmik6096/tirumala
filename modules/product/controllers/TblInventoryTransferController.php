@@ -130,7 +130,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $fstockTxnModel;
 
                 $receipt = new TblProductReceipt();
-                $receipt->product_receipt_code = Yii::$app->general->getPrimaryCode($receipt);
+                $receipt->product_receipt_code = Yii::$app->general->getUuid();
+                ;
                 $receipt->grn_no = '1234';
                 $receipt->grn_date = date('Y-m-d');
                 $receipt->vendor_type = $this->model->from_type;
@@ -197,7 +198,8 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $modelSave[] = $stockTxnModel;
 
                 $receiptTo = new TblProductReceipt();
-                $receiptTo->product_receipt_code = Yii::$app->general->getPrimaryCode($receiptTo, $i);
+                $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
+                ;
                 $receiptTo->grn_no = '1234';
                 $receiptTo->grn_date = date('Y-m-d');
                 $receiptTo->vendor_type = $this->model->to_type;
