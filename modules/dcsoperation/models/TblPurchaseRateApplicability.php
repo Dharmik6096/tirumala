@@ -554,4 +554,12 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
                         ->one();
     }
 
+    public function getApplicability($rate_id, $dcs_code, $date) {
+        return $this->find()
+                        ->select(['tbl_purchase_rate_applicability.*'])
+                        ->where(['tbl_purchase_rate_applicability.is_active' => 1, 'tbl_purchase_rate_applicability.dcs_code' => $dcs_code, 'tbl_purchase_rate_applicability.purchase_rate_code' => $rate_id])
+                        ->andWhere(['cast(tbl_purchase_rate_applicability.wef_date as date)' => $date])
+                        ->one();
+    }
+
 }

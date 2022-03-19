@@ -218,7 +218,156 @@ class TblSentbox extends \yii\db\ActiveRecord {
         return $command['id'];
     }
 
-    private function jsonModel($model) {
+    public function getData($notInTables = []) {
+        $data = $this->find()
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->andWhere(['NOT IN', 'table_name', $notInTables])
+                ->orderBy('posting_timestamp')
+                ->limit(5)
+                ->all();
+        $response = [];
+        foreach ($data as $key => $model) {
+            $response[] = $this->jsonModel($model);
+        }
+        return $response;
+    }
+
+    public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type) {
+        $query = TblSentbox::find()->select(['dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
+                        ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
+                        ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $query->asArray()->all(),
+            'pagination' => false,
+        ]);
+        return $dataProvider;
+    }
+
+    public function getDataCount($notInTables = []) {
+        $data = $this->find()
+                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
+                ->andWhere(['NOT IN', 'table_name', $notInTables])
+                ->count();
+        return $data;
+    }
+
+    public function setSentboxDownload($model, $operation, $count = 1) {
+
+        $addressBook = $this->isAddressBook(!empty($this->table_name) ? $this->table_name : $model->tableName());
+        foreach ($addressBook as $d) {
+            $sentModel = new TblSentbox();
+            $attribute = $this->attributes;
+            $sentModel->setAttributes($attribute);
+            switch ($d->destinations) {
+                case 0:
+                    $this->childEntryDownload($model, $operation, $sentModel);
+                    break;
+                case 1:
+                    if ($d->to_child == 1) {
+                        $table = !empty($this->table_name) ? $this->table_name : $model->tableName();
+                        if (in_array($table, ['tbl_user_organization_mapping', 'user'])) {
+                            if ($model->entry_type == 1) {
+                                $this->childEntryDownload($model, $operation, $sentModel);
+                            }
+                        } else {
+                            $this->childEntryDownload($model, $operation, $sentModel);
+                        }
+                    }
+                    if ($d->to_parent == 1 && $count == 1) {
+                        $sentModel = new TblSentbox();
+                        $attribute = $this->attributes;
+                        $sentModel->setAttributes($attribute);
+                        $this->parentEntryDownload($model, $operation, $sentModel);
+                    }
+                    break;
+                case 2:
+                    $this->childEntryDownload($model, $operation, $sentModel);
+                    $sentModel = new TblSentbox();
+                    $attribute = $this->attributes;
+                    $sentModel->setAttributes($attribute);
+                    if ($count == 1)
+                        $this->parentEntryDownload($model, $operation, $sentModel);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $sentModel;
+    }
+
+    private function parentEntryDownload($model, $operation, $sentModel) {
+        $this->entry($model, $operation, $sentModel);
+        return $sentModel;
+    }
+
+    private function childEntryDownload($model, $operation, $sentModel) {
+
+        $destination = '';
+        switch (Yii::$app->session->get('organizations_type')) {
+            case 'NATIONAL':
+                $destination = 'FEDERATION';
+                break;
+            case 'FEDERATION':
+                $destination = 'UNION';
+                break;
+            case 'UNION':
+                $destination = 'DCS';
+                break;
+        }
+        $this->entrydownload($model, $operation, $sentModel);
+        $sentModel->dest_org_id = !empty($sentModel->dest_org_id) ? $sentModel->dest_org_id : '0';
+        $sentModel->dest_org_type = !empty($sentModel->dest_org_type) ? $sentModel->dest_org_type : $destination;
+        if ($sentModel->table_name == 'tbl_route_mapping') {
+            $sentModel->table_name = 'tbl_route';
+        } else if ($sentModel->table_name == 'tbl_route_mapping_sources') {
+            $sentModel->table_name = 'tbl_route_mapping';
+        }
+        $data = $sentModel->attributes;
+        $model = new TblAndroidInstallationDetails();
+        $model_data = $model->getActiveDeviceData($sentModel->dest_org_id, $sentModel->dest_org_type, $sentModel->device_id);
+        $save_model = [];
+        $connection = Yii::$app->getDb();
+        if (!empty($model_data)) {
+            foreach ($model_data as $device) {
+                $sent_box_model = new TblSentbox();
+                $sent_box_model->setAttributes($data);
+                $sent_box_model->device_id = !empty($device->device_id) ? $device->device_id : '';
+                $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
+                $sent_box_model->uuid = $command['id'];
+                $save_model[] = $sent_box_model;
+            }
+            return $save_model;
+        }
+        return $save_model;
+    }
+
+    public function entrydownload($model, $operation, $sentModel) {
+        $microtime = date("Y-m-d H:i:s.") . gettimeofday()["usec"];
+        if (strpos($model->tableName(), 'local') || $model->tableName() == 'tbl_message_property') {
+            $sentModel->language_code = $model->language_code;
+        }
+        //        $sentModel->uuid = $this->getUUID();
+        $sentModel->table_name = !empty($sentModel->table_name) ? $sentModel->table_name : $model->tableName();
+        $sentModel->operation = $operation;
+        $sentModel->json_text = !empty($sentModel->json_text) ? $sentModel->json_text : Json::encode($this->jsonModel($model), JSON_UNESCAPED_UNICODE);
+        $sentModel->message_type = 'RECORD';
+        //        $sentModel->processed = 0;
+        //   $this->column_sequence = implode(',', $model->getTableSchema()->getColumnNames());
+        $sentModel->sync_status = 'U';
+        $sentModel->sync_timestamp = $microtime;
+        $sentModel->posting_timestamp = $microtime;
+        //        $sentModel->transmitted = 0;
+        //        $sentModel->is_origin = 1;
+        $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');
+        $sentModel->originating_org_type = Yii::$app->session->get('organizations_type');
+        //        $sentModel->source_org_id = ''; //Yii::$app->session->get('organizations_code');
+        $sentModel->source_org_type = Yii::$app->session->get('organizations_type');
+        $sentModel->sequence_no = 5;
+        $sentModel->source_device_mac = Yii::$app->session->get('MacAddress');
+        //        $sentModel->operation_condition = (in_array($model->tableName(), array_keys($this->priority_array))) ? $this->priority_array[$model->tableName()] : '8';
+    }
+
+    public function jsonModel($model) {
         $newModel = null;
         $scema = $model->getTableSchema();
         foreach ($model->attributes as $key => $a) {
@@ -265,39 +414,6 @@ class TblSentbox extends \yii\db\ActiveRecord {
             }
         }
         return (object) $newModel;
-    }
-
-    public function getData($notInTables = []) {
-        $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
-                ->andWhere(['NOT IN', 'table_name', $notInTables])
-                ->orderBy('posting_timestamp')
-                ->limit(5)
-                ->all();
-        $response = [];
-        foreach ($data as $key => $model) {
-            $response[] = $this->jsonModel($model);
-        }
-        return $response;
-    }
-
-    public function getExportDataDcsNew($device_id, $dest_org_id, $dest_org_type) {
-        $query = TblSentbox::find()->select(['dest_org_id', 'dest_org_type', 'error_log', 'error_timestamp', 'json_text', 'message_type', 'operation', 'originating_org_id', 'originating_org_type', 'posting_timestamp', 'sequence_no', 'source_device_mac', 'source_org_id', 'source_org_type', 'sync_status', 'sync_timestamp', 'table_name', 'uuid', 'version_no'])
-                        ->where(['dest_org_id' => $dest_org_id, 'dest_org_type' => $dest_org_type, 'device_id' => $device_id])
-                        ->andWhere(['sync_status' => 'U', 'message_type' => 'RECORD'])->orderBy('posting_timestamp');
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => $query->asArray()->all(),
-            'pagination' => false,
-        ]);
-        return $dataProvider;
-    }
-
-    public function getDataCount($notInTables = []) {
-        $data = $this->find()
-                ->where(['dest_org_id' => $this->dest_org_id, 'dest_org_type' => $this->dest_org_type, 'device_id' => $this->device_id])
-                ->andWhere(['NOT IN', 'table_name', $notInTables])
-                ->count();
-        return $data;
     }
 
 }

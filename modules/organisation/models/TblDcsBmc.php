@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\installation\models\TblAndroidInstallation;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -449,6 +450,10 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getTblDcsBmc() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getAndroidInstallation() {
+        return $this->hasOne(TblAndroidInstallation::className(), ['organization_code' => 'ref_code'])->andOnCondition(['organization_type' => 'BMC']);
     }
 
     public function encryptModel($model) {

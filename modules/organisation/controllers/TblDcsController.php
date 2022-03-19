@@ -1176,4 +1176,45 @@ class TblDcsController extends ChildController {
         }
     }
 
+    public function actionExportSentbox($id) {
+        $this->model = $this->findModel($id);
+
+        $MemberModel = new TblMember();
+        $memberArray = $MemberModel->getMembers($id);
+
+        $jsonData = [];
+        ob_clean();
+        foreach ($memberArray as $member) {
+            $operation = !empty($member->updated_at) ? 'UPDATE' : 'INSERT';
+            $sentbox = $member->sentboxModel($id, 'VLC');
+            $sentboxData = $sentbox->setSentboxDownload($member, $operation);
+            $jsonData[] = Json::encode($sentbox->jsonModel($sentboxData), JSON_UNESCAPED_UNICODE);
+        }
+        if (true || count($memberArray) == count($jsonData)) {
+            $extention = 'txt';
+            $header = [
+                'mime' => 'text/plain',
+                'extension' => $extention,
+                'writer' => 'Excel2007',
+            ];
+
+            $labelT = $id . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
+//        header('Content-Type: text/plain');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+//        header("Content-Type: application/xls");
+//        header("Content-Disposition: attachment; filename={$fileName}");
+//        header("Pragma: no-cache");
+//        header("Expires: 0");
+            foreach ($jsonData as $json) {
+                $key = Yii::$app->general->SetSecurityEncryptionKey('UNION', $this->model->union_code);
+                Yii::$app->encrypter->setGlobalPassword($key);
+                echo Yii::$app->general->encryptData($json) . PHP_EOL;
+            }
+            exit();
+        }
+    }
+
 }

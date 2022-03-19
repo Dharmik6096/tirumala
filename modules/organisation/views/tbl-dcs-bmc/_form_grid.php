@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
+use app\modules\installation\models\TblAndroidInstallationDetails;
 ?>
 
 <?php
@@ -118,6 +119,17 @@ $grid_option = [
             $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Silos Info.'];
             return GhostHtml::a('<i class="fa fa-plus-square"></i>', ['/organisation/tbl-dcs-bmc/silos-info', 'id' => $model->bmc_code], $options);
         },
+        'generate_sentbox' => function ($url, $model) {
+            $existCount = 0;
+            if (!empty($model->androidInstallation->android_installation_id)) {
+                $id = $model->androidInstallation->android_installation_id;
+                $detail = new TblAndroidInstallationDetails();
+                $existCount = $detail->find()->where(['android_installation_id' => $id, 'is_active' => 1])->count();
+            }
+            $class = $existCount > 0 ? '' : 'disabled';
+            $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
+            return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/organisation/tbl-dcs-bmc/export-sentbox', 'id' => $model->bmc_code], $options);
+        }
     ]
 ];
 

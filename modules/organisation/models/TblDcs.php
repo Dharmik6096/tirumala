@@ -40,6 +40,7 @@ use app\modules\general\models\TblDepartment;
 use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
+use app\modules\installation\models\TblAndroidInstallation;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -871,14 +872,6 @@ class TblDcs extends ChildModel {
         }
     }
 
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
     public function afterDelete() {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
@@ -1225,6 +1218,29 @@ class TblDcs extends ChildModel {
         $this->pan_no = strtoupper($this->pan_no);
     }
 
+    public function getAndroidInstallation() {
+        return $this->hasOne(TblAndroidInstallation::className(), ['organization_code' => 'ref_code'])->andOnCondition(['organization_type' => 'VLC']);
+    }
+
+    public function getSocietys($bmc_code, $as_array = false) {
+        if (!empty($bmc_code)) {
+            $query = $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1]);
+            if ($as_array)
+                $query->asArray();
+            $dcs = $query->all();
+            return $dcs;
+        }
+        return false;
+    }
+
+    public function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
+    }
+
     public function encryptModel($model) {
         $result = array_intersect($this->toEncrypt, array_keys($model));
         foreach ($result as $key => $value) {
@@ -1248,7 +1264,7 @@ class TblDcs extends ChildModel {
 
     public function getDpuTypeWiseDCS($bmcCode = [], $dpuType = 0, $RLS = 'TRUE') {
         $query = $this->find()->alias('t')
-                ->select(['t.dcs_code', 't.dcs_name', 't.ref_code','dpu_type'=>'count(m.member_code)'])
+                ->select(['t.dcs_code', 't.dcs_name', 't.ref_code', 'dpu_type' => 'count(m.member_code)'])
                 ->leftJoin('tbl_member m', 'm.dcs_code=t.dcs_code')
                 ->where(['t.is_active' => 1, 't.dpu_type' => $dpuType]);
         if (!empty($bmcCode))

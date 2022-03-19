@@ -173,6 +173,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         }
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
+        $ftpPath = $FTPProcess['ftp_path'];
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             $header = array_keys($output[0]);
@@ -182,7 +183,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fwrite($txt_file, implode(',', $line) . PHP_EOL);
             }
             fclose($txt_file);
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath);
         }
         return FALSE;
         /** csv generate * */
@@ -227,7 +228,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
@@ -237,11 +238,13 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $ftp_file->attributes = $data->attributes;
             $ftp_file->total_count = $ftp_file->success_count = $count;
             $ftp_file->txn_datetime = date('Y-m-d H:i:s');
-            $ftp_file->file_path = $ftpData->ftp_path . '/' . $fileName;
+            $ftp_file->file_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath) . '/' . $fileName;
             $ftp_file->file_name = $fileName;
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
+            $ftp_file->ftp_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath);
+
             if ($ftp_upload) {
                 $ftp = new FTPConnection();
                 $ftp->ftp_type = $ftp_file->ftp_type;

@@ -293,14 +293,6 @@ class TblCustomerMaster extends \app\models\ChildModel {
         }
     }
 
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
     public function getRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
@@ -550,6 +542,25 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function validateCustomerRef($bmc_code, $customer_code) {
         return $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1])
                         ->andWhere(['or', ['customer_code' => $customer_code], ['ref_code' => $customer_code]])->one();
+    }
+
+    public function getvendor($bmc_code, $as_array = false) {
+        if (!empty($bmc_code)) {
+            $query = $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1]);
+            if ($as_array)
+                $query->asArray();
+            $dcs = $query->all();
+            return $dcs;
+        }
+        return false;
+    }
+
+    public function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
     public function maxDigits($attribute) {

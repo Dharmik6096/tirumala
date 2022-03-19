@@ -9,6 +9,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
+use app\modules\installation\models\TblAndroidInstallationDetails;
 ?>
 <?php
 $attribute = [
@@ -328,6 +329,17 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
+        'generate_sentbox' => function ($url, $model) {
+            $existCount = 0;
+            if (!empty($model->androidInstallation->android_installation_id)) {
+                $id = $model->androidInstallation->android_installation_id;
+                $detail = new TblAndroidInstallationDetails();
+                $existCount = $detail->find()->where(['android_installation_id' => $id, 'is_active' => 1])->count();
+            }
+            $class = $existCount > 0 ? '' : 'disabled';
+            $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
+            return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/organisation/tbl-dcs/export-sentbox', 'id' => $model->dcs_code], $options);
+        }
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
       return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
