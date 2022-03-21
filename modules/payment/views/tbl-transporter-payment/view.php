@@ -1,6 +1,8 @@
 <?php
+
 use yii\helpers\Html;
-$this->title = Yii::t('app', 'Payment Detail of ') . $model->routeCode->route_name . ' (' . Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . '-' . $model->vehicleCode->parsing_no . ')';
+
+$this->title = Yii::t('app', 'Payment Detail of ') . $model->routeCode->route_name . ' (' . Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . ')';
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

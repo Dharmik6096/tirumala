@@ -2211,4 +2211,22 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function DeliveryChallanOrgFilter($query, $main_table, $from_dest = 'Ownmccid', $to_dest = 'ToPlace') {
+        $unions = !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : NULL;
+        $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+        $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
+        $query->andFilterWhere(['or',
+                ['pd.union_code' => $unions],
+                ['ms.union_code' => $unions],
+                ['md.union_code' => $unions],
+                ['cs.union_code' => $unions],
+                ['cd.union_code' => $unions]
+        ]);
+        $form_to = !empty($mccs) ? $mccs : $plants;
+        $query->andFilterWhere(['or',
+                [$main_table . '.' . $from_dest => $form_to],
+                [$main_table . '.' . $to_dest => $form_to],
+        ]);
+    }
+
 }

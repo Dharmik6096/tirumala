@@ -44,35 +44,32 @@ use Yii;
  * @property string $updated_by
  * @property integer $is_active
  */
-class TblTransporterHistory extends \yii\db\ActiveRecord
-{
+class TblTransporterHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_transporter_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-           // [['id'], 'required'],
-            [['id', 'is_active'], 'safe'],
-            [['history_created_at', 'created_at', 'updated_at', 'security_amount'], 'safe'],
-            [['operation_type', 'transporter_code', 'transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'pincode', 'registration_no', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'safe'],
-            [['tds_per'], 'safe'],
+            // [['id'], 'required'],
+                [['id', 'is_active'], 'safe'],
+                [['history_created_at', 'created_at', 'updated_at', 'security_amount'], 'safe'],
+                [['operation_type', 'transporter_code', 'transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'pincode', 'registration_no', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'safe'],
+                [['tds_per', 'vendor_code', 'billing_type_code', 'agreement_from_date', 'agreement_to_date'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'history_created_at' => Yii::t('app', 'History Created At'),
@@ -110,7 +107,8 @@ class TblTransporterHistory extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'security_amount'=>Yii::t('app', 'Security Amount'),
+            'security_amount' => Yii::t('app', 'Security Amount'),
         ];
     }
+
 }

@@ -132,6 +132,8 @@ class importData extends \yii\base\Module {
             'vendor-master' => ['table_name' => 'tbl_vendor_master', 'fields' => 'union_code,vendor_code,vendor_name,pan_no,aadhaar_no,contact_person,local_contact_person,middle_name,local_middlename,surname,local_surname,email,mobile_no,department', 'save_child' => true, 'scenario' => 'importCsv'],
             'grn' => ['table_name' => 'tbl_grn', 'fields' => 'grn_date,vendor_code,mcc_plant_code,invoice_no,invoice_date,product_code,rate,received_qty,rejected_qty,tax', 'save_child' => true, 'scenario' => 'importCsv'],
             'inventory-transfer' => ['table_name' => 'tbl_inventory_transfer', 'fields' => 'inventory_transfer_no,inventory_transfer_date,from_type,from_code,to_type,to_code,remarks,product_code,qty', 'save_child' => true, 'scenario' => 'importCsv'],
+            'location-wise-km' => ['table_name' => 'tbl_location_wise_km_detail', 'fields' => 'union_code,from_type,from_dest,to_type,to_dest,wef_date,total_kms', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
+            'transporter-time-penalties' => ['table_name' => 'tbl_transporter_time_wise_penalty', 'fields' => 'mcc_plant_code,wef_date,minute_limit,penalty_amount', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

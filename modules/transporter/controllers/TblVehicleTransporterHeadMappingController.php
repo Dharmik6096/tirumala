@@ -53,7 +53,7 @@ class TblVehicleTransporterHeadMappingController extends \app\controllers\ChildC
         $this->viewFile = 'create';
 
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->billing_type = 0;
+//            $this->model->billing_type = 0;
             $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Vehicle Transporter Head', 'create']);
             if ($transaction == 'customRender') {

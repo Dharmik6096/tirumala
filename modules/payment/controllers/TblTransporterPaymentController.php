@@ -55,8 +55,8 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             $data['to_date'] = $model->to_date;
             $data['user_code'] = \Yii::$app->user->identity->user_code;
             if ($model->transporter_type == 1) {
-                //Yii::$app->ClientPaymentConfig->processPayment('secondary_tpt_payment', $data);
-                //return $this->redirect(['payment-adjust', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
+                Yii::$app->ClientPaymentConfig->processPayment('secondary_tpt_payment', $data);
+                return $this->redirect(['payment-adjust', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
             } else {
                 Yii::$app->ClientPaymentConfig->processPayment('primary_tpt_payment', $data);
                 return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code]]);
@@ -255,12 +255,28 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             }
             $transaction = $this->generalModel->saveTransaction($Models, ['Billing', 'edit']);
             if ($transaction !== FALSE) {
-                $record = ['status' => 'success', 'msg' => 'Billing locked successfully.'];
+                $record = ['status' => 'success', 'msg' => 'Transporter Payment locked successfully.'];
                 return Json::encode($record);
             }
         }
         $record = ['status' => 'error', 'msg' => 'Billing could not be locked.'];
         return Json::encode($record);
+    }
+
+    public function actionViewBillDetail($union_code, $transporter_code, $from_date, $to_date, $transporter_type, $route_code = NULL) {
+        $controls = [];
+        $controls['p_union_code'] = $union_code;
+        $controls['p_transporter_code'] = $transporter_code;
+        $controls['p_from_date'] = $from_date;
+        $controls['p_to_date'] = $to_date;
+        if ($transporter_type == 1) {
+            $controls['p_report_name'] = 'Secondary Transporter Bill';
+            Yii::$app->general->printDocument($controls, 'transportationpayment/TransportationPaymentBillDetail', 'TransportationPaymentBill', 'pdf');
+        } else {
+            $controls['p_route_code'] = $route_code;
+            $controls['p_report_name'] = 'Primary Transporter Bill';
+            Yii::$app->general->printDocument($controls, 'transportationpayment/PrimaryTransporterBill', 'PrimaryTransporterBill', 'pdf');
+        }
     }
 
 }

@@ -11,26 +11,25 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\Response;
+use app\modules\transporter\models\TblTransporter;
+use app\modules\transporter\models\TblVehicleWiseQtyFlag;
 
 /**
  * TblVehicleMasterController implements the CRUD actions for TblVehicleMaster model.
  */
-class TblVehicleMasterController extends \app\controllers\ChildController
-{
-
+class TblVehicleMasterController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblVehicleMaster models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblVehicleMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -39,10 +38,14 @@ class TblVehicleMasterController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
+        $searchModel = new TblVehicleMasterSearch();
+        $searchModel->vehicle_code = $id;
+        $dataProvider = $searchModel->searchwiseflag(Yii::$app->request->queryParams);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -54,12 +57,22 @@ class TblVehicleMasterController extends \app\controllers\ChildController
     public function actionCreate() {
         $this->model = new TblVehicleMaster();
         $this->viewFile = 'create';
-        
-        if ($this->model->load(Yii::$app->request->post())) {
+        $saveModel = [];
+        if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
             $this->setModel($this->model);
             $this->model->vehicle_code = Yii::$app->general->getCodeAutoIncrement($this->model);
-//            var_dump($this->model);die;
-            $transaction = $this->generalModel->saveTransaction([$this->model],['Vehicle', 'create']);
+            $saveModel[] = $this->model;
+
+            if (in_array($this->model->vehicle_use_type, [1, 2])) {
+                $this->model->scenario = 'vehicleWiseFlag';
+                $childModel = new TblVehicleWiseQtyFlag();
+                $childModel->vehicle_wise_qty_flag_code = Yii::$app->general->getCodeAutoIncrement($childModel);
+                $childModel->vehicle_code = $this->model->vehicle_code;
+                $childModel->qty_flag = $this->model->billing_qty_flag;
+                $childModel->wef_date = ($this->model->flag_wef_date) ? Yii::$app->formatter->asDate($this->model->flag_wef_date, DATE_FORMAT) : NULL;
+                $saveModel[] = $childModel;
+            }
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -76,16 +89,36 @@ class TblVehicleMasterController extends \app\controllers\ChildController
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-
+        $childModel = new TblVehicleWiseQtyFlag();
+        $flagData = $childModel->getExistingData($this->model);
+        if (!empty($flagData)) {
+            $this->model->billing_qty_flag = $flagData->qty_flag;
+            $this->model->flag_wef_date = $flagData->wef_date;
+        }
+        $saveModel = [];
         if (Yii::$app->request->post()) {
-                $historyModel = new TblVehicleMasterHistory();
-                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-                $this->model->load(Yii::$app->request->post());
-                $this->setModel($this->model);
-                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Vehicle', 'edit']);
-                if ($transaction !== FALSE) {
-                    return $this->{$transaction}();
+            $historyModel = new TblVehicleMasterHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $this->setModel($this->model);
+            $saveModel[] = $this->model;
+            $saveModel[] = $historyModel;
+            if (in_array($this->model->vehicle_use_type, [1, 2])) {
+                $this->model->scenario = 'vehicleWiseFlag';
+                $childModel = new TblVehicleWiseQtyFlag();
+                $childModel->vehicle_code = $this->model->vehicle_code;
+                $childModel->qty_flag = $this->model->billing_qty_flag;
+                $childModel->wef_date = ($this->model->flag_wef_date) ? Yii::$app->formatter->asDate($this->model->flag_wef_date, DATE_FORMAT) : NULL;
+                $flagData = $childModel->getExistingFlag();
+                if (empty($flagData)) {
+                    $childModel->vehicle_wise_qty_flag_code = Yii::$app->general->getCodeAutoIncrement($childModel);
+                    $saveModel[] = $childModel;
                 }
+            }
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
         return $this->customRender();
     }
@@ -117,28 +150,27 @@ class TblVehicleMasterController extends \app\controllers\ChildController
      * @return TblVehicleMaster the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblVehicleMaster::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     protected function customRedirect() {
         return $this->redirect(['view', 'id' => $this->model->vehicle_code]);
     }
-    
+
     private function setModel() {
         $this->model->driver_name = ucwords($this->model->driver_name);
-        $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);        
-        $this->model->expiry_date = ($this->model->expiry_date == '') ? null : Yii::$app->formatter->asDate($this->model->expiry_date, DATE_FORMAT);        
-        $this->model->licence_expiry_date = ($this->model->licence_expiry_date == '') ? null : Yii::$app->formatter->asDate($this->model->licence_expiry_date, DATE_FORMAT);        
+        $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+        $this->model->expiry_date = ($this->model->expiry_date == '') ? null : Yii::$app->formatter->asDate($this->model->expiry_date, DATE_FORMAT);
+        $this->model->licence_expiry_date = ($this->model->licence_expiry_date == '') ? null : Yii::$app->formatter->asDate($this->model->licence_expiry_date, DATE_FORMAT);
     }
-    
-    public function actionDependVehicles(){
-        
+
+    public function actionDependVehicles() {
+
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -154,11 +186,57 @@ class TblVehicleMasterController extends \app\controllers\ChildController
                 //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
                 //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
                 // ]
-                return Json::encode(['output'=>$out, 'selected'=>'']);
+                echo Json::encode(['output' => $out, 'selected' => '']);
                 return;
             }
         }
-        return Json::encode(['output'=>'', 'selected'=>'']);
-    
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
+
+    public function actionBillingType() {
+        $tr_code = Yii::$app->request->post('transporter_code');
+        $model = new TblVehicleMaster();
+        $model->transporter_code = $tr_code;
+        $data = Yii::$app->general->getforeignkey($model->transporter, 'billing_type_code');
+        if (!empty($data)) {
+            return Json::encode(['status' => 'success', 'data' => $data]);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
+    }
+
+    public function actionVehicleActivate($id) {
+        $this->model = $this->findModel($id);
+        $HistoryModel = new TblVehicleMasterHistory();
+        Yii::$app->operation->history($this->model, $HistoryModel, UPDATE);
+        $this->model->scenario = 'activation';
+        $this->model->is_active = 1;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $HistoryModel], ['Vehicle', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                'message' => 'Vehicle Activated successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Could not Activate. Please try again.']);
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionVehicleDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $HistoryModel = new TblVehicleMasterHistory();
+        Yii::$app->operation->history($this->model, $HistoryModel, UPDATE);
+        $this->model->scenario = 'activation';
+        $this->model->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $HistoryModel], ['Vehicle', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                'message' => 'Vehicle Deactivated Successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Could not Deactivated. Please try again.']);
+        }
+        return $this->redirect(['index']);
+    }
+
 }
