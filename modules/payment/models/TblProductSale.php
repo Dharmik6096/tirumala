@@ -462,7 +462,7 @@ class TblProductSale extends \app\models\ChildModel {
         $model->is_installment = $model->payment_mode == 1 ? 1 : 0;
         $model->no_of_installment = $model->payment_mode == 1 ? $model->no_of_installment : 0;
         $this->createProductSaleData($model, $detailModel, $modelSave);
-        $data = $this->productSaleCode;
+//        $data = $detailModel->productSaleCode;
         if (!empty($detailModel->product_code) && !empty($model->customer_type) && !empty($model->customer_code)) {
             $date = !empty($model->invoice_date) ? date('Y-m-d', strtotime($model->invoice_date)) : date('Y-m-d');
             $memberRate = 0;
