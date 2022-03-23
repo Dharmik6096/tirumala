@@ -469,10 +469,12 @@ class TblProductSale extends \app\models\ChildModel {
             if ($model->customer_type == 'member') {
                 $memberRate = 1;
             }
+            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
+            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
             $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                     ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                     ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
-                    ->where(['tbl_product_sale_rate.product_code' => $detailModel->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $model->customer_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $model->customer_code]);
+                    ->where(['tbl_product_sale_rate.product_code' => $detailModel->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (empty($app)) {
                 $detailModel->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
@@ -784,10 +786,12 @@ class TblProductSale extends \app\models\ChildModel {
             if (strtolower($data->customer_type) == 'member') {
                 $memberRate = 1;
             }
+            $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
+            $applicable_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : $this->customer_type;
             $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
                     ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
                     ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $date])
-                    ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $data->customer_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $data->customer_code]);
+                    ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (empty($app)) {
                 $this->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
