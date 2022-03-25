@@ -95,7 +95,7 @@ class ReportsModel extends Model {
                 [['union_code', 'org_type', 'from_date', 'to_date'], 'required', 'on' => ['StockDetailSummary']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['RecoveryFromOtherMember']],
                 [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['RecoveryFromDifferentVendor']],
-                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CenterLossGainReport', 'MissingCollectionShiftBmcCrossTab']],
+                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['CenterLossGainReport', 'MissingCollectionShiftBmcCrossTab']],
         ];
     }
 
