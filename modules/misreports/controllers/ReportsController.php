@@ -729,6 +729,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCenterLossGainReport() {
+        $this->report = 'CenterLossGainReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMissingCollectionShiftBmcCrossTab() {
+        $this->report = 'MissingCollectionShiftBmcCrossTab';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1898,6 +1908,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_recovery_from_different_vendor',
                 'scenario' => 'RecoveryFromDifferentVendor',
                 'title' => '620 - Recovery From Different Vendor',
+            ],
+            'CenterLossGainReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_CentertoCCLossGainReport',
+                'scenario' => 'CenterLossGainReport',
+                'title' => '214 - Center Loss Gain Report',
+            ],
+            'MissingCollectionShiftBmcCrossTab' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_collection_shift_bmc_cross_tab',
+                'scenario' => 'MissingCollectionShiftBmcCrossTab',
+                'title' => 'Tracking Report',
             ],
         ];
         return $label[$l];
