@@ -19,9 +19,9 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
      */
     public function rules() {
         return [
-            [['extra_km_code', 'originating_type'], 'integer'],
-            [['vehicle_code', 'transporter_code', 'date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_date', 'to_date'], 'safe'],
-            [['extra_kms'], 'number'],
+                [['extra_km_code', 'originating_type'], 'integer'],
+                [['vehicle_code', 'transporter_code', 'date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_date', 'to_date', 'rate'], 'safe'],
+                [['extra_kms'], 'number'],
         ];
     }
 
@@ -62,6 +62,7 @@ class TblVehicleExtraKmDaywiseSearch extends TblVehicleExtraKmDaywise {
         $query->andFilterWhere([
             'extra_km_code' => $this->extra_km_code,
             'extra_kms' => $this->extra_kms,
+            'rate' => $this->rate,
         ]);
         if (!empty($this->date))
             $query->andFilterWhere(['and', ['>=', 'date', date('Y-m-d', strtotime($this->date))], ['<=', 'date', date('Y-m-d', strtotime($this->date))]]);

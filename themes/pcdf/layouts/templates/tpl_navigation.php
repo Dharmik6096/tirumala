@@ -79,7 +79,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'FAT/SNF Recovery Param'), 'url' => ['/transporter/tbl-recovery-param-detail/index'], 'active' => ($cntrl == 'tbl-recovery-param-detail')],
                     ['label' => Yii::t('app', 'Time Wise Penalty (Primary)'), 'url' => ['/transporter/tbl-transporter-time-wise-penalty/index'], 'active' => ($cntrl == 'tbl-transporter-time-wise-penalty')],
                     ['label' => Yii::t('app', 'Primary Transportation Cost'), 'url' => ['/transporter/tbl-mcc-wise-transportation-cost/index'], 'active' => ($cntrl == 'tbl-mcc-wise-transportation-cost')],
-//                ['label' => Yii::t('app', 'Vehicle Extra Km'), 'url' => ['/transporter/tbl-vehicle-extra-km-daywise/index'], 'active' => ($cntrl == 'tbl-vehicle-extra-km-daywise')],
+                    ['label' => Yii::t('app', 'Vehicle Extra Km'), 'url' => ['/transporter/tbl-vehicle-extra-km-daywise/index'], 'active' => ($cntrl == 'tbl-vehicle-extra-km-daywise')],
 //                ['label' => Yii::t('app', 'Mobile Oil Rate'), 'url' => ['/transporter/tbl-mobile-oil-rate-master/index'], 'active' => ($cntrl == 'tbl-mobile-oil-rate-master')],
                 ['label' => Yii::t('app', 'Transporter Payment Head'), 'url' => ['/transporter/tbl-transporter-payment-head/index'], 'active' => ($cntrl == 'tbl-transporter-payment-head')],
                     ['label' => Yii::t('app', 'Vehicle Transporter Payment Head'), 'url' => ['/transporter/tbl-vehicle-transporter-head-mapping/index'], 'active' => ($cntrl == 'tbl-vehicle-transporter-payment-head')],
