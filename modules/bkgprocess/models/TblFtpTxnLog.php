@@ -152,8 +152,9 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             if (!empty($bmc_data)) {
                 $data->module_code = $bmc_data->bmc_code;
                 $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+                $data->union_code = $bmc_data->union_code;
             }
-            $this->generateFiles($output, $FTPProcess, $data, TRUE, $title);
+            return $this->generateFiles($output, $FTPProcess, $data, TRUE, $title);
         }
     }
 
@@ -277,6 +278,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     }
                     $ftp->CloseConnection();
                 }
+                $ftp_file->save();
+                return $fileName;
             }
 
             if ($ftp_file->save()) {
