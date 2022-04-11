@@ -573,6 +573,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Stock Summary'), 'url' => ['/misreports/reports/stock-summary']],
                             ['label' => Yii::t('app', 'Stock Detail'), 'url' => ['/misreports/reports/stock-detail']],
                             ['label' => Yii::t('app', 'Stock Detail Summary'), 'url' => ['/misreports/reports/stock-detail-summary']],
+                            ['label' => Yii::t('app', 'Product Stock Detail Summary Society Wise'), 'url' => ['/misreports/reports/product-stock-detail-summary-society-wise']],
+                            ['label' => Yii::t('app', 'Product Stock Detail Summary MCC Wise'), 'url' => ['/misreports/reports/product-stock-detail-summary-mcc-wise']],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
