@@ -766,7 +766,8 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function validateQty($attribute, $param) {
         $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
-        if ($config == 1) {
+        $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
+        if ($config == 1 && $productType != 1) {
             $sale_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
             $sale_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
             $stockModel = new TblProductStock();

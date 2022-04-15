@@ -264,7 +264,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 
     public function validateQty($attribute, $param) {
         $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
-        if ($config == 1) {
+        $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
+        if ($config == 1 && $productType != 1) {
             if ($this->available_stock < $this->quantity) {
                 $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $this->available_stock));
             }
