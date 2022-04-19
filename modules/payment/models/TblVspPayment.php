@@ -150,7 +150,7 @@ class TblVspPayment extends \app\models\ChildModel {
         return $this->find()->where(['union_code' => $this->union_code,
                     'payment_cycle_code' => $this->payment_cycle_code,
                     'bmc_code' => $this->bmc_code,
-                    'customer_type' => $this->customer_type, 'status' => 'processed']);
+                    'customer_type' => $this->customer_type, 'status' => 'processed'])->orderBy('net_payable');
     }
 
     public function getRemunerationRecords() {

@@ -30,6 +30,9 @@ use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
 use yii\helpers\Url;
 use app\modules\payment\models\TblVspPaymentRecovery;
+use app\modules\payment\models\TblSaleInstallmentsSearch;
+use app\modules\payment\models\TblSaleInstallments;
+use app\modules\payment\models\TblProductSaleInstallmentHistory;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -148,15 +151,89 @@ class TblVspPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionBillHead() {
-        if (!empty($_POST['code'])) {
-            $searchModel = new TblVspPaymentTransactionSearch();
-            $searchModel->vsp_payment_code = $_POST['code'];
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            return $this->renderAjax('bill-head-view', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider,
-            ]);
+        $searchModel = new TblVspPaymentTransactionSearch();
+        $searchModel->vsp_payment_code = Yii::$app->request->get()['code'];
+        $model = $this->findModel($searchModel->vsp_payment_code);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $instalSearch = new TblSaleInstallmentsSearch();
+        $idataProvider = $instalSearch->vendorInstallment($model);
+        if (Yii::$app->request->post()) {
+            $paymentData = Yii::$app->request->post()['paymentData'];
+            $new_product_inst = !empty($paymentData) ? explode(',', $paymentData) : [];
+            $old_product_inst = array_filter(array_map(function($a) {
+                        return !empty($a->installment_date) ? $a->product_sale_installment_code : '';
+                    }, $idataProvider->getModels()));
+            $add_inst = array_diff($new_product_inst, $old_product_inst);
+            $delete_inst = array_diff($old_product_inst, $new_product_inst);
+            $process = FALSE;
+            if (!empty($add_inst) || !empty($delete_inst)) {
+                $add_amt = 0;
+                $sub_amt = 0;
+                $process = TRUE;
+                $saveModel = [];
+                $deleteModel = [];
+                foreach ($add_inst as $id) {
+                    $inst = TblSaleInstallments::findOne($id);
+                    $historyModel = new TblProductSaleInstallmentHistory();
+                    Yii::$app->operation->history($inst, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $inst->installment_date = date('Y-m-d', strtotime($model->from_datetime));
+                    $saveModel[] = $inst;
+                    $add_amt = $add_amt + $inst->installment_amount;
+                }
+                foreach ($delete_inst as $id) {
+                    $inst = TblSaleInstallments::findOne($id);
+                    $historyModel = new TblProductSaleInstallmentHistory();
+                    Yii::$app->operation->history($inst, $historyModel, UPDATE);
+                    $saveModel[] = $historyModel;
+                    $inst->installment_date = NULL;
+                    $saveModel[] = $inst;
+                    $sub_amt = $sub_amt + $inst->installment_amount;
+                }
+            }
+
+            if ($process) {
+                $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'VENDOR', 'union_code' => $model->union_code])->one();
+                $vsp_txn = TblVspPaymentTransaction::find()->where(['vsp_payment_code' => $model->vsp_payment_code, 'bill_head_code' => $pro_sale_head->bill_head_code])->one();
+                if (empty($vsp_txn)) {
+                    $vsp_txn = new TblVspPaymentTransaction();
+                    $vsp_txn->bill_head_code = $pro_sale_head->bill_head_code;
+                    $vsp_txn->vsp_payment_code = $model->vsp_payment_code;
+                    $vsp_txn->bill_head_type = 1;
+                    $vsp_txn->amount = 0;
+                }
+                $vsp_txn->amount = $vsp_txn->amount + $add_amt - $sub_amt;
+                $is_txn_delete = (empty($add_inst) && $vsp_txn->amount == 0) ? TRUE : FALSE;
+                if ($is_txn_delete) {
+                    $deleteModel[] = $vsp_txn;
+                } else {
+                    $saveModel[] = $vsp_txn;
+                }
+                $model->deduction = $model->deduction + $add_amt - $sub_amt;
+                $model->net_payable = $model->net_payable + $add_amt - $sub_amt;
+                $model->final_pay = $model->final_pay + $add_amt - $sub_amt;
+                $saveModel[] = $model;
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale Installment', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $record = ['status' => 'success', 'msg' => ''];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::t('app', 'No Changes found in data.');
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
         }
+        return $this->renderAjax('bill-head-view', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'instalSearch' => $instalSearch,
+                    'idataProvider' => $idataProvider,
+                    'model' => $model
+        ]);
     }
 
     /* To bind societies based on selected payment cycle */
