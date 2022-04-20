@@ -20,10 +20,10 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'bmc_code'], 'safe'],
-            [['main_amount', 'installment_amount'], 'number'],
-            [['installment_status'], 'integer'],
-            [['payment_cycle_code'], 'safe'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'bmc_code'], 'safe'],
+                [['main_amount', 'installment_amount'], 'number'],
+                [['installment_status'], 'integer'],
+                [['payment_cycle_code'], 'safe'],
         ];
     }
 
@@ -138,6 +138,21 @@ class TblSaleInstallmentsSearch extends TblSaleInstallments {
         // grid filtering conditions
 
 
+        return $dataProvider;
+    }
+
+    public function vendorInstallment($model) {
+        $query = TblSaleInstallments::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $query->andWhere(['OR', ['=', 'installment_date', date('Y-m-d', strtotime($model->from_datetime))], ['is', 'installment_date', NULL]]);
+        $query->andWhere([
+            'bmc_code' => $model->bmc_code,
+            'customer_code' => $model->customer_code,
+            'customer_type' => $model->customer_type]);
+        $query->orderBy('installment_date DESC');
         return $dataProvider;
     }
 

@@ -63,7 +63,9 @@ $attribute = [
         ['attribute' => 'recovery', 'visible' => $recovery_from_other_vendor],
         ['attribute' => 'final_pay'],
         ['attribute' => 'adjust_remark'],
-        ['attribute' => 'status'],
+        ['attribute' => 'status', 'value' => function($model) {
+            return $model->status == 'sent' ? 'disbursed' : $model->status;
+        }],
         ['attribute' => 'bank_name', 'visible' => false],
         ['attribute' => 'branch_name', 'visible' => false],
         ['attribute' => 'ifsc', 'visible' => false],

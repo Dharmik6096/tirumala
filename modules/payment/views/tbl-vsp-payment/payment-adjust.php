@@ -252,7 +252,7 @@ $script .= "$(document).ready(function(){
     function ViewBillHead(code){
         if(code != ''){         
         $.ajax({
-                type: 'post',
+                type: 'get',
                 url: '" . Url::to(['/payment/tbl-vsp-payment/bill-head']) . "',
                 data: {'code' : code},
                 beforeSend:function(data) {

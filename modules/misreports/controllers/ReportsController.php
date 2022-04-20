@@ -739,6 +739,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionProductStockDetailSummarySocietyWise() {
+        $this->report = 'ProductStockDetailSummarySocietyWise';
+        return $this->actionIndex();
+    }
+
+    public function actionProductStockDetailSummaryMccWise() {
+        $this->report = 'ProductStockDetailSummaryMccWise';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1920,6 +1930,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_missing_collection_shift_bmc_cross_tab',
                 'scenario' => 'MissingCollectionShiftBmcCrossTab',
                 'title' => 'Tracking Report',
+            ],
+            'ProductStockDetailSummarySocietyWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,p_date:string',
+                'sp_name' => 'sp_mis_product_stock_detail_summary_society_wise',
+                'scenario' => 'ProductStockDetailSummarySocietyWise',
+                'title' => 'Product Stock Detail Summary Society Wise',
+            ],
+            'ProductStockDetailSummaryMccWise' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
+                'sp_name' => 'sp_mis_product_stock_detail_summary_mcc_wise',
+                'scenario' => 'ProductStockDetailSummaryMccWise',
+                'title' => 'Product Stock Detail Summary MCC Wise',
             ],
         ];
         return $label[$l];

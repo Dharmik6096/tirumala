@@ -203,6 +203,7 @@ $recovery_from_other_vendor = (isset(Yii::$app->session->get('unionConfig')[Yii:
                         'columns' => [
                                 [
                                 'attribute' => 'status',
+                                'value' => $model->status == 'sent' ? 'disbursed' : $model->status,
                                 'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],

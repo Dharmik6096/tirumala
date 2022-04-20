@@ -358,6 +358,9 @@ class TblDcsController extends ChildController {
                         $vendorModel = $vendorModelData;
                     }
                     $vendorModel->vendor_code = $this->model->vendor;
+                    if ($this->model->vendor == 'BIPL') {
+                        Yii::$app->general->generateFTPDir($this->model, 'dcs_code', [], $this->model->mcc_plant_code, $this->model->ref_code);
+                    }
                     array_push($mappingList, $vendorModel);
                     $userModel = new User();
                     $users = $userModel->findByRole([$vendorModel->vendor_code]);

@@ -33,6 +33,7 @@ class TblProduct extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern;
+    public $product_type;
 
     /**
      * @inheritdoc
@@ -46,40 +47,45 @@ class TblProduct extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_group_code', 'product_name', 'union_code', 'unit_code', 'tax_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['product_group_code', 'product_name', 'tax_code'], 'required', 'on' => ['importCsv']],
-            [['product_group_code', 'is_active'], 'integer', 'except' => ['androidsync']],
-            [['product_name', 'product_desc', 'created_by', 'updated_by', 'local_name'], 'string', 'except' => ['androidsync']],
-            ['product_name', 'unique', 'when' => function($model) {
+                [['product_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'product_type');
+                }, 'on' => 'importCsv'],
+                [['product_group_code', 'product_name', 'union_code', 'unit_code', 'tax_code', 'x_col3'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['importCsv']],
+                [['product_group_code', 'is_active'], 'integer', 'except' => ['androidsync']],
+                [['product_name', 'product_desc', 'created_by', 'updated_by', 'local_name'], 'string', 'except' => ['androidsync']],
+                ['product_name', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_name' => $model->product_name])->andWhere(['<>', 'product_code', $model->product_code])->one();
                     return ($data) ? true : false;
                 }, 'except' => ['androidsync']],
-            [['product_name'], function ($attribute, $params) {
+                [['product_name'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['local_name'], function ($attribute, $params) {
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code'], 'safe'],
-            [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code'], 'except' => ['androidsync']],
-            [['tax_code'], function ($attribute, $params) {
+                [['created_at', 'updated_at', 'product_code', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'ref_code', 'tax_code', 'product_category_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_market_name', 'product_variant', 'product_sku', 'product_pack_type', 'brand_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_dpu_product', 'dpu_product_code', 'product_type'], 'safe'],
+                [['product_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProductGroup::className(), 'targetAttribute' => ['product_group_code' => 'product_group_code'], 'except' => ['androidsync']],
+                [['tax_code'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->productGroupCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'tax_code', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-            [['tax_code'], 'exist', 'skipOnEmpty' => true, 'targetClass' => TblTax::className(), 'targetAttribute' => ['tax_code' => 'tax_code'], 'on' => ['importCsv']],
-            [['dpu_product_code'], 'string', 'min' => 4, 'max' => 4, 'except' => ['androidsync']],
-            [['dpu_product_code'], 'integer', 'min' => 0, 'except' => ['androidsync']],
-            [['dpu_product_code'], 'required', 'when' => function ($model) {
+                [['tax_code'], 'exist', 'skipOnEmpty' => true, 'targetClass' => TblTax::className(), 'targetAttribute' => ['tax_code' => 'tax_code'], 'on' => ['importCsv']],
+                [['dpu_product_code'], 'string', 'min' => 4, 'max' => 4, 'except' => ['androidsync']],
+                [['dpu_product_code'], 'integer', 'min' => 0, 'except' => ['androidsync']],
+                [['dpu_product_code'], 'required', 'when' => function ($model) {
                     return $model->is_dpu_product == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproduct-is_dpu_product').is(':checked'); 
           }", 'except' => ['androidsync']],
-            [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent'], 'in', 'range' => ['0', '1'], 'on' => ['importCsv']],
-            [['product_group_code'], 'setImport', 'on' => ['importCsv']],
-            [['ref_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
-            [['dpu_product_code'], 'unique', 'targetAttribute' => ['union_code', 'dpu_product_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['dpu_product_code'], 'validateDpuProduct', 'except' => ['androidsync']],
-            [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+                [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent'], 'in', 'range' => ['0', '1'], 'on' => ['importCsv']],
+                [['product_group_code'], 'setImport', 'on' => ['importCsv']],
+                [['ref_code'], 'unique', 'targetAttribute' => ['union_code', 'ref_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['androidsync']],
+                [['dpu_product_code'], 'unique', 'targetAttribute' => ['union_code', 'dpu_product_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['dpu_product_code'], 'validateDpuProduct', 'except' => ['androidsync']],
+                [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
+                [['product_type'], 'setProductType', 'on' => ['importCsv']],
+                [['x_col3'], 'default', 'value' => 2],
         ];
     }
 
@@ -112,6 +118,7 @@ class TblProduct extends \app\models\ChildModel {
             'is_indent' => Yii::t('app', 'Is Indent'),
             'is_dpu_product' => Yii::t('app', 'Is DPU Product'),
             'dpu_product_code' => Yii::t('app', 'DPU Product Code'),
+            'x_col3' => Yii::t('app', 'Product Type'),
         ];
     }
 
@@ -242,6 +249,10 @@ class TblProduct extends \app\models\ChildModel {
         if (empty($this->getErrors())) {
             $this->unit_code = Yii::$app->general->getforeignkey($this->productGroupCode, 'unit_code');
         }
+    }
+
+    public function setProductType($attribute, $params) {
+        $this->x_col3 = $this->product_type;
     }
 
 }
