@@ -730,7 +730,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1302,6 +1302,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['bmc' => Yii::t('app', 'BMC'), 'mcc' => Yii::t('app', 'MCC'), 'plant' => Yii::t('app', 'PLANT'), 'vendor' => Yii::t('app', 'VENDOR')],
             ],
+            'weigh_type' => [
+                'name' => 'weigh_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'In'), 2 => Yii::t('app', 'Out')],
+            ],
         ];
         return $records[$l];
     }
@@ -1495,7 +1500,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
