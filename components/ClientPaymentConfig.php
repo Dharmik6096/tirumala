@@ -77,6 +77,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
                     'sp_name' => 'sp_tpt_sec_payment_new',
                 ],
+                'member_payment_disburse' => [
+                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
+                    'sp_name' => 'member_payment_disburse',
+                ],
             ],
             'VARDDAN' => [
                 'vsp_payment' => [
