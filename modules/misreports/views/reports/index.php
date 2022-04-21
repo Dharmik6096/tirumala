@@ -179,7 +179,12 @@ if (isset($data['url1'])) {
                                         if (in_array($value, array('vendor_code'))) {
                                             $depend = 'reportsmodel-bmc_code,reportsmodel-customer_type';
                                             if (isset($value_array[1])) {
-                                                $depend = 'reportsmodel-bmc_code,reportsmodel-' . $value_array[1];
+                                                if ($value_array[1] == 'BULKVEN') {
+                                                    echo Html::hiddenInput('customer_type', 'BULKVEN', ['id' => 'reportsmodel-customer_type']);
+                                                    $depend = 'reportsmodel-bmc_code,reportsmodel-customer_type';
+                                                } else {
+                                                    $depend = 'reportsmodel-bmc_code,reportsmodel-' . $value_array[1];
+                                                }
                                             }
                                             ?>
                                             <div class="col-sm-3 vendor">
@@ -337,13 +342,26 @@ if (isset($data['url1'])) {
                                             <?php
                                         }
                                         if (in_array($value, array('product_code'))) {
+                                            if (isset($value_array[1]) && $value_array[1] == 'product_type') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->product($model, $form, 'reportsmodel-union_code,reportsmodel-product_type', $value, 'Product', TRUE); ?>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                        }
+                                        if (in_array($value, array('org_type'))) {
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
                                             </div>
                                             <?php
                                         }
-                                        if (in_array($value, array('org_type'))) {
+                                        if (in_array($value, array('product_type'))) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
