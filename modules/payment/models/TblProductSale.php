@@ -357,7 +357,13 @@ class TblProductSale extends \app\models\ChildModel {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
-    public function setTransactionData($model, $json, &$childModel) {
+    public function setTransactionData(&$model, $json, &$childModel) {
+        $modelData = $model->find()->where(['product_sale_code' => $model->product_sale_code])->one();
+
+        if (!empty($modelData)) {
+            $model->x_col2 = $model->product_sale_code;
+            $model->product_sale_code = Yii::$app->general->getUuid();
+        }
         $saleDate = date('Y-m-d', strtotime($model->invoice_date));
         $appCycleAppModel = new TblPaymentCycleApplicability();
         $appCycleAppModel->applicable_type = $model->customer_type;

@@ -165,6 +165,21 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
         $manageStock = TRUE;
+
+        $saleModel = new TblProductSale();
+        $saleModel->x_col2 = $model->product_sale_code;
+        $saleModelData = $saleModel->find()->where(['x_col2' => $saleModel->x_col2])->orderBy('created_at desc')->one();
+        if (!empty($saleModelData)) {
+            $model->x_col2 = $model->product_sale_transaction_code;
+            $model->product_sale_code = $saleModelData->product_sale_code;
+            $model->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code);
+        } else {
+            $modelData = $model->find()->where(['product_sale_transaction_code' => $model->product_sale_transaction_code])->one();
+            if (!empty($modelData)) {
+                $model->x_col2 = $model->product_sale_transaction_code;
+                $model->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code);
+            }
+        }
         if (!empty($model->product_code) && !empty($model->productCode->dpu_product_code) && $model->productCode->dpu_product_code == '994') {
             $loanModel = new TblLoanProductSaleDetails();
             $loanModel->attributes = $model->attributes;

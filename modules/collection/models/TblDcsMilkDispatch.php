@@ -51,8 +51,7 @@ use app\modules\sms\models\TblApiMaster;
 class TblDcsMilkDispatch extends \app\models\ChildModel {
 
     public $from_date, $to_date, $from_shift, $to_shift, $name, $dcs, $status;
-
-//    public $saveChildRecords = TRUE;
+    public $saveChildRecords = TRUE;
 
     /**
      * @inheritdoc
@@ -66,12 +65,12 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs_milk_dispatch_code'], 'safe', 'on' => ['androidsync']],
-            [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks', 'antibiotic'], 'safe'],
-            [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs'], 'safe'],
-            [['shift_code', 'dispatch_type', 'destination_type', 'originating_type', 'dcs_milk_dispatch_code', 'received_timestamp'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create', 'update']],
-            [['date_time_of_dispatch'], function ($attribute, $params) {
+                [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs_milk_dispatch_code'], 'safe', 'on' => ['androidsync']],
+                [['challan_no', 'destination_code', 'vehicle_no', 'vehicle_in_time', 'vehicle_out_time', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'remarks', 'antibiotic'], 'safe'],
+                [['date_time_of_dispatch', 'created_at', 'updated_at', 'dcs'], 'safe'],
+                [['shift_code', 'dispatch_type', 'destination_type', 'originating_type', 'dcs_milk_dispatch_code', 'received_timestamp'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['create', 'update']],
+                [['date_time_of_dispatch'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
                     }
@@ -181,7 +180,7 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
         return $this->find()->where(['dcs_code' => $data->dcs_code, 'date_time_of_dispatch' => $data->date_time_of_dispatch, 'shift_code' => $data->shift_code])->one();
     }
 
-    public function setTransactionData($model) {
+    public function setTransactionDataModel($model) {
         $union = $model->union_code;
         $apiData = TblApiMaster::find()->where(['union_code' => $union, 'receiver_type' => 'SMS', 'is_active' => 1])->one();
         $unionData = TblUnions::find()->where(['union_code' => $union, 'is_active' => 1])->one();
@@ -219,7 +218,7 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
                         $arrFrom = '';
                         $arrTo = '';
                         $ex_code = !empty($farmerCode) ? $farmerCode : $excode;
-                     
+
                         if (!empty($mobile)) {
                             if (strtolower($antibioticTest) == 'not tested') {
                                 $arrFrom = array("{member_name}", "{member_code_ex}", "{date}", "{shift}", "{milk_type}", "{qty}", "{fat}", "{snf}", "{rate}", "{amount}");
@@ -256,8 +255,17 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
 //        if ($flag == 'INSERT') {
-        $this->setTransactionData($this);
+        $this->setTransactionDataModel($this);
 //        }
+    }
+
+    public function setTransactionData(&$model, $json, &$childModel) {
+        $modelData = $model->find()->where(['dcs_milk_dispatch_code' => $model->dcs_milk_dispatch_code])->one();
+
+        if (!empty($modelData)) {
+            $model->x_col2 = $model->dcs_milk_dispatch_code;
+            $model->dcs_milk_dispatch_code = Yii::$app->general->getUuid();
+        }
     }
 
 }
