@@ -17,6 +17,8 @@ use yii\helpers\Json;
  */
 class TblProductController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['product-list'];
+
     /**
      * Lists all TblProduct models.
      * @return mixed
@@ -122,6 +124,24 @@ class TblProductController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionProductList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $type = isset($parents[1]) ? $parents[1] : '';
+                $product = new TblProduct();
+                $data = $product->getProductList($parents[0], $type);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

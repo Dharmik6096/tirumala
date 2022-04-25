@@ -483,6 +483,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
