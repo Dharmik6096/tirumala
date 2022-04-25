@@ -110,6 +110,9 @@ $type = !empty($type) ? $type : '';
                 <div class="col-sm-1 noOfInstallment reset_field">
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>  
+                <div class="col-sm-2">
+                    <?= $form->field($detailModel, 'remarks')->textInput() ?>
+                </div>  
 
                 <?= $form->field($detailModel, 'product_sale_rate_applicability_code', ['template' => '{input}'])->hiddenInput()->label(false) ?>
                 <div class="clearfix"></div>

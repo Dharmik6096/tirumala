@@ -9,10 +9,11 @@ use yii\helpers\Html;
 
 $attribute = [
 //    ['attribute' => 'product_sale_code'],
-    ['attribute' => 'product_code', 'value' =>'productCode.product_name'],
-    ['attribute' => 'rate','format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'product_code', 'value' => 'productCode.product_name'],
+    ['attribute' => 'rate', 'format' => Yii::$app->general->CurrencyFormat(),],
     ['attribute' => 'quantity'],
-    ['attribute' => 'amount','format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'remarks'],
 ];
 
 $grid_option = [

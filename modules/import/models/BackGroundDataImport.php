@@ -12,7 +12,7 @@ class BackGroundDataImport extends Model {
     public $bmc_code, $applicable_code, $applicable_for, $purchase_rate_code, $dcs_purchase_rate_code, $wef_date, $shift_code;
     public $customer_type, $customer_code, $invoice_date, $payment_mode, $product_code, $quantity, $discount, $no_of_installment;
     public $member_code, $product_sale_rate_code, $product_group_code, $product_name, $tax_code, $is_dpu_product, $dpu_product_code, $is_inhouse, $is_inclusive_tax, $is_saleable, $is_indent;
-    public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type;
+    public $union_code, $sale_rate, $is_member_rate, $commission, $ifsc, $rate_class, $vendor_code, $sap_farmer_code, $product_type, $remarks;
 
     function __construct() {
         
@@ -23,34 +23,34 @@ class BackGroundDataImport extends Model {
      */
     public function rules() {
         $main_rules = [
-                [['dcs_code', 'member_name'], 'required', 'on' => ['member', 'member_rateclass']],
-                [['dob', 'registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['member', 'member_rateclass']],
-                [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date'], 'required', 'on' => ['rateapplicability']],
+            [['dcs_code', 'member_name'], 'required', 'on' => ['member', 'member_rateclass']],
+            [['dob', 'registration_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['member', 'member_rateclass']],
+            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date'], 'required', 'on' => ['rateapplicability']],
 //            [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2017-11-01'), 'skipOnEmpty' => true, 'on' => ['rateapplicability']],
             [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
                 }, 'on' => ['rateapplicability']],
-                [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate']],
-                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate']],
-                [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
-                ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
-                [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale']],
-                [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member']],
-                [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member']],
-                ['payment_mode', 'in', 'range' => ['1', '0'], 'on' => ['product_sale', 'product_sale_member']],
-                [['dcs_code', 'member_code', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale_member']],
-                [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['sale_rate_applicability']],
-                [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['product_master']],
-                [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'is_member_rate'], 'in', 'range' => ['0', '1'], 'on' => ['product_master']],
-                [['dpu_product_code'], 'required', 'when' => function ($model) {
+            [['wef_date'], 'convertDateDot', 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate']],
+            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate']],
+            [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
+            ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
+            [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale']],
+            [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member']],
+            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member']],
+            ['payment_mode', 'in', 'range' => ['1', '0'], 'on' => ['product_sale', 'product_sale_member']],
+            [['dcs_code', 'member_code', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale_member']],
+            [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['sale_rate_applicability']],
+            [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['product_master']],
+            [['is_dpu_product', 'is_inhouse', 'is_inclusive_tax', 'is_saleable', 'is_indent', 'is_member_rate'], 'in', 'range' => ['0', '1'], 'on' => ['product_master']],
+            [['dpu_product_code'], 'required', 'when' => function ($model) {
                     return $model->is_dpu_product == 1;
                 }, 'on' => ['product_master']],
-                [['union_code', 'product_code', 'sale_rate', 'wef_date', 'is_member_rate'], 'required', 'on' => ['product_sale_rate']],
-                [['commission'], 'required', 'when' => function ($model) {
+            [['union_code', 'product_code', 'sale_rate', 'wef_date', 'is_member_rate'], 'required', 'on' => ['product_sale_rate']],
+            [['commission'], 'required', 'when' => function ($model) {
                     return $model->is_member_rate == 1;
                 }, 'on' => ['product_sale_rate']
             ],
-                ['rate_class', 'in', 'range' => ['A', 'B', 'C'], 'on' => ['member_rateclass']],
+            ['rate_class', 'in', 'range' => ['A', 'B', 'C'], 'on' => ['member_rateclass']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

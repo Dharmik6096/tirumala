@@ -17,9 +17,9 @@ class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code'], 'integer'],
-                [['product_sale_code', 'product_sale_rate_applicability_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-                [['rate', 'quantity', 'amount', 'product_code'], 'safe'],
+            [['product_sale_transaction_code'], 'integer'],
+            [['product_sale_code', 'product_sale_rate_applicability_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'remarks'], 'safe'],
+            [['rate', 'quantity', 'amount', 'product_code'], 'safe'],
         ];
     }
 
@@ -62,7 +62,6 @@ class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
             ]);
         }
 //        Yii::$app->general->filterByNumber($query, $this, ['rate', 'quantity', 'amount']);
-
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_product_sale_transaction.product_sale_transaction_code' => $this->product_sale_transaction_code,
