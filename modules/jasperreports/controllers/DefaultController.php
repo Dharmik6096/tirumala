@@ -353,7 +353,12 @@ class DefaultController extends \app\controllers\ChildController {
                 echo $this->output;
             }
         } else {
-            \Yii::$app->pdf->generatePdfAtmos($model);
+            $client_code = \Yii::$app->session->get('eiplCode');
+            if (strtolower($client_code) == 'mmd') {
+                \Yii::$app->pdf->generatePdfMMd($model);
+            } else {
+                \Yii::$app->pdf->generatePdfAtmos($model);
+            }
 //            $this->redirect(['/pdf/pdf', 'param' => $model]);
         }
     }
