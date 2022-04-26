@@ -303,7 +303,7 @@ class DefaultController extends \app\controllers\ChildController {
         }
         $this->type = Yii::$app->request->post('html');
 // var_dump($model);die;
-        if ($this->type != 'tcpdf') {
+        if (!in_array($this->type, ['tcpdf', 'tcpdf_two'])) {
             $controls = [];
             $param = explode(',', $this->data['param']);
             foreach ($param as $key => $value) {
@@ -355,7 +355,11 @@ class DefaultController extends \app\controllers\ChildController {
         } else {
             $client_code = \Yii::$app->session->get('eiplCode');
             if (strtolower($client_code) == 'mmd') {
-                \Yii::$app->pdf->generatePdfMMd($model);
+                if (!in_array($this->type, ['tcpdf_two'])) {
+                    \Yii::$app->pdf->generatePdfMMd($model);
+                } else {
+                    \Yii::$app->pdf->generatePdfMMdTwo($model);
+                }
             } else {
                 \Yii::$app->pdf->generatePdfAtmos($model);
             }

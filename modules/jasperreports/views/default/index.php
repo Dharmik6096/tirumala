@@ -330,6 +330,10 @@ $defaultToggle = true;
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
+                                            $client_code = \Yii::$app->session->get('eiplCode');
+                                            if (strtolower($client_code) == 'mmd') {
+                                                echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'pdf')]);
+                                            }
                                         }
                                         ?>
                                         <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
