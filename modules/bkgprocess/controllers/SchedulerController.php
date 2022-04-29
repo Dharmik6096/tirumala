@@ -806,4 +806,50 @@ class SchedulerController extends ChildController {
         $htmlContent .= "</table>";
     }
 
+    public function actionGenerateWqDispatchFile() {
+        try {
+            $FTPProcess = Bkgprocess::FTPProcess()['TblBmcCollection_dispatch'];
+            $param = explode(',', $FTPProcess['param']);
+            $controls = [];
+            foreach ($param as $key => $val) {
+                $controls[$val] = 0;
+            }
+            $controls['from_date'] = date('Y-m-d 06:00:00');
+            $controls['to_date'] = date('Y-m-d 18:00:00');
+            $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+            $downLoadArray = [];
+            foreach ($output as $detail) {
+                $plant = 'Plant Code';
+                if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                    if (empty($downLoadArray[$detail[$plant]])) {
+                        $downLoadArray[$detail[$plant]] = [];
+                    }
+                    $downLoadArray[$detail[$plant]][] = $detail;
+                }
+            }
+            foreach ($downLoadArray as $bmc => $download) {
+                $report_type = Yii::t('app', 'WQ');
+                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($controls['from_date'])) . '_1';
+                $data_array = [];
+                $data_array['module_name'] = 'TblBmcCollection_dispatch';
+                $data_array['module_code'] = $bmc;
+                $data_array['mcc_plant_code'] = $bmc;
+                $data_array['union_code'] = NULL;
+                $data_array['applicable_date'] = $controls['from_date'];
+                $data_array['shift_code'] = 1;
+                $data_array['bmc_code'] = NULL;
+                $data_array['from_date'] = $controls['from_date'];
+                $data_array['to_date'] = $controls['to_date'];
+                $ftp_model = new TblFtpTxnLog();
+                $result = $ftp_model->exportData($data_array, $title, $download);
+                if (!empty($result)) {
+                    $controls['file_name'] = $result;
+                    \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
+                }
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+        }
+    }
+
 }

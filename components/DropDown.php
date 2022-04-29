@@ -1312,6 +1312,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['1' => Yii::t('app', 'Service'), '2' => Yii::t('app', 'Product')],
             ],
+            'weigh_type' => [
+                'name' => 'weigh_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'In'), 2 => Yii::t('app', 'Out')],
+            ],
         ];
         return $records[$l];
     }

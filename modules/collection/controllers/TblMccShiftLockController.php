@@ -366,7 +366,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection');
+        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
     }
 
