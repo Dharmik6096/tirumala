@@ -731,6 +731,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionCenterLossGainReport() {
         $this->report = 'CenterLossGainReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BMCLossGainReport';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -1973,7 +1978,15 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'rpt_mis_CentertoCCLossGainReport',
                 'scenario' => 'CenterLossGainReport',
+                'title' => '214 - Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'BMCLossGainReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_prabhat_loss_gain',
+                'scenario' => 'CenterLossGainReport',
                 'title' => '214 - Center Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
             ],
             'MissingCollectionShiftBmcCrossTab' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
