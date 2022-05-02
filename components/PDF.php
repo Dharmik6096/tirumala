@@ -469,7 +469,7 @@ class PDF extends TCPDF {
             $bill_detail['to_date'] = $value['to_date'];
             $bill_detail['bmc_name'] = $value['bmc_name'] . '(' . $value['bmc_code'] . ')';
             $bill_detail['dcs_name'] = $value['dcs_name'] . '(' . $value['ref_code'] . ')';
-            $bill_detail['route'] = $value['route_name'] . '(' . $value['route_code'] . ')';
+            $bill_detail['route'] = $value['route_name'];
 
             if (empty($main[$value['member_code']]['basic'])) {
                 array_push($array[$value['member_code']]['basic'], $bill_detail);
@@ -599,10 +599,10 @@ class PDF extends TCPDF {
                 // Ac No and IFSC
                 $tableData .= '<tr>';
                 $tableData .= '<td align="center" width="80"></td>';
-                $tableData .= '<td align="left" width="430">AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . ' IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '<br/>';
+                $tableData .= '<td align="left" width="430">AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . '&nbsp;&nbsp;&nbsp;IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '<br/>';
                 $tableData .= (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '') . '<br/>';
                 $tableData .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '') . '</td>';
-                $tableData .= '<td align="right" width="100">' . ++$i . '<br/><br/>' . date('d-m-Y') . '</td>';
+                $tableData .= '<td align="left" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . ++$i . '<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . date('d.m.Y') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
 //                // DCS Name
@@ -678,16 +678,16 @@ class PDF extends TCPDF {
                             . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? '<td  align="right">' . $tbl_value['cow'][0]['collection_date_php'] . '  </td>' : ((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? '<td  align="right">' . $tbl_value['buffalo'][0]['collection_date_php'] . '  </td>' : '<td></td><td></td>'))) .
                             '</tr></table>' .
                             '</td>
-                            <td align="right" width="62">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? number_format((float) $tbl_value['buffalo'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="45">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="60">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgSNF'], 2) : 0) . '</td>
-                            <td align="right" width="51">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? number_format((float) $tbl_value['buffalo'][0]['rate'], 2) : 0) . '</td>
-                            <td align="right" width="67">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? number_format((float) $tbl_value['buffalo'][0]['bm_amount'], 2) : 0) . '</td>
-                            <td align="right" width="57">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? number_format((float) $tbl_value['cow'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="45">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? number_format((float) $tbl_value['cow'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="60">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? number_format((float) $tbl_value['cow'][0]['bm_avgSNF'], 2) : 0) . '</td>
-                            <td align="right" width="51">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? number_format((float) $tbl_value['cow'][0]['rate'], 2) : 0) . '</td>
-                            <td align="right" width="67">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? number_format((float) $tbl_value['cow'][0]['bm_amount'], 2) : 0) . '</td>
+                            <td align="right" width="62">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_qty']) ? number_format((float) $tbl_value['buffalo'][0]['bm_qty'], 2) : '') . '</td>
+                            <td align="right" width="45">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgFAT'], 2) : '') . '</td>
+                            <td align="right" width="60">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgSNF'], 2) : '') . '</td>
+                            <td align="right" width="51">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['rate']) ? number_format((float) $tbl_value['buffalo'][0]['rate'], 2) : '') . '</td>
+                            <td align="right" width="67">' . (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_amount']) ? number_format((float) $tbl_value['buffalo'][0]['bm_amount'], 2) : '') . '</td>
+                            <td align="right" width="57">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_qty']) ? number_format((float) $tbl_value['cow'][0]['bm_qty'], 2) : '') . '</td>
+                            <td align="right" width="45">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['cow'][0]['bm_avgFAT'], 2) : '') . '</td>
+                            <td align="right" width="60">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['cow'][0]['bm_avgSNF'], 2) : '') . '</td>
+                            <td align="right" width="51">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['rate']) ? number_format((float) $tbl_value['cow'][0]['rate'], 2) : '') . '</td>
+                            <td align="right" width="67">' . (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_amount']) ? number_format((float) $tbl_value['cow'][0]['bm_amount'], 2) : '') . '</td>
                     </tr>';
 
 //                            <td align="right" width="80">' . number_format(((float) (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? $tbl_value['cow'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? $tbl_value['buffalo'][0]['bm_amount'] : 0)), 2) . '</td>
@@ -801,17 +801,17 @@ class PDF extends TCPDF {
                     <tr>
                         <td align="center" width="40"></td>
                         <td align="left" width="320"></td>
-                        <td align="right" width="250">' . $totalAmt . '</td>
+                        <td align="right" width="250">' . number_format($totalAmt, 2) . '</td>
                     </tr> 
                     <tr>
                         <td align="center" width="40"></td>
                         <td align="right" width="320"></td>
-                        <td align="right" width="250">' . $total_addition . '</td>
+                        <td align="right" width="250">' . number_format($total_addition, 2) . '</td>
                     </tr> 
                     <tr>
                         <td align="center" width="40"></td>
                         <td align="left" width="320">' . $amtInWords . '</td>
-                        <td align="right" width="250">' . $total_deduction . '<br/>' . number_format($final_payable, 2) . '</td>
+                        <td align="right" width="250">' . number_format($total_deduction, 2) . '<br/>' . number_format($final_payable, 2) . '</td>
                     </tr> 
                     <tr>
                         <td align="center" width="40"></td>
@@ -1032,7 +1032,7 @@ class PDF extends TCPDF {
                 $tableData .= '<td align="center" width="200"></td>';
                 $tableData .= '<td align="left" width="260">Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '') . '</td>';
                 $tableData .= '<td align="center" width="20"></td>';
-                $tableData .= '<td align="right" width="120">' . date('d-m-Y') . '</td>';
+                $tableData .= '<td align="right" width="120">' . date('d.m.Y') . '</td>';
                 $tableData .= '<td align="center"></td>';
                 $tableData .= '</tr>';
                 $tableData .= '<tr>';
@@ -1118,16 +1118,16 @@ class PDF extends TCPDF {
                             . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? '<td  align="right">' . $tbl_value['am'][0]['collection_date_php'] . '  </td>' : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? '<td  align="right">' . $tbl_value['pm'][0]['collection_date_php'] . '  </td>' : '<td></td><td></td>'))) .
                             '</tr></table>' .
                             '</td>
-                            <td align="center" width="90">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="38">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : 0) . '</td>
-                            <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : 0) . '</td>
-                            <td align="right" width="62">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : 0) . '</td>
-                            <td align="center" width="75">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : 0) . '</td>
-                            <td align="right" width="45">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : 0) . '</td>
-                            <td align="right" width="44">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : 0) . '</td>
-                            <td align="right" width="54">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : 0) . '</td>
-                            <td align="right" width="58">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : 0) . '</td>
+                            <td align="center" width="90">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : '') . '</td>
+                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : '') . '</td>
+                            <td align="right" width="38">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : '') . '</td>
+                            <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : '') . '</td>
+                            <td align="right" width="62">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : '') . '</td>
+                            <td align="center" width="75">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : '') . '</td>
+                            <td align="right" width="45">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : '') . '</td>
+                            <td align="right" width="44">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : '') . '</td>
+                            <td align="right" width="54">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : '') . '</td>
+                            <td align="right" width="58">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : '') . '</td>
                     </tr>';
                     $total_qty_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_qty'] != '-' ? $tbl_value['am'][0]['bm_qty'] : 0) + $total_qty_am;
                     $total_qty_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_qty'] != '-' ? $tbl_value['pm'][0]['bm_qty'] : 0) + $total_qty_pm;
@@ -1251,7 +1251,7 @@ class PDF extends TCPDF {
                         <td align="center" width="50"></td>
                         <td align="left" width="280" ></td>
                         <td align="left" width="100"></td>
-                        <td align="left" width="100">' . $total_deduction . '</td>
+                        <td align="left" width="100">' . number_format($total_deduction, 2) . '</td>
                         <td align="center" width="120">' . number_format($totalQty, 2) . '</td>
                     </tr> 
                     <tr>
@@ -1259,7 +1259,7 @@ class PDF extends TCPDF {
                         <td align="left" width="280" rowspan="3">' . $amtInWords . '</td>
                         <td align="left" width="100"></td>
                         <td align="left" width="100"></td>
-                        <td align="center" width="120">' . $totalAmt . '</td>
+                        <td align="center" width="120">' . number_format($totalAmt, 2) . '</td>
                     </tr> 
                     <tr>
                         <td align="center" width="50"></td>
