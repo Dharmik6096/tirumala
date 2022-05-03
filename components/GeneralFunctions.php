@@ -874,7 +874,7 @@ class GeneralFunctions extends Component {
     }
 
     public function CurrencyFormat() {
-        return ['IndianCurrency', 2];
+        return ['decimal', 2];
     }
 
     public function ColoumnAlign() {
