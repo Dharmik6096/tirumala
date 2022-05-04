@@ -849,12 +849,17 @@ class PDF extends TCPDF {
             40 => 'Forty', 50 => 'Fifty', 60 => 'Sixty',
             70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety');
         $here_digits = array('', 'Hundred', 'Thousand', 'Lakh', 'Crore');
+        $negativeAmt = '';
         while ($x < $count_length) {
             $get_divider = ($x == 2) ? 10 : 100;
             $amount = floor($num % $get_divider);
             $num = floor($num / $get_divider);
             $x += $get_divider == 10 ? 1 : 2;
             if ($amount) {
+                if ($amount < 0) {
+                    $amount = $amount * -1;
+                    $negativeAmt = 'Minus ';
+                }
                 $add_plural = (($counter = count($string)) && $amount > 9) ? 's' : null;
                 $amt_hundred = ($counter == 1 && $string[0]) ? ' and ' : null;
                 $string [] = ($amount < 21) ? $change_words[$amount] . ' ' . $here_digits[$counter] . $add_plural . ' 
@@ -866,7 +871,7 @@ class PDF extends TCPDF {
         $implode_to_Rupees = implode('', array_reverse($string));
         $get_paise = ($amount_after_decimal > 0) ? "And " . ($change_words[$amount_after_decimal / 10] . " 
    " . $change_words[$amount_after_decimal % 10]) . ' Paise' : '';
-        return ($implode_to_Rupees ? $implode_to_Rupees . 'Rupees ' : '') . $get_paise;
+        return ($implode_to_Rupees ? $negativeAmt . $implode_to_Rupees . 'Rupees ' : '') . $get_paise;
     }
 
     public function generatePdfMMdTwo($model) {
