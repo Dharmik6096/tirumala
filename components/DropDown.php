@@ -1620,7 +1620,7 @@ class DropDown extends Component {
                         var selected_val_json = $.parseJSON(selected_val);
                         var array_val = [];
                         var depend = '" . $depends [0] . "';
-                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
+//                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
                             $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                                 $.each(selected_val_json, function(index, value) {
                                     $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
