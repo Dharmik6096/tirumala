@@ -894,11 +894,19 @@ class TblDcsController extends ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
+                $for = !empty($parents[1]) ? $parents[1] : '';
+                $route = !empty($parents[2]) ? $parents[2] : '';
                 $mccs = new TblDcs();
-                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS');
+                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS', '', $route);
                 $model = new TblCustomerMaster();
                 $customer = $model->getCustomerList($parents[0]);
-                $data = $bmc + $customer;
+                if (empty($for)) {
+                    $data = $bmc + $customer;
+                } elseif ($for == 1) {
+                    $data = $bmc;
+                } elseif ($for == 2) {
+                    $data = $customer;
+                }
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
