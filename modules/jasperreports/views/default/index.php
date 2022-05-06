@@ -76,7 +76,7 @@ $defaultToggle = true;
                                         }
                                         if (in_array($value, array('p_route_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 dd_route">
                                                 <?php
                                                 echo Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value);
                                                 ?>
@@ -288,15 +288,24 @@ $defaultToggle = true;
                                                 <?=
                                                 $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control '],
                                                     'mask' => '99-9999',])
-                                                ?>                                               <?php
+                                                ?>                                               
+                                                <?php
                                             }
 
                                             if (in_array($value, array('p_dcsc_code'))) {
+                                                $depend = 'reportsmodel-p_bmc_code';
+                                                if (isset($value_array[1])) {
+                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-p_route_code';
+                                                }
+                                                $value_array[1];
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-p_bmc_code', 'p_dcsc_code', Yii::t('app', 'Name')); ?>
+                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $depend, 'p_dcsc_code', Yii::t('app', 'Name')); ?>
                                                 </div>
                                                 <?php
+                                            }
+                                            if (in_array($value, array('p_billing_for'))) {
+                                                echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
                                             }
                                         }
                                         if (isset($data['report_type'])) {
@@ -452,6 +461,30 @@ $defaultToggle = true;
             $('#reportsmodel-p_milk_type option:first').after($('<option/>', { 'value': '','selected':'selected', text: '" . Yii::t('app', 'NA') . "'}));      
        }
     });
+    
+    $(document).ready(function(){  
+        if('" . $report . "'=='VendorBillMmd'){
+            hideRoute();
+            $(document).on('change','#reportsmodel-p_billing_for', function() {
+                hideRoute();
+            });
+        }
+    });
+    $(document).on('change','#reportsmodel-p_billing_for', function() {
+        if('" . $report . "'=='VendorBillMmd'){
+            hideRoute();
+        }
+    });
+    function hideRoute(){
+        var type =  $('#reportsmodel-p_billing_for option:selected').val();
+        if(type == '1'){
+            $('.dd_route').show();
+        }else {
+            $('.dd_route').hide();
+            $('.dd_route select').val('');
+            $('.dd_route select').trigger('change');
+        }
+    }
 ";
     $this->registerJs($script, View::POS_END, 'shift');
     ?>
