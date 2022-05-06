@@ -37,7 +37,7 @@ class ReportsModel extends Model {
      */
     public function rules() {
         return [
-            [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_billing_for'], 'default', 'value' => '0'],
+            [['p_customer_code', 'p_staff_member_code', 'p_dcs_code', 'p_member_code', 'p_dcsc_code', 'p_route_code', 'p_billing_for'], 'default', 'value' => '0'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_dcs_code', 'p_collection_date', 'shift'], 'required', 'on' => 'ShiftReportNameWise'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_type'], 'required', 'on' => 'MemberMilkCollectionRegister'],
             [['p_plant_code', 'p_mcc_code', 'p_bmc_code', 'union_code', 'p_from_date', 'p_to_date', 'p_dcs_code', 'from_shift', 'to_shift', 'p_member_code'], 'required', 'on' => 'MemberMilkCollectionSummary'],

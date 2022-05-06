@@ -446,6 +446,8 @@ class PDF extends TCPDF {
         $param[] = $parameters['p_plant_code']; //union
         $param[] = $parameters['p_mcc_code']; //
         $param[] = $parameters['p_bmc_code'];
+        $param[] = $parameters['p_billing_for'];
+        $param[] = $parameters['p_route_code'];
         $param[] = $parameters['p_dcsc_code'];
         $param[] = $parameters['p_payment_cycle_code'];
         $output = \Yii::$app->general->getSpData($sp_name, $param);
@@ -931,6 +933,8 @@ class PDF extends TCPDF {
         $param[] = $parameters['p_plant_code']; //union
         $param[] = $parameters['p_mcc_code']; //
         $param[] = $parameters['p_bmc_code'];
+        $param[] = $parameters['p_billing_for'];
+        $param[] = $parameters['p_route_code'];
         $param[] = $parameters['p_dcsc_code'];
         $param[] = $parameters['p_payment_cycle_code'];
         $output = \Yii::$app->general->getSpData($sp_name, $param);
