@@ -619,7 +619,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 3, ' ', STR_PAD_LEFT);
                 $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
                 $inPad = 85 - (14 + strlen($acNo) + 3 + strlen($acIfsc));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 14, ' ', STR_PAD_LEFT);
                 $textContent .= (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
@@ -994,14 +994,12 @@ class PDF extends TCPDF {
                     $bill_transaction_am[$memberCode] = [];
                 }
                 $bill_transaction_am[$memberCode][$memberDate] = $bill_transaction;
-//                array_push($bill_transaction_am, $bill_transaction);
             }
             if ($value['shift'] == 'PM') {
                 if (empty($bill_transaction_pm[$memberCode])) {
                     $bill_transaction_pm[$memberCode] = [];
                 }
                 $bill_transaction_pm[$memberCode][$memberDate] = $bill_transaction;
-//                array_push($bill_transaction_pm, $bill_transaction);
             }
         }
         foreach ($array as $key => $value) {
@@ -1036,92 +1034,96 @@ class PDF extends TCPDF {
                     }
                 }
             }
-//            foreach ($bill_transaction_pm as $key => $value) {
-//                if ($value['member_code'] == $member_code) {
-//                    $array[$member_code]['details'][$value['collection_date_php']]['pm'] = [];
-//                    array_push($array[$member_code]['details'][$value['collection_date_php']]['pm'], $value);
-//                }
-//            }
-//            foreach ($bill_transaction_am as $key => $value) {
-//                // var_dump($value);
-//                if ($value['member_code'] == $member_code) {
-//                    $array[$member_code]['details'][$value['collection_date_php']]['am'] = [];
-//                    array_push($array[$member_code]['details'][$value['collection_date_php']]['am'], $value);
-//                }
-//            }
         }
 
         if (!empty($array)) {
-            $width = 297;
-            $height = 297;
-            $pageLayout = array(255, 114); // 25.4, 10.10
-            $pdf = new Yii::$app->pdf('L', PDF_UNIT, $pageLayout, true, 'UTF-8', false);
-            $pdf->SetCreator(PDF_CREATOR);
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-            $pdf->SetAutoPageBreak(False, 0);
-            $pdf->SetFont('helvetica', '', 8);
-            $pdf->SetTextColor(0, 0, 0);
-            $pdf->SetMargins(0, 10, 0);
-            // for($i=0;$i<count($array);$i++){
+//            $width = 297;
+//            $height = 297;
+//            $pageLayout = array(255, 114); // 25.4, 10.10
+//            $pdf = new Yii::$app->pdf('L', PDF_UNIT, $pageLayout, true, 'UTF-8', false);
+//            $pdf->SetCreator(PDF_CREATOR);
+//            $pdf->setPrintHeader(false);
+//            $pdf->setPrintFooter(false);
+//            $pdf->SetAutoPageBreak(False, 0);
+//            $pdf->SetFont('helvetica', '', 8);
+//            $pdf->SetTextColor(0, 0, 0);
+//            $pdf->SetMargins(0, 10, 0);
             $i = 0;
+
+            $file = 'Shift_Wise_Bill_' . date('YmdHis') . ".txt";
+            $txt = fopen($file, "w") or die("Unable to open file!");
             foreach ($array as $key => $value) {
-                $pdf->AddPage();
-                $pdf->SetFont('dejavusans', '', 9, '', true);
+                $textContent = '';
+                $textContent .= "\n";
+//                $pdf->AddPage();
+//                $pdf->SetFont('dejavusans', '', 9, '', true);
                 $tableData = '';
                 $tableData .= '<table  border="none" cellpadding="0" cellspacing="0">';
                 // From Date
-                $tableData .= '<tr>';
-                $tableData .= '<td align="center" width="200"></td>';
-                $tableData .= '<td align="right" width="260">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['from_date'] : '') . '</td>';
-                $tableData .= '<td align="center" width="20"></td>';
-                $tableData .= '<td align="center" width="120">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['to_date'] : '') . '</td>';
-                $tableData .= '<td align="center"></td>';
-                $tableData .= '</tr>';
-                $tableData .= '<tr>';
-                $tableData .= '<td align="center" width="200"></td>';
-                $tableData .= '<td align="left" width="260">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '') . '</td>';
-                $tableData .= '<td align="center" width="20"></td>';
-                $tableData .= '<td align="center" width="120">' . ++$i . '</td>';
-                $tableData .= '<td align="center"></td>';
-                $tableData .= '</tr>';
-                $tableData .= '<tr>';
-                $tableData .= '<td align="center" width="200"></td>';
-                $tableData .= '<td align="left" width="260">Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '') . '</td>';
-                $tableData .= '<td align="center" width="20"></td>';
-                $tableData .= '<td align="right" width="120">' . date('d.m.Y') . '</td>';
-                $tableData .= '<td align="center"></td>';
-                $tableData .= '</tr>';
-                $tableData .= '<tr>';
-                $tableData .= '<td align="center" width="200"></td>';
-                $tableData .= '<td align="left" width="260">AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . ' IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '</td>';
-                $tableData .= '<td align="center" width="20"></td>';
-                $tableData .= '<td align="center" width="120"></td>';
-                $tableData .= '<td align="center"></td>';
-                $tableData .= '</tr>';
-                // To Date
-//                $tableData .= '<tr>';
-//                $tableData .= '<td align="center" width="80"></td>';
-//                $tableData .= '<td align="center" width="430"></td>';
-//                $tableData .= '<td align="right" width="100"></td>';
-//                $tableData .= '<td align="center"></td>';
-//                $tableData .= '</tr>';
-                // Ac No and IFSC
 //                $tableData .= '<tr>';
 //                $tableData .= '<td align="center" width="200"></td>';
-//                $tableData .= '<td align="left" width="280">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '') . '<br/>';
-//                $tableData .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '') . '<br/>';
-//                $tableData .= 'AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . ' IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '</td>';
+//                $tableData .= '<td align="right" width="260">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['from_date'] : '') . '</td>';
 //                $tableData .= '<td align="center" width="20"></td>';
-//                $tableData .= '<td align="right" width="120">' . ++$i . '<br/>' . date('d-m-Y') . '</td>';
+//                $tableData .= '<td align="center" width="120">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['to_date'] : '') . '</td>';
 //                $tableData .= '<td align="center"></td>';
 //                $tableData .= '</tr>';
-                $tableData .= '</table>';
-//echo $tableData;die;
-                $pdf->writeHTML($tableData, true, false, false, false, '');
 
-                $detailTable = '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:100px">';
-                // var_dump(count($value['details']));
+                $fDate = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['from_date'] : '');
+                $tDate = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['to_date'] : '');
+                $textContent .= str_pad('', 63, ' ', STR_PAD_LEFT);
+                $textContent .= $fDate;
+                $textContent .= str_pad('', 7, ' ', STR_PAD_LEFT);
+                $textContent .= $tDate;
+                $textContent .= "\n";
+
+//                $tableData .= '<tr>';
+//                $tableData .= '<td align="center" width="200"></td>';
+//                $tableData .= '<td align="left" width="260">' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '') . '</td>';
+//                $tableData .= '<td align="center" width="20"></td>';
+//                $tableData .= '<td align="center" width="120">' . ++$i . '</td>';
+//                $tableData .= '<td align="center"></td>';
+//                $tableData .= '</tr>';
+//                $tableData .= '<tr>';
+//                $tableData .= '<td align="center" width="200"></td>';
+//                $tableData .= '<td align="left" width="260">Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '') . '</td>';
+//                $tableData .= '<td align="center" width="20"></td>';
+//                $tableData .= '<td align="right" width="120">' . date('d.m.Y') . '</td>';
+//                $tableData .= '<td align="center"></td>';
+//                $tableData .= '</tr>';
+//                $tableData .= '<tr>';
+//                $tableData .= '<td align="center" width="200"></td>';
+//                $tableData .= '<td align="left" width="260">AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . ' IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '') . '</td>';
+//                $tableData .= '<td align="center" width="20"></td>';
+//                $tableData .= '<td align="center" width="120"></td>';
+//                $tableData .= '<td align="center"></td>';
+//                $tableData .= '</tr>';
+//                $tableData .= '</table>';
+//                $pdf->writeHTML($tableData, true, false, false, false, '');
+                $acNo = 'AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '');
+                $acIfsc = 'IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
+                $memName = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
+                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
+                $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
+                $inPad = 87 - (33 + strlen($memName));
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
+                $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
+                $datePad = 85 - (33 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+//                $textContent .= date('d.m.Y');
+                $textContent .= str_pad('', $datePad, ' ', STR_PAD_LEFT);
+                $textContent .= date('d.m.Y');
+                $textContent .= "\n";
+                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
+                $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
+                $textContent .= str_pad('', 3, ' ', STR_PAD_LEFT);
+                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
+                $textContent .= "\n";
+                $textContent .= "\n";
+                $textContent .= "\n";
+
+
+//                $detailTable = '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:100px">';
                 $total_qty_am = 0;
                 $total_qty_pm = 0;
 
@@ -1142,19 +1144,6 @@ class PDF extends TCPDF {
                 $member_type = '';
                 $mDevideCount = 0;
                 $eDevideCount = 0;
-                $detailTable .= '<tr>
-                            <td align="left"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="left"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                        </tr>';
 //                $detailTable .= '<tr>
 //                            <td align="left"></td>
 //                            <td align="center"></td>
@@ -1169,23 +1158,37 @@ class PDF extends TCPDF {
 //                            <td align="center"></td>
 //                        </tr>';
                 foreach ($value['details'] as $tbl_key => $tbl_value) {
-                    $detailTable .= '<tr>
-                            <td align="center" width="70">' .
-                            '<table><tr>'
-                            . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? '<td  align="right">' . $tbl_value['am'][0]['collection_date_php'] . '  </td>' : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? '<td  align="right">' . $tbl_value['pm'][0]['collection_date_php'] . '  </td>' : '<td></td><td></td>'))) .
-                            '</tr></table>' .
-                            '</td>
-                            <td align="center" width="90">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : '') . '</td>
-                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : '') . '</td>
-                            <td align="right" width="38">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : '') . '</td>
-                            <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : '') . '</td>
-                            <td align="right" width="62">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : '') . '</td>
-                            <td align="center" width="75">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : '') . '</td>
-                            <td align="right" width="45">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : '') . '</td>
-                            <td align="right" width="44">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : '') . '</td>
-                            <td align="right" width="54">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : '') . '</td>
-                            <td align="right" width="58">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : '') . '</td>
-                    </tr>';
+
+                    $collDate = (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date_php'] : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['collection_date_php'] : '')));
+                    $textContent .= str_pad($collDate, 13, ' ', STR_PAD_LEFT); //$collDate;
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : ''), 11, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+//                    $detailTable .= '<tr>
+//                            <td align="center" width="70">' .
+//                            '<table><tr>'
+//                            . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? '<td  align="right">' . $tbl_value['am'][0]['collection_date_php'] . '  </td>' : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? '<td  align="right">' . $tbl_value['pm'][0]['collection_date_php'] . '  </td>' : '<td></td><td></td>'))) .
+//                            '</tr></table>' .
+//                            '</td>
+//                            <td align="center" width="90">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : '') . '</td>
+//                            <td align="right" width="35">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : '') . '</td>
+//                            <td align="right" width="38">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : '') . '</td>
+//                            <td align="right" width="50">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : '') . '</td>
+//                            <td align="right" width="62">' . (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : '') . '</td>
+//                            <td align="center" width="75">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : '') . '</td>
+//                            <td align="right" width="45">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : '') . '</td>
+//                            <td align="right" width="44">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : '') . '</td>
+//                            <td align="right" width="54">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : '') . '</td>
+//                            <td align="right" width="58">' . (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : '') . '</td>
+//                    </tr>';
                     $total_qty_am = (float) (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_qty'] != '-' ? $tbl_value['am'][0]['bm_qty'] : 0) + $total_qty_am;
                     $total_qty_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_qty'] != '-' ? $tbl_value['pm'][0]['bm_qty'] : 0) + $total_qty_pm;
 
@@ -1202,21 +1205,18 @@ class PDF extends TCPDF {
                     $total_bm_amount_pm = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['bm_amount'] != '-' ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_bm_amount_pm;
                     $total_amount = (float) (!empty($tbl_value['pm']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['bm_amount'] != '-' ? $tbl_value['am'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0] && $tbl_value['pm'][0]['bm_amount'] != '-') ? $tbl_value['pm'][0]['bm_amount'] : 0) + $total_amount;
 
-//                    $total_addition = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_addition'] != '-' ? $tbl_value['pm'][0]['total_addition'] : 0;
                     if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_addition'] != '-') {
                         $total_addition = $tbl_value['pm'][0]['total_addition'];
                     } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['total_addition'] != '-') {
                         $total_addition = $tbl_value['am'][0]['total_addition'];
                     }
 
-//                    $total_deduction = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_deduction'] != '-' ? $tbl_value['pm'][0]['total_deduction'] : 0;
                     if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['total_deduction'] != '-') {
                         $total_deduction = $tbl_value['pm'][0]['total_deduction'];
                     } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['total_deduction'] != '-') {
                         $total_deduction = $tbl_value['am'][0]['total_deduction'];
                     }
 
-//                    $final_pay = !empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['final_pay'] != '-' ? $tbl_value['pm'][0]['final_pay'] : 0;
                     if (!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && $tbl_value['pm'][0]['final_pay'] != '-') {
                         $final_pay = $tbl_value['pm'][0]['final_pay'];
                     } else if (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && $tbl_value['am'][0]['final_pay'] != '-') {
@@ -1231,70 +1231,65 @@ class PDF extends TCPDF {
                         $eDevideCount++;
                     }
                 }
-                for ($j = 0; $j < 11 - count($value['details']); $j++) {
-                    $detailTable .= '<tr>
-                            <td align="left"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="left"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                            <td align="center"></td>
-                        </tr>';
+                for ($j = 0; $j < 12 - count($value['details']); $j++) {
+//                    $detailTable .= '<tr>
+//                            <td align="left"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="left"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                            <td align="center"></td>
+//                        </tr>';
+                    $textContent .= "\n";
                 }
-//                $detailTable .= '</table>';
-//                $pdf->writeHTML($detailTable, true, false, false, false, '');
-//                $footerTable = '<table border="none"  width="100%" cellpadding="1" cellspacing="1">';
-
-                if (false && $member_type == 'Member') {
-                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
-                    <tr>
-                        <td align="right" colspan="6">Deduction : ' . $total_deduction . '</td>
-                        <td align="right" colspan="5">Net. Payable : ' . $final_pay . '</td>
-                    </tr>';
-                } else if (false) {
-                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
-                    <tr>
-                        <td align="right" colspan="4">Incentive : ' . $total_addition . '</td>
-                        <td align="right" colspan="4">Deduction : ' . $total_deduction . '</td>
-                        <td align="right" colspan="3">Net. Payable : ' . $final_pay . '</td>
-                    </tr>';
-                }
-//                $footerTable .= '<tr><td colspan="11"></td></tr>';
-                $detailTable .= '
-                <tr>
-                    <td align="center" width="70"></td>
-                    <td align="center" width="90">' . number_format($total_qty_am, 2) . '</td>
-                    <td align="right" width="35">' . (!empty($mDevideCount) ? number_format(($total_FAT_am / $mDevideCount), 2) : 0) . '</td>
-                    <td align="right" width="38">' . (!empty($mDevideCount) ? number_format(($total_SNF_am / $mDevideCount), 2) : 0) . '</td>
-                    <td align="right" width="50">' . (!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0) . '</td>
-                    <td align="right" width="62">' . number_format($total_bm_amount_am, 2) . '</td>
-                    <td align="center" width="75">' . number_format($total_qty_pm, 2) . '</td>
-                    <td align="right" width="45">' . (!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0) . '</td>
-                    <td align="right" width="44">' . (!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0) . '</td>
-                    <td align="right" width="54">' . (!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0) . '</td>
-                    <td align="right" width="58">' . number_format($total_bm_amount_pm, 2) . '</td>
-                </tr>
-            </table>';
-
+//                if (false && $member_type == 'Member') {
+//                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
+//                    <tr>
+//                        <td align="right" colspan="6">Deduction : ' . $total_deduction . '</td>
+//                        <td align="right" colspan="5">Net. Payable : ' . $final_pay . '</td>
+//                    </tr>';
+//                } else if (false) {
+//                    $footerTable .= ' <table border="none" cellpadding="1" cellspacing="1">
+//                    <tr>
+//                        <td align="right" colspan="4">Incentive : ' . $total_addition . '</td>
+//                        <td align="right" colspan="4">Deduction : ' . $total_deduction . '</td>
+//                        <td align="right" colspan="3">Net. Payable : ' . $final_pay . '</td>
+//                    </tr>';
+//                }
+//                $detailTable .= '
 //                <tr>
-//                    <td align="left"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="left"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
-//                    <td align="center"></td>
+//                    <td align="center" width="70"></td>
+//                    <td align="center" width="90">' . number_format($total_qty_am, 2) . '</td>
+//                    <td align="right" width="35">' . (!empty($mDevideCount) ? number_format(($total_FAT_am / $mDevideCount), 2) : 0) . '</td>
+//                    <td align="right" width="38">' . (!empty($mDevideCount) ? number_format(($total_SNF_am / $mDevideCount), 2) : 0) . '</td>
+//                    <td align="right" width="50">' . (!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0) . '</td>
+//                    <td align="right" width="62">' . number_format($total_bm_amount_am, 2) . '</td>
+//                    <td align="center" width="75">' . number_format($total_qty_pm, 2) . '</td>
+//                    <td align="right" width="45">' . (!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0) . '</td>
+//                    <td align="right" width="44">' . (!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0) . '</td>
+//                    <td align="right" width="54">' . (!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0) . '</td>
+//                    <td align="right" width="58">' . number_format($total_bm_amount_pm, 2) . '</td>
 //                </tr>
-                $detailTable .= '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:180px">';
+//            </table>';
+                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_qty_am, 2), 11, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_FAT_am / $mDevideCount), 2) : 0), 9, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_SNF_am / $mDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0), 8, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_bm_amount_am, 2), 9, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_qty_pm, 2), 8, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 9, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0), 8, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_bm_amount_pm, 2), 9, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+
+//                $detailTable .= '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:180px">';
                 $bmAmt = !empty($total_bm_amount_pm) ? $total_bm_amount_pm : 0;
                 $bmAmtP = !empty($total_bm_amount_am) ? $total_bm_amount_am : 0;
                 $totalQtyP = !empty($total_qty_pm) ? $total_qty_pm : 0;
@@ -1303,49 +1298,73 @@ class PDF extends TCPDF {
                 $totalAmt = $bmAmt + $bmAmtP; //number_format(((float) (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? $tbl_value['cow'][0]['bm_amount'] : 0) + (float) (!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? $tbl_value['buffalo'][0]['bm_amount'] : 0)), 2);
                 $final_payable = $totalAmt + $total_addition - $total_deduction;
                 $amtInWords = $this->AmountInWords($final_payable);
-                $detailTable .= ' 
-                    <tr>
-                        <td align="center" width="50"></td>
-                        <td align="left" width="280" ></td>
-                        <td align="left" width="100"></td>
-                        <td align="left" width="100">' . number_format($total_deduction, 2) . '</td>
-                        <td align="center" width="120">' . number_format($totalQty, 2) . '</td>
-                    </tr> 
-                    <tr>
-                        <td align="center" width="50"></td>
-                        <td align="left" width="280" rowspan="3">' . $amtInWords . '</td>
-                        <td align="left" width="100"></td>
-                        <td align="left" width="100"></td>
-                        <td align="center" width="120">' . number_format($totalAmt, 2) . '</td>
-                    </tr> 
-                    <tr>
-                        <td align="center" width="50"></td>
-                        <td align="left" width="100"></td>
-                        <td align="left" width="100"></td>
-                        <td align="center" width="120">' . number_format($final_payable, 2) . '</td>
-                    </tr> 
-                    <tr>
-                        <td align="center" width="50"></td>
-                        <td align="right" width="100"></td>
-                        <td align="left" width="100"></td>
-                        <td align="center"  width="120"></td>
-                    </tr> 
-                    <tr>
-                        <td align="center" width="50"></td>
-                        <td align="right" width="100"></td>
-                        <td align="left" width="100"></td>
-                        <td align="center"  width="120"></td>
-                    </tr>';
-                $detailTable .= '</table>';
-//                echo $detailTable;
-//                die;
+
+                $textContent .= str_pad('', 65, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_deduction, 2), 8, ' ', STR_PAD_RIGHT);
+                $textContent .= str_pad(number_format($totalQty, 2), 25, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+//                $textContent .= str_pad(number_format($total_addition, 2), 88, ' ', STR_PAD_LEFT);
+//                $textContent .= "\n";
+                $textContent .= str_pad('', 9, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
+                $textContent .= str_pad(substr($amtInWords, 0, 51), 51, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
+                $textContent .= str_pad(number_format($totalAmt, 2), 38, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 9, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
+                $textContent .= str_pad(substr($amtInWords, 51), 51, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
+                $textContent .= str_pad(number_format($final_payable, 2), 38, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                fwrite($txt, $textContent);
+//                $detailTable .= ' 
+//                    <tr>
+//                        <td align="center" width="50"></td>
+//                        <td align="left" width="280" ></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="left" width="100">' . number_format($total_deduction, 2) . '</td>
+//                        <td align="center" width="120">' . number_format($totalQty, 2) . '</td>
+//                    </tr> 
+//                    <tr>
+//                        <td align="center" width="50"></td>
+//                        <td align="left" width="280" rowspan="3">' . $amtInWords . '</td>
+//                        <td align="left" width="100"></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="center" width="120">' . number_format($totalAmt, 2) . '</td>
+//                    </tr> 
+//                    <tr>
+//                        <td align="center" width="50"></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="center" width="120">' . number_format($final_payable, 2) . '</td>
+//                    </tr> 
+//                    <tr>
+//                        <td align="center" width="50"></td>
+//                        <td align="right" width="100"></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="center"  width="120"></td>
+//                    </tr> 
+//                    <tr>
+//                        <td align="center" width="50"></td>
+//                        <td align="right" width="100"></td>
+//                        <td align="left" width="100"></td>
+//                        <td align="center"  width="120"></td>
+//                    </tr>';
 //                $detailTable .= '</table>';
-                $pdf->writeHTML($detailTable, true, false, false, false, '');
+//                $pdf->writeHTML($detailTable, true, false, false, false, '');
             }
+            fclose($txt);
+
+            header('Content-Description: File Transfer');
+            header('Content-Disposition: attachment; filename=' . basename($file));
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            header("Content-Type: text/plain");
+            readfile($file);
+            die;
 //            ob_end_clean();
-            $pdf->Output('vendor_bill_' . date('YmdHis') . '.pdf', 'D');
+//            $pdf->Output('vendor_bill_' . date('YmdHis') . '.pdf', 'D');
 //            $pdf->Output('yii2_tcpdf_example2.pdf', 'D');
-            Yii::$app->end();
+//            Yii::$app->end();
         }
 //        return;
     }

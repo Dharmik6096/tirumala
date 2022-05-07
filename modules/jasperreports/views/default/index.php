@@ -348,7 +348,7 @@ $defaultToggle = true;
                                             echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
 
                                             if (strtolower($client_code) == 'mmd') {
-                                                echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                                echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
                                             }
                                         }
                                         ?>
