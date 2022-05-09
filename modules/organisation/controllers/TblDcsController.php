@@ -899,7 +899,7 @@ class TblDcsController extends ChildController {
                 $mccs = new TblDcs();
                 $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS', '', $route);
                 $model = new TblCustomerMaster();
-                $customer = $model->getCustomerList($parents[0]);
+                $customer = $model->getCustomerList($parents[0], $route);
                 if (empty($for)) {
                     $data = $bmc + $customer;
                 } elseif ($for == 1) {

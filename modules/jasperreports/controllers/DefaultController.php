@@ -694,10 +694,10 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '616 - Milk Bill',
             ],
             'VendorBillMmd' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:union_code,p_dcsc_code:p_route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:all_routes,p_dcsc_code:p_route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/VendorBillFormated',
                 'scenario' => 'VendorBillMmd',
-                'title' => '612 - Vendor Bill',
+                'title' => '612 - Member and Vendor Milk Bill',
                 'tcpdf' => true,
             ],
         ];
