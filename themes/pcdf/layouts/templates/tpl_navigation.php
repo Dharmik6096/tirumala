@@ -431,6 +431,7 @@ echo GhostMenu::widget([
                                 ['label' => '107 -' . Yii::t('app', 'Society Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-society-date-shift-wise']],
                                 ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                 ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
+                                ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
                             ]
                         ],
                         [
@@ -452,6 +453,7 @@ echo GhostMenu::widget([
                                 ['label' => '212 -' . Yii::t('app', 'BMC Collection Data'), 'url' => ['/misreports/reports/bmc-collection-data']],
                                 ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
                                 ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
+                                ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -473,8 +475,6 @@ echo GhostMenu::widget([
                         ['label' => '310 -' . Yii::t('app', 'Society Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/dcs-product-sale-for-paid-installment']],
                         ['label' => '311 -' . Yii::t('app', 'Vendor Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/vendor-product-sale-for-paid-installment']],
                         ['label' => '312 -' . Yii::t('app', 'MCC Wise Product Sale for Piad Installment'), 'url' => ['/misreports/reports/mcc-product-sale-for-paid-installment']],
-                        ['label' => '313 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
-                        ['label' => '314 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
                     ]
                 ],
                 [
@@ -517,7 +517,8 @@ echo GhostMenu::widget([
                         ['label' => '609-' . Yii::t('app', 'Vendor Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill']],
                         ['label' => '610-' . Yii::t('app', 'Member Milk Bill'), 'url' => ['/jasperreports/default/member-milk-bill']],
                         ['label' => '611-' . Yii::t('app', 'Member Payment(Drafted)'), 'url' => ['/misreports/reports/member-payment-drafted']],
-                        ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill']],
+                        ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill'], 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
+                        ['label' => '612-' . Yii::t('app', 'Vendor Bill'), 'url' => ['/jasperreports/default/vendor-bill-mmd'], 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                         ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
                         ['label' => '614-' . Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/jasperreports/default/incharge-remuneration']],
                         ['label' => '615-' . Yii::t('app', 'Member Bill Abstract'), 'url' => ['/jasperreports/default/member-bill-abstract']],

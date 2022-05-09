@@ -617,7 +617,11 @@ class GeneralFunctions extends Component {
                 return false;
             }
         }
-//        chmod($path, 0777);
+
+        if (strstr($path, 'EKOMILK')) {
+            $command = 'chmod 777 -R ' . $path;
+            exec($command);
+        }
         return true;
     }
 
@@ -874,7 +878,7 @@ class GeneralFunctions extends Component {
     }
 
     public function CurrencyFormat() {
-        return ['IndianCurrency', 2];
+        return ['decimal', 2];
     }
 
     public function ColoumnAlign() {
