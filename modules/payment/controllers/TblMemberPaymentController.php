@@ -907,6 +907,25 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $this->redirect(['index']);
                         }
                     } else {
+
+                        $payCycleModel = new TblPaymentCycle();
+                        $payCycleModelData = $payCycleModel->findOne($model->payment_cycle_code);
+                        if (!empty($payCycleModelData)) {
+                            $model->from_datetime = $payCycleModelData->from_date;
+                        } else {
+                            $summaryModel = new TblMemberPaymentSummaryAlias();
+                            $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                                    ->all();
+                            if (!empty($summaryModelData)) {
+                                $paymentCycleApplicabilitycode = $summaryModelData[0]->payment_cycle_applicabilty_code;
+                                $payCycleModel = new TblPaymentCycleApplicability();
+                                $payCycleModelData = $payCycleModel->findOne($paymentCycleApplicabilitycode);
+                                if (!empty($payCycleModelData)) {
+                                    $model->from_datetime = $payCycleModelData->from_date;
+                                }
+                            }
+                        }
+
                         $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                         $originating_org_code = \Yii::$app->session->get('organizations_code');
                         $param = [];
@@ -917,6 +936,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $param['org_code'] = $originating_org_code;
                         $param['org_type'] = 'PORTAL';
                         Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+
                         $param = [];
                         $param['from_datetime'] = $model->from_datetime;
                         $param['customer_type'] = 'MEMBER';

@@ -76,7 +76,7 @@ $defaultToggle = true;
                                         }
                                         if (in_array($value, array('p_route_code'))) {
                                             ?>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-3 dd_route">
                                                 <?php
                                                 echo Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value);
                                                 ?>
@@ -288,15 +288,24 @@ $defaultToggle = true;
                                                 <?=
                                                 $form->field($model, 'p_month')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control '],
                                                     'mask' => '99-9999',])
-                                                ?>                                               <?php
+                                                ?>                                               
+                                                <?php
                                             }
 
                                             if (in_array($value, array('p_dcsc_code'))) {
+                                                $depend = 'reportsmodel-p_bmc_code';
+                                                if (isset($value_array[1])) {
+                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-p_route_code';
+                                                }
+                                                $value_array[1];
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, 'reportsmodel-p_bmc_code', 'p_dcsc_code', Yii::t('app', 'Name')); ?>
+                                                    <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $depend, 'p_dcsc_code', Yii::t('app', 'Name')); ?>
                                                 </div>
                                                 <?php
+                                            }
+                                            if (in_array($value, array('p_billing_for'))) {
+                                                echo Yii::$app->dropdown->dropdownStatic('billing_for', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel($value), false, $value, false);
                                             }
                                         }
                                         if (isset($data['report_type'])) {
@@ -329,7 +338,18 @@ $defaultToggle = true;
                                         <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
-                                            echo GhostHtml::submitButton('<i class="text-white fa fa-file-pdf-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', 'pdf')]);
+                                            $client_code = \Yii::$app->session->get('eiplCode');
+                                            $titleTcpdf = 'pdf';
+                                            $iconClass = ' fa fa-file-pdf-o ';
+                                            if (strtolower($client_code) == 'mmd') {
+                                                $titleTcpdf = 'Milktype Wise Bill';
+                                                $iconClass = ' fa fa-file-text-o ';
+                                            }
+                                            echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf', 'id' => 'tcpdf', 'title' => Yii::t('app', $titleTcpdf)]);
+
+                                            if (strtolower($client_code) == 'mmd') {
+                                                echo GhostHtml::submitButton('<i class="text-white ' . $iconClass . '"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'tcpdf_two', 'id' => 'tcpdf_two', 'title' => Yii::t('app', 'Shift Wise Bill')]);
+                                            }
                                         }
                                         ?>
                                         <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
@@ -441,6 +461,30 @@ $defaultToggle = true;
             $('#reportsmodel-p_milk_type option:first').after($('<option/>', { 'value': '','selected':'selected', text: '" . Yii::t('app', 'NA') . "'}));      
        }
     });
+    
+    $(document).ready(function(){  
+        if('" . $report . "'=='VendorBillMmd'){
+            hideRoute();
+            $(document).on('change','#reportsmodel-p_billing_for', function() {
+                hideRoute();
+            });
+        }
+    });
+    $(document).on('change','#reportsmodel-p_billing_for', function() {
+        if('" . $report . "'=='VendorBillMmd'){
+            hideRoute();
+        }
+    });
+    function hideRoute(){
+        var type =  $('#reportsmodel-p_billing_for option:selected').val();
+        if(type == '1'){
+            $('.dd_route').show();
+        }else {
+            $('.dd_route').hide();
+            $('.dd_route select').val('');
+            $('.dd_route select').trigger('change');
+        }
+    }
 ";
     $this->registerJs($script, View::POS_END, 'shift');
     ?>
@@ -549,7 +593,7 @@ if('" . $report . "'=='InchargeRemuneration'){
         }
     });
 }
-if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'){
+if('" . $report . "'!='MemberMilkCollectionSummary' && '" . $report . "'!='DcsCollectionVsDispatchGraph'&& '" . $report . "'!='BMCPayment'&& '" . $report . "'!='VendorMilkPayment'&& '" . $report . "'!='MemberMilkPayment'&& '" . $report . "'!='VendorMilkBill'&& '" . $report . "'!='MemberMilkBill'&& '" . $report . "'!='VendorBill'&& '" . $report . "'!='InchargeRemuneration'&& '" . $report . "'!='VendorMilkPaymentVarddan'&& '" . $report . "'!='MemberBillAbstract'&& '" . $report . "'!='VendorMilkBillVarddan'&& '" . $report . "'!='VendorBillMmd'){
     $('#reportsmodel-p_plant_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
         $('#reportsmodel-p_plant_code option:first').after($('<option/>', { 'value': '0', text: '" . Yii::t('app', 'All') . "'}));      
         if('" . $model->p_plant_code . "'=='0'){

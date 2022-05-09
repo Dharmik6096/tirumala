@@ -2055,16 +2055,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '312 - MCC Wise Product Sale for Paid Installment',
             ],
             'NewMemberPouringMilk' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_new_member_pouring_milk',
                 'scenario' => 'NewMemberPouringMilk',
-                'title' => '313 - New Member Pouring Milk',
+                'title' => '110 - New Member Pouring Milk',
             ],
             'NewCustomerPouringMilk' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_bmc_collection_shift_for_new_customer',
                 'scenario' => 'NewCustomerPouringMilk',
-                'title' => '314 - New Customer Pouring Milk',
+                'title' => '215 - New Customer Pouring Milk',
             ],
         ];
         return $label[$l];
