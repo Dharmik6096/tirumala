@@ -54,17 +54,18 @@ $defaultToggle = true;
                                         if (in_array($value, array('dcs_code', 'p_dcs_code', 'pm_dcs_code'))) {
                                             ?>
                                             <?php
-                                            if (isset($value_array[1]) && $value_array[1] == 'p_route_code') {
+                                            if (isset($value_array[1]) && ($value_array[1] == 'p_route_code' || $value_array[1] == 'route_code')) {
                                                 $allowmulti = false;
                                                 if (isset($value_array[2]) && $value_array[2] == 'multiselect') {
                                                     $allowmulti = true;
                                                 }
                                                 $id = 'reportsmodel-' . $value;
+                                                $depends = 'reportsmodel-' . $value_array[1];
                                                 ?>
 
                                                 <div class="col-sm-3">
                                                     <?php
-                                                    echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-p_route_code', 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
+                                                    echo Yii::$app->dropdown->route_dcs($model, $form, $depends, 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
                                                     ?>
                                                 </div>
                                             <?php } else { ?>
@@ -302,7 +303,7 @@ $defaultToggle = true;
                                             if (in_array($value, array('p_dcsc_code'))) {
                                                 $depend = 'reportsmodel-p_bmc_code';
                                                 if (isset($value_array[1])) {
-                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-p_route_code';
+                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-route_code';
                                                 }
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
