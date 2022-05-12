@@ -343,7 +343,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = 0;
 
-                  var_dump($controls);die;
+//                  var_dump($controls);die;
             $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
 
             $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
