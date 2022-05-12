@@ -626,7 +626,7 @@ class PDF extends TCPDF {
                 $textContent .= "\n";
                 $textContent .= str_pad('', 14, ' ', STR_PAD_LEFT);
                 $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
-                $datePad = 92 - (14 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+                $datePad = 91 - (14 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
 //                $textContent .= date('d.m.Y');
                 $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
