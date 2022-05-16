@@ -10,7 +10,8 @@ use yii\helpers\Url;
 $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'All Reports - List');
 $inclass = !empty($result) ? '' : 'in';
 $title = isset($this->title) ? $this->title : Yii::t('app', 'Search');
-$defaultToggle = true;?>
+$defaultToggle = true;
+?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading"><?= Html::encode($this->title) ?></div>
     <div class="panel-body">
@@ -86,9 +87,9 @@ $defaultToggle = true;?>
 
             <div id='dynamic-report-grid'>
                 <?php if (!empty($result)) { ?>
-<!--                    <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                        <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
-                    </div>-->
+                    <!--                    <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                                            <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
+                                        </div>-->
                 <?php } ?>
                 <?php
                 if (!empty($result) && !is_array($result)) {
@@ -97,6 +98,9 @@ $defaultToggle = true;?>
                     $attr = [];
                     foreach ($result[0] as $att => $value) {
                         $attr_arr = [];
+                        $attr_arr['value'] = function($model) use ($att) {
+                            return !empty($model[$att]) ? (Yii::$app->general->decryptData($model[$att]) !== FALSE ? Yii::$app->general->decryptData($model[$att]) : $model[$att]) : (isset($model[$att]) && $model[$att] == 0 && $model[$att] != '' ? 0 : '');
+                        };
                         $attr_arr['attribute'] = $att;
                         $attr[] = $attr_arr;
                     }
