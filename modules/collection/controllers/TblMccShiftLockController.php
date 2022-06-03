@@ -506,8 +506,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $data_array['bmc_code'] = '0';
         $data_array['from_date'] = $date;
         $data_array['to_date'] = $date;
-        $ftp_model = new TblFtpTxnLog();
-        $ftp_model->exportData($data_array);
+        if (in_array($mcc, ['7300', '7304', '7300', '7301', '7303', '7304', '7384', '7583', '7416', '7423', '7424', '7302'])) {
+            $ftp_model = new TblFtpTxnLog();
+            $ftp_model->exportData($data_array);
+        }
     }
 
 }
