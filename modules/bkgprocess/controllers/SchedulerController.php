@@ -814,6 +814,7 @@ class SchedulerController extends ChildController {
             foreach ($param as $key => $val) {
                 $controls[$val] = 0;
             }
+            $controls['union_code'] = '003';
             $controls['from_date'] = date('Y-m-d 06:00:00');
             $controls['to_date'] = date('Y-m-d 18:00:00');
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
@@ -844,6 +845,12 @@ class SchedulerController extends ChildController {
                 $result = $ftp_model->exportData($data_array, $title, $download);
                 if (!empty($result)) {
                     $controls['file_name'] = $result;
+                    $ftp_model->ref_code = $data_array['module_code'];
+                    $bmc_data = $ftp_model->bmcCode;
+                    if (!empty($bmc_data)) {
+                        $controls['mcc_plant_code'] = $bmc_data->bmc_code;
+                        $controls['bmc_code'] = $bmc_data->mcc_plant_code;
+                    }
                     \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
                 }
             }
