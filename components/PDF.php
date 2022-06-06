@@ -614,21 +614,24 @@ class PDF extends TCPDF {
 //                $pdf->writeHTML($tableData, true, false, false, false, '');
                 $acNo = 'AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '');
                 $acIfsc = 'IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
-                $textContent .= str_pad('', 14, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
                 $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
-                $textContent .= str_pad('', 3, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
                 $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
-                $inPad = 85 - (14 + strlen($acNo) + 3 + strlen($acIfsc));
-                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+                $inPad = 82 - (13 + strlen($acNo) + 5 + strlen($acIfsc));
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
-                $textContent .= str_pad('', 14, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
                 $textContent .= (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
-                $textContent .= "\n";
-                $textContent .= str_pad('', 14, ' ', STR_PAD_LEFT);
-                $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
-                $datePad = 91 - (14 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+                $datePad = 90 - (13 + strlen((!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '')));
 //                $textContent .= date('d.m.Y');
                 $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                $textContent .= 'ROUTE CODE: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
+//                $datePad = 91 - (13 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+////                $textContent .= date('d.m.Y');
+//                $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= "\n";
                 $textContent .= "\n";
@@ -684,16 +687,16 @@ class PDF extends TCPDF {
                 foreach ($value['details'] as $tbl_key => $tbl_value) {
                     $collDate = (!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) ? $tbl_value['cow'][0]['collection_date_php'] : ((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) ? $tbl_value['buffalo'][0]['collection_date_php'] : '')));
                     $textContent .= str_pad($collDate, 12, ' ', STR_PAD_LEFT); //$collDate;
-                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_qty']) ? number_format((float) $tbl_value['buffalo'][0]['bm_qty'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_qty']) ? number_format((float) $tbl_value['buffalo'][0]['bm_qty'], 2) : ''), 6, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgFAT'], 2) : ''), 7, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['rate']) ? number_format((float) $tbl_value['buffalo'][0]['rate'], 2) : ''), 9, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_amount']) ? number_format((float) $tbl_value['buffalo'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['rate']) ? number_format((float) $tbl_value['buffalo'][0]['rate'], 2) : ''), 10, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_amount']) ? number_format((float) $tbl_value['buffalo'][0]['bm_amount'], 2) : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_qty']) ? number_format((float) $tbl_value['cow'][0]['bm_qty'], 2) : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['cow'][0]['bm_avgFAT'], 2) : ''), 6, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['cow'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['rate']) ? number_format((float) $tbl_value['cow'][0]['rate'], 2) : ''), 9, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_amount']) ? number_format((float) $tbl_value['cow'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['rate']) ? number_format((float) $tbl_value['cow'][0]['rate'], 2) : ''), 10, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_amount']) ? number_format((float) $tbl_value['cow'][0]['bm_amount'], 2) : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= "\n";
 //                    $detailTable .= '<tr>
 //                            <td align="center" width="60">' .
@@ -755,7 +758,7 @@ class PDF extends TCPDF {
                         $eDevideCount++;
                     }
                 }
-                for ($j = 0; $j < 15 - count($value['details']); $j++) {
+                for ($j = 0; $j < 16 - count($value['details']); $j++) {
 //                    $detailTable .= '<tr>
 //                            <td align="left"></td>
 //                            <td align="center"></td>
@@ -788,7 +791,7 @@ class PDF extends TCPDF {
 //                        <td align="right" colspan="3">Net. Payable : ' . $final_pay . '</td>
 //                    </tr>';
 //                }
-                $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 11, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad(number_format($total_qty_pm, 2), 8, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
@@ -862,7 +865,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
                 $textContent .= str_pad(substr($amtInWords, 40), 40, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
                 $textContent .= str_pad(number_format($final_payable, 2), 36, ' ', STR_PAD_LEFT);
-                for ($k = 0; $k < 9; $k++) {
+                for ($k = 0; $k < 8; $k++) {
                     $textContent .= "\n";
                 }
 //                $textContent .= substr($amtInWords, 40);
@@ -1105,7 +1108,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 87 - (33 + strlen($memName));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
