@@ -326,7 +326,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage) {
+    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage, $url = 'index-other') {
         $saveModel = [];
         $model = new TblMccShiftLock();
         $model->mcc_plant_code = $mcc;
@@ -362,33 +362,37 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
         }
-        return $this->redirect(['index-other']);
+        return $this->redirect([$url]);
     }
 
-    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
+    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        if (Yii::$app->session->get('eiplCode') != 'MMD') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
+        }
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url);
     }
 
-    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
+    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        if (Yii::$app->session->get('eiplCode') != 'MMD') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
+        }
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 'Data Unlock - Member', $url);
     }
 
-    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url);
     }
 
-    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC');
+    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC', $url);
     }
 
-    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member');
+    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member', $url);
     }
 
-    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale');
+    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url);
     }
 
     public function actionLockDataOther() {
