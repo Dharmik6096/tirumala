@@ -25,10 +25,14 @@ $attribute = [
 //        }, 
         'filter' => FALSE],
     ['attribute' => 'shift', 'filter' => false],
-    ['attribute' => 'qty', 'filter' => FALSE],
-    ['attribute' => 'avgFAT', 'filter' => FALSE],
-    ['attribute' => 'avgSNF', 'filter' => FALSE],
-    ['attribute' => 'amount', 'filter' => FALSE],
+    ['attribute' => 'DCSqty', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Qty')],
+    ['attribute' => 'DCSavgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Avg FAT')],
+    ['attribute' => 'DCSavgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Avg SNF')],
+    ['attribute' => 'DCSamount', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Amount')],
+    ['attribute' => 'Farmerqty', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Qty')],
+    ['attribute' => 'FarmeravgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Avg FAT')],
+    ['attribute' => 'FarmeravgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Avg SNF')],
+    ['attribute' => 'Farmeramount', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Amount')],
     ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
             $class = $model['bmc_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
             $title = $model['bmc_lock'] == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
@@ -44,7 +48,7 @@ $attribute = [
                 'data-original-title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount'], 'url' => 'index'])
+                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
             ];
             return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
         },
@@ -67,7 +71,7 @@ $attribute = [
                 'data-original-title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount'], 'url' => 'index'])
+                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
             ];
             return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
         },
@@ -90,7 +94,7 @@ $attribute = [
                 'data-original-title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount'], 'url' => 'index'])
+                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
             ];
             return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
         },
@@ -115,11 +119,11 @@ $grid_option = [
             }
             if (!empty($data) && $data->data_lock == 1) {
                 $class = 'lock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
+                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data'], $options);
             } else {
                 $class = 'unlock'; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
+                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data'], $options);
             }
         },
@@ -149,6 +153,10 @@ $(document).ready(function(){
     var amount = $(this).attr('data-amount');
     var fat = $(this).attr('data-fat');
     var snf = $(this).attr('data-snf');
+    var f_qty = $(this).attr('data-f_qty');
+    var f_amount = $(this).attr('data-f_amount');
+    var f_fat = $(this).attr('data-f_fat');
+    var f_snf = $(this).attr('data-f_snf');
     bootbox.confirm({
         message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to LOCK Data ?</span></div></div>',
         buttons: {
@@ -167,7 +175,7 @@ $(document).ready(function(){
                  $.ajax({
                         type: 'get',
                         url: '" . Url::to(['lock-data']) . "',
-                        data:{'mcc':mcc,'date':date,'union':union,'plant':plant,'shift':shift,'qty':qty,'amount':amount,'fat':fat,'snf':snf},
+                        data:{'mcc':mcc,'date':date,'union':union,'plant':plant,'shift':shift,'qty':qty,'amount':amount,'fat':fat,'snf':snf,'f_qty':f_qty,'f_amount':f_amount,'f_fat':f_fat,'f_snf':f_snf},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -199,6 +207,10 @@ $(document).ready(function(){
     var amount = $(this).attr('data-amount');
     var fat = $(this).attr('data-fat');
     var snf = $(this).attr('data-snf');
+    var f_qty = $(this).attr('data-f_qty');
+    var f_amount = $(this).attr('data-f_amount');
+    var f_fat = $(this).attr('data-f_fat');
+    var f_snf = $(this).attr('data-f_snf');
     bootbox.confirm({
         message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to UN-LOCK \"'+name+'\"?</span></div></div>',
         buttons: {
@@ -217,7 +229,7 @@ $(document).ready(function(){
                  $.ajax({
                         type: 'get',
                         url: '" . Url::to(['unlock']) . "',
-                         data:{'mcc':mcc,'date':date,'union':union,'plant':plant,'shift':shift,'qty':qty,'amount':amount,'fat':fat,'snf':snf},
+                         data:{'mcc':mcc,'date':date,'union':union,'plant':plant,'shift':shift,'qty':qty,'amount':amount,'fat':fat,'snf':snf,'f_qty':f_qty,'f_amount':f_amount,'f_fat':f_fat,'f_snf':f_snf},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')

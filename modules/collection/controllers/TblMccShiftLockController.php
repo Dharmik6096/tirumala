@@ -127,6 +127,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $fat = Yii::$app->request->get()['fat'];
         $snf = Yii::$app->request->get()['snf'];
         $amount = Yii::$app->request->get()['amount'];
+        $fqty = Yii::$app->request->get()['f_qty'];
+        $ffat = Yii::$app->request->get()['f_fat'];
+        $fsnf = Yii::$app->request->get()['f_snf'];
+        $famount = Yii::$app->request->get()['f_amount'];
         $saveModel = [];
         if (!empty($mcc)) {
             $this->model = new TblMccShiftLock();
@@ -139,9 +143,13 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->avg_fat = $fat;
             $this->model->avg_snf = $snf;
             $this->model->amount = $amount;
+            $this->model->x_col1 = $fqty;
+            $this->model->x_col2 = $ffat;
+            $this->model->x_col3 = $fsnf;
+            $this->model->x_col4 = $famount;
             $existData = $this->model->getExistData();
             $Recovery = TRUE;
-            if (Yii::$app->session->get('eiplCode') == 'MMD') {
+            if (Yii::$app->session->get('eiplCode') == 'MMDfsfd') {
                 $recoveryModel = new TblVspTransitRecovery();
                 $existRecovery = $recoveryModel->getExistData($this->model);
                 $Recovery = $existRecovery > 0 ? TRUE : FALSE;
@@ -182,7 +190,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $saveModel[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                    if (Yii::$app->session->get('eiplCode') == 'MMDfdf') {
                         $api = new WebApi();
                         $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
                         $api->authentication = FALSE;
@@ -277,6 +285,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $fat = Yii::$app->request->get()['fat'];
         $snf = Yii::$app->request->get()['snf'];
         $amount = Yii::$app->request->get()['amount'];
+        $fqty = Yii::$app->request->get()['f_qty'];
+        $ffat = Yii::$app->request->get()['f_fat'];
+        $fsnf = Yii::$app->request->get()['f_snf'];
+        $famount = Yii::$app->request->get()['f_amount'];
         $saveModel = [];
         if (!empty($mcc)) {
             $this->model = new TblMccShiftLock();
@@ -289,6 +301,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->avg_fat = $fat;
             $this->model->avg_snf = $snf;
             $this->model->amount = $amount;
+            $this->model->x_col1 = $fqty;
+            $this->model->x_col2 = $ffat;
+            $this->model->x_col3 = $fsnf;
+            $this->model->x_col4 = $famount;
             $existData = $this->model->getExistData();
             if (!empty($existData)) {
                 $this->model = $this->findModel($existData->shift_lock_code);
@@ -326,7 +342,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage, $url = 'index-other') {
+    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
         $saveModel = [];
         $model = new TblMccShiftLock();
         $model->mcc_plant_code = $mcc;
@@ -338,6 +354,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $model->avg_fat = $fat;
         $model->avg_snf = $snf;
         $model->amount = $amount;
+        $model->x_col1 = $fqty;
+        $model->x_col2 = $ffat;
+        $model->x_col3 = $fsnf;
+        $model->x_col4 = $famnt;
         $model->{$updateField} = $val;
         $modelData = $model->getExistData();
         $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
@@ -365,34 +385,34 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         return $this->redirect([$url]);
     }
 
-    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
         if (Yii::$app->session->get('eiplCode') != 'MMD') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url);
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
+    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
         if (Yii::$app->session->get('eiplCode') != 'MMD') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
         }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 'Data Unlock - Member', $url);
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 'Data Unlock - Member', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url);
+    public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 1, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC', $url);
+    public function actionBmcDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 0, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member', $url);
+    public function actionMemberDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 0, 'Data Lock - Member', 'Data Unlock - Member', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other') {
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url);
+    public function actionProductSaleUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'product_sale_lock', 0, 'Data Lock - Product Sale', 'Data Unlock - Product Sale', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
     public function actionLockDataOther() {
