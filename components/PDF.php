@@ -791,6 +791,7 @@ class PDF extends TCPDF {
 //                        <td align="right" colspan="3">Net. Payable : ' . $final_pay . '</td>
 //                    </tr>';
 //                }
+                $textContent .= "\n";
                 $textContent .= str_pad('', 11, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad(number_format($total_qty_pm, 2), 8, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
