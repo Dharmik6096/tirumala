@@ -343,7 +343,7 @@ class DefaultController extends \app\controllers\ChildController {
             //$controls['digit_config'] = Yii::$app->session->get('DigitConfig');
             $controls['digit_config'] = 0;
 
-            //      var_dump($controls);die;
+//                  var_dump($controls);die;
             $clientJasper = new Client(\Yii::$app->params['jasper_server'], \Yii::$app->params['jasper_username'], \Yii::$app->params['jasper_password']);
 
             $this->output = $clientJasper->reportService()->runReport(\Yii::$app->params['report_path'] . $this->data['path'], $this->type, null, null, $controls);
@@ -682,7 +682,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '604 - Vendor Milk Payment',
             ],
             'MemberBillAbstract' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_route_code:all_routes,p_dcs_code:route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/MemberBillAbstract',
                 'scenario' => 'MemberBillAbstract',
                 'title' => '615 - Member Bill Abstract',
@@ -694,10 +694,10 @@ class DefaultController extends \app\controllers\ChildController {
                 'title' => '616 - Milk Bill',
             ],
             'VendorBillMmd' => [
-                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:union_code,p_dcsc_code:p_route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_billing_for,p_route_code:all_routes,p_dcsc_code:route_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
                 'path' => 'vsp/VendorBillFormated',
                 'scenario' => 'VendorBillMmd',
-                'title' => '612 - Vendor Bill',
+                'title' => '612 - Member and Vendor Milk Bill',
                 'tcpdf' => true,
             ],
         ];

@@ -1,7 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'AMCS Installation'));
-$this->params['menu'][] = Yii::$app->controls->add('AMCS Installation');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Add App Lock', 'tbl-app-lock-password/index', '', 'btn btn-danger btn-block', '<i class="fa fa-plus"></i>');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'App Lock Password'));
+$this->params['menu'][] = Yii::$app->controls->add('App Lock Password');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

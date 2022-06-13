@@ -566,8 +566,10 @@ class DefaultController extends \app\controllers\ChildController {
         $data_array['bmc_code'] = NULL;
         $data_array['from_date'] = $model->from_date;
         $data_array['to_date'] = $model->to_date;
+//        if (in_array($bmc, ['7300', '7304', '7350'])) {
         $ftp_model = new TblFtpTxnLog();
         $ftp_model->exportData($data_array, $title, $output);
+//        }
     }
 
     /* Reports Configuration */

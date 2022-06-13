@@ -54,17 +54,18 @@ $defaultToggle = true;
                                         if (in_array($value, array('dcs_code', 'p_dcs_code', 'pm_dcs_code'))) {
                                             ?>
                                             <?php
-                                            if (isset($value_array[1]) && $value_array[1] == 'p_route_code') {
+                                            if (isset($value_array[1]) && ($value_array[1] == 'p_route_code' || $value_array[1] == 'route_code')) {
                                                 $allowmulti = false;
                                                 if (isset($value_array[2]) && $value_array[2] == 'multiselect') {
                                                     $allowmulti = true;
                                                 }
                                                 $id = 'reportsmodel-' . $value;
+                                                $depends = 'reportsmodel-' . $value_array[1];
                                                 ?>
 
                                                 <div class="col-sm-3">
                                                     <?php
-                                                    echo Yii::$app->dropdown->route_dcs($model, $form, 'reportsmodel-p_route_code', 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
+                                                    echo Yii::$app->dropdown->route_dcs($model, $form, $depends, 'p_dcs_code', Yii::t('app', 'Society'), false, $allowmulti, $id);
                                                     ?>
                                                 </div>
                                             <?php } else { ?>
@@ -75,15 +76,22 @@ $defaultToggle = true;
                                             }
                                         }
                                         if (in_array($value, array('p_route_code'))) {
-                                            ?>
-                                            <div class="col-sm-3 dd_route">
-                                                <?php
-                                                echo Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value);
+                                            if (isset($value_array[1]) && $value_array[1] == 'all_routes') {
                                                 ?>
-                                            </div>    
-                                            <?php
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->all_routes($model, $form, 'reportsmodel-p_plant_code,reportsmodel-p_mcc_code,reportsmodel-p_bmc_code', 'route_code', Yii::t('app', 'Route')); ?>
+                                                </div>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <div class="col-sm-3 dd_route">
+                                                    <?php
+                                                    echo Yii::$app->dropdown->union_routes($model, $form, 'reportsmodel-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Route', $value);
+                                                    ?>
+                                                </div>    
+                                                <?php
+                                            }
                                         }
-
                                         if (in_array($value, array('p_district_code'))) {
                                             ?>
                                             <div class="col-sm-3">
@@ -295,9 +303,8 @@ $defaultToggle = true;
                                             if (in_array($value, array('p_dcsc_code'))) {
                                                 $depend = 'reportsmodel-p_bmc_code';
                                                 if (isset($value_array[1])) {
-                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-p_route_code';
+                                                    $depend = 'reportsmodel-p_bmc_code,reportsmodel-p_billing_for,reportsmodel-route_code';
                                                 }
-                                                $value_array[1];
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
                                                     <?= Yii::$app->dropdown->merge_dcs_customer($model, $form, $depend, 'p_dcsc_code', Yii::t('app', 'Name')); ?>
@@ -462,29 +469,29 @@ $defaultToggle = true;
        }
     });
     
-    $(document).ready(function(){  
-        if('" . $report . "'=='VendorBillMmd'){
-            hideRoute();
-            $(document).on('change','#reportsmodel-p_billing_for', function() {
-                hideRoute();
-            });
-        }
-    });
-    $(document).on('change','#reportsmodel-p_billing_for', function() {
-        if('" . $report . "'=='VendorBillMmd'){
-            hideRoute();
-        }
-    });
-    function hideRoute(){
-        var type =  $('#reportsmodel-p_billing_for option:selected').val();
-        if(type == '1'){
-            $('.dd_route').show();
-        }else {
-            $('.dd_route').hide();
-            $('.dd_route select').val('');
-            $('.dd_route select').trigger('change');
-        }
-    }
+//    $(document).ready(function(){  
+//        if('" . $report . "'=='VendorBillMmd'){
+//            hideRoute();
+//            $(document).on('change','#reportsmodel-p_billing_for', function() {
+//                hideRoute();
+//            });
+//        }
+//    });
+//    $(document).on('change','#reportsmodel-p_billing_for', function() {
+//        if('" . $report . "'=='VendorBillMmd'){
+//            hideRoute();
+//        }
+//    });
+//    function hideRoute(){
+//        var type =  $('#reportsmodel-p_billing_for option:selected').val();
+//        if(type == '1'){
+//            $('.dd_route').show();
+//        }else {
+//            $('.dd_route').hide();
+//            $('.dd_route select').val('');
+//            $('.dd_route select').trigger('change');
+//        }
+//    }
 ";
     $this->registerJs($script, View::POS_END, 'shift');
     ?>
