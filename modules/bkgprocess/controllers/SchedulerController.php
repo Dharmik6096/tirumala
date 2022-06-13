@@ -817,6 +817,8 @@ class SchedulerController extends ChildController {
             $controls['union_code'] = '003';
             $controls['from_date'] = date('Y-m-d 06:00:00');
             $controls['to_date'] = date('Y-m-d 18:00:00');
+//            $controls['from_date'] = '2022-06-10 06:00:00';
+//            $controls['to_date'] = '2022-06-10 18:00:00';
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
@@ -830,7 +832,8 @@ class SchedulerController extends ChildController {
             }
             foreach ($downLoadArray as $bmc => $download) {
                 $report_type = Yii::t('app', 'WQ');
-                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($controls['from_date'])) . '_1';
+                $shiftId = !empty($download[0]) && !empty($download[0]['Shift Id']) ? $download[0]['Shift Id'] : 1;
+                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($controls['from_date'])) . '_' . $shiftId;
                 $data_array = [];
                 $data_array['module_name'] = 'TblBmcCollection_dispatch';
                 $data_array['module_code'] = $bmc;
