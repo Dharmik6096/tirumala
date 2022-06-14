@@ -432,6 +432,7 @@ echo GhostMenu::widget([
                                 ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                 ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
                                 ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                                ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                             ]
                         ],
                         [
