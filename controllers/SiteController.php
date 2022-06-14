@@ -90,7 +90,7 @@ class SiteController extends Controller {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -2274,8 +2274,8 @@ class SiteController extends Controller {
             $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
             $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
             $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
-            $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
-            $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' ' . Yii::$app->general->getshift($data['from_shift']);
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' ' . Yii::$app->general->getshift($data['to_shift']);
             $sp_param[] = empty($data['widget_for']) ? '' : $data['widget_for'];
             $union = $data['union'];
             $widget_for = $data['widget_for'];
