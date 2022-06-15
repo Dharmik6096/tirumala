@@ -612,30 +612,52 @@ class PDF extends TCPDF {
 //                $tableData .= '</tr>';
 //                $tableData .= '</table>';
 //                $pdf->writeHTML($tableData, true, false, false, false, '');
-                $acNo = 'AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '');
-                $acIfsc = 'IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
+                $acNo = 'AC.No:' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '');
+                $acIfsc = 'IFSC:' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
+
                 $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
-                $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
-                $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
-                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
-                $inPad = 82 - (13 + strlen($acNo) + 5 + strlen($acIfsc));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $memberName = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
+                $textContent .= $memberName;
+                $textContent .= ' ' . $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
+                $inPad = 82 - (13 + strlen($memberName) + 1 + strlen($acNo));
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
-                $textContent .= (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
-                $datePad = 90 - (13 + strlen((!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '')));
-//                $textContent .= date('d.m.Y');
+                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
+                $routeName = 'R.CODE:' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
+                $textContent .= ' ' . $routeName;
+                $datePad = 90 - (13 + strlen($acIfsc) + 1 + strlen($routeName));
                 $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
-                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
-                $textContent .= 'ROUTE CODE: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
-//                $datePad = 91 - (13 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+                $textContent .= str_pad('', 89, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= "\n";
+                $textContent .= "\n";
+                $textContent .= "\n";
+
+
+//                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+//                $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
+//                $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
+//                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
+//                $inPad = 82 - (13 + strlen($acNo) + 5 + strlen($acIfsc));
+//                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+//                $textContent .= "\n";
+//                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+//                $textContent .= (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
+//                $datePad = 90 - (13 + strlen((!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '')));
 ////                $textContent .= date('d.m.Y');
 //                $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
-                $textContent .= "\n";
-                $textContent .= "\n";
-                $textContent .= "\n";
-                $textContent .= "\n";
+//                $textContent .= "\n";
+//                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+//                $textContent .= 'ROUTE CODE: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
+////                $datePad = 91 - (13 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+//////                $textContent .= date('d.m.Y');
+////                $textContent .= str_pad(date('d.m.Y'), $datePad, ' ', STR_PAD_LEFT);
+//                $textContent .= "\n";
+//                $textContent .= "\n";
+//                $textContent .= "\n";
+//                $textContent .= "\n";
 //                $textContent .= '&nbsp;' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '') . '&nbsp;&nbsp;&nbsp;IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
 //                $detailTable = '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:170px">';
                 $total_qty_am = 0;
@@ -758,7 +780,7 @@ class PDF extends TCPDF {
                         $eDevideCount++;
                     }
                 }
-                for ($j = 0; $j < 16 - count($value['details']); $j++) {
+                for ($j = 0; $j < 14 - count($value['details']); $j++) {
 //                    $detailTable .= '<tr>
 //                            <td align="left"></td>
 //                            <td align="center"></td>
@@ -772,6 +794,10 @@ class PDF extends TCPDF {
 //                            <td align="center"></td>
 //                            <td align="center"></td>
 //                        </tr>';
+                    $textContent .= str_pad('', 89, ' ', STR_PAD_LEFT);
+                    $textContent .= "\n";
+                }
+                for ($j = 0; $j < 1; $j++) {
                     $textContent .= "\n";
                 }
 //                $detailTable .= '</table>';
@@ -1109,7 +1135,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 87 - (33 + strlen($memName));
-                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
