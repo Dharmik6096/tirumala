@@ -51,6 +51,7 @@ class TblVspPaymentHistory extends \yii\db\ActiveRecord {
                 [['vsp_payment_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'customer_code', 'customer_type'], 'safe'],
                 [['vsp_payment_code', 'payment_cycle_code', 'dcs_payment_cycle_applicabilty_code'], 'safe'],
                 [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'safe'],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty'], 'safe'],
         ];
     }
 

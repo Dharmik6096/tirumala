@@ -2080,14 +2080,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_data_daily_umang',
                 'scenario' => 'UmangSapReport',
-                'title' => '406 - Daily/Weekly Data Export(UMANG)',
+                'title' => '406 - Daily Data Export(UMANG)',
                 'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
             ],
             'UmangSapReportWeekly' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'sp_mis_sap_data_weekly_umang',
                 'scenario' => 'UmangSapReport',
-                'title' => '406 - Daily/Weekly Data Export(UMANG)',
+                'title' => '406 - Weekly Data Export(UMANG)',
                 'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
             ],
         ];
