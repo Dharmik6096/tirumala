@@ -1026,6 +1026,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionUmangSapReport() {
+        $this->report = 'UmangSapReportDaily';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'UmangSapReportWeekly';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     private function getLabels($l) {
@@ -2065,6 +2075,20 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_shift_for_new_customer',
                 'scenario' => 'NewCustomerPouringMilk',
                 'title' => '215 - New Customer Pouring Milk',
+            ],
+            'UmangSapReportDaily' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_data_daily_umang',
+                'scenario' => 'UmangSapReport',
+                'title' => '406 - Daily/Weekly Data Export(UMANG)',
+                'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
+            ],
+            'UmangSapReportWeekly' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_sap_data_weekly_umang',
+                'scenario' => 'UmangSapReport',
+                'title' => '406 - Daily/Weekly Data Export(UMANG)',
+                'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
             ],
         ];
         return $label[$l];
