@@ -359,6 +359,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
+            if (Yii::$app->session->get('eiplCode') == 'UMANG') {
+                $this->generateSapDataUmang($mcc, $date, $shift);
+            }
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
         }
@@ -366,12 +369,16 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
+        }
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
     }
 
     public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
+        }
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
     }
 
@@ -417,12 +424,13 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->amount = $amount;
             $this->model->amount = $amount;
             $existData = $this->model->getExistData();
-
+            $old_bmc_lock = 0;
             if (!empty($existData)) {
                 $this->model = $this->findModel($existData->shift_lock_code);
                 $historyModel = new TblMccShiftLockHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $saveModel[] = $historyModel;
+                $old_bmc_lock = $this->model->bmc_lock;
             } else {
                 $this->model->shift_lock_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             }
@@ -434,6 +442,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
                 $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
+                if (Yii::$app->session->get('eiplCode') == 'UMANG' && $old_bmc_lock != 1) {
+                    $this->generateSapDataUmang($mcc, $date, $shift);
+                }
             } else {
                 $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
             }
@@ -510,6 +521,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $ftp_model = new TblFtpTxnLog();
         $ftp_model->exportData($data_array);
 //        }
+    }
+
+    public function generateSapDataUmang($mcc, $date, $shift) {
+        \Yii::$app->general->getSpData('sp_generate_sap_data_daily', [$mcc, $date, $shift], TRUE);
     }
 
 }
