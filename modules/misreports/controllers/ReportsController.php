@@ -2082,6 +2082,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'UmangSapReport',
                 'title' => '406 - Daily Data Export(UMANG)',
                 'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
+                'kartik_grid_view' => 'UmangSapReportDaily',
             ],
             'UmangSapReportWeekly' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2089,6 +2090,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'UmangSapReport',
                 'title' => '406 - Weekly Data Export(UMANG)',
                 'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
+                'kartik_grid_view' => 'UmangSapReportWeekly',
             ],
         ];
         return $label[$l];
