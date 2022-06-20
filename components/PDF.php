@@ -883,11 +883,11 @@ class PDF extends TCPDF {
 //                $detailTable .= '</table>';
                 $textContent .= str_pad(number_format($totalAmt, 2), 88, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
-                $textContent .= str_pad(number_format($total_addition, 2), 88, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_deduction, 2), 88, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
                 $textContent .= str_pad(substr($amtInWords, 0, 40), 40, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
-                $textContent .= str_pad(number_format($total_deduction, 2), 36, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(number_format($total_addition, 2), 36, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
                 $textContent .= str_pad(substr($amtInWords, 40), 40, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
