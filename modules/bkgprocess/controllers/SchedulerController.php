@@ -815,32 +815,39 @@ class SchedulerController extends ChildController {
                 $controls[$val] = 0;
             }
             $controls['union_code'] = '003';
-            $controls['from_date'] = date('Y-m-d 06:00:00');
+            $controls['from_date'] = date('Y-m-d h:i:s', strtotime(date('Y-m-d 06:00:00') . '- 12 days'));
             $controls['to_date'] = date('Y-m-d 18:00:00');
+//            $controls['from_date'] = '2022-06-10 06:00:00';
+//            $controls['to_date'] = '2022-06-10 18:00:00';
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
                 $plant = 'Plant Code';
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
-                    if (empty($downLoadArray[$detail[$plant]])) {
-                        $downLoadArray[$detail[$plant]] = [];
+                    $array_key = $detail[$plant] . '###' . $detail['Recpt Date'] . '###' . $detail['Shift Id'];
+                    if (empty($downLoadArray[$array_key])) {
+                        $downLoadArray[$array_key] = [];
                     }
-                    $downLoadArray[$detail[$plant]][] = $detail;
+                    $downLoadArray[$array_key][] = $detail;
                 }
             }
             foreach ($downLoadArray as $bmc => $download) {
+                $bmc = explode('###', $bmc)[0];
                 $report_type = Yii::t('app', 'WQ');
-                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($controls['from_date'])) . '_1';
+                $shiftId = !empty($download[0]) && !empty($download[0]['Shift Id']) ? $download[0]['Shift Id'] : 1;
+                $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $download[0]['Recpt Date'])));
+                $from_date .= ' ' . \Yii::$app->general->getshift($shiftId);
+                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($from_date)) . '_' . $shiftId;
                 $data_array = [];
                 $data_array['module_name'] = 'TblBmcCollection_dispatch';
                 $data_array['module_code'] = $bmc;
                 $data_array['mcc_plant_code'] = $bmc;
                 $data_array['union_code'] = NULL;
-                $data_array['applicable_date'] = $controls['from_date'];
+                $data_array['applicable_date'] = $from_date;
                 $data_array['shift_code'] = 1;
                 $data_array['bmc_code'] = NULL;
-                $data_array['from_date'] = $controls['from_date'];
-                $data_array['to_date'] = $controls['to_date'];
+                $data_array['from_date'] = $from_date;
+                $data_array['to_date'] = $from_date;
                 $ftp_model = new TblFtpTxnLog();
                 $result = $ftp_model->exportData($data_array, $title, $download);
                 if (!empty($result)) {
@@ -850,6 +857,7 @@ class SchedulerController extends ChildController {
                     if (!empty($bmc_data)) {
                         $controls['mcc_plant_code'] = $bmc_data->bmc_code;
                         $controls['bmc_code'] = $bmc_data->mcc_plant_code;
+                        $controls['from_date'] = $controls['to_date'] = $from_date;
                     }
                     \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
                 }
