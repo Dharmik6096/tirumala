@@ -25,16 +25,12 @@ $attribute = [
 //        }, 
         'filter' => FALSE],
     ['attribute' => 'shift', 'filter' => false],
-    ['attribute' => 'DCSqty', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Qty')],
-    ['attribute' => 'DCSavgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Avg FAT')],
-    ['attribute' => 'DCSavgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Avg SNF')],
-    ['attribute' => 'DCSamount', 'filter' => FALSE, 'label' => Yii::t('app', 'DCS Amount')],
-    ['attribute' => 'Farmerqty', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Qty')],
-    ['attribute' => 'FarmeravgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Avg FAT')],
-    ['attribute' => 'FarmeravgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Avg SNF')],
-    ['attribute' => 'Farmeramount', 'filter' => FALSE, 'label' => Yii::t('app', 'Farmer Amount')],
+    ['attribute' => 'DCSqty', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Qty')],
+    ['attribute' => 'DCSavgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg FAT')],
+    ['attribute' => 'DCSavgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg SNF')],
+    ['attribute' => 'DCSamount', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Amount')],
     ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
-            $class = $model['bmc_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+            $class = $model['bmc_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['bmc_lock'] == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
             $url = $model['bmc_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/bmc-data-unlock' : '/collection/tbl-mcc-shift-lock/bmc-data-lock';
             $popupClass = ''; //' disabled ';
@@ -50,14 +46,22 @@ $attribute = [
                 'class' => $popupClass,
                 'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
             ];
-            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+            if (!empty($popupClass)) {
+                return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+            } else {
+                return $model['bmc_lock'] == 1 ? 'LOCK' : 'UNLOCK';
+            }
         },
         'format' => 'raw',
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
+    ['attribute' => 'Farmerqty', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Qty')],
+    ['attribute' => 'FarmeravgFAT', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Avg FAT')],
+    ['attribute' => 'FarmeravgSNF', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Avg SNF')],
+    ['attribute' => 'Farmeramount', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Amount')],
     ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
-            $class = $model['member_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+            $class = $model['member_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['member_lock'] == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
             $url = $model['member_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/member-data-unlock' : '/collection/tbl-mcc-shift-lock/member-data-lock';
             $popupClass = ''; //' disabled ';
@@ -73,35 +77,39 @@ $attribute = [
                 'class' => $popupClass,
                 'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
             ];
-            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
-        },
-        'format' => 'raw',
-        'contentOptions' => function($model) {
-            return ['class' => 'text-center'];
-        }, 'filter' => false],
-    ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
-            $class = $model['product_sale_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
-            $title = $model['product_sale_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
-            $url = $model['product_sale_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/product-sale-unlock' : '/collection/tbl-mcc-shift-lock/product-sale-lock';
-            $popupClass = ''; //' disabled ';
-            if (User::canRoute($url)) {
-                $popupClass = ' generalGridConfirmationPopup ';
+            if (!empty($popupClass) && $model['bmc_lock'] == 1) {
+                return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+            } else {
+                return $model['member_lock'] == 1 ? 'LOCK' : 'UNLOCK';
             }
-            $popupWindowTitle = 'Are you sure you want to ' . ($model['product_sale_lock'] == 1 ? 'Unlock Product Sale Data' : 'Lock Product Sale Data');
-            $options = [
-                'data-toggle' => 'tooltip',
-                'data-placement' => 'top',
-                'data-original-title' => $title,
-                'data-popup-message' => $popupWindowTitle,
-                'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
-            ];
-            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
         },
         'format' => 'raw',
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
+//    ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
+//            $class = $model['product_sale_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+//            $title = $model['product_sale_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
+//            $url = $model['product_sale_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/product-sale-unlock' : '/collection/tbl-mcc-shift-lock/product-sale-lock';
+//            $popupClass = ''; //' disabled ';
+//            if (User::canRoute($url)) {
+//                $popupClass = ' generalGridConfirmationPopup ';
+//            }
+//            $popupWindowTitle = 'Are you sure you want to ' . ($model['product_sale_lock'] == 1 ? 'Unlock Product Sale Data' : 'Lock Product Sale Data');
+//            $options = [
+//                'data-toggle' => 'tooltip',
+//                'data-placement' => 'top',
+//                'data-original-title' => $title,
+//                'data-popup-message' => $popupWindowTitle,
+//                'class' => $popupClass,
+//                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['DCSqty'], 'fat' => $model['DCSavgFAT'], 'snf' => $model['DCSavgSNF'], 'amount' => $model['DCSamount'], 'url' => 'index', 'fqty' => $model['Farmerqty'], 'ffat' => $model['FarmeravgFAT'], 'fsnf' => $model['FarmeravgSNF'], 'famnt' => $model['Farmeramount']])
+//            ];
+//            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+//        },
+//        'format' => 'raw',
+//        'contentOptions' => function($model) {
+//            return ['class' => 'text-center'];
+//        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -109,24 +117,24 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'status' => function ($url, $model) {
-            $lockModel = new TblMccShiftLock();
-            $data = $lockModel->getStatus($model);
-            $stagModel = new TblMccShiftLockStaging();
-            $notAllowUnlock = '';
-            if (!empty($data)) {
-                $notAllowUnlock = $stagModel->find()->where(['shift_lock_code' => $data->shift_lock_code, 'data_post_status' => 1])->one();
-            }
-            if (!empty($data) && $data->data_lock == 1) {
-                $class = 'lock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
-                return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data'], $options);
-            } else {
-                $class = 'unlock'; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
-                return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data'], $options);
-            }
-        },
+//        'status' => function ($url, $model) {
+//            $lockModel = new TblMccShiftLock();
+//            $data = $lockModel->getStatus($model);
+//            $stagModel = new TblMccShiftLockStaging();
+//            $notAllowUnlock = '';
+//            if (!empty($data)) {
+//                $notAllowUnlock = $stagModel->find()->where(['shift_lock_code' => $data->shift_lock_code, 'data_post_status' => 1])->one();
+//            }
+//            if (!empty($data) && $data->data_lock == 1) {
+//                $class = 'lock';
+//                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
+//                return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data'], $options);
+//            } else {
+//                $class = 'unlock'; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
+//                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['DCSqty'], 'data-fat' => $model['DCSavgFAT'], 'data-snf' => $model['DCSavgSNF'], 'data-amount' => $model['DCSamount'], 'data-f_qty' => $model['Farmerqty'], 'data-f_fat' => $model['FarmeravgFAT'], 'data-f_snf' => $model['FarmeravgSNF'], 'data-f_amount' => $model['Farmeramount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
+//                return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data'], $options);
+//            }
+//        },
         'view-shift' => function ($url, $model) {
             $lockModel = new TblMccShiftLock();
             $data = $lockModel->getStatus($model);
