@@ -432,6 +432,7 @@ echo GhostMenu::widget([
                                 ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                 ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
                                 ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                                ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                             ]
                         ],
                         [
@@ -475,6 +476,8 @@ echo GhostMenu::widget([
                         ['label' => '310 -' . Yii::t('app', 'Society Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/dcs-product-sale-for-paid-installment']],
                         ['label' => '311 -' . Yii::t('app', 'Vendor Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/vendor-product-sale-for-paid-installment']],
                         ['label' => '312 -' . Yii::t('app', 'MCC Wise Product Sale for Piad Installment'), 'url' => ['/misreports/reports/mcc-product-sale-for-paid-installment']],
+                        ['label' => '313 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                        ['label' => '314 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
                     ]
                 ],
                 [
