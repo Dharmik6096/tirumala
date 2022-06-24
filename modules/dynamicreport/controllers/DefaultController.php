@@ -205,9 +205,9 @@ class DefaultController extends \app\controllers\ChildController {
                     $dispData = $row[$a];
                 }
                 $value = $dispData;
-                if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
-                    $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
-                }
+//                if (!empty($this->data['to_decrypt']) && in_array($a, $this->data['to_decrypt'])) {
+                $value = !empty($dispData) ? (Yii::$app->general->decryptData($dispData) !== FALSE ? Yii::$app->general->decryptData($dispData) : $dispData) : (isset($dispData) && $dispData == 0 && $dispData != '' ? 0 : '');
+//                }
                 if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
                     echo "<td>" . $value . "</td>";
                 } else {

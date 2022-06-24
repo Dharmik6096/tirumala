@@ -155,6 +155,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         // Farmer Payment Process : Step 2 (Display DCS Wise Data)
         if (Yii::$app->request->post('TblMemberPaymentAlias')) {
             $postData = Yii::$app->request->post();
+            $getParam = Yii::$app->request->post('TblMemberPaymentAlias');
+            $getParam['dcs_code'] = json_decode($getParam['dcs_code']);
 //            $adjust_id = Yii::$app->request->post('TblMemberPaymentAlias')['member_payment_alias_code'];
 //            $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
 //            $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
@@ -167,7 +169,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             //process_lock_flag
 
             $summaryModel = new TblMemberPaymentSummaryAlias();
-            $summaryModel->attributes = Yii::$app->request->get();
+            $summaryModel->attributes = $getParam;
             $summaryModelData = $summaryModel->getRecords(false);
 
             $adjustmentSummary = [];
@@ -213,7 +215,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            }
             $adjust_id = [];
             $memberPaymentModel = new TblMemberPaymentAlias();
-            $memberPaymentModel->attributes = Yii::$app->request->get();
+            $memberPaymentModel->attributes = $getParam;
             $memberPaymentModelData = $memberPaymentModel->getRecords(false)->all();
             foreach ($memberPaymentModelData as $memberPayment) {
                 $historyModel = new TblMemberPaymentAliasHistory();
@@ -263,11 +265,10 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            if ($transaction !== FALSE && $transaction != 'customRender') {
 //                return $this->redirect(['index']);
 //            }
-        }
-        if (Yii::$app->request->get()) {
+            // if (Yii::$app->request->get()) {
             $model = new TblMemberPaymentAlias();
 //            $model->load(Yii::$app->request->get());
-            $model->attributes = Yii::$app->request->get();
+            $model->attributes = $getParam;
 //            if ($reGenerate == 1) {
 //                $query = $this->getMemberDcsSpData($model, $reGenerate);
 //            }
@@ -281,6 +282,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            $negativeValCount = $memberPaymentModel->getNegativeValCount();
             $negativeValCount = $memberPaymentModel->getNegativeValDcs();
             $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
+            $model->dcs_code = json_encode($model->dcs_code);
             return $this->render('process_lock_dcs_payment_data', [
                         'model' => $model,
                         'searchModel' => $searchModel,
@@ -289,6 +291,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         'removeCheckBox' => true,
                         'negativeDcsCode' => $negativeDcsCode
             ]);
+            //   }
         }
     }
 
@@ -328,13 +331,38 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     return $this->redirect(['index']);
                 }
             } else {
+                /*  $model = new TblMemberPaymentAlias();
+                  $model->load(Yii::$app->request->post());
+                  $data = Yii::$app->request->post();
+                  $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
+                  $dcs_ai = 0;
+                  $member_ai = 0;
+                  return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]); */
+
                 $model = new TblMemberPaymentAlias();
                 $model->load(Yii::$app->request->post());
                 $data = Yii::$app->request->post();
+                $model->dcs_code = json_decode($model->dcs_code);
                 $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
-                $dcs_ai = 0;
-                $member_ai = 0;
-                return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]);
+                $searchModel = new TblMemberPaymentSummaryAliasSearch();
+                $searchModel->attributes = $model->attributes;
+                $dataProvider = $searchModel->search([]);
+                $dataProvider->pagination = false;
+                $negativeValCount = 0;
+                $memberPaymentModel = new TblMemberPaymentAlias();
+                $memberPaymentModel->attributes = $model->attributes;
+                $negativeValCount = $memberPaymentModel->getNegativeValDcs();
+                $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
+                $model->dcs_code = json_encode($model->dcs_code);
+                $dataProvider->query->orderBy('CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.dcs_code=tbl_member_payment_alias.dcs_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and final_amount < 0 ) > 0 THEN 0 ELSE 1 END');
+                return $this->render('process_lock_dcs_payment_data', [
+                            'model' => $model,
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $dataProvider,
+                            'negativeValCount' => $negativeValCount,
+                            'removeCheckBox' => true,
+                            'negativeDcsCode' => $negativeDcsCode
+                ]);
             }
         }
         return $this->redirect(\yii\helpers\Url::previous());
@@ -589,120 +617,334 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $model->load(Yii::$app->request->post());
             if (!empty($model->payment_cycle_code)) {
                 if (Yii::$app->request->post('flag') == 'member') {
-                    $saveModel = [];
-                    $deleteModel = [];
-                    $summaryModel = new TblMemberPaymentSummaryAlias();
-                    $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
-                            ->all();
+                    if (false) {
+                        $saveAllData = true;
+                        $transaction = \Yii::$app->db->beginTransaction();
+                        try {
 
-                    if (!empty($summaryModelData)) {
-                        $paymentCycleApplicabilitycode = $summaryModelData[0]->payment_cycle_applicabilty_code;
-                        $payCycleModel = new TblPaymentCycleApplicability();
-                        $payCycleModelData = $payCycleModel->findOne($paymentCycleApplicabilitycode);
+                            $summaryFields = ['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_count', 'payment_cycle_code', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'payment_cycle_applicabilty_code', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'additional_pay', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'adjust_recovery', 'recovery'];
+                            $summaryRecords = [];
+                            $memberFields = ['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'payment_cycle_code', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'payment_cycle_applicabilty_code', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay', 'adjust_remark', 'disburse_date', 'payment_date', 'payment_status', 'approved_by', 'transfer_mode', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'is_verified', 'vsp_payment_reference_no', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'adjust_recovery', 'recovery'];
+                            $memberRecords = [];
+                            $outStandFields = ['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'transaction_date', 'payment_cycle_code', 'hold_amount', 'due_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'];
+                            $outStandRecords = [];
+                            $historyOutStandFields = ['member_outstanding_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'transaction_date', 'payment_cycle_code', 'hold_amount', 'due_amount', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'operation_type', 'history_created_at', 'history_created_by'];
+                            $historyOutStandRecords = [];
+                            $alertFields = ['receiver_detail', 'receiver_type', 'message', 'header_info', 'status', 'send_status', 'response_status', 'content_id', 'refecence_code', 'module_type', 'language_code', 'entry_datetime', 'pick_datetime', 'response_datetime', 'parent_code', 'has_attachment', 'filename', 'file_path', 'send_mail', 'created_by', 'activity_type', 'template_id'];
+                            $alertRecords = [];
+                            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                            $defaultCreateFields = [
+                                'flg_sentbox_entry' => 'Y',
+                                'sync_status' => 'U',
+                                'created_by' => $user,
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'originating_org_code' => \Yii::$app->session->get('organizations_code'),
+                                'originating_org_type' => 'PORTAL',
+                                'originating_type' => 0,
+                            ];
+                            $saveModel = [];
+                            $deleteModel = [];
+                            $summaryModel = new TblMemberPaymentSummaryAlias();
+                            $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                                    ->all();
+
+                            if (!empty($summaryModelData)) {
+                                $paymentCycleApplicabilitycode = $summaryModelData[0]->payment_cycle_applicabilty_code;
+                                $payCycleModel = new TblPaymentCycleApplicability();
+                                $payCycleModelData = $payCycleModel->findOne($paymentCycleApplicabilitycode);
+                                if (!empty($payCycleModelData)) {
+                                    $historyModel = new TblPaymentCycleApplicabilityHistory();
+                                    Yii::$app->operation->history($payCycleModelData, $historyModel, UPDATE);
+//                                $save_model[] = $historyModel;
+                                    $historyModel->save();
+                                    $model->from_datetime = $payCycleModelData->from_date;
+                                    $payCycleModelData->billing_lock_member = 1;
+//                                $save_model[] = $payCycleModelData;
+                                    $payCycleModelData->save(false);
+                                }
+                            }
+
+                            foreach ($summaryModelData as $summaryData) {
+//                            $historyModel = new TblMemberPaymentSummaryAliasHistory();
+//                            Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
+                                $mainModel = new TblMemberPaymentSummary();
+                                $mainModel->attributes = $summaryData->attributes;
+                                $mainModel->created_at = NULL;
+                                $mainModel->created_by = NULL;
+                                $mainModel->payment_status = 'Disburse';
+                                $mainModel->payment_date = date('Y-m-d H:i:s');
+                                $summaryRecord = [];
+                                foreach ($summaryFields as $summaryField) {
+                                    if ($mainModel->hasAttribute($summaryField)) {
+                                        $summaryRecord[$summaryField] = $mainModel->$summaryField;
+                                    } else {
+                                        $summaryRecord[$summaryField] = null;
+                                    }
+                                }
+                                $this->setDefaultFieldsArr($summaryRecord, $summaryFields, $mainModel, $defaultCreateFields);
+                                $summaryRecords[] = $summaryRecord;
+                                if (count($summaryRecords) >= 100) {
+                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
+                                    $summaryRecords = [];
+                                }
+//                            $save_model[] = $mainModel;
+//                            $save_model[] = $historyModel;
+//                            $deleteModel[] = $summaryData;
+                            }
+
+                            $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                                    ->all();
+                            $templateModel = new TblAlertTemplate();
+                            $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $model->union_code);
+                            foreach ($query as $Data) {
+//                            $historyModel = new TblMemberPaymentAliasHistory();
+//                            Yii::$app->operation->history($Data, $historyModel, UPDATE);
+                                $mainModel = new TblMemberPayment();
+                                $mainModel->attributes = $Data->attributes;
+                                $mainModel->created_at = NULL;
+                                $mainModel->created_by = NULL;
+                                $mainModel->payment_status = 'Disburse';
+                                $mainModel->payment_date = date('Y-m-d H:i:s');
+
+                                $memberRecord = [];
+                                foreach ($memberFields as $memberField) {
+                                    if ($mainModel->hasAttribute($memberField)) {
+                                        $memberRecord[$memberField] = $mainModel->$memberField;
+                                    } else {
+                                        $memberRecord[$memberField] = null;
+                                    }
+                                }
+                                $this->setDefaultFieldsArr($memberRecord, $memberFields, $mainModel, $defaultCreateFields);
+                                $memberRecords[] = $memberRecord;
+                                if (count($memberRecords) >= 100) {
+                                    if (!empty($summaryRecords)) {
+                                        \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
+                                        $summaryRecords = [];
+                                    }
+                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment', $memberFields, $memberRecords)->execute();
+                                    $memberRecords = [];
+                                }
+//                            $save_model[] = $mainModel;
+//                            $save_model[] = $historyModel;
+//                            $deleteModel[] = $Data;
+
+
+
+                                $outstanding = new TblMemberOutstanding();
+                                $outstanding->attributes = $Data->attributes;
+                                $outstanding->created_at = NULL;
+                                $outstanding->created_by = NULL;
+                                $outstandingData = $outstanding->getRecord();
+                                if (!empty($outstandingData)) {
+                                    $outstanding = $outstandingData;
+                                    $oshistoryModel = new TblMemberOutstandingHistory();
+                                    Yii::$app->operation->history($outstanding, $oshistoryModel, 'UPDATE');
+                                    $historyOutStandRecord = [];
+                                    foreach ($historyOutStandFields as $historyOutStandField) {
+                                        if ($oshistoryModel->hasAttribute($historyOutStandField)) {
+                                            $historyOutStandRecord[$historyOutStandField] = $oshistoryModel->$historyOutStandField;
+                                        } else {
+                                            $historyOutStandRecord[$historyOutStandField] = null;
+                                        }
+                                    }
+                                    $this->setDefaultFieldsArr($historyOutStandRecord, $historyOutStandFields, $oshistoryModel, $defaultCreateFields);
+                                    $historyOutStandRecords[] = $historyOutStandRecord;
+                                    $outstanding->payment_cycle_code = $Data->payment_cycle_code;
+                                    $outstanding->hold_amount = $Data->hold_amount;
+                                    $outstanding->due_amount = $Data->additional_pay;
+                                    $outstanding->transaction_date = date('Y-m-d');
+                                    $outstanding->save(false);
+//                                $save_model[] = $oshistoryModel;
+                                } else {
+                                    $outstanding->payment_cycle_code = $Data->payment_cycle_code;
+                                    $outstanding->hold_amount = $Data->hold_amount;
+                                    $outstanding->due_amount = $Data->additional_pay;
+                                    $outstanding->transaction_date = date('Y-m-d');
+                                    $outStandRecord = [];
+                                    foreach ($outStandFields as $outStandField) {
+                                        if ($outstanding->hasAttribute($outStandField)) {
+                                            $outStandRecord[$outStandField] = $outstanding->$outStandField;
+                                        } else {
+                                            $outStandRecord[$outStandField] = null;
+                                        }
+                                    }
+                                    $this->setDefaultFieldsArr($outStandRecord, $outStandFields, $outstanding, $defaultCreateFields);
+                                    $outStandRecords[] = $outStandRecord;
+                                    if (count($outStandRecords) >= 100) {
+                                        if (!empty($summaryRecords)) {
+                                            \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
+                                            $summaryRecords = [];
+                                        }
+                                        \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment', $memberFields, $memberRecords)->execute();
+                                        $memberRecords = [];
+                                        \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding', $outStandFields, $outStandRecords)->execute();
+                                        $outStandRecords = [];
+                                        if (!empty($historyOutStandRecords)) {
+                                            \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding_history', $historyOutStandFields, $historyOutStandRecords)->execute();
+                                            $historyOutStandRecords = [];
+                                        }
+                                    }
+                                }
+//                            $save_model[] = $outstanding;
+                                //send sms
+
+                                if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                                    $memberData = isset($Data->memberCode) && !empty($Data->memberCode) ? $Data->memberCode : [];
+                                    $mobilNo = !empty($memberData->mobile_no) ? $memberData->mobile_no : ''; //Yii::$app->general->getforeignkey($Data->memberCode, 'mobile_no');
+                                    $name = !empty($memberData->member_name) ? $memberData->member_name : ''; //Yii::$app->general->getforeignkey($Data->memberCode, 'member_name');
+                                    $dcs_ex = Yii::$app->general->getmultiforeignkey($memberData, ['dcsCode'], 'dcs_code_ex');
+                                    $mcc_ex = Yii::$app->general->getmultiforeignkey($memberData, ['dcsCode', 'mccPlantCode'], 'mcc_plant_code_ex');
+                                    $ex_code = !empty($memberData->ex_member_code) ? $memberData->ex_member_code : ''; //Yii::$app->general->getforeignkey($Data->memberCode, 'ex_member_code');
+                                    $f_date = Yii::$app->controls->view_date($Data->from_datetime);
+                                    $t_date = Yii::$app->controls->view_date($Data->to_datetime);
+                                    $t_date = Yii::$app->controls->view_date($Data->to_datetime);
+                                    if (!empty($mobilNo)) {
+//                                    $templateModel = new TblAlertTemplate();
+//                                    $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $Data->union_code);
+                                        if (!empty($templateData)) {
+                                            $arrFrom = array("{member_name}", "{mcc_code_ex}", "{dcs_code_ex}", "{member_code_ex}", "{from_date}", "{to_date}", "{qty}", "{amt}", "{deduction}", "{net_amount}");
+                                            $arrTo = array(substr($name, 0, 10), $mcc_ex, $dcs_ex, $ex_code, $f_date, $t_date, $Data->qty, $Data->total_amount, $Data->total_deduction, $Data->net_payable);
+                                            $word = $templateData->message;
+                                            $message = str_replace($arrFrom, $arrTo, $word);
+
+                                            $notificationmodel = new TblAlertNotification();
+                                            $datetime = date('Y-m-d H:i:s');
+                                            $notificationmodel->module_type = 'member_payment';
+                                            $notificationmodel->content_id = 1;
+                                            $notificationmodel->receiver_detail = $mobilNo;
+                                            $notificationmodel->receiver_type = 'SMS';
+                                            $notificationmodel->message = $message;
+                                            $notificationmodel->send_status = '0';
+                                            $notificationmodel->entry_datetime = $datetime;
+                                            $notificationmodel->pick_datetime = NULL;
+                                            $notificationmodel->response_datetime = NULL;
+                                            $notificationmodel->response_status = 0;
+                                            $notificationmodel->template_id = $templateData->header_info;
+                                            $alertRecord = [];
+                                            foreach ($alertFields as $alertField) {
+                                                if ($notificationmodel->hasAttribute($alertField)) {
+                                                    $alertRecord[$alertField] = $notificationmodel->$alertField;
+                                                } else {
+                                                    $alertRecord[$alertField] = null;
+                                                }
+                                            }
+                                            $this->setDefaultFieldsArr($alertRecord, $alertFields, $notificationmodel, $defaultCreateFields);
+                                            $alertRecords[] = $alertRecord;
+                                            if (count($alertRecords) >= 100) {
+                                                if (!empty($summaryRecords)) {
+                                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
+                                                    $summaryRecords = [];
+                                                }
+                                                if (!empty($memberRecords)) {
+                                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment', $memberFields, $memberRecords)->execute();
+                                                    $memberRecords = [];
+                                                }
+                                                if (!empty($outStandRecords)) {
+                                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding', $outStandFields, $outStandRecords)->execute();
+                                                    $outStandRecords = [];
+                                                }
+                                                if (!empty($historyOutStandRecords)) {
+                                                    \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding_history', $historyOutStandFields, $historyOutStandRecords)->execute();
+                                                    $historyOutStandRecords = [];
+                                                }
+                                                \Yii::$app->db->createCommand()->batchInsert('tbl_alert_notification', $alertFields, $alertRecords)->execute();
+                                                $alertRecords = [];
+                                            }
+//                                        $save_model[] = $notificationmodel;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!empty($summaryRecords)) {
+                                \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment_summary', $summaryFields, $summaryRecords)->execute();
+                                $summaryRecords = [];
+                            }
+                            if (!empty($memberRecords)) {
+                                \Yii::$app->db->createCommand()->batchInsert('tbl_member_payment', $memberFields, $memberRecords)->execute();
+                                $memberRecords = [];
+                            }
+                            if (!empty($outStandRecords)) {
+                                \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding', $outStandFields, $outStandRecords)->execute();
+                                $outStandRecords = [];
+                            }
+                            if (!empty($historyOutStandRecords)) {
+                                \Yii::$app->db->createCommand()->batchInsert('tbl_member_outstanding_history', $historyOutStandFields, $historyOutStandRecords)->execute();
+                                $historyOutStandRecords = [];
+                            }
+                            if (!empty($alertRecords)) {
+                                \Yii::$app->db->createCommand()->batchInsert('tbl_alert_notification', $alertFields, $alertRecords)->execute();
+                                $alertRecords = [];
+                            }
+//                        $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+//                                ->all();
+//                        $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+//                                ->all();
+                            $summaryModel->deleteAll(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code]);
+                            $model->deleteAll(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code]);
+                            $transaction->commit();
+//                    $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
+                        } catch (\yii\base\UserException $e) {
+                            $transaction->rollback();
+                            $saveAllData = false;
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                'message' => $e->getMessage()]);
+                        } catch (\yii\db\Exception $e) {
+                            $transaction->rollback();
+                            $saveAllData = false;
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+                        }
+//                    if ($transaction == 'customRedirect') {
+                        if ($saveAllData) {
+                            $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                                'message' => $msg_content]);
+                            $param = [];
+                            $param['from_datetime'] = $model->from_datetime;
+                            $param['customer_type'] = 'MEMBER';
+                            $param['bmc_code'] = $model->bmc_code;
+                            Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                            $this->redirect(['index']);
+                        }
+                    } else {
+
+                        $payCycleModel = new TblPaymentCycle();
+                        $payCycleModelData = $payCycleModel->findOne($model->payment_cycle_code);
                         if (!empty($payCycleModelData)) {
-                            $historyModel = new TblPaymentCycleApplicabilityHistory();
-                            Yii::$app->operation->history($payCycleModelData, $historyModel, UPDATE);
-                            $save_model[] = $historyModel;
                             $model->from_datetime = $payCycleModelData->from_date;
-                            $payCycleModelData->billing_lock_member = 1;
-                            $save_model[] = $payCycleModelData;
-                        }
-                    }
-
-                    foreach ($summaryModelData as $summaryData) {
-                        $historyModel = new TblMemberPaymentSummaryAliasHistory();
-                        Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
-                        $mainModel = new TblMemberPaymentSummary();
-                        $mainModel->attributes = $summaryData->attributes;
-                        $mainModel->created_at = NULL;
-                        $mainModel->created_by = NULL;
-                        $mainModel->payment_status = 'Disburse';
-                        $mainModel->payment_date = date('Y-m-d H:i:s');
-                        $save_model[] = $mainModel;
-                        $save_model[] = $historyModel;
-                        $deleteModel[] = $summaryData;
-                    }
-
-                    $query = $model->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
-                            ->all();
-                    foreach ($query as $Data) {
-                        $historyModel = new TblMemberPaymentAliasHistory();
-                        Yii::$app->operation->history($Data, $historyModel, UPDATE);
-                        $mainModel = new TblMemberPayment();
-                        $mainModel->attributes = $Data->attributes;
-                        $mainModel->created_at = NULL;
-                        $mainModel->created_by = NULL;
-                        $mainModel->payment_status = 'Disburse';
-                        $mainModel->payment_date = date('Y-m-d H:i:s');
-                        $save_model[] = $mainModel;
-                        $save_model[] = $historyModel;
-                        $deleteModel[] = $Data;
-
-
-
-                        $outstanding = new TblMemberOutstanding();
-                        $outstanding->attributes = $Data->attributes;
-                        $outstanding->created_at = NULL;
-                        $outstanding->created_by = NULL;
-                        $outstandingData = $outstanding->getRecord();
-                        if (!empty($outstandingData)) {
-                            $outstanding = $outstandingData;
-                            $oshistoryModel = new TblMemberOutstandingHistory();
-                            Yii::$app->operation->history($outstanding, $oshistoryModel, UPDATE);
-                            $save_model[] = $oshistoryModel;
-                        }
-                        $outstanding->payment_cycle_code = $Data->payment_cycle_code;
-                        $outstanding->hold_amount = $Data->hold_amount;
-                        $outstanding->due_amount = $Data->additional_pay;
-                        $outstanding->transaction_date = date('Y-m-d');
-                        $save_model[] = $outstanding;
-
-                        //send sms
-
-                        if (Yii::$app->session->get('eiplCode') == 'MMD') {
-                            $mobilNo = Yii::$app->general->getforeignkey($Data->memberCode, 'mobile_no');
-                            $name = Yii::$app->general->getforeignkey($Data->memberCode, 'member_name');
-                            $dcs_ex = Yii::$app->general->getmultiforeignkey($Data->memberCode, ['dcsCode'], 'dcs_code_ex');
-                            $mcc_ex = Yii::$app->general->getmultiforeignkey($Data->memberCode, ['dcsCode', 'mccPlantCode'], 'mcc_plant_code_ex');
-                            $ex_code = Yii::$app->general->getforeignkey($Data->memberCode, 'ex_member_code');
-                            $f_date = Yii::$app->controls->view_date($Data->from_datetime);
-                            $t_date = Yii::$app->controls->view_date($Data->to_datetime);
-                            $t_date = Yii::$app->controls->view_date($Data->to_datetime);
-                            if (!empty($mobilNo)) {
-                                $templateModel = new TblAlertTemplate();
-                                $templateData = $templateModel->getTemplateData('member_payment', 'SMS', $Data->union_code);
-                                if (!empty($templateData)) {
-                                    $arrFrom = array("{member_name}", "{mcc_code_ex}", "{dcs_code_ex}", "{member_code_ex}", "{from_date}", "{to_date}", "{qty}", "{amt}", "{deduction}", "{net_amount}");
-                                    $arrTo = array(substr($name, 0, 10), $mcc_ex, $dcs_ex, $ex_code, $f_date, $t_date, $Data->qty, $Data->total_amount, $Data->total_deduction, $Data->net_payable);
-                                    $word = $templateData->message;
-                                    $message = str_replace($arrFrom, $arrTo, $word);
-
-                                    $notificationmodel = new TblAlertNotification();
-                                    $datetime = date('Y-m-d H:i:s');
-                                    $notificationmodel->module_type = 'member_payment';
-                                    $notificationmodel->content_id = 1;
-                                    $notificationmodel->receiver_detail = $mobilNo;
-                                    $notificationmodel->receiver_type = 'SMS';
-                                    $notificationmodel->message = $message;
-                                    $notificationmodel->send_status = '0';
-                                    $notificationmodel->entry_datetime = $datetime;
-                                    $notificationmodel->pick_datetime = NULL;
-                                    $notificationmodel->response_datetime = NULL;
-                                    $notificationmodel->response_status = 0;
-                                    $notificationmodel->template_id = $templateData->header_info;
-                                    $save_model[] = $notificationmodel;
+                        } else {
+                            $summaryModel = new TblMemberPaymentSummaryAlias();
+                            $summaryModelData = $summaryModel->find()->where(['payment_cycle_code' => $model->payment_cycle_code, 'payment_status' => ['Lock'], 'bmc_code' => $model->bmc_code])
+                                    ->all();
+                            if (!empty($summaryModelData)) {
+                                $paymentCycleApplicabilitycode = $summaryModelData[0]->payment_cycle_applicabilty_code;
+                                $payCycleModel = new TblPaymentCycleApplicability();
+                                $payCycleModelData = $payCycleModel->findOne($paymentCycleApplicabilitycode);
+                                if (!empty($payCycleModelData)) {
+                                    $model->from_datetime = $payCycleModelData->from_date;
                                 }
                             }
                         }
-                    }
 
-                    $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Member Payment Disburse', 'create']);
-                    if ($transaction == 'customRedirect') {
+                        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                        $originating_org_code = \Yii::$app->session->get('organizations_code');
+                        $param = [];
+                        $param['union_code'] = $model->union_code;
+                        $param['bmc_code'] = $model->bmc_code;
+                        $param['payment_cycle_code'] = $model->payment_cycle_code;
+                        $param['user_code'] = $user;
+                        $param['org_code'] = $originating_org_code;
+                        $param['org_type'] = 'PORTAL';
+                        Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
+
                         $param = [];
                         $param['from_datetime'] = $model->from_datetime;
                         $param['customer_type'] = 'MEMBER';
                         $param['bmc_code'] = $model->bmc_code;
                         Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
+                        $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                            'message' => $msg_content]);
                         $this->redirect(['index']);
                     }
                 } else {
@@ -1190,6 +1432,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     'searchModel' => $instalSearch,
                     'dataProvider' => $idataProvider,
         ]);
+    }
+
+    public function setDefaultFieldsArr(&$setArr, $setArrFields, $modelCheck, $defaultCreateFields) {
+        foreach ($defaultCreateFields as $k => $v) {
+            if (in_array($k, $setArrFields) && $modelCheck->hasAttribute($k)) {
+                $setArr[$k] = $v;
+            }
+        }
     }
 
 }

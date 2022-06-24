@@ -25,6 +25,12 @@ use PHPExcel;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
+use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\dcsoperation\models\TblPurchaseRate;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use yii\helpers\Url;
 
 /**
  * TblDcsPurchaseRateController implements the CRUD actions for TblDcsPurchaseRate model.
@@ -551,39 +557,44 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
         $appModel->fields = [
             'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
-        }],
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
+                }],
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-            return Yii::$app->controls->view_date($model->wef_date);
-        }],
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }],
             'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
-        }],
+                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
+                }],
             'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
             'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
-        }],
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
             'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
-        }],
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
             'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
-            if ($model->applicable_for == 'PLANT') {
-                return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-            } else if ($model->applicable_for == 'MCC') {
-                return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-            } else if ($model->applicable_for == 'BMC') {
-                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-            } else if ($model->applicable_for == 'DCS') {
-                return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
-            } else {
-                return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
-            }
-        }],
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->customerMasterCode, 'customer_name');
+                    }
+                }],
                 //'dcs_name' => ['view' => ['grid'], 'value' => 'dcsCode.dcs_name'],           
         ];
-        $appModel->actions = ['delete' => ['option' => 'applicable_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability']];
-
+        $appModel->actions = [
+            'delete' => ['option' => 'applicable_code,rate_app_code,tbl-dcs-purchase-rate/delete-applicability'],
+            'generate_sentbox' => function ($url, $model)use ($id) {
+                $class = !empty($model->purchaseRateCode->purchaseRateCode) ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
+                return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate/export-sentbox', 'id' => $id, 'dcs_code' => $model->applicable_code, 'rate_type' => 'MEMBER', 'date' => date('Y-m-d', strtotime($model->wef_date))], $options);
+            }];
         $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
         $appModel->ratechart = true;
 //        $appModel->dcs_filters = ['MCC' => 'MCC', 'PLANT' => 'PLANT', 'VENDOR' => 'VENDOR'];
@@ -682,6 +693,199 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionExportSentbox($id, $dcs_code, $rate_type, $date) {
+        $res_data = [];
+        $res_data['purchaseRate'] = NULL;
+        $res_data['purchaseRateBased'] = [];
+        $res_data['purchaseRateApplicability'] = NULL;
+        $res_data['purchaseRateApplicabilityMultiple'] = [];
+        $org_code = $dcs_code;
+        $org_type = 'VLC';
+        $multi_applicability = TRUE;
+        $purchasemodel = new TblPurchaseRate();
+        $app_model = new TblPurchaseRateApplicability();
+        $rate = $purchasemodel->find()->where(['dcs_purchase_rate_code' => $id])->one();
+        $exportPath = Yii::$app->basePath . '/web/export/';
+        if (!is_dir($exportPath)) {
+            mkdir($exportPath);
+            chmod($exportPath, 0777);
+        }
+        $folerName = $org_code . '_DCS';
+        $FolderPath = Yii::$app->basePath . '/web/export/' . $folerName . '/';
+        $zipfolder = Yii::$app->basePath . '/web/export/' . $folerName;
+        if (!is_dir($FolderPath)) {
+            $oldmask = umask(0);
+            mkdir($FolderPath, 0777, TRUE);
+            umask($oldmask);
+        } else {
+            $files = glob($FolderPath . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file))
+                    unlink($file); // delete file
+            }
+        }
+        $respData = [];
+        $respData['status'] = 'success';
+        $respData['error'] = ['code' => 200, 'message' => []];
+        $respData['data'] = [];
+        if (!empty($rate)) {
+            $res_data['purchaseRate'] = $rate->attributes;
+            $based_data = [];
+            $base_record = $rate->purchaseRateBased;
+            foreach ($base_record as $b) {
+                $based_data[] = $b->attributes;
+            }
+            $res_data['purchaseRateBased'] = $based_data;
+            if ($multi_applicability) {
+                $applicability_array = [];
+                $app_model->purchase_rate_code = $rate->purchase_rate_code;
+                $orgDetail = $this->getOrgDetail($org_type, $org_code, FALSE);
+                $dcs_code = $orgDetail['dcs_code'];
+                $bmc_code = $orgDetail['bmc_code'];
+                $mcc_plant_code = $orgDetail['mcc_plant_code'];
+                $plant_code = $orgDetail['plant_code'];
+                $applicability_data = $app_model->getApplicability($rate->purchase_rate_code, $dcs_code, $date);
+                $applicability_array [] = !empty($applicability_data->attributes) ? $applicability_data->attributes : '';
+                $res_data['purchaseRateApplicabilityMultiple'] = $applicability_array;
+            } else {
+                $rate->app_org_code = $org_code;
+                $res_data['purchaseRateApplicability'] = !empty($rate->purchaseRateApplicability) ? $rate->purchaseRateApplicability[0]->attributes : NULL;
+            }
+            $masterFile = $org_code . '_1_master__';
+            $masterFileName = $FolderPath . $masterFile . '.txt';
+            $respData['data'] = $this->underscoreToCamelCase($res_data);
+            $masterFile = fopen($masterFileName, 'w+');
+            fwrite($masterFile, json_encode($respData) . PHP_EOL);
+            fclose($masterFile);
+
+            $arrayKey = [];
+            foreach ($base_record as $baseRate) {
+                $key = $baseRate->milk_quality_type_code . '-' . $baseRate->milk_type_code . '-' . $baseRate->rate_class;
+                if (!in_array($key, $arrayKey)) {
+                    $rate = Yii::$app->general->getSpData('sp_app_amcs_v2_purchase_rate_detail', [$baseRate->purchase_rate_code, $baseRate->milk_quality_type_code, $baseRate->milk_type_code, $rate_type, $baseRate->rate_class]);
+                    if (!empty($rate)) {
+                        $rateArray = array_column($rate, 'detail');
+
+                        $rateDetailFile = $org_code . '_2_detail_' . $baseRate->milk_type_code . '_' . $baseRate->milk_quality_type_code . '_' . $baseRate->rate_class . '__';
+                        $rateDetailFileName = $FolderPath . $rateDetailFile . '.txt';
+
+                        $respData['data'] = $rateArray;
+                        $rateDetailFileData = fopen($rateDetailFileName, 'w+');
+                        fwrite($rateDetailFileData, json_encode($respData) . PHP_EOL);
+                        fclose($rateDetailFileData);
+                    }
+                    $arrayKey[] = $key;
+                }
+            }
+        }
+        $eipl_code = Yii::$app->session->get('eiplCode');
+        if (!empty($eipl_code)) {
+            $pass = substr($eipl_code, 0, 2) . $org_code . substr($eipl_code, 2);
+        } else {
+            $pass = 'ei' . $org_code . 'pl';
+        }
+//        var_dump($pass);die;
+        if (is_file($zipfolder . '.zip'))
+            unlink($zipfolder . '.zip'); // delete file
+        Yii::$app->general->ZipOperation($zipfolder, TRUE, '', $pass, 'txt', 'zip');
+        $files = glob($zipfolder . '/*'); // get all file names
+        foreach ($files as $file) { // iterate files
+            if (is_file($file))
+                unlink($file); // delete file
+        }
+        rmdir($zipfolder);
+        $downlaodPath = $zipfolder . '.zip';
+        $downlaodPath = Url::base('https') . $zipfolder . '.zip';
+        $downlaodPath = Url::base('https') . '/web/export/' . $folerName . '.zip';
+        header("Content-type:application/pdf");
+        header('Content-Disposition: attachment; filename=' . $folerName . '.zip');
+        header('Location: ' . $downlaodPath);
+        exit();
+    }
+
+    public function getOrgDetail($type, $code, $is_string = TRUE) {
+        $dcs_code = [];
+        $bmc_code = [];
+        $mcc_plant_code = [];
+        $plant_code = [];
+        $union_code = '';
+        $model_data = [];
+        if ($type == 'VLC') {
+            $model = new TblDcs();
+            $model->dcs_code = $code;
+            $dcs_code[] = $code;
+            $model_data = $model->getData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $bmc_code[] = $model_data->bmc_code;
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $plant_code[] = $model_data->plant_code;
+            }
+        } else if ($type == 'BMC') {
+            $model = new TblDcsBmc();
+            $model->bmc_code = $code;
+            $model_data = $model->singleBmcData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlant->tblMccPlantGroup, 'p_mcc_plant_code');
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $bmc_code = ArrayHelper::getColumn($model_data->tblBmcGroup, 'p_bmc_code');
+                $bmc_code[] = $model_data->bmc_code;
+                $dcs_code = ArrayHelper::getColumn($model_data->dcsCodes, 'dcs_code');
+                foreach ($model_data->tblBmcGroup as $bmc) {
+                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($bmc->tblDcsCode, 'dcs_code'));
+                }
+            }
+        } else if ($type == 'MCC') {
+            $model = new TblMccPlant();
+            $model->mcc_plant_code = $code;
+            $model_data = $model->getData();
+            if (!empty($model_data)) {
+                $union_code = $model_data->union_code;
+                $plant_code = ArrayHelper::getColumn($model_data->unionCode->tblPlant, 'plant_code');
+                $mcc_plant_code = ArrayHelper::getColumn($model_data->tblMccPlantGroup, 'p_mcc_plant_code');
+                $mcc_plant_code[] = $model_data->mcc_plant_code;
+                $bmc_code = ArrayHelper::getColumn($model_data->bmcCodes, 'bmc_code');
+                $dcs_code = ArrayHelper::getColumn($model_data->tblDcs, 'dcs_code');
+                foreach ($model_data->tblMccPlantGroup as $mcc) {
+                    $bmc_code = array_merge($bmc_code, ArrayHelper::getColumn($mcc->tblBmcCode, 'bmc_code'));
+                    $dcs_code = array_merge($dcs_code, ArrayHelper::getColumn($mcc->tblDcsCode, 'dcs_code'));
+                }
+            }
+        }
+        if ($is_string) {
+            $dcs_code = implode('\',\'', $dcs_code);
+            $bmc_code = implode('\',\'', $bmc_code);
+            $mcc_plant_code = implode('\',\'', $mcc_plant_code);
+            $plant_code = implode('\',\'', $plant_code);
+            $dcs_code = !empty($dcs_code) ? '\'' . $dcs_code . '\'' : $dcs_code;
+            $bmc_code = !empty($bmc_code) ? '\'' . $bmc_code . '\'' : $bmc_code;
+            $mcc_plant_code = !empty($mcc_plant_code) ? '\'' . $mcc_plant_code . '\'' : $mcc_plant_code;
+            $plant_code = !empty($plant_code) ? '\'' . $plant_code . '\'' : $plant_code;
+        }
+        return ['dcs_code' => $dcs_code, 'bmc_code' => $bmc_code, 'mcc_plant_code' => $mcc_plant_code, 'plant_code' => $plant_code, 'union_code' => $union_code, 'model_data' => $model_data];
+    }
+
+    public function &underscoreToCamelCase(&$res_data) {
+        if (is_array($res_data)) {
+            $res_data = array_combine(array_map(function($str) {
+                        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
+                    }, array_keys($res_data)), array_values($res_data));
+            foreach ($res_data as $key => $val) {
+                if (is_array($res_data[$key])) {
+                    $arr1 = array_combine(array_map(function($str) {
+                                return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $str))));
+                            }, array_keys($res_data[$key])), array_values($res_data[$key]));
+                    $res_data[$key] = $arr1;
+                    $this->underscoreToCamelCase($res_data[$key]);
+                }
+            }
+            return $res_data;
+        }
+        return $res_data;
     }
 
 }

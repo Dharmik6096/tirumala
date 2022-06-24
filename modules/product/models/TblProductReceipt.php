@@ -57,11 +57,11 @@ class TblProductReceipt extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_receipt_code'], 'required', 'on' => ['androidsync']],
-            [['product_receipt_code', 'grn_no', 'challan_no', 'description', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['grn_date', 'challan_date', 'created_at', 'updated_at'], 'safe'],
-            [['challan_verified', 'originating_type'], 'safe'],
-            [['challan_verified'], 'default', 'value' => 0],
+                [['product_receipt_code'], 'required', 'on' => ['androidsync']],
+                [['product_receipt_code', 'grn_no', 'challan_no', 'description', 'vendor_type', 'vendor_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['grn_date', 'challan_date', 'created_at', 'updated_at'], 'safe'],
+                [['challan_verified', 'originating_type'], 'safe'],
+                [['challan_verified'], 'default', 'value' => 0],
         ];
     }
 
@@ -122,11 +122,20 @@ class TblProductReceipt extends \app\models\ChildModel {
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
         if (!empty($this->dcs_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->dcs_code);
+            $array = [];
+            $array['code'] = $this->dcs_code;
+            $array['type'] = 'VLC';
+            $sentboxArray = [$array];
         } else if (!empty($this->bmc_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '');
+            $array = [];
+            $array['code'] = $this->bmc_code;
+            $array['type'] = 'BMC';
+            $sentboxArray = [$array];
         } else if (!empty($this->mcc_plant_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->mcc_plant_code, '', '', '');
+            $array = [];
+            $array['code'] = $this->mcc_plant_code;
+            $array['type'] = 'MCC';
+            $sentboxArray = [$array];
         }
         foreach ($sentboxArray as $sent) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';

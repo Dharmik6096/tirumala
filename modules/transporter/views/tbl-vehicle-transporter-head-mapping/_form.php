@@ -15,7 +15,6 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -27,6 +26,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
+    <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('billing_type'), $readonly, 'billing_type', false); ?>
+
     <div class="col-sm-2"> 
         <?= Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_code'), '', $readonly); ?>
     </div>
@@ -36,11 +37,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, '', $readonly); ?>
     </div>
-    <div class="col-sm-2"> 
+    <div class="col-sm-2 default_hide"> 
         <?= Yii::$app->dropdown->routeVehicleDateWise($model, $form, 'tblvehicletransporterheadmapping-vehicle_code,tblvehicletransporterheadmapping-wef_date', 'route_code', $model->getAttributeLabel('route_code'), FALSE, $readonly); ?> 
     </div>
     <div class="col-sm-2">
-        <?php //Yii::$app->dropdown->depend_dropdown('transporter_payment_head_code', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_payment_head_code'), '', $readonly); ?>
+        <?php //Yii::$app->dropdown->depend_dropdown('transporter_payment_head_code', $model, $form, 'tblvehicletransporterheadmapping-union_code', 'form-group col-sm-4', $model->getAttributeLabel('transporter_payment_head_code'), '', $readonly);  ?>
         <?= Yii::$app->dropdown->payment_head($model, $form, 'tblvehicletransporterheadmapping-union_code', 'transporter_payment_head_code', $model->getAttributeLabel('transporter_payment_head_code'), FALSE, $readonly); ?> 
 
     </div>
@@ -50,7 +51,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
-    
+
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save($button, $model); ?>
@@ -64,24 +65,24 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
-//    $(document).ready(function(){
-//        $('.default_hide').hide();
-//        hide();
-//    });
-//    $(document).on('change', '#tblvehicletransporterheadmapping-billing_type', function() {  
-//        hide();
-//    });
-//        function hide(){
-//            var bill = $('#tblvehicletransporterheadmapping-billing_type').val();
-//            if(bill == '0'){
-//                 $('.default_hide').show();
-//            }else{
-//                 $('.default_hide').hide();
-//                $('#tblvehicletransporterheadmapping-route_code').val('');
-//                $('#tblvehicletransporterheadmapping-route_code').trigger('change');
-//                $('#tblvehicletransporterheadmapping-route_code').trigger('select2:select');
-//            }
-//        }
+    $(document).ready(function(){
+        $('.default_hide').hide();
+        hide();
+    });
+    $(document).on('change', '#tblvehicletransporterheadmapping-billing_type', function() {  
+        hide();
+    });
+        function hide(){
+            var bill = $('#tblvehicletransporterheadmapping-billing_type').val();
+            if(bill == '0'){
+                 $('.default_hide').show();
+            }else{
+                 $('.default_hide').hide();
+                $('#tblvehicletransporterheadmapping-route_code').val('');
+                $('#tblvehicletransporterheadmapping-route_code').trigger('change');
+                $('#tblvehicletransporterheadmapping-route_code').trigger('select2:select');
+            }
+        }
 ";
 $this->registerJs($script, View::POS_END, 'create-asset-transaction');
 ?>

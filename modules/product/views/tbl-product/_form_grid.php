@@ -36,6 +36,13 @@ $attribute = [
         ['attribute' => 'ref_code', 'visible' => false],
         ['attribute' => 'product_code'],
         ['attribute' => 'product_name'],
+        [
+        'attribute' => 'x_col3',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('product_type', $searchModel, 'x_col3'),
+        'value' => function($model) {
+            return isset($model->x_col3) ? Yii::$app->dropdown->getRecords('product_type')['data'][$model->x_col3] : '';
+        }
+    ],
         ['attribute' => 'tax_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->taxCode, 'tax_name');
         }, 'visible' => true,],

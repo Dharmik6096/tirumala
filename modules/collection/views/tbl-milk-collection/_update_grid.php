@@ -18,7 +18,7 @@ $form = ActiveForm::begin([
 <div class=" no-effect table_form" >
     <?php
     $attribute = [
-        ['attribute' => 'dcs_code', 'header' => Yii::t('app', 'DCS'),
+            ['attribute' => 'dcs_code', 'header' => Yii::t('app', 'DCS'),
             'value' => function ($model, $key, $index) use ($form, $config) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']milk_collection_code', ['value' => $model->milk_collection_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']union_code', ['value' => $model->union_code]);
@@ -28,11 +28,11 @@ $form = ActiveForm::begin([
                 }
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false],
-        ['header' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'filter' => false],
-        ['header' => Yii::t('app', 'Member Name'), 'attribute' => 'member_code', 'value' => function ($model, $key, $index) use ($form) {
+            ['header' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'filter' => false],
+            ['header' => Yii::t('app', 'Member Name'), 'attribute' => 'member_code', 'value' => function ($model, $key, $index) use ($form) {
                 return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
             }, 'filter' => false],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -42,21 +42,28 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']date_time_of_collection', ['value' => Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d')]);
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
+            ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']shift_code', ['value' => $model->shift_code]);
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
-        ['attribute' => 'sample_no', 'filter' => false],
-        ['attribute' => 'milk_type_code',
+            ['attribute' => 'sample_no', 'filter' => false],
+            ['attribute' => 'milk_type_code',
             'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form, $detailModel) {
+            'value' => function ($model, $key, $index) use ($form, $detailModel, $config) {
+                if (!$config) {
+                    echo Html::activeHiddenInput($model, '[' . $index . ']milk_quality_type_code', ['value' => $model->milk_quality_type_code]);
+                }
                 return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
             },
         ],
-        ['attribute' => 'milk_quality_type_code',
+            ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
-                return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+                if ($config) {
+                    return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
+                } else {
+                    return $model->milk_quality_type_code;
+                }
             }, 'visible' => $config,
         ],
 //        ['attribute' => 'milkqtype', 'filter' => false],
@@ -66,32 +73,32 @@ $form = ActiveForm::begin([
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'fat',
+            ['attribute' => 'fat',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate fat_change\'>' . $form->field($model, '[' . $index . ']fat')->textInput(['value' => $model->fat, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'snf',
+            ['attribute' => 'snf',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']snf')->textInput(['value' => $model->snf, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'clr',
+            ['attribute' => 'clr',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'rtpl',
+            ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']purchase_rate_code', ['value' => $model->purchase_rate_code]);
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']rtpl')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'amount',
+            ['attribute' => 'amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);

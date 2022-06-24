@@ -127,7 +127,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
-                $plant = ($data_array['module_name'] == 'TblBmcCollection') ? 'Plant Code' : 'Plant';
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : 'Plant';
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                     if (empty($downLoadArray[$detail[$plant]])) {
                         $downLoadArray[$detail[$plant]] = [];
@@ -136,7 +136,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 }
             }
             foreach ($downLoadArray as $bmc => $download) {
-                $report_type = ($data_array['module_name'] == 'TblBmcCollection') ? 'WQ' : 'SD';
+                $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ?  'WQ' : 'SD';
                 $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 $txn->ref_code = $bmc;
                 $bmc_data = $txn->bmcCode;
@@ -152,8 +152,9 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             if (!empty($bmc_data)) {
                 $data->module_code = $bmc_data->bmc_code;
                 $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+                $data->union_code = $bmc_data->union_code;
             }
-            $this->generateFiles($output, $FTPProcess, $data, TRUE, $title);
+            return $this->generateFiles($output, $FTPProcess, $data, TRUE, $title);
         }
     }
 
@@ -173,6 +174,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         }
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
+        $ftpPath = $FTPProcess['ftp_path'];
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             $header = array_keys($output[0]);
@@ -182,7 +184,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fwrite($txt_file, implode(',', $line) . PHP_EOL);
             }
             fclose($txt_file);
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath);
         }
         return FALSE;
         /** csv generate * */
@@ -227,7 +229,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
@@ -237,11 +239,13 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $ftp_file->attributes = $data->attributes;
             $ftp_file->total_count = $ftp_file->success_count = $count;
             $ftp_file->txn_datetime = date('Y-m-d H:i:s');
-            $ftp_file->file_path = $ftpData->ftp_path . '/' . $fileName;
+            $ftp_file->file_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath) . '/' . $fileName;
             $ftp_file->file_name = $fileName;
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
+            $ftp_file->ftp_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath);
+
             if ($ftp_upload) {
                 $ftp = new FTPConnection();
                 $ftp->ftp_type = $ftp_file->ftp_type;
@@ -274,6 +278,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     }
                     $ftp->CloseConnection();
                 }
+                $ftp_file->save();
+                return $fileName;
             }
 
             if ($ftp_file->save()) {

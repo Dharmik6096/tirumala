@@ -22,15 +22,15 @@ $society_name = !empty($dataProvider->getModels()) ?
             <div class="popup-header bg_white">
                 <?php
                 $attribute = [
-                    ['attribute' => 'bill_head_code', 'value' => function($model) {
+                        ['attribute' => 'bill_head_code', 'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
                         }
                     ],
-                    ['attribute' => 'bill_head_type',
+                        ['attribute' => 'bill_head_type',
                         'value' => function($model) {
                             return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
                         },],
-                    ['attribute' => 'amount'],
+                        ['attribute' => 'amount'],
                 ];
                 $grid_option = [
                     'id' => 'bill-head-detail-list',
@@ -55,7 +55,7 @@ $society_name = !empty($dataProvider->getModels()) ?
 
                             <?php
                             $attribute = [
-                                ['class' => 'kartik\grid\CheckboxColumn',
+                                    ['class' => 'kartik\grid\CheckboxColumn',
                                     'rowSelectedClass' => GridView::TYPE_SUCCESS,
                                     'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                                     'checkboxOptions' => function($model) use ($searchModel, $selectedCheckbox) {
@@ -67,7 +67,7 @@ $society_name = !empty($dataProvider->getModels()) ?
                                         }
                                         return ['class' => 'checkbox-collection', 'checked' => $checked, 'value' => $model['product_sale_installment_code'] . '###' . $searchModel['payment_cycle_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['customer_code'] . '###' . $model['main_amount'] . '###' . $model['installment_amount'], 'data-installment_amount' => $model['installment_amount'], 'data-existInstallment' => $dataVal];
                                     }],
-                                ['label' => 'Sale Date', 'attribute' => 'invoice_date',
+                                    ['label' => 'Sale Date', 'attribute' => 'invoice_date',
                                     'filterType' => GridView::FILTER_DATE,
                                     'filterWidgetOptions' => [
                                         'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -76,8 +76,8 @@ $society_name = !empty($dataProvider->getModels()) ?
                                     'value' => function($model) {
                                         return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->saleCode, 'invoice_date'));
                                     }, 'filter' => false],
-                                ['attribute' => 'main_amount', 'filter' => FALSE],
-                                ['attribute' => 'installment_amount', 'filter' => FALSE],
+                                    ['attribute' => 'main_amount', 'filter' => FALSE],
+                                    ['attribute' => 'installment_amount', 'filter' => FALSE],
                             ];
 
                             $grid_options = [
@@ -130,7 +130,8 @@ $script = "
 //                bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>" . Yii::t("app", "Please select at least one Installment.") . "</span></div></div>');
 //                return false;
 //            } else 
-            if(paymentAmount > netPay){
+         //   if(paymentAmount > netPay){
+            if(false){
                 bootbox.alert('<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-danger\"><i class=\"fa fa-times\"></i></div><span>" . Yii::t("app", "Installment Must Not More than NetPay.") . "</span></div></div>');
                 return false;
             } else {

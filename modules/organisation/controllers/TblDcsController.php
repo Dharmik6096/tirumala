@@ -358,6 +358,9 @@ class TblDcsController extends ChildController {
                         $vendorModel = $vendorModelData;
                     }
                     $vendorModel->vendor_code = $this->model->vendor;
+                    if ($this->model->vendor == 'BIPL') {
+                        Yii::$app->general->generateFTPDir($this->model, 'dcs_code', [], $this->model->mcc_plant_code, $this->model->ref_code);
+                    }
                     array_push($mappingList, $vendorModel);
                     $userModel = new User();
                     $users = $userModel->findByRole([$vendorModel->vendor_code]);
@@ -891,11 +894,19 @@ class TblDcsController extends ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
+                $for = !empty($parents[1]) ? $parents[1] : '';
+                $route = !empty($parents[2]) ? $parents[2] : '';
                 $mccs = new TblDcs();
-                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS');
+                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS', '', $route);
                 $model = new TblCustomerMaster();
-                $customer = $model->getCustomerList($parents[0]);
-                $data = $bmc + $customer;
+                $customer = $model->getCustomerList($parents[0], $route);
+                if (empty($for)) {
+                    $data = $bmc + $customer;
+                } elseif ($for == 1) {
+                    $data = $bmc;
+                } elseif ($for == 2) {
+                    $data = $customer;
+                }
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -1173,6 +1184,47 @@ class TblDcsController extends ChildController {
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return false;
+        }
+    }
+
+    public function actionExportSentbox($id) {
+        $this->model = $this->findModel($id);
+
+        $MemberModel = new TblMember();
+        $memberArray = $MemberModel->getMembers($id);
+
+        $jsonData = [];
+        ob_clean();
+        foreach ($memberArray as $member) {
+            $operation = !empty($member->updated_at) ? 'UPDATE' : 'INSERT';
+            $sentbox = $member->sentboxModel($id, 'VLC');
+            $sentboxData = $sentbox->setSentboxDownload($member, $operation);
+            $jsonData[] = Json::encode($sentbox->jsonModel($sentboxData), JSON_UNESCAPED_UNICODE);
+        }
+        if (true || count($memberArray) == count($jsonData)) {
+            $extention = 'txt';
+            $header = [
+                'mime' => 'text/plain',
+                'extension' => $extention,
+                'writer' => 'Excel2007',
+            ];
+
+            $labelT = $id . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
+//        header('Content-Type: text/plain');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+//        header("Content-Type: application/xls");
+//        header("Content-Disposition: attachment; filename={$fileName}");
+//        header("Pragma: no-cache");
+//        header("Expires: 0");
+            foreach ($jsonData as $json) {
+                $key = Yii::$app->general->SetSecurityEncryptionKey('UNION', $this->model->union_code);
+                Yii::$app->encrypter->setGlobalPassword($key);
+                echo Yii::$app->general->encryptData($json) . PHP_EOL;
+            }
+            exit();
         }
     }
 

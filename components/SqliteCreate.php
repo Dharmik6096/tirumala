@@ -119,6 +119,15 @@ class SqliteCreate extends Component {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
+                                } else if ($field['key_field'] == 'applicable_code') {
+                                    $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
+                                    $whereDcs = !empty($dcs_code) ? $dcs_code : '\'\'';
+                                    if (strtolower($org_type) == 'vlc') {
+                                        $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereDcs) and lower(applicable_for) = 'dcs')) ";
+                                    } else {
+                                        $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereDcs) and lower(applicable_for) = 'dcs')" . ' or (' . $field['key_field'] . " in ($whereBmc) and lower(applicable_for) != 'dcs'))";
+                                    }
                                 } else {
                                     $whereKeyField = !empty(${$field['key_field']}) ? ${$field['key_field']} : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName;

@@ -729,6 +729,31 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionCenterLossGainReport() {
+        $this->report = 'CenterLossGainReport';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BMCLossGainReport';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionMissingCollectionShiftBmcCrossTab() {
+        $this->report = 'MissingCollectionShiftBmcCrossTab';
+        return $this->actionIndex();
+    }
+
+    public function actionProductStockDetailSummarySocietyWise() {
+        $this->report = 'ProductStockDetailSummarySocietyWise';
+        return $this->actionIndex();
+    }
+
+    public function actionProductStockDetailSummaryMccWise() {
+        $this->report = 'ProductStockDetailSummaryMccWise';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -948,6 +973,56 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionRecoveryFromDifferentVendor() {
         $this->report = 'RecoveryFromDifferentVendor';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberWiseOutstanding() {
+        $this->report = 'MemberWiseOutstanding';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsWiseOutstanding() {
+        $this->report = 'DcsWiseOutstanding';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorWiseOutstanding() {
+        $this->report = 'VendorWiseOutstanding';
+        return $this->actionIndex();
+    }
+
+    public function actionMccWiseOutstanding() {
+        $this->report = 'MccWiseOutstanding';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberProductSaleForPaidInstallment() {
+        $this->report = 'MemberProductSaleForPaidInstallment';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsProductSaleForPaidInstallment() {
+        $this->report = 'DcsProductSaleForPaidInstallment';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorProductSaleForPaidInstallment() {
+        $this->report = 'VendorProductSaleForPaidInstallment';
+        return $this->actionIndex();
+    }
+
+    public function actionMccProductSaleForPaidInstallment() {
+        $this->report = 'MccProductSaleForPaidInstallment';
+        return $this->actionIndex();
+    }
+
+    public function actionNewMemberPouringMilk() {
+        $this->report = 'NewMemberPouringMilk';
+        return $this->actionIndex();
+    }
+
+    public function actionNewCustomerPouringMilk() {
+        $this->report = 'NewCustomerPouringMilk';
         return $this->actionIndex();
     }
 
@@ -1898,6 +1973,98 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_recovery_from_different_vendor',
                 'scenario' => 'RecoveryFromDifferentVendor',
                 'title' => '620 - Recovery From Different Vendor',
+            ],
+            'CenterLossGainReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_CentertoCCLossGainReport',
+                'scenario' => 'CenterLossGainReport',
+                'title' => '214 - Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'BMCLossGainReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'rpt_mis_prabhat_loss_gain',
+                'scenario' => 'CenterLossGainReport',
+                'title' => '214 - Center Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'MissingCollectionShiftBmcCrossTab' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_missing_collection_shift_bmc_cross_tab',
+                'scenario' => 'MissingCollectionShiftBmcCrossTab',
+                'title' => 'Tracking Report',
+            ],
+            'ProductStockDetailSummarySocietyWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,p_date:string',
+                'sp_name' => 'sp_mis_product_stock_detail_summary_society_wise',
+                'scenario' => 'ProductStockDetailSummarySocietyWise',
+                'title' => 'Product Stock Detail Summary Society Wise',
+            ],
+            'ProductStockDetailSummaryMccWise' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
+                'sp_name' => 'sp_mis_product_stock_detail_summary_mcc_wise',
+                'scenario' => 'ProductStockDetailSummaryMccWise',
+                'title' => 'Product Stock Detail Summary MCC Wise',
+            ],
+            'MemberWiseOutstanding' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_type,product_code:product_type,p_date:string',
+                'sp_name' => 'sp_mis_member_wise_loan_outstanding',
+                'scenario' => 'MemberWiseOutstanding',
+                'title' => '305 - Member Wise Outstanding',
+            ],
+            'DcsWiseOutstanding' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_type,product_code:product_type,p_date:string',
+                'sp_name' => 'sp_mis_society_wise_loan_outstanding',
+                'scenario' => 'DcsWiseOutstanding',
+                'title' => '306 - Society Wise Outstanding',
+            ],
+            'VendorWiseOutstanding' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,vendor_code:BULKVEN,product_type,product_code:product_type,p_date:string',
+                'sp_name' => 'sp_mis_vendor_wise_loan_outstanding',
+                'scenario' => 'VendorWiseOutstanding',
+                'title' => '307 - Vendor Wise Outstanding',
+            ],
+            'MccWiseOutstanding' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,product_type,product_code:product_type,p_date:string',
+                'sp_name' => 'sp_mis_mcc_wise_loan_outstanding',
+                'scenario' => 'MccWiseOutstanding',
+                'title' => '308 - MCC Wise Outstanding',
+            ],
+            'MemberProductSaleForPaidInstallment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_product_sale_member_wise_for_paid_installment',
+                'scenario' => 'MemberProductSaleForPaidInstallment',
+                'title' => '309 - Member Wise Product Sale for Paid Installment',
+            ],
+            'DcsProductSaleForPaidInstallment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_product_sale_society_wise_for_paid_installment',
+                'scenario' => 'DcsProductSaleForPaidInstallment',
+                'title' => '310 - DCS Wise Product Sale for Paid Installment',
+            ],
+            'VendorProductSaleForPaidInstallment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,vendor_code:BULKVEN,from_date:string,to_date:string',
+                'sp_name' => 'mis_product_sale_customer_wise_for_paid_installment',
+                'scenario' => 'VendorProductSaleForPaidInstallment',
+                'title' => '311 - Vendor Wise Product Sale for Paid Installment',
+            ],
+            'MccProductSaleForPaidInstallment' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_mcc_wise_all_product_sale',
+                'scenario' => 'MccProductSaleForPaidInstallment',
+                'title' => '312 - MCC Wise Product Sale for Paid Installment',
+            ],
+            'NewMemberPouringMilk' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_new_member_pouring_milk',
+                'scenario' => 'NewMemberPouringMilk',
+                'title' => '110 - New Member Pouring Milk',
+            ],
+            'NewCustomerPouringMilk' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_collection_shift_for_new_customer',
+                'scenario' => 'NewCustomerPouringMilk',
+                'title' => '215 - New Customer Pouring Milk',
             ],
         ];
         return $label[$l];

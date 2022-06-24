@@ -366,7 +366,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection');
+        $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
     }
 
@@ -506,8 +506,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $data_array['bmc_code'] = '0';
         $data_array['from_date'] = $date;
         $data_array['to_date'] = $date;
+//        if (in_array($mcc, ['7300', '7304', '7300', '7301', '7303', '7304', '7384', '7583', '7416', '7423', '7424', '7302'])) {
         $ftp_model = new TblFtpTxnLog();
         $ftp_model->exportData($data_array);
+//        }
     }
 
 }

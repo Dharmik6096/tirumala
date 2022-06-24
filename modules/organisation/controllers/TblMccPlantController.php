@@ -21,6 +21,7 @@ use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
 use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblBmcSilosInfoSearch;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -28,7 +29,7 @@ use app\modules\organisation\models\TblBmcSilosInfoSearch;
 class TblMccPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list'];
+    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list', 'places-list'];
 
     /**
      * Lists all TblMccPlant models.
@@ -374,6 +375,43 @@ class TblMccPlantController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
                     'isaction' => $isaction
         ]);
+    }
+
+    public function actionPlacesList() {
+        $out = [];
+        $u = '';
+        $data = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $union = $parents[0];
+                $type = $parents[1];
+                $setChild = isset($parents[2]) ? TRUE : FALSE;
+            } else {
+                echo Json::encode(['output' => '', 'selected' => '']);
+                return;
+            }
+            if ($type == 'bmc') {
+                $mccs = new TblDcsBmc();
+                $data = $mccs->getBmcs($union, [], false);
+            } else if ($type == 'mcc') {
+                $mccs = new TblMccPlant();
+                $data = $mccs->getUnionMCCList($union);
+            } else if ($type == 'plant') {
+                $mccs = new \app\modules\organisation\models\TblPlant();
+                $data = $mccs->getPlantList($union, 'TRUE', [], false);
+            } else if ($type == 'vendor') {
+                $vendors = new TblCustomerMaster();
+//                $vendors->customer_type = 'VENDOR';
+                $data = $vendors->getUnionCustomerList($union);
+            }
+            foreach ($data as $key => $val) {
+                $out[] = array('id' => $key, 'name' => $val);
+            }
+            return Json::encode(['output' => $out, 'selected' => '']);
+            return;
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

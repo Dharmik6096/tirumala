@@ -67,77 +67,77 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
-                [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
-                [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e'], 'safe'],
-                [['route'], 'required', 'on' => ['importCsv']],
-                [['is_active'], 'integer'],
-                [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
-                [['is_active'], 'default', 'value' => 1],
-                [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
+            [['union_code', 'plant_code', 'mcc_plant_code', 'route_code'], 'required', 'except' => ['importCsv', 'deleteRouteMapping']],
+            [['customer_name', 'address', 'customer_type', 'bmc_code'], 'required', 'except' => ['deleteRouteMapping']],
+            [['customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_by', 'updated_by', 'route', 'beneficiary_name', 'aadhaar_no', 'file_name', 'ts_code_m', 'ts_code_e'], 'safe'],
+            [['route'], 'required', 'on' => ['importCsv']],
+            [['is_active'], 'integer'],
+            [['created_at', 'updated_at', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'route_code', 'same_milk_type', 'diff_milk_type', 'prefix'], 'safe'],
+            [['is_active'], 'default', 'value' => 1],
+            [['gst_no'], 'string', 'max' => 15, 'min' => 15, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 15 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 15 digit '), 'skipOnEmpty' => TRUE],
-                [['local_name', 'local_address'], function ($attribute, $params) {
+            [['local_name', 'local_address'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['customer_code_ex'], function ($attribute, $params) {
+            [['customer_code_ex'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
             //['customer_code_ex', 'unique', 'targetAttribute' => ['customer_code_ex', 'union_code', 'customer_type'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'skipOnError' => TRUE],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-                [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
-                [['customer_type'], function ($attribute, $params) {
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+            [['hamlet_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblHamlets::className(), 'targetAttribute' => ['hamlet_code' => 'hamlet_code'], 'on' => ['importCsv']],
+            [['customer_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['is_organisation' => 0, 'union_code' => (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL]);
                 }, 'on' => ['importCsv']],
-                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-                [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
-                [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
-                [['x_col1'], 'default', 'value' => '1#1'],
-                [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2'], 'safe'],
-                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['bmc_code'], 'setImport', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
+            [['x_col1'], 'default', 'value' => '1#1'],
+            [['contact_person', 'local_contact_person', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'email', 'mobile_no', 'department', 'ifsc', 'bank_account_no', 'ref_code', 'customer_code_ex', 'sap_vendor_code', 'x_col2'], 'safe'],
+            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['local_contact_person', 'local_middlename', 'local_surname'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['importCsv']],
-                [['mobile_no'], function ($attribute, $params) {
+            [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-                [['ifsc'], 'trim', 'on' => ['importCsv']],
-                [['email'], 'email', 'on' => ['importCsv']],
-                [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']],
-                [['customer_code'], function ($attribute, $params) {
+            [['ifsc'], 'trim', 'on' => ['importCsv']],
+            [['email'], 'email', 'on' => ['importCsv']],
+            [['mobile_no', 'contact_person'], 'required', 'on' => ['importCsv']],
+            [['customer_code'], function ($attribute, $params) {
                     Yii::$app->general->vaildateKeyCodes($this, 'tbl_customer_master', 'customer_code_ex', 'customer_code', FALSE);
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv']],
-                [['same_milk_type'], function ($attribute, $params) {
+            [['same_milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
-                [['diff_milk_type'], function ($attribute, $params) {
+            [['diff_milk_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
-                [['department'], function ($attribute, $params) {
+            [['department'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'department');
                 }, 'on' => ['importCsv']],
-                [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
-                [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
-                [['bmc_code'], 'setExCode'],
-                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-                [['customer_code'], function ($attribute, $params) {
+            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
+            [['bmc_code'], 'setXcol', 'on' => ['importCsv']],
+            [['bmc_code'], 'setExCode'],
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['customer_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-                [['customer_code'], function ($attribute, $params) {
+            [['customer_code'], function ($attribute, $params) {
                     $update = FALSE;
                     if ($this->scenario == 'updateFront') {
                         $update = TRUE;
                     }
                     Yii::$app->general->validateExCodes($this, 'tbl_customer_master', 'customer_code_ex', 'tbl_dcs', 'dcs_code_ex', 'TblDcs', $this->union_code, $update);
                 }, 'skipOnEmpty' => false, 'on' => ['updateFront', 'importCsv', 'createFront']],
-                [['aadhaar_no'], function ($attribute, $params) {
+            [['aadhaar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
-                [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
-                [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number']
+            [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'except' => ['deleteRouteMapping']],
+            [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
+            [['ts_code_m', 'ts_code_e'], 'number']
         ];
     }
 
@@ -293,14 +293,6 @@ class TblCustomerMaster extends \app\models\ChildModel {
         }
     }
 
-    private function sentboxModel($code, $type) {
-        $sentbox = new TblSentbox();
-        $sentbox->dest_org_id = $code;
-        $sentbox->source_org_id = $this->union_code;
-        $sentbox->dest_org_type = $type;
-        return $sentbox;
-    }
-
     public function getRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
     }
@@ -317,10 +309,13 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $array;
     }
 
-    public function getCustomerList($bmc) {
+    public function getCustomerList($bmc, $route = '') {
         $query = $this->find()->where(['is_active' => 1]);
         if (!empty($bmc)) {
             $query->andWhere(['bmc_code' => $bmc]);
+        }
+        if (!empty($route)) {
+            $query->andWhere(['route_code' => $route]);
         }
         $data = $query->all();
         $data = ArrayHelper::map($data, 'customer_code', function($data) {
@@ -550,6 +545,25 @@ class TblCustomerMaster extends \app\models\ChildModel {
     public function validateCustomerRef($bmc_code, $customer_code) {
         return $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1])
                         ->andWhere(['or', ['customer_code' => $customer_code], ['ref_code' => $customer_code]])->one();
+    }
+
+    public function getvendor($bmc_code, $as_array = false) {
+        if (!empty($bmc_code)) {
+            $query = $this->find()->where(['bmc_code' => $bmc_code, 'is_active' => 1]);
+            if ($as_array)
+                $query->asArray();
+            $dcs = $query->all();
+            return $dcs;
+        }
+        return false;
+    }
+
+    public function sentboxModel($code, $type) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $this->union_code;
+        $sentbox->dest_org_type = $type;
+        return $sentbox;
     }
 
     public function maxDigits($attribute) {

@@ -37,7 +37,7 @@ $config = [
         'customvalidation' => ['class' => 'app\components\CustomValidation'],
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
-        'pdf' => ['class' => 'app\components\pdf'],
+        'pdf' => ['class' => 'app\components\PDF'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,

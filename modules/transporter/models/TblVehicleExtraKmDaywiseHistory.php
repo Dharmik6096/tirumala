@@ -44,10 +44,10 @@ class TblVehicleExtraKmDaywiseHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['extra_km_code', 'originating_type'], 'safe'],
-            [['vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'history_created_by', 'operation_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['extra_kms'], 'number'],
+                [['extra_km_code', 'originating_type', 'rate'], 'safe'],
+                [['vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'history_created_by', 'operation_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['extra_kms'], 'number'],
         ];
     }
 

@@ -21,6 +21,10 @@ class Operation extends Component {
                 break;
             case UPDATE : $this->updateDefault($model);
                 break;
+            case 'INSERT' : $this->insertDefault($model);
+                break;
+            case 'UPDATE' : $this->updateDefault($model);
+                break;
             default:
                 break;
         }

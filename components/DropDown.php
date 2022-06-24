@@ -479,6 +479,15 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-km-info/route-list', 'Select Route', $multiple, $model->$name, $readonly);
     }
 
+    public function places($model, $form, $depends, $name = 'ownmccid', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select') {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
+    }
+
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
+        $this->setClass($form, $name);
+        $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -726,7 +735,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1278,6 +1287,41 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Rate Digit'),
                 'data' => [4 => Yii::t('app', '4-Digit'), 5 => Yii::t('app', '5-Digit')],
             ],
+            'vehicle_use_type' => [
+                'name' => 'vehicle_use_type',
+                'prompt' => Yii::t('app', 'Billing Type'),
+                'data' => [0 => Yii::t('app', 'Primary'), 1 => Yii::t('app', 'Secondary'), 2 => Yii::t('app', 'Both')],
+            ],
+            'billing_qty_flag' => [
+                'name' => 'billing_qty_flag',
+                'prompt' => Yii::t('app', 'Select Flag'),
+                'data' => [1 => Yii::t('app', 'Actual QTY'), 2 => Yii::t('app', 'Vehicle Capacity'), 3 => Yii::t('app', 'Higher QTY')],
+            ],
+            'is_single_farmer' => [
+                'name' => 'is_single_farmer',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Yes'), 0 => Yii::t('app', 'No')],
+            ],
+            'place_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['bmc' => Yii::t('app', 'BMC'), 'mcc' => Yii::t('app', 'MCC'), 'plant' => Yii::t('app', 'PLANT'), 'vendor' => Yii::t('app', 'VENDOR')],
+            ],
+            'product_type' => [
+                'name' => 'Type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Service'), '2' => Yii::t('app', 'Product')],
+            ],
+            'weigh_type' => [
+                'name' => 'weigh_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'In'), 2 => Yii::t('app', 'Out')],
+            ],
+            'billing_for' => [
+                'name' => 'billing_for',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'MEMBER'), 2 => Yii::t('app', 'VENDOR')],
+            ],
         ];
         return $records[$l];
     }
@@ -1471,7 +1515,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -1581,7 +1625,7 @@ class DropDown extends Component {
                         var selected_val_json = $.parseJSON(selected_val);
                         var array_val = [];
                         var depend = '" . $depends [0] . "';
-                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
+//                        console.log('#'+modelname+'-'+fieldName+'-'+depend+'-'+$('#'+depend).val());
                             $('#'+modelname+'-'+fieldName).on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                                 $.each(selected_val_json, function(index, value) {
                                     $('#'+modelname+'-'+fieldName).find('option[value='+value+']').attr('selected', 'selected');
