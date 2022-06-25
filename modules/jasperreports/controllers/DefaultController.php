@@ -291,6 +291,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionFarmerIncentive() {
+        $this->report = 'FarmerIncentive';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -699,6 +704,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'scenario' => 'VendorBillMmd',
                 'title' => '612 - Member and Vendor Milk Bill',
                 'tcpdf' => true,
+            ],
+            'FarmerIncentive' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_report_name',
+                'path' => 'vsp/FarmerIncentive',
+                'scenario' => 'FarmerIncentive',
+                'title' => '111 - Farmer Incentive',
             ],
         ];
         return $label[$l];
