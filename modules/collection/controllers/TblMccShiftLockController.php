@@ -527,4 +527,15 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         \Yii::$app->general->getSpData('sp_generate_sap_data_daily', [$mcc, $date, $shift], TRUE);
     }
 
+    public function actionIndexMember() {
+        $searchModel = new TblMccShiftLockSearch();
+        $searchModel->scenario = 'shiftLock';
+        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_member');
+
+        return $this->render('index_member', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
 }
