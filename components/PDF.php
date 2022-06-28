@@ -620,7 +620,7 @@ class PDF extends TCPDF {
                 $textContent .= $memberName;
                 $textContent .= ' ' . $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
                 $inPad = 82 - (13 + strlen($memberName) + 1 + strlen($acNo));
-                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
                 $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
@@ -713,12 +713,12 @@ class PDF extends TCPDF {
                     $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgFAT'], 2) : ''), 7, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['buffalo'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['rate']) ? number_format((float) $tbl_value['buffalo'][0]['rate'], 2) : ''), 10, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_amount']) ? number_format((float) $tbl_value['buffalo'][0]['bm_amount'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['buffalo']) && !empty($tbl_value['buffalo'][0]) && !empty($tbl_value['buffalo'][0]['bm_amount']) ? (float) $tbl_value['buffalo'][0]['bm_amount'] : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_qty']) ? number_format((float) $tbl_value['cow'][0]['bm_qty'], 2) : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['cow'][0]['bm_avgFAT'], 2) : ''), 6, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['cow'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['rate']) ? number_format((float) $tbl_value['cow'][0]['rate'], 2) : ''), 10, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_amount']) ? number_format((float) $tbl_value['cow'][0]['bm_amount'], 2) : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['cow']) && !empty($tbl_value['cow'][0]) && !empty($tbl_value['cow'][0]['bm_amount']) ? (float) $tbl_value['cow'][0]['bm_amount'] : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= "\n";
 //                    $detailTable .= '<tr>
 //                            <td align="center" width="60">' .
@@ -1135,7 +1135,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 87 - (33 + strlen($memName));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
                 $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
