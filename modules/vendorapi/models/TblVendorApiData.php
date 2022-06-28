@@ -69,8 +69,8 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [[ 'parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
-            [['parent_code_other','date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_fat', 'to_fat', 'fat_price', 'from_snf', 'to_snf', 'snf_price'], 'safe'],
+            [['parent_code', 'master_code', 'master_name', 'master_type', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'contact_first_name', 'contact_middle_name', 'contact_last_name', 'address', 'address_2', 'email', 'bank_name', 'branch_name', 'bank_account_no', 'ifsc', 'type_of_data', 'union_code', 'service_type', 'username', 'password'], 'string'],
+            [['parent_code_other', 'date_1', 'date_2', 'time_1', 'time_2', 'time_3', 'time_4', 'type_2', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_fat', 'to_fat', 'fat_price', 'from_snf', 'to_snf', 'snf_price'], 'safe'],
             [['capacity', 'route_length'], 'number'],
             [['is_active'], 'integer'],
             [['master_type'], 'default', 'value' => 'Can', 'on' => 'route_master'],
@@ -78,10 +78,10 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['master_code', 'master_name', 'date_1', 'time_1', 'time_2', 'time_3', 'time_4'], 'required', 'on' => 'route_master'],
 //            [['date_validate'], 'convertDateDot'],
 //            [['date_validate'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01.12.2018')],
-            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i:s', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30')],
+            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i:s', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30'), 'except' => ['route_create']],
             [['type_2'], function ($attribute, $params) {
-            Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
-        }, 'on' => 'route_master'],
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'vehicle_type_code');
+                }, 'on' => 'route_master'],
             [['master_code'], 'string', 'max' => 8, 'on' => 'route_master'],
             [['parent_code'], 'string', 'max' => 4, 'on' => 'route_master'],
             //[['mobile_no'], 'number', 'on' => 'route_master'],
@@ -90,10 +90,10 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['parent_code', 'master_code', 'master_name', 'date_1'], 'required', 'on' => 'mcc_master'],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'bank_account_no', 'ifsc'], 'required', 'on' => 'vlcc_master'],
             [['parent_code', 'master_code', 'date_1', 'date_2'], 'required', 'on' => 'route_vlcc'],
-        //    [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
-          //  [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
-           // [['parent_code'], 'validateMccCode', 'on' => 'route_master'],
-           // [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+            //    [['parent_code'], 'validateRouteCode', 'on' => 'route_vlcc'],
+            //  [['master_code'], 'validateVlccCode', 'on' => 'route_vlcc'],
+            // [['parent_code'], 'validateMccCode', 'on' => 'route_master'],
+            // [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
 //            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
 //            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
@@ -107,6 +107,10 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['from_snf', 'to_snf'], 'snfRangeValidate', 'on' => 'rate_master'],
             [['from_fat', 'to_fat', 'from_snf', 'to_snf', 'fat_price', 'snf_price'], 'number', 'min' => 0, 'on' => 'rate_master'],
             //[['hamlet_code'], 'validateHamlet', 'on' => 'vlcc_master']
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['parent_code', 'master_code', 'master_type', 'master_name', 'parent_code_other', 'date_1', 'bank_account_no', 'ifsc', 'is_active'], 'required', 'on' => ['dcs_create']],
+            [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'master_type', 'type_2', 'capacity', 'x_col1', 'route_length', 'time_1', 'time_2', 'time_3', 'time_4', 'contact_first_name', 'is_active'], 'required', 'on' => ['route_create']],
+            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30'), 'on' => ['route_create']],
         ];
     }
 
@@ -194,7 +198,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
 
     public function fatRangeValidate($attribute, $params) {
         if (empty($this->getErrors())) {
-            if ((float)$this->from_fat > (float)$this->to_fat) {
+            if ((float) $this->from_fat > (float) $this->to_fat) {
                 $this->addError($attribute, Yii::t('app', 'End range can not be less than Start range.'));
             }
         }
@@ -203,7 +207,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
     public function snfRangeValidate($attribute, $params) {
         if (empty($this->getErrors())) {
 
-            if ((float)$this->from_snf > (float) $this->to_snf) {
+            if ((float) $this->from_snf > (float) $this->to_snf) {
                 $this->addError($attribute, Yii::t('app', 'End range can not be less than Start range.'));
             }
         }
