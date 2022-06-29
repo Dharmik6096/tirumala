@@ -455,6 +455,7 @@ echo GhostMenu::widget([
                                 ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
                                 ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
                                 ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
+                                ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

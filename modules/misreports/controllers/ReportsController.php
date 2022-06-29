@@ -1026,6 +1026,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBmcCollectionHistory() {
+        $this->report = 'BmcCollectionHistory';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     private function getLabels($l) {
@@ -2065,6 +2070,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_collection_shift_for_new_customer',
                 'scenario' => 'NewCustomerPouringMilk',
                 'title' => '215 - New Customer Pouring Milk',
+            ],
+            'BmcCollectionHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_history_tbl_bmc_collection',
+                'scenario' => 'BmcCollectionHistory',
+                'title' => '216 - BMC Collection History',
             ],
         ];
         return $label[$l];

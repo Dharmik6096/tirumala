@@ -102,6 +102,7 @@ class ReportsModel extends Model {
             [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['NewMemberPouringMilk', 'NewCustomerPouringMilk']],
             [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'report_type'], 'required', 'on' => ['CenterLossGainReport']],
+            [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcCollectionHistory']],
         ];
     }
 
