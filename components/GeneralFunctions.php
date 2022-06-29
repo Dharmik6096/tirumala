@@ -1733,6 +1733,12 @@ class GeneralFunctions extends Component {
                     break;
                 }
             }
+            if ($status) {
+                $perMissionPath = $ftpData->ftp_path . '/' . $cp_code;
+                $perMissionPath = str_replace('//', '/', $perMissionPath);
+                $command = 'chmod 777 -R ' . $perMissionPath;
+                exec($command);
+            }
         }
         if ($status === false) {
             $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
