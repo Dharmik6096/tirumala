@@ -75,6 +75,11 @@ $form = ActiveForm::begin(['options' => [
 <?php
 $script = "$('.kv-panel-before').hide();";
 $script .= "$('.save').on('click',function(){
+          var len = $('input[class=\'checkbox-collection kv-row-checkbox\']:checked').length;
+            if(len == 0){
+                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please select at least one record.</span></div></div>');
+                return false;
+            } else { 
             var type = $(this).prop('name');
             $('#flag').val(type);
             var msg = '';        
@@ -102,6 +107,7 @@ $script .= "$('.save').on('click',function(){
             }
         }
     });
+ }  
  });";
 $this->registerJs($script, View::POS_END, 'shift-lock-member');
 ?>

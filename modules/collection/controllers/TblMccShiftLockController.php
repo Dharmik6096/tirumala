@@ -16,6 +16,7 @@ use app\modules\collection\models\TblMccShiftLockStaging;
 use app\components\WebApi;
 use app\modules\vsp\models\TblVspTransitRecovery;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
+use app\modules\collection\models\TblMccShiftLockStagingHistory;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -530,70 +531,85 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     public function actionIndexMember() {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->scenario = 'shiftLock';
-        if (Yii::$app->request->post() && !empty((Yii::$app->request->post()['flag'])) && !empty($_REQUEST['selection'])) {
-            $type = Yii::$app->request->post()['flag'];
-            $data_lock = ($type == 'lock-data') ? 1 : 0;
-            $selected_data = $_REQUEST['selection'];
-            $model = new TblMccShiftLock();
-            $auto_inc = Yii::$app->general->getCodeAutoIncrement($model);
-            $auto_inc = $auto_inc - 1;
-            foreach ($selected_data as $d) {
-                $data = explode('###', $d);
-                $shift_lock_code = $data[0];
-                $member_lock = $data[1];
-                $union = $data[2];
-                $plant = $data[3];
-                $mcc = $data[4];
-                $date = $data[5];
-                $shift = $data[6];
-                $qty = $data[7];
-                $avgFAT = $data[8];
-                $avgSNF = $data[9];
-                $amount = $data[10];
+        if (Yii::$app->request->post() && !empty((Yii::$app->request->post()['flag']))) {
+            if (!empty($_REQUEST['selection'])) {
+                $type = Yii::$app->request->post()['flag'];
+                $data_lock = ($type == 'lock-data') ? 1 : 0;
+                $selected_data = $_REQUEST['selection'];
+                $model = new TblMccShiftLock();
+                $auto_inc = Yii::$app->general->getCodeAutoIncrement($model);
+                $auto_inc = $auto_inc - 1;
                 $saveModel = [];
-                if ($data_lock != $member_lock) {
-                    if (empty($shift_lock_code)) {
-                        $auto_inc = $auto_inc + 1;
-                        $model = new TblMccShiftLock();
-                        $model->shift_lock_code = $auto_inc;
-                        $model->union_code = $union;
-                        $model->plant_code = $plant;
-                        $model->mcc_plant_code = $mcc;
-                        $model->date_time_of_collection = $date;
-                        $model->shift_code = $shift;
-                    } else {
-                        $model = TblMccShiftLock::findOne($shift_lock_code);
-                        $historyModel = new TblMccShiftLockHistory();
-                        Yii::$app->operation->history($model, $historyModel, UPDATE);
-                        $saveModel[] = $historyModel;
+                $deleteModel = [];
+                foreach ($selected_data as $d) {
+                    $data = explode('###', $d);
+                    $shift_lock_code = $data[0];
+                    $member_lock = $data[1];
+                    $union = $data[2];
+                    $plant = $data[3];
+                    $mcc = $data[4];
+                    $date = $data[5];
+                    $shift = $data[6];
+                    $qty = $data[7];
+                    $avgFAT = $data[8];
+                    $avgSNF = $data[9];
+                    $amount = $data[10];
+                    if ($data_lock != $member_lock) {
+                        if (empty($shift_lock_code)) {
+                            $auto_inc = $auto_inc + 1;
+                            $model = new TblMccShiftLock();
+                            $model->shift_lock_code = $auto_inc;
+                            $model->union_code = $union;
+                            $model->plant_code = $plant;
+                            $model->mcc_plant_code = $mcc;
+                            $model->date_time_of_collection = $date;
+                            $model->shift_code = $shift;
+                        } else {
+                            $model = TblMccShiftLock::findOne($shift_lock_code);
+                            $historyModel = new TblMccShiftLockHistory();
+                            Yii::$app->operation->history($model, $historyModel, UPDATE);
+                            $saveModel[] = $historyModel;
+                        }
+                        $model->member_lock = $data_lock;
+                        $stagging_model = TblMccShiftLockStaging::find()->where(['shift_lock_code' => $model->shift_lock_code])->one();
+                        if ($data_lock == 1) {
+                            if (empty($stagging_model)) {
+                                $stagging_model = new TblMccShiftLockStaging();
+                                $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
+                                $stagging_model->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $shift;
+                            }
+                            $stagging_model->mcc_plant_code = $model->mcc_plant_code;
+                            $stagging_model->shift_lock_code = $model->shift_lock_code;
+                            $stagging_model->date_time_of_collection = $model->date_time_of_collection;
+                            $stagging_model->shift_code = $model->shift_code;
+                            $stagging_model->data_post_status = 0;
+                            $stagging_model->picked_datetime = NULL;
+                            $stagging_model->response_datetime = NULL;
+                            $stagging_model->resp_status = NULL;
+                            $stagging_model->resp_desc = NULL;
+                            $stagging_model->qty = $qty;
+                            $stagging_model->avg_fat = $avgFAT;
+                            $stagging_model->avg_snf = $avgSNF;
+                            $stagging_model->amount = $amount;
+                            $saveModel[] = $stagging_model;
+                        } else {
+                            if (!empty($stagging_model)) {
+                                $historyModel = new TblMccShiftLockStagingHistory();
+                                Yii::$app->operation->history($stagging_model, $historyModel, DELETE);
+                                $saveModel[] = $historyModel;
+                                $deleteModel[] = $stagging_model;
+                            }
+                        }
+                        $saveModel[] = $model;
                     }
-                    $model->member_lock = $data_lock;
-                    $stagging_model = TblMccShiftLockStaging::find()->where(['shift_lock_code' => $model->shift_lock_code])->one();
-                    if (empty($stagging_model)) {
-                        $stagging_model = new TblMccShiftLockStaging();
-                        $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
-                        $stagging_model->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $shift;
-                    }
-                    $stagging_model->mcc_plant_code = $model->mcc_plant_code;
-                    $stagging_model->shift_lock_code = $model->shift_lock_code;
-                    $stagging_model->date_time_of_collection = $model->date_time_of_collection;
-                    $stagging_model->shift_code = $model->shift_code;
-                    $stagging_model->data_post_status = 0;
-                    $stagging_model->picked_datetime = NULL;
-                    $stagging_model->response_datetime = NULL;
-                    $stagging_model->resp_status = NULL;
-                    $stagging_model->resp_desc = NULL;
-                    $stagging_model->qty = $qty;
-                    $stagging_model->avg_fat = $avgFAT;
-                    $stagging_model->avg_snf = $avgSNF;
-                    $stagging_model->amount = $amount;
-                    $saveModel[] = $model;
-                    $saveModel[] = $stagging_model;
                 }
-            }
-            $msg = ($data_lock == 1) ? 'Shift LOCK' : 'Shift UN-LOCK';
-            if (!empty($saveModel)) {
-                $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'edit']);
+                $msg = ($data_lock == 1) ? 'Shift LOCK' : 'Shift UN-LOCK';
+                if (!empty($saveModel)) {
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$msg, 'edit']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Please Select Data.']);
             }
         }
         $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_member');

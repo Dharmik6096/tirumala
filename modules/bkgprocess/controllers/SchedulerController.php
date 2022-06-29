@@ -899,11 +899,14 @@ class SchedulerController extends ChildController {
                     $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
                     if (!empty($output)) {
                         unset($output[count($output) - 1]);
-                        if ($ftp_model->generateFiles($output, $FTPProcess, $file_data)) {
+                        $result = $ftp_model->generateFiles($output, $FTPProcess, $file_data);
+                        if ($result) {
+                            $data->resp_desc = $result;
                             $data->data_post_status = 2;
                         } else {
                             $data->data_post_status = 3;
                         }
+                        $data->response_datetime = date('Y-m-d H:i:s');
                         $data->save(FALSE);
                     }
                 }

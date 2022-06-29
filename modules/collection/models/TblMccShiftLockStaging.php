@@ -105,7 +105,7 @@ class TblMccShiftLockStaging extends \app\models\ChildModel {
 
     public function getLockShift($limit = '') {
         $query = $this->find()
-               // ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
+                ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
                 ->limit($limit)
                 ->all();
 
