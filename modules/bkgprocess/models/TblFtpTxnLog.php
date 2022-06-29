@@ -136,7 +136,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 }
             }
             foreach ($downLoadArray as $bmc => $download) {
-                $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ?  'WQ' : 'SD';
+                $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'WQ' : 'SD';
                 $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 $txn->ref_code = $bmc;
                 $bmc_data = $txn->bmcCode;
@@ -294,7 +294,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $connection = \Yii::$app->db;
                 $command = $connection->createCommand($query);
                 $command->execute();
-                return TRUE;
+                return $fileName;
             }
         }
         return FALSE;

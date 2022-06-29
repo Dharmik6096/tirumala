@@ -59,6 +59,7 @@ class TblVspPayment extends \app\models\ChildModel {
                 [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
                 [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty'], 'safe'],
         ];
     }
 

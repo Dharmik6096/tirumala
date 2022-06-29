@@ -118,7 +118,7 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
         $this->load($params);
 
         $output = [];
-        if (!empty($params)) {
+        if (!empty($params) && $this->validate()) {
             $sp_params = [
                 'f_union_code' => '',
                 'f_plant_code' => '',
@@ -129,9 +129,14 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
                 'to_shift' => ''];
 
             $sp_params = array_merge($sp_params, $params['TblMccShiftLockSearch']);
+            $mcc_array = $mcc_string = $params['TblMccShiftLockSearch']['f_mcc_code'];
             if (empty($this->f_mcc_code)) {
                 $this->f_mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            } else if (is_array($mcc_array)) {
+                $mcc_string = implode(',', $mcc_array);
+                $this->f_mcc_code = ',' . $mcc_string . ',';
             }
+
             $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
             $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
             $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
@@ -142,6 +147,7 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
 
 
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
+            $this->f_mcc_code = $mcc_array;
         }
         $dataProvider = new ArrayDataProvider();
         if (!empty($output)) {

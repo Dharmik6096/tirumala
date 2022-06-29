@@ -2233,4 +2233,15 @@ class GeneralFunctions extends Component {
         ]);
     }
 
+    public function validateMCC($model, $attribute) {
+        $mccModel = new TblMccPlant();
+        $records = $mccModel->find()->select('mcc_plant_code')->where(['or', ['mcc_plant_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $model->$attribute = $records[0]->mcc_plant_code;
+        } else {
+            $model->addError('mcc_plant_code', Yii::t('app/validation', Yii::t('app', 'MCC') . ' Is Invalid.'));
+            return false;
+        }
+    }
+
 }
