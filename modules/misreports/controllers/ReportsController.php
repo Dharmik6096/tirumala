@@ -1944,7 +1944,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '808 - Cleaning Format',
             ],
             'AlertNotification' => [
-                'param' => 'from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,module_type',
                 'sp_name' => 'sp_alert_notification_list',
                 'scenario' => 'AlertNotification',
                 'title' => 'Alert Notification',
