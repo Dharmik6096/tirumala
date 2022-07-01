@@ -35,11 +35,20 @@ class MasterServiceController extends ActiveController {
         ];
         $post_data = Json::decode(Yii::$app->request->getRawBody());
         $header = getallheaders();
-        if (!empty($header) && !empty($header['token'])) {
+        $token = '';
+        if (!empty($header)) {
+            if (!empty($header['token'])) {
+                $token = $header['token'];
+            } else if (!empty($header['authorization'])) {
+                $token = $header['authorization'];
+            }
+        }
+
+        if ($token) {
             $date = date('Y-m-d H:i:s');
             $activatemodel = new TblDataExchangeActivation();
             $data = $activatemodel->find()
-                    ->where(['token' => $header['token']])
+                    ->where(['token' => $token])
                     ->andWhere('((\'' . $date . '\' between valid_from  and valid_to))')
                     ->one();
             if (!empty($data)) {
