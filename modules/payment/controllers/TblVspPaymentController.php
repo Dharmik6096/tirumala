@@ -210,8 +210,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $saveModel[] = $vsp_txn;
                 }
                 $model->deduction = $model->deduction + $add_amt - $sub_amt;
-                $model->net_payable = $model->net_payable + $add_amt - $sub_amt;
-                $model->final_pay = $model->final_pay + $add_amt - $sub_amt;
+                $model->net_payable = $model->net_payable - $add_amt + $sub_amt;
+                $model->final_pay = $model->final_pay - $add_amt + $sub_amt;
                 $saveModel[] = $model;
                 $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale Installment', 'create']);
                 if ($transaction == 'customRedirect') {
