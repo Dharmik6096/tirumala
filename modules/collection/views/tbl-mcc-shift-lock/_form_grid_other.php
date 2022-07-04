@@ -54,24 +54,29 @@ $attribute = [
             return ['class' => 'text-center'];
         }, 'filter' => false],
         ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
-            $class = $model['member_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
-            $title = $model['member_lock'] == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
-            $url = $model['member_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/member-data-unlock' : '/collection/tbl-mcc-shift-lock/member-data-lock';
-            $popupClass = ''; //' disabled ';
-            if (User::canRoute($url)) {
-                $popupClass = ' generalGridConfirmationPopup ';
+            if (Yii::$app->session->get('eiplCode') != 'PRABHAT') {
+                $class = $model['member_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+                $title = $model['member_lock'] == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
+                $url = $model['member_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/member-data-unlock' : '/collection/tbl-mcc-shift-lock/member-data-lock';
+                $popupClass = ''; //' disabled ';
+                if (User::canRoute($url)) {
+                    $popupClass = ' generalGridConfirmationPopup ';
+                }
+                $popupWindowTitle = 'Are you sure you want to ' . ($model['member_lock'] == 1 ? 'Unlock Member Data' : 'Lock Member Data');
+                $options = [
+                    'data-toggle' => 'tooltip',
+                    'data-placement' => 'top',
+                    'data-original-title' => $title,
+                    'data-popup-message' => $popupWindowTitle,
+                    'class' => $popupClass,
+                    'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
+                ];
+                return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+            } else {
+                return '';
             }
-            $popupWindowTitle = 'Are you sure you want to ' . ($model['member_lock'] == 1 ? 'Unlock Member Data' : 'Lock Member Data');
-            $options = [
-                'data-toggle' => 'tooltip',
-                'data-placement' => 'top',
-                'data-original-title' => $title,
-                'data-popup-message' => $popupWindowTitle,
-                'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
-            ];
-            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
         },
+        'visible' => (Yii::$app->session->get('eiplCode') != 'PRABHAT'),
         'format' => 'raw',
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];

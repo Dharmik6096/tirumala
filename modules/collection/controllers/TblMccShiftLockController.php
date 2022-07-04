@@ -586,7 +586,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                             }
                             $stagging_model->mcc_plant_code = $model->mcc_plant_code;
                             $stagging_model->shift_lock_code = $model->shift_lock_code;
-                            $stagging_model->date_time_of_collection = $model->date_time_of_collection;
+                            $stagging_model->date_time_of_collection = date('Y-m-d', strtotime($model->date_time_of_collection));
+                            $stagging_model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($model->shift_code);
                             $stagging_model->shift_code = $model->shift_code;
                             $stagging_model->data_post_status = 0;
                             $stagging_model->picked_datetime = NULL;
