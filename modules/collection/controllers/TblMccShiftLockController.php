@@ -134,7 +134,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->union_code = $union;
             $this->model->plant_code = $plant;
             $this->model->mcc_plant_code = $mcc;
-            $this->model->date_time_of_collection = $date;
+            $this->model->date_time_of_collection = date('Y-m-d', strtotime($date));
+            $this->model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
             $this->model->shift_code = $shift;
             $this->model->qty = $qty;
             $this->model->avg_fat = $fat;
@@ -284,7 +285,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->union_code = $union;
             $this->model->plant_code = $plant;
             $this->model->mcc_plant_code = $mcc;
-            $this->model->date_time_of_collection = $date;
+            $this->model->date_time_of_collection = date('Y-m-d', strtotime($date));
+            $this->model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
             $this->model->shift_code = $shift;
             $this->model->qty = $qty;
             $this->model->avg_fat = $fat;
@@ -333,7 +335,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $model->mcc_plant_code = $mcc;
         $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
         $model->plant_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'plant_code');
-        $model->date_time_of_collection = $date;
+        $model->date_time_of_collection = date('Y-m-d', strtotime($date));
+        $model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
         $model->shift_code = $shift;
         $model->qty = $qty;
         $model->avg_fat = $fat;
@@ -377,9 +380,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
-        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
-            $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
-        }
+//        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
+//            $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
+//        }
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
     }
 
@@ -415,7 +418,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->union_code = $union;
             $this->model->plant_code = $plant;
             $this->model->mcc_plant_code = $mcc;
-            $this->model->date_time_of_collection = $date;
+            $this->model->date_time_of_collection = date('Y-m-d', strtotime($date));
+            $this->model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
             $this->model->shift_code = $shift;
             $this->model->qty = $qty;
             $this->model->avg_fat = $fat;
@@ -471,7 +475,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->union_code = $union;
             $this->model->plant_code = $plant;
             $this->model->mcc_plant_code = $mcc;
-            $this->model->date_time_of_collection = $date;
+            $this->model->date_time_of_collection = date('Y-m-d', strtotime($date));
+            $this->model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
             $this->model->shift_code = $shift;
             $this->model->qty = $qty;
             $this->model->avg_fat = $fat;
@@ -562,7 +567,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                             $model->union_code = $union;
                             $model->plant_code = $plant;
                             $model->mcc_plant_code = $mcc;
-                            $model->date_time_of_collection = $date;
+                            $model->date_time_of_collection = date('Y-m-d', strtotime($date));
+                            $model->date_time_of_collection .= ' ' . \Yii::$app->general->getshift($shift);
                             $model->shift_code = $shift;
                         } else {
                             $model = TblMccShiftLock::findOne($shift_lock_code);
