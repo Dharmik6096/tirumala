@@ -387,15 +387,15 @@ class TblRouteMapping extends \app\models\ChildModel {
         }
     }
 
-    public function routeFromDestination($plant_code, $mcc_code = NULL, $bmc_code = NULL, $concateRef = true) {
+    public function routeFromDestination($plant_code, $mcc_code = NULL, $bmc_code = NULL, $concateRef = true, $showName = false) {
         $data = $this->find()->select(['route_code', 'route_name', 'to_type', 'ref_code'])
                 ->where(['to_dest' => $plant_code, 'to_type' => 'plant']);
         !empty($mcc_code) ? $data = $data->orWhere(['to_dest' => $mcc_code, 'to_type' => 'mcc']) : '';
         !empty($bmc_code) ? $data = $data->orWhere(['to_dest' => $bmc_code, 'to_type' => 'bmc']) : '';
 
         $data = $data->all();
-        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) use($concateRef) {
-                    return ($concateRef) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] : $value['ref_code'] . ' - ' . $value['route_name'] . ' - ' . strtoupper($value['to_type']);
+        $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) use($concateRef, $showName) {
+                    return ($showName) ? $value['route_name'] : (($concateRef) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] : $value['ref_code'] . ' - ' . $value['route_name'] . ' - ' . strtoupper($value['to_type']));
                 });
         return $array;
     }

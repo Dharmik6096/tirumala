@@ -195,12 +195,14 @@ class UserController extends AdminDefaultController {
         $stickeyOrgArray['mcc'] = [];
         $stickeyOrgArray['bmc'] = [];
         $stickeyOrgArray['dcs'] = [];
+        $stickeyOrgArray['route'] = [];
         if ($app_org_array) {
             $stickeyOrgArray['union'] = !empty($app_organization['union']['selectedArray']) ? $app_organization['union']['selectedArray'] : [];
             $stickeyOrgArray['plant'] = !empty($app_organization['plant']['selectedArray']) ? $app_organization['plant']['selectedArray'] : [];
             $stickeyOrgArray['mcc'] = !empty($app_organization['mcc']['selectedArray']) ? $app_organization['mcc']['selectedArray'] : [];
             $stickeyOrgArray['bmc'] = !empty($app_organization['bmc']['selectedArray']) ? $app_organization['bmc']['selectedArray'] : [];
             $stickeyOrgArray['dcs'] = !empty($app_organization['dcs']['selectedArray']) ? $app_organization['dcs']['selectedArray'] : [];
+            $stickeyOrgArray['route'] = !empty($app_organization['route']['selectedArray']) ? $app_organization['route']['selectedArray'] : [];
         }
         if (empty($modelData) && !empty($app_organization)) {
             $organization = $app_organization;
@@ -213,6 +215,8 @@ class UserController extends AdminDefaultController {
         $mcc = $organization['mcc'];
         $bmc = $organization['bmc'];
         $dcs = $organization['dcs'];
+        $route = $organization['route'];
+        $model->route = $route['selectedArray'];
         $model->dcs = $dcs['selectedArray'];
         $model->bmc = $bmc['selectedArray'];
         $model->mcc = $mcc['selectedArray'];
@@ -271,7 +275,7 @@ class UserController extends AdminDefaultController {
             Yii::$app->display->message(true, 'user', 'edit');
             return $this->redirect(['index']);
         }
-        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'stickeyOrgArray' => $stickeyOrgArray]);
+        return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
     }
 
     private function addUserOrganizationMapping($data, $type, $userId, $active) {

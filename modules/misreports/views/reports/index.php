@@ -368,6 +368,12 @@ if (isset($data['url1'])) {
                                             </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('module_type'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {

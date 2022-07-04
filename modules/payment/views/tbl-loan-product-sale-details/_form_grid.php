@@ -16,15 +16,15 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false, 'visible' => false],
-        ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-        ['attribute' => 'dcs_name', 'value' => 'dcsCode.dcs_name', 'label' => Yii::t('app', 'DCS Name')],
-        ['attribute' => 'member_code', 'value' => 'member_code', 'label' => Yii::t('app', 'Member Code')],
-        ['attribute' => 'member_name', 'value' => 'memberCode.member_name', 'label' => Yii::t('app', 'Member Name')],
-        ['attribute' => 'product_code', 'value' => function($model) {
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false, 'visible' => false],
+    ['attribute' => 'dcs_code', 'value' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+    ['attribute' => 'dcs_name', 'value' => 'dcsCode.dcs_name', 'label' => Yii::t('app', 'DCS Name')],
+    ['attribute' => 'member_code', 'value' => 'member_code', 'label' => Yii::t('app', 'Member Code')],
+    ['attribute' => 'member_name', 'value' => 'memberCode.member_name', 'label' => Yii::t('app', 'Member Name')],
+    ['attribute' => 'product_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }],
-        ['attribute' => 'sale_date_time',
+    ['attribute' => 'sale_date_time',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -33,15 +33,15 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->sale_date_time);
         }],
-        ['attribute' => 'amount'],
-        ['attribute' => 'entry_type'],
-        ['attribute' => 'send_status',
+    ['attribute' => 'amount'],
+    ['attribute' => 'entry_type'],
+    ['attribute' => 'send_status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('send_status', $searchModel, 'send_status'),
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('send_status')['data'][$model->send_status]) ? Yii::$app->dropdown->getRecords('send_status')['data'][$model->send_status] : '';
         },
     ],
-        ['attribute' => 'response_datetime',
+    ['attribute' => 'response_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -50,7 +50,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->response_datetime);
         }],
-        ['attribute' => 'picked_datetime',
+    ['attribute' => 'picked_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -59,10 +59,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->picked_datetime);
         }],
-        ['attribute' => 'resp_desc'],
-        ['attribute' => 'data_inserted_from', 'filter' => false, 'visible' => false],
-        ['attribute' => 'txfarmer_id', 'filter' => false, 'visible' => false],
-        ['attribute' => 'received_timestamp',
+    ['attribute' => 'resp_desc'],
+    ['attribute' => 'data_inserted_from', 'filter' => false, 'visible' => false],
+    ['attribute' => 'txfarmer_id', 'filter' => false, 'visible' => false],
+    ['attribute' => 'received_timestamp',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -71,6 +71,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->received_timestamp);
         }],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode', 'channelMaster'], 'channel_desc');
+        }, 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [

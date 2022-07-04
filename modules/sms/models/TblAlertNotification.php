@@ -97,4 +97,14 @@ class TblAlertNotification extends \app\models\ChildModel {
                 ->all();
     }
 
+    public function getModuleType() {
+        $data = $this->find()
+                ->select('module_type')
+                ->distinct()
+                ->all();
+
+        $array = \yii\helpers\ArrayHelper::map($data, 'module_type', 'module_type');
+        return $array;
+    }
+
 }
