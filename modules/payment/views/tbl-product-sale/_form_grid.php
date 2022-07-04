@@ -49,6 +49,9 @@ $attribute = [
     ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),],
     ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(),],
     ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc');
+        }, 'visible' => true, 'filter' => false],
         // 'is_installment',
         // 'no_of_installment',
         // 'created_at',
