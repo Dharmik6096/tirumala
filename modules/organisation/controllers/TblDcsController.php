@@ -851,9 +851,10 @@ class TblDcsController extends ChildController {
         $mccList = [];
         if (!empty($_POST['bmc'])) {
             $palnt = explode(',', $_POST['bmc']);
+            $route = !empty($_POST['route']) ? explode(',', $_POST['route']) : '';
             $RLS = $_POST['RLS'];
             $model = new TblDcs();
-            $mccList = $model->getBMCDCSList($palnt, $RLS);
+            $mccList = $model->getBMCDCSList($palnt, $RLS, '', '', $route);
         }
         return Json::encode(['status' => 'success', 'data' => $mccList]);
     }

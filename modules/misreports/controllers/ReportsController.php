@@ -1033,6 +1033,10 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'UmangSapReportWeekly';
             }
         }
+    }
+
+    public function actionBmcCollectionHistory() {
+        $this->report = 'BmcCollectionHistory';
         return $this->actionIndex();
     }
 
@@ -1949,7 +1953,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '808 - Cleaning Format',
             ],
             'AlertNotification' => [
-                'param' => 'from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,module_type',
                 'sp_name' => 'sp_alert_notification_list',
                 'scenario' => 'AlertNotification',
                 'title' => 'Alert Notification',
@@ -2091,6 +2095,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '406 - Weekly Data Export(UMANG)',
                 'report_type' => [Yii::t('app', 'Daily'), Yii::t('app', 'Weekly')],
                 'kartik_grid_view' => 'UmangSapReportWeekly',
+            ],
+            'BmcCollectionHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_history_tbl_bmc_collection',
+                'scenario' => 'BmcCollectionHistory',
+                'title' => '216 - BMC Collection History',
             ],
         ];
         return $label[$l];

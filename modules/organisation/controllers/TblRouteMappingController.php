@@ -34,7 +34,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list', 'all-route-list'];
+    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route'];
 
     /**
      * @inheritdoc
@@ -443,6 +443,19 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 }
             }
         }
+    }
+
+    public function actionGetBmcRoute() {
+        $bmcList = [];
+        if (!empty($_POST['bmc'])) {
+            $bmc = explode(',', $_POST['bmc']);
+            $plant = explode(',', $_POST['plant']);
+            $mcc = explode(',', $_POST['mcc']);
+            $RLS = $_POST['RLS'];
+            $model = new TblRouteMapping();
+            $bmcList = $model->routeFromDestination($plant, $mcc, $bmc, FALSE, TRUE);
+        }
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
 
 }

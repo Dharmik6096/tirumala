@@ -36,97 +36,103 @@ $this->title = Yii::$app->label->title('view', 'Product Sales');
             <div class="table-responsive">
                 <?php
                 $attributes = [
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'union_code',
                                 'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'bmc_code',
                                 'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'customer_type',
                                 'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'customer_code',
                                 'value' => isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'invoice_date',
                                 'format' => 'html',
                                 'value' => date('d-m-Y', strtotime($model->invoice_date)),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'payment_mode',
                                 'value' => isset($model->payment_mode) ? Yii::$app->dropdown->getRecords('payment_mode')['data'][$model->payment_mode] : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'other_amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'discount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'paid_amount',
                                 'format' => Yii::$app->general->CurrencyFormat(),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'is_installment',
                                 'format' => 'html',
                                 'value' => $model->is_installment ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-                                [
+                            [
                                 'attribute' => 'no_of_installment',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'amount_due',
                                 'format' => Yii::$app->general->CurrencyFormat(),
-                                'valueColOptions' => ['style' => 'width:80%'],
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'bmc_code',
+                                'label' => Yii::t('app', 'Channel'),
+                                'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],

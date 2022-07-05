@@ -26,6 +26,7 @@ use app\modules\details\models\TblContactDetails;
 use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\collection\models\TblMccShiftLockStaging;
 
 class SchedulerController extends ChildController {
 
@@ -860,6 +861,54 @@ class SchedulerController extends ChildController {
                         $controls['from_date'] = $controls['to_date'] = $from_date;
                     }
                     \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
+                }
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+        }
+    }
+
+    public function actionGenerateSdCollectionFile() {
+        try {
+            $model = new TblMccShiftLockStaging();
+            $modelData = $model->getLockShift(25);
+            if (!empty($modelData)) {
+                $ids = array_map(function($e) {
+                    return $e->staging_code;
+                }, $modelData);
+                $model->updateFileStatus($ids);
+                foreach ($modelData as $data) {
+                    $file_data = new TblFileCreator();
+                    $mcc = $data->mccPlantCode;
+                    $file_data->union_code = $mcc->union_code;
+                    $file_data->mcc_plant_code = $data->mcc_plant_code;
+                    $file_data->shift_code = $data->shift_code;
+                    $file_data->applicable_date = date('Y-m-d H:i:s', strtotime($data->date_time_of_collection));
+                    $file_data->module_code = $mcc->ref_code;
+                    $file_data->module_name = 'TblMilkCollection';
+                    $data_array = [];
+                    $data_array['bmc_code'] = 0;
+                    $data_array['from_date'] = $data_array['to_date'] = $file_data->applicable_date;
+                    $ftp_model = new TblFtpTxnLog();
+                    $FTPProcess = Bkgprocess::FTPProcess()[$file_data->module_name];
+                    $param = explode(',', $FTPProcess['param']);
+                    $controls = [];
+                    foreach ($param as $key => $val) {
+                        $controls[$val] = isset($file_data->{$val}) ? $file_data->{$val} : $data_array[$val];
+                    }
+                    $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+                    if (!empty($output)) {
+                        unset($output[count($output) - 1]);
+                        $result = $ftp_model->generateFiles($output, $FTPProcess, $file_data);
+                        if ($result) {
+                            $data->resp_desc = $result;
+                            $data->data_post_status = 2;
+                        } else {
+                            $data->data_post_status = 3;
+                        }
+                        $data->response_datetime = date('Y-m-d H:i:s');
+                        $data->save(FALSE);
+                    }
                 }
             }
         } catch (\Throwable $ex) {

@@ -32,6 +32,11 @@ class BmcImport extends TblDcsBmc {
             [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
             [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
             [['state_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStates::className(), 'targetAttribute' => ['state_code' => 'state_code']],
+            [['channel_type'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'channel');
+                }, 'on' => 'importCsv'],
+            [['channel_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblChannelMaster::className(), 'targetAttribute' => ['channel_type' => 'channel_master_code'], 'on' => ['importCsv']],
+            [['channel_type'], 'setChannel'],
         ];
 
         foreach ($rules as $row) {
@@ -162,6 +167,12 @@ class BmcImport extends TblDcsBmc {
                 $this->addError($attribute, Yii::t('app/validation', $bmcMilkType['msg']));
                 return false;
             }
+        }
+    }
+
+    public function setChannel($attribute, $params) {
+        if (!empty($this->channel_type)) {
+            $this->x_col1 = $this->channel_type;
         }
     }
 

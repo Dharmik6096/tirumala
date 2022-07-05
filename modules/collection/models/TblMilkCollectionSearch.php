@@ -24,15 +24,15 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
     public function rules() {
         return [
-                [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
-                [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code'], 'safe'],
-                [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
-                [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
-                [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
+            [['milk_collection_code', 'sample_no', 'ack'], 'integer'],
+            [['member_code', 'dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'purchase_rate_code', 'error_log', 'soc_bmc_flag', 'union_code', 'min_date', 'max_date', 'f_plant_code', 'f_mcc_code'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code'], 'safe'],
+            [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
+            [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
+            [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
         ];
     }
 
@@ -259,6 +259,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         if ($flag == 1) {
             $query->joinWith(['approvalData']);
         }
+        $query->join('LEFT JOIN', 'tbl_mcc_shift_lock', 'tbl_mcc_shift_lock.mcc_plant_code = tbl_milk_collection.mcc_plant_code and CAST(tbl_mcc_shift_lock.date_time_of_collection as date) = CAST(tbl_milk_collection.date_time_of_collection as date) and tbl_mcc_shift_lock.shift_code = tbl_milk_collection.shift_code and tbl_mcc_shift_lock.member_lock = 1');
+
         $query->andWhere([
             'tbl_milk_collection.bmc_code' => $this->bmc_code]);
 
@@ -281,6 +283,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         if ($flag == 1) {
             $query->andWhere(['or', ['is', 'tbl_collection_data_alias.member_code', NULL], ['is', 'tbl_collection_data_alias.bmc_code', NULL], ['is', 'tbl_collection_data_alias.dcs_code', NULL], ['is', 'tbl_collection_data_alias.shift_code', NULL], ['is', 'tbl_collection_data_alias.date_time_of_collection', NULL]]);
         }
+        $query->andWhere(['or', ['is', 'tbl_mcc_shift_lock.mcc_plant_code', NULL], ['is', 'tbl_mcc_shift_lock.shift_code', NULL], ['is', 'tbl_mcc_shift_lock.date_time_of_collection', NULL]]);
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,

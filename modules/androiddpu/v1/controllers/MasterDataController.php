@@ -61,6 +61,7 @@ class MasterDataController extends RestController {
                 $transaction_data = $request->camelCaseToUnderscore($transaction_data);
                 $model = new TblInbox();
                 $model->setAttributes($transaction_data);
+                $model->posting_timestamp = date('Y-m-d H:i:s');
                 $modelData = $model->findOne($model->uuid);
                 $syncModel = new TblSyncLog();
                 $syncModel->uuid = $model->uuid;
