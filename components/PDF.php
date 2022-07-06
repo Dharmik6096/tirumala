@@ -620,7 +620,7 @@ class PDF extends TCPDF {
                 $textContent .= $memberName;
                 $textContent .= ' ' . $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
                 $inPad = 82 - (13 + strlen($memberName) + 1 + strlen($acNo));
-                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
                 $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
@@ -998,7 +998,7 @@ class PDF extends TCPDF {
             $bill_detail['to_date'] = $value['to_date'];
             $bill_detail['bmc_name'] = $value['bmc_name'] . '(' . $value['bmc_code'] . ')';
             $bill_detail['dcs_name'] = $value['dcs_name'] . '(' . $value['ref_code'] . ')';
-            $bill_detail['route'] = $value['route_name'] . '(' . $value['route_code'] . ')';
+            $bill_detail['route'] = $value['route_name']; //$value['route_name'] . '(' . $value['route_code'] . ')';
 
             if (empty($main[$value['member_code']]['basic'])) {
                 array_push($array[$value['member_code']]['basic'], $bill_detail);
@@ -1143,7 +1143,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 78 - (30 + strlen($memName));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= 'R.Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
