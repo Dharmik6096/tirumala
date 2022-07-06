@@ -350,8 +350,12 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         } else {
             $modelData = $model->find()->where(['dcs_milk_dispatch_txn_code' => $model->dcs_milk_dispatch_txn_code])->one();
             if (!empty($modelData)) {
-                $model->x_col2 = $model->dcs_milk_dispatch_txn_code;
-                $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);
+                if ($model->x_col1 == $modelData->x_col1) {
+                    $model = $modelData;
+                } else {
+                    $model->x_col2 = $model->dcs_milk_dispatch_txn_code;
+                    $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);
+                }
             }
         }
     }
