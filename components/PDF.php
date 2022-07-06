@@ -1092,7 +1092,7 @@ class PDF extends TCPDF {
             $txt = fopen($file, "w") or die("Unable to open file!");
             foreach ($array as $key => $value) {
                 $textContent = '';
-                $textContent .= "\n";
+//                $textContent .= "\n";
 //                $pdf->AddPage();
 //                $pdf->SetFont('dejavusans', '', 9, '', true);
                 $tableData = '';
@@ -1108,7 +1108,7 @@ class PDF extends TCPDF {
 
                 $fDate = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['from_date'] : '');
                 $tDate = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['to_date'] : '');
-                $textContent .= str_pad('', 63, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 60, ' ', STR_PAD_LEFT);
                 $textContent .= $fDate;
                 $textContent .= str_pad('', 7, ' ', STR_PAD_LEFT);
                 $textContent .= $tDate;
@@ -1140,24 +1140,26 @@ class PDF extends TCPDF {
                 $acNo = 'AC.No: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['bank_account_no'] : '');
                 $acIfsc = 'IFSC: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['ifsc'] : '');
                 $memName = (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
-                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
-                $inPad = 87 - (33 + strlen($memName));
+                $inPad = 78 - (30 + strlen($memName));
                 $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
-                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
-                $textContent .= 'Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
-                $datePad = 85 - (33 + strlen('Route Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
+                $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
+                $textContent .= 'R.Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');
+                $datePad = 77 - (30 + strlen('R.Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '')));
 //                $textContent .= date('d.m.Y');
                 $textContent .= str_pad('', $datePad, ' ', STR_PAD_LEFT);
                 $textContent .= date('d.m.Y');
                 $textContent .= "\n";
-                $textContent .= str_pad('', 33, ' ', STR_PAD_LEFT);
-                $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
-                $textContent .= str_pad('', 3, ' ', STR_PAD_LEFT);
-                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
+//                $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
+//                $textContent .= $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
+//                $textContent .= str_pad('', 3, ' ', STR_PAD_LEFT);
+//                $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
+//                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
-                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
 
 
@@ -1198,17 +1200,19 @@ class PDF extends TCPDF {
                 foreach ($value['details'] as $tbl_key => $tbl_value) {
 
                     $collDate = (!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) ? $tbl_value['am'][0]['collection_date_php'] : ((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) ? $tbl_value['pm'][0]['collection_date_php'] : '')));
-                    $textContent .= str_pad($collDate, 13, ' ', STR_PAD_LEFT); //$collDate;
-                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : ''), 11, ' ', STR_PAD_LEFT);
+
+//                    $textContent .= str_pad('', 5, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad($collDate, 11, ' ', STR_PAD_LEFT); //$collDate;
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_qty']) ? number_format((float) $tbl_value['am'][0]['bm_qty'], 2) : ''), 9, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['am'][0]['bm_avgFAT'], 2) : ''), 9, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['am'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : ''), 8, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? number_format((float) $tbl_value['am'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : ''), 8, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['rate']) ? number_format((float) $tbl_value['am'][0]['rate'], 2) : ''), 7, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['am']) && !empty($tbl_value['am'][0]) && !empty($tbl_value['am'][0]['bm_amount']) ? (float) $tbl_value['am'][0]['bm_amount'] : ''), 8, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_qty']) ? number_format((float) $tbl_value['pm'][0]['bm_qty'], 2) : ''), 7, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgFAT']) ? number_format((float) $tbl_value['pm'][0]['bm_avgFAT'], 2) : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_avgSNF']) ? number_format((float) $tbl_value['pm'][0]['bm_avgSNF'], 2) : ''), 7, ' ', STR_PAD_LEFT);
                     $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['rate']) ? number_format((float) $tbl_value['pm'][0]['rate'], 2) : ''), 8, ' ', STR_PAD_LEFT);
-                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? number_format((float) $tbl_value['pm'][0]['bm_amount'], 2) : ''), 9, ' ', STR_PAD_LEFT);
+                    $textContent .= str_pad((!empty($tbl_value['pm']) && !empty($tbl_value['pm'][0]) && !empty($tbl_value['pm'][0]['bm_amount']) ? (float) $tbl_value['pm'][0]['bm_amount'] : ''), 8, ' ', STR_PAD_LEFT);
                     $textContent .= "\n";
 //                    $detailTable .= '<tr>
 //                            <td align="center" width="70">' .
@@ -1269,7 +1273,7 @@ class PDF extends TCPDF {
                         $eDevideCount++;
                     }
                 }
-                for ($j = 0; $j < 12 - count($value['details']); $j++) {
+                for ($j = 0; $j < 11 - count($value['details']); $j++) {
 //                    $detailTable .= '<tr>
 //                            <td align="left"></td>
 //                            <td align="center"></td>
@@ -1283,6 +1287,7 @@ class PDF extends TCPDF {
 //                            <td align="center"></td>
 //                            <td align="center"></td>
 //                        </tr>';
+                    $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
                     $textContent .= "\n";
                 }
 //                if (false && $member_type == 'Member') {
@@ -1314,17 +1319,17 @@ class PDF extends TCPDF {
 //                    <td align="right" width="58">' . number_format($total_bm_amount_pm, 2) . '</td>
 //                </tr>
 //            </table>';
-                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad(number_format($total_qty_am, 2), 11, ' ', STR_PAD_LEFT);
+//                $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($total_qty_am, 20, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_FAT_am / $mDevideCount), 2) : 0), 9, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($mDevideCount) ? number_format(($total_SNF_am / $mDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad((!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0), 8, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad(number_format($total_bm_amount_am, 2), 9, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad(number_format($total_qty_pm, 2), 8, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 9, ' ', STR_PAD_LEFT);
+//                $textContent .= str_pad((!empty($total_qty_am) ? number_format(($total_bm_amount_am / $total_qty_am), 2) : 0), 16, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($total_bm_amount_am, 16, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($total_qty_pm, 7, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_FAT_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
                 $textContent .= str_pad((!empty($eDevideCount) ? number_format(($total_SNF_pm / $eDevideCount), 2) : 0), 7, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad((!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0), 8, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad(number_format($total_bm_amount_pm, 2), 9, ' ', STR_PAD_LEFT);
+//                $textContent .= str_pad((!empty($total_qty_pm) ? number_format(($total_bm_amount_pm / $total_qty_pm), 2) : 0), 8, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($total_bm_amount_pm, 17, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
 
 //                $detailTable .= '<table border="none" width="100%" cellpadding="0" cellspacing="0" style="margin-top:180px">';
@@ -1337,19 +1342,32 @@ class PDF extends TCPDF {
                 $final_payable = $totalAmt + $total_addition - $total_deduction;
                 $amtInWords = $this->AmountInWords($final_payable);
 
-                $textContent .= str_pad('', 65, ' ', STR_PAD_LEFT);
-                $textContent .= str_pad(number_format($total_deduction, 2), 8, ' ', STR_PAD_RIGHT);
-                $textContent .= str_pad(number_format($totalQty, 2), 25, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad('', 59, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($total_deduction, 8, ' ', STR_PAD_RIGHT);
+                $textContent .= str_pad('', 12, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($totalQty, 8, ' ', STR_PAD_RIGHT);
                 $textContent .= "\n";
 //                $textContent .= str_pad(number_format($total_addition, 2), 88, ' ', STR_PAD_LEFT);
 //                $textContent .= "\n";
                 $textContent .= str_pad('', 9, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
-                $textContent .= str_pad(substr($amtInWords, 0, 51), 51, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
-                $textContent .= str_pad(number_format($totalAmt, 2), 38, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(substr($amtInWords, 0, 32), 32, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
+                $LeaveSpace = 70 - strlen(str_pad(substr($amtInWords, 0, 32), 32, ' ', STR_PAD_RIGHT));
+                $textContent .= str_pad('', $LeaveSpace, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
+                $textContent .= str_pad($totalAmt, 8, ' ', STR_PAD_RIGHT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 9, ' ', STR_PAD_LEFT); //substr($amtInWords, 0, 40);
-                $textContent .= str_pad(substr($amtInWords, 51), 51, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40);
-                $textContent .= str_pad(number_format($final_payable, 2), 38, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(substr($amtInWords, 32), 32, ' ', STR_PAD_RIGHT); //substr($amtInWords, 0, 40); //substr($amtInWords, 0, 40);
+                $LeaveSpace = 70 - strlen(str_pad(substr($amtInWords, 32), 32, ' ', STR_PAD_RIGHT));
+                $textContent .= str_pad('', $LeaveSpace, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad($final_payable, 8, ' ', STR_PAD_RIGHT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
+                $textContent .= "\n";
+                $textContent .= str_pad('', 90, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 fwrite($txt, $textContent);
 //                $detailTable .= ' 
