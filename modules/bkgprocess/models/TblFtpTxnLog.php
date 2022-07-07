@@ -175,19 +175,20 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
         $ftpPath = $FTPProcess['ftp_path'];
-        /** csv generate * */
+        $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
+        /** csv/txt generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             $header = array_keys($output[0]);
             $txt_file = fopen($filePath . $fileName, "w");
-            fwrite($txt_file, implode(',', $header) . PHP_EOL);
+            fwrite($txt_file, implode($implode_char, $header) . PHP_EOL);
             foreach ($output as $line) {
-                fwrite($txt_file, implode(',', $line) . PHP_EOL);
+                fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
             }
             fclose($txt_file);
             return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath);
         }
         return FALSE;
-        /** csv generate * */
+        /** csv/txt generate * */
         /** xlsx generate * */
         /*
           $header = array_keys($output[0]);
@@ -283,17 +284,17 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             }
 
             if ($ftp_file->save()) {
-                $model_name = Yii::$app->path->define($data->module_name);
-                $model = new $model_name();
-                //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
-                //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
-                $table = $model->tableSchema->name;
-                $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
-                        . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
-                        . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
-                $connection = \Yii::$app->db;
-                $command = $connection->createCommand($query);
-                $command->execute();
+                /* $model_name = Yii::$app->path->define($data->module_name);
+                  $model = new $model_name();
+                  //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
+                  //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
+                  $table = $model->tableSchema->name;
+                  $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
+                  . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
+                  . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
+                  $connection = \Yii::$app->db;
+                  $command = $connection->createCommand($query);
+                  $command->execute(); */
                 return $fileName;
             }
         }

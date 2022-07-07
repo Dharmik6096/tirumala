@@ -106,7 +106,6 @@ class SchedulerController extends ChildController {
     public function actionGenerateFile() {
         try {
             $model = new TblFileCreator();
-            $model->file_status = 0;
             $model->status = 0;
             $modelData = $model->getPendingData();
             if (!empty($modelData)) {
@@ -116,7 +115,6 @@ class SchedulerController extends ChildController {
                 $model->updateFileStatus($ids);
                 foreach ($modelData as $data) {
                     $ftp_model = new TblFtpTxnLog();
-                    $ftp_model->module_code = $data->attributes;
                     $FTPProcess = Bkgprocess::FTPProcess()[$data->module_name];
                     $param = explode(',', $FTPProcess['param']);
                     $controls = [];
@@ -124,12 +122,13 @@ class SchedulerController extends ChildController {
                         $controls[$val] = $data->{$val};
                     }
                     $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
-                    if ($ftp_model->generateFiles($output, $FTPProcess, $data)) {
+                    if ($ftp_model->generateFiles($output, $FTPProcess, $data, FALSE, $data->file_name)) {
                         $data->status = 2;
                         $data->file_status = 1;
                     } else {
                         $data->status = 3;
                     }
+                    $data->response_datetime = date('Y-m-d H:i:s');
                     $data->save(FALSE);
                 }
             }

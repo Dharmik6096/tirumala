@@ -73,6 +73,24 @@ class Bkgprocess extends \yii\base\Module {
 //                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
 //                'ftp_path' => 'WQ/Inbound'
 //            ],
+            'TblSapDataDaily' => [
+                'ext' => '.TXT',
+                'implode_char' => '|',
+                'param' => 'union_code,module_code,applicable_date,shift_code',
+                'sp_name' => 'sp_file_sap_data_daily_umang',
+                'export_title' => '',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/DAILY/',
+                'ftp_path' => ''
+            ],
+            'TblVspPayment' => [
+                'ext' => '.TXT',
+                'implode_char' => '|',
+                'param' => 'union_code,module_code,from_datetime,to_datetime',
+                'sp_name' => 'sp_file_sap_data_weekly_umang',
+                'export_title' => '',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/WEEKLY/',
+                'ftp_path' => ''
+            ],
         ];
     }
 
