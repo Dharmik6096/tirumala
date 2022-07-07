@@ -27,6 +27,7 @@ use app\modules\dcsoperation\models\TblMemberDeactive;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\collection\models\TblMccShiftLockStaging;
+use app\modules\configuration\models\TblGenerateReportParam;
 
 class SchedulerController extends ChildController {
 
@@ -676,9 +677,10 @@ class SchedulerController extends ChildController {
         }
     }
 
-    public function CreateFile($fileName, $output) {
+    public function CreateFile($fileName, $output, $folders = '') {
         $column_header = array_keys($output[0]);
-        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->attachment_folder;
+        $folder = !empty($folders) ? $folders : $this->attachment_folder;
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $folder;
         if (\Yii::$app->general->checkDirectory($path)) {
             $absoluteBaseUrl = Url::base(true);
             $objPHPExcel = new PHPExcel();
@@ -698,7 +700,7 @@ class SchedulerController extends ChildController {
             $filePath = $path . $fileName;
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save($filePath);
-            return $absoluteBaseUrl . $this->attachment_folder . $fileName;
+            return $absoluteBaseUrl . $folder . $fileName;
         }
     }
 
@@ -913,6 +915,53 @@ class SchedulerController extends ChildController {
             }
         } catch (\Throwable $ex) {
             var_dump($ex);
+        }
+    }
+
+    public function actionGenerateReportFile() {
+        $model = new TblGenerateReportParam();
+        $modelData = $model->getPickRecords(10);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->report_param_code;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                $data = \app\modules\misreports\controllers\ReportsController::getLabels($row->report_key);
+                $controls = [];
+                $param = explode(',', $data['param']);
+                foreach ($param as $key => $value) {
+                    $value_array = explode(':', $value);
+                    $value = $value_array[0];
+                    $controls[$value] = $row->{$value};
+                }
+                $sp_name = $data['sp_name'];
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
+
+                if (!empty($output)) {
+                    try {
+                        $fileName = $data['title'] . '-' . date('Ymdhis') . '-' . $row->report_param_code . '.xls';
+                        $file_path = $this->CreateFile(str_replace(' ', '', $fileName), $output, '/web/reports-files/');
+                        $row->data_post_status = 2;
+                        $row->resp_desc = 'File Generated';
+                        $row->file_name = $file_path;
+                        $row->save(FALSE);
+                        $update = $model->updateFileName($row->report_param_code, 2, $file_path, $row->resp_desc);
+                    } catch (\Throwable $ex) {
+                        $row->status = 3;
+                        $row->resp_desc = 'Unable to Generated file.';
+                        $row->save(FALSE);
+                        $update = $model->updateFileName($row->report_param_code, 3, '', $row->resp_desc);
+                        var_dump($ex->getMessage());
+                    }
+                } else {
+                    $row->data_post_status = 2;
+                    $row->resp_desc = 'No Data Available.';
+                    $row->file_name = '';
+                    $row->save(FALSE);
+                    $update = $model->updateFileName($row->report_param_code, 2, '', $row->resp_desc);
+                }
+            }
         }
     }
 
