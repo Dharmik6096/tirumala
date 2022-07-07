@@ -924,7 +924,7 @@ class PDF extends TCPDF {
     }
 
     public function AmountInWords($amount) {
-        $amount_after_decimal = round($amount - ($num = floor($amount)), 2) * 100;
+        $amount_after_decimal = $amount;// - ($num = floor($amount)) * 100;
         // Check if there is any number after decimal
         $amt_hundred = null;
         $count_length = strlen($num);
