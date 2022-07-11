@@ -278,7 +278,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                     $record = ['status' => 'error', 'msg' => 'DATA Not LOCK Successfully.'];
                 }
             } else {
-                $record = ['status' => 'success', 'msg' => 'Transit Reovery Not Availbale.'];
+                $record = ['status' => 'success', 'msg' => 'Transit Reovery Not Available.'];
             }
         }
         Yii::$app->getSession()->setFlash('success');
@@ -421,6 +421,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 //                $staging->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
                 $saveModel[] = $staging;
             }
+        } else {
+            if ($setErp && Yii::$app->session->get('eiplCode') == 'MMD') {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Transit Reovery Not Available.']);
+                return $this->redirect([$url]);
+            }
         }
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
@@ -437,18 +443,23 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         return $this->redirect([$url]);
     }
 
-    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+    public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
         if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC');
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
-    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount) {
+    public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
 //        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
 //            $this->generateFTPFile($mcc, $date, $shift, 'TblMilkCollection');
 //        }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 1, 'Data Unlock - Member');
+        if (Yii::$app->session->get('eiplCode') == 'MMD') {
+            $checkRecovery = true;
+        } else {
+            $checkRecovery = false;
+        }
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'member_lock', 1, 'Data Lock - Member', 'Data Unlock - Member', $url, $fqty, $ffat, $fsnf, $famnt, $checkRecovery);
     }
 
     public function actionProductSaleLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
