@@ -539,7 +539,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
     }
 
     public function getMainContactDetails() {
-        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'dcs_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
+        return $this->hasOne(TblContactDetails::className(), ['module_code' => 'customer_code'])->andOnCondition(['tbl_contact_details.module_name' => 'customer', 'tbl_contact_details.is_default' => 1, 'tbl_contact_details.is_active' => 1]);
     }
 
     public function validateCustomerRef($bmc_code, $customer_code) {

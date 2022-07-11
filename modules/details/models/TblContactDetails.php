@@ -54,6 +54,7 @@ class TblContactDetails extends \app\models\ChildModel {
             [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
+            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
