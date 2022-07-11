@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\transporter\models;
+namespace app\modules\transporter\controllers;
 
 use Yii;
 use app\modules\transporter\models\TblGateEntry;
