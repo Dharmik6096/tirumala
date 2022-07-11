@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_user_organization_mapping".
@@ -38,6 +39,7 @@ class TblUserOrganizationMapping extends ChildModel {
     public $bmc;
     public $mcc;
     public $dcs;
+    public $route;
 
     /**
      * @inheritdoc
@@ -162,6 +164,7 @@ class TblUserOrganizationMapping extends ChildModel {
         $mcc = ['data' => [], 'selectedArray' => []];
         $bmc = ['data' => [], 'selectedArray' => []];
         $dcs = ['data' => [], 'selectedArray' => []];
+        $route = ['data' => [], 'selectedArray' => []];
         $federations = ['data' => $federations, 'selectedArray' => []];
         $unions = ['data' => $unions, 'selectedArray' => []];
         $data = [];
@@ -198,6 +201,9 @@ class TblUserOrganizationMapping extends ChildModel {
                 $bmc['selectedArray'] = $bmc_temp['selectedArray'];
                 $dcs = $this->getDcs($bmc['selectedArray']);
                 $dcs['selectedArray'] = $selected;
+                $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], 0);
+                $route_temp = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], $dcs['selectedArray']);
+                $route['selectedArray'] = $route_temp['selectedArray'];
                 break;
             case '6' :
                 $federations = $this->getFederations();
@@ -213,6 +219,7 @@ class TblUserOrganizationMapping extends ChildModel {
                 $bmc = $this->getBMC($mcc['selectedArray'], 0);
                 $bmc['selectedArray'] = $selected;
                 $dcs = $this->getDcs($selected);
+                $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], $bmc['selectedArray'], 0);
                 break;
             case '5' :
                 $federations = $this->getFederations();
@@ -227,6 +234,7 @@ class TblUserOrganizationMapping extends ChildModel {
                 $mcc['selectedArray'] = $selected;
                 $bmc = $this->getBMC($selected, 0);
                 $dcs = $this->getDcs($bmc['selectedArray']);
+                $route = $this->getRoute($plant['selectedArray'], $mcc['selectedArray'], 0, 0);
                 break;
             case '4' :
                 $federations = $this->getFederations();
@@ -238,6 +246,7 @@ class TblUserOrganizationMapping extends ChildModel {
                 $mcc = $this->getMCC($selected, 0);
                 $bmc = $this->getBMC($mcc['selectedArray'], 0);
                 $dcs = $this->getDcs($bmc['selectedArray']);
+                $route = $this->getRoute($plant['selectedArray'], 0, 0, 0);
                 break;
             case '3' :
                 $federations = $this->getFederations();
@@ -247,6 +256,7 @@ class TblUserOrganizationMapping extends ChildModel {
                 $mcc = $this->getMCC($plant['selectedArray'], 0);
                 $bmc = $this->getBMC($mcc['selectedArray'], 0);
                 $dcs = $this->getDcs($bmc['selectedArray']);
+                $route = $this->getRoute(0, 0, 0, 0);
                 break;
             case '2' :
                 $federations = ['data' => $data, 'selectedArray' => $selected];
@@ -255,9 +265,10 @@ class TblUserOrganizationMapping extends ChildModel {
                 $mcc = $this->getMCC($plant['selectedArray'], 0);
                 $bmc = $this->getBMC($mcc['selectedArray'], 0);
                 $dcs = $this->getDcs($bmc['selectedArray']);
+                $route = $this->getRoute(0, 0, 0, 0);
                 break;
         }
-        return ['federation' => $federations, 'union' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs];
+        return ['federation' => $federations, 'union' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route];
     }
 
     private function getDcs($BMCArray) {
@@ -439,6 +450,33 @@ class TblUserOrganizationMapping extends ChildModel {
 
     public function getUserOrgMapping() {
         return $this->find()->where(['user_id' => $this->user_id, 'organization_type' => $this->organization_type])->all();
+    }
+
+    private function getRoute($PlantArray, $MCCArray, $BMCArray, $DcsArray) {
+        $query = TblRouteMapping::find();
+        $query->select(['route_code', 'route_name']);
+        $query->where(['to_dest' => $PlantArray, 'to_type' => 'plant']);
+
+        $selected = [];
+        if ($MCCArray !== 0) {
+            $query->orWhere(['to_dest' => array_keys($MCCArray), 'to_type' => 'mcc']);
+        }
+        if ($BMCArray !== 0) {
+            $query->orWhere(['to_dest' => array_keys($BMCArray), 'to_type' => 'bmc']);
+        }
+        $list = $query->asArray()->all();
+        $data = ArrayHelper::map($list, 'route_code', 'route_name');
+        if ($DcsArray != 0) {
+            $codes = TblDcs::find()->select(['route_code'])->where(['dcs_code' => array_values($DcsArray)])->asArray()->all();
+            $query->andWhere(['route_code' => $codes]);
+            $list = $query->asArray()->all();
+
+            $data = ArrayHelper::map($list, 'route_code', 'route_name');
+            foreach ($data as $key => $row) {
+                $selected[$key] = $key;
+            }
+        }
+        return ['data' => $data, 'selectedArray' => $selected];
     }
 
 }

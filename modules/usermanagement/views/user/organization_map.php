@@ -28,85 +28,95 @@ $this->title = Yii::t('app', $title);
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?php echo $title; ?></h4>
             </div>
-        <?= $form->errorSummary($model); ?>
-        <div class="col-md-12">
-        <div class="row multiple">
-            <?php
-            echo $form->field($model, 'federation', [ 'options' => ['class' => 'form-group col-sm-12 hidden',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $federations['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
+            <?= $form->errorSummary($model); ?>
+            <div class="col-md-12">
+                <div class="row multiple">
+                    <?php
+                    echo $form->field($model, 'federation', ['options' => ['class' => 'form-group col-sm-12 hidden',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $federations['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
 
-            echo $form->field($model, 'union', [ 'options' => ['class' => 'form-group col-sm-12',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $unions['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
+                    echo $form->field($model, 'union', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $unions['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
 
-            echo $form->field($model, 'plant', [ 'options' => ['class' => 'form-group col-sm-12',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $plant['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
-            echo $form->field($model, 'mcc', [ 'options' => ['class' => 'form-group col-sm-12',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $mcc['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
-            echo $form->field($model, 'bmc', [ 'options' => ['class' => 'form-group col-sm-12',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $bmc['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
-            echo $form->field($model, 'dcs', [ 'options' => ['class' => 'form-group col-sm-12',]])
-                    ->widget(DualListbox::className(), [
-                        'items' => $dcs['data'],
-                        'clientOptions' => [
-                            'moveOnSelect' => FALSE,
-                            'selectedListLabel' => FALSE,
-                            'nonSelectedListLabel' => FALSE,
-                            'filterPlaceHolder' => '',
-                        ],
-            ]);
-            ?>
-            <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
-            <div class="clearfix"></div>
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                <div class="form-group">
-                    <?= Yii::$app->controls->save($button, $model); ?>
-                    <?= Yii::$app->controls->reset(); ?>
-                    <?= Yii::$app->controls->cancel($model); ?>
+                    echo $form->field($model, 'plant', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $plant['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
+                    echo $form->field($model, 'mcc', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $mcc['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
+                    echo $form->field($model, 'bmc', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $bmc['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
+                    echo $form->field($model, 'route', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $route['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
+                    echo $form->field($model, 'dcs', ['options' => ['class' => 'form-group col-sm-12',]])
+                            ->widget(DualListbox::className(), [
+                                'items' => $dcs['data'],
+                                'clientOptions' => [
+                                    'moveOnSelect' => FALSE,
+                                    'selectedListLabel' => FALSE,
+                                    'nonSelectedListLabel' => FALSE,
+                                    'filterPlaceHolder' => '',
+                                ],
+                    ]);
+                    ?>
+                    <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
+                    <div class="clearfix"></div>
+                    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                        <div class="form-group">
+                            <?= Yii::$app->controls->save($button, $model); ?>
+                            <?= Yii::$app->controls->reset(); ?>
+                            <?= Yii::$app->controls->cancel($model); ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        </div>
-    </div>
         <?php ActiveForm::end(); ?>
     </div>
 </div>
@@ -231,15 +241,27 @@ $script = "
                                 }
             });           
     });
-    $('#tbluserorganizationmapping-bmc').on('change',function(){          
-             var bmc = []; 
-             $('#tbluserorganizationmapping-bmc :selected').each(function(i, selected){ 
+    $('#tbluserorganizationmapping-bmc').on('change',function(){  
+          getDCSData();
+          getRouteData();
+    });
+    $('#tbluserorganizationmapping-route').on('change',function(){  
+          getDCSData();
+    });
+    
+    function getDCSData(){
+        var bmc = []; 
+        var route = []; 
+            $('#tbluserorganizationmapping-bmc :selected').each(function(i, selected){ 
                 bmc[i] = $(selected).val(); 
-              });  
+            }); 
+            $('#tbluserorganizationmapping-route :selected').each(function(i, selected){ 
+                route[i] = $(selected).val(); 
+            }); 
             $.ajax({
-                        type: 'post',
+             type: 'post',
                         url: '" . Url::to(['/organisation/tbl-dcs/get-bmc-dcs']) . "',    
-                        data: 'bmc='+bmc+'&RLS=FALSE',
+                        data: 'bmc='+bmc+'&route='+route+'&RLS=FALSE',
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
@@ -263,64 +285,98 @@ $script = "
                         },
                         error:function(data){
                                 }
-            });           
-    });
+            });    
+    }
+    function getRouteData(){
+        var bmc = []; 
+        var mcc = []; 
+        var plant = []; 
+            $('#tbluserorganizationmapping-bmc :selected').each(function(i, selected){ 
+                bmc[i] = $(selected).val(); 
+            }); 
+            $('#tbluserorganizationmapping-mcc :selected').each(function(i, selected){ 
+                mcc[i] = $(selected).val(); 
+            }); 
+            $('#tbluserorganizationmapping-plant :selected').each(function(i, selected){ 
+                plant[i] = $(selected).val(); 
+            }); 
+            $.ajax({
+             type: 'post',
+                        url: '" . Url::to(['/organisation/tbl-route-mapping/get-bmc-route']) . "',    
+                        data: 'bmc='+bmc+'&mcc='+mcc+'&plant='+plant+'&RLS=FALSE',
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                        var routearray =  $('#tbluserorganizationmapping-route option:selected').map(function () {
+                                        return this.value;
+                                      }).get();
+                           $('#tbluserorganizationmapping-route option').remove();                              
+                               var options='';              
+                                $.each(obj1.data, function(index, value) {
+                                    if(jQuery.inArray(index,routearray) == -1){   
+                                         options += '<option value=\"'+index+'\">'+value+'</option>';
+                                    }else{
+                                         options += '<option value=\"'+index+'\" selected>'+value+'</option>';
+                                    }
+                                });                        
+                       $('#tbluserorganizationmapping-route').html(options);
+                        $('#tbluserorganizationmapping-route').bootstrapDualListbox('refresh', true); 
+                            }
+                         setData();    
+                        },
+                        error:function(data){
+                                }
+            });    
+    }
     $('#tbluserorganizationmapping-dcs').on('change',function(){     
        setData();
     });
-function setData(){
-          var selectedDcs =  $('#tbluserorganizationmapping-dcs :selected').length;
-          var count = $('#tbluserorganizationmapping-dcs option').length;
+    function setData(){
+            var selectedDcs =  $('#tbluserorganizationmapping-dcs :selected').length;
+            var count = $('#tbluserorganizationmapping-dcs option').length;
             if(count > 0 && selectedDcs != 0){
                 $('#user_type').val(7);
                 if(selectedDcs==count) 
                 $('#user_type').val(6);
-              }else{
-              
- var selectedBmc =  $('#tbluserorganizationmapping-bmc :selected').length;
-           var count = $('#tbluserorganizationmapping-bmc option').length;
-             if(count > 0 && selectedBmc != 0){
-                $('#user_type').val(6);
-                if(selectedBmc==count) 
-                $('#user_type').val(5);
-              }else{
-              var selectedMcc =  $('#tbluserorganizationmapping-mcc :selected').length;
-           var count = $('#tbluserorganizationmapping-mcc option').length;
-             if(count > 0 && selectedMcc != 0){
-                $('#user_type').val(5);
-                if(selectedMcc==count)  
-                $('#user_type').val(4);
-              }  else {
-               var selectedPlant =  $('#tbluserorganizationmapping-plant :selected').length;
-           var count = $('#tbluserorganizationmapping-plant option').length;
-             if(count > 0 && selectedPlant != 0){
-                $('#user_type').val(4);
-                if(selectedPlant==count) 
-                $('#user_type').val(3);
-              } else {
-               var selectedUnion =  $('#tbluserorganizationmapping-union :selected').length;
-           var count = $('#tbluserorganizationmapping-union option').length;             
-             if(count > 0 && selectedUnion != 0){
-              $('#user_type').val(3);
-//                if(selectedUnion==count) {
-//                $('#user_type').val(2);
-//                }
-              } else {             
-                $('#user_type').val(2);
-                
-} 
-          
-} 
-                
-}
-                
-          
-}  
-           
-}  
-             
-        
-}        
+            }else{
+                var selectedBmc =  $('#tbluserorganizationmapping-bmc :selected').length;
+                var count = $('#tbluserorganizationmapping-bmc option').length;
+                if(count > 0 && selectedBmc != 0){
+                   $('#user_type').val(6);
+                   if(selectedBmc==count) 
+                   $('#user_type').val(5);
+                }else{
+                    var selectedMcc =  $('#tbluserorganizationmapping-mcc :selected').length;
+                    var count = $('#tbluserorganizationmapping-mcc option').length;
+                    if(count > 0 && selectedMcc != 0){
+                       $('#user_type').val(5);
+                       if(selectedMcc==count)  
+                       $('#user_type').val(4);
+                    }  else {
+                        var selectedPlant =  $('#tbluserorganizationmapping-plant :selected').length;
+                        var count = $('#tbluserorganizationmapping-plant option').length;
+                        if(count > 0 && selectedPlant != 0){
+                           $('#user_type').val(4);
+                           if(selectedPlant==count) 
+                           $('#user_type').val(3);
+                        } else {
+                            var selectedUnion =  $('#tbluserorganizationmapping-union :selected').length;
+                            var count = $('#tbluserorganizationmapping-union option').length;             
+                            if(count > 0 && selectedUnion != 0){
+                            $('#user_type').val(3);
+                //                if(selectedUnion==count) {
+                //                $('#user_type').val(2);
+                //                }
+                            } else {             
+                                $('#user_type').val(2);
+
+                            } 
+                        } 
+                    }
+                }  
+            }  
+    }    
 
 ";
 $this->registerJs($script, View::POS_END, 'user-org-map-list');

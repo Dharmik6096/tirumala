@@ -121,6 +121,7 @@ echo GhostMenu::widget([
                 ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
                 ['label' => 'Shift Lock ', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                 ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
+                ['label' => 'Shift Lock (Member Data)', 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
                 ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
@@ -145,6 +146,7 @@ echo GhostMenu::widget([
                 ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate/index'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate')],
                 ['label' => 'Rate Recalculation', 'url' => ['/dcsoperation/tbl-rate-recalculation/index'], 'active' => ($cntrl == 'tbl-rate-recalculation')],
                 ['label' => 'Collection Penalty Rate', 'url' => ['/collection/tbl-collection-penalty-rate/index'], 'active' => ($cntrl == 'tbl-collection-penalty-rate')],
+                ['label' => 'Milk Cost Param', 'url' => ['/collection/tbl-milkcost-param/index'], 'active' => ($cntrl == 'tbl-milkcost-param')],
             ],
         ],
         [
@@ -432,6 +434,7 @@ echo GhostMenu::widget([
                                 ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                 ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
                                 ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                                ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                             ]
                         ],
                         [
@@ -454,6 +457,7 @@ echo GhostMenu::widget([
                                 ['label' => '213 -' . Yii::t('app', 'Day Wise Qty'), 'url' => ['/misreports/reports/day-wise-qty']],
                                 ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
                                 ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
+                                ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
                             ]
                         ],
                         ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -475,6 +479,8 @@ echo GhostMenu::widget([
                         ['label' => '310 -' . Yii::t('app', 'Society Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/dcs-product-sale-for-paid-installment']],
                         ['label' => '311 -' . Yii::t('app', 'Vendor Wise Product Sale for Paid Installment'), 'url' => ['/misreports/reports/vendor-product-sale-for-paid-installment']],
                         ['label' => '312 -' . Yii::t('app', 'MCC Wise Product Sale for Piad Installment'), 'url' => ['/misreports/reports/mcc-product-sale-for-paid-installment']],
+                        ['label' => '313 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                        ['label' => '314 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
                     ]
                 ],
                 [
@@ -486,6 +492,7 @@ echo GhostMenu::widget([
                         ['label' => '403-' . Yii::t('app', 'Dispatch vs Receipt Report'), 'url' => ['/misreports/reports/dispatch-vs-receipt']],
                         ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/cpmilk-sap-report']],
                         ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
+                        ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                     ]
                 ],
                 [

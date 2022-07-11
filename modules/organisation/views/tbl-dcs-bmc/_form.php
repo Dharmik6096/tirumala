@@ -49,6 +49,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('bmc_type', $model, $form, '', 'BMC Type', false, 'bmc_type_code'); ?>        
         </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('channel', $model, $form, '', 'Channel Type', false, 'x_col1'); ?>        
+        </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_bmc');
         if (!empty($keyPattern)) {

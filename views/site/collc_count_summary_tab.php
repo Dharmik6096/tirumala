@@ -6,7 +6,7 @@ use yii\helpers\Url;
 ?>
 
 <div class="table-responsive dashboard_tbl h450">
-    <table class="table table-striped">
+    <table  id="custom_report_coll_count_summary"  class="table table-striped">
         <thead>
             <tr>
                 <?php

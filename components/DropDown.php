@@ -488,6 +488,18 @@ class DropDown extends Component {
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
     }
 
+    public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true) {
+        $this->setClass($form, $name);
+        $alert = new \app\modules\sms\models\TblAlertNotification();
+        if (isset($searchable) && $searchable) {
+            echo $form->field($model, $name)->widget(Select2::classname(), [
+                'data' => $alert->getModuleType(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Module Type', 'disabled' => $disable]]
+            )->label($islable);
+        } else {
+            echo $form->field($model, $name)->dropDownList($alert->getModuleType(), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
+        }
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1429,6 +1441,7 @@ class DropDown extends Component {
             'device_code' => ['name' => 'weight_device_code', 'fields' => 'interfacing_device_code,device_name,', 'prompt' => Yii::t('app', 'Select Device'), 'model' => 'TblInterfacingDevice', 'depend' => 'union_code', 'dependArray' => ['device_type']],
 //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
+            'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
         ];
         return $label[$l];
     }

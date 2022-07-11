@@ -263,8 +263,12 @@ class TblDcsMilkDispatch extends \app\models\ChildModel {
         $modelData = $model->find()->where(['dcs_milk_dispatch_code' => $model->dcs_milk_dispatch_code])->one();
 
         if (!empty($modelData)) {
-            $model->x_col2 = $model->dcs_milk_dispatch_code;
-            $model->dcs_milk_dispatch_code = Yii::$app->general->getUuid();
+            if ($model->x_col1 == $modelData->x_col1) {
+                $model = $modelData;
+            } else {
+                $model->x_col2 = $model->dcs_milk_dispatch_code;
+                $model->dcs_milk_dispatch_code = Yii::$app->general->getUuid();
+            }
         }
     }
 
