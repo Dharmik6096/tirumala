@@ -38,10 +38,10 @@ class TblVehicleKmInfoHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['is_active', 'data_lock'], 'safe'],
-            [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at', 'shift_code'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms','union_code'], 'safe'],
+                [['is_active', 'data_lock', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['km_info_code', 'vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at', 'shift_code'], 'safe'],
+                [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'union_code', 'morning_arrival_time', 'evening_arrival_time', 'morning_grace_time', 'evening_grace_time'], 'safe'],
         ];
     }
 
