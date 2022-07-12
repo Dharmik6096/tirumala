@@ -724,7 +724,8 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                         ['label' => Yii::t('app', 'DPU Station Detail'), 'url' => ['/installation/dpu-station-detail/index'], 'active' => ($cntrl == 'dpu-station-detail')],
                         ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
-                        ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports')],
+                        ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports' && $action == 'alert-notification')],
+                        ['label' => Yii::t('app', 'Report Download'), 'url' => ['/configuration/tbl-generate-report-param/index'], 'active' => ($cntrl == 'tbl-generate-report-param')],
                     ]
                 ],
                 [
