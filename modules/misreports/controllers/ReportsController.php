@@ -1083,7 +1083,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'download_day_differe' => '15'
+//                'download_day_differe' => '15'
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1091,7 +1091,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'download_day_differe' => '15'
+//                'download_day_differe' => '15'
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1099,7 +1099,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
-                'download_day_differe' => '15'
+//                'download_day_differe' => '15'
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -1888,7 +1888,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_milk_collection_list',
                 'scenario' => 'MilkCollectionData',
                 'title' => '108 - Milk Collection Data',
-                'download_day_differe' => '15'
+//                'download_day_differe' => '15'
             ],
             'BmcCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',

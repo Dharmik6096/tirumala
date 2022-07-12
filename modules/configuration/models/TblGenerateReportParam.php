@@ -34,6 +34,8 @@ use webvimark\modules\UserManagement\models\User;
  */
 class TblGenerateReportParam extends \app\models\ChildModel {
 
+    public $report_type, $from_shift, $to_shift;
+
     /**
      * @inheritdoc
      */
@@ -48,7 +50,22 @@ class TblGenerateReportParam extends \app\models\ChildModel {
         return [
             [['union_code', 'plant_code', 'mcc_code', 'dcs_code', 'bmc_code', 'from_date', 'to_date', 'report_key', 'file_name', 'member_code', 'originating_type'], 'safe'],
             [['resp_status', 'resp_desc', 'data_post_status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'ref_code', 'report_name'], 'safe'],
-            [['data_post_status'], 'default', 'value' => 0]
+            [['data_post_status'], 'default', 'value' => 0],
+            [['report_type', 'from_shift', 'to_shift'], 'safe'],
+            [['report_name', 'union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['createFront']],
+            [['mcc_code'], 'required', 'when' => function ($model) {
+                    return $model->report_name == '108 - Milk Collection Data';
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblgeneratereportparam-report_name').val() == '108 - Milk Collection Data'; 
+                        }", 'on' => ['createFront']],
+            [['report_type'], 'required', 'when' => function ($model) {
+                    return $model->report_name == '101 - Member Collection Detail';
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblgeneratereportparam-report_name').val() == '101 - Member Collection Detail'; 
+                        }", 'on' => ['createFront']],
+            [['to_date'], function ($attribute, $params) {
+                    Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 15, '<', 'Day Difference can be greater than 15.');
+                }, 'skipOnEmpty' => false, 'on' => ['createFront']],
         ];
     }
 

@@ -82,6 +82,12 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->data_post_status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->data_post_status] : '';
         }],
+    ['label' => 'Tentative Response Date',
+        'value' => function($model) {
+            $date = $model->created_at;
+            $response = date('Y-m-d', strtotime($date . ' +1 day'));
+            return Yii::$app->controls->view_date($response);
+        }],
     ['attribute' => 'resp_desc'],
     [
         'attribute' => 'file_name', 'label' => 'Report Data',

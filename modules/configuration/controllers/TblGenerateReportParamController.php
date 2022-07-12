@@ -12,20 +12,19 @@ use yii\filters\VerbFilter;
 /**
  * TblGenerateReportParamController implements the CRUD actions for TblGenerateReportParam model.
  */
-class TblGenerateReportParamController extends \app\controllers\ChildController
-{
+class TblGenerateReportParamController extends \app\controllers\ChildController {
+
     /**
      * Lists all TblGenerateReportParam models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblGenerateReportParamSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -34,10 +33,9 @@ class TblGenerateReportParamController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -46,17 +44,57 @@ class TblGenerateReportParamController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
-        $model = new TblGenerateReportParam();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->report_param_code]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+    public function actionCreate() {
+        $this->model = new TblGenerateReportParam();
+        $this->viewFile = 'create';
+        $this->model->from_date = date('d-m-Y');
+        $this->model->to_date = date('d-m-Y');
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            $this->model->scenario = 'createFront';
+            if ($this->model->validate()) {
+                $this->model->from_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->from_shift);
+                $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->to_shift);
+                if ($this->model->report_type == 0) {
+                    $this->model->report_key = 'MemberPassbook';
+                } elseif ($this->model->report_type == 1) {
+                    $this->model->report_key = 'MemberDailyCollection';
+                } elseif ($this->model->report_type == 2) {
+                    $this->model->report_key = 'MemberConsolidated';
+                } else {
+                    $this->model->report_key = 'MilkCollectionData';
+                }
+                if (empty($this->model->union_code)) {
+                    $this->model->union_code = !empty(Yii::$app->session->get('organizations_code')) ? ',' . Yii::$app->session->get('organizations_code') . ',' : 0;
+                }
+                if (empty($this->model->plant_code)) {
+                    $this->model->plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+                }
+                if (empty($this->model->mcc_code)) {
+                    $this->model->mcc_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+                }
+                if (empty($this->model->bmc_code)) {
+                    $this->model->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+                }
+                if (empty($this->model->dcs_code)) {
+                    $this->model->dcs_code = !empty(Yii::$app->session->get('Dcs')) ? ',' . Yii::$app->session->get('Dcs') . ',' : 0;
+                }
+                if (empty($this->model->member_code)) {
+                    $this->model->member_code = 0;
+                }
+                $exist = $this->model->getExistData();
+                if (!empty($exist)) {
+                    $this->model->ref_code = $exist->report_param_code;
+                }
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['Report Param', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                }
+            }
         }
+        return $this->render('create', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -65,15 +103,14 @@ class TblGenerateReportParamController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->report_param_code]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -84,8 +121,7 @@ class TblGenerateReportParamController extends \app\controllers\ChildController
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -98,12 +134,12 @@ class TblGenerateReportParamController extends \app\controllers\ChildController
      * @return TblGenerateReportParam the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblGenerateReportParam::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
