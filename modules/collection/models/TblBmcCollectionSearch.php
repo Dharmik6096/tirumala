@@ -247,7 +247,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
         $query = TblBmcCollection::find()->where(['IS NOT', 'tbl_bmc_collection.bmc_code', NULL]);
         // add conditions that should always apply here
 
-        $query->joinWith(['mccPlantCode.plantCode', 'approvalData']);
+        $query->joinWith(['mccPlantCode.plantCode']);
         $query->join('LEFT JOIN', 'tbl_mcc_shift_lock', 'tbl_mcc_shift_lock.mcc_plant_code = tbl_bmc_collection.mcc_plant_code and CAST(tbl_mcc_shift_lock.date_time_of_collection as date) = CAST(tbl_bmc_collection.date_time_of_collection as date) and tbl_mcc_shift_lock.shift_code = tbl_bmc_collection.shift_code and tbl_mcc_shift_lock.bmc_lock = 1');
         $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.bmc_code = tbl_bmc_collection.bmc_code and tbl_collection_data_alias.customer_code = tbl_bmc_collection.customer_code and tbl_collection_data_alias.customer_type = tbl_bmc_collection.customer_type and tbl_collection_data_alias.old_milk_type_code = tbl_bmc_collection.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_bmc_collection.milk_quality_type_code and tbl_collection_data_alias.shift_code = tbl_bmc_collection.shift_code and tbl_collection_data_alias.date_time_of_collection = tbl_bmc_collection.date_time_of_collection and tbl_collection_data_alias.table_name = 'tbl_bmc_collection' and action_perform = 'DELETE'");
 
