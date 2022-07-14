@@ -212,9 +212,9 @@ class SiteController extends Controller {
         $results7 = []; //$results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
         $results8 = []; //$results8 = $this->getReconciliationSpResult('sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $milk_collection = []; //$this->getWidgetDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $monthly_milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
+        $monthly_milk_collection = []; // $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
         $dashboard_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $member_mobile_detail = $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
+        $member_mobile_detail = []; // $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
         $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
