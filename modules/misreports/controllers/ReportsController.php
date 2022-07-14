@@ -2133,7 +2133,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'kartik_grid_view' => 'UmangSapReportWeekly',
             ],
             'BmcCollectionHistory' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,action_perform',
                 'sp_name' => 'sp_mis_history_tbl_bmc_collection',
                 'scenario' => 'BmcCollectionHistory',
                 'title' => '216 - BMC Collection History',

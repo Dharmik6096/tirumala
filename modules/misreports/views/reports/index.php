@@ -236,6 +236,13 @@ if (isset($data['url1'])) {
                                                 <?php
                                             }
                                         }
+                                        if (in_array($value, array('action_perform'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value, false, TRUE) ?> 
+                                            </div>
+                                            <?php
+                                        }
 
                                         if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
