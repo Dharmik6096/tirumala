@@ -73,7 +73,7 @@ class TblMccShiftLock extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col1' => Yii::t('app', 'Channel Type'),
             'x_col2' => Yii::t('app', 'X Col2'),
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),

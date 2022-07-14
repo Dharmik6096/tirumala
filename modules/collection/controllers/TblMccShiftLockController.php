@@ -535,7 +535,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 
     public function actionIndexMember() {
         $searchModel = new TblMccShiftLockSearch();
-        $searchModel->scenario = 'shiftLock';
+        $searchModel->scenario = 'shiftLockMember';
         if (Yii::$app->request->post() && !empty((Yii::$app->request->post()['flag']))) {
             if (!empty($_REQUEST['selection'])) {
                 $type = Yii::$app->request->post()['flag'];
@@ -619,7 +619,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                     'message' => 'Please Select Data.']);
             }
         }
-        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_member');
+        $dataProvider = $searchModel->shiftlockmembersearch(Yii::$app->request->queryParams);
         return $this->render('index_member', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

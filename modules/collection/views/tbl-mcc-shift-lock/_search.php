@@ -16,12 +16,18 @@ $model->to_date = !empty($model->to_date) ? $model->to_date : date('d-m-Y');
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'f_union_code', Yii::t('app', 'UNION')); ?>
     </div>
+    <!--    <div class="col-sm-2">
+    <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmccshiftlocksearch-f_union_code', 'f_plant_code', Yii::t('app', 'PLANT')); ?>
+       </div>
+       <div class="col-sm-2 ">
+    <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmccshiftlocksearch-f_plant_code', 'f_mcc_code', Yii::t('app', 'MCC'), TRUE); ?>
+       </div>  -->
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmccshiftlocksearch-f_union_code', 'f_plant_code', Yii::t('app', 'PLANT')); ?>
+        <?= Yii::$app->dropdown->dropdown('channel', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('x_col1'), false, 'x_col1'); ?>
     </div>
-    <div class="col-sm-2 ">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmccshiftlocksearch-f_plant_code', 'f_mcc_code', Yii::t('app', 'MCC'), TRUE); ?>
-    </div>  
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->channel_bmc($model, $form, 'tblmccshiftlocksearch-x_col1', 'f_bmc_code', Yii::t('app', 'BMC'), TRUE); ?>
+    </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, TRUE); ?>
     </div>
