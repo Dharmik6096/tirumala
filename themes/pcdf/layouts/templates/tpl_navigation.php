@@ -703,6 +703,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'BMC Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-bmc-collection/index-allow'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index-allow')],
                             ]
                         ],
+                            ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => ($eiplCode == 'GYAN') ? TRUE : FALSE],
                             ['label' => Yii::t('app', 'Collection Pendrive File'), 'url' => ['/misreports/reports/collection-pendrive-file']],
                             ['label' => Yii::t('app', 'FAT/SNF Threshold'), 'url' => ['/general/tbl-fat-snf-threshold/index'], 'active' => ($cntrl == 'tbl-fat-snf-threshold')],
                             ['label' => Yii::t('app', 'Shift Time'), 'url' => ['/general/tbl-shift-time/index'], 'active' => ($cntrl == 'tbl-shift-time')],
@@ -725,7 +726,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Prevent BMC Collection Data'), 'url' => ['/vendorapi/tbl-prevent-collection-data/index'], 'active' => ($cntrl == 'tbl-prevent-collection-data')],
                             ['label' => Yii::t('app', 'DPU Station Detail'), 'url' => ['/installation/dpu-station-detail/index'], 'active' => ($cntrl == 'dpu-station-detail')],
                             ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
-                            ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports')],
+                            ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports' && $action == 'alert-notification')],
+                            ['label' => Yii::t('app', 'Report Download'), 'url' => ['/configuration/tbl-generate-report-param/index'], 'active' => ($cntrl == 'tbl-generate-report-param')],
                     ]
                 ],
                     [
