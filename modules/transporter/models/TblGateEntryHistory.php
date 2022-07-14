@@ -40,42 +40,39 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblGateEntryHistory extends \app\models\ChildModel
-{
+class TblGateEntryHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_gate_entry_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
-            [['gate_entry_code', 'shift_code', 'responsibility_code', 'originating_type'], 'integer'],
-            [['grace_time', 'late_by_time'], 'number'],
-            [['operation_type', 'route_code'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['transporter_code'], 'string', 'max' => 8],
-            [['vehicle_code'], 'string', 'max' => 20],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['history_created_at', 'date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
+                [['gate_entry_code', 'shift_code', 'responsibility_code', 'originating_type'], 'safe'],
+                [['grace_time', 'late_by_time'], 'safe'],
+                [['operation_type', 'route_code'], 'safe'],
+                [['history_created_by', 'created_by', 'updated_by'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code'], 'safe'],
+                [['bmc_code', 'dcs_code'], 'safe'],
+                [['transporter_code'], 'safe'],
+                [['vehicle_code'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'operation_type' => Yii::t('app', 'Operation Type'),
@@ -111,4 +108,5 @@ class TblGateEntryHistory extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

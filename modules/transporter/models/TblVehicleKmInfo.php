@@ -238,4 +238,13 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
         return $array;
     }
 
+    public function getRouteVehicleDetail($route_code, $datetime) {
+        return $this->find()
+                        ->select(['vehicle_code', 'morning_arrival_time', 'morning_grace_time', 'evening_arrival_time', 'evening_grace_time'])
+                        ->where(['route_code' => $route_code])
+                        ->andFilterWhere(['<=', 'wef_date', date('Y-m-d H:i:s', strtotime($datetime))])
+                        ->orderBy(['wef_date' => 'DESC'])
+                        ->one();
+    }
+
 }

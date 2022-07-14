@@ -3,6 +3,14 @@
 namespace app\modules\transporter\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\transporter\models\TblTransporter;
+use app\modules\transporter\models\TblVehicleMaster;
 
 /**
  * This is the model class for table "tbl_gate_entry".
@@ -36,56 +44,54 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblGateEntry extends \app\models\ChildModel
-{
+class TblGateEntry extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_gate_entry';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
-            [['shift_code', 'responsibility_code', 'originating_type'], 'integer'],
-            [['grace_time', 'late_by_time'], 'number'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['route_code'], 'string', 'max' => 10],
-            [['transporter_code'], 'string', 'max' => 8],
-            [['vehicle_code'], 'string', 'max' => 20],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'actual_arrival_time', 'route_code', 'vehicle_code'], 'required'],
+                [['date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
+                [['shift_code', 'responsibility_code', 'originating_type'], 'safe'],
+                [['grace_time', 'late_by_time'], 'number'],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+                [['bmc_code', 'dcs_code'], 'string', 'max' => 12],
+                [['route_code'], 'string', 'max' => 10],
+                [['transporter_code'], 'string', 'max' => 8],
+                [['vehicle_code'], 'string', 'max' => 20],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'gate_entry_code' => Yii::t('app', 'Gate Entry Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'route_code' => Yii::t('app', 'Route'),
             'transporter_code' => Yii::t('app', 'Transporter Code'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
-            'date_time_of_collection' => Yii::t('app', 'Date Time Of Collection'),
-            'shift_code' => Yii::t('app', 'Shift Code'),
-            'define_arrival_time' => Yii::t('app', 'Define Arrival Time'),
-            'actual_arrival_time' => Yii::t('app', 'Actual Arrival Time'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
+            'date_time_of_collection' => Yii::t('app', 'Date Of Collection'),
+            'shift_code' => Yii::t('app', 'Shift'),
+            'define_arrival_time' => Yii::t('app', 'Defined Time'),
+            'actual_arrival_time' => Yii::t('app', 'Arrival Time'),
             'grace_time' => Yii::t('app', 'Grace Time'),
             'late_by_time' => Yii::t('app', 'Late By Time'),
             'responsibility_code' => Yii::t('app', 'Responsibility Code'),
@@ -103,4 +109,37 @@ class TblGateEntry extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getTransporterCode() {
+        return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
+    }
+
+    public function getVehicleCode() {
+        return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
+    }
+
 }

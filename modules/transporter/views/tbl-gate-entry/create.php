@@ -1,21 +1,15 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\transporter\models\TblGateEntry */
-
-$this->title = Yii::t('app', 'Create Tbl Gate Entry');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Gate Entries'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Gate Entry');
 ?>
-<div class="tbl-gate-entry-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create',
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider
+        ])
+        ?>
+    </div>
 </div>

@@ -20,7 +20,7 @@ use yii\helpers\Json;
  */
 class TblVehicleKmInfoController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['route-list'];
+    public $freeAccessActions = ['route-list', 'route-vehicle-detail'];
 
     /**
      * Lists all TblVehicleKmInfo models.
@@ -124,7 +124,7 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1])) {
                 $mccs = new TblVehicleKmInfo();
-                $data = $mccs->getdateWiseVehicleRouteList($parents[0],$parents[1]);
+                $data = $mccs->getdateWiseVehicleRouteList($parents[0], $parents[1]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -133,6 +133,23 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionRouteVehicleDetail() {
+        var_dump(Yii::$app->request->get('TblGateEntry'));die;
+        $route_code = '';
+        $shift_code = '';
+        $datetime = '';
+        $model = new TblVehicleKmInfo();
+        $data = $model->getRouteVehicleDetail($route_code, $datetime);
+        $vehicle_code = $parsing_no = $arrival_time = $grace_time = '';
+        if (!empty($data)) {
+            $vehicle_code = $data->vehicle_code;
+            $parsing_no = $data->vehicle->parsing_no;
+            $arrival_time = ($shift_code == '1') ? $data->morning_arrival_time : $data->evening_arrival_time;
+            $grace_time = ($shift_code == '1') ? $data->morning_grace_time : $data->evening_grace_time;
+        }
+        return Json::encode(['vehicle_code' => $vehicle_code, 'parsing_no' => $parsing_no, 'arrival_time' => $arrival_time, 'grace_time' => $grace_time]);
     }
 
 }

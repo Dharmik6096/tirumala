@@ -1,75 +1,99 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\transporter\models\TblGateEntry */
-/* @var $form yii\widgets\ActiveForm */
+use yii\web\View;
+use yii\helpers\Url;
 ?>
-
-<div class="tbl-gate-entry-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'plant_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'mcc_plant_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'bmc_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'dcs_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'route_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'transporter_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'vehicle_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'date_time_of_collection')->textInput() ?>
-
-    <?= $form->field($model, 'shift_code')->textInput() ?>
-
-    <?= $form->field($model, 'define_arrival_time')->textInput() ?>
-
-    <?= $form->field($model, 'actual_arrival_time')->textInput() ?>
-
-    <?= $form->field($model, 'grace_time')->textInput() ?>
-
-    <?= $form->field($model, 'late_by_time')->textInput() ?>
-
-    <?= $form->field($model, 'responsibility_code')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'x_col1')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col2')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col3')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col4')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'x_col5')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
+<div id="maincontent">
+    <?=
+    $this->render('_entry_input', ['model' => $model, 'type' => 'create']);
+    ?>
 </div>
+<div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
+    <div class="QltyParamDivGrid">
+        <?=
+        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
+        ?>
+    </div>
+</div>
+<?php
+$script = "
+     gridChange();
+    $(document).on('change', '#tblgateentry-date_time_of_collection', function() {  
+        gridChange();
+    });
+    $(document).on('change', '#tblgateentry-shift_code', function() {  
+        gridChange();
+    });
+    $(document).on('change', '#tblgateentry-bmc_code', function() { 
+         gridChange();
+    });
+    $(document).on('change', '#tblgateentry-route_code', function() { 
+         routeChange();
+    });
+    function gridChange(){
+       $('.add-collection').prop('disabled',true);
+       $('#gate-entry-form .reset_field input').val('');
+      // $('.QltyParamDiv').hide();
+        var bmc = $('#tblgateentry-bmc_code').val();
+        var date = $('#tblgateentry-date_time_of_collection').val();
+        var shift = $('#tblgateentry-shift_code').val();
+            if(setData(bmc) && setData(date) && setData(shift)){
+                $('.add-collection').removeAttr('disabled');
+        }        
+    }
+    function routeChange(){
+        var route = $('#tblgateentry-route_code').val();
+        var date = $('#tblgateentry-date_time_of_collection').val();
+        var shift = $('#tblgateentry-shift_code').val();
+            if(setData(route) && setData(date) && setData(shift)){
+            vehicleDetail();
+        }        
+    }
+    function setData(field = ''){
+        if(field != '' && field != null && field != undefined){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    
+    $(document).on('click','.add-collection',function(e){
+        reloadGrid();
+        $('.QltyParamDiv').show();
+    });
+    function reloadGrid(){
+            var url = '" . Url::to(['/transporter/tbl-gate-entry/list-grid']) . "'+ '?' + $('#gate-entry-form').serialize();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    beforeSend:function(data) {
+                        $('#loadercontent').show();
+                        $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $('#gridcontentSet .QltyParamDivGrid').html(data);
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                    },
+                });
+    }
+    function vehicleDetail(){
+            var url = '" . Url::to(['/transporter/tbl-vehicle-km-info/route-vehicle-detail') . "'+ '?' + $('#gate-entry-form').serialize();
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    beforeSend:function(data) {
+                        $('#loadercontent').show();
+                        $('#pageloader').show();
+                    },
+                    success: function(data) {
+                    console.log(data);
+
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                    },
+                });
+    }
+";
+$this->registerJs($script, View::POS_END, 'gate-entry-create');
+?>
