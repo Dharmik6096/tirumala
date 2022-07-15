@@ -90,8 +90,8 @@ $form = ActiveForm::begin([
                         'type' => 'POST',
                         'url' => Url::to(['create']),
                         'beforeSend' => new JsExpression("function(data){
-                                            //    $('#loadercontent').show();
-                                           //    $('#pageloader').show();
+                                                $('#loadercontent').show();
+                                                $('#pageloader').show();
                                                 }"),
                         'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
