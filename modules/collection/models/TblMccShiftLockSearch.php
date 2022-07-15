@@ -26,7 +26,8 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
                 [['shift_lock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'date_time_of_collection', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['data_lock', 'originating_type'], 'integer'],
                 [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
-                [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_mcc_code'], 'safe'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'f_mcc_code', 'f_bmc_code'], 'safe'],
+                [['x_col1', 'f_union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLockMember']],
         ];
     }
 
@@ -167,6 +168,61 @@ class TblMccShiftLockSearch extends TblMccShiftLock {
             ]);
         }
         //var_dump($output); exit;
+        return $dataProvider;
+    }
+
+    public function shiftlockmembersearch($params, $sp = 'portal_mcc_shift_lock_data_member') {
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params) && $this->validate()) {
+            $sp_params = [
+                'f_union_code' => '',
+                'f_bmc_code' => '',
+                'x_col1' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''];
+
+            $sp_params = array_merge($sp_params, $params['TblMccShiftLockSearch']);
+            $bmc_array = $bmc_string = $params['TblMccShiftLockSearch']['f_bmc_code'];
+            if (empty($this->f_bmc_code)) {
+                $this->f_bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+            } else if (is_array($bmc_array)) {
+                $bmc_string = implode(',', $bmc_array);
+                $this->f_bmc_code = ',' . $bmc_string . ',';
+            }
+
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            $sp_params['f_bmc_code'] = $this->f_bmc_code;
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+
+
+            $output = \Yii::$app->general->getSpData($sp, $sp_params);
+            $this->f_bmc_code = $bmc_array;
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
         return $dataProvider;
     }
 

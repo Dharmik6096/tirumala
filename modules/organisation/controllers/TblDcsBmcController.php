@@ -31,7 +31,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list'];
 
     /**
      * Lists all TblDcsBmc models.
@@ -445,6 +445,22 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             echo Yii::$app->general->encryptData($json) . PHP_EOL;
         }
         exit();
+    }
+
+    public function actionChannelBmcList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $bmc = new TblDcsBmc();
+                $data = $bmc->getBMCList('', 'TRUE', TRUE, FALSE, $parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

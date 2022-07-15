@@ -315,6 +315,15 @@ class DropDown extends Component {
         }
     }
 
+    public function channel_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
+        $this->setClass($form, $name);
+        if ($multiselect) {
+            $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list');
+        } else {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly);
+        }
+    }
+
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -747,7 +756,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1528,7 +1537,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
