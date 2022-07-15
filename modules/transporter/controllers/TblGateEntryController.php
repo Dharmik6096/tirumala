@@ -11,6 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * TblGateEntryController implements the CRUD actions for TblGateEntry model.
@@ -64,16 +65,24 @@ class TblGateEntryController extends ChildController {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
             if (!empty(Yii::$app->request->post()['TblGateEntry']['gate_entry_code'])) {
+                $post_data = $this->model;
                 $this->model = $this->findModel(Yii::$app->request->post()['TblGateEntry']['gate_entry_code']);
                 $historyModel = new TblGateEntryHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
-                $this->model->load(Yii::$app->request->post());
+                $this->model->actual_arrival_time = $post_data->actual_arrival_time;
                 $update = TRUE;
+                $type = 'edit';
+            } else {
+                $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
+                $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             }
-            $this->model->date_time_of_collection = !empty($this->model->date_time_of_collection) ? date('Y-m-d', strtotime($this->model->date_time_of_collection)) : '';
-            $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($this->model->validate()) {
+                $actual_arrival_time = date("H:i", strtotime($this->model->actual_arrival_time));
+                $define_arrival_time = date("H:i", strtotime('+' . (empty($this->model->grace_time) ? 0 : (int) $this->model->grace_time) . ' minutes', strtotime($this->model->define_arrival_time)));
+                $late_by_time = (strtotime($actual_arrival_time) - strtotime($define_arrival_time)) / 60;
+                $this->model->late_by_time = ($late_by_time > 0) ? $late_by_time : 0;
+                $this->model->transporter_code = $this->model->vehicleCode->transporter_code;
                 $modelSave[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
@@ -105,14 +114,12 @@ class TblGateEntryController extends ChildController {
      */
     public function actionUpdate($id) {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->gate_entry_code]);
+        if (!empty($model)) {
+            $record = ['status' => 'success', 'route_code' => $model->route_code, 'actual_arrival_time' => $model->actual_arrival_time];
         } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+            $record = ['status' => 'error'];
         }
+        return Json::encode($record);
     }
 
     /**

@@ -56,10 +56,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-10">
             <div class="row">
                 <div class="QltyParamDiv">
-                    <div class="col-sm-3 create_fields <?= $disable ?>">
+                    <div class="col-sm-3 reset_field create_fields <?= $disable ?>">
+                        <?= Html::activeHiddenInput($model, 'gate_entry_code'); ?>
                         <?= Yii::$app->dropdown->all_routes($model, $form, 'tblgateentry-plant_code,tblgateentry-mcc_plant_code,tblgateentry-bmc_code', 'route_code', $model->getAttributeLabel('route_code')); ?>
                     </div>
-                    <div class="col-sm-3 create_fields <?= $disable ?>">
+                    <div class="col-sm-3 reset_field create_fields <?= $disable ?>">
                         <?= $form->field($model, 'vehicle_code')->dropDownList([]); ?>
                     </div>
                     <div class="col-sm-2 reset_field">
@@ -68,13 +69,13 @@ $form = ActiveForm::begin([
                             'mask' => '99:99',])
                         ?> 
                     </div>
-                    <div class="col-sm-2 create_fields disabled">
+                    <div class="col-sm-2 reset_field disabled">
                         <?=
                         $form->field($model, 'define_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                             'mask' => '99:99',])
                         ?> 
                     </div>
-                    <div class="col-sm-2 create_fields number-validate disabled">
+                    <div class="col-sm-2 reset_field number-validate disabled">
                         <?= $form->field($model, 'grace_time')->textInput() ?>
                     </div>
                 </div>
@@ -89,8 +90,8 @@ $form = ActiveForm::begin([
                         'type' => 'POST',
                         'url' => Url::to(['create']),
                         'beforeSend' => new JsExpression("function(data){
-                                                $('#loadercontent').show();
-                                                $('#pageloader').show();
+                                            //    $('#loadercontent').show();
+                                           //    $('#pageloader').show();
                                                 }"),
                         'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
@@ -101,13 +102,17 @@ $form = ActiveForm::begin([
                                                                     $("#pageloader").hide();
                                                                     $(".help-block").text("");
                                                                     $(".form-group").removeClass("has-error");         
-                                                                    $(".create_fields").removeClass("disabled");                                                                     
+                                                                    $(".create_fields").removeClass("disabled");
+                                                                    $("#tblgateentry-route_code").removeAttr("disabled");
+                                                                    $("#tblgateentry-vehicle_code").removeAttr("disabled");
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
                                                                     $("#gate-entry-form .reset_field input").val("");
                                                                     $("#gate-entry-form .reset_field select").val("");
                                                                     $("#gate-entry-form .reset_field textarea").val("");
+                                                                    $("#tblgateentry-route_code").change();
+                                                                    $(".DisableAferAdd").addClass("disabledDiv");                                                                  
                                                                     $(".panel-body").scrollTop(0);                                                                    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
@@ -132,7 +137,7 @@ $form = ActiveForm::begin([
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
             </div>
 
         </div>

@@ -136,10 +136,12 @@ class TblVehicleKmInfoController extends \app\controllers\ChildController {
     }
 
     public function actionRouteVehicleDetail() {
-        var_dump(Yii::$app->request->get('TblGateEntry'));die;
-        $route_code = '';
-        $shift_code = '';
-        $datetime = '';
+        $param = Yii::$app->request->get();
+        $route_code = $param['route_code'];
+        $shift_code = $param['shift_code'];
+        $date = $param['date'];
+        $datetime = date('Y-m-d', strtotime($date)) . ' ' . \Yii::$app->general->getshift($shift_code);
+
         $model = new TblVehicleKmInfo();
         $data = $model->getRouteVehicleDetail($route_code, $datetime);
         $vehicle_code = $parsing_no = $arrival_time = $grace_time = '';

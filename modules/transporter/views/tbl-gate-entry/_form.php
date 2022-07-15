@@ -33,7 +33,7 @@ $script = "
     function gridChange(){
        $('.add-collection').prop('disabled',true);
        $('#gate-entry-form .reset_field input').val('');
-      // $('.QltyParamDiv').hide();
+       $('.QltyParamDiv').hide();
         var bmc = $('#tblgateentry-bmc_code').val();
         var date = $('#tblgateentry-date_time_of_collection').val();
         var shift = $('#tblgateentry-shift_code').val();
@@ -46,7 +46,7 @@ $script = "
         var date = $('#tblgateentry-date_time_of_collection').val();
         var shift = $('#tblgateentry-shift_code').val();
             if(setData(route) && setData(date) && setData(shift)){
-            vehicleDetail();
+            vehicleDetail(route,date,shift);
         }        
     }
     function setData(field = ''){
@@ -59,7 +59,35 @@ $script = "
     
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
-        $('.QltyParamDiv').show();
+         $('#gate-entry-form .reset_field input').val('');
+         $('#gate-entry-form .reset_field select').val('');                                                             
+         $('#tblgateentry-route_code').change();
+         $('.QltyParamDiv').show();
+    });
+     $(document).on('click','.edit-record',function(e){
+     var id = $(this).attr('data-val');
+     var url = '" . Url::to(['/transporter/tbl-gate-entry/update']) . "';
+                $.ajax({
+                    type: 'get',
+                    data:{'id':id},
+                    url: url,
+                    beforeSend:function(data) {
+                        $('#loadercontent').show();
+                        $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        var obj = $.parseJSON(data);
+                        if(obj.status=='success'){
+                        $('#tblgateentry-route_code').val(obj.route_code).change();
+                        $('#tblgateentry-gate_entry_code').val(id);
+                        $('#tblgateentry-actual_arrival_time').val(obj.actual_arrival_time);
+                        $('#tblgateentry-route_code').prop('disabled', true);
+                        $('#tblgateentry-vehicle_code').prop('disabled', true);
+                        }
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                    },
+                });         
     });
     function reloadGrid(){
             var url = '" . Url::to(['/transporter/tbl-gate-entry/list-grid']) . "'+ '?' + $('#gate-entry-form').serialize();
@@ -77,18 +105,21 @@ $script = "
                     },
                 });
     }
-    function vehicleDetail(){
-            var url = '" . Url::to(['/transporter/tbl-vehicle-km-info/route-vehicle-detail') . "'+ '?' + $('#gate-entry-form').serialize();
+    function vehicleDetail(route,date,shift){
+            var url = '" . Url::to(['/transporter/tbl-vehicle-km-info/route-vehicle-detail']) . "';
                 $.ajax({
                     type: 'get',
+                    data:{'route_code':route,'date':date,'shift_code':shift},
                     url: url,
                     beforeSend:function(data) {
                         $('#loadercontent').show();
                         $('#pageloader').show();
                     },
                     success: function(data) {
-                    console.log(data);
-
+                        var obj = $.parseJSON(data);
+                        $('#tblgateentry-define_arrival_time').val(obj.arrival_time);
+                        $('#tblgateentry-grace_time').val(obj.grace_time);
+                        $('#tblgateentry-vehicle_code').find('option').remove().end().append($('<option></option>').attr('value',obj.vehicle_code).text(obj.parsing_no));
                         $('#loadercontent').hide();
                         $('#pageloader').hide();
                     },

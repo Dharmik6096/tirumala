@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblRouteMapping;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleMaster;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_gate_entry".
@@ -60,17 +61,11 @@ class TblGateEntry extends \app\models\ChildModel {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'date_time_of_collection', 'shift_code', 'actual_arrival_time', 'route_code', 'vehicle_code'], 'required'],
                 [['date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
-                [['shift_code', 'responsibility_code', 'originating_type'], 'safe'],
+                [['shift_code', 'responsibility_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['dcs_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
                 [['grace_time', 'late_by_time'], 'number'],
-                [['union_code'], 'string', 'max' => 3],
-                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-                [['bmc_code', 'dcs_code'], 'string', 'max' => 12],
-                [['route_code'], 'string', 'max' => 10],
-                [['transporter_code'], 'string', 'max' => 8],
-                [['vehicle_code'], 'string', 'max' => 20],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['actual_arrival_time'], 'date', 'format' => 'php:H:i'],
+                [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
 
@@ -86,7 +81,7 @@ class TblGateEntry extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'route_code' => Yii::t('app', 'Route'),
-            'transporter_code' => Yii::t('app', 'Transporter Code'),
+            'transporter_code' => Yii::t('app', 'Transporter'),
             'vehicle_code' => Yii::t('app', 'Vehicle'),
             'date_time_of_collection' => Yii::t('app', 'Date Of Collection'),
             'shift_code' => Yii::t('app', 'Shift'),
@@ -140,6 +135,10 @@ class TblGateEntry extends \app\models\ChildModel {
 
     public function getVehicleCode() {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
+    }
+
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
 }
