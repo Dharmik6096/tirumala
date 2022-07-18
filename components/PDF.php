@@ -447,7 +447,7 @@ class PDF extends TCPDF {
         $param[] = $parameters['p_mcc_code']; //
         $param[] = $parameters['p_bmc_code'];
         $param[] = $parameters['p_billing_for'];
-        $param[] = $parameters['p_route_code'];
+        $param[] = $parameters['route_code'];
         $param[] = $parameters['p_dcsc_code'];
         $param[] = $parameters['p_payment_cycle_code'];
         $output = \Yii::$app->general->getSpData($sp_name, $param);
@@ -620,7 +620,7 @@ class PDF extends TCPDF {
                 $textContent .= $memberName;
                 $textContent .= ' ' . $acNo; //str_pad($acNo, 20, ' ', STR_PAD_RIGHT);
                 $inPad = 82 - (13 + strlen($memberName) + 1 + strlen($acNo));
-                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 13, ' ', STR_PAD_LEFT);
                 $textContent .= $acIfsc; //str_pad($acIfsc, 22, ' ', STR_PAD_RIGHT);
@@ -927,6 +927,11 @@ class PDF extends TCPDF {
 //        $amount_after_decimal = $amount - ($num = floor($amount)) * 100;
         $amtArr = !empty($amount) ? explode('.', $amount) : [];
         $num = !empty($amtArr[0]) ? $amtArr[0] : 0;
+        $negativeAmt = '';
+        if ($num < 0) {
+            $num = $num * -1;
+            $negativeAmt = 'Minus ';
+        }
         $amount_after_decimal = !empty($amtArr[1]) ? $amtArr[1] : '';
         // Check if there is any number after decimal
         $amt_hundred = null;
@@ -943,7 +948,7 @@ class PDF extends TCPDF {
             40 => 'Forty', 50 => 'Fifty', 60 => 'Sixty',
             70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety');
         $here_digits = array('', 'Hundred', 'Thousand', 'Lakh', 'Crore');
-        $negativeAmt = '';
+//        $negativeAmt = '';
         while ($x < $count_length) {
             $get_divider = ($x == 2) ? 10 : 100;
             $amount = floor($num % $get_divider);
@@ -961,7 +966,7 @@ class PDF extends TCPDF {
                 $string[] = null;
         }
         $implode_to_Rupees = implode('', array_reverse($string));
-        $get_paise = ($amount_after_decimal > 0) ? "And " . ($change_words[$amount_after_decimal / 10] . " " . $change_words[$amount_after_decimal % 10]) . ' Paise' : '';
+        $get_paise = ($amount_after_decimal > 0 && !empty($change_words[$amount_after_decimal / 10])) ? "And " . ($change_words[$amount_after_decimal / 10] . " " . $change_words[$amount_after_decimal % 10]) . ' Paise' : '';
         return ($implode_to_Rupees ? $negativeAmt . $implode_to_Rupees . 'Rupees ' : '') . $get_paise;
     }
 
@@ -975,7 +980,7 @@ class PDF extends TCPDF {
         $param[] = $parameters['p_mcc_code']; //
         $param[] = $parameters['p_bmc_code'];
         $param[] = $parameters['p_billing_for'];
-        $param[] = $parameters['p_route_code'];
+        $param[] = $parameters['route_code'];
         $param[] = $parameters['p_dcsc_code'];
         $param[] = $parameters['p_payment_cycle_code'];
         $output = \Yii::$app->general->getSpData($sp_name, $param);
@@ -1146,7 +1151,7 @@ class PDF extends TCPDF {
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= $memName; //(!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['member_name'] : '');
                 $inPad = 78 - (30 + strlen($memName));
-                $textContent .= str_pad( ++$i, $inPad, ' ', STR_PAD_LEFT);
+                $textContent .= str_pad(++$i, $inPad, ' ', STR_PAD_LEFT);
                 $textContent .= "\n";
                 $textContent .= str_pad('', 30, ' ', STR_PAD_LEFT);
                 $textContent .= 'R.Code: ' . (!empty($value['basic']) && !empty($value['basic'][0]) ? $value['basic'][0]['route'] : '');

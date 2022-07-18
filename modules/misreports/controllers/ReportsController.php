@@ -9,6 +9,7 @@ use app\modules\misreports\models\ReportsModel;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use PHPExcel;
+use app\modules\configuration\models\TblGenerateReportParam;
 
 /**
  * Default controller for the `JasperReports` module
@@ -836,8 +837,39 @@ class ReportsController extends \app\controllers\ChildController {
             }
             $controls[$value] = is_array($model->{$value}) ? ',' . implode(',', $model->{$value}) . ',' : $model->{$value};
         }
+        $showOutPut = TRUE;
+        if (!empty($this->data['download_day_differe'])) {
+            if (!empty($controls['from_date']) && !empty($controls['to_date'])) {
+                $count = $this->data['download_day_differe'];
+                $fDate = date('Y-m-d', strtotime($controls['from_date']));
+                $tDate = date('Y-m-d', strtotime($controls['to_date']));
+
+                $fDate = date_create($fDate);
+                $tDate = date_create($tDate);
+                $diff = date_diff($fDate, $tDate);
+                $DayCount = $diff->format("%a");
+                $DayCount = $DayCount + 1;
+                if ($DayCount > $count) {
+                    $showOutPut = false;
+                    $reportParam = new TblGenerateReportParam();
+                    $reportParam->setAttributes($controls);
+                    $reportParam->report_key = $this->report;
+                    $reportParam->data_post_status = 0;
+                    $reportParam->report_name = $this->data['title'];
+                    $exist = $reportParam->getExistData();
+                    if (!empty($exist)) {
+                        $reportParam->ref_code = $exist->report_param_code;
+                    }
+                    $reportParam->save(FALSE);
+                }
+            }
+        }
         $sp_name = $this->data['sp_name'];
-        $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        if ($showOutPut) {
+            $output = \Yii::$app->general->getSpData($sp_name, $controls);
+        } else {
+            $output[0]['message'] = 'Your Request has been submitted For Report Data. You can download file from Rport Download Screen.';
+        }
         $this->output = $output;
 
         if (!empty($this->data['sp_name2'])) {
@@ -1042,7 +1074,7 @@ class ReportsController extends \app\controllers\ChildController {
 
     /* Reports Configuration */
 
-    private function getLabels($l) {
+    public function getLabels($l) {
         $label = [
 //101
             'MemberDailyCollection' => [
@@ -1051,6 +1083,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
             ],
             'MemberPassbook' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1058,6 +1091,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
             ],
             'MemberConsolidated' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -1065,6 +1099,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MemberDailyCollection',
                 'title' => '101 - Member Collection Detail',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
             ],
             //102
             'DcsCollDateShiftSummary' => [
@@ -1853,6 +1888,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_milk_collection_list',
                 'scenario' => 'MilkCollectionData',
                 'title' => '108 - Milk Collection Data',
+//                'download_day_differe' => '15'
             ],
             'BmcCollectionData' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
