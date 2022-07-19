@@ -396,7 +396,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $saveModel[] = $model;
         }
 
-        if ($mccFlag != 1 || $Recovery) {
+        if (empty($mccFlag) || $Recovery) {
             $staging = new TblMccShiftLockStaging();
             $attribute = $model->attributes;
             unset($attribute['x_col1']);
