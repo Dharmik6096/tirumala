@@ -240,7 +240,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                                 $loopData['companyId'] = '';
                                 $loopData['sourceSystem'] = '';
 
-                                $loopDetailData['itemNumber'] = 'RM000001';
+                                $loopDetailData['itemNumber'] = 'WIP-Raw-Chilled-Milk'; // 'RM000001';
                                 $loopDetailData['quantity'] = $value->qty;
                                 $loopDetailData['lineAmount'] = $value->amount;
                                 $loopDetailData['locationId'] = '';
@@ -650,7 +650,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $loopData['companyId'] = 'MMD';
                 $loopData['sourceSystem'] = '';
 
-                $loopDetailData['itemNumber'] = 'RM000001';
+                $loopDetailData['itemNumber'] = 'WIP-Raw-Chilled-Milk'; // 'RM000001';
                 $loopDetailData['quantity'] = $value->qty;
                 $loopDetailData['lineAmount'] = $value->amount;
                 $loopDetailData['locationId'] = '';
