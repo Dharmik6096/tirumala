@@ -374,14 +374,13 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $model->{$updateField} = $val;
         $modelData = $model->getExistData();
         $Recovery = FALSE;
+        $mccFlag = Yii::$app->general->getforeignkey($model->mccPlantCode, 'recovery_validate');
         if ($setErp && Yii::$app->session->get('eiplCode') == 'MMD') {
             $recoveryModel = new TblVspTransitRecovery();
             $existRecovery = $recoveryModel->getExistData($model);
             $Recovery = $existRecovery > 0 ? TRUE : FALSE;
         }
-
         $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
-
         if (!empty($modelData)) {
             $historyModel = new TblMccShiftLockHistory();
             Yii::$app->operation->history($modelData, $historyModel, UPDATE);
@@ -397,7 +396,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $saveModel[] = $model;
         }
 
-        if ($Recovery) {
+        if ($mccFlag != 1 || $Recovery) {
             $staging = new TblMccShiftLockStaging();
             $attribute = $model->attributes;
             unset($attribute['x_col1']);
