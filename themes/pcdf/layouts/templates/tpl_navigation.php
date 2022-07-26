@@ -213,6 +213,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
                     ['label' => Yii::t('app', 'Bill Head Transaction'), 'url' => ['/vsp/tbl-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-bill-head-detail')],
                     ['label' => Yii::t('app', 'Head Load'), 'url' => ['/vsp/tbl-head-load/index'], 'active' => ($cntrl == 'tbl-head-load')],
+                    ['label' => Yii::t('app', 'Rejection Resp. Mapping'), 'url' => ['/collection/tbl-milk-reject/responsibility-mapping'], 'active' => ($cntrl == 'tbl-milk-reject')],
                     ['label' => Yii::t('app', 'Transit Loss'), 'url' => ['/vsp/tbl-bmc-transit-loss/index'], 'active' => ($cntrl == 'tbl-bmc-transit-loss')],
                     ['label' => Yii::t('app', 'Transit Recovery'), 'url' => ['/vsp/transit-recovery/transit-loss-shortage'], 'active' => ($cntrl == 'transit-loss-shortage')],
                     ['label' => Yii::t('app', 'VSP Outstanding'), 'url' => ['/payment/tbl-vsp-outstanding/index'], 'active' => ($cntrl == 'tbl-vsp-outstanding')],

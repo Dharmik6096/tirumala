@@ -73,19 +73,19 @@ class TblMilkReject extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['source_org_type', 'rejection_reason_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'date_time_of_collection', 'action_taken', 'fat', 'snf', 'no_of_can', 'qty'], 'required'],
-            [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'device_id', 'version_no', 'vehicle_code', 'parsing_no', 'route_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['shift_code', 'milk_type_code', 'no_of_can', 'originating_type', 'rejection_reason_code', 'rejection_responsibility_code', 'sample_no', 'qty_mode', 'doc_no'], 'integer'],
-            [['fat', 'snf', 'qty', 'clr', 'water'], 'number'],
-            [['created_at', 'updated_at', 'date_time_of_collection', 'customer_code', 'customer_type'], 'safe'],
-            [['fat', 'snf', 'snf'], 'number'],
-            [['fat', 'snf', 'qty', 'no_of_can'], 'number', 'min' => 0],
-            [['customer_code', 'customer_type'], 'required', 'when' => function ($model) {
+                [['source_org_type', 'rejection_reason_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'date_time_of_collection', 'action_taken', 'fat', 'snf', 'no_of_can', 'qty'], 'required', 'except' => ['rejectRespMap']],
+                [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'device_id', 'version_no', 'vehicle_code', 'parsing_no', 'route_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['shift_code', 'milk_type_code', 'no_of_can', 'originating_type', 'rejection_reason_code', 'rejection_responsibility_code', 'sample_no', 'qty_mode', 'doc_no'], 'safe'],
+                [['fat', 'snf', 'qty', 'clr', 'water'], 'number'],
+                [['created_at', 'updated_at', 'date_time_of_collection', 'customer_code', 'customer_type'], 'safe'],
+                [['fat', 'snf', 'snf'], 'number'],
+                [['fat', 'snf', 'qty', 'no_of_can'], 'number', 'min' => 0],
+                [['customer_code', 'customer_type'], 'required', 'when' => function ($model) {
                     return ($model->source_org_type == 'bmc');
                 }, 'whenClient' => "function (attribute, value) { 
               return ($('#tblmilkreject-source_org_type').val() == 'bmc'); 
-          }"],
-            [['water'], 'default', 'value' => 0]
+          }", 'except' => ['rejectRespMap']],
+                [['water'], 'default', 'value' => 0]
         ];
     }
 
