@@ -308,19 +308,21 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
                     if ($modelRouteSource->route_type == 'Can') {
                         $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $d[0]])->one();
-                        $historyModel = new TblSocietyCodesHistory();
-                        Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
-                        $societyCodes->route_code = $modelRouteSource->route_code;
+                        if (!empty($societyCodes)) {
+                            $historyModel = new TblSocietyCodesHistory();
+                            Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
+                            $societyCodes->route_code = $modelRouteSource->route_code;
 //                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
 //                        $societyCodes->bmc_code = $modelRouteSource->getBmcCode();
+                            array_push($mapping, $historyModel);
+                            array_push($mapping, $societyCodes);
+                        }
                         $dcsCode = TblDcs::findOne($d[0]);
                         $dcsCode->scenario = 'routeMapping';
                         $dcsHistoryModel = new TblDcsHistory();
                         Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
                         $dcsCode->route_code = $modelRouteSource->route_code;
 
-                        array_push($mapping, $societyCodes);
-                        array_push($mapping, $historyModel);
                         array_push($mapping, $dcsCode);
                         array_push($mapping, $dcsHistoryModel);
                     }
