@@ -62,8 +62,10 @@ class AuthServiceController extends ActiveController {
                 'data' => ['message' => $message1],
             ];
         }
-        $data = json_encode($response);
-        echo $data;
+//        $data = json_encode($response);
+//        echo $data;
+        $data = $response;
+        return $data;
     }
 
 }

@@ -71,8 +71,10 @@ class MasterServiceController extends ActiveController {
                 }
             }
         }
-        $data = json_encode($response);
-        echo $data;
+//        $data = json_encode($response);
+//        echo $data;
+        $data = $response;
+        return $data;
     }
 
     public function manipulation($model_data, $arrayKey = 'dcs_create', $apiData) {
@@ -170,8 +172,10 @@ class MasterServiceController extends ActiveController {
                 }
             }
         }
-        $data = json_encode($response);
-        echo $data;
+//        $data = json_encode($response);
+//        echo $data;
+        $data = $response;
+        return $data;
     }
 
 }
