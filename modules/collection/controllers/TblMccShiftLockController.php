@@ -151,7 +151,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->x_col4 = $famount;
             $existData = $this->model->getExistData();
             $Recovery = TRUE;
-            if (Yii::$app->session->get('eiplCode') == 'MMD') {
+            if (Yii::$app->session->get('eiplCode') == 'MMD' && !in_array($this->model->mcc_plant_code, ['010021'])) {
                 $recoveryModel = new TblVspTransitRecovery();
                 $existRecovery = $recoveryModel->getExistData($this->model);
                 $Recovery = $existRecovery > 0 ? TRUE : FALSE;
@@ -192,7 +192,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $saveModel[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if (Yii::$app->session->get('eiplCode') == 'MMD' && !in_array($this->model->mcc_plant_code, ['010021'])) {
+                    if (Yii::$app->session->get('eiplCode') == 'MMD') {
                         $this->setMmdErpData();
                     }
                     if (false && Yii::$app->session->get('eiplCode') == 'MMD') {
@@ -429,7 +429,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
-            if ($callErp && Yii::$app->session->get('eiplCode') == 'MMD' && !in_array($mcc, ['010021'])) {
+            if ($callErp && Yii::$app->session->get('eiplCode') == 'MMD') {
                 $this->setMmdErpData();
             }
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
