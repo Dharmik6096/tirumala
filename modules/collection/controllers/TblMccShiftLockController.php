@@ -192,7 +192,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $saveModel[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if (Yii::$app->session->get('eiplCode') == 'MMD') {
+                    if (Yii::$app->session->get('eiplCode') == 'MMD' && !in_array($this->model->mcc_plant_code, ['010021'])) {
                         $this->setMmdErpData();
                     }
                     if (false && Yii::$app->session->get('eiplCode') == 'MMD') {
@@ -354,7 +354,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '', $setErp = false) {
+    public function updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, $updateField, $val, $lockMessage, $unlockMessage, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '', $setErp = false, $callErp = FALSE) {
         $saveModel = [];
         $model = new TblMccShiftLock();
         $model->mcc_plant_code = $mcc;
@@ -429,7 +429,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
-            if ($Recovery && Yii::$app->session->get('eiplCode') == 'MMD') {
+            if ($callErp && Yii::$app->session->get('eiplCode') == 'MMD' && !in_array($mcc, ['010021'])) {
                 $this->setMmdErpData();
             }
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
@@ -446,7 +446,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt);
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt, false, true);
     }
 
     public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
