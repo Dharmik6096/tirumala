@@ -79,6 +79,34 @@ $this->title = Yii::$app->label->title('view', 'Integration Status');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'x_col1',
+                                'label' => Yii::t('app', 'Member Qty'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'x_col2',
+                                'label' => Yii::t('app', 'Member Avg FAT'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'x_col3',
+                                'label' => Yii::t('app', 'Member Avg SNF'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'x_col4',
+                                'label' => Yii::t('app', 'Member Amount'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
@@ -111,6 +139,10 @@ $this->title = Yii::$app->label->title('view', 'Integration Status');
                     ['attribute' => 'avg_fat', 'filter' => FALSE],
                     ['attribute' => 'avg_snf', 'filter' => FALSE],
                     ['attribute' => 'amount', 'filter' => FALSE],
+                    ['attribute' => 'x_col1', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Qty')],
+                    ['attribute' => 'x_col2', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg FAT')],
+                    ['attribute' => 'x_col3', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg SNF')],
+                    ['attribute' => 'x_col4', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Amount')],
                     ['label' => Yii::t('app', 'DATA Status'), 'attribute' => 'data_lock', 'value' => function($model) {
                             return $model->data_lock == 1 ? 'LOCK' : 'UN-LOCK';
                         }, 'filter' => FALSE],
