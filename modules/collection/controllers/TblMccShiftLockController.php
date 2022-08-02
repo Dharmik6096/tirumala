@@ -416,8 +416,8 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             } else {
                 $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
                 $ConcateShift = $shift;
-                $staging->staging_code = Yii::$app->general->getUuid();
-//                $staging->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
+//                $staging->staging_code = Yii::$app->general->getUuid();
+                $staging->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
                 $saveModel[] = $staging;
             }
         } else {
