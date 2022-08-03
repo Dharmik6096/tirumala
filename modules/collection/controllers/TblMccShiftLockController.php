@@ -397,15 +397,23 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
 
         $dateCheck = date('Y-m-d', strtotime($date));
+        $staggingCode = '';
         if (empty($mccFlag) || $Recovery || $callErp) {
             $staging = new TblMccShiftLockStaging();
             $attribute = $model->attributes;
             unset($attribute['x_col1']);
             unset($attribute['x_col2']);
             $staging->setAttributes($attribute);
+
+            $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
+            $ConcateShift = $shift;
+//                $staging->staging_code = Yii::$app->general->getUuid();
+            $staging->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
+            $staggingCode = $staging->staging_code;
             $stagingData = $staging->find()
 //                    ->where(['shift_lock_code' => $model->shift_lock_code])
-                    ->where(['CAST(date_time_of_collection as date)' => $dateCheck, 'mcc_plant_code' => $model->mcc_plant_code, 'shift_code' => $model->shift_code])
+                    ->where(['staging_code' => $staggingCode])
+//                    ->where(['CAST(date_time_of_collection as date)' => $dateCheck, 'mcc_plant_code' => $model->mcc_plant_code, 'shift_code' => $model->shift_code])
                     ->one();
             if (!empty($stagingData)) {
                 $stagingData->setAttributes($attribute);
@@ -418,10 +426,6 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 $stagingData->resp_desc = NULL;
                 $saveModel[] = $stagingData;
             } else {
-                $ConcateDate = date('d', strtotime($date)) . '' . date('m', strtotime($date)) . '' . date('y', strtotime($date));
-                $ConcateShift = $shift;
-//                $staging->staging_code = Yii::$app->general->getUuid();
-                $staging->staging_code = $model->mcc_plant_code . '-' . $ConcateDate . '-' . $ConcateShift;
                 $saveModel[] = $staging;
             }
         } else {
@@ -434,7 +438,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
             if ($callErp && Yii::$app->session->get('eiplCode') == 'MMD') {
-                $this->setMmdErpData();
+                $this->setMmdErpData($staggingCode);
             }
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
             if (Yii::$app->session->get('eiplCode') == 'UMANG') {
@@ -608,7 +612,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 //        }
     }
 
-    public function setMmdErpData() {
+    public function setMmdErpData($staggingCode = '') {
         $api = new WebApi();
         $api->serverUrl = 'https://login.microsoftonline.com/2c11ed1f-0dff-46b9-94e9-8cbe83717417/oauth2/token';
         $api->authentication = FALSE;
@@ -639,7 +643,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 
         if (!empty($responseData['token_type']) && !empty($responseData['resource']) && !empty($responseData['access_token'])) {
             $shiftLock = new TblMccShiftLockStaging();
-            $shiftLockData = $shiftLock->getLockShift(10);
+            $shiftLockData = $shiftLock->getLockShift(10, $staggingCode);
 
             foreach ($shiftLockData as $key => $value) {
                 $body = [];
