@@ -384,6 +384,14 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         if (!empty($modelData)) {
             $historyModel = new TblMccShiftLockHistory();
             Yii::$app->operation->history($modelData, $historyModel, UPDATE);
+            $modelData->qty = $qty;
+            $modelData->avg_fat = $fat;
+            $modelData->avg_snf = $snf;
+            $modelData->amount = $amount;
+            $modelData->x_col1 = $fqty;
+            $modelData->x_col2 = $ffat;
+            $modelData->x_col3 = $fsnf;
+            $modelData->x_col4 = $famnt;
             $modelData->{$updateField} = $val;
             $saveModel[] = $historyModel;
             if ($modelData->bmc_lock == 1 && $modelData->member_lock == 1 && $modelData->product_sale_lock) {
