@@ -396,13 +396,17 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $saveModel[] = $model;
         }
 
+        $dateCheck = date('Y-m-d', strtotime($date));
         if (empty($mccFlag) || $Recovery || $callErp) {
             $staging = new TblMccShiftLockStaging();
             $attribute = $model->attributes;
             unset($attribute['x_col1']);
             unset($attribute['x_col2']);
             $staging->setAttributes($attribute);
-            $stagingData = $staging->find()->where(['shift_lock_code' => $model->shift_lock_code])->one();
+            $stagingData = $staging->find()
+//                    ->where(['shift_lock_code' => $model->shift_lock_code])
+                    ->where(['CAST(date_time_of_collection as date)' => $dateCheck, 'mcc_plant_code' => $model->mcc_plant_code, 'shift_code' => $model->shift_code])
+                    ->one();
             if (!empty($stagingData)) {
                 $stagingData->setAttributes($attribute);
 //                $stagingData->x_col1 = null;
