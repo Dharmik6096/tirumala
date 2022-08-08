@@ -176,6 +176,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $filePath = $FTPProcess['file_path'];
         $ftpPath = $FTPProcess['ftp_path'];
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
+        $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
         /** csv/txt generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             $header = array_keys($output[0]);
@@ -185,7 +186,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
             }
             fclose($txt_file);
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $append_ftp_path);
         }
         return FALSE;
         /** csv/txt generate * */
@@ -230,22 +231,23 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $append_ftp_path) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
         if (!empty($ftpData)) {
+            $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
             $ftp_file = new TblFtpTxnLog();
             $ftp_file->attributes = $ftpData->attributes;
             $ftp_file->attributes = $data->attributes;
             $ftp_file->total_count = $ftp_file->success_count = $count;
             $ftp_file->txn_datetime = date('Y-m-d H:i:s');
-            $ftp_file->file_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath) . '/' . $fileName;
+            $ftp_file->file_path = $ftp_file_path . '/' . $fileName;
             $ftp_file->file_name = $fileName;
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
-            $ftp_file->ftp_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath);
+            $ftp_file->ftp_path = $ftp_file_path;
 
             if ($ftp_upload) {
                 $ftp = new FTPConnection();

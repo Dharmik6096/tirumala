@@ -80,7 +80,8 @@ class Bkgprocess extends \yii\base\Module {
                 'sp_name' => 'sp_file_sap_data_daily_umang',
                 'export_title' => '',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/DAILY/',
-                'ftp_path' => ''
+                'ftp_path' => '/In/Daily',
+                'append_ftp_path' => TRUE,
             ],
             'TblVspPayment' => [
                 'ext' => '.TXT',
@@ -89,7 +90,8 @@ class Bkgprocess extends \yii\base\Module {
                 'sp_name' => 'sp_file_sap_data_weekly_umang',
                 'export_title' => '',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/WEEKLY/',
-                'ftp_path' => ''
+                'ftp_path' => '/In/Weekly',
+                'append_ftp_path' => TRUE,
             ],
         ];
     }
