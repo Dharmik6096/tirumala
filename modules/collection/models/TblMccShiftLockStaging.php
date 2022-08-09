@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\collection\models\TblMccShiftLock;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_mcc_shift_lock_staging".
@@ -104,12 +105,18 @@ class TblMccShiftLockStaging extends \app\models\ChildModel {
     }
 
     public function getLockShift($limit = '') {
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
         $query = $this->find()
                 ->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]])
-                ->limit($limit)
-                ->all();
+                ->limit($limit);
 
-        return $query;
+        $pendingDataQuery = $this->find()
+                ->where(['and', ['data_post_status' => 1], ['<', 'picked_datetime', $datetime]])
+                ->limit(20);
+
+        return $unionQuery = (new ActiveQuery(TblMccShiftLockStaging::className()))->from([
+                    'pending_data' => $query->union($pendingDataQuery, TRUE)
+                ])->all();
     }
 
     public function updateFileStatus($ids) {
