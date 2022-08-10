@@ -76,21 +76,22 @@ class TblRouteMappingSearch extends TblRouteMapping {
         $plant_table = 'tbl_mcc_plant';
         if (Yii::$app->session->get('Plant') !== '')
             $query->andFilterWhere(['tbl_mcc_plant.plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
-        if (!empty($this->f_plant_code))
+        if (!empty($this->f_plant_code) && empty($this->f_bmc_code))
             $query->andFilterWhere(['tbl_mcc_plant.plant_code' => $this->f_plant_code]);
 
 
 //        if (Yii::$app->session->get('MCC') !== '')
 //            $query->andFilterWhere(['tbl_mcc_plant.mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
-        if (!empty($this->f_mcc_code)) {
+        if (!empty($this->f_mcc_code) && empty($this->f_bmc_code)) {
             $query->andFilterWhere(['or', ['tbl_route_mapping.to_dest' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'MCC'], ['tbl_bmc.mcc_plant_code' => $this->f_mcc_code, 'tbl_route_mapping.to_type' => 'BMC']]);
         }
 
 
 //        if (Yii::$app->session->get('BMC') !== '')
 //            $query->andFilterWhere(['tbl_bmc.bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
-        if (!empty($this->f_bmc_code))
+        if (!empty($this->f_bmc_code)) {
             $query->andFilterWhere(['tbl_route_mapping.to_dest' => $this->f_bmc_code]);
+        }
 
 
 
