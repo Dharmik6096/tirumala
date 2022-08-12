@@ -651,7 +651,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 
         if (!empty($responseData['token_type']) && !empty($responseData['resource']) && !empty($responseData['access_token'])) {
             $shiftLock = new TblMccShiftLockStaging();
-            $shiftLockData = $shiftLock->getLockShift(10, $staggingCode);
+            $shiftLockData = $shiftLock->getSingleLockShift($staggingCode);
 
             foreach ($shiftLockData as $key => $value) {
                 $body = [];

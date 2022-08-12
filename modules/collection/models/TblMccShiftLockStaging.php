@@ -123,4 +123,11 @@ class TblMccShiftLockStaging extends \app\models\ChildModel {
         return $this->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], ['staging_code' => $ids]);
     }
 
+    public function getSingleLockShift($staggingCode = '') {
+        $query = $this->find()
+                ->andWhere(['staging_code' => $staggingCode]);
+
+        return $query->all();
+    }
+
 }
