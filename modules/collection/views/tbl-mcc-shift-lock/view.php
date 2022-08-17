@@ -72,10 +72,48 @@ $this->title = Yii::$app->label->title('view', 'Integration Status');
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'data_lock',
-                                'label' => Yii::t('app', 'DATA Status'),
-                                'value' => $model->data_lock == 1 ? 'LOCK' : 'UN-LOCK',
+                                'attribute' => 'bmc_lock',
+                                'label' => Yii::t('app', 'BMC DATA Status'),
+                                'value' => $model->bmc_lock == 1 ? 'LOCK' : 'UN-LOCK',
                                 'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'x_col1',
+                                'label' => Yii::t('app', 'Member Qty'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'x_col2',
+                                'label' => Yii::t('app', 'Member Avg FAT'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'x_col3',
+                                'label' => Yii::t('app', 'Member Avg SNF'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'x_col4',
+                                'label' => Yii::t('app', 'Member Amount'),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'member_lock',
+                                'label' => Yii::t('app', 'MEMBER DATA Status'),
+                                'value' => $model->member_lock == 1 ? 'LOCK' : 'UN-LOCK',
+                                'valueColOptions' => ['style' => 'width:80%'],
                             ],
                         ],
                     ],
@@ -107,12 +145,19 @@ $this->title = Yii::$app->label->title('view', 'Integration Status');
             <div class="form-grid">
                 <?php
                 $attribute = [
-                    ['attribute' => 'qty', 'filter' => FALSE],
-                    ['attribute' => 'avg_fat', 'filter' => FALSE],
-                    ['attribute' => 'avg_snf', 'filter' => FALSE],
-                    ['attribute' => 'amount', 'filter' => FALSE],
-                    ['label' => Yii::t('app', 'DATA Status'), 'attribute' => 'data_lock', 'value' => function($model) {
-                            return $model->data_lock == 1 ? 'LOCK' : 'UN-LOCK';
+                    ['attribute' => 'qty', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Qty')],
+                    ['attribute' => 'avg_fat', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg FAT')],
+                    ['attribute' => 'avg_snf', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Avg SNF')],
+                    ['attribute' => 'amount', 'filter' => FALSE, 'label' => Yii::t('app', 'BMC Amount')],
+                    ['label' => Yii::t('app', 'BMC DATA Status'), 'attribute' => 'data_lock', 'value' => function($model) {
+                            return $model->bmc_lock == 1 ? 'LOCK' : 'UN-LOCK';
+                        }, 'filter' => FALSE],
+                    ['attribute' => 'x_col1', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Qty')],
+                    ['attribute' => 'x_col2', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Avg FAT')],
+                    ['attribute' => 'x_col3', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Avg SNF')],
+                    ['attribute' => 'x_col4', 'filter' => FALSE, 'label' => Yii::t('app', 'Member Amount')],
+                    ['label' => Yii::t('app', 'Member DATA Status'), 'attribute' => 'member_lock', 'value' => function($model) {
+                            return $model->member_lock == 1 ? 'LOCK' : 'UN-LOCK';
                         }, 'filter' => FALSE],
                     ['attribute' => 'history_created_at', 'value' => function($model) {
                             return Yii::$app->controls->view_datetime($model->history_created_at);

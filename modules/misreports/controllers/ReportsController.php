@@ -755,6 +755,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSdFileSummary() {
+        $this->report = 'SdFileSummary';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1069,6 +1074,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionBmcCollectionHistory() {
         $this->report = 'BmcCollectionHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyCompositeVsActual() {
+        $this->report = 'SocietyCompositeVsActual';
         return $this->actionIndex();
     }
 
@@ -2137,6 +2147,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_history_tbl_bmc_collection',
                 'scenario' => 'BmcCollectionHistory',
                 'title' => '216 - BMC Collection History',
+            ],
+            'SocietyCompositeVsActual' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_cda_date_shift_mmd',
+                'scenario' => 'SocietyCompositeVsActual',
+                'title' => '217 - Society Composite Vs Actual Report',
+            ],
+            'SdFileSummary' => [
+                'param' => 'union_code,channel_code,bmc_code:channel_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_mcc_shift_lock_data',
+                'scenario' => 'SdFileSummary',
+                'title' => '407 - SD File Summary',
             ],
         ];
         return $label[$l];

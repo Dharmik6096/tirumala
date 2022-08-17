@@ -928,7 +928,7 @@ class GeneralFunctions extends Component {
         } else {
             $data = 'error';
         }
-        return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
+        return $data == '' ? (!empty($value->$field) ? $value->$field : '') : '';
     }
 
     public function getSpData($sp, $param, $execute = false, $db = 'db', $dbtype = 'sql') {

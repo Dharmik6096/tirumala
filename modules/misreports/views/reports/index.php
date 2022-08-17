@@ -132,11 +132,19 @@ if (isset($data['url1'])) {
                                         }
                                         if (in_array($value, array('bmc_code'))) {
                                             $multiple = in_array($value, $multiArray) ? true : false;
-                                            ?>
-                                            <div class="col-sm-3 val_bmc_code">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
-                                            </div>
-                                            <?php
+                                            if (isset($value_array[1]) && $value_array[1] == 'channel_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), TRUE); ?>
+                                                </div>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <div class="col-sm-3 val_bmc_code">
+                                                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         if (in_array($value, array('dcs_code'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'route_code') {
@@ -338,6 +346,13 @@ if (isset($data['url1'])) {
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('channel_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('channel', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel($value), false, $value); ?>
                                             </div>
                                             <?php
                                         }

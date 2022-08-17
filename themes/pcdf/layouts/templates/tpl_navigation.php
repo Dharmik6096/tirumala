@@ -460,6 +460,7 @@ echo GhostMenu::widget([
                                     ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report']],
                                     ['label' => '215 -' . Yii::t('app', 'New Customer Pouring Milk'), 'url' => ['/misreports/reports/new-customer-pouring-milk']],
                                     ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
+                                    ['label' => '217 -' . Yii::t('app', 'Society Composite Vs Actual Report'), 'url' => ['/misreports/reports/society-composite-vs-actual'], 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -495,6 +496,7 @@ echo GhostMenu::widget([
                             ['label' => '404-' . Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/cpmilk-sap-report']],
                             ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
+                            ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
                     ]
                 ],
                     [
