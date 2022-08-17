@@ -462,7 +462,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
-        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt, false, true);
+        if (Yii::$app->session->get('eiplCode') == 'MMD') {
+            $callErp = true;
+        } else {
+            $callErp = false;
+        }
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'bmc_lock', 1, 'Data Lock - BMC', 'Data Unlock - BMC', $url, $fqty, $ffat, $fsnf, $famnt, false, $callErp);
     }
 
     public function actionMemberDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
