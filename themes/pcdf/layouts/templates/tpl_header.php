@@ -5,8 +5,9 @@ use yii\helpers\Url;
 
 $logo = $this->theme->getUrl('/assets/images/logo.png');
 $eipl_code = Yii::$app->session->get('eiplCode');
+$logo_code = Yii::$app->session->get('organization_logo');
 if (!empty($eipl_code)) {
-    $logo_image = strtolower($eipl_code) . '.png';
+    $logo_image = !empty($logo_code) ? $logo_code : strtolower($eipl_code) . '.png';
     $new_logo = $this->theme->getUrl('/assets/images/union_logo/') . $logo_image;
     $dir_path = Yii::$app->basePath . '/' . substr(Yii::$app->params['logo_path'], 1) . $logo_image;
     $logo = file_exists($dir_path) ? $new_logo : $logo;
