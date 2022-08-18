@@ -32,6 +32,11 @@ use app\modules\organisation\models\TblMccPlant;
  * @property string $x_col3
  * @property string $x_col4
  * @property string $x_col5
+ * @property string $headload_charge
+ * @property string $building_rent_labour_charge
+ * @property string $dgset_service_other_charge
+ * @property string $other_charge_addition
+ * @property string $other_charge_deduction
  */
 class TblMilkcostParam extends \app\models\ChildModel {
 
@@ -47,9 +52,9 @@ class TblMilkcostParam extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['wef_date', 'chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'mcc_plant_code'], 'required'],
+                [['wef_date', 'chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'headload_charge', 'building_rent_labour_charge', 'dgset_service_other_charge', 'other_charge_addition', 'other_charge_deduction', 'mcc_plant_code'], 'required'],
                 [['union_code', 'plant_code'], 'required', 'except' => ['importCsv']],
-                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge'], 'number'],
+                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'headload_charge', 'building_rent_labour_charge', 'dgset_service_other_charge', 'other_charge_addition', 'other_charge_deduction'], 'number'],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'safe'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -94,6 +99,11 @@ class TblMilkcostParam extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'headload_charge' => Yii::t('app', 'Head Load Charge(Rs./Ltr)'),
+            'building_rent_labour_charge' => Yii::t('app', 'Building Rent & Labor Charge(Rs./Ltr)'),
+            'dgset_service_other_charge' => Yii::t('app', 'DG Set Service & Other Charge(Rs./Ltr)'),
+            'other_charge_addition' => Yii::t('app', 'Other Addition Charge(Rs./Ltr)'),
+            'other_charge_deduction' => Yii::t('app', 'Other Deduction Charge(Rs./Ltr)'),
         ];
     }
 

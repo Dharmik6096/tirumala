@@ -134,7 +134,7 @@ class importData extends \yii\base\Module {
             'inventory-transfer' => ['table_name' => 'tbl_inventory_transfer', 'fields' => 'inventory_transfer_no,inventory_transfer_date,from_type,from_code,to_type,to_code,remarks,product_code,qty', 'save_child' => true, 'scenario' => 'importCsv'],
             'location-wise-km' => ['table_name' => 'tbl_location_wise_km_detail', 'fields' => 'union_code,from_type,from_dest,to_type,to_dest,wef_date,total_kms', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
             'transporter-time-penalties' => ['table_name' => 'tbl_transporter_time_wise_penalty', 'fields' => 'mcc_plant_code,wef_date,minute_limit,penalty_amount', 'scenario' => 'importCsv'],
-            'milk-cost-param' => ['table_name' => 'tbl_milkcost_param', 'fields' => 'mcc_plant_code,wef_date,chilling_rate,primary_tpt_cost,commission_percentage,labour_charge,service_charge', 'scenario' => 'importCsv'],
+            'milk-cost-param' => ['table_name' => 'tbl_milkcost_param', 'fields' => 'mcc_plant_code,wef_date,chilling_rate,primary_tpt_cost,commission_percentage,labour_charge,service_charge,headload_charge,building_rent_labour_charge,dgset_service_other_charge,other_charge_addition,other_charge_deduction', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

@@ -33,6 +33,11 @@ $attribute = [
     'commission_percentage',
     'labour_charge',
     'service_charge',
+        ['attribute' => 'headload_charge', 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'building_rent_labour_charge', 'filter' => false, 'visible' => FALSE],
+        ['attribute' => 'dgset_service_other_charge', 'filter' => false, 'visible' => FALSE],
+    'other_charge_addition',
+    'other_charge_deduction',
 ];
 
 $grid_option = [

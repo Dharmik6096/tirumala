@@ -34,39 +34,36 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblMilkcostParamHistory extends \app\models\ChildModel
-{
+class TblMilkcostParamHistory extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_milkcost_param_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['milkcost_param_code', 'originating_type'], 'integer'],
-            [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge'], 'number'],
-            [['operation_type'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['history_created_at', 'wef_date', 'created_at', 'updated_at', 'headload_charge', 'building_rent_labour_charge', 'dgset_service_other_charge', 'other_charge_addition', 'other_charge_deduction'], 'safe'],
+                [['milkcost_param_code', 'originating_type'], 'integer'],
+                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge'], 'number'],
+                [['operation_type'], 'string', 'max' => 10],
+                [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code'], 'string', 'max' => 6],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'operation_type' => Yii::t('app', 'Operation Type'),
@@ -96,4 +93,5 @@ class TblMilkcostParamHistory extends \app\models\ChildModel
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

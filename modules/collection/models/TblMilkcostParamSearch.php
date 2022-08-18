@@ -20,7 +20,7 @@ class TblMilkcostParamSearch extends TblMilkcostParam {
     public function rules() {
         return [
                 [['milkcost_param_code', 'originating_type', 'from_date', 'to_date'], 'safe'],
-                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge'], 'safe'],
+                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'other_charge_addition', 'other_charge_deduction'], 'safe'],
                 [['wef_date', 'union_code', 'plant_code', 'mcc_plant_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
@@ -69,7 +69,9 @@ class TblMilkcostParamSearch extends TblMilkcostParam {
                 ->andFilterWhere(['like', 'primary_tpt_cost', $this->primary_tpt_cost])
                 ->andFilterWhere(['like', 'commission_percentage', $this->commission_percentage])
                 ->andFilterWhere(['like', 'labour_charge', $this->labour_charge])
-                ->andFilterWhere(['like', 'service_charge', $this->service_charge]);
+                ->andFilterWhere(['like', 'service_charge', $this->service_charge])
+                ->andFilterWhere(['like', 'other_charge_addition', $this->other_charge_addition])
+                ->andFilterWhere(['like', 'other_charge_deduction', $this->other_charge_deduction]);
 
         return $dataProvider;
     }
