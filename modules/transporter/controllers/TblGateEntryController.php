@@ -71,6 +71,8 @@ class TblGateEntryController extends ChildController {
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                 $modelSave[] = $historyModel;
                 $this->model->actual_arrival_time = $post_data->actual_arrival_time;
+                $this->model->no_of_filled_can = $post_data->no_of_filled_can;
+                $this->model->no_of_empty_can = $post_data->no_of_empty_can;
                 $update = TRUE;
                 $type = 'edit';
             } else {
@@ -115,7 +117,7 @@ class TblGateEntryController extends ChildController {
     public function actionUpdate($id) {
         $model = $this->findModel($id);
         if (!empty($model)) {
-            $record = ['status' => 'success', 'route_code' => $model->route_code, 'actual_arrival_time' => $model->actual_arrival_time];
+            $record = ['status' => 'success', 'route_code' => $model->route_code, 'actual_arrival_time' => $model->actual_arrival_time, 'no_of_filled_can' => $model->no_of_filled_can, 'no_of_empty_can' => $model->no_of_empty_can];
         } else {
             $record = ['status' => 'error'];
         }

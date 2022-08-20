@@ -46,6 +46,8 @@ $attribute = [
         ['attribute' => 'define_arrival_time'],
         ['attribute' => 'grace_time'],
         ['attribute' => 'late_by_time'],
+        ['attribute' => 'no_of_filled_can'],
+        ['attribute' => 'no_of_empty_can'],
 ];
 
 

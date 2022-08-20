@@ -81,6 +81,8 @@ $script = "
                         $('#tblgateentry-route_code').val(obj.route_code).change();
                         $('#tblgateentry-gate_entry_code').val(id);
                         $('#tblgateentry-actual_arrival_time').val(obj.actual_arrival_time);
+                        $('#tblgateentry-no_of_filled_can').val(obj.no_of_filled_can);
+                        $('#tblgateentry-no_of_empty_can').val(obj.no_of_empty_can);
                         $('#tblgateentry-route_code').prop('disabled', true);
                         $('#tblgateentry-vehicle_code').prop('disabled', true);
                         }

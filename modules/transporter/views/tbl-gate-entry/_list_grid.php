@@ -23,6 +23,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'actual_arrival_time', 'filter' => false],
             ['attribute' => 'define_arrival_time', 'filter' => false],
             ['attribute' => 'grace_time', 'filter' => false],
+            ['attribute' => 'no_of_filled_can', 'filter' => false],
+            ['attribute' => 'no_of_empty_can', 'filter' => false],
     ];
 
 

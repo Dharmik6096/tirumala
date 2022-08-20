@@ -63,7 +63,7 @@ class TblGateEntry extends \app\models\ChildModel {
                 [['date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'updated_at'], 'safe'],
                 [['shift_code', 'responsibility_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['dcs_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
-                [['grace_time', 'late_by_time'], 'number'],
+                [['grace_time', 'late_by_time', 'no_of_filled_can', 'no_of_empty_can'], 'number'],
                 [['actual_arrival_time'], 'date', 'format' => 'php:H:i'],
                 [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'date_time_of_collection', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
@@ -102,6 +102,8 @@ class TblGateEntry extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'no_of_filled_can' => Yii::t('app', 'No. of Filled Cans'),
+            'no_of_empty_can' => Yii::t('app', 'No. of Empty Cans'),
         ];
     }
 

@@ -56,11 +56,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-10">
             <div class="row">
                 <div class="QltyParamDiv">
-                    <div class="col-sm-3 reset_field create_fields <?= $disable ?>">
+                    <div class="col-sm-2 reset_field create_fields <?= $disable ?>">
                         <?= Html::activeHiddenInput($model, 'gate_entry_code'); ?>
                         <?= Yii::$app->dropdown->all_routes($model, $form, 'tblgateentry-plant_code,tblgateentry-mcc_plant_code,tblgateentry-bmc_code', 'route_code', $model->getAttributeLabel('route_code')); ?>
                     </div>
-                    <div class="col-sm-3 reset_field create_fields <?= $disable ?>">
+                    <div class="col-sm-2 reset_field create_fields <?= $disable ?>">
                         <?= $form->field($model, 'vehicle_code')->dropDownList([]); ?>
                     </div>
                     <div class="col-sm-2 reset_field">
@@ -69,14 +69,20 @@ $form = ActiveForm::begin([
                             'mask' => '99:99',])
                         ?> 
                     </div>
-                    <div class="col-sm-2 reset_field disabled">
+                    <div class="col-sm-1 reset_field disabled">
                         <?=
                         $form->field($model, 'define_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
                             'mask' => '99:99',])
                         ?> 
                     </div>
-                    <div class="col-sm-2 reset_field number-validate disabled">
+                    <div class="col-sm-1 reset_field number-validate disabled">
                         <?= $form->field($model, 'grace_time')->textInput() ?>
+                    </div>
+                    <div class="col-sm-2 reset_field number-validate">
+                        <?= $form->field($model, 'no_of_filled_can')->textInput() ?>
+                    </div>
+                    <div class="col-sm-2 reset_field number-validate">
+                        <?= $form->field($model, 'no_of_empty_can')->textInput() ?>
                     </div>
                 </div>
             </div>

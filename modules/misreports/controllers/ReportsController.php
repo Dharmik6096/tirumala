@@ -1070,6 +1070,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'UmangSapReportWeekly';
             }
         }
+        return $this->actionIndex();
     }
 
     public function actionBmcCollectionHistory() {
