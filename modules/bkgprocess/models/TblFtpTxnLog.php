@@ -177,11 +177,14 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $ftpPath = $FTPProcess['ftp_path'];
         $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
         $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
+        $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
         /** csv/txt generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             $header = array_keys($output[0]);
             $txt_file = fopen($filePath . $fileName, "w");
-            fwrite($txt_file, implode($implode_char, $header) . PHP_EOL);
+            if (!$skip_header) {
+                fwrite($txt_file, implode($implode_char, $header) . PHP_EOL);
+            }
             foreach ($output as $line) {
                 fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
             }

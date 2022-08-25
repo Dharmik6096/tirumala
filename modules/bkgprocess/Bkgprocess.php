@@ -82,6 +82,7 @@ class Bkgprocess extends \yii\base\Module {
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/DAILY/',
                 'ftp_path' => '/In/Daily/',
                 'append_ftp_path' => TRUE,
+                'skip_header' => TRUE,
             ],
             'TblVspPayment' => [
                 'ext' => '.TXT',
@@ -92,6 +93,7 @@ class Bkgprocess extends \yii\base\Module {
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'UMANG/WEEKLY/',
                 'ftp_path' => '/In/Weekly/',
                 'append_ftp_path' => TRUE,
+                'skip_header' => TRUE,
             ],
         ];
     }
