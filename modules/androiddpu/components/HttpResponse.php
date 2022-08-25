@@ -18,13 +18,13 @@ class HttpResponse extends \yii\base\Component {
     public function BindResponse($response) {
         if (!empty($response['data'])) {
             $this->response['data'] = ($this->apply_camel_case) ? $this->underscoreToCamelCase($response['data']) : $response['data'];
-            $this->response['error']['message'] = $response['message'];
+            $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : $response['message'];
         } else {
-            $this->response['error']['message'] = ['Data Not Available'];
+            $this->response['error']['message'] = !empty($response['error']['message']) ? $response['error']['message'] : ['Data Not Available'];
             $this->response['data'] = new \StdClass();
         }
-        $this->response['status'] = 'success';
-        $this->response['error']['code'] = Yii::$app->response->statusCode;
+        $this->response['status'] = !empty($response['status']) ? $response['status'] : 'success';
+        $this->response['error']['code'] = !empty($response['error']['code']) ? $response['error']['code'] : Yii::$app->response->statusCode;
         return $this->response;
     }
 
