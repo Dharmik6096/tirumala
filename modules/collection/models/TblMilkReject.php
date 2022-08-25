@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\globalmaster\models\TblRejectionReason;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\globalmaster\models\TblRejectionResponsibility;
 
 /**
  * This is the model class for table "tbl_milk_reject".
@@ -197,6 +198,10 @@ class TblMilkReject extends \app\models\ChildModel {
                 ->one();
         $sample_no = (int) $data['sample_no'] + 1;
         return $sample_no;
+    }
+
+    public function getRejectResponsibility() {
+        return $this->hasOne(TblRejectionResponsibility::className(), ['rejection_responsibility_code' => 'rejection_responsibility_code']);
     }
 
 }

@@ -37,6 +37,7 @@ $form = ActiveForm::begin(['options' => [
             ['attribute' => 'rejection_responsibility_code',
             'label' => Yii::t('app', 'Responsibility'),
             'format' => 'raw',
+            'hiddenFromExport' => TRUE,
             'contentOptions' => function($model) {
                 return ['class' => 'hide_help_block div_margin_0'];
             },
@@ -49,6 +50,17 @@ $form = ActiveForm::begin(['options' => [
                 }
                 return Html::activeHiddenInput($searchModel, '[' . $index . ']collection_code', ['value' => $model['collection_code']]) . Html::activeHiddenInput($searchModel, '[' . $index . ']collection_type', ['value' => $model['collection_type']]) .
                         Yii::$app->dropdown->dropdown('rejection_responsibility', $searchModel, $form, 'col-sm-3 form-group', FALSE, $disable, '[' . $index . ']rejection_responsibility_code');
+            },
+            'filter' => FALSE],
+            ['attribute' => 'rejection_responsibility_code',
+            'label' => Yii::t('app', 'Responsibility'),
+            'visible' => FALSE,
+            'value' => function ($model, $key, $index) use ($form, $searchModel) {
+                $searchModel->rejection_responsibility_code = $model['rejection_responsibility_code_auto'];
+                if (!empty($model['rejection_responsibility_code'])) {
+                    $searchModel->rejection_responsibility_code = $model['rejection_responsibility_code'];
+                }
+                return Yii::$app->general->getforeignkey($searchModel->rejectResponsibility, 'responsibility_name');
             },
             'filter' => FALSE],
     ];
@@ -75,8 +87,7 @@ $form = ActiveForm::begin(['options' => [
 
 
 <?php
-$script = "$('.kv-panel-before').hide();";
-$script .= "$('.save').on('click',function(){
+$script = "$('.save').on('click',function(){
            var msg = 'Are you sure you want to Save Data ?';        
        bootbox.confirm({
         message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>' + msg + '</span></div></div>',
