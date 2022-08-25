@@ -1281,4 +1281,39 @@ class TblDcs extends ChildModel {
         return $query->all();
     }
 
+    public function getMergeBmcDcsList($type, $mcc = '') {
+        if (in_array($type, [1])) {
+            $bmcModel = new TblDcsBmc();
+            $query = $bmcModel->find()->where(['is_active' => 1]);
+            if (Yii::$app->session->get('BMC') !== '') {
+                $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+            }
+            if (!empty($mcc)) {
+                $query->andWhere(['mcc_plant_code' => $mcc]);
+            }
+
+            $bmc = $query->all();
+            $bmc = ArrayHelper::map($bmc, 'bmc_code', function($bmc) {
+                        return $bmc->ref_code . ' - ' . $bmc->bmc_name;
+                    });
+            asort($bmc, SORT_NATURAL | SORT_FLAG_CASE);
+            return $bmc;
+        } else if (in_array($type, [2])) {
+            $query = $this->find()->where(['is_active' => 1]);
+            if (Yii::$app->session->get('Dcs') !== '') {
+                $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+            }
+            if (!empty($mcc)) {
+                $query->andWhere(['mcc_plant_code' => $mcc]);
+            }
+
+            $dcs = $query->all();
+            $dcs = ArrayHelper::map($dcs, 'dcs_code', function($bmc) {
+                        return $bmc->ref_code . ' - ' . $bmc->dcs_name;
+                    });
+            asort($dcs, SORT_NATURAL | SORT_FLAG_CASE);
+            return $dcs;
+        }
+    }
+
 }

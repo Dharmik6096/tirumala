@@ -62,6 +62,7 @@ echo GhostMenu::widget([
                     ]
                 ],
                 ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
+                ['label' => Yii::t('app', 'Device Master'), 'url' => ['/globalmaster/tbl-device-master/index'], 'active' => ($cntrl == 'tbl-device-master')],
             ],
         ],
         [
@@ -686,6 +687,7 @@ echo GhostMenu::widget([
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Configuration<b class="caret"></b></a>',
                             'items' => [
                                 ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
+                                ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
                             ]
                         ],
                         [
