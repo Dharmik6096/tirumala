@@ -731,6 +731,8 @@ echo GhostMenu::widget([
                         ['label' => 'Shift Lock Staging', 'url' => ['/collection/tbl-mcc-shift-lock-staging/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock-staging')],
                         ['label' => Yii::t('app', 'Alert Notification'), 'url' => ['/misreports/reports/alert-notification'], 'active' => ($cntrl == 'reports' && $action == 'alert-notification')],
                         ['label' => Yii::t('app', 'Report Download'), 'url' => ['/configuration/tbl-generate-report-param/index'], 'active' => ($cntrl == 'tbl-generate-report-param')],
+                        ['label' => Yii::t('app', 'Device SMS Count'), 'url' => ['/dcsoperation/tbl-send-sms-count/index'], 'active' => ($cntrl == 'tbl-send-sms-count')],
+                        ['label' => Yii::t('app', 'Device SMS Fail Log'), 'url' => ['/sms/tbl-sms-fail-log/index'], 'active' => ($cntrl == 'tbl-sms-fail-log')],
                     ]
                 ],
                 [
