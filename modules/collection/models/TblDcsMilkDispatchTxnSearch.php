@@ -12,7 +12,7 @@ use app\modules\collection\models\TblDcsMilkDispatchTxn;
  */
 class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
 
-    public $destination_type, $challan_no, $destination_code, $antibiotic,$vehicle_no;
+    public $destination_type, $challan_no, $destination_code, $antibiotic, $vehicle_no;
 
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
                 [['shift_code', 'dispatch_type', 'destination_type', 'challan_no', 'destination_code'], 'safe'],
                 [['dcs_milk_dispatch_txn_code', 'dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'integer'],
                 [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount'], 'number'],
-                [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'date_time_of_dispatch', 'antibiotic','vehicle_no'], 'safe'],
+                [['dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'ref_code', 'date_time_of_dispatch', 'antibiotic', 'vehicle_no'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkDispatch']],
         ];
@@ -151,12 +151,18 @@ class TblDcsMilkDispatchTxnSearch extends TblDcsMilkDispatchTxn {
         $this->load($params);
         $query = TblDcsMilkDispatchTxn::find();
         // add conditions that should always apply here
-
-        $query->joinWith(['dcsMilkDispatch', 'approvalData']);
+//        $query->joinWith(['dcsMilkDispatch', 'approvalData']);
+        $query->joinWith(['dcsMilkDispatch']);
+        $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.dcs_code = tbl_dcs_milk_dispatch_txn.dcs_code and tbl_collection_data_alias.old_milk_type_code = tbl_dcs_milk_dispatch_txn.milk_type_code and tbl_collection_data_alias.old_milk_quality_type_code = tbl_dcs_milk_dispatch_txn.milk_quality_type_code and tbl_collection_data_alias.table_name = 'tbl_dcs_milk_dispatch' and tbl_collection_data_alias.action_perform = 'DELETE'");
         $query->join('LEFT JOIN', 'tbl_dcs_milk_dispatch dmd', 'dmd.date_time_of_dispatch = tbl_collection_data_alias.date_time_of_collection and dmd.shift_code = tbl_collection_data_alias.shift_code');
         $query->andWhere([
             'tbl_dcs_milk_dispatch.bmc_code' => $this->bmc_code]);
-
+        if (empty($this->from_date)) {
+            $this->from_date = date('Y-m-d');
+        }
+        if (empty($this->to_date)) {
+            $this->to_date = date('Y-m-d');
+        }
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);

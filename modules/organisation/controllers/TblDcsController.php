@@ -52,7 +52,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
 
     /**
      * Lists all TblDcs models.
@@ -1227,6 +1227,23 @@ class TblDcsController extends ChildController {
             }
             exit();
         }
+    }
+
+    public function actionMergeBmcDcsList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $dcs = new TblDcs();
+                $mccCode = !empty($parents[1]) ? $parents[1] : '';
+                $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

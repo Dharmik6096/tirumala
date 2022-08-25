@@ -36,7 +36,8 @@ class Path extends Component {
             'TblMilkQualityType', 'TblMilkQualityTypeHistory',
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
-            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason'
+            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason',
+            'TblDeviceMaster', 'TblDeviceMasterMapping'
         ],
         '\\app\modules\organisation\models\\' =>
         ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
@@ -79,7 +80,8 @@ class Path extends Component {
         ['TblDpuProductDemandCreamy', 'TblMACAlibrationCreamy', 'TblMACAlibrationChangeCreamy', 'TblMACleaningCreamy', 'CollectionFarmerLocalSaleCreamy', 'MasterfarmerCreamy', 'TblDcsPortalCreamy', 'MastervillageCreamy', 'CollectionvillageCreamy', 'TblDpuShiftEndSummaryCreamy', 'TblMASerialNoCreamy'],
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],
         '\\app\modules\configuration\models\\' =>
-        ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory', 'TblGenerateReportParam'],
+        ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory', 'TblGenerateReportParam',
+            'TblAppLockConfig', 'TblAppLockConfigDetail', 'TblAppLockConfigResult', 'TblDeviceConfigMaster', 'TblDeviceConfigMasterTxn', 'TblDeviceConfigTemplate', 'TblDeviceConfigTemplateDetails', 'TblDeviceConfigTempMapping'],
         '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory', 'TblAppStartup', 'TblAction', 'TblRole', 'TblRoleActionMapping', 'TblUserAndroid', 'TblUserRoleMapping', 'TblUserDownloadAck', 'TblAppLockPassword'],
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory'],

@@ -138,6 +138,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
     </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'recovery_validate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
     <div class="clearfix"></div>
 </div>
 <div class="row">

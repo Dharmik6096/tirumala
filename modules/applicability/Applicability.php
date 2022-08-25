@@ -71,6 +71,7 @@ class Applicability extends \yii\base\Module {
     public $selectedRouteCode = [];
     public $generateMail = false;
     public $attachment_folder = '/web/alert-data/';
+    public $isApproval = false;
 
     /**
      * @inheritdoc
@@ -225,7 +226,11 @@ class Applicability extends \yii\base\Module {
                 $model->setAttributes($this->assignStaticData);
                 if ($model->validate()) {
                     $saveModel = [];
-                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
+                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value]);
+                    if ($this->model->hasAttribute('wef_date')) {
+                        $dataold->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                    }
+                    $dataold->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
                     $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
                     $toAssign = $model->{$main_field_name};
@@ -241,7 +246,11 @@ class Applicability extends \yii\base\Module {
 //echo $value.'<br/>';
                                 $r = new ReflectionClass($this->model->className());
                                 $appModel = $r->newInstanceArgs();
-                                $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
+                                $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value]);
+                                if ($appModel->hasAttribute('wef_date')) {
+                                    $appModel->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                                }
+                                $appModel->one();
                                 $h = new ReflectionClass($this->historyModel->className());
                                 $appHistory = $h->newInstanceArgs();
                                 Yii::$app->operation->history($appModel, $appHistory, DELETE);
@@ -274,17 +283,17 @@ class Applicability extends \yii\base\Module {
 //$appModel->union_code = $this->union_code;  
 
                             $appModel->union_code = $this->union_code;
-
-                            $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
-                            if ($model->hasAttribute('shift_code')) {
-                                $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
+                            if ($appModel->hasAttribute('wef_date')) {
+                                $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+                                if ($model->hasAttribute('shift_code')) {
+                                    $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
+                                }
+                                $check = $this->checkDuplicateCount($appModel);
+                                if ($check == 1) {
+                                    $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                    return $this->customRender();
+                                }
                             }
-                            $check = $this->checkDuplicateCount($appModel);
-                            if ($check == 1) {
-                                $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
-                                return $this->customRender();
-                            }
-
                             if (!empty($appModel->purchaseRateCode->for_member) && $appModel->purchaseRateCode->for_member == 1) {
                                 $dcsRateModel = TblPurchaseRate::find()->where(['dcs_purchase_rate_code' => $appModel->purchase_rate_code])->one();
                                 if (!empty($dcsRateModel) && strtoupper($appModel->applicable_for) == 'DCS') {
