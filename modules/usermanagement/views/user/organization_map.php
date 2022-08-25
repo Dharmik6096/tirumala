@@ -105,7 +105,7 @@ $this->title = Yii::t('app', $title);
                                 ],
                     ]);
                     ?>
-                    <?= Html::textInput('user_type', 2, ['id' => 'user_type']); ?>
+                    <?= Html::hiddenInput('user_type', 2, ['id' => 'user_type']); ?>
                     <div class="clearfix"></div>
                     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                         <div class="form-group">
