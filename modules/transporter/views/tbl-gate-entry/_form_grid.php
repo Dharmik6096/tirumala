@@ -55,6 +55,12 @@ $grid_option = [
     'id' => 'gate-entry-list',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'print-gate-pass' => function ($url, $model) {
+            $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Gate Pass'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Print Gate Pass')];
+            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/transporter/tbl-gate-entry/print-gate-pass', 'id' => $model->gate_entry_code], $options);
+        },
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

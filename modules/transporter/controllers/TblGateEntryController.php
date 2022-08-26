@@ -158,4 +158,11 @@ class TblGateEntryController extends ChildController {
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
+    public function actionPrintGatePass($id) {
+        $controls = [];
+        $controls['p_gate_entry_code'] = $id;
+        $controls['p_report_name'] = 'GatePass-' . $id;
+        $this->printDocument($controls, 'vsp/GatePass', 'GatePass-' . $id, 'pdf');
+    }
+
 }
