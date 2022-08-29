@@ -509,6 +509,11 @@ class DropDown extends Component {
         }
     }
 
+    public function merge_bmc_dcs($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-bmc-dcs-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -756,7 +761,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1343,6 +1348,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [1 => Yii::t('app', 'MEMBER'), 2 => Yii::t('app', 'VENDOR')],
             ],
+            'tab_type' => [
+                'name' => 'tab_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'EVEREST 7-INCH'), 2 => Yii::t('app', 'EVEREST 8-INCH'), 3 => Yii::t('app', 'STELLAPPS 7-INCH'), 4 => Yii::t('app', 'STELLAPPS 10-INCH'), 5 => Yii::t('app', 'STELLAPPS 8-INCH')],
+            ],
+            'applicability_type' => [
+                'name' => 'applicability_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'BMC'), 2 => Yii::t('app', 'DCS')],
+            ],
         ];
         return $records[$l];
     }
@@ -1537,7 +1552,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
