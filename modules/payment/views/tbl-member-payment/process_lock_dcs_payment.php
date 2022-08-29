@@ -63,7 +63,7 @@ $tot_amt = array_sum(array_map(function($array) {
                             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
                         }],
                     ['attribute' => 'dcs_code', 'value' => function($model) {
-                            return !empty($model->dcs_name) ? 'dfdf' : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                            return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                         }],
                     ['attribute' => 'member_count'],
                     ['attribute' => 'kg_fat'],
