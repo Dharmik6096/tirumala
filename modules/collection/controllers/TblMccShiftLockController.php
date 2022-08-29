@@ -459,7 +459,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
-        if (Yii::$app->session->get('eiplCode') == 'PRABHAT') {
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
         if (Yii::$app->session->get('eiplCode') == 'MMD') {

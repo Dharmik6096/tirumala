@@ -35,26 +35,26 @@ $message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' .
 //            'checkboxOptions' => function($model) {
 //                return ['value' => $model['dcs_code']];
 //            }],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
             }],
-            ['attribute' => 'dcs_code', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        ['attribute' => 'dcs_code', 'value' => function($model) {
+                return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }],
-            ['attribute' => 'member_count'],
-            ['attribute' => 'kg_fat'],
-            ['attribute' => 'kg_snf'],
-            ['attribute' => 'qty', 'pageSummary' => true],
-            ['attribute' => 'total_amount', 'pageSummary' => true],
-            ['attribute' => 'total_addition', 'pageSummary' => true],
-            ['attribute' => 'total_deduction', 'pageSummary' => true],
-            ['attribute' => 'previous_hold', 'pageSummary' => true],
-            ['attribute' => 'previous_due', 'pageSummary' => true],
-            ['attribute' => 'net_payable', 'pageSummary' => true,],
-            ['attribute' => 'hold_amount', 'pageSummary' => true,],
-            ['attribute' => 'additional_pay', 'pageSummary' => true,],
-            ['attribute' => 'final_amount', 'pageSummary' => true,],
+        ['attribute' => 'member_count'],
+        ['attribute' => 'kg_fat'],
+        ['attribute' => 'kg_snf'],
+        ['attribute' => 'qty', 'pageSummary' => true],
+        ['attribute' => 'total_amount', 'pageSummary' => true],
+        ['attribute' => 'total_addition', 'pageSummary' => true],
+        ['attribute' => 'total_deduction', 'pageSummary' => true],
+        ['attribute' => 'previous_hold', 'pageSummary' => true],
+        ['attribute' => 'previous_due', 'pageSummary' => true],
+        ['attribute' => 'net_payable', 'pageSummary' => true,],
+        ['attribute' => 'hold_amount', 'pageSummary' => true,],
+        ['attribute' => 'additional_pay', 'pageSummary' => true,],
+        ['attribute' => 'final_amount', 'pageSummary' => true,],
     ];
 
     $grid_option = [
