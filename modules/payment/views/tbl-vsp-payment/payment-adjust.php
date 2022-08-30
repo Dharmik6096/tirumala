@@ -43,59 +43,59 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
         ?>
         <?php
         $attribute = [
-                ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-                ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                 }, 'filter' => false],
-                ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->customer_type);
+            ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+                    return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
                 }],
-                ['attribute' => 'kg_fat'],
-                ['attribute' => 'kg_snf'],
-                ['attribute' => 'total_qty', 'value' => 'total_qty',
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'total_qty', 'value' => 'total_qty',
                 'pageSummary' => true
             ],
-                ['attribute' => 'amount', 'value' => 'amount',
+            ['attribute' => 'amount', 'value' => 'amount',
                 'pageSummary' => true
             ],
-                ['attribute' => 'addition', 'value' => 'addition',
+            ['attribute' => 'addition', 'value' => 'addition',
                 'pageSummary' => true
             ],
-                ['attribute' => 'deduction', 'value' => 'deduction',
+            ['attribute' => 'deduction', 'value' => 'deduction',
                 'pageSummary' => true
             ],
-                ['attribute' => 'previous_hold', 'pageSummary' => true
+            ['attribute' => 'previous_hold', 'pageSummary' => true
             ],
-                ['attribute' => 'previous_due', 'pageSummary' => true
+            ['attribute' => 'previous_due', 'pageSummary' => true
             ],
-                ['attribute' => 'final_pay', 'value' => 'net_payable',
+            ['attribute' => 'final_pay', 'value' => 'net_payable',
                 'pageSummary' => true,
                 'contentOptions' => ['class' => 'final-amount'],
             ],
-                ['attribute' => 'adjust_recovery', 'contentOptions' => ['class' => 'adjust-recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
-                ['attribute' => 'recovery', 'contentOptions' => ['class' => 'recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
-                ['attribute' => 'hold_amount',
+            ['attribute' => 'adjust_recovery', 'contentOptions' => ['class' => 'adjust-recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
+            ['attribute' => 'recovery', 'contentOptions' => ['class' => 'recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
+            ['attribute' => 'hold_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'hold_amount[' . $index . ']')->textInput(['value' => $model->hold_amount, 'class' => 'number-validate hold-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_amount',
+            ['attribute' => 'adjust_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return Html::activeHiddenInput($model, 'vsp_payment_code[' . $index . ']', ['value' => $model->vsp_payment_code]) . $form->field($model, 'adjust_amount[' . $index . ']')->textInput(['value' => $model->adjust_amount, 'class' => 'number-validate adjust-amount cal-amount form-control',])->label(FALSE);
                 },
             ],
-                ['attribute' => 'net_payable',
+            ['attribute' => 'net_payable',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {
                     return $form->field($model, 'net_payable[' . $index . ']')->textInput(['class' => 'number-validate net-amount form-control', "disabled" => TRUE, 'value' => $model->final_pay])->label(FALSE);
                 },
             ],
-                ['attribute' => 'adjust_remark',
+            ['attribute' => 'adjust_remark',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                 'value' => function ($model, $key, $index) use ($form) {

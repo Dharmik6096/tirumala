@@ -44,6 +44,15 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->pick_datetime);
         }],
+    ['attribute' => 'cron_pick_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_datetime($model->cron_pick_datetime);
+        }],
     ['attribute' => 'response_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -57,7 +66,8 @@ $attribute = [
         'attribute' => 'interval',
         'filter' => FALSE,
         'value' => function($model) {
-            $datetime1 = new DateTime($model->pick_datetime);
+            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+            $datetime1 = new DateTime($fromDate);
             $datetime2 = new DateTime($model->response_datetime);
             $interval = $datetime1->diff($datetime2);
             return $interval->format('%h') . ":" . $interval->format('%i') . ":" . $interval->format('%s');

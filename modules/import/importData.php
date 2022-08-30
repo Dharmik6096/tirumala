@@ -135,6 +135,8 @@ class importData extends \yii\base\Module {
             'location-wise-km' => ['table_name' => 'tbl_location_wise_km_detail', 'fields' => 'union_code,from_type,from_dest,to_type,to_dest,wef_date,total_kms', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
             'transporter-time-penalties' => ['table_name' => 'tbl_transporter_time_wise_penalty', 'fields' => 'mcc_plant_code,wef_date,minute_limit,penalty_amount', 'scenario' => 'importCsv'],
             'milk-cost-param' => ['table_name' => 'tbl_milkcost_param', 'fields' => 'mcc_plant_code,wef_date,chilling_rate,primary_tpt_cost,commission_percentage,labour_charge,service_charge,headload_charge,building_rent_labour_charge,dgset_service_other_charge,other_charge_addition,other_charge_deduction', 'scenario' => 'importCsv'],
+            'device-master' => ['table_name' => 'tbl_device_master', 'fields' => 'tab_type,sr_no,mac_address,remarks', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv', 'increment' => 1, 'mapping' => 1, 'mapping_model' => 'TblDeviceMasterMapping', 'mapping_fields' => 'device_id,collection_center_type,collection_center_code,eff_date', 'mapping_scenario' => 'importMapping', 'save_map_child' => TRUE],
+            'device-master-mapping' => ['table_name' => 'tbl_device_master_mapping', 'fields' => 'device_id,collection_center_type,collection_center_code,eff_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }

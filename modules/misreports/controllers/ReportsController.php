@@ -286,6 +286,19 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSocietyWiseCdaFormat() {
+        $this->report = 'SocietyWiseCdaFormat';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'SocietyWiseCdaDateWiseFormat';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'SocietyWiseCdaConsolidatedFormat';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     public function actionGprsDataReconciliation() {
         $this->report = 'GprsDataReconciliation';
         return $this->actionIndex();
@@ -2160,6 +2173,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_mcc_shift_lock_data',
                 'scenario' => 'SdFileSummary',
                 'title' => '407 - SD File Summary',
+            ],
+            'SocietyWiseCdaFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_shift_format_2',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA Format 2',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'SocietyWiseCdaDateWiseFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_date_format_2',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA Format 2',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'SocietyWiseCdaConsolidatedFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_cda_consolidated_format_2',
+                'scenario' => 'SocietyWiseCda',
+                'title' => '207 - Society Wise CDA Format 2',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
             ],
         ];
         return $label[$l];

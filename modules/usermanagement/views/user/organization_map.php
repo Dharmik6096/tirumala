@@ -335,10 +335,21 @@ $script = "
     function setData(){
             var selectedDcs =  $('#tbluserorganizationmapping-dcs :selected').length;
             var count = $('#tbluserorganizationmapping-dcs option').length;
+            var routeCount = $('#tbluserorganizationmapping-route option').length;
+            var selectedRoute =  $('#tbluserorganizationmapping-route :selected').length;
+            
             if(count > 0 && selectedDcs != 0){
                 $('#user_type').val(7);
-                if(selectedDcs==count) 
-                $('#user_type').val(6);
+                if(routeCount == selectedRoute && selectedDcs == count){
+                    $('#user_type').val(6);
+                }else if(routeCount == selectedRoute && selectedDcs != count){
+                    $('#user_type').val(7);
+                }else if(selectedRoute != 0 && routeCount != selectedRoute && selectedDcs == count){
+                    $('#user_type').val(7);
+                }else             
+                if(selectedDcs==count){
+                    $('#user_type').val(6);
+                }
             }else{
                 var selectedBmc =  $('#tbluserorganizationmapping-bmc :selected').length;
                 var count = $('#tbluserorganizationmapping-bmc option').length;
