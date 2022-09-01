@@ -11,6 +11,8 @@ use yii\web\JsExpression;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
 $list = array('0' => 'No', '1' => 'Yes');
+$allowCanSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_can_selection', 'PORTAL') == 1 ? TRUE : FALSE;
+$allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 
 <?php
@@ -67,6 +69,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-10">
             <div class="row">
                 <div class="QltyParamDiv">
+                    <?php if ($allowRouteSelection) { ?>
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblbmccollection-plant_code,tblbmccollection-mcc_plant_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
+                        </div>
+                    <?php } ?>
                     <div class="col-sm-2 create_fields">
                         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                     </div>
@@ -86,7 +93,10 @@ $form = ActiveForm::begin([
                     <div class="col-sm-2 rtpl_validate create_fields">
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
                     </div>
-                    <div class="clearfix"></div>
+
+                    <?php if (!$allowRouteSelection) { ?>
+                        <div class="clearfix"></div>
+                    <?php } ?>
                     <div class="col-sm-1 reset_field number-validate">
                         <?= $form->field($model, 'qty')->textInput() ?>
                     </div>
@@ -96,6 +106,11 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1 reset_field number-validate">
                         <?= $form->field($model, 'snf')->textInput() ?>
                     </div>
+                    <?php if ($allowCanSelection) { ?>
+                        <div class="col-sm-1 create_fields">
+                            <?= $form->field($model, 'can_no')->textInput() ?>
+                        </div>
+                    <?php } ?>
                     <div class="col-sm-1 reset_field rtpl_validate ">
                         <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
                     </div>

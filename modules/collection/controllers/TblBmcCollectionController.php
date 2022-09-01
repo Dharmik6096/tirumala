@@ -99,17 +99,22 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $this->model->qlty_time = $datetime;
                 $this->model->qty_time = $datetime;
                 $this->model->date_time_of_testing = $datetime;
+                $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
                 if (strtolower($this->model->customer_type) == 'dcs') {
                     $dcs = new TblDcs();
                     $this->model->dcs_code = $dcs->validDcs($this->model->customer_code, $this->model->bmc_code);
                     $this->model->customer_code = $this->model->dcs_code;
                     $this->model->village_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'village_code');
-                    $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
+                    if (!$allowRouteSelection) {
+                        $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
+                    }
                 } else {
                     $this->model->dcs_code = NULL;
                     $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
                     $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
-                    $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
+                    if (!$allowRouteSelection) {
+                        $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
+                    }
                 }
                 $this->model->own_mcc_plant_code = $this->model->mcc_plant_code;
                 $this->model->own_bmc_code = $this->model->bmc_code;

@@ -80,7 +80,8 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ],
                         [
                             'attribute' => 'route_name',
-                            'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
+                            'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
+//                            'value' => Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -286,7 +287,11 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         [
                             'attribute' => 'qty_time',
                             'value' => !empty(Yii::$app->controls->view_datetime($model->qty_time)) ? Yii::$app->controls->view_datetime($model->qty_time) : 'N/A',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'can_no',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
