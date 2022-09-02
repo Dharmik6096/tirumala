@@ -1096,6 +1096,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionFileGenerateStatus() {
+        $this->report = 'FileGenerateStatus';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2197,6 +2202,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '207 - Society Wise CDA Format 2',
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'FileGenerateStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_file_status',
+                'scenario' => 'FileGenerateStatus',
+                'title' => '914 - File Generate Status',
             ],
         ];
         return $label[$l];
