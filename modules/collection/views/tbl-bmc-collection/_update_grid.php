@@ -10,6 +10,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <div class=""></div>
 <?php
+$is_dcs_editable = (Yii::$app->general->getUnionConfiguration($searchModel->union_code, 'bmc_coll_dcs_editable', 'PORTAL') == 1) ? TRUE : FALSE;
 $form = ActiveForm::begin([
             'id' => 'update-bmc-collection',
         ]);
@@ -18,7 +19,7 @@ $form = ActiveForm::begin([
 <div class=" no-effect table_form" >
     <?php
     $attribute = [
-        ['attribute' => 'customer_type', 'value' => function ($model, $key, $index) use ($form) {
+            ['attribute' => 'customer_type', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']milk_collection_code', ['value' => $model->milk_collection_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']union_code', ['value' => $model->union_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']dcs_code', ['value' => $model->dcs_code]);
@@ -28,14 +29,22 @@ $form = ActiveForm::begin([
 
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
-        ['attribute' => 'customer_code', 'filter' => false],
-        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'filter' => false],
+            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-                return Yii::$app->general->getCustomer($model, $model->customer_type);
-            }, 'filter' => false],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'),
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form, $is_dcs_editable) {
+                $customer_name = Yii::$app->general->getCustomer($model, $model->customer_type);
+                if ($is_dcs_editable) {
+                    return $form->field($model, '[' . $index . ']customer_name')->textInput(['class' => 'form-control', 'readonly' => TRUE, 'value' => $customer_name])->label(FALSE);
+                } else {
+                    return $customer_name;
+                }
+            }, 'filter' => false
+        ],
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -45,18 +54,26 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']date_time_of_collection', ['value' => Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d')]);
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
+            ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']shift_code', ['value' => $model->shift_code]);
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
-        ['attribute' => 'sample_no', 'filter' => false],
-        ['attribute' => 'milk_type_code',
+            ['attribute' => 'sample_no', 'filter' => false],
+            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'New Code Ex.'),
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                $ex_code = Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
+                echo Html::activeHiddenInput($model, '[' . $index . ']old_ex_code', ['value' => $ex_code]);
+                return '<span class=\'dcs_validate\'>' . $form->field($model, '[' . $index . ']ex_code')->textInput(['value' => $ex_code, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+            }, 'visible' => $is_dcs_editable
+        ],
+            ['attribute' => 'milk_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
                 return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
             },
         ],
-        ['attribute' => 'milk_quality_type_code',
+            ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
                 return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
@@ -69,38 +86,38 @@ $form = ActiveForm::begin([
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'fat',
+            ['attribute' => 'fat',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate fat_change\'>' . $form->field($model, '[' . $index . ']fat')->textInput(['value' => $model->fat, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'snf',
+            ['attribute' => 'snf',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']snf')->textInput(['value' => $model->snf, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'clr',
+            ['attribute' => 'clr',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'rtpl',
+            ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']rate_code', ['value' => $model->rate_code]);
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']rtpl')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'amount',
+            ['attribute' => 'amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'bmc_silos_info_code',
+            ['attribute' => 'bmc_silos_info_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
@@ -149,8 +166,41 @@ $script = "
         var tr_key = $(this).closest('tr').attr('data-key');
          amount(tr_key);
     });
-    
-
+  
+     $(document).on('change','span.dcs_validate input', function() { 
+        var tr_key = $(this).closest('tr').attr('data-key');
+         var customer_type = $('#tblbmccollection-'+tr_key+'-customer_type').val();
+         var bmc_code = $('#tblbmccollection-'+tr_key+'-bmc_code').val();
+         var ex_code = $('#tblbmccollection-'+tr_key+'-ex_code').val();
+         var union_code = $('#tblbmccollection-'+tr_key+'-union_code').val();
+         var date = $('#tblbmccollection-'+tr_key+'-date_time_of_collection').val();
+         var old_ex_code = $('#tblbmccollection-'+tr_key+'-old_ex_code').val();
+        if(customer_type != '' && bmc_code != '' && ex_code != '' && union_code!= '' && date != ''){
+            $.ajax({
+                type: 'post',
+                url:'" . Url::to(['validate-dcs']) . "',
+                data: {'dcs_code':ex_code,'customer_type':customer_type,'bmc_code':bmc_code,'union_code':union_code,'date':date},
+                success: function(data) {   
+                      var obj = $.parseJSON(data);
+                      if (obj.status == 'success')
+                      {
+                            $('#tblbmccollection-'+tr_key+'-old_ex_code').val(ex_code); 
+                            $('#tblbmccollection-'+tr_key+'-dcs_code').val('');
+                            if(customer_type.toLowerCase()=='dcs'){
+                            $('#tblbmccollection-'+tr_key+'-dcs_code').val(obj.customer_code);
+                            }
+                            $('#tblbmccollection-'+tr_key+'-customer_code').val(obj.customer_code);
+                            $('#tblbmccollection-'+tr_key+'-customer_name').val(obj.data);                          
+                           rtpl(tr_key);
+                        }else{
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Invalid New Code Ex.</span></div></div>');
+                            $('#tblbmccollection-'+tr_key+'-ex_code').val(old_ex_code);
+                      }
+                }
+            });
+        }
+    });
+   
  function rtpl(tr_key){
         $('#tblbmccollection-'+tr_key+'-rtpl').val('');
         $('#tblbmccollection-'+tr_key+'-rate_code').val('');
