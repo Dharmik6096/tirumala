@@ -278,6 +278,24 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_mapped_allow') {
                 $flag = 'bmc-mapped-collection-allow-bulk';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection_Allow';
+            } else if ($row->file_type == 'bmc_collection_route') {
+                $flag = 'bmc-collection-bulk-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_can') {
+                $flag = 'bmc-collection-bulk-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route') {
+                $flag = 'bmc-collection-bulk-bmc-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_can') {
+                $flag = 'bmc-collection-bulk-bmc-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_route_can') {
+                $flag = 'bmc-collection-bulk-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route_can') {
+                $flag = 'bmc-collection-bulk-bmc-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -304,6 +322,7 @@ class SchedulerController extends ChildController {
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
                     $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
                     $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
