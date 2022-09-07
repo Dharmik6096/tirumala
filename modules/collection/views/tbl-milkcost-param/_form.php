@@ -27,6 +27,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
     </div>
+    <div class="col-sm-2 shift">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
+    </div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'chilling_rate')->textInput() ?>
     </div>

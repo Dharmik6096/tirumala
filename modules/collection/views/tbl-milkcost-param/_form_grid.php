@@ -28,6 +28,9 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
+        ['attribute' => 'shift_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
+        }, 'filter' => false],
     'chilling_rate',
     'primary_tpt_cost',
     'commission_percentage',
