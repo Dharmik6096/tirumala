@@ -126,11 +126,6 @@ class MasterServiceController extends ActiveController {
         $model->created_by = '001';
         $model->master_code = !empty($model->master_code) ? (string) $model->master_code : NULL;
         $model->bank_account_no = !empty($model->bank_account_no) ? (string) $model->bank_account_no : NULL;
-        var_dump($model->validate());
-        echo '<pre>';
-        print_r($model->getErrors());
-        echo '</pre>';
-        die;
         if ($model->validate() && $model->save(false)) {
             return TRUE;
         } else {

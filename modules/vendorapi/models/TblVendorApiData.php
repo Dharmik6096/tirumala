@@ -110,7 +110,7 @@ class TblVendorApiData extends \yii\db\ActiveRecord {
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['parent_code', 'master_code', 'master_type', 'master_name', 'parent_code_other', 'date_1', 'bank_account_no', 'ifsc', 'is_active'], 'required', 'on' => ['dcs_create']],
             [['parent_code', 'parent_code_other', 'master_code', 'master_name', 'master_type', 'type_2', 'capacity', 'x_col1', 'route_length', 'time_1', 'time_2', 'time_3', 'time_4', 'contact_first_name', 'is_active'], 'required', 'on' => ['route_create']],
-            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30'), 'on' => ['route_create']],
+//            [['time_1', 'time_2', 'time_3', 'time_4'], 'date', 'format' => 'php:H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 12:30'), 'on' => ['route_create']],
         ];
     }
 
