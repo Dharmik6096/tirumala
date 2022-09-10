@@ -387,8 +387,9 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
+                $self = isset($parents[1]) ? $parents[1] : TRUE;
                 $mccs = new TblBmcGroupMapping();
-                $data = $mccs->getBMCList($parents[0], 'TRUE', TRUE);
+                $data = $mccs->getBMCList($parents[0], 'TRUE', TRUE, $self);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

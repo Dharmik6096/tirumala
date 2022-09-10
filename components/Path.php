@@ -16,7 +16,7 @@ class Path extends Component {
         '\\app\modules\collection\models\\' =>
         ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
             'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory', 'TblCollectionDataAliasReject', 'TblBulkDataImport', 'TblBmcCollectionNotExist', 'TblMilkCollectionNotExists', 'TblCollectionPenaltyRate', 'TblCollectionPenaltyRateApplicability', 'TblCollectionPenaltyType',
-            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam'],
+            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam', 'TblMilkTransfer'],
         '\\app\modules\geo\models\\' =>
         ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',

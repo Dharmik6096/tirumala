@@ -66,14 +66,16 @@ class TblBmcGroupMapping extends \app\models\ChildModel {
         return $this->hasMany(TblDcs::className(), ['bmc_code' => 'p_bmc_code']);
     }
 
-    public function getBMCList($bmcCode, $RLS = 'TRUE', $hasBMC = false) {
+    public function getBMCList($bmcCode, $RLS = 'TRUE', $hasBMC = false, $concateSelf = true) {
         $value = $this->getBMC($bmcCode, $RLS, $hasBMC);
 
         $value = ArrayHelper::map($value, 'p_bmc_code', function($value) {
                     return Yii::$app->general->getforeignkey($value->bmcCode, 'bmc_name') . ' - ' . Yii::$app->general->getforeignkey($value->bmcCode, 'ref_code');
                 });
-        $this->bmc_code = $bmcCode;
-        $value[$bmcCode] = Yii::$app->general->getforeignkey($this->mainBmcCode, 'bmc_name') . ' - ' . Yii::$app->general->getforeignkey($this->mainBmcCode, 'ref_code');
+        if ($concateSelf) {
+            $this->bmc_code = $bmcCode;
+            $value[$bmcCode] = Yii::$app->general->getforeignkey($this->mainBmcCode, 'bmc_name') . ' - ' . Yii::$app->general->getforeignkey($this->mainBmcCode, 'ref_code');
+        }
         return $value;
     }
 

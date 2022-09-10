@@ -381,6 +381,9 @@ class SearchFilter {
             'TblGenerateReportParamSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblMilkTransferSearch' => [
+                'filter' => ['f_union_code', 'transfer_types'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
