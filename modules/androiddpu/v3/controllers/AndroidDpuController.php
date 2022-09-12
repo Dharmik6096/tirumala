@@ -29,6 +29,9 @@ use app\modules\installation\models\TblRole;
 use app\modules\organisation\models\TblAllowDcsManualCollectionRange;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\organisation\models\TblUnions;
+use app\modules\syncutility\models\TblSentbox;
+use app\modules\organisation\models\TblDcsDeactive;
+use app\modules\organisation\models\TblCustomerDeactive;
 
 /**
  * Default controller for the `vendorapi` module
@@ -383,6 +386,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
 
                         if ($response) {
                             $res_data['db_path'] = Yii::$app->request->hostInfo . Yii::$app->request->baseUrl . $id_model->db_path;
+                            $this->dcsSentboxGenerate($data);
                         } else {
                             $res_data['db_path'] = NULL;
                         }
@@ -624,6 +628,71 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
         }
         $this->response['data'] = $res_data;
         return $this->response;
+    }
+
+    public function DcsSentboxGenerate($post) {
+        $device = $post['device_id'];
+        $model = new TblDcsDeactive();
+        $deactiveData = $model->getDeactiveRecords(false, $post);
+        $this->setSentBox($post, $model, $device, $deactiveData, 'dcs_deactive_code', 'TblDcs', 'dcs_code', 0, 1, 2, 3);
+
+        $CustModel = new TblCustomerDeactive();
+        $deactiveData = $CustModel->getDeactiveRecords(false, $post);
+        $this->setSentBox($post, $CustModel, $device, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
+    }
+
+    public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {
+        if (!empty($data)) {
+            $ids = array_map(function ($e) use ($key) {
+                return $e->{$key};
+            }, $data);
+            // $update = $model->updateFileStatus($ids, $u_status);
+            foreach ($data as $row) {
+                $model_name = Yii::$app->path->define($masterModel);
+                $modelMaster = new $model_name();
+                $existData = $modelMaster::find()->where([$f_key => $row->{$f_key}])->one();
+                if (!empty($existData)) {
+                    $existData->is_active = $status;
+                    $sentboxArray = [];
+                    $encrypt = $modelMaster->encryptModel($existData->attributes);
+                    $existData->setAttributes($encrypt);
+                    // if (!empty($existData->customer_type)) {
+                    //     $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $existData->bmc_code);
+                    // } else {
+                    //     $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $existData->dcs_code);
+                    // }
+                    $array = [];
+                    $array['code'] = $post['organization_code'];
+                    $array['type'] = $post['organization_type'];
+                    $sentboxArray[] = $array;
+
+                    foreach ($sentboxArray as $sent) {
+                        $flag = 'UPDATE';
+                        $sentbox = $this->sentboxModel($sent['code'], $sent['type'], $existData->union_code, $device);
+                        if (!($sentbox->setSentbox($existData, $flag))) {
+                            $row->data_post_status = $error;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'SentBox Entry is not Generated';
+                            $row->save(FALSE);
+                        } else {
+                            $row->data_post_status = $success;
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->resp_desc = 'Sentbox Generated';
+                            $row->save(FALSE);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function sentboxModel($code, $type, $union, $device) {
+        $sentbox = new TblSentbox();
+        $sentbox->dest_org_id = $code;
+        $sentbox->source_org_id = $union;
+        $sentbox->dest_org_type = $type;
+        $sentbox->device_id = $device;
+        return $sentbox;
     }
 
 }
