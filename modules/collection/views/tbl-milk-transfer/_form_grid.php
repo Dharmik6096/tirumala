@@ -66,7 +66,6 @@ $attribute = [
     ['attribute' => 'snf'],
     ['attribute' => 'qty'],
     ['attribute' => 'temp'],
-    ['attribute' => 'remarks', 'visible' => TRUE],
 ];
 
 $grid_option = [
@@ -75,6 +74,7 @@ $grid_option = [
     'active_column' => false,
     'default_sorting' => FALSE,
     'actions' => [
+        'view' => true,
         'update' => true,
     ]
 ];

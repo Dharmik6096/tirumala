@@ -61,6 +61,7 @@ class TblMilkTransferHistory extends \yii\db\ActiveRecord {
             [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['operation_type', 'history_created_by', 'history_created_at'], 'safe'],
+            [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
         ];
     }
 

@@ -1,62 +1,230 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use app\components\GeneralFunctions;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\collection\models\TblMilkTransfer */
+/* @var $model app\modules\dcsoperation\models\TblPurchaseRate */
 
-$this->title = $model->milk_transfer_code;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Milk Transfers'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Milk Tranfer');
 ?>
-<div class="tbl-milk-transfer-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                $attributes = [
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'union_code',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'source_code',
+                                'label' => (Yii::t('app', 'Source Ref. Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->sourceCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'source_code',
+                                'label' => (Yii::t('app', 'Source Code')),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'source_code',
+                                'value' => Yii::$app->general->getforeignkey($model->sourceCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'destination_code',
+                                'label' => (Yii::t('app', 'Dest Ref. Code')),
+                                'value' => Yii::$app->general->getforeignkey($model->destCode, 'ref_code'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ]
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'destination_code',
+                                'label' => (Yii::t('app', 'Dest Code')),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'destination_code',
+                                'value' => Yii::$app->general->getforeignkey($model->destCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'from_date',
+                                'value' => Yii::$app->controls->view_date($model->from_date),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'from_shift',
+                                'value' => Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'to_date',
+                                'value' => Yii::$app->controls->view_date($model->to_date),
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'to_shift',
+                                'value' => Yii::$app->general->getforeignkey($model->toShiftCode, 'shift'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'transfer_type',
+                                'value' => Yii::$app->dropdown->getRecords('transfer_type')['data'][$model->transfer_type],
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'qty',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'fat',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'snf',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ]
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'clr',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'temp',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'water',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'protein',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'density',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'lactose',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'adt_param',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'adt_value',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'salt',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'freezing_point',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'ph_value',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                            [
+                                'attribute' => 'other_reading',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'remarks',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
+                ];
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->milk_transfer_code], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->milk_transfer_code], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'milk_transfer_code',
-            'transaction_id',
-            'from_date',
-            'from_shift',
-            'to_date',
-            'to_shift',
-            'transfer_type',
-            'union_code',
-            'source_code',
-            'destination_code',
-            'vehicle_no',
-            'fat',
-            'snf',
-            'qty',
-            'temp',
-            'remarks',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_type',
-            'originating_org_code',
-            'originating_org_type',
-            'x_col1',
-            'x_col2',
-            'x_col3',
-            'x_col4',
-            'x_col5',
-        ],
-    ]) ?>
-
+                // View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+    </div>
 </div>

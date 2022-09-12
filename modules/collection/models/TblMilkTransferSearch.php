@@ -23,6 +23,7 @@ class TblMilkTransferSearch extends TblMilkTransfer {
             [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'integer'],
             [['fat', 'snf', 'qty', 'temp'], 'number'],
             [['transfer_types'], 'required', 'on' => ['indexSearch']],
+            [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
         ];
     }
 
