@@ -342,7 +342,15 @@ $grid_option = [
             $class = $existCount > 0 ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
             return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/organisation/tbl-dcs/export-sentbox', 'id' => $model->dcs_code], $options);
-        }
+        },
+        'upload-ftp-file' => function ($url, $model) {
+            $id = $model->dcs_code;
+            $type = 'DCS';
+            $class = $model->dpu_type == 91 ? '' : 'link-disable disabled';
+            $url = ['/organisation/tbl-dcs/upload-ftp-file', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a('<i class="fa fa-upload"></i>', $url, $options);
+        },
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
       return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);

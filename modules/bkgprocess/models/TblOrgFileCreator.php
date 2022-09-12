@@ -36,7 +36,7 @@ class TblOrgFileCreator extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['module_name', 'module_code', 'file_type', 'vendor_code', 'created_by', 'updated_by', 'value1'], 'string'],
+            [['module_name', 'module_code', 'file_type', 'vendor_code', 'created_by', 'updated_by', 'value1'], 'safe'],
             [['file_status', 'status'], 'integer'],
             [['pick_datetime', 'created_at', 'updated_at', 'ref_code'], 'safe'],
         ];

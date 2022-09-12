@@ -38,7 +38,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblVspPayment extends \app\models\ChildModel {
 
-    public $otp_code, $customer_name, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
+    public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
 
     /**
      * @inheritdoc
@@ -52,14 +52,14 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
-                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
-                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
-                [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
-                [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
-                [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
-                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-                [['route_code', 'avg_fat', 'avg_snf', 'std_qty'], 'safe'],
+            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
+            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
+            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
+            [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
+            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+            [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
         ];
     }
 

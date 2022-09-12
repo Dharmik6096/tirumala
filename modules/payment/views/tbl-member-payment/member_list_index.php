@@ -52,7 +52,7 @@ $this->title = Yii::t('app', 'Members');
                         return substr($model->member_code, -4);
                     }, 'label' => Yii::t('app', 'Member Code')],
                 ['attribute' => 'member_code', 'value' => function($model) {
-                        return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+                        return !empty($model->member_name) ? $model->member_name : Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
                     }],
                 ['attribute' => 'payment_cycle_code', 'value' => function($model) {
                         return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);

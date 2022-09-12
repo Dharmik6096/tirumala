@@ -44,6 +44,8 @@ use app\modules\details\models\TblContactDetailsHistory;
 use yii\base\UserException;
 use ReflectionClass;
 use app\models\ChildModel;
+use app\modules\bkgprocess\models\TblOrgFileCreator;
+use app\modules\bkgprocess\models\TblOrgFileLog;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -1226,6 +1228,48 @@ class TblDcsController extends ChildController {
                 echo Yii::$app->general->encryptData($json) . PHP_EOL;
             }
             exit();
+        }
+    }
+
+    public function actionUploadFtpFile($id) {
+        $dcsModel = $this->findModel($id);
+        $saveModel = [];
+        for ($x = 1; $x <= 2; $x += 1) {
+            $file_type = $x == 1 ? 'MEMBER' : 'RATE';
+            $model = new TblOrgFileCreator();
+            $model->file_status = 1;
+            $model->status = 2;
+            $model->vendor_code = 'BIPL';
+            $model->module_code = $dcsModel->dcs_code;
+            $model->ref_code = $dcsModel->ref_code;
+            $model->module_name = 'TblDcs';
+            $model->file_type = $file_type;
+            $model->value1 = '';
+            if ($file_type == 'RATE') {
+                $applicability = new TblPurchaseRateApplicability();
+                $applicableData = $applicability->getDcsApplicability($dcsModel->dcs_code, date('Y-m-d'));
+                $purchaseRate = !empty($applicableData) ? $applicableData->purchase_rate_code : '';
+                if (!empty($purchaseRate)) {
+                    $org_model = new TblOrgFileLog();
+                    $org_model->module_code = $model->module_code;
+                    $model->value1 = $purchaseRate;
+                    $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                    $model->status = 2;
+                    $model->file_status = 1;
+                    $saveModel[] = $model;
+                }
+            } else {
+                $org_model = new TblOrgFileLog();
+                $org_model->module_code = $model->module_code;
+                $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                $model->status = 2;
+                $model->file_status = 1;
+                $saveModel[] = $model;
+            }
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['NAME/RATE Uploaded', 'create']);
+        if ($transaction == 'customRedirect') {
+            return $this->redirect(['index']);
         }
     }
 

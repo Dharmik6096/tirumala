@@ -68,7 +68,7 @@ class TblMemberPayment extends \app\models\ChildModel {
             [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'additional_pay'], 'number'],
             [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at'], 'safe'],
             [['payment_cycle_code', 'bmc_code', 'dcs_code'], 'required'],
-            [['disburse_date', 'payment_date', 'payment_cycle', 'created_at', 'created_by', 'updated_at', 'updated_by', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'dcs_payment_cycle_code', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'is_verified', 'vsp_payment_reference_no', 'additional_pay', 'transfer_mode', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
+            [['disburse_date', 'payment_date', 'payment_cycle', 'created_at', 'created_by', 'updated_at', 'updated_by', 'qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'dcs_payment_cycle_code', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'is_verified', 'vsp_payment_reference_no', 'additional_pay', 'transfer_mode', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'member_name', 'beneficiary_name', 'dcs_name'], 'safe'],
             [['additional_pay'], 'double'],
         ];
     }

@@ -211,8 +211,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         $dcs = Yii::$app->request->post('dcs_code');
         $union = Yii::$app->request->post('union_code');
         $type = Yii::$app->request->post('customer_type');
-        $mcc = Yii::$app->request->post('mcc');
-        $plant = Yii::$app->request->post('plant');
+        /* $mcc = Yii::$app->request->post('mcc');
+          $plant = Yii::$app->request->post('plant'); */
         $date = Yii::$app->request->post('date');
         $bmcModel = new TblBmcCollection();
         if (!empty($type) && strtolower($type) != 'dcs') {
@@ -237,6 +237,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $name = Yii::$app->general->getCustomer($bmcModel, $type);
             $response['status'] = 'success';
             $response['data'] = $name;
+            $response['customer_code'] = $data;
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
@@ -365,7 +366,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             if (Model::validateMultiple($modelData)) {
                 $saveModel = [];
                 foreach ($modelData as $detalData) {
-                    if (!empty($detalData->oldAttributes) && ($detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'])) {
+                    if (!empty($detalData->oldAttributes) && ($detalData->customer_code != $detalData->oldAttributes['customer_code'] || $detalData->fat != $detalData->oldAttributes['fat'] || $detalData->snf != $detalData->oldAttributes['snf'] || $detalData->rtpl != $detalData->oldAttributes['rtpl'] || $detalData->qty != $detalData->oldAttributes['qty'] || $detalData->milk_type_code != $detalData->oldAttributes['milk_type_code'] || $detalData->milk_quality_type_code != $detalData->oldAttributes['milk_quality_type_code'] || $detalData->no_of_can != $detalData->oldAttributes['no_of_can'])) {
                         if (Yii::$app->general->getUnionConfiguration($detalData->union_code, 'collection_approval', 'PORTAL') == 1) {
                             $approvalModel = new TblCollectionDataAlias();
                             $approvalModel->attributes = $detalData->attributes;
@@ -379,6 +380,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $approvalModel->old_milk_quality_type_code = $detalData->oldAttributes['milk_quality_type_code'];
                             $approvalModel->old_purchase_rate_code = $detalData->oldAttributes['rate_code'];
                             $approvalModel->old_no_of_can = $detalData->oldAttributes['no_of_can'];
+                            $approvalModel->old_customer_code = $detalData->oldAttributes['customer_code'];
                             $approvalModel->table_name = 'tbl_bmc_collection';
                             $approvalModel->action_perform = 'UPDATE';
                             $approvalModel->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
