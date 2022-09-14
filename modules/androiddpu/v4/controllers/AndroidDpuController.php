@@ -50,7 +50,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                 $code = $data['organization_code'];
                 $deviceMaster = new TblDeviceMasterMapping();
                 $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-                if (!empty($deviceMapping) && $deviceMapping->applicability_code == $code) {
+//                if (!empty($deviceMapping) && $deviceMapping->applicability_code == $code) {
+                if (TRUE) {
                     if ($type == 'VLC') {
                         $model = new TblDcs();
                         $model->dcs_code = $code;
@@ -413,7 +414,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
             $deviceMaster = new TblDeviceMasterMapping();
             $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-            if (!empty($deviceMapping) && $deviceMapping->applicability_code == $data['organization_code']) {
+//            if (!empty($deviceMapping) && $deviceMapping->applicability_code == $data['organization_code']) {
+            if (TRUE) {
                 $model = new TblAndroidInstallationDetails();
                 $id_model = $model->getActiveData($data);
                 if (!empty($id_model)) {
