@@ -74,6 +74,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Km Wise Rate'), 'url' => ['/transporter/tbl-km-wise-rate/index'], 'active' => ($cntrl == 'tbl-km-wise-rate')],
                 ['label' => Yii::t('app', 'Fuel Rate'), 'url' => ['/transporter/tbl-fuel-rate-master/index'], 'active' => ($cntrl == 'tbl-fuel-rate-master')],
                 ['label' => Yii::t('app', 'Vehicle Km Information (Primary)'), 'url' => ['/transporter/tbl-vehicle-km-info/index'], 'active' => ($cntrl == 'tbl-vehicle-km-info')],
+                ['label' => Yii::t('app', 'Gate Entry'), 'url' => ['/transporter/tbl-gate-entry/index'], 'active' => ($cntrl == 'tbl-gate-entry')],
                 ['label' => Yii::t('app', 'Vehicle Late Arrival (Primary)'), 'url' => ['/transporter/tbl-route-wise-late-arrival/index'], 'active' => ($cntrl == 'tbl-route-wise-late-arrival')],
                 ['label' => Yii::t('app', 'Location Wise Km (Secondary)'), 'url' => ['/transporter/tbl-location-wise-km-detail/index'], 'active' => ($cntrl == 'tbl-location-wise-km-detail')],
 //                    ['label' => Yii::t('app', 'Vehicle VTS Km'), 'url' => ['/transporter/tbl-vehicle-vts-km/index'], 'active' => ($cntrl == 'tbl-vehicle-vts-km')],
