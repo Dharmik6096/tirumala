@@ -18,6 +18,7 @@ $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
+$downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
 
@@ -81,7 +82,7 @@ if (isset($data['url1'])) {
                             <div class="row margin_0">
 
                                 <div class="modal-body">
-                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);   ?>  
+                                    <?php //Yii::$app->dropdown->federation($model, $form, 'federation_code', false);    ?>  
                                     <?php
                                     $param = isset($data['param']) ? explode(',', $data['param']) : [];
                                     foreach ($param as $key => $value) {
@@ -259,7 +260,7 @@ if (isset($data['url1'])) {
                                             if (isset($value_array[1]) && $value_array[1] == 'rate_type') {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));    ?>
+                                                    <?php // Yii::$app->dropdown->org_type_rate($model, $form, 'reportsmodel-p_organization_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code'));     ?>
                                                     <?= Yii::$app->dropdown->memberRateChart($model, $form, 'reportsmodel-union_code,reportsmodel-rate_type', 'p_purchase_rate_code', $model->getAttributeLabel('p_purchase_rate_code')); ?>
                                                 </div>
                                                 <?php
@@ -563,6 +564,11 @@ if (isset($data['url1'])) {
             }
             ?>
         </div>
+        <?php
+        if (!empty($fileDownloadArr)) {
+            echo GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+        }
+        ?>
     </div>
 </div>       
 <?php
@@ -687,4 +693,44 @@ if ($defaultToggle) {
     ";
 }
 $this->registerJs($script, View::POS_READY, 'mis-report-script');
+?>
+
+
+<?php
+$baseUrl = Yii::$app->request->baseUrl;
+$count = count($fileDownloadArr);
+$timeOutForLoader = ($count * 1000) + 2000;
+$scriptDownload = "
+
+var timeOut = 500;
+$(document).on('click', '.downloadSapFiles', function(e){
+    e.preventDefault();
+    $('#loadercontent').show();
+    $('#pageloader').show();
+    timeOut = 500;
+    var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
+    var downloadFilesJson = '" . $downloadSapFiles . "';
+    var timeOutForLoader = " . $timeOutForLoader . ";
+    var downloadFilesJsonAr = JSON.parse(downloadFilesJson);
+    $.each(downloadFilesJsonAr, function(ind, vl) {
+        setTimeout(() => {
+            window.location.href = baseUrl + vl;
+        }, timeOut);
+        timeOut = timeOut + 1000;
+    });
+    setTimeout(() => {
+        $('#loadercontent').hide();
+        $('#pageloader').hide();
+    }, timeOutForLoader);
+    return false;
+});
+
+$(document).on('click', '.uploadSapFiles', function(e){
+    $('#reportsmodelold-upload_ftp_file').val('1');
+    $('#report-form').submit();
+});
+
+";
+
+$this->registerJs($scriptDownload, View::POS_READY, 'mis-report-script-other-download');
 ?>

@@ -51,7 +51,7 @@ class ReportsModel extends Model {
             [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
             [['p_organization_type', 'rate_type', 'union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['RateAcknowledgement']],
             [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
-            [['output_type'], 'required', 'except' => ['DcsMaster', 'MemberMaster', 'CustomerMaster', 'CollectionPendriveFile']],
+            [['output_type'], 'required', 'except' => ['DcsMaster', 'MemberMaster', 'CustomerMaster', 'CollectionPendriveFile', 'SapReport']],
             [['union_code', 'date'], 'required', 'on' => ['LocationWiseAssetSummary', 'LocationWiseAssetMovement']],
             [['asset_code', 'store_location_type'], 'default', 'value' => 0, 'on' => ['LocationWiseAssetDetail', 'LocationWiseAssetSummary', 'LocationWiseAssetMovement']],
             [['union_code', 'from_date', 'to_date'], 'required', 'on' => 'LocationWiseAssetDetail'],
@@ -108,6 +108,7 @@ class ReportsModel extends Model {
                 }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyCompositeVsActual']],
             [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
+            [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
         ];
     }
 

@@ -20,7 +20,7 @@ class ReportsController extends \app\controllers\ChildController {
      * Renders the index view for the module
      * @return string
      */
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '', $label = '';
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $message = '', $label = '', $fileDownloadArr = [];
 
     public function actionIndex() {
         $model = new ReportsModel();
@@ -51,7 +51,7 @@ class ReportsController extends \app\controllers\ChildController {
         if (isset($this->data['export_file_name']) && empty($this->output)) {
             $this->data['export_file_name'] = $this->data['title'];
         }
-        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+        return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
 
     public function actionMemberDailyCollection() {
@@ -819,6 +819,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->renderAjax('view_history_list', ['result' => $this->output, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
     }
 
+    public function actionSapReportDodla() {
+        $this->report = 'VmReportSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'WqReportSap';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -951,6 +961,7 @@ class ReportsController extends \app\controllers\ChildController {
                     ],
                 ],
             ];
+
             if (!empty($this->data['kartik_grid_view'])) {
 //                $dataPro['pagination'] = ['pageSize' => 500, 'defaultPageSize' => 500];
             } else {
@@ -971,6 +982,27 @@ class ReportsController extends \app\controllers\ChildController {
 //                    ],
 //                ],
 //            ]);
+            if (!empty($this->data['sap_download'])) {
+                $downLoadArray = [];
+                foreach ($this->output as $detail) {
+                    $plant = ($model->report_type == 1) ? 'PLANT_CODE' : 'Plant';
+                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                        if (empty($downLoadArray[$detail[$plant]])) {
+                            $downLoadArray[$detail[$plant]] = [];
+                        }
+                        $downLoadArray[$detail[$plant]][] = $detail;
+                    }
+                }
+                foreach ($downLoadArray as $bmc => $download) {
+                    $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+//                    if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
+//                        $this->uploadFTPData($title, $download, $model, $bmc);
+//                    }
+                    $this->downloadDataLocal($title, $download, $fileArray);
+                }
+                $this->fileDownloadArr = $fileArray;
+            }
         }
 
         if (isset($this->data['download_only']) && $this->data['download_only'] == true && !empty($this->output)) {
@@ -2197,6 +2229,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
                 'multiArray' => ['mcc_code', 'bmc_code']
             ],
+            'VmReportSap' => [
+//                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
+                'sp_name' => 'mis_bmc_collection_vm',
+                'scenario' => 'SapReport',
+                'title' => 'SAP VM Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'export_title' => true,
+//                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
+                'output_type' => false,
+            ],
+            'WqReportSap' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,date:string:shift',
+                'sp_name' => 'mis_bmc_collection_wq',
+                'scenario' => 'SapReport',
+                'title' => 'SAP WQ Report',
+                'report_type' => [Yii::t('app', 'VM'), Yii::t('app', 'WQ')],
+                'export_title' => true,
+//                'message' => Yii::t('app', 'Sync of data is pending from device.'),
+//                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
+                'sap_download' => true,
+                'output_type' => false,
+            ],
         ];
         return $label[$l];
     }
@@ -2406,4 +2462,36 @@ class ReportsController extends \app\controllers\ChildController {
         exit();
     }
 
+    public function downloadDataLocal($title, $download, &$fileArray) {
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $download, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $file_name = $title . '.' . 'xls';
+        $path = Yii::$app->basePath . '/web/sap_data_files/';
+        Yii::$app->general->checkDirectory($path);
+        $fileArray[] = $file_name;
+        $fileName = $path . '/' . $file_name;
+        fopen($fileName, "w+");
+        $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
+        $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save($fileName);
+    }
 }
