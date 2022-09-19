@@ -1374,7 +1374,7 @@ class DropDown extends Component {
             'branch' => ['name' => 'branch_code', 'fields' => 'branch_code,branch_name~ifsc,local_name', 'prompt' => 'Select Branch', 'model' => 'TblBranch', 'depend' => 'bank_code', 'checkValid'],
             'sub-center' => ['name' => 'sub_center_code', 'fields' => 'sub_center_code,sub_center_name,local_name', 'prompt' => 'Select Sub Center', 'model' => 'TblSubCenter', 'depend' => 'dcs_code'],
             'destination' => ['name' => 'destination_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Destination', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
-            'bmc' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
+            'bmc' => ['name' => 'bmc_code', 'fields' => 'bmc_code,bmc_name~ref_code', 'prompt' => 'Select BMC', 'model' => 'TblDcsBmc', 'depend' => 'union_code'],
             'dcs' => ['name' => 'dcs_code', 'fields' => 'dcs_code,dcs_name~ref_code,local_name', 'prompt' => Yii::t('app', 'Select Society'), 'model' => 'TblDcs', 'depend' => 'union_code', 'checkValid'],
             'plant' => ['name' => 'plant_code', 'fields' => 'plant_code,name~ref_code,local_name', 'prompt' => 'Select Plant', 'model' => 'TblPlant', 'depend' => 'union_code', 'checkValid'],
             'mcc' => ['name' => 'mcc_code', 'fields' => 'mcc_plant_code,name~ref_code,local_name', 'prompt' => 'Select MCC', 'model' => 'TblMccPlant', 'depend' => 'union_code', 'checkValid'],
