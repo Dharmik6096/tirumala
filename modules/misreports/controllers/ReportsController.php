@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use PHPExcel;
 use app\modules\configuration\models\TblGenerateReportParam;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
 
 /**
  * Default controller for the `JasperReports` module
@@ -51,6 +52,7 @@ class ReportsController extends \app\controllers\ChildController {
         if (isset($this->data['export_file_name']) && empty($this->output)) {
             $this->data['export_file_name'] = $this->data['title'];
         }
+        $model->upload_ftp_file = '0';
         return $this->render('index', ['result' => $this->output, 'message' => $this->message, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
 
@@ -829,6 +831,22 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function uploadFTPData($title, $output, $model, $bmc) {
+        $data_array = [];
+        $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
+        $data_array['module_code'] = $bmc;
+        $data_array['mcc_plant_code'] = $bmc;
+        $data_array['union_code'] = $model->union_code;
+        $data_array['applicable_date'] = $model->date;
+        $data_array['shift_code'] = $model->shift;
+        $data_array['bmc_code'] = NULL;
+        $data_array['from_date'] = $model->date;
+        $ftp_model = new TblFtpTxnLog();
+
+        $ftp_model->exportData($data_array, $title, $output, $bmc);
+//        }
+    }
+
     /* MIS Call */
 
     private function LoadReport($model) {
@@ -996,9 +1014,9 @@ class ReportsController extends \app\controllers\ChildController {
                 foreach ($downLoadArray as $bmc => $download) {
                     $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
-//                    if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
-//                        $this->uploadFTPData($title, $download, $model, $bmc);
-//                    }
+                    if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
+                        $this->uploadFTPData($title, $download, $model, $bmc);
+                    }
                     $this->downloadDataLocal($title, $download, $fileArray);
                 }
                 $this->fileDownloadArr = $fileArray;
@@ -2494,4 +2512,5 @@ class ReportsController extends \app\controllers\ChildController {
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
     }
+
 }

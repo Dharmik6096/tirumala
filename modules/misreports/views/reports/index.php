@@ -406,6 +406,9 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                     <div class="modal-footer mt10 col-sm-12">
                                         <?php
                                         if ($param) {
+                                            if (!empty($fileDownloadArr)) {
+                                                echo Html::hiddenInput('upload_ftp_file', '0', ['id' => 'reportsmodel-upload_ftp_file']);
+                                            }
                                             echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
@@ -567,6 +570,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         <?php
         if (!empty($fileDownloadArr)) {
             echo GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+            echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn btn-default apply-shortcut uploadSapFiles', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
         }
         ?>
     </div>
@@ -726,7 +730,7 @@ $(document).on('click', '.downloadSapFiles', function(e){
 });
 
 $(document).on('click', '.uploadSapFiles', function(e){
-    $('#reportsmodelold-upload_ftp_file').val('1');
+    $('#reportsmodel-upload_ftp_file').val('1');
     $('#report-form').submit();
 });
 

@@ -49,7 +49,7 @@ class DefaultController extends Controller {
                             } elseif ($row->has_attachment == 2) {
                                 $filename = $row->filename;
                                 $filepath = $row->file_path;
-                                $cc = '';
+//                                $cc = '';
                                 $attachment = FALSE;
                             } else {
                                 $attachment = FALSE;

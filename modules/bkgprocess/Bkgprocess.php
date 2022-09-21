@@ -73,6 +73,20 @@ class Bkgprocess extends \yii\base\Module {
 //                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
 //                'ftp_path' => 'WQ/Inbound'
 //            ],
+            'TblBmcCollection_dodla_VM' => [
+                'ext' => '.csv',
+                'param' => 'union_code,mcc_plant_code,bmc_code,from_date',
+                'sp_name' => 'mis_bmc_collection_vm',
+                'export_title' => 'mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
+            ],
+            'TblBmcCollection_dodla_WQ' => [
+                'ext' => '.csv',
+                'param' => 'union_code,mcc_plant_code,bmc_code,from_date',
+                'sp_name' => 'mis_bmc_collection_wq',
+                'export_title' => 'mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
+            ],
         ];
     }
 
