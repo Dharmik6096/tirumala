@@ -379,8 +379,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $file_name = "";
                 $file_path = "";
                 $absoluteBaseUrl = Url::base(true);
-//                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/';
-                $path = $absoluteBaseUrl . \Yii::$app->params['FTPDirPath'] . 'upload/';
+                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/';
+//                $path = $absoluteBaseUrl . \Yii::$app->params['FTPDirPath'] . 'upload/';
                 $file_name = $FileName;
                 $file_path = $path . $file_name;
                 $this->setHtmlContent($mcc, $htmlContent, $message);
