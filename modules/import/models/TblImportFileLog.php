@@ -98,9 +98,13 @@ class TblImportFileLog extends \app\models\ChildModel {
         if ($considerPickData) {
             $pendingDataQuery = $this->find()
                     ->where(['status' => 1])
-                    ->andWhere(['<', 'tbl_import_file_log.pick_datetime', $datetime])
-                    ->orderBy(['log_id' => SORT_ASC])
-                    ->limit(5);
+                    ->andWhere(['<', 'tbl_import_file_log.pick_datetime', $datetime]);
+
+            if (!empty($type)) {
+                $pendingDataQuery->andWhere(['tbl_import_file_log.process_type' => $type]);
+            }
+
+            $pendingDataQuery->orderBy(['log_id' => SORT_ASC])->limit(5);
 
             return $unionQuery = (new ActiveQuery(TblImportFileLog::className()))->from([
                         'pending_data' => $query->union($pendingDataQuery, TRUE)
