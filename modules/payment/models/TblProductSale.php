@@ -55,6 +55,7 @@ class TblProductSale extends \app\models\ChildModel {
     public $is_sentbox = TRUE;
     public $saveChildRecords = TRUE;
     public $import_union_code, $import_eipl_code, $import_key_pattern, $product_code, $quantity, $member_code, $available_stock;
+    public $calculateTax = FALSE;
 
     /**
      * @inheritdoc
@@ -482,20 +483,27 @@ class TblProductSale extends \app\models\ChildModel {
                 $detailModel->unit_code = $app['unit_code'];
                 $model->amount = $detailModel->quantity * $detailModel->rate;
             }
+        } else {
+            $this->loadRate($model, $detailModel);
         }
         $detailModel->tax_code = Yii::$app->general->getforeignkey($detailModel->productCode, 'tax_code');
 
-        $configModel = new TblDcsGeneralConfig();
-        $configModel->union_code = $model->union_code;
-        $configModelData = $configModel->getData();
+        if ($this->calculateTax) {
+            $configModel = new TblDcsGeneralConfig();
+            $configModel->union_code = $model->union_code;
+            $configModelData = $configModel->getData();
 
+            $tax = $detailModel->tax_code;
+            $modeltax = new TblTaxDetail();
+            $data = $modeltax->getDetail($tax);
 
-        $tax = $detailModel->tax_code;
-        $modeltax = new TblTaxDetail();
-        $data = $modeltax->getDetail($tax);
+            $this->getCalculation($model, $detailModel, '', $configModelData, $data);
+            $this->getCalculation($model, $detailModel, 'check', $configModelData, $data);
+        } else {
+            $configModelData = '';
+            $data = '';
+        }
 
-        $this->getCalculation($model, $detailModel, '', $configModelData, $data);
-        $this->getCalculation($model, $detailModel, 'check', $configModelData, $data);  
         $detailModel->amount = $model->amount;
         $model->other_amount = 0;
         $model->paid_amount = $model->payment_mode == 1 ? 0 : $model->amount_due;
@@ -662,77 +670,77 @@ class TblProductSale extends \app\models\ChildModel {
                 $ai++;
             }
         }
-
-        $discount_val = !empty($detailModel->discount) ? $detailModel->discount : 0;
-        $totalAmount = 0;
-        $totalAmount = $totalAmount + $detailModel->amount - $discount_val;
-        $credit = $model->amount_due;
-        if (empty($configModelData)) {
-            $configModel = new TblDcsGeneralConfig();
-            $configModel->union_code = $model->union_code;
-            $configModelData = $configModel->getData();
-        }
-        $rateWithTax = !empty($configModelData->sale_rate_with_tax) ? $configModelData->sale_rate_with_tax : 0;
-        $taxCode = $detailModel->tax_code;
-        $totalAmt = !empty($model->amount_due) ? $model->amount_due : 0;
-        $discount = !empty($detailModel->discount) ? $detailModel->discount : 0;
-        $quantity = !empty($detailModel->quantity) ? $detailModel->quantity : 1;
-        $amount = !empty($detailModel->x_col1) ? $detailModel->x_col1 : $detailModel->rate;
-        if (empty($taxdata)) {
-            $taxModel = new TblTaxDetail();
-            $taxdata = $taxModel->getDetail($taxCode);
-        }
-        $j = 1;
-        if (!empty($taxdata) && $detailModel->tax_amount > 0) {
-            foreach ($taxdata as $key => $d) {
-                if ($d->percentage != 100) {
-                    $disc = 0;
-                    $percent = 0;
-                    $count = 0;
-                    foreach ($taxdata as $keys => $per) {
-                        if ($per->percentage != 100) {
-                            $percent += $per->percentage;
-                            $count++;
+        if ($this->calculateTax) {
+            $discount_val = !empty($detailModel->discount) ? $detailModel->discount : 0;
+            $totalAmount = 0;
+            $totalAmount = $totalAmount + $detailModel->amount - $discount_val;
+            $credit = $model->amount_due;
+            if (empty($configModelData)) {
+                $configModel = new TblDcsGeneralConfig();
+                $configModel->union_code = $model->union_code;
+                $configModelData = $configModel->getData();
+            }
+            $rateWithTax = !empty($configModelData->sale_rate_with_tax) ? $configModelData->sale_rate_with_tax : 0;
+            $taxCode = $detailModel->tax_code;
+            $totalAmt = !empty($model->amount_due) ? $model->amount_due : 0;
+            $discount = !empty($detailModel->discount) ? $detailModel->discount : 0;
+            $quantity = !empty($detailModel->quantity) ? $detailModel->quantity : 1;
+            $amount = !empty($detailModel->x_col1) ? $detailModel->x_col1 : $detailModel->rate;
+            if (empty($taxdata)) {
+                $taxModel = new TblTaxDetail();
+                $taxdata = $taxModel->getDetail($taxCode);
+            }
+            $j = 1;
+            if (!empty($taxdata) && $detailModel->tax_amount > 0) {
+                foreach ($taxdata as $key => $d) {
+                    if ($d->percentage != 100) {
+                        $disc = 0;
+                        $percent = 0;
+                        $count = 0;
+                        foreach ($taxdata as $keys => $per) {
+                            if ($per->percentage != 100) {
+                                $percent += $per->percentage;
+                                $count++;
+                            }
                         }
+                        if ($rateWithTax == 1 || $rateWithTax == true) {
+                            $val = ($amount * 100) / ($percent + 100);
+                            $val = $amount - $val;
+                            $disc = $discount * $percent / 100;
+                        } else {
+                            $val = $amount * $percent / 100;
+                            $disc = $discount * $percent / 100;
+                        }
+                        $val = $val / $count;
+                        $disc = $disc / $count;
+                        $val = $val * $detailModel->quantity;
+                        $val = $val - $disc;
+                        $val = round($val, 2);
+                        $totalAmount = $totalAmount + $val;
+                        $taxModel = new TblProductSaleTaxCalculated();
+                        $taxModel->product_sale_code = $detailModel->product_sale_code;
+                        $taxModel->product_sale_transaction_code = $detailModel->product_sale_transaction_code;
+                        $taxModel->tax_detail_code = $d->tax_detail_code;
+                        if ($taxModelDataCheck) {
+                            $taxModelData = $taxModel->getRecords();
+                        } else {
+                            $taxModelData = '';
+                        }
+                        if (!empty($taxModelData)) {
+                            $taxModel = $taxModelData;
+                            $historyModel = new TblProductSaleTaxCalculatedHistory();
+                            Yii::$app->operation->history($taxModel, $historyModel, UPDATE);
+                            $modelSave[] = $historyModel;
+                        } else {
+                            $taxModel->product_sale_tax_calculated_code = $taxModel->product_sale_code . 'T' . $j; //Yii::$app->general->getTransactionCode($taxModel, $taxModel->product_sale_code, $j);
+                            $j++;
+                        }
+                        $taxModel->value = $val;
+                        $modelSave[] = $taxModel;
                     }
-                    if ($rateWithTax == 1 || $rateWithTax == true) {
-                        $val = ($amount * 100) / ($percent + 100);
-                        $val = $amount - $val;
-                        $disc = $discount * $percent / 100;
-                    } else {
-                        $val = $amount * $percent / 100;
-                        $disc = $discount * $percent / 100;
-                    }
-                    $val = $val / $count;
-                    $disc = $disc / $count;
-                    $val = $val * $detailModel->quantity;
-                    $val = $val - $disc;
-                    $val = round($val, 2);
-                    $totalAmount = $totalAmount + $val;
-                    $taxModel = new TblProductSaleTaxCalculated();
-                    $taxModel->product_sale_code = $detailModel->product_sale_code;
-                    $taxModel->product_sale_transaction_code = $detailModel->product_sale_transaction_code;
-                    $taxModel->tax_detail_code = $d->tax_detail_code;
-                    if ($taxModelDataCheck) {
-                        $taxModelData = $taxModel->getRecords();
-                    } else {
-                        $taxModelData = '';
-                    }
-                    if (!empty($taxModelData)) {
-                        $taxModel = $taxModelData;
-                        $historyModel = new TblProductSaleTaxCalculatedHistory();
-                        Yii::$app->operation->history($taxModel, $historyModel, UPDATE);
-                        $modelSave[] = $historyModel;
-                    } else {
-                        $taxModel->product_sale_tax_calculated_code = $taxModel->product_sale_code . 'T' . $j; //Yii::$app->general->getTransactionCode($taxModel, $taxModel->product_sale_code, $j);
-                        $j++;
-                    }
-                    $taxModel->value = $val;
-                    $modelSave[] = $taxModel;
                 }
             }
         }
-
         $fstockModel = new TblProductStock();
         $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
         $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
