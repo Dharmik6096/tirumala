@@ -194,7 +194,7 @@ class TblMemberDeactive extends \app\models\ChildModel {
         $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
     }
 
-    public function getDeactiveRecords($checkStatus = true, $limit = '') {
+    public function getDeactiveRecords($checkStatus = true, $data = '', $limit = '') {
         $date = date('Y-m-d');
         $query = $this->find()
                 ->where(['<=', 'from_date', $date])
@@ -202,7 +202,17 @@ class TblMemberDeactive extends \app\models\ChildModel {
         if ($checkStatus) {
             $query->andWhere(['or', ['data_post_status' => 0], ['is', 'data_post_status', NULL]]);
         }
-
+        if (!empty($data) && (!empty($data['organization_code']) && !empty($data['organization_type']))) {
+            if ($data['organization_type'] == 'MCC') {
+                $query->andWhere(['mcc_plant_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'BMC') {
+                $query->andWhere(['bmc_code' => $data['organization_code']]);
+            }
+            if ($data['organization_type'] == 'VLC') {
+                $query->andWhere(['dcs_code' => $data['organization_code']]);
+            }
+        }
         $dataList = $query->orderBy(['member_deactive_code' => SORT_ASC])
                 ->limit($limit)
                 ->all();

@@ -521,7 +521,7 @@ class SchedulerController extends ChildController {
 
 
         $MemberModel = new TblMemberDeactive();
-        $deactiveData = $MemberModel->getDeactiveRecords(true, $limit);
+        $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
 
         $activeData = $MemberModel->getActiveRecords($limit);
