@@ -165,4 +165,22 @@ class TblGateEntryController extends ChildController {
         $this->printDocument($controls, 'vsp/GatePass', 'GatePass-' . $id, 'pdf');
     }
 
+    public function actionGetOutEntry($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblGateEntryHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->scenario = 'getOut';
+        $this->model->status = 1;
+        $this->model->status_time = date('Y-m-d H:i:s');
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Gate Entry', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Gate Out Entry created Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Gate Out Entry Not created Deactivated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }
