@@ -185,13 +185,33 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
-            $header = array_keys($output[0]);
-            $txt_file = fopen($filePath . $fileName, "w");
-            fwrite($txt_file, implode(',', $header) . PHP_EOL);
-            foreach ($output as $line) {
-                fwrite($txt_file, implode(',', $line) . PHP_EOL);
+            if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+                $objPHPExcel = new PHPExcel();
+                $sheet = $objPHPExcel->getActiveSheet();
+                $sheet->fromArray(
+                        array_keys($output[0]), // The data to set
+                        NULL, // Array values with this value will not be set
+                        'A1'         // Top left coordinate of the worksheet range where
+                        //    we want to set these values (default is A1)
+                );
+                $sheet->fromArray(
+                        $output, // The data to set
+                        NULL, // Array values with this value will not be set
+                        'A2'         // Top left coordinate of the worksheet range where
+                        //    we want to set these values (default is A1)
+                );
+                $successfilePath = $filePath . $fileName;
+                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter->save($successfilePath);
+            } else {
+                $header = array_keys($output[0]);
+                $txt_file = fopen($filePath . $fileName, "w");
+                fwrite($txt_file, implode(',', $header) . PHP_EOL);
+                foreach ($output as $line) {
+                    fwrite($txt_file, implode(',', $line) . PHP_EOL);
+                }
+                fclose($txt_file);
             }
-            fclose($txt_file);
             return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email);
         }
         return FALSE;
