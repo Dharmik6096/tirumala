@@ -146,11 +146,13 @@ class TblGateEntry extends \app\models\ChildModel {
     }
 
     public function validateVehicle($attribute, $params) {
-        $data = $this->find()->where(['vehicle_code' => $this->vehicle_code])
-                ->andWhere(['status' => 0])
-                ->one();
-        if (!empty($data) && empty($this->gate_entry_code)) {
-            $this->addError('vehicle_code', Yii::t('app/validation', $this->getAttributeLabel('vehicle_code') . ' is Already Available.'));
+        if (Yii::$app->session->get('eiplCode') != 'DODLA') {
+            $data = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                    ->andWhere(['status' => 0])
+                    ->one();
+            if (!empty($data) && empty($this->gate_entry_code)) {
+                $this->addError('vehicle_code', Yii::t('app/validation', $this->getAttributeLabel('vehicle_code') . ' is Already Available.'));
+            }
         }
     }
 
