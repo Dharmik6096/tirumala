@@ -6,6 +6,7 @@ use kartik\detail\DetailView;
 
 $this->title = Yii::$app->label->title('view', 'BMC Collection');
 //$this->params['menu'][] = Yii::$app->controls->update($model->milk_collection_code);
+$client_code = \Yii::$app->session->get('eiplCode');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -66,6 +67,7 @@ $this->title = Yii::$app->label->title('view', 'BMC Collection');
                         ],
                         [
                             'attribute' => 'customer_code',
+                            'value' => $client_code = 'UMANG' ? Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE) : $model->customer_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
