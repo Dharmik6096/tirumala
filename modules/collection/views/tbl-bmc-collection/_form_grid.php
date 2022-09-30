@@ -8,7 +8,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 
-$client_code = \Yii::$app->session->get('eiplCode');
+$client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
 ?>
 <?php
 
@@ -41,9 +41,10 @@ $attribute = [
     ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         },],
-    ['attribute' => 'customer_code', 'value' => function($model) {
-            return $client_code = 'UMANG' ? Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE) : $model->customer_code;
-        }],
+    ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
+            return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE);
+        }, 'filter' => FALSE, 'visible' => $client_code],
+    ['attribute' => 'customer_code', 'filter' => FALSE],
     ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
         }, 'filter' => false],

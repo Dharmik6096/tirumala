@@ -67,7 +67,6 @@ $client_code = \Yii::$app->session->get('eiplCode');
                         ],
                         [
                             'attribute' => 'customer_code',
-                            'value' => $client_code = 'UMANG' ? Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE) : $model->customer_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
