@@ -46,6 +46,7 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'yii\\bootstrap\\' => 14,
             'yii\\' => 4,
             'yidas\\yii2BowerAsset\\' => 21,
+            'yii\\redis\\' => 10,
         ),
         'w' => 
         array (
@@ -589,6 +590,10 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         array (
             0 => __DIR__ . '/..' . '/codeception/base/src/Codeception',
         ),
+        'yii\\redis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yiisoft/yii2-redis/src',
+        )
     );
 
     public static $prefixesPsr0 = array (
