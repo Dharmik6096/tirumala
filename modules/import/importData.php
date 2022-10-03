@@ -137,6 +137,7 @@ class importData extends \yii\base\Module {
             'milk-cost-param' => ['table_name' => 'tbl_milkcost_param', 'fields' => 'mcc_plant_code,wef_date,chilling_rate,primary_tpt_cost,commission_percentage,labour_charge,service_charge', 'scenario' => 'importCsv'],
             'device-master' => ['table_name' => 'tbl_device_master', 'fields' => 'tab_type,sr_no,mac_address,remarks', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv', 'increment' => 1, 'mapping' => 1, 'mapping_model' => 'TblDeviceMasterMapping', 'mapping_fields' => 'device_id,collection_center_type,collection_center_code,eff_date', 'mapping_scenario' => 'importMapping', 'save_map_child' => TRUE],
             'device-master-mapping' => ['table_name' => 'tbl_device_master_mapping', 'fields' => 'device_id,collection_center_type,collection_center_code,eff_date', 'default_fields' => 'originating_type:1', 'increment' => 1, 'scenario' => 'importCsv'],
+            'vsp-payment' => ['table_name' => 'tbl_vsp_payment_data_config', 'fields' => 'bmc_code,dcs_code,date_time_of_collection,shift_code', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
         ];
         return $label[$l];
     }
