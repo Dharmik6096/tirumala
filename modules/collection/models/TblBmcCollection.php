@@ -105,7 +105,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
           }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update']],
-            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
+//            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //                    return $this->shift_code;
 //                }, 'except' => ['androidsync']],
@@ -242,7 +242,7 @@ class TblBmcCollection extends \app\models\ChildModel {
 
     public function validateDcs($attribute, $params) {
         $dcs_model = new TblDcs();
-        $data = $dcs_model->find()->where(['dcs_code' => $this->dcs_code, 'is_active' => 1])->one();
+        $data = $dcs_model->find()->where(['dcs_codee' => $this->dcs_code, 'is_active' => 1])->one();
         if (empty($data)) {
             $this->addError($attribute, "Please Enter Valid Society Code");
         }
