@@ -188,6 +188,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             if (Yii::$app->session->get('eiplCode') == 'DODLA') {
                 $objPHPExcel = new PHPExcel();
                 $sheet = $objPHPExcel->getActiveSheet();
+                $sheet->setTitle('Sheet1');
                 $sheet->fromArray(
                         array_keys($output[0]), // The data to set
                         NULL, // Array values with this value will not be set
