@@ -38,7 +38,10 @@ class DefaultController extends Controller {
                             $filepath = '';
                             $from = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
                             $to = $row->receiver_detail;
-                            $cc = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
+                            $otherReceiver = $row->other_receiver_detail;
+                            $token = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
+                            $cc = !empty($otherReceiver) ? $otherReceiver : $token;
+                            $bcc = '';
                             if ($row->has_attachment == 1) {
                                 $controls = [];
                                 $controls['dcs_milk_dispatch_code'] = $row->parent_code;
@@ -54,7 +57,7 @@ class DefaultController extends Controller {
                             } else {
                                 $attachment = FALSE;
                             }
-                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename, $filepath);
+                            $send = Yii::$app->alertnotification->sendEmail($from, $to, $cc, $row->header_info, $row->message, $attachment, $filename, $filepath, $bcc);
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->response_status = $send;
