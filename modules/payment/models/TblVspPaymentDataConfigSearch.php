@@ -46,7 +46,7 @@ class TblVspPaymentDataConfigSearch extends TblVspPaymentDataConfig {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode']);
+        $query->joinWith(['dcsCode']);
 
         $this->load($params);
 
@@ -56,17 +56,16 @@ class TblVspPaymentDataConfigSearch extends TblVspPaymentDataConfig {
             return $dataProvider;
         }
 
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_vsp_payment_data_config', 'tbl_vsp_payment_data_config', 'tbl_vsp_payment_data_config');
 
-        if (!empty($this->from_date) || !empty($this->from_shift)) {
+        if (!empty($this->from_date) && !empty($this->from_shift)) {
             $from_date = date('Y-m-d', strtotime($this->from_date));
             $from_shift = \Yii::$app->general->getshift($this->from_shift);
             $from_date .= ' ' . $from_shift;
             $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
         }
 
-        if (!empty($this->to_date) || !empty($this->to_shift)) {
+        if (!empty($this->to_date) && !empty($this->to_shift)) {
             $to_date = date('Y-m-d', strtotime($this->to_date));
             $to_shift = \Yii::$app->general->getshift($this->to_shift);
             $to_date .= ' ' . $to_shift;
@@ -81,12 +80,8 @@ class TblVspPaymentDataConfigSearch extends TblVspPaymentDataConfig {
 
         $query->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code])
                 ->andFilterWhere(['like', 'shift_code', $this->shift_code])
-                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
                 ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])

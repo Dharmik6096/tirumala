@@ -60,8 +60,8 @@ class TblVspPaymentDataConfig extends \app\models\ChildModel {
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code'], 'required', 'except' => ['importCsv']],
-                [['date_time_of_collection', 'shift_code', 'dcs_code'], 'required'],
+                [['union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
+                [['date_time_of_collection', 'shift_code', 'dcs_code', 'bmc_code'], 'required'],
                 [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
@@ -85,10 +85,10 @@ class TblVspPaymentDataConfig extends \app\models\ChildModel {
             'date_time_of_collection' => Yii::t('app', 'Collection Date'),
             'shift_code' => Yii::t('app', 'Shift'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'union_code' => Yii::t('app', 'Company'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -157,16 +157,6 @@ class TblVspPaymentDataConfig extends \app\models\ChildModel {
             $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
             $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
             $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
-
-//            if (empty($this->dcs_code)) {
-//                $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
-//            } else {
-//                $bmc = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-//                if (!empty($this->bmc_code) && ($this->bmc_code != $bmc)) {
-//                    $this->addError('bmc_code', Yii::t('app/validation', $this->getAttributeLabel('bmc_code') . ' is invalid'));
-//                }
-//                $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
-//            }
         }
     }
 

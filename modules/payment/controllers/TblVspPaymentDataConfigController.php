@@ -49,13 +49,13 @@ class TblVspPaymentDataConfigController extends ChildController {
      */
     public function actionCreate() {
         $this->model = new TblVspPaymentDataConfig();
-
+        $saveModel = [];
         $this->viewFile = 'create';
+        $saveModel[] = $this->model;
         if ($this->model->load(\Yii::$app->request->post())) {
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
-//            $this->model->vsp_payment_data_config_code = \Yii::$app->general->getCodeAutoIncrement($this->model);
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Data Consider in Vsp Payment', 'create']);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Data Consider in Vsp Payment', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -72,18 +72,15 @@ class TblVspPaymentDataConfigController extends ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        $this->model->union_code = Yii::$app->general->getforeignkey($this->model->unionCode, 'union_code');
-        $this->model->plant_code = Yii::$app->general->getforeignkey($this->model->plantCode, 'plant_code');
-        $this->model->mcc_plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'mcc_plant_code');
-        $this->model->bmc_code = Yii::$app->general->getforeignkey($this->model->bmcCode, 'bmc_code');
-        $this->model->dcs_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'dcs_code');
+        $saveModel = [];
         if (Yii::$app->request->post()) {
             $historyModel = new TblVspPaymentDataConfigHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $saveModel[] = $historyModel;
             $this->model->load(Yii::$app->request->post());
             $this->model->date_time_of_collection = Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($this->model->shift_code);
-
-            $transaction = $this->generalModel->saveTransaction([$this->model], [$historyModel], ['Data Consider in Vsp Payment', 'edit']);
+            $saveModel[] = $this->model;
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Data Consider in Vsp Payment', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }

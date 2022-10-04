@@ -16,16 +16,16 @@ use yii\web\View;
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'label' => Yii::t('app', 'Company'), 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'plant_code', 'label' => Yii::t('app', 'Plant'), 'value' => function($model) {
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'mcc_plant_code', 'label' => Yii::t('app', 'MCC'), 'value' => function($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC'), 'value' => function($model) {
+        ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
         ['label' => Yii::t('app', 'Soc. Code'), 'visible' => TRUE, 'attribute' => 'dcs_code', 'filter' => true],
@@ -40,8 +40,7 @@ $attribute = [
         ['attribute' => 'dcs_name', 'visible' => TRUE, 'filter' => true, 'label' => Yii::t('app', 'Society Name'), 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'vAlign' => 'middle'],
-//    'vsp_payment_data_config_code',
-    [
+        [
         'attribute' => 'date_time_of_collection',
         'vAlign' => 'middle',
         'filterType' => GridView::FILTER_DATE,
@@ -61,13 +60,7 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-//        'view' => true,
         'update' => true,
-//        'update' => function ($url, $model) {
-//            $disable = '';
-//            $options = ['title' => Yii::t('app', 'update'), 'class' => $disable];
-//            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/general/tbl-mcc-refrigeration-chart/update', 'id' => $model->refrigeration_chart_code], $options);
-//        },
         'delete' => ['option' => 'mcc_plant_code,vsp_payment_data_config_code,tbl-vsp-payment-data-config/delete'],
     ]
 ];
