@@ -10,8 +10,14 @@ $this->title = 'Process for Payment Disburse';
 $action = Url::to(['bank-payment']);
 $bmc_info = '';
 if (!empty($searchModel)) {
-    $bmc_info = Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name') . ' > ' .
-            Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
+    if (is_array($searchModel->bmc_code)) {
+        $mcc_data = $searchModel->mccPlantCode;
+        $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
+    } else {
+        $bmc_data = $searchModel->bmcCode;
+        $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+    }
+    $bmc_info .= Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') . ' > ' .
             (($searchModel->billing_type == 'remuneration') ? Yii::$app->controls->view_date($searchModel->from_datetime) . ' to ' . Yii::$app->controls->view_date($searchModel->to_datetime) :
             Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($searchModel->paymentCycleCode, 'to_date')));
 }
@@ -38,7 +44,14 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 ?>   
                 <?= Html::activeHiddenInput($searchModel, 'payment_cycle_code'); ?>
                 <?= Html::activeHiddenInput($searchModel, 'union_code'); ?>
-                <?= Html::activeHiddenInput($searchModel, 'bmc_code'); ?>
+                <?= Html::activeHiddenInput($searchModel, 'mcc_plant_code'); ?>
+                <?php if (is_array($searchModel->bmc_code)) { ?>
+                    <?php foreach ($searchModel->bmc_code as $bmc_code) { ?>
+                        <?= Html::activeHiddenInput($searchModel, 'bmc_code[]', ['value' => $bmc_code]); ?>
+                    <?php } ?>
+                <?php } else { ?>
+                    <?= Html::activeHiddenInput($searchModel, 'bmc_code'); ?>
+                <?php } ?>
                 <?= Html::activeHiddenInput($searchModel, 'customer_type'); ?>
                 <?php //foreach ($searchModel->dcs_code as $dcs_code) { ?>
                 <?php //Html::activeHiddenInput($searchModel, 'dcs_code[]', ['value' => $dcs_code]); ?>

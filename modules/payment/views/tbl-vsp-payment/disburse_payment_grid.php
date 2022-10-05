@@ -21,7 +21,14 @@ $this->title = 'Process for Payment Disburse';
     <div class="grid-button-wrap" >
         <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php if (is_array($model->bmc_code)) { ?>
+            <?php foreach ($model->bmc_code as $bmc_code) { ?>
+                <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
+        <?php } ?>
         <?= Html::activeHiddenInput($model, 'customer_type'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
@@ -41,57 +48,57 @@ $this->title = 'Process for Payment Disburse';
 //    }],
         //['attribute' => 'bmc_code', 'value' => 'dcsCode.bmcCode.bmc_name', 'label' => Yii::t('app', 'BMC')],
         //['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'label' => Yii::t('app', 'DCS')],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }, 'filter' => false],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
             }],
-        ['attribute' => 'amount', 'pageSummary' => true, 'value' => 'amount',
+            ['attribute' => 'amount', 'pageSummary' => true, 'value' => 'amount',
             'label' => Yii::t('app', 'Milk Amount(+)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'addition', 'pageSummary' => true, 'value' => 'addition',
+            ['attribute' => 'addition', 'pageSummary' => true, 'value' => 'addition',
             'label' => Yii::t('app', 'Addition(+)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'deduction', 'pageSummary' => true, 'value' => 'deduction',
+            ['attribute' => 'deduction', 'pageSummary' => true, 'value' => 'deduction',
             'label' => Yii::t('app', 'Deduction(-)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'previous_hold', 'pageSummary' => true, 'value' => 'previous_hold',
+            ['attribute' => 'previous_hold', 'pageSummary' => true, 'value' => 'previous_hold',
             'label' => Yii::t('app', 'Previous Hold(+)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'previous_due', 'pageSummary' => true, 'value' => 'previous_due',
+            ['attribute' => 'previous_due', 'pageSummary' => true, 'value' => 'previous_due',
             'label' => Yii::t('app', 'Previous Due(-)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'hold_amount', 'pageSummary' => true, 'value' => 'hold_amount',
+            ['attribute' => 'hold_amount', 'pageSummary' => true, 'value' => 'hold_amount',
             'label' => Yii::t('app', 'Hold Amount(-)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'adjust_amount', 'pageSummary' => true, 'value' => 'adjust_amount',
+            ['attribute' => 'adjust_amount', 'pageSummary' => true, 'value' => 'adjust_amount',
             'label' => Yii::t('app', 'Additional Pay(+)'),
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
-        ['attribute' => 'adjust_recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
+            ['attribute' => 'adjust_recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat()
         ],
-        ['attribute' => 'recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
+            ['attribute' => 'recovery', 'visible' => $recovery_from_other_vendor, 'pageSummary' => true,
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat()
         ],
-        ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => 'final_pay',
+            ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => 'final_pay',
             'hAlign' => Yii::$app->general->ColoumnAlign(),
             'format' => Yii::$app->general->CurrencyFormat(),
         ],
