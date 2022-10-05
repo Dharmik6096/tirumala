@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\sms\models\TblApiMaster;
 use yii\helpers\Url;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -390,7 +391,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
     }
 
     public function GenerateMail($mcc, $FileName) {
-        if (!empty($FileName)) {
+        $contactModelData = TblContactDetails::find()->where(['module_code' => $mcc, 'module_name' => 'mccPlant', 'is_active' => 1, 'is_default' => 1])->one();
+        if (!empty($contactModelData) && !empty($contactModelData->email_to) && !empty($FileName)) {
             $apiMaster = new TblApiMaster();
             $apiMaster->receiver_type = 'EMAIL';
             $apiMasterData = $apiMaster->getAPI();
@@ -415,7 +417,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $notificationModel->module_type = "FTP Upload";
                 $notificationModel->entry_datetime = date('Y-m-d H:i:s');
                 $notificationModel->send_mail = 1;
-                $notificationModel->receiver_detail = 'procurement@dodladairy.com,ccpdr@dodladairy.com';
+                $notificationModel->receiver_detail = $contactModelData->email_to; //'procurement@dodladairy.com,ccpdr@dodladairy.com';
+                $notificationModel->other_receiver_detail = $contactModelData->email_cc;
                 $notificationModel->filename = $file_name;
                 $notificationModel->file_path = $file_path;
                 $notificationModel->has_attachment = 2;
