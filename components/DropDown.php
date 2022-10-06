@@ -324,10 +324,10 @@ class DropDown extends Component {
         }
     }
 
-    public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
+    public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
-            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, $autoClose);
         } else {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly);
         }
@@ -1613,7 +1613,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true) {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -1641,7 +1641,7 @@ class DropDown extends Component {
                     'type' => $dropDownType,
                     'data' => $data,
                     'name' => $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple]],
+                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]],
                     'pluginOptions' => [
                         'depends' => $depends,
                         'placeholder' => $placeholder,
