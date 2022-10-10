@@ -148,6 +148,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             }
                                         }
                                         if (in_array($value, array('dcs_code'))) {
+                                            $multiple = in_array($value, $multiArray) ? true : false;
                                             if (isset($value_array[1]) && $value_array[1] == 'route_code') {
                                                 ?>
                                                 <div class="col-sm-3">
@@ -159,7 +160,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_dcs_code">
-                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+                                                    <?= Yii::$app->dropdown->bmc_society($model, $form, 'reportsmodel-bmc_code', 'dcs_code', Yii::t('app', 'Society'), $multiple, '', false, false); ?>
                                                 </div>
                                                 <?php
                                             }
