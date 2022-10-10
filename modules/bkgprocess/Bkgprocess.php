@@ -87,6 +87,14 @@ class Bkgprocess extends \yii\base\Module {
                 'export_title' => 'mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
             ],
+            'TblMilkCollection_cdpl_VM' => [
+                'ext' => '.csv',
+                'param' => 'union_code,mcc_plant_code,bmc_code,dcs_code,from_date,to_date',
+                'sp_name' => 'mis_vmcc_collection_date_wise',
+                'export_title' => 'dcs_code+_mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
+                'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
+                'ftp_path' => '/CDPL/MCC/VMCC/inbox/'
+            ],
         ];
     }
 

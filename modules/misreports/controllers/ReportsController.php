@@ -831,6 +831,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSapReportCdpl() {
+        $this->report = 'SapReportCdpl';
+        return $this->actionIndex();
+    }
+
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -1003,7 +1008,7 @@ class ReportsController extends \app\controllers\ChildController {
             if (!empty($this->data['sap_download'])) {
                 $downLoadArray = [];
                 foreach ($this->output as $detail) {
-                    $plant = ($model->report_type == 1) ? 'PLANT_CODE' : 'Plant';
+                    $plant = $this->report == 'SapReportCdpl' ? 'Agent_Code' : (($model->report_type == 1) ? 'PLANT_CODE' : 'Plant');
                     if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                         if (empty($downLoadArray[$detail[$plant]])) {
                             $downLoadArray[$detail[$plant]] = [];
@@ -1012,11 +1017,16 @@ class ReportsController extends \app\controllers\ChildController {
                     }
                 }
                 foreach ($downLoadArray as $bmc => $download) {
-                    $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
-                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+                    if ($this->report == 'SapReportCdpl') {
+                        $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+                    } else {
+                        $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
+                        $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->date)) . '_' . $model->shift;
+                    }
                     if (isset(Yii::$app->request->queryParams['upload_ftp_file']) && Yii::$app->request->queryParams['upload_ftp_file'] == '1') {
                         $this->uploadFTPData($title, $download, $model, $bmc);
                     }
+
                     $this->downloadDataLocal($title, $download, $fileArray);
                 }
                 $this->fileDownloadArr = $fileArray;
@@ -2270,6 +2280,16 @@ class ReportsController extends \app\controllers\ChildController {
 //                'url1' => ['SAP Files Process', '/bkgprocess/tbl-ftp-txn-log/index', true],
                 'sap_download' => true,
                 'output_type' => false,
+            ],
+            'SapReportCdpl' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_vmcc_collection_date_wise',
+                'scenario' => 'SapReportCdpl',
+                'title' => 'SAP VM Report',
+                'export_title' => true,
+                'sap_download' => true,
+                'output_type' => false,
+                'multiArray' => ['dcs_code']
             ],
         ];
         return $label[$l];

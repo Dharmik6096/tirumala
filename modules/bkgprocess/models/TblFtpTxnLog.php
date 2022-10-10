@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\sms\models\TblApiMaster;
 use yii\helpers\Url;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -131,7 +132,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
             $downLoadArray = [];
             foreach ($output as $detail) {
-                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : 'Plant');
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : 'Plant'));
                 if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
                     if (empty($downLoadArray[$detail[$plant]])) {
                         $downLoadArray[$detail[$plant]] = [];
@@ -140,12 +141,16 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 }
             }
             foreach ($downLoadArray as $bmc => $download) {
-                if ($eiplCode == 'DODLA') {
+                if ($eiplCode == 'JERSEY') {
+                    $report_type = 'VMCC';
+                    $title = $data_array['mcc_plant_code'] . '_' . $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                } elseif ($eiplCode == 'DODLA') {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 } else {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'WQ' : 'SD';
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 }
-                $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 $txn->ref_code = $bmc;
                 $bmc_data = $txn->bmcCode;
                 if (!empty($bmc_data)) {
@@ -390,7 +395,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
     }
 
     public function GenerateMail($mcc, $FileName) {
-        if (!empty($FileName)) {
+        $contactModelData = TblContactDetails::find()->where(['module_code' => $mcc, 'module_name' => 'mccPlant', 'is_active' => 1, 'is_default' => 1])->one();
+        if (!empty($contactModelData) && !empty($contactModelData->email_to) && !empty($FileName)) {
             $apiMaster = new TblApiMaster();
             $apiMaster->receiver_type = 'EMAIL';
             $apiMasterData = $apiMaster->getAPI();
@@ -415,7 +421,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $notificationModel->module_type = "FTP Upload";
                 $notificationModel->entry_datetime = date('Y-m-d H:i:s');
                 $notificationModel->send_mail = 1;
-                $notificationModel->receiver_detail = 'procurement@dodladairy.com,ccpdr@dodladairy.com';
+                $notificationModel->receiver_detail = $contactModelData->email_to; //'procurement@dodladairy.com,ccpdr@dodladairy.com';
+                $notificationModel->other_receiver_detail = $contactModelData->email_cc;
                 $notificationModel->filename = $file_name;
                 $notificationModel->file_path = $file_path;
                 $notificationModel->has_attachment = 2;
