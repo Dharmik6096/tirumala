@@ -48,31 +48,31 @@ class TblVspPaymentDataConfig extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['shift_code'], function ($attribute, $params) {
+            [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-                [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-                [['date_time_of_collection', 'created_at', 'updated_at', 'dcs_code', 'shift_code', 'dcs_name'], 'safe'],
-                [['shift_code', 'originating_type'], 'integer'],
-                [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
-                [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-                [['union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
-                [['date_time_of_collection', 'shift_code', 'dcs_code', 'bmc_code'], 'required'],
-                [['bmc_code'], function ($attribute, $params) {
+            [['shift_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+            [['date_time_of_collection', 'created_at', 'updated_at', 'dcs_code', 'shift_code', 'dcs_name'], 'safe'],
+            [['shift_code', 'originating_type'], 'integer'],
+            [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
+            [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
+            [['union_code'], 'string', 'max' => 3],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['union_code', 'mcc_plant_code', 'plant_code'], 'required', 'except' => ['importCsv']],
+            [['date_time_of_collection', 'shift_code', 'dcs_code', 'bmc_code'], 'required'],
+            [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'validDcs', 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
-                ['shift_code', 'unique', 'targetAttribute' => ['shift_code', 'dcs_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
+            [['date_time_of_collection'], 'validDcs', 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDateDot', 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['date_time_of_collection'], 'convertDate', 'on' => ['importCsv']],
+            ['shift_code', 'unique', 'targetAttribute' => ['shift_code', 'dcs_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                     return empty($this->getErrors());
                 },],
-                [['shift_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['shift_code'], 'ImportfieldSet', 'skipOnError' => true, 'on' => 'importCsv'],
         ];
     }
 
@@ -145,10 +145,10 @@ class TblVspPaymentDataConfig extends \app\models\ChildModel {
 
     public function validDcs() {
         $data = TblDcs::find()->select('dcs_code')->where(['or', ['dcs_code' => $this->dcs_code], ['dcs_code_ex' => $this->dcs_code], ['ref_code' => $this->dcs_code]])->andWhere(['is_active' => 1, 'bmc_code' => $this->bmc_code])->all();
-        $dcs = !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
+        $this->dcs_code = !empty($data) && count($data) == 1 ? $data[0]->dcs_code : '';
 
-        if (empty($dcs)) {
-            $this->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'DCS Code') . ' is invalid'));
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS Code') . ' is invalid'));
         }
     }
 
