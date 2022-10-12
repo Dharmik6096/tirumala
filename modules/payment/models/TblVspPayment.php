@@ -39,6 +39,7 @@ use app\modules\organisation\models\TblUnions;
 class TblVspPayment extends \app\models\ChildModel {
 
     public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
+    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc;
 
     /**
      * @inheritdoc
@@ -52,14 +53,15 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
-            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
-            [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
-            [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
-            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-            [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
+                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code', 'multiple_bmc'], 'safe'],
+                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+                [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code'], 'required'],
+                [['bmc_code', 'customer_type'], 'required', 'on' => ['remuneration', 'processpayment']],
+                [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
+                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
         ];
     }
 
@@ -101,7 +103,10 @@ class TblVspPayment extends \app\models\ChildModel {
             'recovery' => Yii::t('app', 'Recovery(-)'),
             'old_recovery' => Yii::t('app', 'Old Recovery(-)'),
             'new_recovery' => Yii::t('app', 'New Recovery(+)'),
-            'total_recovery' => Yii::t('app', 'Net Recovery')
+            'total_recovery' => Yii::t('app', 'Net Recovery'),
+            'p_bmc_code' => Yii::t('app', 'BMC'),
+            'p_customer_type' => Yii::t('app', 'Type'),
+            'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
         ];
     }
 
