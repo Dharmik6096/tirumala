@@ -28,10 +28,11 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\modules\configuration\models\TblGenerateReportParam;
+use app\modules\collection\models\TblMilkCollectionSummary;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -985,6 +986,34 @@ class SchedulerController extends ChildController {
                 } else {
                     $this->process_files_data($row);
                 }
+            }
+        }
+    }
+
+    public function actionSapFileUpload() {
+        $model = new TblMilkCollectionSummary();
+        $modelData = $model->getPickRecords(10);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->milk_collection_summary_code;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            $output = [];
+            foreach ($modelData as $row) {
+                $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+                $data_array['module_code'] = $row->dcs_code;
+                $data_array['mcc_plant_code'] = $row->mcc_plant_code;
+                $data_array['union_code'] = $row->union_code;
+                $data_array['applicable_date'] = $row->date_time_of_collection;
+                $data_array['shift_code'] = $row->shift_code;
+                $data_array['bmc_code'] = $row->bmc_code;
+                $data_array['dcs_code'] = $row->dcs_code;
+                $data_array['from_date'] = $row->date_time_of_collection;
+                $data_array['to_date'] = $row->date_time_of_collection;
+
+                $ftp_model = new TblFtpTxnLog();
+                $ftp_model->exportData($data_array, $title = '', $output);
+                $update = $model->updateFileUploadStatus($row->milk_collection_summary_code);
             }
         }
     }

@@ -9,6 +9,7 @@ use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "tbl_milk_collection_summary".
@@ -61,10 +62,11 @@ class TblMilkCollectionSummary extends \app\models\ChildModel {
     public function rules() {
         return [
             [['date_time_of_collection', 'created_at', 'updated_at'], 'safe', 'on' => ['androidsync']],
-            [['milk_collection_summary_code', 'date_time_of_collection', 'created_at', 'updated_at'], 'safe'],
+            [['milk_collection_summary_code', 'date_time_of_collection', 'created_at', 'updated_at', 'data_post_status', 'picked_datetime'], 'safe'],
             [['shift_code', 'sample_count', 'auto_count', 'manual_count'], 'safe'],
             [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount', 'received_timestamp'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['data_post_status'], 'default', 'value' => 0]
         ];
     }
 
@@ -128,6 +130,35 @@ class TblMilkCollectionSummary extends \app\models\ChildModel {
 
     public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
+    public function getPickRecords($limit = 10, $considerPickData = true) {
+        $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $query = $this->find()
+                ->where(['or', ['data_post_status' => 0], ['data_post_status' => NULL], ['data_post_status' => '']])
+                ->limit($limit)
+                ->orderBy(['milk_collection_summary_code' => SORT_ASC]);
+
+        if ($considerPickData) {
+            $pendingDataQuery = $this->find()
+                    ->where(['data_post_status' => 1])
+                    ->andWhere(['<', 'picked_datetime', $datetime]);
+            $pendingDataQuery->orderBy(['milk_collection_summary_code' => SORT_ASC])->limit(5);
+
+            return $unionQuery = (new ActiveQuery(TblMilkCollectionSummary::className()))->from([
+                        'pending_data' => $query->union($pendingDataQuery, TRUE)
+                    ])->all();
+        } else {
+            return $query->all();
+        }
+    }
+
+    public function updateFileStatus($value) {
+        return $this->updateAll(['data_post_status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['milk_collection_summary_code' => $value]);
+    }
+
+    public function updateFileUploadStatus($value) {
+        return $this->updateAll(['data_post_status' => 2, 'pick_datetime' => date('Y-m-d H:i:s')], ['milk_collection_summary_code' => $value]);
     }
 
 }
