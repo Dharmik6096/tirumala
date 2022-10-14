@@ -119,6 +119,10 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false) {
         $eiplCode = Yii::$app->session->get('eiplCode');
+        if (empty($eiplCode)) {
+            $mccModelData = TblUnions::find()->where(['union_code' => $data_array['union_code']])->one();
+            $eiplCode = !empty($mccModelData) ? $mccModelData->eipl_code : $eiplCode;
+        }
         $data = new TblFileCreator();
         $data->attributes = $data_array;
         $txn = new TblFtpTxnLog();
