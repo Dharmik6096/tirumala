@@ -394,7 +394,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $modelData->x_col4 = $famnt;
             $modelData->{$updateField} = $val;
             $saveModel[] = $historyModel;
-            if ($modelData->bmc_lock == 1 && $modelData->member_lock == 1 && $modelData->product_sale_lock) {
+            if ($modelData->bmc_lock == 1 && $modelData->member_lock == 1 && $modelData->product_sale_lock == 1 && $modelData->vm_data_lock == 1) {
                 $modelData->data_lock = 1;
             }
             $model = $modelData;
@@ -462,6 +462,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
+        if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_dodla_WQ', TRUE);
+        }
+
         if (Yii::$app->session->get('eiplCode') == 'MMD') {
             $callErp = true;
         } else {
@@ -539,6 +543,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->bmc_lock = 1;
             $this->model->member_lock = 1;
             $this->model->product_sale_lock = 1;
+            $this->model->vm_data_lock = 1;
             $saveModel[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
@@ -591,6 +596,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->bmc_lock = 0;
             $this->model->member_lock = 0;
             $this->model->product_sale_lock = 0;
+            $this->model->vm_data_lock = 0;
             $saveModel[] = $this->model;
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
@@ -604,11 +610,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
-    public function generateFTPFile($mcc, $date, $shift, $module_name) {
+    public function generateFTPFile($mcc, $date, $shift, $module_name, $mail = false) {
         $date .= ' ' . \Yii::$app->general->getshift($shift);
         $model = new TblMccShiftLock();
         $model->mcc_plant_code = $mcc;
         $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
+        $mccRefCode = Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
         $data_array = [];
         $data_array['module_name'] = $module_name;
         $data_array['module_code'] = $mcc;
@@ -621,7 +628,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $data_array['to_date'] = $date;
 //        if (in_array($mcc, ['7300', '7304', '7300', '7301', '7303', '7304', '7384', '7583', '7416', '7423', '7424', '7302'])) {
         $ftp_model = new TblFtpTxnLog();
-        $ftp_model->exportData($data_array);
+        $ftp_model->exportData($data_array, '', [], $mccRefCode, $mail);
 //        }
     }
 
@@ -800,6 +807,17 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionVmDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+            $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_dodla_VM', TRUE);
+        }
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'vm_data_lock', 1, 'Data Lock - VM', 'Data Unlock - VM', $url, $fqty, $ffat, $fsnf, $famnt);
+    }
+
+    public function actionVmDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
+        $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'vm_data_lock', 0, 'Data Lock - VM', 'Data Unlock - VM', $url, $fqty, $ffat, $fsnf, $famnt);
     }
 
 }

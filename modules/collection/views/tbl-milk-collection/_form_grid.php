@@ -37,10 +37,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
         },],
-    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Society Name'),
+    ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'Society Name'),
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'filter' => false],
+        }],
     ['label' => Yii::t('app', 'Member Code'), 'attribute' => 'member_code', 'value' => function($model) {
             return substr($model->member_code, -4);
         }, 'visible' => TRUE, 'filter' => false],

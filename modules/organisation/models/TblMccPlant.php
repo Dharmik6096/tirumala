@@ -94,7 +94,7 @@ class TblMccPlant extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
 //            [['mcc_plant_code'], 'integer', 'min' => 1],
 //            [['mcc_plant_code'], 'string', 'max' => 6],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code', 'vendor_code'], 'safe'],
             [['is_weight_manual', 'is_quality_manual'], 'boolean'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
@@ -103,6 +103,7 @@ class TblMccPlant extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['recovery_validate'], 'default', 'value' => 0],
+            [['sap_vendor_code'], 'setVendorCode'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -431,6 +432,12 @@ class TblMccPlant extends \app\models\ChildModel {
             $data = $this->find()->select('mcc_plant_code')->where(['or', ['mcc_plant_code' => $mcc], ['mcc_plant_code_ex' => $mcc], ['ref_code' => $mcc]])->andWhere(['is_active' => 1])->all();
         }
         return !empty($data) && count($data) == 1 ? $data[0]->mcc_plant_code : '';
+    }
+
+    public function setVendorCode($attribute, $params) {
+        if (Yii::$app->session->get('eiplCode') == 'MMD') {
+            $this->vendor_code = $this->sap_vendor_code;
+        }
     }
 
 }

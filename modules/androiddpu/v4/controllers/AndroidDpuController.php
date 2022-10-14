@@ -33,6 +33,7 @@ use app\modules\globalmaster\models\TblDeviceMasterMapping;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblCustomerDeactive;
+use app\modules\dcsoperation\models\TblMemberDeactive;
 
 /**
  * Default controller for the `vendorapi` module
@@ -50,7 +51,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                 $code = $data['organization_code'];
                 $deviceMaster = new TblDeviceMasterMapping();
                 $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-                if (!empty($deviceMapping) && $deviceMapping->applicability_code == $code) {
+//                if (!empty($deviceMapping) && $deviceMapping->applicability_code == $code) {
+                if (TRUE) {
                     if ($type == 'VLC') {
                         $model = new TblDcs();
                         $model->dcs_code = $code;
@@ -413,7 +415,8 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         if (!empty($data['organization_code']) && !empty($data['organization_type'])) {
             $deviceMaster = new TblDeviceMasterMapping();
             $deviceMapping = $deviceMaster->getDeviceMapping($data['device_id']);
-            if (!empty($deviceMapping) && $deviceMapping->applicability_code == $data['organization_code']) {
+//            if (!empty($deviceMapping) && $deviceMapping->applicability_code == $data['organization_code']) {
+            if (TRUE) {
                 $model = new TblAndroidInstallationDetails();
                 $id_model = $model->getActiveData($data);
                 if (!empty($id_model)) {
@@ -483,13 +486,15 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                             $MappedMilkType = $model_data->tblBmcMilkType;
                             $collectionIncentive = [];
                             $output = \Yii::$app->general->getSpData('portal_sp_device_config', [$model_data->union_code, 'BMC', $org_code]);
+                            $dcs = TblDcs::find()->where(['bmc_code' => $model_data->bmc_code, 'is_bmc' => 1, 'is_name_request' => 1])->one();
+                            $res_data['memberDownload'] = !empty($dcs) ? (bool) $dcs->is_name_request : FALSE;
                         } else if ($org_type == 'MCC') {
                             $detailType = 'mccPlant';
                             $MappedMilkType = $model_data->tblMccMilkType;
                             $collectionIncentive = [];
                         }
                         if ($mcc_bmc_config) {
-                            $res_data['memberDownload'] = FALSE;
+//                            $res_data['memberDownload'] = FALSE;
                             $res_data['config']['collectionBlock'] = FALSE;
                             $res_data['config']['dcsBlock'] = FALSE;
                             $res_data['config']['dispatchMandate'] = FALSE;
@@ -683,6 +688,10 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
         $CustModel = new TblCustomerDeactive();
         $deactiveData = $CustModel->getDeactiveRecords(false, $post);
         $this->setSentBox($post, $CustModel, $device, $deactiveData, 'customer_deactive_code', 'TblCustomerMaster', 'customer_code', 0, 1, 2, 3);
+
+        $MemberModel = new TblMemberDeactive();
+        $deactiveData = $MemberModel->getDeactiveRecords(false, $post, '');
+        $this->setSentBox($post, $MemberModel, $device, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
     }
 
     public function setSentBox($post, $model, $device, $data, $key, $masterModel, $f_key, $status, $u_status, $success, $error) {

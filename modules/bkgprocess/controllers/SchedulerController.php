@@ -31,7 +31,7 @@ use app\modules\configuration\models\TblGenerateReportParam;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -235,7 +235,7 @@ class SchedulerController extends ChildController {
     public function actionProcessImportFiles() {
         $model = new TblImportFileLog();
         $model->status = 0;
-        $modelData = $model->getPickRecords([], 10);
+        $modelData = $model->getPickRecords([], 10, ['SP']);
         if (!empty($modelData)) {
             $ids = array_map(function($e) {
                 return $e->log_id;
@@ -521,7 +521,7 @@ class SchedulerController extends ChildController {
 
 
         $MemberModel = new TblMemberDeactive();
-        $deactiveData = $MemberModel->getDeactiveRecords(true, $limit);
+        $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
 
         $activeData = $MemberModel->getActiveRecords($limit);
@@ -964,6 +964,26 @@ class SchedulerController extends ChildController {
                     $row->file_name = '';
                     $row->save(FALSE);
                     $update = $model->updateFileName($row->report_param_code, 2, '', $row->resp_desc);
+                }
+            }
+        }
+    }
+
+    public function actionProcessImportFilesBackground() {
+        $model = new TblImportFileLog();
+        $model->status = 0;
+        $modelData = $model->getPickRecords([], 1, ['background'], false);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->log_id;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                $model->updateCronPickedDate($row);
+                if (strtolower($row->process_type) == 'background') {
+                    $this->bulk_files_data($row);
+                } else {
+                    $this->process_files_data($row);
                 }
             }
         }

@@ -153,6 +153,7 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
 //                                $saveModel[] = $existMainData;
                             } else if ($action == 'DELETE') {
                                 $MainModel = new TblBmcCollection();
+                                $existData->old_customer_code = !empty($existData->old_customer_code) ? $existData->old_customer_code : $existData->customer_code;
                                 $existMainData = $MainModel->getExistingCollection($existData);
                                 if (!empty($existMainData)) {
                                     $historyModel = new TblBmcCollectionHistory();

@@ -24,18 +24,18 @@ class TransactionDataController extends \app\modules\soap\controllers\DefaultCon
                 'update_key' => 'milk_collection_code',
                 'result_key' => 'MilkCollectionDataResult',
             ],
-            'CFSalesData' => [
-                'sp_name' => 'sp_vendor_prabhat_product_sale_data',
-                'model_name' => 'TblProductSaleTransaction',
-                'update_key' => 'product_sale_transaction_code',
-                'result_key' => 'CFSalesDataResult',
-            ],
-            'AdvanceFromPM' => [
-                'sp_name' => 'sp_vendor_prabhat_loan_product_sale_data',
-                'model_name' => 'TblLoanProductSaleDetails',
-                'update_key' => 'sale_detail_code',
-                'result_key' => 'AdvanceFromPMResult',
-            ],
+//            'CFSalesData' => [
+//                'sp_name' => 'sp_vendor_prabhat_product_sale_data',
+//                'model_name' => 'TblProductSaleTransaction',
+//                'update_key' => 'product_sale_transaction_code',
+//                'result_key' => 'CFSalesDataResult',
+//            ],
+//            'AdvanceFromPM' => [
+//                'sp_name' => 'sp_vendor_prabhat_loan_product_sale_data',
+//                'model_name' => 'TblLoanProductSaleDetails',
+//                'update_key' => 'sale_detail_code',
+//                'result_key' => 'AdvanceFromPMResult',
+//            ],
         ];
         return isset($data[$param]) ? [$param => $data[$param]] : $data;
     }
@@ -83,6 +83,31 @@ class TransactionDataController extends \app\modules\soap\controllers\DefaultCon
                 }
             }
         }
+    }
+
+    public function actionProductSale() {
+        $data = $this->setDataKeyProdSale();
+        foreach ($data as $api_key => $api_config) {
+            $this->postData([$api_key => $api_config]);
+        }
+    }
+
+    public function setDataKeyProdSale($param = NULL) {
+        $data = [
+            'CFSalesData' => [
+                'sp_name' => 'sp_vendor_prabhat_product_sale_data',
+                'model_name' => 'TblProductSaleTransaction',
+                'update_key' => 'product_sale_transaction_code',
+                'result_key' => 'CFSalesDataResult',
+            ],
+            'AdvanceFromPM' => [
+                'sp_name' => 'sp_vendor_prabhat_loan_product_sale_data',
+                'model_name' => 'TblLoanProductSaleDetails',
+                'update_key' => 'sale_detail_code',
+                'result_key' => 'AdvanceFromPMResult',
+            ],
+        ];
+        return isset($data[$param]) ? [$param => $data[$param]] : $data;
     }
 
 }

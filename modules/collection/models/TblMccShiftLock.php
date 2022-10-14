@@ -43,14 +43,14 @@ class TblMccShiftLock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['shift_lock_code'], 'required'],
-                [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'created_at', 'updated_at'], 'safe'],
-                [['data_lock', 'originating_type'], 'integer'],
-                [['created_by', 'updated_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['qty', 'avg_fat', 'avg_snf', 'amount', 'bmc_lock', 'member_lock', 'product_sale_lock'], 'safe'],
-                [['data_lock', 'bmc_lock', 'member_lock', 'product_sale_lock'], 'default', 'value' => 0]
+            [['shift_lock_code'], 'required'],
+            [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'shift_code', 'created_at', 'updated_at'], 'safe'],
+            [['data_lock', 'originating_type'], 'integer'],
+            [['created_by', 'updated_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'vm_data_lock'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['qty', 'avg_fat', 'avg_snf', 'amount', 'bmc_lock', 'member_lock', 'product_sale_lock'], 'safe'],
+            [['data_lock', 'bmc_lock', 'member_lock', 'product_sale_lock', 'vm_data_lock'], 'default', 'value' => 0]
         ];
     }
 
@@ -79,6 +79,7 @@ class TblMccShiftLock extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'f_plant_code' => Yii::t('app', 'Plant Code'),
+            'vm_data_lock' => Yii::t('app', 'VM Data Lock'),
         ];
     }
 

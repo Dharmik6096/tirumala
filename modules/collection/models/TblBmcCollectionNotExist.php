@@ -136,7 +136,7 @@ class TblBmcCollectionNotExist extends \app\models\ChildModel {
             [['originating_type', 'last_edited_type', 'sync_status'], 'safe'],
             [['union_code'], 'safe'],
             [['vehicle_no', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['purchase_rate_code', 'recalculated_code', 'antibiotic'], 'safe'],
+            [['purchase_rate_code', 'recalculated_code', 'antibiotic', 'tare_weight', 'gross_weight'], 'safe'],
         ];
     }
 
