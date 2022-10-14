@@ -486,6 +486,7 @@ class TblProductSale extends \app\models\ChildModel {
                 $detailModel->x_col1 = $app['sale_rate'];
                 $detailModel->unit_code = $app['unit_code'];
                 $model->amount = $detailModel->quantity * $detailModel->rate;
+                $model->amount_due = $model->amount - $model->discount;
             }
         } else {
             $this->loadRate($model, $detailModel);
