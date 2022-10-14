@@ -589,6 +589,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
                         ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
+                        ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
                     ]
                 ],
                 [

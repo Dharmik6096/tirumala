@@ -585,6 +585,16 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'SapMilkCollectionData';
         return $this->actionIndex();
     }
+    
+      public function actionAutoManualMilkCollection() {
+        $this->report = 'AutoManualMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AutoManualBMCCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
 
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
@@ -2291,6 +2301,22 @@ class ReportsController extends \app\controllers\ChildController {
                 'output_type' => false,
                 'multiArray' => ['dcs_code']
             ],
+            
+            'AutoManualMilkCollection' => [
+                'param' => 'union_code,channel_code,bmc_code:channel_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_auto_manual_milk_collection_report',
+                'scenario' => 'AutoManualMilkCollection',
+                'title' => 'Auto Manual Report',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],   
+            
+            'AutoManualBMCCollection' => [
+                'param' => 'union_code,channel_code,bmc_code:channel_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_auto_manual_bmc_collection_report',
+                'scenario' => 'AutoManualMilkCollection',
+                'title' => 'Auto Manual Report',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ], 
         ];
         return $label[$l];
     }
