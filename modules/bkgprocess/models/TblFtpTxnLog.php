@@ -65,11 +65,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_status', 'status'], 'default', 'value' => 0],
-            [['txn_type'], 'default', 'value' => 'EIPL'],
-            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
+                [['file_status', 'status'], 'default', 'value' => 0],
+                [['txn_type'], 'default', 'value' => 'EIPL'],
+                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
         ];
     }
 
@@ -147,7 +147,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             foreach ($downLoadArray as $bmc => $download) {
                 if ($eiplCode == 'JERSEY') {
                     $report_type = 'VMCC';
-                    $title = $data_array['mcc_plant_code'] . '_' . $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                    $mccCode = (!empty($download[0]) && !empty($download[0]['Plant_Code'])) ? $download[0]['Plant_Code'] : $data_array['mcc_plant_code'];
+                    $title = $mccCode . '_' . $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
                 } elseif ($eiplCode == 'DODLA') {
                     $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
                     $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
