@@ -1207,7 +1207,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $file_header = !empty($download) ? array_keys($download[0]) : [];
         $sheet->fromArray(
                 $file_header, // The data to set
                 NULL, // Array values with this value will not be set
