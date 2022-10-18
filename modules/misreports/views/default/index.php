@@ -128,7 +128,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     echo Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodelold-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodelold-plant_code', $value, 'MCC', $multiple);
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodelold-plant_code', $value, Yii::t('app', 'MCC'), $multiple);
                                                 }
                                                 ?>                
                                             </div>
