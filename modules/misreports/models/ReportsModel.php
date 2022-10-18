@@ -110,6 +110,7 @@ class ReportsModel extends Model {
             [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['union_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'SapReportCdpl'],
+            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'TankerReport'],
         ];
     }
 

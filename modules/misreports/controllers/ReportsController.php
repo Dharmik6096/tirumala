@@ -1155,6 +1155,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTankerReport() {
+        $this->report = 'TankerReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2290,6 +2295,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sap_download' => true,
                 'output_type' => false,
                 'multiArray' => ['dcs_code']
+            ],
+            'TankerReport' => [
+                'param' => 'union_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_tanker_dispatch',
+                'scenario' => 'TankerReport',
+                'title' => 'Tanker Report',
             ],
         ];
         return $label[$l];
