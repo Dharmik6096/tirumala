@@ -92,6 +92,7 @@ class TblWeightCollection extends \app\models\ChildModel {
                 [['cans', 'rejected_can', 'rejected_qty'], 'default', 'value' => '0'],
                 [['date_time_of_collection', 'shift_code'], 'backendData', 'except' => ['androidsync']],
                 [['uuid'], 'validateBmcCode'],
+                [['uuid'], 'validateRouteCode'],
         ];
     }
 
@@ -214,14 +215,6 @@ class TblWeightCollection extends \app\models\ChildModel {
     }
 
     public function validateBmcCode() {
-        if (strtolower($this->customer_type) == 'DCS') {
-            $routeCode = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
-        } else if (strtolower($this->customer_type) == 'member') {
-            $routeCode = $this->route_code;
-        } else {
-            $routeCode = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
-        }
-        $this->route_code = !empty($routeCode) && $routeCode != 'N/A' ? $routeCode : $this->route_code;
         if (empty($this->bmc_code) || empty($this->own_bmc_code)) {
             $bmcCode = Yii::$app->general->getforeignkey($this->defaultBmcCode, 'bmc_code');
             $this->bmc_code = !empty($bmcCode) && $bmcCode != 'N/A' && empty($this->bmc_code) ? $bmcCode : $this->bmc_code;
@@ -235,6 +228,17 @@ class TblWeightCollection extends \app\models\ChildModel {
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
+    public function validateRouteCode($attribute, $param) {
+        if (strtolower($this->customer_type) == 'dcs') {
+            $routeCode = Yii::$app->general->getforeignkey($this->dcsCode, 'route_code');
+        } else if (strtolower($this->customer_type) == 'member') {
+            $routeCode = $this->route_code;
+        } else {
+            $routeCode = Yii::$app->general->getforeignkey($this->mainCustomerCode, 'route_code');
+        }
+        $this->route_code = !empty($routeCode) && $routeCode != 'N/A' ? $routeCode : $this->route_code;
     }
 
 }
