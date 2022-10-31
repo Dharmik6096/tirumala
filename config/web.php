@@ -17,7 +17,27 @@ $config = [
         '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
-        'session' => ['name' => 'tirumala'],
+        // 'session' => ['name' => 'tirumala'],
+        'session' => [
+            'cookieParams' => [
+            'httpOnly' => true,
+            'secure' => false
+            ]
+        ],
+        'cookies' => [
+                'class' => 'yii\web\Cookie',
+                'httpOnly' => true,
+                'secure' => true
+        ],
+        // 'cache' => ['class' => 'yii\caching\FileCache'],
+        'cache' => [
+                'class' => 'yii\redis\Cache',
+                'redis' => [
+                        'hostname' => '10.1.0.13',
+                        'port' => 6379,
+                        'database' => 1,
+                ]
+        ],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
@@ -69,7 +89,6 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'PqRQWzXJwmIUsAA96iTQhWvWzgREpvc2',
         ],
-        'cache' => ['class' => 'yii\caching\FileCache'],
 //        'user' => [
 //            'identityClass' => 'app\models\User',
 //            'enableAutoLogin' => true,
