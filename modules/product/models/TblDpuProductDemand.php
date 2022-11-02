@@ -49,10 +49,10 @@ class TblDpuProductDemand extends \app\models\ChildModel {
     public function rules() {
         return [
 //            [['trDate', 'shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'required'],
-            [['trDate', 'ApprovedDate', 'UpdateOnUtc', 'shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'safe'],
-            [['shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'CreatedBy', 'UpdatedBy', 'ProductStatus'], 'string'],
-            [['PPrice', 'PQty', 'PAmount'], 'number'],
-            [['Status'], 'integer'],
+                [['trDate', 'ApprovedDate', 'UpdateOnUtc', 'shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'PPrice', 'PQty', 'PAmount', 'CreateOnUtc', 'CreatedBy'], 'safe'],
+                [['shift', 'bmc_code', 'dcs_code', 'member_code', 'product_code', 'CreatedBy', 'UpdatedBy', 'ProductStatus'], 'string'],
+                [['PPrice', 'PQty', 'PAmount'], 'number'],
+                [['Status'], 'integer'],
         ];
     }
 
@@ -83,6 +83,7 @@ class TblDpuProductDemand extends \app\models\ChildModel {
             'product_name' => Yii::t('app', 'Product Name'),
             'unit_code' => Yii::t('app', 'Unit'),
             'type' => Yii::t('app', 'Type'),
+            'member_name' => Yii::t('app', 'Member Name'),
         ];
     }
 

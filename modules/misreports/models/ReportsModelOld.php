@@ -79,6 +79,7 @@ class ReportsModelOld extends Model {
             'vendor_code' => \Yii::t('app', 'Name'),
             'customer_type' => \Yii::t('app', 'Type'),
             'payment_cycle_code' => \Yii::t('app', 'Payment Cycle'),
+            'member' => \Yii::t('app', 'Member'),
         ];
     }
 

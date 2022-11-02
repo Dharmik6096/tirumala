@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Customer Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Customer Details') ?></h4>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>

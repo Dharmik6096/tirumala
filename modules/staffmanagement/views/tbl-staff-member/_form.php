@@ -14,7 +14,6 @@ $disable = $type == 'edit' ? (!empty($model->tenure_to_date) ? TRUE : FALSE) : t
 $form = ActiveForm::begin([
             'options' => ['id' => 'staff-member-form'],
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -24,7 +23,7 @@ $form = ActiveForm::begin([
 <div class="row theme_border_left theme_border_right theme_border_bottom">
     <div class="col-md-6 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Staff Member Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Staff Farmer Details') ?></h4>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
@@ -59,7 +58,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-md-6 padding_10_0 theme-box theme_border_left">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Member Address Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Member Address Details') ?></h4>
         </div>
         <?= $form->field($model, 'address', ['options' => ['class' => 'form-group col-sm-4 disable_enab']])->textarea() ?>
         <div class="col-sm-4">
@@ -93,7 +92,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Member Bank Details</h4>
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Member Bank Details') ?></h4>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($model, $form, 'tenure_from_date', 'form-group col-sm-2 ' . $class, FALSE, FALSE, $readonly); ?>
