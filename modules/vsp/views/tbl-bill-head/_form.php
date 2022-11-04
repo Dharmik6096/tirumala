@@ -74,13 +74,19 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'sequence_no')->textInput() ?>       
     </div>
-    <div class="col-sm-2 mt10">
+    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?php
+        echo Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false);
+        ?>
+    </div>
+    <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
     <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>
-    <div class="col-sm-2 mt10" id="slab">
+    <div class="col-sm-2 mt15" id="slab">
         <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

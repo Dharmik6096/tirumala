@@ -19,7 +19,6 @@ if (!empty($_POST)) {
         <?php
         $form = ActiveForm::begin([
                     'validateOnBlur' => false,
-                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -38,8 +37,11 @@ if (!empty($_POST)) {
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblremunerationsummary-plant_code', 'mcc_plant_code', TRUE); ?>
             </div>      
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', TRUE); ?>
+            <div  id="single-bmc" class="col-sm-2">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'bmc_code', 'BMC *'); ?>
+            </div>
+            <div id="multiple-bmc" class="col-sm-2">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblremunerationsummary-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'from_datetime', '', '', false, false); ?>
@@ -65,3 +67,31 @@ if (!empty($_POST)) {
     </div>
 </div>
 
+<?php
+$script = "
+     $('#single-bmc').hide();
+     $('#multiple-bmc').hide();  
+$('#tblremunerationsummary-mcc_plant_code').on('change',function(){
+     var mcc_plant_code= $(this).val();
+     if(mcc_plant_code !='' && mcc_plant_code != null){
+            $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
+            data: {'mcc_plant_code' : mcc_plant_code},            
+            success: function(data) {
+                var data = $.parseJSON(data);
+                var multiple_bmc = data.multiple_bmc;
+               if(multiple_bmc == '1'){
+                 $('#single-bmc').hide();
+                 $('#multiple-bmc').show();
+               }else{
+                 $('#multiple-bmc').hide();
+                 $('#single-bmc').show();
+               }   
+            }
+        });
+      }
+});
+";
+$this->registerJs($script, View::POS_END, 'check-mcc-type');
+?>
