@@ -13,8 +13,8 @@ use webvimark\modules\UserManagement\models\User;
 <?php
 
 $attribute = [
-    ['attribute' => 'mcc', 'vAlign' => 'middle', 'filter' => false],
-    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
+        ['attribute' => Yii::t('app', 'MCC'), 'vAlign' => 'middle', 'filter' => false],
+        ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -24,14 +24,14 @@ $attribute = [
 //            return Yii::$app->controls->view_date($model['date_time_of_collection']);
 //        }, 
         'filter' => FALSE],
-    ['attribute' => 'shift', 'filter' => false],
-    ['attribute' => 'qty', 'filter' => FALSE],
-    ['attribute' => 'avgFAT', 'filter' => FALSE],
-    ['attribute' => 'avgSNF', 'filter' => FALSE],
-    ['attribute' => 'amount', 'filter' => FALSE],
-    ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
+        ['attribute' => 'shift', 'filter' => false],
+        ['attribute' => 'qty', 'filter' => FALSE],
+        ['attribute' => 'avgFAT', 'filter' => FALSE],
+        ['attribute' => 'avgSNF', 'filter' => FALSE],
+        ['attribute' => 'amount', 'filter' => FALSE],
+        ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
 
-            $class = $model['bmc_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+            $class = $model['bmc_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['bmc_lock'] == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
             $url = $model['bmc_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/bmc-data-unlock' : '/collection/tbl-mcc-shift-lock/bmc-data-lock';
             $popupClass = ''; //' disabled ';
@@ -53,9 +53,9 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
-    ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
+        ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
             if (Yii::$app->session->get('eiplCode') != 'PRABHAT') {
-                $class = $model['member_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model['member_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model['member_lock'] == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
                 $url = $model['member_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/member-data-unlock' : '/collection/tbl-mcc-shift-lock/member-data-lock';
                 $popupClass = ''; //' disabled ';
@@ -81,8 +81,8 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
-    ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
-            $class = $model['product_sale_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+        ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
+            $class = $model['product_sale_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['product_sale_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
             $url = $model['product_sale_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/product-sale-unlock' : '/collection/tbl-mcc-shift-lock/product-sale-lock';
             $popupClass = ''; //' disabled ';
@@ -104,8 +104,8 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
-    ['attribute' => 'vm_data_lock', 'label' => Yii::t('app', 'VM Data'), 'value' => function($model) {
-            $class = $model['vm_data_lock'] == 1 ? 'fa-unlock' : 'fa-lock';
+        ['attribute' => 'vm_data_lock', 'label' => Yii::t('app', 'VM Data'), 'value' => function($model) {
+            $class = $model['vm_data_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['vm_data_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
             $url = $model['vm_data_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/vm-data-unlock' : '/collection/tbl-mcc-shift-lock/vm-data-lock';
             $popupClass = ''; //' disabled ';
@@ -145,11 +145,11 @@ $grid_option = [
             if (!empty($data) && $data->data_lock == 1) {
                 $class = 'lock';
                 $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
-                return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data-other'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data-other'], $options);
             } else {
                 $class = 'unlock'; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
                 $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
-                return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data-other'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data-other'], $options);
             }
         },
 //        'view-shift' => function ($url, $model) {

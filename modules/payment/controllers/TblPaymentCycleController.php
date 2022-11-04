@@ -246,7 +246,7 @@ class TblPaymentCycleController extends ChildController {
                 }],
         ];
         $appModel->fields['data_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
-                $class = $model->data_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model->data_lock_bmc == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model->data_lock_bmc == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
                 $url = $model->data_lock_bmc == 1 ? '/payment/tbl-payment-cycle/bmc-data-unlock' : '/payment/tbl-payment-cycle/bmc-data-lock';
                 $popupClass = ' disabled ';
@@ -271,7 +271,7 @@ class TblPaymentCycleController extends ChildController {
             'label' => Yii::t('app', 'Data Lock - BMC'), 'filter' => false];
 
         $appModel->fields['sync_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
-                $class = $model->sync_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model->sync_lock_bmc == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model->sync_lock_bmc == 1 ? 'Sync Unlock - BMC' : 'Sync Lock - BMC';
                 $url = $model->data_lock_bmc == 1 ? '/payment/tbl-payment-cycle/bmc-sync-unlock' : '/payment/tbl-payment-cycle/bmc-sync-lock';
                 $popupClass = ' disabled ';
@@ -296,7 +296,7 @@ class TblPaymentCycleController extends ChildController {
             'label' => Yii::t('app', 'Sync Lock - BMC'), 'filter' => false];
 
         $appModel->fields['billing_lock_bmca'] = ['view' => ['grid'], 'value' => function($model) {
-                $class = $model->billing_lock_bmc == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model->billing_lock_bmc == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model->billing_lock_bmc == 1 ? 'Billing Unlock - BMC' : 'Billing Lock - BMC';
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Billing for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
@@ -315,7 +315,7 @@ class TblPaymentCycleController extends ChildController {
             },
             'label' => Yii::t('app', 'Billing Lock - BMC'), 'filter' => false];
         $appModel->fields['data_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
-                $class = $model->data_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model->data_lock_member == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model->data_lock_member == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
                 $url = $model->data_lock_member == 1 ? '/payment/tbl-payment-cycle/member-data-unlock' : '/payment/tbl-payment-cycle/member-data-lock';
                 $popupClass = ' disabled ';
@@ -340,7 +340,7 @@ class TblPaymentCycleController extends ChildController {
             'label' => Yii::t('app', 'Data Lock - Member'), 'filter' => false];
 
         $appModel->fields['sync_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
-                $class = $model->sync_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                $class = $model->sync_lock_member == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model->sync_lock_member == 1 ? 'Sync Unlock - Member' : 'Sync Lock - Member';
                 $url = $model->sync_lock_member == 1 ? '/payment/tbl-payment-cycle/member-sync-unlock' : '/payment/tbl-payment-cycle/member-sync-lock';
                 $popupClass = ' disabled ';
@@ -366,7 +366,7 @@ class TblPaymentCycleController extends ChildController {
 
         if (User::canRoute('/payment/tbl-payment-cycle/member-billing-lock')) {
             $appModel->fields['billing_lock_membera'] = ['view' => ['grid'], 'value' => function($model) {
-                    $class = $model->billing_lock_member == 1 ? 'fa-unlock' : 'fa-lock';
+                    $class = $model->billing_lock_member == 1 ? 'fa-lock' : 'fa-unlock';
                     $title = $model->billing_lock_member == 1 ? 'Billing Unlock - Member' : 'Billing Lock - Member';
                     $popupClass = ' disabled ';
                     if ($model->billing_lock_member == 0) {
