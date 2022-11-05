@@ -297,8 +297,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         exit();
     }
 
-    public
-            function actionRemunerationPaymentCycle() {
+    public function actionRemunerationPaymentCycle() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
