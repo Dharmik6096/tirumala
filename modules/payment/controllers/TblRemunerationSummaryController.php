@@ -100,6 +100,10 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $model->from_datetime = $payment_cycle_code[0];
             $model->to_datetime = $payment_cycle_code[1];
         }
+        $mcc_data = $model->mccPlantCode;
+        if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+            $model->bmc_code = $model->p_bmc_code;
+        }
         $query = $model->find()->where(['from_datetime' => $model->from_datetime,
             'to_datetime' => $model->to_datetime,
             'bmc_code' => $model->bmc_code,
@@ -189,10 +193,10 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     'to_datetime' => $model->to_datetime,
                     'bmc_code' => $model->bmc_code,
                     'union_code' => $model->union_code])
-                ->one();
-        if (!empty($PaymentApp)) {
-            $PaymentApp->status = 'sent';
-            $save_model[] = $PaymentApp;
+                ->all();
+        foreach ($PaymentApp as $dataApp) {
+            $dataApp->status = 'sent';
+            $save_model[] = $dataApp;
         }
         foreach ($query as $data) {
             $outstanding = TblVspOutstanding::find()->where([
@@ -214,12 +218,19 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data->scenario = 'remuneration';
             $data->status = 'sent';
             $save_model[] = $data;
-            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
-            if ($transaction == 'customRedirect') {
+        }
+        $transaction = $this->generalModel->saveTransaction($save_model, ['Payment Locked Successfully', 'info']);
+        if ($transaction == 'customRedirect') {
+            $bmc_array = [];
+            $bmc_array[] = $model->bmc_code;
+            if (is_array($model->bmc_code)) {
+                $bmc_array = $model->bmc_code;
+            }
+            foreach ($bmc_array as $bmc_code) {
                 $param = [];
                 $param['from_datetime'] = $model->from_datetime;
                 $param['customer_type'] = 'DCS';
-                $param['bmc_code'] = $model->bmc_code;
+                $param['bmc_code'] = $bmc_code;
                 Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
             }
         }
@@ -286,7 +297,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         exit();
     }
 
-    public function actionRemunerationPaymentCycle() {
+    public
+            function actionRemunerationPaymentCycle() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
