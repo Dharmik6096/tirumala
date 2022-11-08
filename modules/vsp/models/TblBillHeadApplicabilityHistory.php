@@ -35,11 +35,11 @@ class TblBillHeadApplicabilityHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['bill_head_applicabilty_code'], 'safe'],
-            [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
-            [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code', 'operation_type', 'history_created_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe']
+                [['bill_head_applicabilty_code', 'from_date', 'to_date'], 'safe'],
+                [['created_at', 'updated_at', 'wef_date', 'history_created_at'], 'safe'],
+                [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code', 'operation_type', 'history_created_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe']
         ];
     }
 

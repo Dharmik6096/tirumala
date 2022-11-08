@@ -142,7 +142,9 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblBillHeadApplicability();
-        $appModel->model->wef_date = date('Y-m-d');
+        $appModel->model->wef_date = $appModel->model->from_date = date('Y-m-d');
+        $appModel->model->to_date = date('Y-m-d', strtotime('+ 1 year'));
+        $appModel->periodic_applicability = TRUE;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'bill_head_code';
         $appModel->field_value = $id;
@@ -151,8 +153,11 @@ class TblBillHeadController extends \app\controllers\ChildController {
         $appModel->trans_label = Yii::t('app', 'bill head applicabilities');
         $appModel->model->bill_head_for = $model->bill_head_for;
         $appModel->header_title = ' [Bill Head: ' . $model->bill_head_name . ', Type: ' . Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] . '] ';
-        $appModel->fields = ['wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
+        $appModel->fields = ['from_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->to_date);
                 }],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');

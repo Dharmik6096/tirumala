@@ -72,6 +72,7 @@ class Applicability extends \yii\base\Module {
     public $generateMail = false;
     public $attachment_folder = '/web/alert-data/';
     public $isApproval = false;
+    public $periodic_applicability = FALSE;
 
     /**
      * @inheritdoc
@@ -280,9 +281,15 @@ class Applicability extends \yii\base\Module {
                             unset($appModel->$primaryKey);
                             $appModel->{$main_field_name} = $value;
                             $appModel->$field_name = $this->field_value;
-//$appModel->union_code = $this->union_code;  
-
                             $appModel->union_code = $this->union_code;
+
+                            if ($appModel->hasAttribute('from_date')) {
+                                $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                                $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                                if ($appModel->hasAttribute('wef_date')) {
+                                    $appModel->wef_date = $model->wef_date = $appModel->from_date;
+                                }
+                            }
                             if ($appModel->hasAttribute('wef_date')) {
                                 $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
                                 if ($model->hasAttribute('shift_code')) {
@@ -290,7 +297,11 @@ class Applicability extends \yii\base\Module {
                                 }
                                 $check = $this->checkDuplicateCount($appModel);
                                 if ($check == 1) {
-                                    $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                    if ($this->periodic_applicability) {
+                                        $model->addError('from_date', 'Date Range already taken by ' . $title . '.');
+                                    } else {
+                                        $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                    }
                                     return $this->customRender();
                                 }
                             }
