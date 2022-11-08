@@ -1155,6 +1155,21 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTankerReport() {
+        $this->report = 'TankerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionPaymentDifference() {
+        $this->report = 'PaymentDifference';
+        return $this->actionIndex();
+    }
+
+    public function actionSapUploadSummary() {
+        $this->report = 'SapUploadSummary';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2290,6 +2305,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sap_download' => true,
                 'output_type' => false,
                 'multiArray' => ['dcs_code']
+            ],
+            'TankerReport' => [
+                'param' => 'union_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_tanker_dispatch',
+                'scenario' => 'TankerReport',
+                'title' => 'Tanker Report',
+            ],
+            'PaymentDifference' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code:type_check',
+                'sp_name' => 'sp_mis_payment_difference',
+                'scenario' => 'PaymentDifference',
+                'title' => '621 - Payment Difference',
+            ],
+            'SapUploadSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift,sap_file:static:sap_file',
+                'sp_name' => 'sp_mis_WQ_file_summary',
+                'scenario' => 'SapUploadSummary',
+                'title' => 'WQ/VM File Summary',
             ],
         ];
         return $label[$l];

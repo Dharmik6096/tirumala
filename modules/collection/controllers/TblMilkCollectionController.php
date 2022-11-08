@@ -1132,7 +1132,12 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $controls['dcs_code'] = $data[4];
                         $controls['from_date'] = $data[5];
                         $controls['to_date'] = $data[5];
-                        $output = \Yii::$app->general->getSpData('mis_vmcc_collection_date_wise', $controls);
+                        $sp = 'mis_vmcc_collection_date_wise';
+                        $eiplCode = Yii::$app->session->get('eiplCode');
+                        if ($eiplCode == 'DODLA') {
+                            $sp = 'mis_vmcc_collection_date_wise_dodla';
+                        }
+                        $output = \Yii::$app->general->getSpData($sp, $controls);
 
                         if (!empty($output)) {
                             $downLoadArray = [];
@@ -1147,6 +1152,9 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                             }
                             foreach ($downLoadArray as $bmc => $download) {
                                 $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                if ($eiplCode == 'DODLA') {
+                                    $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                }
                                 $this->downloadData($title, $download, $fileArray);
                             }
                             $this->fileDownloadArr = $fileArray;
@@ -1207,7 +1215,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         ];
         $objPHPExcel = new PHPExcel();
         $sheet = $objPHPExcel->getActiveSheet();
-        $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
+        $file_header = !empty($download) ? array_keys($download[0]) : [];
         $sheet->fromArray(
                 $file_header, // The data to set
                 NULL, // Array values with this value will not be set

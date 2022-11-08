@@ -123,7 +123,7 @@ echo GhostMenu::widget([
                 ['label' => 'SAP Data Repost', 'url' => ['/collection/tbl-milk-collection/repost-sap-data'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'repost-sap-data')],
                 ['label' => 'Shift Lock ', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => ($eiplCode == 'MMD') ? TRUE : FALSE],
                 ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => ($eiplCode == 'MMD') ? FALSE : TRUE],
-                ['label' => 'Shift Lock (Member Data)', 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
+                ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
                 ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
                 ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
                 [
@@ -541,6 +541,7 @@ echo GhostMenu::widget([
                         ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
                         ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
                         ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
+                        ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
                     ]
                 ],
                 [
@@ -590,6 +591,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
                         ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
+                        ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
                     ]
                 ],
                 [
@@ -726,7 +728,8 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/default/sap-report'], 'active' => ($cntrl == 'default' && $action == 'sap-report'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
                         ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/sap-report-dodla'], 'active' => ($cntrl == 'reports' && $action == 'sap-report-dodla'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
 //                        ['label' => Yii::t('app', 'SAP Data Export'), 'url' => ['/misreports/reports/sap-report-cdpl'], 'active' => ($cntrl == 'reports' && $action == 'sap-report-cdpl'), 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
-                        ['label' => Yii::t('app', 'SAP Data Upload'), 'url' => ['/collection/tbl-milk-collection/sap-upload'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'ssap-upload')], //, 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
+                        ['label' => Yii::t('app', 'SAP Data Upload'), 'url' => ['/collection/tbl-milk-collection/sap-upload'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'sap-upload')], //, 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
+                        ['label' => Yii::t('app', 'WQ/VM File Summary'), 'url' => ['/misreports/reports/sap-upload-summary'], 'active' => ($cntrl == 'reports' && $action == 'sap-upload-summary')], //, 'visible' => ($eiplCode == 'JERSEY') ? TRUE : FALSE],
                         ['label' => Yii::t('app', 'PM Advance'), 'url' => ['/misreports/reports/advance-pm']],
 //                        ['label' => 'Member Credit', 'url' => ['/payment/tbl-member-credit-limit/index']],
                         ['label' => Yii::t('app', 'Company Configuration '), 'url' => ['/configuration/tbl-milk-collection-config/tabs']],
@@ -748,7 +751,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Dpu Calibration'), 'url' => ['/tbl-dpu-calibration/index']],
                         ['label' => Yii::t('app', 'Dpu Cleaning'), 'url' => ['/tbl-cleaning-dpu/index']],
-                        ['label' => 'Member Acknowledgement', 'url' => ['/dcsoperation/tbl-member-download/index']],
+                        ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                         ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
 //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],

@@ -93,7 +93,7 @@ class Bkgprocess extends \yii\base\Module {
                 'sp_name' => 'mis_vmcc_collection_date_wise',
                 'export_title' => 'dcs_code+_mcc_plant_code+_+WQ+_+applicable_date:date+_+shift_code',
                 'file_path' => str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/',
-                'ftp_path' => '/CDPL/MCC/VMCC/inbox/'
+                'ftp_path' => '/CDPL/CDPL_MCC/VMCC/INBOX/' //'/CDPL/MCC/VMCC/inbox/'
             ],
         ];
     }

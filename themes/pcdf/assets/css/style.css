@@ -4854,3 +4854,7 @@ tr.highlightRow {
 .panel > .table-responsive > .table-bordered > thead > tr > th.font_fff {
     color: #fff !important;
 }
+
+#report-form .shift {
+    height: 57px
+}

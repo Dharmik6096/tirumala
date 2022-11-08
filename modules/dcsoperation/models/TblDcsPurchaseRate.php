@@ -77,6 +77,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'reference_code' => Yii::t('app', 'SAP Rate ID'),
             'ts_rate' => Yii::t('app', 'TS Rate'),
+            'for_member' => Yii::t('app', 'For Member'),
         ];
     }
 

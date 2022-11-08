@@ -11,7 +11,7 @@ class ReportsModel extends Model {
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
     public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code;
     public $no_of_payment_cycle, $output_type, $store_location_type, $asset_code, $sap_code, $sr_no, $main_customer_type, $transporter_code, $vehicle_code, $originating_type, $report_collection_type, $type_wise_report, $route_type_trans, $product_code;
-    public $org_type, $product_type, $module_type, $channel_code, $upload_ftp_file;
+    public $org_type, $product_type, $module_type, $channel_code, $upload_ftp_file, $sap_file;
 
     function __construct() {
         
@@ -23,7 +23,7 @@ class ReportsModel extends Model {
     public function rules() {
         return [
             [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code', 'main_customer_type', 'transporter_code', 'vehicle_code', 'product_type'], 'default', 'value' => 0],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'channel_code', 'upload_ftp_file'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'no_of_payment_cycle', 'output_type', 'report_type', 'store_location_type', 'asset_code', 'sap_code', 'sr_no', 'main_customer_type', 'transporter_code', 'vehicle_code', 'originating_type', 'report_collection_type', 'type_wise_report', 'route_type_trans', 'product_code', 'org_type', 'product_type', 'module_type', 'channel_code', 'upload_ftp_file', 'sap_file'], 'safe'],
             [['union_code', 'plant_code', 'mcc_code', 'date', 'shift'], 'required', 'on' => ['MemberCollectionShiftReport']],
             [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['BmcCollDateShiftWiseSummary']],
             [['union_code', 'plant_code', 'mcc_code', 'date'], 'required', 'on' => ['MemberCollectionPaymentCycleWise', 'MemberWiseMonthlyCollection']],
@@ -110,6 +110,9 @@ class ReportsModel extends Model {
             [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
             [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
             [['union_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'SapReportCdpl'],
+            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'TankerReport'],
+            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => 'PaymentDifference'],
+            [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_file'], 'required', 'on' => 'SapUploadSummary'],
         ];
     }
 
