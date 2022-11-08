@@ -283,7 +283,7 @@ class Applicability extends \yii\base\Module {
                             $appModel->$field_name = $this->field_value;
                             $appModel->union_code = $this->union_code;
 
-                            if ($appModel->hasAttribute('from_date')) {
+                            if ($this->periodic_applicability) {
                                 $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
                                 $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
                                 if ($appModel->hasAttribute('wef_date')) {
