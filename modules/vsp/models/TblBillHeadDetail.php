@@ -50,45 +50,45 @@ class TblBillHeadDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
+            [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
 //                [['bill_head_code', 'bmc_code', 'amount', 'transaction_date'], 'required'],
-                [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
-                [['member_code'], 'required', 'on' => ['importDetailCsv']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
-                [['transaction_date'], 'required', 'on' => ['importCsv', 'importDetailCsv']],
-                [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
-                [['created_at', 'updated_at', 'installment_amount', 'bill_head_for', 'transaction_date'], 'safe'],
-                [['amount'], 'number', 'min' => 0],
-                [['no_installment'], 'number', 'min' => 0],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'transaction_date'], 'safe'],
-                [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'transaction_date'], 'safe'],
-                [['no_installment'], 'default', 'value' => 1],
-                [['bmc_code'], function ($attribute, $params) {
+            [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
+            [['member_code'], 'required', 'on' => ['importDetailCsv']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
+            [['transaction_date'], 'required', 'on' => ['importCsv', 'importDetailCsv']],
+            [['payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
+            [['created_at', 'updated_at', 'installment_amount', 'bill_head_for', 'transaction_date'], 'safe'],
+            [['amount'], 'number', 'min' => 0],
+            [['no_installment'], 'number', 'min' => 0],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'transaction_date'], 'safe'],
+            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'transaction_date'], 'safe'],
+            [['no_installment'], 'default', 'value' => 1],
+            [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv', 'importDetailCsv']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
-                [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
-                [['customer_type'], function ($attribute, $params) {
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
+            [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
+            [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-                [['transaction_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
-                [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
-                [['transaction_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
-                [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
-                [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv', 'importDetailCsv']],
-                [['customer_code'], 'required', 'on' => ['importCsv']],
-                [['customer_code'], function ($attribute, $params) {
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
+            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
+            [['transaction_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
+            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
+            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv', 'importDetailCsv']],
+            [['customer_code'], 'required', 'on' => ['importCsv']],
+            [['customer_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
+//                        $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
                         $customer_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
-                        if (empty($this->dcs_code) && $customer_type == 'DCS' && $billingType == '1') {
-                            
-                        } else {
-                            $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
-                            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
-                        }
+//                        if (empty($this->dcs_code) && $customer_type == 'DCS' && $billingType == '1') {
+//                            
+//                        } else {
+                        $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
+                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+//                    }
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
         ];
@@ -212,10 +212,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             if (!array_key_exists($this->bill_head_code, $list)) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
-            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
-            if ($billingType != 1 && $customer_type != 'DCS') {
-                Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
-            }
+//            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
+//            if ($billingType != 1 && $customer_type != 'DCS') {
+            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+//            }
         }
     }
 
