@@ -51,7 +51,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
-                [['bill_head_code', 'bmc_code', 'amount', 'transaction_date'], 'required'],
+//                [['bill_head_code', 'bmc_code', 'amount', 'transaction_date'], 'required'],
                 [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
                 [['member_code'], 'required', 'on' => ['importDetailCsv']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
@@ -150,7 +150,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     }
 
     public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['mcc_plant_code' => 'bmc_code']);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
     public function getCustomerType() {
