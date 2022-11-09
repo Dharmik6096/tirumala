@@ -23,6 +23,7 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
  * @property string $originating_org_code
  * @property string $originating_org_type
  * @property integer $originating_type
+ * @property string $criteria_code
  */
 class TblVspBillHeadCriteria extends \app\models\ChildModel {
 
@@ -38,19 +39,19 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vsp_criteria_code', 'bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
-            [['bill_head_code', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at', 'criteria_type'], 'safe'],
-            [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
-            [['criteria_name'], 'string', 'max' => 100],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 255],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            ['criteria_name', 'unique', 'targetAttribute' => ['criteria_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['create']],
-            [['criteria_name'], function ($attribute, $params) {
+                [['vsp_criteria_code', 'bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
+                [['bill_head_code', 'originating_type'], 'integer'],
+                [['created_at', 'updated_at', 'criteria_type', 'criteria_code'], 'safe'],
+                [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
+                [['criteria_name'], 'string', 'max' => 100],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 255],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                ['criteria_name', 'unique', 'targetAttribute' => ['criteria_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['create']],
+                [['criteria_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['criteria_type'], 'default', 'value' => 0]
+                [['criteria_type'], 'default', 'value' => 0]
         ];
     }
 
@@ -71,6 +72,7 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'criteria_code' => Yii::t('app', 'Criteria Code'),
         ];
     }
 
