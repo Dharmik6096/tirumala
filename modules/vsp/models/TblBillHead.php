@@ -29,7 +29,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblBillHead extends \app\models\ChildModel {
 
-    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code;
+    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date;
 
     /**
      * @inheritdoc
@@ -59,7 +59,7 @@ class TblBillHead extends \app\models\ChildModel {
           }"],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
 //            ['customer_type', 'required', 'when' => function ($model) {
 //                    return $model->bill_head_for != 'MEMBER';
 //                }, 'whenClient' => "function (attribute, value) { 

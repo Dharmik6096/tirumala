@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
                         <tr class="bill_head_row_<?= $key ?>">
                             <td><?= $name; ?></td>
                             <?php
-                            $fromDate = Yii::$app->general->getforeignkey($model->paymentCycle, 'from_date');
+                            $fromDate = $model->from_date;
                             $applicability = $model->getApplicabiliytData($model, $code, $fromDate);
                             $dispBtn = false;
                             $headCount = count($head);
@@ -55,7 +55,8 @@ $form = ActiveForm::begin([
                                         <div class="">
                                             <?= Html::hiddenInput('dcs', $code, ['class' => 'bill_head_row_' . $key, 'id' => 'dcs']); ?>
                                             <?= Html::hiddenInput('type', $model->customer_type, ['class' => 'bill_head_row_' . $key, 'id' => 'type']); ?>
-                                            <?= Html::hiddenInput('date', $fromDate, ['class' => 'bill_head_row_' . $key, 'id' => 'date']); ?>
+                                            <?= Html::hiddenInput('from_date', $model->from_date, ['class' => 'bill_head_row_' . $key, 'id' => 'from_date']); ?>
+                                            <?= Html::hiddenInput('to_date', $model->to_date, ['class' => 'bill_head_row_' . $key, 'id' => 'to_date']); ?>
                                             <?= Html::hiddenInput('union', $model->union_code, ['class' => 'bill_head_row_' . $key, 'id' => 'union']); ?>
                                             <?= Html::hiddenInput('bmc', $model->bmc_code, ['class' => 'bill_head_row_' . $key, 'id' => 'bmc']); ?>
                                             <?= Html::hiddenInput('head_for', $model->bill_head_for, ['class' => 'bill_head_row_' . $key, 'id' => 'head_for']); ?>
@@ -102,14 +103,15 @@ $script = "
         let bmc = $('.bill_head_row_'+setKey+' #bmc').val();
         let dcs = $('.bill_head_row_'+setKey+' #dcs').val();
         let type = $('.bill_head_row_'+setKey+' #type').val();
-        let date = $('.bill_head_row_'+setKey+' #date').val();
+        let from_date = $('.bill_head_row_'+setKey+' #from_date').val();
+        let to_date = $('.bill_head_row_'+setKey+' #to_date').val();
         let head_for = $('.bill_head_row_'+setKey+' #head_for').val();
 
         if(action_codes.length > 0){
                 $.ajax({
                     type: 'post',
                     url:'" . Url::to(['save-applicability']) . "',
-                    data: {'union_code':union, 'bill_head_codes':action_codes,'bmc_code':bmc,'applicable_code':dcs,'applicable_for':type,'wef_date':date,'bill_head_for':head_for},
+                    data: {'union_code':union, 'bill_head_codes':action_codes,'bmc_code':bmc,'applicable_code':dcs,'applicable_for':type,'wef_date':from_date,'from_date':from_date,'to_date':to_date,'bill_head_for':head_for},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

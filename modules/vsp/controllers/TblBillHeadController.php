@@ -285,12 +285,17 @@ class TblBillHeadController extends \app\controllers\ChildController {
             $model->mcc_plant_code = $data['mcc_plant_code'];
             $model->bmc_code = $data['bmc_code'];
             $model->customer_type = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-            $model->payment_cycle_code = !empty($data['payment_cycle_code']) ? $data['payment_cycle_code'] : '';
+            $data['customer_type'] = $model->customer_type;
+            $model->from_date = !empty($data['from_date']) ? $data['from_date'] : '';
+            $model->to_date = !empty($data['to_date']) ? $data['to_date'] : '';
             $model->bill_head_for = $data['bill_head_for'];
             if ($model->validate()) {
                 $head = $model->getBillHead($model);
                 $dcs = $model->getDcs($data);
             }
+        } else {
+            $model->from_date = date('Y-m-d');
+            $model->to_date = date('Y-m-d', strtotime('+ 1 year'));
         }
         return $this->render('dcs_bill_head', [
                     'model' => $model,
@@ -307,6 +312,9 @@ class TblBillHeadController extends \app\controllers\ChildController {
                 $model = new TblBillHeadApplicability();
                 $model->setAttributes($data);
                 $model->bill_head_code = $code;
+                $model->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                $model->wef_date = $model->from_date;
                 $saveModel[] = $model;
             }
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Applicability', 'create']);
