@@ -1373,6 +1373,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['0' => Yii::t('app', 'WQ'), '1' => Yii::t('app', 'VM')],
             ],
+            'payment_cycle_type' => [
+                'name' => 'payment_cycle_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['first' => Yii::t('app', 'First'), 'second' => Yii::t('app', 'Second'), 'third' => Yii::t('app', 'Third'), 'consecutive' => Yii::t('app', 'Consecutive')],
+            ],
         ];
         return $records[$l];
     }

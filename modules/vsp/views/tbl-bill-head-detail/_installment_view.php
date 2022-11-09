@@ -15,18 +15,14 @@ use kartik\grid\GridView;
 
 <?php
 $attribute = [
-    ['attribute' => 'installement_cycle', 'filter' => false],
-    ['attribute' => 'installment_amount', 'filter' => false],
-    [
+        ['attribute' => 'installement_cycle', 'filter' => false],
+        ['attribute' => 'installment_amount', 'filter' => false],
+        [
         'attribute' => 'installment_date',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->installment_date);
         }, 'filter' => false],
+        ['attribute' => 'payment_cycle_type', 'filter' => false],
 ];
 
 $grid_option = [

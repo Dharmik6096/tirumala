@@ -38,10 +38,16 @@ $attribute = [
         },],
         ['attribute' => 'sequence_no'],
         ['attribute' => 'has_slab',
-//        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),
         'value' => function($model) {
             return $model->has_slab == 1 ? 'Yes' : 'No';
         },],
+        ['attribute' => 'is_hold',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_hold'),
+        'value' => function($model) {
+            return $model->is_hold == 1 ? 'Yes' : 'No';
+        },],
+        ['attribute' => 'payment_cycle_type'],
 ];
 $grid_option = [
     'id' => 'bill-head-list',

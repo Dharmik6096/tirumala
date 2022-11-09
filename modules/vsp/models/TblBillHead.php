@@ -46,10 +46,11 @@ class TblBillHead extends \app\models\ChildModel {
                 [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
                 [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
                 [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on'], 'safe'],
+                [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type'], 'safe'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_disburse_allowed'], 'default', 'value' => '1'],
-                [['is_default', 'has_slab'], 'default', 'value' => '0'],
+                [['is_default', 'has_slab', 'is_hold'], 'default', 'value' => '0'],
+                [['payment_cycle_type'], 'default', 'value' => 'consecutive'],
                 ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code', 'bill_head_for'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
                 ['default_bill_head_code', 'required', 'when' => function ($model) {
                     return $model->is_default == 1;
@@ -88,6 +89,8 @@ class TblBillHead extends \app\models\ChildModel {
             'sequence_no' => Yii::t('app', 'Sequence No.'),
             'bill_head_for' => Yii::t('app', 'Head For'),
             'calculation_based_on' => Yii::t('app', 'Calculation Based On'),
+            'is_hold' => Yii::t('app', 'Is Hold'),
+            'payment_cycle_type' => Yii::t('app', 'Payment Cycle Type'),
         ];
     }
 

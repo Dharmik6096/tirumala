@@ -76,18 +76,22 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
-        <?php
-        echo Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false);
-        ?>
+        <?= Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false); ?>
     </div>
     <div class="col-sm-2 mt15">
         <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>   
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
     </div>
     <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>
-    <div class="col-sm-2 mt15" id="slab">
-        <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    <div class="col-sm-2 mt15" id="isHold">
+        <?= $form->field($model, 'is_hold', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>
+    <div class="col-sm-2" id="paymentCycleType">
+        <?= Yii::$app->dropdown->dropdownStatic('payment_cycle_type', $model, $form, 'form-group', $model->getAttributeLabel('payment_cycle_type'), false, 'payment_cycle_type', false); ?>
     </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -104,7 +108,6 @@ $form = ActiveForm::begin([
 $script = "
     $(document).ready(function(){
        dispDefBillHead();
-       dispSlab();
     });
     $('#tblbillhead-is_default').on('change',function(){
         dispDefBillHead();
@@ -112,12 +115,20 @@ $script = "
     
     function dispDefBillHead(){
         $('#defaultbill').hide();
+        $('#isHold').show();
+        $('#paymentCycleType').show();
+        
         if($('#tblbillhead-is_default').is(':checked')){
           $('#defaultbill').show();
+          $('#isHold').hide();
+          $('#paymentCycleType').hide();  
+          $('#tblbillhead-is_hold').val('');
+          $('#tblbillhead-payment_cycle_type').val('');
         } else {
          $('#defaultbill').hide();
-         $('#tblbillhead-default_bill_head_code').val('');
-         
+         $('#isHold').show();
+         $('#paymentCycleType').show();
+         $('#tblbillhead-default_bill_head_code').val('');         
         }
     }
         var formula_value='';
@@ -168,24 +179,8 @@ $script = "
                     removeError();
                     addError('Value is not in proper Format');
                 }
-            }
-              
-            
-         });
-        $('#tblbillhead-bill_head_for').on('change',function(){
-            dispSlab();
-        });
-       
-        function dispSlab(){
-            $('#slab').hide();
-            var headFor = $('#tblbillhead-bill_head_for').val();
-            if(headFor == 'TRANSPORTER' || headFor == 'VENDOR'){
-                $('#slab').show();
-            } else {
-                $('#slab').hide();
-                $('#tblbillhead-has_slab').prop('checked', false);
-            }
-        }
+            }                          
+         });       
 ";
 
 $this->registerJs($script, View::POS_END, 'formula');
