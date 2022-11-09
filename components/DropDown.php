@@ -1368,6 +1368,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
             ],
+            'sap_file' => [
+                'name' => 'sap_file',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['0' => Yii::t('app', 'WQ'), '1' => Yii::t('app', 'VM')],
+            ],
         ];
         return $records[$l];
     }
