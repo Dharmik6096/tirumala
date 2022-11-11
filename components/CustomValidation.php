@@ -390,7 +390,7 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
-            'DODLA' => [
+            'UMANG' => [
                 'TblDcs' => [
                     'default' => [
                         [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
