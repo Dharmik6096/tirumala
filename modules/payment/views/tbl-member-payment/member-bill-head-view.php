@@ -49,13 +49,12 @@ $update_count = 0;
                                 },],
                                 ['attribute' => 'current_cycle',
                                 'value' => function($model) {
-                                    return $model->is_skippable == 1 ? $model->billHeadCode->payment_cycle_type : '';
-                                }, /* 'visible' => $allow_update */],
+                                    return $model->is_skippable == 1 ? $model->billHeadCode->payment_cycle_type : 'N/A';
+                                }, 'visible' => $allow_update],
                                 ['attribute' => 'payment_cycle_type',
                                 'format' => 'raw',
                                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
                                 'value' => function ($model, $key, $index) use ($form, $allow_update, &$update_count) {
-                                    $allow_update = TRUE;
                                     if ($allow_update && $model->is_skippable == 1) {
                                         $update_count++;
                                         $model->payment_cycle_type = $model->billHeadCode->payment_cycle_type;
@@ -70,7 +69,7 @@ $update_count = 0;
                                         }
                                         return Html::activeHiddenInput($model, '[' . $index . ']member_payment_head_code', ['value' => $model->member_payment_head_code]) . Html::activeHiddenInput($model, '[' . $index . ']current_cycle', ['value' => $model->payment_cycle_type]) . $form->field($model, '[' . $index . ']payment_cycle_type')->dropDownList($items, ['class' => ''])->label(FALSE);
                                     }
-                                }, /* 'visible' => $allow_update */],
+                                }, 'visible' => $allow_update],
                         ];
                         $grid_option = [
                             'id' => 'bill-head-detail-list',

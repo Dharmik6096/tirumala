@@ -1469,7 +1469,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         foreach ($bill_head_inst as $installment) {
                             $insthistoryModel = new TblBillHeadInstallmentHistory();
                             Yii::$app->operation->history($installment, $insthistoryModel, 'UPDATE');
-                            $installment->installment_date = NULL;
+                            $installment->installment_status = 2;
                             $installment->payment_cycle_type = $new_payment_cycle_type;
                             $saveModel[] = $insthistoryModel;
                             $saveModel[] = $installment;
