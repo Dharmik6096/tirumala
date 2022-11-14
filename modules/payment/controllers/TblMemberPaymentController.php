@@ -51,6 +51,10 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\payment\models\TblMemberPaymentRecovery;
 use app\modules\payment\models\TblMemberPaymentRecoveryHistory;
+use app\modules\payment\models\TblMemberPaymentHead;
+use app\modules\vsp\models\TblBillHeadInstallment;
+use app\modules\vsp\models\TblBillHeadInstallmentHistory;
+use app\modules\payment\models\TblMemberPaymentHeadSummary;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -1166,6 +1170,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             return $this->renderAjax('member-bill-head-view', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $dataProvider,
+                        'allow_update' => !empty($_POST['allow_update']) ? TRUE : FALSE
             ]);
         }
     }
@@ -1439,6 +1444,78 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             if (in_array($k, $setArrFields) && $modelCheck->hasAttribute($k)) {
                 $setArr[$k] = $v;
             }
+        }
+    }
+
+    public function actionSkipHead() {
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post()['TblMemberPaymentHead'])) {
+            $head_detail = Yii::$app->request->post()['TblMemberPaymentHead'];
+            $process = FALSE;
+            $total_addition = 0;
+            $total_deduction = 0;
+            $saveModel = [];
+            $deleteModel = [];
+            foreach ($head_detail as $head) {
+                if ($head['current_cycle'] != $head['payment_cycle_type']) {
+                    $new_payment_cycle_type = explode('-', $head['payment_cycle_type'])[0];
+                    $p_head = TblMemberPaymentHead::findOne($head['member_payment_head_code']);
+                    if (!empty($p_head)) {
+                        $process = TRUE;
+                        $member_code = $p_head->member_code;
+                        $dcs_code = $p_head->dcs_code;
+                        $payment_cycle_code = $p_head->payment_cycle_code;
+                        $from_date = date('Y-m-d', strtotime($p_head->paymentCycleCode->from_date));
+                        $bill_head_inst = TblBillHeadInstallment::find()->where(['installment_date' => $from_date, 'customer_type' => 'MEMBER', 'bill_head_for' => 'MEMBER', 'customer_code' => $p_head->member_code, 'bill_head_code' => $p_head->bill_head_code])->all();
+                        foreach ($bill_head_inst as $installment) {
+                            $insthistoryModel = new TblBillHeadInstallmentHistory();
+                            Yii::$app->operation->history($installment, $insthistoryModel, 'UPDATE');
+                            $installment->installment_date = NULL;
+                            $installment->payment_cycle_type = $new_payment_cycle_type;
+                            $saveModel[] = $insthistoryModel;
+                            $saveModel[] = $installment;
+                        }
+                        if ($p_head->bill_head_type == 0) {
+                            $total_addition = $total_addition + $p_head->amount;
+                        } else {
+                            $total_deduction = $total_deduction + $p_head->amount;
+                        }
+                        $deleteModel[] = $p_head;
+
+                        $dcs_head = TblMemberPaymentHeadSummary::find()->where(['payment_cycle_code' => $p_head->payment_cycle_code, 'dcs_code' => $p_head->dcs_code, 'bill_head_code' => $p_head->bill_head_code])->one();
+                        $dcs_head->amount = $dcs_head->amount - $p_head->amount;
+                        $saveModel[] = $dcs_head;
+                    }
+                }
+            }
+            if ($process) {
+                $member_alias = TblMemberPaymentAlias::find()->where(['member_code' => $p_head->member_code, 'payment_cycle_code' => $p_head->payment_cycle_code])->one();
+                $member_alias->total_addition = $member_alias->total_addition - $total_addition;
+                $member_alias->total_deduction = $member_alias->total_deduction - $total_deduction;
+                $member_alias->net_payable = $member_alias->net_payable + $total_deduction - $total_addition;
+                $member_alias->final_amount = $member_alias->final_amount + $total_deduction - $total_addition;
+                $saveModel[] = $member_alias;
+
+                $dcs_summary = TblMemberPaymentSummaryAlias::find()->where(['payment_cycle_code' => $payment_cycle_code, 'dcs_code' => $dcs_code])->one();
+                $dcs_summary->total_addition = $dcs_summary->total_addition - $total_addition;
+                $dcs_summary->total_deduction = $dcs_summary->total_deduction - $total_deduction;
+                $dcs_summary->net_payable = $dcs_summary->net_payable + $total_deduction - $total_addition;
+                $dcs_summary->final_amount = $dcs_summary->final_amount + $total_deduction - $total_addition;
+                $saveModel[] = $dcs_summary;
+
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Member Payment Head', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::t('app', 'No Changes found in data.');
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
         }
     }
 

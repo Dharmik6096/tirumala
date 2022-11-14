@@ -286,7 +286,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
     $.ajax({
             type: 'post',
             url: '" . Url::to(['/payment/tbl-member-payment/member-bill-head']) . "',
-            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code, 'member_code': member_code},
+            data: {'payment_cycle_code' : payment_cycle_code,'bmc_code' : bmc_code,'dcs_code' : dcs_code, 'member_code': member_code,'allow_update': '1'},
             beforeSend:function(data) {
                 $('#loadercontent').show();
                 $('#pageloader').show();

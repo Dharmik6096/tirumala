@@ -71,7 +71,7 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
 
     public function setHeadDetail() {
         $bill_head = $this->billHeadCode;
-        if (!empty($bill_head)) {
+        if (empty($this->payment_cycle_type) && !empty($bill_head)) {
             $this->payment_cycle_type = $bill_head->payment_cycle_type;
         }
     }

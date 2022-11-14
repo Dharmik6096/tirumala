@@ -100,6 +100,18 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_umang',
                 ],
             ],
+            'CARGILL' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code',
+                    'sp_name' => 'sp_member_payment_cargill',
+                ],
+            ],
+            'KOTMALE' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code',
+                    'sp_name' => 'sp_member_payment_cargill',
+                ],
+            ],
         ];
     }
 

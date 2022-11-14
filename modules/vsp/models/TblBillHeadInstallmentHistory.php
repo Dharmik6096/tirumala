@@ -34,11 +34,11 @@ class TblBillHeadInstallmentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['bill_head_installment_code', 'bill_head_detail_code', 'payment_cycle_code', 'bill_head_for'], 'safe'],
-            [['bill_head_code', 'dcs_code', 'installement_cycle', 'operation_type', 'history_created_by'], 'safe'],
-            [['installment_amount'], 'safe'],
-            [['installment_date', 'history_created_at'], 'safe'],
-            [['customer_type', 'customer_code', 'union_code'], 'safe'],
+                [['bill_head_installment_code', 'bill_head_detail_code', 'payment_cycle_code', 'bill_head_for', 'payment_cycle_type'], 'safe'],
+                [['bill_head_code', 'dcs_code', 'installement_cycle', 'operation_type', 'history_created_by'], 'safe'],
+                [['installment_amount'], 'safe'],
+                [['installment_date', 'history_created_at'], 'safe'],
+                [['customer_type', 'customer_code', 'union_code'], 'safe'],
         ];
     }
 

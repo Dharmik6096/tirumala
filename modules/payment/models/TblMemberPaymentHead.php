@@ -7,6 +7,7 @@ use app\modules\vsp\models\TblBillHead;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\payment\models\TblPaymentCycle;
 
 /**
  * This is the model class for table "tbl_member_payment_head".
@@ -22,6 +23,8 @@ use app\modules\dcsoperation\models\TblMember;
  */
 class TblMemberPaymentHead extends \app\models\ChildModel {
 
+    public $payment_cycle_type, $current_cycle;
+
     /**
      * @inheritdoc
      */
@@ -34,9 +37,9 @@ class TblMemberPaymentHead extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_code', 'dcs_code', 'member_code', 'bill_head_code'], 'string'],
-                [['payment_cycle_code', 'bill_head_type'], 'integer'],
-                [['amount'], 'number'],
+                [['bmc_code', 'dcs_code', 'member_code', 'bill_head_code', 'is_hold', 'is_skippable', 'general_formula'], 'safe'],
+                [['payment_cycle_code', 'bill_head_type'], 'safe'],
+                [['amount'], 'safe'],
         ];
     }
 
@@ -53,6 +56,8 @@ class TblMemberPaymentHead extends \app\models\ChildModel {
             'bill_head_code' => Yii::t('app', 'Bill Head'),
             'amount' => Yii::t('app', 'Amount'),
             'bill_head_type' => Yii::t('app', 'Type'),
+            'is_hold' => Yii::t('app', 'Is Hold ?'),
+            'payment_cycle_type' => Yii::t('app', 'New Cycle'),
         ];
     }
 
@@ -70,6 +75,10 @@ class TblMemberPaymentHead extends \app\models\ChildModel {
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getPaymentCycleCode() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
     }
 
 }
