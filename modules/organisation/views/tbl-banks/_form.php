@@ -17,7 +17,6 @@ if ($model->isNewRecord) {
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -50,12 +49,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'nationalized_bank', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
     </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'is_alpha_acno_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+    </div>
     <div class="clearfix"></div>   
     <div class="col-sm-12 national-bank" style="display: <?= $style ?>" id="national-bank">
         <?php
-        
         $selectAllChecked = (count($map_model) == count($district) && count($district) != 0) ? 'checked' : '';
-      
+
         $bankCode = $model->bank_code;
         ?>
         <div class="checkbox select-all-div">
@@ -67,7 +68,7 @@ $form = ActiveForm::begin([
             'id' => 'district-list',
             'class' => 'row',
             'item' =>
-            function ($index, $label, $name, $checked, $value) use ($district,$map_model, $bankCode, $model) {
+            function ($index, $label, $name, $checked, $value) use ($district, $map_model, $bankCode, $model) {
 //                var_dump(count($map_model));exit;
                 $checked = in_array($value, $map_model);
                 $check = $model->getDistrictUsed($bankCode, $label);
@@ -82,25 +83,25 @@ $form = ActiveForm::begin([
                             'id' => $value,
                         ]) . "</div></div>";
             },
-                        ]
-                )->label(false);
-                ?>
-                <?php //$form->field($model,'district', [ 'options' => ['class' => 'form-group col-sm-3 '.$disable,]])->listBox($districts['value'],['multiple'=>'multiple','size'=>'10','options'=>$districts['selected']]); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->controls->active($model, $form); ?>
-            </div>
-            <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                <div class="form-group">
-                    <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-                    <?= Yii::$app->controls->reset(); ?>
-                    <?= Yii::$app->controls->cancel($model); ?>
-                </div>
-            </div>
+                ]
+        )->label(false);
+        ?>
+        <?php //$form->field($model,'district', [ 'options' => ['class' => 'form-group col-sm-3 '.$disable,]])->listBox($districts['value'],['multiple'=>'multiple','size'=>'10','options'=>$districts['selected']]); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->active($model, $form); ?>
+    </div>
+    <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
         </div>
-        <?php ActiveForm::end(); ?>
-        <?php
-        $script = "
+    </div>
+</div>
+<?php ActiveForm::end(); ?>
+<?php
+$script = "
 
 $('#tblbanks-state').change(function() {
 	   $.ajax({
@@ -171,5 +172,4 @@ $('#district-list').on('change','.route-checkbox',function() {
     }
 });
 ";
-        $this->registerJs($script, View::POS_END, 'bank-select');
-        
+$this->registerJs($script, View::POS_END, 'bank-select');
