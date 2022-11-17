@@ -119,7 +119,10 @@ $form = ActiveForm::begin([
                                                                     $("#gate-entry-form .reset_field textarea").val("");
                                                                     $("#tblgateentry-route_code").change();
                                                                     $(".DisableAferAdd").addClass("disabledDiv");                                                                  
-                                                                    $(".panel-body").scrollTop(0);                                                                    
+                                                                    $(".panel-body").scrollTop(0);  
+                                                                        var dt = new Date($.now());
+                                                                        var time = dt.getHours() + ":" + dt.getMinutes();
+                                                                        $("#tblgateentry-actual_arrival_time").val(time);    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
                                                                    $("#tblgateentry-route_code").focus();},100);

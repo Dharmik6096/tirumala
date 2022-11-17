@@ -63,6 +63,9 @@ $script = "
          $('#gate-entry-form .reset_field select').val('');                                                             
          $('#tblgateentry-route_code').change();
          $('.QltyParamDiv').show();
+         var dt = new Date($.now());
+         var time = dt.getHours() + ':' + dt.getMinutes();
+         $('#tblgateentry-actual_arrival_time').val(time);                                                             
     });
      $(document).on('click','.edit-record',function(e){
      var id = $(this).attr('data-val');
