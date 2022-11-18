@@ -49,7 +49,7 @@ $update_count = 0;
                                 },],
                                 ['attribute' => 'current_cycle',
                                 'value' => function($model) {
-                                    return $model->is_skippable == 1 ? $model->billHeadCode->payment_cycle_type : 'N/A';
+                                    return $model->is_skippable == 1 ? $model->payment_cycle_type : 'N/A';
                                 }, 'visible' => $allow_update],
                                 ['attribute' => 'payment_cycle_type',
                                 'format' => 'raw',
@@ -57,7 +57,6 @@ $update_count = 0;
                                 'value' => function ($model, $key, $index) use ($form, $allow_update, &$update_count) {
                                     if ($allow_update && $model->is_skippable == 1) {
                                         $update_count++;
-                                        $model->payment_cycle_type = $model->billHeadCode->payment_cycle_type;
                                         if ($model->payment_cycle_type == 'first') {
                                             $items = ['first' => 'first', 'second' => 'second', 'third' => 'third', 'first-next' => 'first-NextMonth'];
                                         } else if ($model->payment_cycle_type == 'second') {
@@ -65,7 +64,7 @@ $update_count = 0;
                                         } else if ($model->payment_cycle_type == 'third') {
                                             $items = ['third' => 'third', 'first-next' => 'first-NextMonth'];
                                         } else {
-                                            $items = ['consicutive' => 'consicutive', 'consicutive-next' => 'consicutive-Next', 'first-next' => 'first-NextMonth'];
+                                            $items = ['consecutive' => 'consecutive', 'consecutive-next' => 'consecutive-Next', 'first-next' => 'first-NextMonth'];
                                         }
                                         return Html::activeHiddenInput($model, '[' . $index . ']member_payment_head_code', ['value' => $model->member_payment_head_code]) . Html::activeHiddenInput($model, '[' . $index . ']current_cycle', ['value' => $model->payment_cycle_type]) . $form->field($model, '[' . $index . ']payment_cycle_type')->dropDownList($items, ['class' => ''])->label(FALSE);
                                     }
