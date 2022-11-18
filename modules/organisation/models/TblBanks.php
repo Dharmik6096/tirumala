@@ -67,6 +67,9 @@ class TblBanks extends ChildModel {
                 [['bank_code'], 'string', 'max' => 4],
                 [['bank_name'], 'string', 'max' => 100],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['is_alpha_acno_allow'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'boolean_value');
+                }, 'on' => 'importCsv'],
         ];
     }
 
