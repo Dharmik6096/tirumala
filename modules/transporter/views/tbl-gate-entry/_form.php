@@ -63,9 +63,11 @@ $script = "
          $('#gate-entry-form .reset_field select').val('');                                                             
          $('#tblgateentry-route_code').change();
          $('.QltyParamDiv').show();
-         var dt = new Date($.now());
-         var time = dt.getHours() + ':' + dt.getMinutes();
-         $('#tblgateentry-actual_arrival_time').val(time);                                                             
+         
+          var dt = new Date($.now());
+         // var time = dt.getHours() + ':' + dt.getMinutes();
+         var time = ((dt.getHours()<10?'0':'') + dt.getHours()) + ':' + ((dt.getMinutes()<10?'0':'') + dt.getMinutes());
+         $('#tblgateentry-actual_arrival_time').val(time);                                                            
     });
      $(document).on('click','.edit-record',function(e){
      var id = $(this).attr('data-val');

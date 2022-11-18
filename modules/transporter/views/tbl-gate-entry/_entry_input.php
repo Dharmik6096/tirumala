@@ -120,8 +120,9 @@ $form = ActiveForm::begin([
                                                                     $("#tblgateentry-route_code").change();
                                                                     $(".DisableAferAdd").addClass("disabledDiv");                                                                  
                                                                     $(".panel-body").scrollTop(0);  
-                                                                        var dt = new Date($.now());
-                                                                        var time = dt.getHours() + ":" + dt.getMinutes();
+                                                                       var dt = new Date($.now());
+                                                                        // var time = dt.getHours() + ":" + dt.getMinutes();
+									var time = ((dt.getHours()<10?"0":"") + dt.getHours()) + ":" + ((dt.getMinutes()<10?"0":"") + dt.getMinutes());
                                                                         $("#tblgateentry-actual_arrival_time").val(time);    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
