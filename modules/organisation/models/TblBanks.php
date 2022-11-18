@@ -142,7 +142,7 @@ class TblBanks extends ChildModel {
             'updated_by' => Yii::t('app', 'Updated By'),
             'short_name' => Yii::t('app', 'Short Name'),
             'local_short_name' => Yii::t('app', 'Local Short Name'),
-            'is_alpha_acno_allow' => Yii::t('app', 'Allow Alpha Accno'),
+            'is_alpha_acno_allow' => Yii::t('app', 'Allow Alpha A/C no.'),
         ];
     }
 
