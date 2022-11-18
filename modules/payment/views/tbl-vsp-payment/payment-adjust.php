@@ -334,3 +334,31 @@ $this->registerJs($script, View::POS_END, 'payment-adjust-script');
 $script = "$('.kv-panel-before').hide();";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
+
+<?php
+$script = "$(document).on('click','#add-installment',function(e){
+        $('#error-summary').hide();
+        var paymentData = [];
+            $('#vendor-installment-form .checkbox-installment').each(function () {
+             if(this.checked){
+                    paymentData.push($(this).val()); 
+                }
+            });
+       var skipHead=$('#vendor-head-skip-form').serialize();     
+        $.ajax({
+                    type: 'post',
+                    url: $('#vendor-head-skip-form').attr('action'),
+                    data: 'paymentData='+paymentData+'&'+skipHead,
+                    success: function(data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            location.reload();
+                        }else{
+                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.msg+'</span>');
+                        }
+                    }
+                });           
+    })";
+$this->registerJs($script, View::POS_END, 'vendor-installment-form-submit');
+?>

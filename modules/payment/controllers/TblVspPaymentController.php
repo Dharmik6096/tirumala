@@ -33,6 +33,8 @@ use app\modules\payment\models\TblVspPaymentRecovery;
 use app\modules\payment\models\TblSaleInstallmentsSearch;
 use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblProductSaleInstallmentHistory;
+use app\modules\vsp\models\TblBillHeadInstallment;
+use app\modules\vsp\models\TblBillHeadInstallmentHistory;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -187,12 +189,12 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $add_inst = array_diff($new_product_inst, $old_product_inst);
             $delete_inst = array_diff($old_product_inst, $new_product_inst);
             $process = FALSE;
+            $saveModel = [];
+            $deleteModel = [];
+            $add_amt = 0;
+            $sub_amt = 0;
             if (!empty($add_inst) || !empty($delete_inst)) {
-                $add_amt = 0;
-                $sub_amt = 0;
                 $process = TRUE;
-                $saveModel = [];
-                $deleteModel = [];
                 foreach ($add_inst as $id) {
                     $inst = TblSaleInstallments::findOne($id);
                     $historyModel = new TblProductSaleInstallmentHistory();
@@ -211,9 +213,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                     $saveModel[] = $inst;
                     $sub_amt = $sub_amt + $inst->installment_amount;
                 }
-            }
 
-            if ($process) {
                 $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'VENDOR', 'union_code' => $model->union_code])->one();
                 $vsp_txn = TblVspPaymentTransaction::find()->where(['vsp_payment_code' => $model->vsp_payment_code, 'bill_head_code' => $pro_sale_head->bill_head_code])->one();
                 if (empty($vsp_txn)) {
@@ -230,11 +230,50 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                 } else {
                     $saveModel[] = $vsp_txn;
                 }
+            }
+            $total_addition = 0;
+            $total_deduction = 0;
+            $head_detail = !empty(Yii::$app->request->post()['TblVspPaymentTransaction']) ? Yii::$app->request->post()['TblVspPaymentTransaction'] : [];
+            if (!empty($head_detail)) {
+                foreach ($head_detail as $head) {
+                    if ($head['current_cycle'] != $head['payment_cycle_type']) {
+                        $new_payment_cycle_type = explode('-', $head['payment_cycle_type'])[0];
+                        $p_head = TblVspPaymentTransaction::findOne($head['tbl_vsp_payment_transaction_code']);
+                        if (!empty($p_head)) {
+                            $process = TRUE;
+                            $from_date = date('Y-m-d', strtotime($model->from_datetime));
+                            $bill_head_inst = TblBillHeadInstallment::find()->where(['installment_date' => $from_date, 'customer_type' => $model->customer_type, 'bill_head_for' => 'VENDOR', 'customer_code' => $model->customer_code, 'bill_head_code' => $p_head->bill_head_code])->all();
+                            foreach ($bill_head_inst as $installment) {
+                                $insthistoryModel = new TblBillHeadInstallmentHistory();
+                                Yii::$app->operation->history($installment, $insthistoryModel, 'UPDATE');
+                                $installment->installment_status = 2;
+                                $installment->payment_cycle_type = $new_payment_cycle_type;
+                                $saveModel[] = $insthistoryModel;
+                                $saveModel[] = $installment;
+                            }
+                            if ($p_head->bill_head_type == 0) {
+                                $total_addition = $total_addition + $p_head->amount;
+                            } else {
+                                $total_deduction = $total_deduction + $p_head->amount;
+                            }
+                            $deleteModel[] = $p_head;
+                        }
+                    }
+                }
+            }
+
+            if ($process) {
                 $model->deduction = $model->deduction + $add_amt - $sub_amt;
                 $model->net_payable = $model->net_payable - $add_amt + $sub_amt;
                 $model->final_pay = $model->final_pay - $add_amt + $sub_amt;
+
+                $model->addition = $model->addition - $total_addition;
+                $model->deduction = $model->deduction - $total_deduction;
+                $model->net_payable = $model->net_payable + $total_deduction - $total_addition;
+                $model->final_pay = $model->final_pay + $total_deduction - $total_addition;
+
                 $saveModel[] = $model;
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Product Sale Installment', 'create']);
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Vendor Payment Head', 'edit']);
                 if ($transaction == 'customRedirect') {
                     $record = ['status' => 'success', 'msg' => ''];
                 } else {
