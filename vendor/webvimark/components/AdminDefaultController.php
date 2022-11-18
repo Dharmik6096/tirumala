@@ -209,7 +209,7 @@ class AdminDefaultController extends BaseController {
      * @return mixed
      */
     public function actionDelete($id = '') {
-        $id = \Yii::$app->request->post('id');
+//        $id = \Yii::$app->request->post('id');
         $model = $this->findModel($id);
         $className = \yii\helpers\StringHelper::basename(get_class($model));
         if ($className == 'User') {
