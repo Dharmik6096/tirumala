@@ -13,8 +13,8 @@ use webvimark\modules\UserManagement\models\User;
 <?php
 
 $attribute = [
-        ['attribute' => Yii::t('app', 'MCC'), 'vAlign' => 'middle', 'filter' => false],
-        ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
+    ['attribute' => 'mcc', 'label' => Yii::t('app', 'MCC'), 'vAlign' => 'middle', 'filter' => false],
+    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -24,12 +24,12 @@ $attribute = [
 //            return Yii::$app->controls->view_date($model['date_time_of_collection']);
 //        }, 
         'filter' => FALSE],
-        ['attribute' => 'shift', 'filter' => false],
-        ['attribute' => 'qty', 'filter' => FALSE],
-        ['attribute' => 'avgFAT', 'filter' => FALSE],
-        ['attribute' => 'avgSNF', 'filter' => FALSE],
-        ['attribute' => 'amount', 'filter' => FALSE],
-        ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
+    ['attribute' => 'shift', 'filter' => false],
+    ['attribute' => 'qty', 'filter' => FALSE],
+    ['attribute' => 'avgFAT', 'filter' => FALSE],
+    ['attribute' => 'avgSNF', 'filter' => FALSE],
+    ['attribute' => 'amount', 'filter' => FALSE],
+    ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
 
             $class = $model['bmc_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['bmc_lock'] == 1 ? 'Data Unlock - BMC' : 'Data Lock - BMC';
@@ -53,7 +53,7 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
-        ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
+    ['attribute' => 'member_lock', 'label' => Yii::t('app', 'Member Data'), 'value' => function($model) {
             if (Yii::$app->session->get('eiplCode') != 'PRABHAT') {
                 $class = $model['member_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
                 $title = $model['member_lock'] == 1 ? 'Data Unlock - Member' : 'Data Lock - Member';
@@ -81,7 +81,7 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
-        ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
+    ['attribute' => 'product_sale_lock', 'label' => Yii::t('app', 'Product Sale Data'), 'value' => function($model) {
             $class = $model['product_sale_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
             $title = $model['product_sale_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
             $url = $model['product_sale_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/product-sale-unlock' : '/collection/tbl-mcc-shift-lock/product-sale-lock';
@@ -90,29 +90,6 @@ $attribute = [
                 $popupClass = ' generalGridConfirmationPopup ';
             }
             $popupWindowTitle = 'Are you sure you want to ' . ($model['product_sale_lock'] == 1 ? 'Unlock Product Sale Data' : 'Lock Product Sale Data');
-            $options = [
-                'data-toggle' => 'tooltip',
-                'data-placement' => 'top',
-                'data-original-title' => $title,
-                'data-popup-message' => $popupWindowTitle,
-                'class' => $popupClass,
-                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
-            ];
-            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
-        },
-        'format' => 'raw',
-        'contentOptions' => function($model) {
-            return ['class' => 'text-center'];
-        }, 'filter' => false],
-        ['attribute' => 'vm_data_lock', 'label' => Yii::t('app', 'VM Data'), 'value' => function($model) {
-            $class = $model['vm_data_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
-            $title = $model['vm_data_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
-            $url = $model['vm_data_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/vm-data-unlock' : '/collection/tbl-mcc-shift-lock/vm-data-lock';
-            $popupClass = ''; //' disabled ';
-            if (User::canRoute($url)) {
-                $popupClass = ' generalGridConfirmationPopup ';
-            }
-            $popupWindowTitle = 'Are you sure you want to ' . ($model['vm_data_lock'] == 1 ? 'Unlock VM Data' : 'Lock VM Data');
             $options = [
                 'data-toggle' => 'tooltip',
                 'data-placement' => 'top',
