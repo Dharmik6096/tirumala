@@ -104,6 +104,29 @@ $attribute = [
         'contentOptions' => function($model) {
             return ['class' => 'text-center'];
         }, 'filter' => false],
+    ['attribute' => 'vm_data_lock', 'label' => Yii::t('app', 'VM Data'), 'value' => function($model) {
+            $class = $model['vm_data_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
+            $title = $model['vm_data_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
+            $url = $model['vm_data_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/vm-data-unlock' : '/collection/tbl-mcc-shift-lock/vm-data-lock';
+            $popupClass = ''; //' disabled ';
+            if (User::canRoute($url)) {
+                $popupClass = ' generalGridConfirmationPopup ';
+            }
+            $popupWindowTitle = 'Are you sure you want to ' . ($model['vm_data_lock'] == 1 ? 'Unlock VM Data' : 'Lock VM Data');
+            $options = [
+                'data-toggle' => 'tooltip',
+                'data-placement' => 'top',
+                'data-original-title' => $title,
+                'data-popup-message' => $popupWindowTitle,
+                'class' => $popupClass,
+                'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
+            ];
+            return GhostHtml::a_alert('<i class="fa ' . $class . '"></i>', ['#', 'mcc_plant_code' => $model['mcc_plant_code'], 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($model['date_time_of_collection']))], $options);
+        },
+        'format' => 'raw',
+        'contentOptions' => function($model) {
+            return ['class' => 'text-center'];
+        }, 'filter' => false],
 ];
 
 $grid_option = [
