@@ -18,6 +18,8 @@ use app\modules\organisation\models\TblBmcMilkTypeHistory;
 use app\modules\organisation\models\TblBmcGroupMapping;
 use app\modules\organisation\models\TblBmcGroupMappingSearch;
 use yii\helpers\ArrayHelper;
+use app\modules\details\models\TblBankDetails;
+use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\organisation\models\TblBmcGroupMappingHistory;
 use app\modules\organisation\models\TblMccPlantGroupMapping;
 use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
@@ -30,6 +32,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblDcsBmcController extends \app\controllers\ChildController {
 
+    public $bankDetails;
     public $contactDetails;
     public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list'];
 
@@ -55,6 +58,11 @@ class TblDcsBmcController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $bsearchModel = new TblBankDetailsSearch();
+        $bsearchModel->module_name = 'bmc';
+        $bsearchModel->module_code = $id;
+        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
+
         $csearchModel = new TblContactDetailsSearch();
         $csearchModel->module_name = 'bmc';
         $csearchModel->module_code = $id;
@@ -73,6 +81,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $isaction = FALSE;
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
                     'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
                     'sdataProvider' => $sdataProvider, 'ssearchModel' => $ssearchModel,
                     'sndataProvider' => $sndataProvider, 'snsearchModel' => $snsearchModel, 'isaction' => $isaction
@@ -87,6 +96,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->viewFile = 'create';
         $this->model = new TblDcsBmc();
+        $this->bankDetails = new TblBankDetails();
         $this->contactDetails = new TblContactDetails();
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
@@ -97,6 +107,13 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $this->setModel($this->model);
             $this->model->bmc_code = $this->model->getCode();
             $this->model->bmc_name = ucwords($this->model->bmc_name);
+            $this->setModel($this->model);
+            $this->bankDetails->load(Yii::$app->request->post());
+            if (!empty($this->bankDetails->bank_code)) {
+                $this->bankDetails->setModel('bmc', $this->model->bmc_code);
+                $this->bankDetails->scenario = 'bank_selected';
+                array_push($master, $this->bankDetails);
+            }
             $this->contactDetails->load(Yii::$app->request->post());
             $this->contactDetails->setModel('bmc', $this->model->bmc_code);
             $master[] = $this->model;
@@ -193,6 +210,25 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionBankDetails($id) {
+        $bankDetails = new TblBankDetails();
+        $bankDetails->scenario = 'additional';
+        $searchModel = new TblBankDetailsSearch();
+        $searchModel->module_name = 'bmc';
+        $searchModel->module_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $modelDcs = $this->findModel($id);
+        return $this->render('../../../details/views/tbl-bank-details/create', [
+                    'model' => $bankDetails,
+                    'id' => $id,
+                    'module' => 'bmc',
+                    'dist' => $modelDcs->district_code,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'dist_field' => 'tbldcsbmc-district_code'
+        ]);
+    }
+
     public function actionContactDetails($id) {
         $contactDetails = new TblContactDetails();
         $searchModel = new TblContactDetailsSearch();
@@ -210,6 +246,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
+                    'bankDetails' => $this->bankDetails,
                     'contactDetails' => $this->contactDetails
         ]);
     }

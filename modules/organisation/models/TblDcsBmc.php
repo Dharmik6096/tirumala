@@ -51,7 +51,7 @@ use app\modules\organisation\models\TblChannelMaster;
 class TblDcsBmc extends \app\models\ChildModel {
 
     public $is_sentbox, $milk_type_code;
-    public $toEncrypt = ['password'];
+    public $toEncrypt = ['password', 'pan_no'];
     public $channel_type;
 
     /**
@@ -86,7 +86,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type', 'gst_no', 'pan_no'], 'safe'],
                 [['mcc_plant_code'], 'setField'],
                 [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
@@ -101,6 +101,16 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
+                [['pan_no'], 'trim'],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
+                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['gst_no'], 'unique', 'except' => ['post_sap_data', 'from_mcc']],
+                [['gst_no'], 'string', 'max' => 15],
+                [['gst_no'], function ($attribute, $params) {
+                    $this->validateGstNo($attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -142,6 +152,8 @@ class TblDcsBmc extends \app\models\ChildModel {
             'bmc_code_ex' => Yii::t('app', 'BMC Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
             'x_col1' => Yii::t('app', 'Channel Type'),
+            'pan_no' => Yii::t('app', 'PAN No'),
+            'gst_no' => Yii::t('app', 'GST No'),
         ];
     }
 
@@ -486,6 +498,19 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getChannelMaster() {
         return $this->hasOne(TblChannelMaster::className(), ['channel_master_code' => 'x_col1']);
+    }
+
+    public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
+    }
+
+    public function validateGstNo($attribute, $params) {
+
+        if (!empty($this->gst_no))
+            if (strlen($this->gst_no) != 15) {
+                $this->addError($attribute, Yii::t('app/validation', 'Gst no must contain 15 characters'));
+            }
+        return false;
     }
 
 }
