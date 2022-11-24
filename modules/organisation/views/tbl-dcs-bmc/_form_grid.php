@@ -92,6 +92,9 @@ $attribute = [
         },],
         ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'password', 'visible' => false, 'filter' => false],
+        ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
+        ['attribute' => 'address', 'visible' => false, 'filter' => false],
+        ['attribute' => 'aadhaar_no'],
         ['attribute' => 'antibiotic_check',
         'value' => function($model) {
             return $model->antibiotic_check == 1 ? 'Yes' : 'No';

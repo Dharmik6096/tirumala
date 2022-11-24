@@ -90,6 +90,9 @@ $form = ActiveForm::begin([
             </div> -->
         <!--<div class="clearfix"></div>-->
         <div class="col-sm-2">
+            <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2">
@@ -125,6 +128,12 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>

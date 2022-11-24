@@ -226,6 +226,27 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'pincode',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                                [
+                                'attribute' => 'address',
+                                'valueColOptions' => ['style' => 'width:30%'],
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'aadhaar_no',
+                                'format' => 'html',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
 // View file rendering the widget
