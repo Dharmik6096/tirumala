@@ -62,7 +62,7 @@ class TblBmcCollectionTransferController extends \app\controllers\ChildControlle
                 $deleteModel = [];
                 $type = 'create';
                 $post = Yii::$app->request->post()['TblBmcCollectionTransferSearch'];
-              
+
                 $deletedata = Yii::$app->request->post('selection');
                 $codes = empty(Yii::$app->request->post('selection')) ? [] : Yii::$app->request->post('selection');
                 $where = [];
@@ -70,7 +70,7 @@ class TblBmcCollectionTransferController extends \app\controllers\ChildControlle
                     $where['milk_collection_code'] = $code;
                     $existData = TblBmcCollection::find()->where($where)->one();
                     $bmc = $existData->bmc_code;
-                    $dcs = $existData->dcs_code;
+                    $dcs = $existData->customer_code;
                     $dcsModel = TblDcs::find()->where(['dcs_code' => $dcs, 'bmc_code' => $bmc])->one();
                     $sapVendorCode = !empty($dcsModel) ? $dcsModel->sap_vendor_code : '';
                     $dcsVendorModel = TblDcs::find()->where(['sap_vendor_code' => $sapVendorCode, 'plant_code' => $post['to_plant_code'], 'mcc_plant_code' => $post['to_mcc_plant_code']])->one();
@@ -95,7 +95,7 @@ class TblBmcCollectionTransferController extends \app\controllers\ChildControlle
                 }
                 $Transfer = new TblBmcCollectionTransfer();
                 $Transfer->attributes = $searchModel->attributes;
-                $Transfer->from_date = Yii::$app->formatter->asDate($Transfer->from_date , DATE_FORMAT) . ' ' . Yii::$app->general->getshift($Transfer->from_shift_code);
+                $Transfer->from_date = Yii::$app->formatter->asDate($Transfer->from_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($Transfer->from_shift_code);
                 $Transfer->to_date = Yii::$app->formatter->asDate($Transfer->to_date, DATE_FORMAT) . ' ' . Yii::$app->general->getshift($Transfer->to_shift_code);
 
                 $Transfer->to_plant_code = $post['to_plant_code'];
