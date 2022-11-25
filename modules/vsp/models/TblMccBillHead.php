@@ -1,0 +1,189 @@
+<?php
+
+namespace app\modules\vsp\models;
+
+use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\vsp\models\TblMccBillHeadDefault;
+use app\modules\organisation\models\TblDcs;
+use yii\helpers\ArrayHelper;
+use app\modules\payment\models\TblPaymentCycle;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\globalmaster\models\TblAnimalType;
+
+/**
+ * This is the model class for table "tbl_mcc_bill_head".
+ *
+ * @property string $mcc_bill_head_code
+ * @property string $bill_head_name
+ * @property integer $is_default
+ * @property integer $is_active
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $union_code
+ * @property integer $is_disburse_allowed
+ * @property integer $bill_head_type
+ * @property string $general_formula_code
+ * @property string $calculation_based_on
+ */
+class TblMccBillHead extends \app\models\ChildModel {
+
+    public $plant_code, $mcc_plant_code, $bmc_code, $customer_type, $payment_cycle_code, $from_date, $to_date;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_mcc_bill_head';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['bill_head_for'], 'default', 'value' => 'BMC'],
+            [['mcc_bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
+            [['mcc_bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
+            [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
+            [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on', 'is_hold', 'payment_cycle_type'], 'safe'],
+            [['is_active'], 'default', 'value' => '1'],
+            [['is_disburse_allowed'], 'default', 'value' => '1'],
+            [['is_default', 'has_slab', 'is_hold', 'milk_type_code'], 'default', 'value' => '0'],
+            [['payment_cycle_type'], 'default', 'value' => 'consecutive'],
+            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code', 'bill_head_for'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
+            ['default_bill_head_code', 'required', 'when' => function ($model) {
+                    return $model->is_default == 1;
+                }, 'whenClient' => "function (attribute, value) { 
+              return $('#tblmccbillhead-is_default').is(':checked'); 
+          }"],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'milk_type_code'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
+//            ['customer_type', 'required', 'when' => function ($model) {
+//                    return $model->bill_head_for != 'MEMBER';
+//                }, 'whenClient' => "function (attribute, value) { 
+//              return $('#tblmccbillhead-bill_head_for').val()!='MEMBER'; 
+//          }", 'on' => ['dcsWiseHead']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'mcc_bill_head_code' => Yii::t('app', 'Bill Head Code'),
+            'bill_head_name' => Yii::t('app', 'Head Name'),
+            'is_default' => Yii::t('app', 'Is Default'),
+            'is_active' => Yii::t('app', 'Is Active'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'union_code' => Yii::t('app', 'Union'),
+            'is_disburse_allowed' => Yii::t('app', 'Is Disburse Allowed'),
+            'bill_head_type' => Yii::t('app', 'Bill Head Type'),
+            'default_bill_head_code' => Yii::t('app', 'Default Bill Head Type'),
+            'general_formula_code' => Yii::t('app', 'Formula'),
+            'sequence_no' => Yii::t('app', 'Sequence No.'),
+            'bill_head_for' => Yii::t('app', 'Head For'),
+            'calculation_based_on' => Yii::t('app', 'Calculation Based On'),
+            'is_hold' => Yii::t('app', 'Is Hold'),
+            'payment_cycle_type' => Yii::t('app', 'Payment Cycle Type'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return TblMccBillHeadQuery the active query used by this AR class.
+     */
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getBillHeadCode() {
+        return $this->hasOne(TblMccBillHeadApplicability::className(), ['mcc_bill_head_code' => 'mcc_bill_head_code']);
+    }
+
+    public function getDefaultBillHeadCode() {
+        return $this->hasOne(TblMccBillHeadDefault::className(), ['default_bill_head_code' => 'default_bill_head_code']);
+    }
+
+    public function getAllBillHead($society = '', $union = '') {
+        $query = $this->find()->select('tbl_mcc_bill_head.mcc_bill_head_code,bill_head_name')->where(['is_active' => 1, 'is_default' => 0]);
+        $query->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
+        if (!empty($union)) {
+            $query->andWhere(['union_code' => $union]);
+        }
+        if (!empty($society)) {
+            $query->innerJoinWith('billHeadCode')->andWhere(['dcs_code' => $society]);
+        }
+        return $query->all();
+    }
+
+    public function billHeadData($society = [], $union = []) {
+        $list = $this->getAllBillHead($society, $union);
+        return \yii\helpers\ArrayHelper::map($list, 'mcc_bill_head_code', 'bill_head_name');
+    }
+
+    public function billHeadType($bill_head_code) {
+        return $this->find()->select(['bill_head_type'])->where(['mcc_bill_head_code' => $bill_head_code])->one();
+    }
+
+    public function billHeadTypeWise($union, $type, $code, $headFor) {
+        $query = $this->find()
+                ->innerJoinWith('billHeadCode as apl')
+                ->where(['is_active' => 1, 'is_default' => 0, 'tbl_mcc_bill_head.bill_head_for' => $headFor, 'apl.union_code' => $union, 'apl.applicable_for' => $type, 'apl.applicable_code' => $code])
+                ->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
+        $list = $query->all();
+
+        return \yii\helpers\ArrayHelper::map($list, 'mcc_bill_head_code', function($data) {
+                    return isset($data->bill_head_type) ? $data->bill_head_name . ' (' . Yii::$app->dropdown->getRecords('calc_type')['data'][$data->bill_head_type] . ')' : $data->bill_head_name;
+                });
+    }
+
+    public function getBillHead($model) {
+        $query = $this->find()
+                ->where(['is_active' => 1, 'union_code' => $model->union_code, 'bill_head_for' => $model->bill_head_for])
+                ->andWhere(['IN', 'has_slab', ['0', NULL, '']]);
+        return $list = $query->all();
+    }
+
+    public function getDcs($data) {
+        if ($data['customer_type'] == 'DCS') {
+            $dcs = new TblDcs();
+            $query = $dcs->find()->where(['union_code' => $data['union_code'], 'plant_code' => $data['plant_code'], 'mcc_plant_code' => $data['mcc_plant_code'], 'bmc_code' => $data['bmc_code'], 'is_active' => 1]);
+            if (Yii::$app->session->get('Dcs') !== '') {
+                $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+            }
+            return $dcsData = $query->all();
+        } else {
+            $customer = new TblCustomerMaster();
+            $query = $customer->find()->where(['union_code' => $data['union_code'], 'plant_code' => $data['plant_code'], 'mcc_plant_code' => $data['mcc_plant_code'], 'bmc_code' => $data['bmc_code'], 'is_active' => 1, 'customer_type' => $data['customer_type']]);
+            return $dcsData = $query->all();
+        }
+    }
+
+    public function getApplicabiliytData($searchData, $code, $date) {
+        $applicable = new TblMccBillHeadApplicability();
+        $query = $applicable->find()
+                        ->where(['union_code' => $searchData->union_code, 'bmc_code' => $searchData->bmc_code, 'applicable_code' => $code, 'applicable_for' => $searchData->customer_type, 'bill_head_for' => $searchData->bill_head_for])->all();
+//                        ->andWhere(['<=', 'wef_date', $date])->all();
+
+        return \yii\helpers\ArrayHelper::map($query, 'mcc_bill_head_code', 'mcc_bill_head_code');
+//        return $list = $query->one();
+    }
+
+    public function getPaymentCycle() {
+        return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getMilkTypeCode() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+}

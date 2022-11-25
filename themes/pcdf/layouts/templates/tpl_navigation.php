@@ -220,6 +220,15 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'VSP Outstanding'), 'url' => ['/payment/tbl-vsp-outstanding/index'], 'active' => ($cntrl == 'tbl-vsp-outstanding')],
                 ['label' => Yii::t('app', 'Bill Head Criteria'), 'url' => ['/vsp/tbl-vsp-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-vsp-bill-head-criteria')],
                 ['label' => Yii::t('app', 'DCS Bill Head'), 'url' => ['/vsp/tbl-bill-head/dcs-wise-bill-head'], 'active' => ($cntrl == 'tbl-bill-head' && $action == 'dcs-wise-bill-head')],
+                [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MCC Billing<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
+                        ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
+                        ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
+                    ]
+                ],
             ],
         ],
         [

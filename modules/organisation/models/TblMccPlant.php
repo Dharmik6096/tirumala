@@ -46,7 +46,7 @@ use app\modules\globalmaster\models\TblAnimalType;
  */
 class TblMccPlant extends \app\models\ChildModel {
 
-    public $milk_type_code;
+    public $milk_type_code, $vendor_payment_with_multiple_bmc;
 
     /**
      * @inheritdoc

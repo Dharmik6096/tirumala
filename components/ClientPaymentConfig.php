@@ -81,6 +81,14 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
                     'sp_name' => 'member_payment_disburse',
                 ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_remuneration_payment_cargill',
+                ],
+                'mcc_payment_disburse' => [
+                    'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_disburse_remuneration_payment_cargill',
+                ],
             ],
             'VARDDAN' => [
                 'vsp_payment' => [

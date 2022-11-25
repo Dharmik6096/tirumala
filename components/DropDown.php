@@ -454,6 +454,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
+    public function mccRemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-mcc-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
+    }
+
     public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-bmc-milk-dispatch/destination-code-list', Yii::t('app', 'Select Code'), $multiple, '', $readonly);
@@ -761,7 +766,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1486,6 +1491,8 @@ class DropDown extends Component {
 //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
+            'mcc_default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblMccBillHeadDefault'],
+            'mcc_general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblMccGeneralFormula', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
@@ -1572,7 +1579,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
