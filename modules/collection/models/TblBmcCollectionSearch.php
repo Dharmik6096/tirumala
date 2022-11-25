@@ -24,14 +24,14 @@ class TblBmcCollectionSearch extends TblBmcCollection {
      */
     public function rules() {
         return [
-                [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
-                [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
-                [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
-                [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code'], 'safe'],
-                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
-                [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
-                [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
+            [['milk_collection_code', 'milk_type_code', 'sample_no', 'ack'], 'integer'],
+            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'shift_code', 'date_time_of_collection', 'date_time_of_recieve', 'village_code', 'type_of_data_receive', 'rate_code', 'error_log', 'soc_bmc_flag', 'dt_date', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'remarks', 'from_date', 'to_date', 'from_shift', 'to_shift', 'qty_mode', 'doc_no', 'bmc_silos_info_code', 'route_code'], 'safe'],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount'], 'number'],
+            [['mcc_plant_code', 'plant_code', 'union', 'customer_code', 'customer_type', 'customer_name', 'bmc_code', 'originating_org_type', 'originating_type', 'ref_code', 'bmc_ref_code'], 'safe'],
+            [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
+            [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
+            [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
         ];
     }
 
@@ -152,11 +152,11 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
     public function createsearch($params) {
         $this->load($params);
-        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Not Verified'")])
+        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Not Verified'"), 'route_code', 'can_no'])
                 ->where(['bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_bmc_collection'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-        $query = $this->find()->select(['tbl_bmc_collection.union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Verified'")]);
+        $query = $this->find()->select(['tbl_bmc_collection.union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Verified'"), 'route_code', 'can_no']);
 
         $unionQuery = (new ActiveQuery(TblBmcCollection::className()))->from([
                     'tbl_bmc_collection' => $query->union($ApprovalData, TRUE)

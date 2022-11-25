@@ -95,6 +95,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
             [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
                 }, 'on' => ['importCsv']],
+            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Record Is Alredy Exist.'), 'on' => ['approval']],
         ];
     }
 

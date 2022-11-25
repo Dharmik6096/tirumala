@@ -1153,6 +1153,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'UmangSapReportWeekly';
             }
         }
+        return $this->actionIndex();
     }
 
     public function actionBmcCollectionHistory() {
@@ -1177,6 +1178,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSapUploadSummary() {
         $this->report = 'SapUploadSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionFileGenerateStatus() {
+        $this->report = 'FileGenerateStatus';
         return $this->actionIndex();
     }
 
@@ -2347,6 +2353,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'AutoManualMilkCollection',
                 'title' => 'Auto Manual Report',
                 'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'FileGenerateStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_file_status',
+                'scenario' => 'FileGenerateStatus',
+                'title' => '914 - File Generate Status',
             ],
         ];
         return $label[$l];

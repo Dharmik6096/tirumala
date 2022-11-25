@@ -69,18 +69,15 @@ class TblQualityCollectionSearch extends TblQualityCollection {
         if (!empty($this->snf)) {
             $query->andFilterWhere([$this->operator_snf, 'tbl_quality_collection.snf', $this->snf]);
         }
-        if (!empty($this->from_date) || !empty($this->from_shift)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
-        }
-        if (!empty($this->to_date) || !empty($this->to_shift)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_quality_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
 

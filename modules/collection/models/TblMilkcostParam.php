@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\dcsoperation\models\TblShift;
 
 /**
  * This is the model class for table "tbl_milkcost_param".
@@ -32,6 +33,11 @@ use app\modules\organisation\models\TblMccPlant;
  * @property string $x_col3
  * @property string $x_col4
  * @property string $x_col5
+ * @property string $headload_charge
+ * @property string $building_rent_labour_charge
+ * @property string $dgset_service_other_charge
+ * @property string $other_charge_addition
+ * @property string $other_charge_deduction
  */
 class TblMilkcostParam extends \app\models\ChildModel {
 
@@ -47,9 +53,12 @@ class TblMilkcostParam extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['wef_date', 'chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'mcc_plant_code'], 'required'],
+                [['shift_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
+                }, 'on' => 'importCsv'],
+                [['wef_date', 'chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'headload_charge', 'building_rent_labour_charge', 'dgset_service_other_charge', 'other_charge_addition', 'other_charge_deduction', 'mcc_plant_code', 'shift_code'], 'required'],
                 [['union_code', 'plant_code'], 'required', 'except' => ['importCsv']],
-                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge'], 'number'],
+                [['chilling_rate', 'primary_tpt_cost', 'commission_percentage', 'labour_charge', 'service_charge', 'headload_charge', 'building_rent_labour_charge', 'dgset_service_other_charge', 'other_charge_addition', 'other_charge_deduction'], 'number'],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'safe'],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
@@ -58,12 +67,13 @@ class TblMilkcostParam extends \app\models\ChildModel {
                 [['mcc_plant_code'], function ($attribute, $params) {
                     Yii::$app->general->validateMCC($this, $attribute, 'mcc_plant_code');
                 }, 'on' => ['importCsv']],
+                [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
                 [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
                 [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['wef_date'], 'convertDate', 'on' => ['importCsv']],
-                [['wef_date'], 'unique', 'targetAttribute' => ['wef_date', 'mcc_plant_code']],
                 [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
+                [['wef_date'], 'unique', 'targetAttribute' => ['wef_date', 'mcc_plant_code']],
         ];
     }
 
@@ -94,6 +104,12 @@ class TblMilkcostParam extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'headload_charge' => Yii::t('app', 'Head Load Charge(Rs./Ltr)'),
+            'building_rent_labour_charge' => Yii::t('app', 'Building Rent & Labor Charge(Rs./Ltr)'),
+            'dgset_service_other_charge' => Yii::t('app', 'DG Set Service & Other Charge(Rs./Ltr)'),
+            'other_charge_addition' => Yii::t('app', 'Other Addition Charge(Rs./Ltr)'),
+            'other_charge_deduction' => Yii::t('app', 'Other Deduction Charge(Rs./Ltr)'),
+            'shift_code' => Yii::t('app', 'Shift'),
         ];
     }
 
@@ -109,11 +125,19 @@ class TblMilkcostParam extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
+
     public function setImport($attribute, $params) {
         $mccPlant = $this->mccPlantCode;
         if (!empty($mccPlant)) {
             $this->union_code = $mccPlant->union_code;
             $this->plant_code = $mccPlant->plant_code;
+        }
+        if (empty($this->getErrors())) {
+            $this->wef_date = !empty($this->wef_date) ? date('Y-m-d', strtotime($this->wef_date)) : '';
+            $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
         }
     }
 

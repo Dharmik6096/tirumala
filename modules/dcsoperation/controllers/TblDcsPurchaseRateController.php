@@ -601,6 +601,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $appModel->dcs_filters = $value;
         $appModel->check_wef_date = true;
         $appModel->generateMail = true;
+        $appModel->isApproval = true;
         return $appModel->createApp();
     }
 

@@ -450,7 +450,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             }
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
             if (Yii::$app->session->get('eiplCode') == 'UMANG') {
-                $this->generateSapDataUmang($mcc, $date, $shift);
+                if ($updateField == 'bmc_lock' && $val == 1) {
+                    $this->generateSapDataUmang($mcc, $date, $shift);
+                }
             }
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];

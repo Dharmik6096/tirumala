@@ -16,7 +16,7 @@ class Path extends Component {
         '\\app\modules\collection\models\\' =>
         ['TblMilkCollection', 'TblMilkCollectionSearch', 'TblMilkCollectionHistory', 'TblMilkDispatch', 'TblMilkDispatchSearch', 'TblMilkDispatchHistory', 'TblBmcCollection', 'TblBmcCollectionHistory', 'TblMACAlibration', 'TblMACAlibrationChange', 'TblMACleaning', 'CollectionFarmerLocalSale', 'TblDpuShiftEndSummary', 'TblMASerialNo', 'TblQualityCollection', 'TblWeightCollection', 'TblShiftSummary',
             'TblDcsMilkDispatch', 'TblDcsMilkDispatchTxn', 'TblMilkCollectionSummary', 'TblMilkCollectionSummaryHistory', 'TblDcsMilkDispatchHistory', 'TblDcsMilkDispatchTxnHistory', 'TblMilkReject', 'TblMilkRejectHistory', 'TblMilkRejectHistory', 'TblCollectionDataAliasReject', 'TblBulkDataImport', 'TblBmcCollectionNotExist', 'TblMilkCollectionNotExists', 'TblCollectionPenaltyRate', 'TblCollectionPenaltyRateApplicability', 'TblCollectionPenaltyType',
-            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam', 'TblMilkTransfer'],
+            'TblAnalyzerCalibration', 'TblAnalyzerCleaning', 'TblMilkCollectionAudit', 'TblDcsClosing', 'TblDcsClosingHistory', 'TblMccShiftLockStaging', 'TblMccShiftLock', 'TblCollectionApproval', 'TblCollectionApprovalHistory', 'TblWeighBridgeData', 'TblMilkcostParam', 'TblMilkTransfer', 'TblBmcCollectionTransfer'],
         '\\app\modules\geo\models\\' =>
         ['TblStates', 'TblStatesHistory',
             'TblVillagesHistory', 'TblVillages', 'TblVillageMiscellaneous', 'TblVillagesSearch',
@@ -36,7 +36,7 @@ class Path extends Component {
             'TblMilkQualityType', 'TblMilkQualityTypeHistory',
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
-            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason',
+            'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason', 'TblRejectionResponsibility',
             'TblDeviceMaster', 'TblDeviceMasterMapping'
         ],
         '\\app\modules\organisation\models\\' =>
@@ -65,7 +65,7 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
         ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
-            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount'],
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias'],
         '\\app\modules\product\models\\' =>
         ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', 'TblProductReceiptTaxCalculatedHistory', 'TblProductDispatch', 'TblProductDispatchHistory', 'TblProductDispatchTransaction', 'TblProductDispatchTransactionHistory', 'TblProductSaleRate', 'TblProductSaleRateHistory', 'TblProductPurchaseRate', 'TblProductPurchaseRateApplicability', 'TblProductSaleRateApplicability', 'TblProductSaleRateApplicabilityHistory', 'TblProductStock', 'TblProductStockHistory', 'TblProductStockTransaction', 'TblProductStockTransactionHistory', 'TblVendorMaster', 'TblInventoryTransfer', 'TblInventoryTransferTxn',
             'TblGrn', 'TblGrnTxn'],

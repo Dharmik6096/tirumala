@@ -38,5 +38,7 @@ return [
     'FTPDirPath' => '/SAPFILES/',
     'google_map_api_key' => 'AIzaSyD78APuRJaxdjFBBSJjKag_CD2tWXSrjhE',
     'data_exchange_vendor_code' => 'EIPLMDPL',
-    'attachment_server' => 'localhost'
+    'attachment_server' => 'localhost',
+    'data_exchange_un' => 'umang-admin',
+    'data_exchange_pw' => 'P@1234',
 ];

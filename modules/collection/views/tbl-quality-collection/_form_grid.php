@@ -7,6 +7,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\web\View;
 
 $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
 ?>
@@ -37,8 +38,8 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-    return Yii::$app->controls->view_date($model->date_time_of_collection);
-}],
+            return Yii::$app->controls->view_date($model->date_time_of_collection);
+        }],
     ['attribute' => 'shift_code', 'filter' => false, 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
         }
@@ -58,8 +59,8 @@ $attribute = [
     ['attribute' => 'adt_param', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'adt_value', 'filter' => FALSE, 'visible' => false],
     ['attribute' => 'quality_datetime', 'value' => function($model) {
-        return Yii::$app->controls->view_datetime($model->quality_datetime);
-    }, 'filter' => false],
+            return Yii::$app->controls->view_datetime($model->quality_datetime);
+        }, 'filter' => false],
 ];
 
 $grid_option = [
@@ -70,4 +71,15 @@ $grid_option = [
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>
+<?php
+
+$script = "
+$(document).ready(function(){
+        setInterval(() => {
+            console.log('test');
+            $.pjax.reload({container: '#tbl-quality-collection-grid'});
+        },120000);
+});";
+$this->registerJs($script, View::POS_END, 'tbl-quality-collection-grid');
 ?>
