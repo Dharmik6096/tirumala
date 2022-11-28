@@ -1191,6 +1191,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMccBilling() {
+        $this->report = 'MccBilling';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2370,6 +2375,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_wise_rate_different',
                 'scenario' => 'SocietyWiseRateDifferenceReport',
                 'title' => '915 - Society Wise Rate Difference Report',
+            ],
+            'MccBilling' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'process_remuneration_payment_row_pivoting ',
+                'scenario' => 'MccBilling',
+                'title' => '225 - Mcc Billing',
+                'multiArray' => ['mcc_code', 'bmc_code'],
             ],
         ];
         return $label[$l];
