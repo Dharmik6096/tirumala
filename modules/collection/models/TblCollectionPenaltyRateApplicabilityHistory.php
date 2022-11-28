@@ -36,44 +36,41 @@ use Yii;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblCollectionPenaltyRateApplicabilityHistory extends \yii\db\ActiveRecord
-{
+class TblCollectionPenaltyRateApplicabilityHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_collection_penalty_rate_applicability_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['penalty_rate'], 'number'],
-            [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['penalty_rate_applicability_code'], 'string', 'max' => 35],
-            [['penalty_rate_code'], 'string', 'max' => 30],
-            [['penalty_type', 'created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['applicable_code'], 'string', 'max' => 15],
-            [['applicable_for', 'applicable_type'], 'string', 'max' => 20],
-            [['bmc_code'], 'string', 'max' => 12],
-            [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
-            [['union_code'], 'string', 'max' => 3],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['operation_type'], 'string', 'max' => 10],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['penalty_rate'], 'number'],
+                [['wef_date', 'created_at', 'updated_at', 'history_created_at', 'dcs_code'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['penalty_rate_applicability_code'], 'string', 'max' => 35],
+                [['penalty_rate_code'], 'string', 'max' => 30],
+                [['penalty_type', 'created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
+                [['applicable_code'], 'string', 'max' => 15],
+                [['applicable_for', 'applicable_type'], 'string', 'max' => 20],
+                [['bmc_code'], 'string', 'max' => 12],
+                [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
+                [['union_code'], 'string', 'max' => 3],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['operation_type'], 'string', 'max' => 10],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'penalty_rate_applicability_code' => Yii::t('app', 'Penalty Rate Applicability Code'),
@@ -105,4 +102,5 @@ class TblCollectionPenaltyRateApplicabilityHistory extends \yii\db\ActiveRecord
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
     }
+
 }

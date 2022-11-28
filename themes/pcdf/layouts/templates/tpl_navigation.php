@@ -198,6 +198,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                 ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
                 ['label' => Yii::t('app', 'Bank Payment Log'), 'url' => ['/payment/tbl-bank-payment-log/index'], 'active' => ($cntrl == 'tbl-bank-payment-log')],
+                ['label' => Yii::t('app', 'Data Consider in VSP Payment'), 'url' => ['/payment/tbl-vsp-payment-data-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-data-config')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -602,6 +603,7 @@ echo GhostMenu::widget([
                         ['label' => '912-' . Yii::t('app', 'Monthly Comparison Report'), 'url' => ['/misreports/reports/milk-and-bmc-collection-monthly-comparision']],
                         ['label' => '913-' . Yii::t('app', 'Rate Applicability Detail History'), 'url' => ['/misreports/reports/rate-applicability-details-history']],
                         ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
+                        ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
                     ]
                 ],
                 [

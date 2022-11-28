@@ -785,6 +785,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionSocietyWiseRateDifferenceReport() {
+        $this->report = 'SocietyWiseRateDifferenceReport';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -2359,6 +2364,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_file_status',
                 'scenario' => 'FileGenerateStatus',
                 'title' => '914 - File Generate Status',
+            ],
+            'SocietyWiseRateDifferenceReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_society_wise_rate_different',
+                'scenario' => 'SocietyWiseRateDifferenceReport',
+                'title' => '915 - Society Wise Rate Difference Report',
             ],
         ];
         return $label[$l];
