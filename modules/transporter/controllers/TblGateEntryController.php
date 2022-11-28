@@ -61,6 +61,7 @@ class TblGateEntryController extends ChildController {
         $modelSave = [];
         $message = 'Gate Entry';
         $type = 'create';
+        $client_code = \Yii::$app->session->get('eiplCode');
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
@@ -84,7 +85,11 @@ class TblGateEntryController extends ChildController {
                 $define_arrival_time = date("H:i", strtotime('+' . (empty($this->model->grace_time) ? 0 : (int) $this->model->grace_time) . ' minutes', strtotime($this->model->define_arrival_time)));
                 $late_by_time = (strtotime($actual_arrival_time) - strtotime($define_arrival_time)) / 60;
                 $this->model->late_by_time = ($late_by_time > 0) ? $late_by_time : 0;
-                $this->model->transporter_code = Yii::$app->general->getforeignkey($this->model->vehicleName, 'transporter_code');
+                if ($client_code == 'UMANG') {
+                    $this->model->transporter_code = $this->model->vehicleCode->transporter_code;
+                } else {
+                    $this->model->transporter_code = Yii::$app->general->getforeignkey($this->model->vehicleName, 'transporter_code');
+                }
                 $modelSave[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
@@ -163,6 +168,24 @@ class TblGateEntryController extends ChildController {
         $controls['p_gate_entry_code'] = $id;
         $controls['p_report_name'] = 'GatePass-' . $id;
         $this->printDocument($controls, 'vsp/GatePass', 'GatePass-' . $id, 'pdf');
+    }
+
+    public function actionGetOutEntry($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblGateEntryHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->scenario = 'getOut';
+        $this->model->status = 1;
+        $this->model->status_time = date('Y-m-d H:i:s');
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Gate Entry', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Gate Out Entry created Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Gate Out Entry Not created Deactivated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

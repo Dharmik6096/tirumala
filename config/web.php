@@ -269,6 +269,7 @@ $config = [
         'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
         'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
         'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
+        'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
     ],
     'params' => $params,
 ];

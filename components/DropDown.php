@@ -766,7 +766,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1157,6 +1157,7 @@ class DropDown extends Component {
                 'name' => 'action_perform',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['CREATE' => Yii::t('app', 'CREATE'), 'UPDATE' => Yii::t('app', 'UPDATE'), 'DELETE' => Yii::t('app', 'DELETE')],
+                'remove_key' => ['CREATE'],
             ],
             'process_type' => [
                 'name' => 'process_type',
@@ -1371,7 +1372,7 @@ class DropDown extends Component {
             'calc_based_on' => [
                 'name' => 'type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance')],
+                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance'), 'defined_amount_only' => Yii::t('app', 'Defined Amount Only')],
             ],
             'sap_file' => [
                 'name' => 'sap_file',
@@ -1382,6 +1383,11 @@ class DropDown extends Component {
                 'name' => 'payment_cycle_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['first' => Yii::t('app', 'First'), 'second' => Yii::t('app', 'Second'), 'third' => Yii::t('app', 'Third'), 'consecutive' => Yii::t('app', 'Consecutive')],
+            ],
+            'approved_status' => [
+                'name' => 'approved_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Approved')],
             ],
         ];
         return $records[$l];
@@ -1493,6 +1499,7 @@ class DropDown extends Component {
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
             'mcc_default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblMccBillHeadDefault'],
             'mcc_general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblMccGeneralFormula', 'depend' => 'union_code'],
+            'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
         ];
         return $label[$l];
     }
@@ -1579,7 +1586,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

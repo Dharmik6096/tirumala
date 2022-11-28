@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\collection\models\TblMilkRejectHistory;
+use app\modules\collection\models\TblBmcCollection;
+use app\modules\collection\models\TblBmcCollectionHistory;
 
 /**
  * TblMilkRejectController implements the CRUD actions for TblMilkReject model.
@@ -135,6 +137,47 @@ class TblMilkRejectController extends \app\controllers\ChildController {
         $model->clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
         $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
+    }
+
+    public function actionResponsibilityMapping() {
+        $searchModel = new TblMilkRejectSearch();
+        $searchModel->scenario = 'responsibilityMapping';
+        if (Yii::$app->request->post()) {
+            if (!empty(Yii::$app->request->post()['TblMilkRejectSearch'])) {
+                $post_data = Yii::$app->request->post()['TblMilkRejectSearch'];
+                $saveModel = [];
+                foreach ($post_data as $d) {
+                    if (!empty($d['rejection_responsibility_code'])) {
+                        if ($d['collection_type'] == 'bmc_rejection') {
+                            $model = TblMilkReject::findOne($d['collection_code']);
+                            $historyModel = new TblMilkRejectHistory();
+                        } else {
+                            $model = TblBmcCollection::findOne($d['collection_code']);
+                            $historyModel = new TblBmcCollectionHistory();
+                        }
+                        if (!empty($model)) {
+                            $old_resp = $model->rejection_responsibility_code;
+                            $new_resp = $d['rejection_responsibility_code'];
+                            if ($old_resp != $new_resp) {
+                                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                $saveModel[] = $historyModel;
+                                $model->rejection_responsibility_code = $new_resp;
+                                $model->scenario = 'rejectRespMap';
+                                $saveModel[] = $model;
+                            }
+                        }
+                    }
+                }
+                if (!empty($saveModel)) {
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Rejection Responsibility Mapping', 'edit']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->responsibilityMapping(Yii::$app->request->queryParams);
+        return $this->render('responsibility_mapping', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

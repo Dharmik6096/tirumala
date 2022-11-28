@@ -16,55 +16,77 @@ $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
         <div class="table-responsive">
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'vehicle_code',
-                            'value' => $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name,
+                            'value' => $model->vehicle->parsing_no . '/' . $model->vehicle->vehicleType->vehicle_type_name,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'route_code',
                             'value' => isset($model->routeCode) ? $model->routeCode->route_name : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'transporter_code',
                             'value' => $model->transporterCode->transporter_name,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'wef_date',
                             'value' => Yii::$app->controls->view_date($model->wef_date),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                
-                
-                [
+                    [
                     'columns' => [
-                        [
+                            [
+                            'attribute' => 'morning_arrival_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'morning_grace_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'evening_arrival_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'evening_grace_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'morning_kms',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'evening_kms',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'extra_kms',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'total_kms',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
@@ -82,7 +104,7 @@ $this->title = Yii::$app->label->title('view', 'Vehicle KM Information');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],

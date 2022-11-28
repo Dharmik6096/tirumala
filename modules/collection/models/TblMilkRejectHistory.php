@@ -66,9 +66,9 @@ class TblMilkRejectHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['milk_reject_code', 'shift_code', 'milk_type_code', 'no_of_can', 'originating_type', 'rejection_reason_code', 'rejection_responsibility_code', 'sample_no', 'qty_mode', 'doc_no'], 'integer'],
-            [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'device_id', 'version_no', 'vehicle_code', 'parsing_no', 'route_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'string'],
-            [['fat', 'snf', 'qty', 'clr', 'water'], 'number'],
+            [['milk_reject_code', 'shift_code', 'milk_type_code', 'no_of_can', 'originating_type', 'rejection_reason_code', 'rejection_responsibility_code', 'sample_no', 'qty_mode', 'doc_no'], 'safe'],
+            [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'device_id', 'version_no', 'vehicle_code', 'parsing_no', 'route_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
+            [['fat', 'snf', 'qty', 'clr', 'water'], 'safe'],
             [['created_at', 'updated_at', 'date_time_of_collection', 'history_created_at', 'bmc_code', 'mcc_plant_code', 'plant_code'], 'safe'],
         ];
     }
