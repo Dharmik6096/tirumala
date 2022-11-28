@@ -133,6 +133,8 @@ class TblMccRemunerationSummary extends \app\models\ChildModel {
                     $to_date = date('d-m-Y', strtotime($pending_disburse->to_datetime));
                     $this->addError($attribute, Yii::t('app', "Please first disburse payment of $from_date to $to_date ."));
                     return FALSE;
+                } else {
+                    return True;
                 }
 //                $unlock_cnt = TblPaymentCycleApplicability::find()->select(['status'])
 //                        ->where(['union_code' => $this->union_code,
