@@ -229,7 +229,6 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
                 }
                 fclose($txt_file);
-                fclose($txt_file);
             }
             return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
         }
