@@ -27,6 +27,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, '', $readonly); ?>
     </div>
+    <div class="col-sm-2 shift">
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
+    </div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'chilling_rate')->textInput() ?>
     </div>
@@ -41,6 +44,21 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 number-validate"> 
         <?= $form->field($model, 'service_charge')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'headload_charge')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'building_rent_labour_charge')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'dgset_service_other_charge')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'other_charge_addition')->textInput() ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'other_charge_deduction')->textInput() ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

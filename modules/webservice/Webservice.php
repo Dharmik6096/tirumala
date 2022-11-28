@@ -42,6 +42,9 @@ class Webservice extends \yii\base\Module {
             'emilkprolite' => [
                 'class' => 'app\modules\webservice\emilkprolite\emilkProLite',
             ],
+            'dataexchange' => [
+                'class' => 'app\modules\webservice\dataexchange\dataexchange',
+            ],
         ];
     }
 

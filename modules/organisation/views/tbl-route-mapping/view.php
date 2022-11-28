@@ -151,6 +151,14 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'sap_route_code',
+                                'valueColOptions' => ['style' => 'width:80%'],
+                            ],
+                        ],
+                    ],
                 ];
 
                 // View file rendering the widget
@@ -163,7 +171,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     'responsive' => true,
                     'hAlign' => 'left',
                     'vAlign' => 'top',
-                    'deleteOptions' => [ // your ajax delete parameters
+                    'deleteOptions' => [// your ajax delete parameters
                         'params' => ['id' => 1000, 'kvdelete' => true],
                     ],
                     'container' => ['id' => 'kv-demo'],
@@ -172,13 +180,13 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 
                 <!--                <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
                                 <div class="form-grid">
-                                    <?=
-                                    $this->render('../../../details/views/tbl-bank-details/_bank_details', [
-                                        'model' => $model,
-                                        'dataProvider' => $bdataProvider,
-                                        'searchModel' => $bsearchModel,
-                                    ])
-                                    ?>
+                <?=
+                $this->render('../../../details/views/tbl-bank-details/_bank_details', [
+                    'model' => $model,
+                    'dataProvider' => $bdataProvider,
+                    'searchModel' => $bsearchModel,
+                ])
+                ?>
                                 </div>-->
 
                 <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div> -->

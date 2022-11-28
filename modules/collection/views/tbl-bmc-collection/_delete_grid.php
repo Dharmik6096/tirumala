@@ -11,6 +11,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $milkType = new TblAnimalType();
 $milk_type = $milkType->getAnimalMilkTypeArray();
 $action = Url::to(['bulk-delete']);
+$client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
 ?>
 <div class=""></div>
 
@@ -24,23 +25,26 @@ $form = ActiveForm::begin([
 
     <?php
     $attribute = [
-            ['class' => 'kartik\grid\CheckboxColumn',
+        ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
                 return ['class' => 'checkbox-collection', 'value' => $model['milk_collection_code']];
             }],
-            ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
+        ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
-            ['attribute' => 'customer_code', 'filter' => false],
-            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
+                return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE);
+            }, 'filter' => FALSE, 'visible' => $client_code],
+        ['attribute' => 'customer_code', 'filter' => FALSE],
+        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }],
-            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type);
             }, 'filter' => false],
-            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -49,22 +53,22 @@ $form = ActiveForm::begin([
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-            ['attribute' => 'shift_code', 'value' => function($model) {
+        ['attribute' => 'shift_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => FALSE],
-            ['attribute' => 'sample_no', 'filter' => FALSE],
-            ['attribute' => 'milk_type_code', 'value' => function($model) {
+        ['attribute' => 'sample_no', 'filter' => FALSE],
+        ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
             }, 'filter' => FALSE],
-            ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
             }, 'filter' => FALSE],
-            ['attribute' => 'qty', 'filter' => FALSE],
-            ['attribute' => 'fat', 'filter' => FALSE],
-            ['attribute' => 'snf', 'filter' => FALSE],
-            ['attribute' => 'clr', 'filter' => FALSE],
-            ['attribute' => 'rtpl', 'filter' => FALSE],
-            ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+        ['attribute' => 'qty', 'filter' => FALSE],
+        ['attribute' => 'fat', 'filter' => FALSE],
+        ['attribute' => 'snf', 'filter' => FALSE],
+        ['attribute' => 'clr', 'filter' => FALSE],
+        ['attribute' => 'rtpl', 'filter' => FALSE],
+        ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     ];
 
     $grid_option = [

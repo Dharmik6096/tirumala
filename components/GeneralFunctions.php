@@ -817,7 +817,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -1358,7 +1358,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1381,6 +1381,12 @@ class GeneralFunctions extends Component {
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
             }
+        } else if ($sapCode) {
+            if (strtolower($type) == 'dcs') {
+                $name = $this->getforeignkey($model->dcsCode, 'sap_vendor_code');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'sap_vendor_code');
+            }
         } else {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_name');
@@ -1401,14 +1407,14 @@ class GeneralFunctions extends Component {
 
     public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
@@ -2226,16 +2232,16 @@ class GeneralFunctions extends Component {
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere(['or',
-                ['pd.union_code' => $unions],
-                ['ms.union_code' => $unions],
-                ['md.union_code' => $unions],
-                ['cs.union_code' => $unions],
-                ['cd.union_code' => $unions]
+            ['pd.union_code' => $unions],
+            ['ms.union_code' => $unions],
+            ['md.union_code' => $unions],
+            ['cs.union_code' => $unions],
+            ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-                [$main_table . '.' . $from_dest => $form_to],
-                [$main_table . '.' . $to_dest => $form_to],
+            [$main_table . '.' . $from_dest => $form_to],
+            [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 

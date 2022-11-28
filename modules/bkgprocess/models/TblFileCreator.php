@@ -40,14 +40,14 @@ class TblFileCreator extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_status', 'status'], 'default', 'value' => 0],
-            [['activity_type'], 'default', 'value' => 'AUTO'],
-            [['vendor_code'], 'default', 'value' => 'EIPL'],
-            [['process_type'], 'default', 'value' => 'TRANSACTION'],
-            [['file_type'], 'default', 'value' => 'COLLECTION'],
-            [['module_name', 'module_code', 'mcc_plant_code', 'union_code', 'process_type', 'file_type', 'vendor_code', 'activity_type', 'created_by', 'updated_by'], 'string'],
-            [['applicable_date', 'shift_code', 'created_at', 'updated_at'], 'safe'],
-            [['file_status', 'status'], 'integer'],
+                [['file_status', 'status'], 'default', 'value' => 0],
+                [['activity_type'], 'default', 'value' => 'AUTO'],
+                [['vendor_code'], 'default', 'value' => 'EIPL'],
+                [['process_type'], 'default', 'value' => 'TRANSACTION'],
+                [['file_type'], 'default', 'value' => 'COLLECTION'],
+                [['module_name', 'module_code', 'mcc_plant_code', 'union_code', 'process_type', 'file_type', 'vendor_code', 'activity_type', 'created_by', 'updated_by'], 'string'],
+                [['applicable_date', 'shift_code', 'created_at', 'updated_at'], 'safe'],
+                [['file_status', 'status', 'eipl_code', 'file_name', 'from_datetime', 'to_datetime', 'picked_datetime', 'response_datetime'], 'safe'],
         ];
     }
 
@@ -86,13 +86,13 @@ class TblFileCreator extends \app\models\ChildModel {
 
     public function getPendingData() {
         return $this->find()
-                        ->where(['file_status' => $this->file_status, 'status' => $this->status])
+                        ->where(['status' => $this->status])
                         ->limit(25)
                         ->all();
     }
 
     public function updateFileStatus($ids) {
-        return $this->updateAll(['status' => 1, 'updated_at' => date('Y-m-d H:i:s')], ['file_creator_id' => $ids]);
+        return $this->updateAll(['status' => 1, 'picked_datetime' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')], ['file_creator_id' => $ids]);
     }
 
     public function getShiftCode() {

@@ -117,7 +117,7 @@ class TblBmcCollectionNotExist extends \app\models\ChildModel {
         return [
             [['milk_type_code', 'sample_no', 'ack', 'collection_type', 'milk_quality_type_code', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_times_no', 'data_post_status', 'doc_no', 'ftp_txn_log_id', 'converted_qty_mode', 'bmc_silos_info_code', 'data_import_code'], 'safe'],
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'density', 'clr', 'lactose', 'protein', 'converted_qty', 'converted_can', 'adt_value'], 'safe'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'date_time_of_testing', 'created_at', 'updated_at', 'picked_datetime', 'route_arrival_time', 'response_datetime'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'qlty_time', 'qty_time', 'date_time_of_testing', 'created_at', 'updated_at', 'picked_datetime', 'route_arrival_time', 'response_datetime', 'can_no'], 'safe'],
             [['remarks'], 'safe'],
             [['dcs_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'own_mcc_plant_code', 'own_bmc_code'], 'safe'],
             [['name'], 'safe'],
