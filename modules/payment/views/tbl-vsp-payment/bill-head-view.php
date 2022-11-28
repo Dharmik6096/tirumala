@@ -13,7 +13,7 @@ $society_name = !empty($dataProvider->getModels()) ?
 $update_count = 0;
 ?>
 <div class="modal modal-default fade" id="BillHeadModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog width_100-50_per">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>

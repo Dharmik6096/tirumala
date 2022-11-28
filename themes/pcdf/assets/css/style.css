@@ -4858,3 +4858,6 @@ tr.highlightRow {
 #report-form .shift {
     height: 57px
 }
+.width_100-50_per {
+    width: calc(100% - 50%);
+}
