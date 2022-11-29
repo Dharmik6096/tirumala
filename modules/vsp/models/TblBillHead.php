@@ -58,7 +58,7 @@ class TblBillHead extends \app\models\ChildModel {
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab', 'sap_seq_no'], 'safe'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'to_date'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
 //            ['customer_type', 'required', 'when' => function ($model) {
 //                    return $model->bill_head_for != 'MEMBER';

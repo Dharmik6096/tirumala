@@ -27,6 +27,8 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaApplicability;
  */
 class TblVspBillHeadCriteria extends \app\models\ChildModel {
 
+    public $to_date;
+
     /**
      * @inheritdoc
      */
@@ -41,7 +43,7 @@ class TblVspBillHeadCriteria extends \app\models\ChildModel {
         return [
                 [['vsp_criteria_code', 'bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
                 [['bill_head_code', 'originating_type'], 'integer'],
-                [['created_at', 'updated_at', 'criteria_type', 'criteria_code'], 'safe'],
+                [['created_at', 'updated_at', 'criteria_type', 'criteria_code', 'to_date'], 'safe'],
                 [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
                 [['criteria_name'], 'string', 'max' => 100],
                 [['union_code'], 'string', 'max' => 3],

@@ -326,4 +326,46 @@ class TblBillHeadController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionUpdateToDate($id) {
+        $model = $this->findModel($id);
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblBillHeadHistory();
+            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+            $model->load(Yii::$app->request->post());
+            if (!empty($model->to_date)) {
+                $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                $historyModel->bill_head_name = $historyModel->bill_head_name . '-' . $model->to_date;
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($historyModel->save()) {
+                        Yii::$app->db->createCommand("update tbl_bill_head_applicability set to_date = :to_date where bill_head_code = :bill_head_code")
+                                ->bindValue(':to_date', $model->to_date)
+                                ->bindValue(':bill_head_code', $model->bill_head_code)
+                                ->execute();
+                        $transaction->commit();
+                        Yii::$app->display->message(true, 'Bill Head Applicability To Date', 'edit');
+                        return $this->customRedirect();
+                    } else {
+                        $transaction->rollback();
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => 'Your transaction is not saved successfully']);
+                    }
+                } catch (yii\base\UserException $e) {
+                    $transaction->rollback();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => $e->getMessage()]);
+                } catch (\yii\db\Exception $e) {
+                    $transaction->rollback();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+                }
+            } else {
+                $model->addError('to_date', \Yii::t('app', 'To Date can not be blank'));
+            }
+        }
+        return $this->render('update_to_date', [
+                    'model' => $model,
+        ]);
+    }
+
 }
