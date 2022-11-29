@@ -110,7 +110,7 @@ class TblDcsMilkDispatchController extends \app\controllers\ChildController {
                 } else {
                     $existMainData = $this->model->getExistingData($this->model);
                     if (empty($existMainData)) {
-                        $this->model->dcs_milk_dispatch_code = Yii::$app->general->getPrimaryCode($this->model);
+                        $this->model->dcs_milk_dispatch_code = Yii::$app->general->getUuid(); //Yii::$app->general->getPrimaryCode($this->model);
                         $modelSave[] = $this->model;
                     }
                     $txModel->dcs_milk_dispatch_code = !empty($existMainData) ? $existMainData->dcs_milk_dispatch_code : $this->model->dcs_milk_dispatch_code;

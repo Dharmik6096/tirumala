@@ -11,14 +11,22 @@ $this->title = $title;
 <?php
 $array = $dataProvider->getModels();
 $tot_amt = array_sum(array_map(function($array) {
-            return $array['net_payable'];
+            return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'];
         }, $array));
 $final_amt = array_sum(array_map(function($array) {
-            return $array['net_payable'] + $array['adjust_amount'] - $array['hold_amount'];
+            return $array['net_payable'] + $array['adjust_recovery'] - $array['recovery'] + $array['adjust_amount'] - $array['hold_amount'];
         }, $array));
 
-$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
+$recovery_from_other_vendor = ($model->billing_type != 'remuneration' && isset(Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor']) && Yii::$app->session->get('unionConfig')[$model->union_code]['recovery_from_other_vendor'] == 1) ? TRUE : FALSE;
+
+if ($model->multiple_bmc) {
+    $mcc_data = $model->mccPlantCode;
+    $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
+} else {
+    $bmc_data = $model->bmcCode;
+    $bmc_info = $bmc_data->bmc_code . ' > ' . $bmc_data->bmc_name . ' > ';
+}
+$bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
         (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
         Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')));
 ?>
@@ -46,7 +54,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
                     return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
                 }, 'filter' => false],
                 ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-                    return Yii::$app->general->getCustomer($model, $model->customer_type);
+                    return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
                 }],
                 ['attribute' => 'kg_fat'],
                 ['attribute' => 'kg_snf'],
@@ -70,6 +78,8 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
                 'pageSummary' => true,
                 'contentOptions' => ['class' => 'final-amount'],
             ],
+                ['attribute' => 'adjust_recovery', 'contentOptions' => ['class' => 'adjust-recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
+                ['attribute' => 'recovery', 'contentOptions' => ['class' => 'recovery'], 'visible' => $recovery_from_other_vendor, 'pageSummary' => true],
                 ['attribute' => 'hold_amount',
                 'format' => 'raw',
                 'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
@@ -110,6 +120,12 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->vsp_payment_code];
                     return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-vsp-payment/bill-head', 'id' => $model->vsp_payment_code], $options);
                 },
+                'vendor-recovery' => function ($url, $model) use ($recovery_from_other_vendor) {
+                    if ($recovery_from_other_vendor) {
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'add-recovery', 'data-original-title' => 'Add Recovery', 'data-val' => $model->vsp_payment_code];
+                        return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/payment/tbl-vsp-payment/add-recovery', 'id' => $model->vsp_payment_code], $options);
+                    }
+                },
             ]
         ];
 
@@ -128,6 +144,7 @@ $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code') . ' >
 </div>
 <?php ActiveForm::end(); ?>
 <div id='bill_head_view'></div>
+<div id='add_recovery_data'></div>
 <?php
 $script = "$('#adjust').click(function() {
             $('#loadercontent').show();
@@ -141,7 +158,7 @@ $script = "$('#adjust').click(function() {
                     $('#pageloader').hide();
                     data_ok=0;
                     bootbox.alert(
-                    \"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Net Payable should not be less than final amount.</span></div></div>\",function(){
+                    \"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Net Payable should not be Negative.</span></div></div>\",function(){
                         bootbox.hideAll();
                     });
                     return false; 
@@ -184,24 +201,35 @@ $script .= " $('.cal-amount').on('blur',function(){
         var adjust = parseFloat(parent.find('.adjust-amount').val());
         var final = parseFloat(parent.find('.final-amount').text());
         var hold = parseFloat(parent.find('.hold-amount').val());
-  
+        var adjust_recovery = parseFloat(parent.find('.adjust-recovery').text());
+        var recovery = parseFloat(parent.find('.recovery').text());
+
+
         if(adjust == '' ||  isNaN(adjust)){
         adjust=0;
         }
         if(hold == '' ||  isNaN(hold)){
         hold=0;
         }
-        var net = final + adjust - hold;  
+        if(adjust_recovery == '' ||  isNaN(adjust_recovery)){
+        adjust_recovery=0;
+        }
+        if(recovery == '' ||  isNaN(recovery)){
+        recovery=0;
+        }        
+
+        var net = final + adjust - hold + adjust_recovery - recovery;  
          parent.find('.net-amount').val(net.toFixed(2));
-       if(net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
-                bootbox.hideAll();
-                    $('#'+id).focus().select();
-            });
-            return false;
-        } else {                   
-          SumAmount();    
-       }
+         SumAmount(); 
+//       if(net != '' && net < 0){
+//         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be Negative.</span>',function(){
+//                bootbox.hideAll();
+//                    $('#'+id).focus().select();
+//            });
+//            return false;
+//        } else {                   
+//          SumAmount();    
+//       }
     });";
 $script .= " function SumAmount()
  {
@@ -230,7 +258,7 @@ $script .= "$(document).ready(function(){
     function ViewBillHead(code){
         if(code != ''){         
         $.ajax({
-                type: 'post',
+                type: 'get',
                 url: '" . Url::to(['/payment/tbl-vsp-payment/bill-head']) . "',
                 data: {'code' : code},
                 beforeSend:function(data) {
@@ -251,6 +279,55 @@ $script .= "$(document).ready(function(){
         }
     }
 });";
+$script .= "$(document).ready(function(){
+    $(document).on('click','.add-recovery',function(e){
+    var id= $(this).attr('data-val');
+         AddRecoveryData(id);
+    });
+    function AddRecoveryData(code){
+        if(code != ''){         
+        $.ajax({
+                type: 'get',
+                url: '" . Url::to(['/payment/tbl-vsp-payment/add-recovery']) . "',
+                data: {'code' : code},
+                beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+                },
+                success: function(data) {
+                  $('#add_recovery_data').html(data);
+                   $('#RecoveryModal').modal('toggle');              
+                   $('#loadercontent').hide();
+                   $('#pageloader').hide();                                                                  
+                },
+                error: function(data) {  
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                }
+            });
+        }
+    }
+});";
+$script .= "$(document).on('blur','.cal-recovery',function(e){
+        var id = $(this).attr('id');
+        var parent = $(this).parents('tr');
+        var rec = parseFloat(parent.find('.recovery-amount').text());
+        var old_rec = parseFloat(parent.find('.old-recovery').text());
+        var new_rec = parseFloat(parent.find('.new-recovery').val());
+        var tot_rec = parseFloat(parent.find('.total-recovery').text());
+        if(rec == '' ||  isNaN(rec)){
+        rec=0;
+        }
+        if(new_rec == '' ||  isNaN(new_rec)){
+        new_rec=0;
+        }
+        if(old_rec == '' ||  isNaN(old_rec)){
+        old_rec=0;
+        }
+         tot_rec = rec + new_rec - old_rec;  
+         parent.find('.total-recovery').text(tot_rec.toFixed(2));       
+    });";
+
 $this->registerJs($script, View::POS_END, 'payment-adjust-script');
 ?>
 <?php

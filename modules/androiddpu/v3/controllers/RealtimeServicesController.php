@@ -90,7 +90,11 @@ class RealtimeServicesController extends \app\modules\androiddpu\v2\controllers\
         $data = $this->post_data;
         $model = new TblMember();
         $model->attributes = $data['content'];
-        $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_member_detail', [$model->dcs_code]);
+        if ($data['organization_type'] == 'BMC') {
+            $res_data = Yii::$app->general->getSpData('sp_app_amcs_member_detail', [$data['organization_code']]);
+        } else {
+            $res_data = Yii::$app->general->getSpData('sp_app_amcs_v2_member_detail', [$model->dcs_code]);
+        }
         $this->response['data'] = $res_data;
         return $this->response;
     }
@@ -110,7 +114,11 @@ class RealtimeServicesController extends \app\modules\androiddpu\v2\controllers\
             } else if ($data['ack_type'] == 'MEMBER') {
                 $model = new TblDcs();
                 $model->attributes = $data;
-                $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['dcs_code' => $model->dcs_code]);
+                if ($this->post_data['organization_type'] = 'BMC') {
+                    $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['bmc_code' => $this->post_data['organization_code'], 'is_bmc' => 1]);
+                } else {
+                    $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'is_name_request' => 0], ['dcs_code' => $model->dcs_code]);
+                }
             }
         }
         $this->response['data'] = $res_data;

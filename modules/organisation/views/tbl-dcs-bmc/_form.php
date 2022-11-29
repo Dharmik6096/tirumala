@@ -44,10 +44,13 @@ $form = ActiveForm::begin([
         </div>
         <?= Html::activeHiddenInput($model, 'is_mcc') ?>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('mcc', $model, $form, 'tbldcsbmc-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'MCC', 'mcc_plant_code', $readonly); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('mcc', $model, $form, 'tbldcsbmc-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'MCC'), 'mcc_plant_code', $readonly); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('bmc_type', $model, $form, '', 'BMC Type', false, 'bmc_type_code'); ?>        
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('channel', $model, $form, '', 'Channel Type', false, 'x_col1'); ?>        
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_bmc');

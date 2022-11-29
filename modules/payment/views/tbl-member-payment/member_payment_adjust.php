@@ -328,7 +328,7 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code, member_code){
                         $.ajax({
                         type: 'get',
                         url: '" . Url::to(['/payment/tbl-member-payment/recovery-adjust']) . "',
-                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery},
+                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery,'recovery_dcs':dcs},
                             success: function(data) {     
                                 $('#recoverOtherMember').html(data);
                                 $('#recoverOtherMemberModal').modal('toggle');    

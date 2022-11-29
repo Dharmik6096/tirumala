@@ -22,7 +22,7 @@ $model->from_date = !empty($model->from_date) ? $model->from_date : NULL;
         <?= Yii::$app->dropdown->union_plant($model, $form, $depend . '-union_code', 'plant_code', 'Plant'); ?>
     </div> 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, $depend . '-plant_code', 'mcc_plant_code', 'MCC'); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, $depend . '-plant_code', 'mcc_plant_code', Yii::t('app', 'MCC')); ?>
     </div> 
     <div class="col-sm-2 height100">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, $depend . '-mcc_plant_code', 'bmc_code', 'BMC'); ?>

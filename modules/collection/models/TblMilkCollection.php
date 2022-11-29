@@ -23,6 +23,7 @@ use app\modules\configuration\models\TblUnionRatechartRange;
 use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\collection\models\TblProvisionalMilkCollection;
 use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
+use app\modules\collection\models\TblMccShiftLock;
 
 /**
  * This is the model class for table "tbl_milk_collection".
@@ -74,7 +75,7 @@ use app\modules\collection\models\TblProvisionalMilkCollectionHistory;
  */
 class TblMilkCollection extends \app\models\ChildModel {
 
-    public $collection_date, $member;
+    public $collection_date, $member, $dcs_name;
 
     /**
      * @inheritdoc
@@ -108,7 +109,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr', 'no_of_can'], 'number', 'except' => ['sendsms', 'androidsync']],
             //[['sms_status'],'default','n'],
             //[['sms_msgid','sms_mobile','sms_errorlog','sms_timestamp'],'default',NULL],
-            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'sms_timestamp', 'sms_status', 'data_post_status', 'clr', 'status', 'qty_mode', 'qlty_time', 'qty_time', 'no_of_can', 'milk_quality_type_code', 'qlty_auto', 'qty_auto', 'collection_date', 'is_approved', 'data_post_id', 'picked_datetime', 'resp_status', 'resp_desc', 'shift_code', 'own_bmc_code', 'own_mcc_plant_code', 'member', 'tag_1', 'tag_2', 'error_desc', 'device_lat', 'device_long', 'mob_lat', 'mob_long', 'is_sms_sent', 'dcs_name'], 'safe'],
             [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'except' => ['sendsms', 'androidsync']],
             [['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code'], 'except' => ['sendsms', 'androidsync', 'importCsv']],
             [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
@@ -116,7 +117,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             // [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRate::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code'], 'except' => ['sendsms']],
 //            [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
 //            [['milk_collection_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkCollection::className(), 'targetAttribute' => ['milk_collection_code' => 'milk_collection_code']],
-            [['fat', 'snf', 'clr', 'water', 'qty'], 'default', 'value' => '0'],
+            [['fat', 'snf', 'clr', 'water', 'qty', 'is_sms_sent'], 'default', 'value' => '0'],
             [['rtpl', 'amount'], 'default', 'value' => '0', 'except' => ['importCsv']],
             [['is_approved'], 'default', 'value' => '1'],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_type', 'protein', 'density', 'lactose', 'dcs_payment_cycle_code', 'milk_analyser_type_code', 'ws_code'], 'safe'],
@@ -157,7 +158,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             [['is_rate_recalc'], 'default', 'value' => 0],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
             [['antibiotic_sms_sent'], 'safe'],
@@ -721,6 +722,10 @@ class TblMilkCollection extends \app\models\ChildModel {
                         ->andWhere(['<=', 'date_time_of_collection', $toDate])
                         ->andWhere(['or', ['IS', 'antibiotic_sms_sent', NULL], ['antibiotic_sms_sent' => ''], ['antibiotic_sms_sent' => '0']])
                         ->all();
+    }
+
+    public function getShiftLock() {
+        return $this->hasOne(TblMccShiftLock::className(), ['mcc_plant_code' => 'mcc_plant_code', 'cast(date_time_of_collection as date)' => 'cast(date_time_of_collection as date)', 'shift_code' => 'shift_code'])->andOnCondition(['member_lock' => 1])->select('tset');
     }
 
 }

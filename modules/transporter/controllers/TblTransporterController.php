@@ -15,6 +15,7 @@ use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
+use yii\helpers\Url;
 
 /**
  * TblTransporterController implements the CRUD actions for TblTransporter model.
@@ -86,6 +87,8 @@ class TblTransporterController extends \app\controllers\ChildController {
             $this->contactDetails->setModel('transporter', $this->model->transporter_code);
             $master[] = $this->contactDetails;
 //            var_dump($_POST);exit;
+            $this->model->agreement_from_date = !empty($this->model->agreement_from_date) ? Yii::$app->formatter->asDate($this->model->agreement_from_date, DATE_FORMAT) : '';
+            $this->model->agreement_to_date = !empty($this->model->agreement_to_date) ? Yii::$app->formatter->asDate($this->model->agreement_to_date, DATE_FORMAT) : '';
             $master[] = $this->model;
             if ($_POST['warning'] == '0')
                 $validate = Yii::$app->warning->unique($this->model, 'transporter_name', $this->model->transporter_name);
@@ -120,6 +123,8 @@ class TblTransporterController extends \app\controllers\ChildController {
 
                 $this->model->load(Yii::$app->request->post());
                 $this->model->transporter_name = ucwords($this->model->transporter_name);
+                $this->model->agreement_from_date = !empty($this->model->agreement_from_date) ? Yii::$app->formatter->asDate($this->model->agreement_from_date, DATE_FORMAT) : '';
+                $this->model->agreement_to_date = !empty($this->model->agreement_to_date) ? Yii::$app->formatter->asDate($this->model->agreement_to_date, DATE_FORMAT) : '';
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Transporter', 'edit']);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
@@ -208,6 +213,40 @@ class TblTransporterController extends \app\controllers\ChildController {
                     'bankDetails' => $this->bankDetails,
                     'contactDetails' => $this->contactDetails
         ]);
+    }
+
+    public function actionTransporterActivate($id) {
+        $this->model = $this->findModel($id);
+        $HistoryModel = new TblTransporterHistory();
+        Yii::$app->operation->history($this->model, $HistoryModel, UPDATE);
+        $this->model->scenario = 'activation';
+        $this->model->is_active = 1;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $HistoryModel], ['Transporter', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                'message' => 'Transporter Activated successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Could not Activate. Please try again.']);
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionTransporterDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $HistoryModel = new TblTransporterHistory();
+        Yii::$app->operation->history($this->model, $HistoryModel, UPDATE);
+        $this->model->scenario = 'activation';
+        $this->model->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $HistoryModel], ['Transporter', 'edit']);
+        if ($transaction == 'customRedirect') {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                'message' => 'Transporter Deactivated Successfully.']);
+        } else {
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => 'Could not Deactivated. Please try again.']);
+        }
+        return $this->redirect(['index']);
     }
 
 }

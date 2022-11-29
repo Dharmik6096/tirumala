@@ -110,6 +110,9 @@ $type = !empty($type) ? $type : '';
                 <div class="col-sm-1 noOfInstallment reset_field">
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>  
+                <div class="col-sm-2">
+                    <?= $form->field($detailModel, 'remarks')->textInput() ?>
+                </div>  
 
                 <?= $form->field($detailModel, 'product_sale_rate_applicability_code', ['template' => '{input}'])->hiddenInput()->label(false) ?>
                 <div class="clearfix"></div>
@@ -577,14 +580,15 @@ $script = "
            var pay_mode=$('#tblproductsale-payment_mode').val();
            var amount_due=$('#tblproductsale-amount_due').val();
            var noi=$('#tblproductsale-no_of_installment').val();
+           var code = $('#tblproductsale-customer_code').val();
 
 
-        var code ='';
-        if(type=='Member'){
-            var code = $('#tblproductsale-dcs_code').val();
-        }else{
-            var code = $('#tblproductsale-bmc_code').val();
-        }
+//        var code ='';
+//        if(type=='Member'){
+//            var code = $('#tblproductsale-dcs_code').val();
+//        }else{
+//            var code = $('#tblproductsale-bmc_code').val();
+//        }
 
         if(setData(date) && setData(type) && setData(code)){
              $.ajax({

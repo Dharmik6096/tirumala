@@ -617,7 +617,11 @@ class GeneralFunctions extends Component {
                 return false;
             }
         }
-//        chmod($path, 0777);
+
+        if (strstr($path, 'EKOMILK')) {
+            $command = 'chmod 777 -R ' . $path;
+            exec($command);
+        }
         return true;
     }
 
@@ -813,7 +817,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -874,7 +878,7 @@ class GeneralFunctions extends Component {
     }
 
     public function CurrencyFormat() {
-        return ['IndianCurrency', 2];
+        return ['decimal', 2];
     }
 
     public function ColoumnAlign() {
@@ -924,7 +928,7 @@ class GeneralFunctions extends Component {
         } else {
             $data = 'error';
         }
-        return $data == '' ? (!empty($value->$field) ? $value->$field : 'N/A') : 'N/A';
+        return $data == '' ? (!empty($value->$field) ? $value->$field : '') : '';
     }
 
     public function getSpData($sp, $param, $execute = false, $db = 'db', $dbtype = 'sql') {
@@ -1354,7 +1358,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1376,6 +1380,12 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
+            }
+        } else if ($sapCode) {
+            if (strtolower($type) == 'dcs') {
+                $name = $this->getforeignkey($model->dcsCode, 'sap_vendor_code');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'sap_vendor_code');
             }
         } else {
             if (strtolower($type) == 'dcs') {
@@ -1482,15 +1492,18 @@ class GeneralFunctions extends Component {
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $model->customer_type;
                 $customerModelData = $customerModel->find()
-                        ->where(['customer_type' => $model->customer_type])
+                        ->where(['customer_type' => $model->customer_type, 'bmc_code' => $model->bmc_code])
                         ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
                         ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
                     $model->ex_code = $customerModelData[0]->customer_code_ex;
+                } else {
+                    $Code = $model->customer_code;
                 }
             } else {
-                $model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                //$model->ex_code = !empty($length) ? $prefix . str_pad($model->customer_code, $length, '0', STR_PAD_LEFT) : '';
+                $model->ex_code = $model->customer_code;
                 $Code = $this->getforeignkey($model->customerCode, 'customer_code');
             }
             return $data = empty($Code) ? '' : $Code;
@@ -1531,7 +1544,7 @@ class GeneralFunctions extends Component {
         $orgCode = 'PORTAL-' . $organizations_code . '-';
         $len = strlen($orgCode);
         $val = $model->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
@@ -1726,6 +1739,12 @@ class GeneralFunctions extends Component {
                     break;
                 }
             }
+            if ($status) {
+                $perMissionPath = $ftpData->ftp_path . '/' . $cp_code;
+                $perMissionPath = str_replace('//', '/', $perMissionPath);
+                $command = 'chmod 777 -R ' . $perMissionPath;
+                exec($command);
+            }
         }
         if ($status === false) {
             $model->addError($attribute, Yii::t('app/validation', 'FTP Directory not Generated.'));
@@ -1863,14 +1882,14 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function shiftLock($model, $dateParam, $codeParam, $showError = '') {
+    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock') {
         if (!empty($model->$dateParam)) {
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
             $showError = !empty($showError) ? $showError : $dateParam;
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, 'data_lock' => 1])
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
                     ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
@@ -1898,6 +1917,16 @@ class GeneralFunctions extends Component {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be like GJ10AB1111'));
             return false;
         }
+        return TRUE;
+    }
+
+    function validOneDigitDecimal($model, $attribute, $params) {
+        $pattern = "/^[0-9]{2}[.][0-9]{1}$/";
+        if (!preg_match($pattern, $model->$attribute)) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be between 0.1 to 99.9'));
+            return false;
+        }
+
         return TRUE;
     }
 
@@ -2191,6 +2220,49 @@ class GeneralFunctions extends Component {
             }
             reset($objects);
             rmdir($dir);
+        }
+    }
+
+    public function CreateDirectory($folder_path) {
+        if (!is_dir($folder_path)) {
+            $oldmask = umask(0);
+            mkdir($folder_path, 0777, TRUE);
+            umask($oldmask);
+        } else {
+            $files = glob($folder_path . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file))
+                    unlink($file); // delete file
+            }
+        }
+    }
+
+    public function DeliveryChallanOrgFilter($query, $main_table, $from_dest = 'Ownmccid', $to_dest = 'ToPlace') {
+        $unions = !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : NULL;
+        $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
+        $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
+        $query->andFilterWhere(['or',
+                ['pd.union_code' => $unions],
+                ['ms.union_code' => $unions],
+                ['md.union_code' => $unions],
+                ['cs.union_code' => $unions],
+                ['cd.union_code' => $unions]
+        ]);
+        $form_to = !empty($mccs) ? $mccs : $plants;
+        $query->andFilterWhere(['or',
+                [$main_table . '.' . $from_dest => $form_to],
+                [$main_table . '.' . $to_dest => $form_to],
+        ]);
+    }
+
+    public function validateMCC($model, $attribute) {
+        $mccModel = new TblMccPlant();
+        $records = $mccModel->find()->select('mcc_plant_code')->where(['or', ['mcc_plant_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
+        if (!empty($records) && count($records) == 1) {
+            $model->$attribute = $records[0]->mcc_plant_code;
+        } else {
+            $model->addError('mcc_plant_code', Yii::t('app/validation', Yii::t('app', 'MCC') . ' Is Invalid.'));
+            return false;
         }
     }
 

@@ -18,6 +18,8 @@ use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\installation\models\TblAndroidInstallation;
+use app\modules\organisation\models\TblChannelMaster;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -50,6 +52,7 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public $is_sentbox, $milk_type_code;
     public $toEncrypt = ['password'];
+    public $channel_type;
 
     /**
      * @inheritdoc
@@ -68,7 +71,7 @@ class TblDcsBmc extends \app\models\ChildModel {
                 [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
                 [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
                 [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check'], 'safe'],
+                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type'], 'safe'],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
@@ -138,6 +141,7 @@ class TblDcsBmc extends \app\models\ChildModel {
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'bmc_code_ex' => Yii::t('app', 'BMC Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
+            'x_col1' => Yii::t('app', 'Channel Type'),
         ];
     }
 
@@ -284,18 +288,22 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false) {
-        $value = $this->getBMC($plantCode, $RLS, $hasBMC);
+    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = []) {
+        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode);
         $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
                     return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
                 });
         return $value;
     }
 
-    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1) {
+    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = []) {
         $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
-        if (!empty($plantCode))
+        if (!empty($plantCode)) {
             $query->andWhere(['mcc_plant_code' => $plantCode]);
+        }
+        if (!empty($channelCode)) {
+            $query->andWhere(['x_col1' => $channelCode]);
+        }
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         }
@@ -451,6 +459,10 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
+    public function getAndroidInstallation() {
+        return $this->hasOne(TblAndroidInstallation::className(), ['organization_code' => 'ref_code'])->andOnCondition(['organization_type' => 'BMC']);
+    }
+
     public function encryptModel($model) {
         $result = array_intersect($this->toEncrypt, array_keys($model));
         foreach ($result as $key => $value) {
@@ -470,6 +482,10 @@ class TblDcsBmc extends \app\models\ChildModel {
             }
         }
         return $model;
+    }
+
+    public function getChannelMaster() {
+        return $this->hasOne(TblChannelMaster::className(), ['channel_master_code' => 'x_col1']);
     }
 
 }

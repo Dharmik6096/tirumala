@@ -64,7 +64,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual'];
 
     public function init() {
         parent::init();
@@ -212,9 +212,9 @@ class SiteController extends Controller {
         $results7 = []; //$results7 = $this->getBmcSpResult('sp_Portal_BMC_Dispatch', $union_str, $end_date, $end_date, $bmc_str);
         $results8 = []; //$results8 = $this->getReconciliationSpResult('sp_portal_dashboard_rptDPU_GPRSDataReconciliation_chart', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $milk_collection = []; //$this->getWidgetDetails('sp_Portal_dashboard_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $monthly_milk_collection = $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
+        $monthly_milk_collection = []; // $this->getWidgetDetails('sp_Portal_dashboard_monthly_milk_collection', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $start_date, $end_date);
         $dashboard_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
-        $member_mobile_detail = $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
+        $member_mobile_detail = []; // $this->getMemberMobileDetail('sp_Portal_dashboard_piechart_member_app', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code);
         $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
@@ -1799,6 +1799,9 @@ class SiteController extends Controller {
             $modelData = $model->getData();
             $i = 1;
             if (!empty($modelData)) {
+                $update_ids = array_column($modelData, 'uuid');
+                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+//                $model->updateAll(['data_post_status' => 1], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
                         $delete = [];
@@ -1933,10 +1936,12 @@ class SiteController extends Controller {
                                 $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
 //                                $transaction_data->error_log = (string) $transaction;
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
                                 if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
                                     $inbox_constraint = new TblInboxConstraint();
                                     $inbox_constraint->attributes = $transaction_data->attributes;
                                     $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
+                                    $inbox_constraint->data_post_status = 3;
                                     $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
                                 } else {
                                     $transaction_data->save();
@@ -1945,11 +1950,13 @@ class SiteController extends Controller {
                         } else {
                             $transaction_data->error_log = Json::encode($model->getErrors());
                             $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                            $transaction_data->data_post_status = 3;
                             $transaction_data->save();
                         }
                     } catch (\Throwable $ex) {
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                        $transaction_data->data_post_status = 3;
                         $transaction_data->save();
                     }
                     $i++;
@@ -2268,8 +2275,8 @@ class SiteController extends Controller {
             $sp_param[] = empty($rlsData['mcc']) ? '0' : $rlsData['mcc'];
             $sp_param[] = empty($rlsData['bmc']) ? '0' : $rlsData['bmc'];
             $sp_param[] = empty($rlsData['dcs']) ? '0' : $rlsData['dcs'];
-            $sp_param[] = date('Y-m-d', strtotime($data['from_date']));
-            $sp_param[] = date('Y-m-d', strtotime($data['to_date']));
+            $sp_param[] = date('Y-m-d', strtotime($data['from_date'])) . ' ' . Yii::$app->general->getshift($data['from_shift']);
+            $sp_param[] = date('Y-m-d', strtotime($data['to_date'])) . ' ' . Yii::$app->general->getshift($data['to_shift']);
             $sp_param[] = empty($data['widget_for']) ? '' : $data['widget_for'];
             $union = $data['union'];
             $widget_for = $data['widget_for'];
@@ -2835,6 +2842,13 @@ class SiteController extends Controller {
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return ['status' => 'success', 'res' => $res];
+    }
+
+    public function actionHelpManual() {
+        $path = Yii::getAlias('@webroot') . '/web/docs/user_manual.pdf';
+        if (file_exists($path)) {
+            return Yii::$app->response->sendFile($path, 'user_manual.pdf');
+        }
     }
 
 }

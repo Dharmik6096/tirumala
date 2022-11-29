@@ -38,7 +38,8 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblVspPayment extends \app\models\ChildModel {
 
-    public $otp_code, $customer_name, $customer_ex_code;
+    public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
+    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc;
 
     /**
      * @inheritdoc
@@ -52,13 +53,15 @@ class TblVspPayment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type'], 'safe'],
-            [['payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount'], 'safe'],
-            [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
-            [['customer_type', 'bmc_code', 'plant_code', 'mcc_plant_code'], 'required'],
-            [['payment_cycle_code'], 'required', 'except' => ['remuneration']],
-            [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['union_code', 'adjust_remark', 'created_by', 'updated_by', 'status', 'from_datetime', 'from_shift', 'to_datetime', 'to_shift', 'billing_type', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code', 'multiple_bmc'], 'safe'],
+                [['payment_cycle_code', 'payment_cycle_applicabilty_code', 'old_recovery', 'new_recovery', 'total_recovery'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+                [['created_at', 'updated_at', 'dcs_code', 'bmc_code', 'customer_code', 'customer_type', 'plant_code', 'mcc_plant_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code'], 'required'],
+                [['bmc_code', 'customer_type'], 'required', 'on' => ['remuneration', 'processpayment']],
+                [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
+                [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
         ];
     }
 
@@ -96,6 +99,14 @@ class TblVspPayment extends \app\models\ChildModel {
             'bmc_code' => Yii::t('app', 'BMC'),
             'customer_code' => Yii::t('app', 'Code'),
             'customer_type' => Yii::t('app', 'Type'),
+            'adjust_recovery' => Yii::t('app', 'Adjusted Recovery(+)'),
+            'recovery' => Yii::t('app', 'Recovery(-)'),
+            'old_recovery' => Yii::t('app', 'Old Recovery(-)'),
+            'new_recovery' => Yii::t('app', 'New Recovery(+)'),
+            'total_recovery' => Yii::t('app', 'Net Recovery'),
+            'p_bmc_code' => Yii::t('app', 'BMC'),
+            'p_customer_type' => Yii::t('app', 'Type'),
+            'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
         ];
     }
 
@@ -145,7 +156,7 @@ class TblVspPayment extends \app\models\ChildModel {
         return $this->find()->where(['union_code' => $this->union_code,
                     'payment_cycle_code' => $this->payment_cycle_code,
                     'bmc_code' => $this->bmc_code,
-                    'customer_type' => $this->customer_type, 'status' => 'processed']);
+                    'customer_type' => $this->customer_type, 'status' => 'processed'])->orderBy('net_payable');
     }
 
     public function getRemunerationRecords() {
@@ -169,6 +180,18 @@ class TblVspPayment extends \app\models\ChildModel {
             $to_date = date('d-m-Y', strtotime($data->to_datetime));
             $this->addError($attribute, Yii::t('app', "Please first disburse payment cycle $from_date to $to_date ."));
         }
+    }
+
+    public function getRecoveryRecords() {
+        return $this->find()
+                        ->alias('t')->select('t.*,r.recovery_amount as old_recovery')
+                        ->leftJoin('tbl_vsp_payment_recovery r', 'r.payment_cycle_code=t.payment_cycle_code and r.bmc_code=t.bmc_code and r.customer_type=t.customer_type and r.from_customer_code=t.customer_code and r.for_customer_code=' . $this->customer_code . '')
+                        ->where(['t.union_code' => $this->union_code,
+                            't.payment_cycle_code' => $this->payment_cycle_code,
+                            't.bmc_code' => $this->bmc_code,
+                            't.customer_type' => $this->customer_type, 't.status' => 'processed'])
+                        ->andWhere(['>', 't.net_payable', 0])
+                        ->andWhere(['!=', 't.vsp_payment_code', $this->vsp_payment_code])->all();
     }
 
 }

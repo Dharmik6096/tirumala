@@ -26,6 +26,7 @@ use app\modules\sms\models\TblAlertNotification;
 use PHPExcel;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\details\models\TblContactDetails;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitityAlias;
 
 /**
  * applicability module definition class
@@ -71,6 +72,7 @@ class Applicability extends \yii\base\Module {
     public $selectedRouteCode = [];
     public $generateMail = false;
     public $attachment_folder = '/web/alert-data/';
+    public $isApproval = false;
 
     /**
      * @inheritdoc
@@ -225,7 +227,11 @@ class Applicability extends \yii\base\Module {
                 $model->setAttributes($this->assignStaticData);
                 if ($model->validate()) {
                     $saveModel = [];
-                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->all();
+                    $dataold = $this->model->find()->where([$this->field_name => $this->field_value]);
+                    if ($this->model->hasAttribute('wef_date')) {
+                        $dataold->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                    }
+                    $dataold->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);
                     $toRevoke = array_intersect($returnedArray, $model->{$main_field_name});
                     $toAssign = $model->{$main_field_name};
@@ -235,18 +241,36 @@ class Applicability extends \yii\base\Module {
                     $errorArr = [];
 //var_dump($returnedArray);
 //var_dump($model->dcs_code);
-                    foreach ($toRevoke as $value) {
-                        if (!empty($value)) {
+                    $session = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['rate_approval']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['rate_approval'] : '';
+                    if ($this->isApproval && $session) {
+                        foreach ($toAssign as $value) {
                             try {
-//echo $value.'<br/>';
-                                $r = new ReflectionClass($this->model->className());
-                                $appModel = $r->newInstanceArgs();
-                                $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value, 'wef_date' => date('Y-m-d', strtotime($model->wef_date))])->one();
-                                $h = new ReflectionClass($this->historyModel->className());
-                                $appHistory = $h->newInstanceArgs();
-                                Yii::$app->operation->history($appModel, $appHistory, DELETE);
-                                $saveModel[] = $appHistory->save();
-                                $saveModel[] = $appModel->delete();
+                                $aliasName = $this->model->className() . 'Alias';
+                                $aliasModel = new $aliasName();
+                                $data = $model->attributes;
+                                $aliasModel->setAttributes($data);
+                                $aliasModel->setAttributes($this->assignStaticData);
+                                $aliasModel->{$main_field_name} = $value;
+                                $aliasModel->$field_name = $this->field_value;
+
+                                $aliasModel->union_code = $this->union_code;
+                                if ($aliasModel->hasAttribute('wef_date')) {
+                                    $aliasModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+                                    if ($model->hasAttribute('shift_code')) {
+                                        $aliasModel->wef_date = $aliasModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
+                                    }
+                                }
+                                if ($aliasModel->hasAttribute('from_date') && $aliasModel->hasAttribute('from_shift')) {
+                                    $aliasModel->from_date = $aliasModel->schemeRateCode->from_date;
+                                    $aliasModel->from_shift = $aliasModel->schemeRateCode->from_shift;
+                                    $aliasModel->rtpl = $aliasModel->schemeRateCode->rtpl;
+                                    $aliasModel->rate_class = $aliasModel->schemeRateCode->rate_class;
+                                }
+                                if ($aliasModel->hasAttribute('to_date') && $aliasModel->hasAttribute('to_shift')) {
+                                    $aliasModel->to_date = $aliasModel->schemeRateCode->to_date;
+                                    $aliasModel->to_shift = $aliasModel->schemeRateCode->to_shift;
+                                }
+                                $saveModel[] = $aliasModel->save();
                             } catch (UserException $e) {
                                 $saveModel[] = false;
                                 $hasError = true;
@@ -256,108 +280,136 @@ class Applicability extends \yii\base\Module {
                                 $hasError = true;
                                 $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
                             }
+                        }
+                    } else {
+
+                        foreach ($toRevoke as $value) {
+                            if (!empty($value)) {
+                                try {
+                                    $r = new ReflectionClass($this->model->className());
+                                    $appModel = $r->newInstanceArgs();
+                                    $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value]);
+                                    if ($appModel->hasAttribute('wef_date')) {
+                                        $appModel->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                                    }
+                                    $appModel->one();
+                                    $h = new ReflectionClass($this->historyModel->className());
+                                    $appHistory = $h->newInstanceArgs();
+                                    Yii::$app->operation->history($appModel, $appHistory, DELETE);
+                                    $saveModel[] = $appHistory->save();
+                                    $saveModel[] = $appModel->delete();
+                                } catch (UserException $e) {
+                                    $saveModel[] = false;
+                                    $hasError = true;
+                                    $errorArr[] = $e->getMessage();
+                                } catch (\yii\db\Exception $e) {
+                                    $saveModel[] = false;
+                                    $hasError = true;
+                                    $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+                                }
 //                                array_push($mappingList, $appHistory);
 //                                array_push($mappingList, $appModel);
+                            }
                         }
-                    }
-                    foreach ($toAssign as $value) {
-                        try {
-                            $r = new ReflectionClass($this->model->className());
-                            $appModel = $r->newInstanceArgs();
-                            $data = $model->attributes;
-                            $appModel->setAttributes($data);
-                            $appModel->setAttributes($this->assignStaticData);
-                            $primaryKey = $model->tableSchema->primaryKey[0];
-                            unset($appModel->$primaryKey);
-                            $appModel->{$main_field_name} = $value;
-                            $appModel->$field_name = $this->field_value;
+                        foreach ($toAssign as $value) {
+                            try {
+                                $r = new ReflectionClass($this->model->className());
+                                $appModel = $r->newInstanceArgs();
+                                $data = $model->attributes;
+                                $appModel->setAttributes($data);
+                                $appModel->setAttributes($this->assignStaticData);
+                                $primaryKey = $model->tableSchema->primaryKey[0];
+                                unset($appModel->$primaryKey);
+                                $appModel->{$main_field_name} = $value;
+                                $appModel->$field_name = $this->field_value;
 //$appModel->union_code = $this->union_code;  
 
-                            $appModel->union_code = $this->union_code;
-
-                            $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
-                            if ($model->hasAttribute('shift_code')) {
-                                $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
-                            }
-                            $check = $this->checkDuplicateCount($appModel);
-                            if ($check == 1) {
-                                $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
-                                return $this->customRender();
-                            }
-
-                            if (!empty($appModel->purchaseRateCode->for_member) && $appModel->purchaseRateCode->for_member == 1) {
-                                $dcsRateModel = TblPurchaseRate::find()->where(['dcs_purchase_rate_code' => $appModel->purchase_rate_code])->one();
-                                if (!empty($dcsRateModel) && strtoupper($appModel->applicable_for) == 'DCS') {
-                                    $dcsAppModel = new TblPurchaseRateApplicability();
-                                    $dcsAppModel->attributes = $appModel->attributes;
-                                    $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
-                                    $dcsAppModel->dcs_code = $appModel->applicable_code;
-                                    $dcsAppModel->union_code = $appModel->union_code;
-                                    $dcsAppModel->applicable_for = 'DCS';
-                                    $saveModel[] = $dcsAppModel->save();
-                                }
-                            }
-
-                            if (!empty($appModel->purchaseRateCode->rate_type)) {
-                                $sms_data = [];
-                                $type = $appModel->purchaseRateCode->rate_type == 1 ? 'increase_rate' : 'decrease_rate';
-
-                                $date = date('d-m-Y', strtotime($appModel->wef_date));
-                                $rate = $appModel->purchaseRateCode->rate_value;
-                                $mobilNo = '';
-                                $moduleName = strtoupper($appModel->applicable_for) == 'DCS' ? 'society' : 'customer';
-                                $contact = new TblContactDetails();
-                                $contactData = $contact->find()
-                                        ->where(['module_code' => $appModel->applicable_code, 'module_name' => $moduleName, 'is_default' => 1, 'is_active' => 1])
-                                        ->one();
-                                if ($contactData) {
-                                    $mobilNo = $contactData->mobile_no;
-                                }
-                                if (!empty($mobilNo)) {
-                                    $templateModel = new TblAlertTemplate();
-                                    $templateData = $templateModel->getTemplateData($type, 'SMS', $appModel->union_code);
-                                    if (!empty($templateData)) {
-                                        $arrFrom = array("{date}", '{' . $type . '}');
-                                        $arrTo = array($date, $rate);
-                                        $word = $templateData->message;
-                                        $message = str_replace($arrFrom, $arrTo, $word);
-
-                                        $notificationmodel = new TblAlertNotification();
-                                        $datetime = date('Y-m-d H:i:s');
-                                        $notificationmodel->module_type = $type;
-                                        $notificationmodel->content_id = 1;
-                                        $notificationmodel->receiver_detail = $mobilNo;
-                                        $notificationmodel->receiver_type = 'SMS';
-                                        $notificationmodel->message = $message;
-                                        $notificationmodel->send_status = '0';
-                                        $notificationmodel->entry_datetime = $datetime;
-                                        $notificationmodel->pick_datetime = NULL;
-                                        $notificationmodel->response_datetime = NULL;
-                                        $notificationmodel->response_status = 0;
-                                        $notificationmodel->template_id = $templateData->header_info;
-                                        $saveModel[] = $notificationmodel->save();
+                                $appModel->union_code = $this->union_code;
+                                if ($appModel->hasAttribute('wef_date')) {
+                                    $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
+                                    if ($model->hasAttribute('shift_code')) {
+                                        $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
+                                    }
+                                    $check = $this->checkDuplicateCount($appModel);
+                                    if ($check == 1) {
+                                        $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                        return $this->customRender();
                                     }
                                 }
-                            }
+                                if (!empty($appModel->purchaseRateCode->for_member) && $appModel->purchaseRateCode->for_member == 1) {
+                                    $dcsRateModel = TblPurchaseRate::find()->where(['dcs_purchase_rate_code' => $appModel->purchase_rate_code])->one();
+                                    if (!empty($dcsRateModel) && strtoupper($appModel->applicable_for) == 'DCS') {
+                                        $dcsAppModel = new TblPurchaseRateApplicability();
+                                        $dcsAppModel->attributes = $appModel->attributes;
+                                        $dcsAppModel->purchase_rate_code = $dcsRateModel->purchase_rate_code;
+                                        $dcsAppModel->dcs_code = $appModel->applicable_code;
+                                        $dcsAppModel->union_code = $appModel->union_code;
+                                        $dcsAppModel->applicable_for = 'DCS';
+                                        $saveModel[] = $dcsAppModel->save();
+                                    }
+                                }
 
-                            $saveModel[] = $appModel->save();
-                        } catch (UserException $e) {
-                            $saveModel[] = false;
-                            $hasError = true;
-                            $errorArr[] = $e->getMessage();
-                        } catch (\yii\db\Exception $e) {
-                            $saveModel[] = false;
-                            $hasError = true;
-                            $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
-                        }
+                                if (!empty($appModel->purchaseRateCode->rate_type)) {
+                                    $sms_data = [];
+                                    $type = $appModel->purchaseRateCode->rate_type == 1 ? 'increase_rate' : 'decrease_rate';
+
+                                    $date = date('d-m-Y', strtotime($appModel->wef_date));
+                                    $rate = $appModel->purchaseRateCode->rate_value;
+                                    $mobilNo = '';
+                                    $moduleName = strtoupper($appModel->applicable_for) == 'DCS' ? 'society' : 'customer';
+                                    $contact = new TblContactDetails();
+                                    $contactData = $contact->find()
+                                            ->where(['module_code' => $appModel->applicable_code, 'module_name' => $moduleName, 'is_default' => 1, 'is_active' => 1])
+                                            ->one();
+                                    if ($contactData) {
+                                        $mobilNo = $contactData->mobile_no;
+                                    }
+                                    if (!empty($mobilNo)) {
+                                        $templateModel = new TblAlertTemplate();
+                                        $templateData = $templateModel->getTemplateData($type, 'SMS', $appModel->union_code);
+                                        if (!empty($templateData)) {
+                                            $arrFrom = array("{date}", '{' . $type . '}');
+                                            $arrTo = array($date, $rate);
+                                            $word = $templateData->message;
+                                            $message = str_replace($arrFrom, $arrTo, $word);
+
+                                            $notificationmodel = new TblAlertNotification();
+                                            $datetime = date('Y-m-d H:i:s');
+                                            $notificationmodel->module_type = $type;
+                                            $notificationmodel->content_id = 1;
+                                            $notificationmodel->receiver_detail = $mobilNo;
+                                            $notificationmodel->receiver_type = 'SMS';
+                                            $notificationmodel->message = $message;
+                                            $notificationmodel->send_status = '0';
+                                            $notificationmodel->entry_datetime = $datetime;
+                                            $notificationmodel->pick_datetime = NULL;
+                                            $notificationmodel->response_datetime = NULL;
+                                            $notificationmodel->response_status = 0;
+                                            $notificationmodel->template_id = $templateData->header_info;
+                                            $saveModel[] = $notificationmodel->save();
+                                        }
+                                    }
+                                }
+
+                                $saveModel[] = $appModel->save();
+                            } catch (UserException $e) {
+                                $saveModel[] = false;
+                                $hasError = true;
+                                $errorArr[] = $e->getMessage();
+                            } catch (\yii\db\Exception $e) {
+                                $saveModel[] = false;
+                                $hasError = true;
+                                $errorArr[] = htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8');
+                            }
 //                            array_push($mappingList, $appModel);
+                        }
                     }
                     $this->selectedMccCode = [];
                     $this->selectedBmcCode = [];
                     $this->selectedRouteCode = [];
                     if (!in_array(FALSE, $saveModel)) {
                         Yii::$app->display->message(true, $this->trans_label, 'create');
-                        if ($this->generateMail) {
+                        if ($this->generateMail && !$this->isApproval && !$session) {
                             $this->GenerateMail($appModel, $toAssign);
                         }
                         return $this->customRedirect();
@@ -976,7 +1028,8 @@ class Applicability extends \yii\base\Module {
 
     public function checkDuplicateCount($model) {
         $field_name = $this->field_name;
-        $query = $this->model->find()->where(['dcs_code' => $model->dcs_code, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
+        $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;
+        $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
                 $query->andWhere([$key => $model->{$key}]);

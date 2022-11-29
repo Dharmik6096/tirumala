@@ -100,7 +100,7 @@ class TblProductStockTransaction extends \app\models\ChildModel {
         $orgCode = 'MCC-' . $this->mcc_plant_code . '-';
         $len = strlen($orgCode);
         $val = $this->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,8))) AS " . $primaryKey])
                 ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
                 ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;

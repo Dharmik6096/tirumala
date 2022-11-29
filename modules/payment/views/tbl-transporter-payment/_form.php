@@ -8,7 +8,6 @@ use yii\helpers\Html;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -19,9 +18,11 @@ echo $form->errorSummary($model);
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <?=
+    <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); ?>
+
+    <?php
     //Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); 
-    Html::hiddenInput('transporter_type', 0, ['id' => 'tbltransporterpayment-transporter_type']);
+//    Html::hiddenInput('transporter_type', 0, ['id' => 'tbltransporterpayment-transporter_type']);
     ?>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', '', false, false); ?>
@@ -43,4 +44,24 @@ echo $form->errorSummary($model);
 <?php ActiveForm::end(); ?>
 </div>
 </div>
+<?php
+$script = "$(document).ready(function(){     
+       setPrimaryTransportation();
+       $(document).on('change','#tbltransporterpayment-transporter_type', function() { 
+        setPrimaryTransportation();
+       });   
+});
+
+function setPrimaryTransportation(){
+    $('#tbltransporterpayment-primary_tpt_cost').parent('div').hide();            
+     var billing_type=$('#tbltransporterpayment-transporter_type').val();
+           if(billing_type==1){
+                $('#tbltransporterpayment-primary_tpt_cost').parent('div').show();            
+            }else{
+                $('#tbltransporterpayment-primary_tpt_cost').parent('div').hide();            
+            }
+
+}
+";
+$this->registerJs($script, View::POS_READY, 'tpt-cost-script');
 

@@ -39,7 +39,7 @@ $tot_amt = array_sum(array_map(function($array) {
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,
-//                            'action' => Url::to(['list-member-payment-summary-data'])
+                            'action' => Url::to(['list-member-payment-summary-data'])
 //                            'action' => Url::to(['list-member-payment'])
                 ]);
                 ?>
@@ -49,6 +49,7 @@ $tot_amt = array_sum(array_map(function($array) {
                 <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
                 <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
+                <?= Html::activeHiddenInput($model, 'dcs_code'); ?>
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
                 $attribute = [
@@ -95,7 +96,14 @@ $tot_amt = array_sum(array_map(function($array) {
                     ]
                 ];
 
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
+                $rowOptions = function ($model) use ($negativeDcsCode) {
+                    $rowcolor = '';
+                    if (in_array($model->dcs_code, $negativeDcsCode)) {
+                        $rowcolor = 'danger';
+                    }
+                    return ['class' => $rowcolor];
+                };
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false, [], [], true, $rowOptions);
                 ?>
                 <div class="col-md-12" >
                     <?php if (!empty($dataProvider->getModels())) { ?>
@@ -157,6 +165,15 @@ function ViewBillHead(payment_cycle_code, bmc_code, dcs_code){
 }
 
 
+var payCode = '';
+var uniCode = '';
+var plantCode = '';
+var mccPlantCode = '';
+var bmcCode = '';
+var dcsCode = '';
+function ViewMemberAdjustmentDataAfterPopupSave(){
+    ViewMemberAdjustmentData(payCode, uniCode, plantCode, mccPlantCode, bmcCode, dcsCode);
+}
 
 $(document).on('click','.view-head-pencil',function(e){
     var payment_cycle_code= $(this).attr('data-payment_cycle_code');
@@ -165,6 +182,12 @@ $(document).on('click','.view-head-pencil',function(e){
     var mcc_plant_code= $(this).attr('data-mcc_plant_code');
     var bmc_code= $(this).attr('data-bmc_code');
     var dcs_code= $(this).attr('data-dcs_code');
+    payCode = payment_cycle_code;
+    uniCode = union_code;
+    plantCode = plant_code;
+    mccPlantCode = mcc_plant_code;
+    bmcCode = bmc_code;
+    dcsCode = dcs_code;
     ViewMemberAdjustmentData(payment_cycle_code, union_code, plant_code, mcc_plant_code, bmc_code, dcs_code);
 });
 
@@ -399,7 +422,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
                         $.ajax({
                         type: 'get',
                         url: '" . Url::to(['/payment/tbl-member-payment/recovery-adjust']) . "',
-                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery},
+                        data:{'member_payment_alias_code':alis_code,'plant_code':plant,'mcc_plant_code':mcc,'bmc_code':bmc,'payment_cycle_code':payment_cycle_code,'dcs_code':dcs,'member_code':member,'adjust_recovery':adjustRecovery,'recovery_dcs':dcs},
                             success: function(data) {     
                                 $('#recoverOtherMember').html(data);
                                 $('#recoverOtherMemberModal').modal('toggle');    
@@ -443,6 +466,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(oldRec == '' || isNaN(oldRec)){
             oldRec = 0;
         }
+        oldRec = 0;
         var netPay = oldRec + recovery;
         if(netPay > net){
             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Recovery Not More Than Net Pay.</span></div></div>');

@@ -59,28 +59,26 @@ class TblWeightCollectionSearch extends TblWeightCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode', 'shiftCode', 'milkTypeCode', 'mainCustomerCode', 'customerType', 'bmcCode']);
+        $query->joinWith(['dcsCode', 'shiftCode', 'milkTypeCode', 'mainCustomerCode', 'customerType', 'bmcCode', 'memberCode']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_weight_collection', 'tbl_weight_collection', 'tbl_weight_collection');
 
         if (!empty($this->qty)) {
             $query->andFilterWhere([$this->operator_qty, 'tbl_weight_collection.qty', $this->qty]);
         }
-        if (!empty($this->from_date) || !empty($this->from_shift)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
-        }
-        if (!empty($this->to_date) || !empty($this->to_shift)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
-        }
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andFilterWhere(['>=', 'date_time_of_collection', $from_date]);
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andFilterWhere(['<=', 'date_time_of_collection', $to_date]);
+
         if (!empty($this->date_time_of_collection))
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_weight_collection.date_time_of_collection, 126)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name], ['like', 'tbl_member.member_name', $this->customer_name]]);
         $query->andFilterWhere(['or', ['like', 'tbl_dcs.ref_code', $this->ref_code], ['like', 'tbl_customer_master.ref_code', $this->ref_code]]);
 
 

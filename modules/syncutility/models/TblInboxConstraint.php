@@ -29,34 +29,32 @@ use Yii;
  * @property string $processed_timestamp
  * @property string $error_timestamp
  */
-class TblInboxConstraint extends \yii\db\ActiveRecord
-{
+class TblInboxConstraint extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_inbox_constraint';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['uuid'], 'safe'],
-            [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
-            [['sequence_no'], 'safe'],
-            [['posting_timestamp', 'sync_timestamp', 'processed_timestamp', 'error_timestamp'], 'safe'],
+                [['uuid'], 'safe'],
+                [['uuid', 'sync_status', 'source_org_type', 'source_org_id', 'dest_org_type', 'dest_org_id', 'message_type', 'table_name', 'operation', 'json_text', 'error_log', 'originating_org_id', 'originating_org_type', 'source_device_mac', 'version_no', 'device_id'], 'safe'],
+                [['sequence_no'], 'safe'],
+                [['posting_timestamp', 'sync_timestamp', 'processed_timestamp', 'error_timestamp', 'data_post_status'], 'safe'],
+                [['data_post_status'], 'default', 'value' => 0]
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'sync_status' => Yii::t('app', 'Sync Status'),
@@ -81,4 +79,5 @@ class TblInboxConstraint extends \yii\db\ActiveRecord
             'error_timestamp' => Yii::t('app', 'Error Timestamp'),
         ];
     }
+
 }

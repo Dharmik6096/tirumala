@@ -11,7 +11,7 @@ use app\modules\organisation\models\TblDcsBmc;
 class ReportsModelOld extends Model {
 
     public $union_code, $plant_code, $mcc_code, $bmc_code, $dcs_code, $from_date, $from_shift, $to_date, $to_shift, $report_type, $date, $shift;
-    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code;
+    public $calibration_day, $p_date, $customer_code, $member_code, $p_organization_type, $p_purchase_rate_code, $rate_type, $customer_type, $vendor_code, $payment_cycle_code, $bank_type, $report_status, $member_type, $route_code, $upload_ftp_file;
 
     function __construct() {
         
@@ -23,7 +23,7 @@ class ReportsModelOld extends Model {
     public function rules() {
         return [
                 [['member_code', 'p_purchase_rate_code', 'payment_cycle_code', 'vendor_code', 'customer_type', 'route_code'], 'default', 'value' => 0],
-                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'p_date', 'customer_code', 'member_code', 'rate_type', 'customer_type', 'vendor_code', 'payment_cycle_code', 'report_status', 'member_type', 'route_code', 'upload_ftp_file'], 'safe'],
                 [['report_type'], 'required', 'on' => ['BmcCollection', 'CPReportSap']],
                 [['union_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => 'SapReport'],
                 [['to_date'], function ($attribute, $params) {
@@ -79,6 +79,7 @@ class ReportsModelOld extends Model {
             'vendor_code' => \Yii::t('app', 'Name'),
             'customer_type' => \Yii::t('app', 'Type'),
             'payment_cycle_code' => \Yii::t('app', 'Payment Cycle'),
+            'member' => \Yii::t('app', 'Member'),
         ];
     }
 

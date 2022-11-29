@@ -74,8 +74,16 @@ $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($
 //                            'format' => 'raw',
 //                            'visible' => User::hasPermission('viewRegistrationIp'),
 //                        ),
-                    'created_at:datetime',
-                    'updated_at:datetime',
+                    [
+                        'attribute' => 'created_at',
+                        'value' => !empty($model->created_at) ? date('M d, Y H:i:s a', strtotime($model->created_at)) : '',
+                    ],
+                    [
+                        'attribute' => 'updated_at',
+                        'value' => !empty($model->updated_at) ? date('M d, Y H:i:s a', strtotime($model->updated_at)) : '',
+                    ],
+//                    'created_at:datetime',
+//                    'updated_at:datetime',
                 ],
             ])
             ?>

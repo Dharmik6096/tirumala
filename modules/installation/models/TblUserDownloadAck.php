@@ -48,15 +48,15 @@ class TblUserDownloadAck extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['download_pending', 'originating_type'], 'integer'],
-            [['download_date_time', 'created_at', 'updated_at'], 'safe'],
-            [['user_code', 'created_by', 'updated_by'], 'safe'],
-            [['device_id'], 'string', 'max' => 500],
-            [['hash_key'], 'string', 'max' => 100],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+                [['download_pending', 'originating_type'], 'integer'],
+                [['download_date_time', 'created_at', 'updated_at'], 'safe'],
+                [['user_code', 'created_by', 'updated_by'], 'safe'],
+                [['device_id'], 'string', 'max' => 500],
+                [['hash_key'], 'string', 'max' => 100],
+                [['union_code'], 'string', 'max' => 3],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
         ];
     }
 
@@ -138,9 +138,9 @@ class TblUserDownloadAck extends \app\models\ChildModel {
     public function getExistDataAck($org_type) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
         if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code]);
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code]);
+            $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }

@@ -69,9 +69,12 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2  <?= $disable ?> ">
             <?= $form->field($model, 'criteria_name')->textInput()->label('Name') ?>
-        </div>
+        </div>       
         <div class="col-sm-2 <?= $disable ?>">
             <?= Yii::$app->dropdown->dropdown('slab_bill_head', $model, $form, '', TRUE, FALSE, 'bill_head_code'); ?>
+        </div>
+        <div class="col-sm-2  <?= $disable ?> " id="product-wise-slab">
+            <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblvspbillheadcriteria-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'criteria_code'); ?>
         </div>
         <div class="col-sm-2 <?= $disable ?>">
             <?= Yii::$app->dropdown->depend_dropdown('general_formula_code', $model, $form, 'tblvspbillheadcriteria-union_code', '', $model->getAttributeLabel('general_formula_code')); ?>

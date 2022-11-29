@@ -28,10 +28,13 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\eipldpu\models\TblEiplPacketFileLog;
 use app\modules\eipldpu\controllers\PendriveImportController;
+use app\modules\collection\models\TblMccShiftLockStaging;
+use app\modules\configuration\models\TblGenerateReportParam;
+use app\modules\collection\models\TblMilkCollectionSummary;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-bulk-eipl-files'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-bulk-eipl-files', 'process-import-files', 'process-import-files-background', 'sap-file-upload'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -107,7 +110,6 @@ class SchedulerController extends ChildController {
     public function actionGenerateFile() {
         try {
             $model = new TblFileCreator();
-            $model->file_status = 0;
             $model->status = 0;
             $modelData = $model->getPendingData();
             if (!empty($modelData)) {
@@ -117,7 +119,6 @@ class SchedulerController extends ChildController {
                 $model->updateFileStatus($ids);
                 foreach ($modelData as $data) {
                     $ftp_model = new TblFtpTxnLog();
-                    $ftp_model->module_code = $data->attributes;
                     $FTPProcess = Bkgprocess::FTPProcess()[$data->module_name];
                     $param = explode(',', $FTPProcess['param']);
                     $controls = [];
@@ -125,12 +126,13 @@ class SchedulerController extends ChildController {
                         $controls[$val] = $data->{$val};
                     }
                     $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
-                    if ($ftp_model->generateFiles($output, $FTPProcess, $data)) {
+                    if ($ftp_model->generateFiles($output, $FTPProcess, $data, FALSE, $data->file_name)) {
                         $data->status = 2;
                         $data->file_status = 1;
                     } else {
                         $data->status = 3;
                     }
+                    $data->response_datetime = date('Y-m-d H:i:s');
                     $data->save(FALSE);
                 }
             }
@@ -235,13 +237,14 @@ class SchedulerController extends ChildController {
     public function actionProcessImportFiles() {
         $model = new TblImportFileLog();
         $model->status = 0;
-        $modelData = $model->getPickRecords([], 10);
+        $modelData = $model->getPickRecords([], 10, ['SP']);
         if (!empty($modelData)) {
             $ids = array_map(function($e) {
                 return $e->log_id;
             }, $modelData);
             $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
+                $model->updateCronPickedDate($row);
                 if (strtolower($row->process_type) == 'background') {
                     $this->bulk_files_data($row);
                 } else {
@@ -278,6 +281,24 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_mapped_allow') {
                 $flag = 'bmc-mapped-collection-allow-bulk';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection_Allow';
+            } else if ($row->file_type == 'bmc_collection_route') {
+                $flag = 'bmc-collection-bulk-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_can') {
+                $flag = 'bmc-collection-bulk-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route') {
+                $flag = 'bmc-collection-bulk-bmc-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_can') {
+                $flag = 'bmc-collection-bulk-bmc-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_route_can') {
+                $flag = 'bmc-collection-bulk-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route_can') {
+                $flag = 'bmc-collection-bulk-bmc-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -304,6 +325,7 @@ class SchedulerController extends ChildController {
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
                     $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
                     $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
@@ -520,7 +542,7 @@ class SchedulerController extends ChildController {
 
 
         $MemberModel = new TblMemberDeactive();
-        $deactiveData = $MemberModel->getDeactiveRecords(true, $limit);
+        $deactiveData = $MemberModel->getDeactiveRecords(true, '', $limit);
         $this->setSentBox($MemberModel, $deactiveData, 'member_deactive_code', 'TblMember', 'member_code', 0, 1, 2, 3);
 
         $activeData = $MemberModel->getActiveRecords($limit);
@@ -677,9 +699,10 @@ class SchedulerController extends ChildController {
         }
     }
 
-    public function CreateFile($fileName, $output) {
+    public function CreateFile($fileName, $output, $folders = '') {
         $column_header = array_keys($output[0]);
-        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->attachment_folder;
+        $folder = !empty($folders) ? $folders : $this->attachment_folder;
+        $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $folder;
         if (\Yii::$app->general->checkDirectory($path)) {
             $absoluteBaseUrl = Url::base(true);
             $objPHPExcel = new PHPExcel();
@@ -699,7 +722,7 @@ class SchedulerController extends ChildController {
             $filePath = $path . $fileName;
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save($filePath);
-            return $absoluteBaseUrl . $this->attachment_folder . $fileName;
+            return $absoluteBaseUrl . $folder . $fileName;
         }
     }
 
@@ -829,6 +852,213 @@ class SchedulerController extends ChildController {
                     return $e->file_id;
                 }, $modelData);
                 PendriveImportController::savePacketData($ids);
+            }
+        }
+    }
+
+    public function actionGenerateWqDispatchFile() {
+        try {
+            $union_codes = ['001', '003'];
+            foreach ($union_codes as $k => $union_code) {
+                $FTPProcess = Bkgprocess::FTPProcess()['TblBmcCollection_dispatch'];
+                $param = explode(',', $FTPProcess['param']);
+                $controls = [];
+                foreach ($param as $key => $val) {
+                    $controls[$val] = 0;
+                }
+                $controls['union_code'] = $union_code;
+                $controls['from_date'] = date('Y-m-d h:i:s', strtotime(date('Y-m-d 06:00:00') . '- 12 days'));
+                $controls['to_date'] = date('Y-m-d 18:00:00');
+//            $controls['from_date'] = '2022-06-10 06:00:00';
+//            $controls['to_date'] = '2022-06-10 18:00:00';
+                $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+                $downLoadArray = [];
+                foreach ($output as $detail) {
+                    $plant = 'Plant Code';
+                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                        $array_key = $detail[$plant] . '###' . $detail['Recpt Date'] . '###' . $detail['Shift Id'];
+                        if (empty($downLoadArray[$array_key])) {
+                            $downLoadArray[$array_key] = [];
+                        }
+                        $downLoadArray[$array_key][] = $detail;
+                    }
+                }
+                foreach ($downLoadArray as $bmc => $download) {
+                    $bmc = explode('###', $bmc)[0];
+                    $report_type = Yii::t('app', 'WQ');
+                    $shiftId = !empty($download[0]) && !empty($download[0]['Shift Id']) ? $download[0]['Shift Id'] : 1;
+                    $from_date = date('Y-m-d', strtotime(str_replace('/', '-', $download[0]['Recpt Date'])));
+                    $from_date .= ' ' . \Yii::$app->general->getshift($shiftId);
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($from_date)) . '_' . $shiftId;
+                    $data_array = [];
+                    $data_array['module_name'] = 'TblBmcCollection_dispatch';
+                    $data_array['module_code'] = $bmc;
+                    $data_array['mcc_plant_code'] = $bmc;
+                    $data_array['union_code'] = NULL;
+                    $data_array['applicable_date'] = $from_date;
+                    $data_array['shift_code'] = 1;
+                    $data_array['bmc_code'] = NULL;
+                    $data_array['from_date'] = $from_date;
+                    $data_array['to_date'] = $from_date;
+                    $ftp_model = new TblFtpTxnLog();
+                    $result = $ftp_model->exportData($data_array, $title, $download);
+                    if (!empty($result)) {
+                        $controls['file_name'] = $result;
+                        $ftp_model->ref_code = $data_array['module_code'];
+                        $bmc_data = $ftp_model->bmcCode;
+                        if (!empty($bmc_data)) {
+                            $controls['mcc_plant_code'] = $bmc_data->bmc_code;
+                            $controls['bmc_code'] = $bmc_data->mcc_plant_code;
+                            $controls['from_date'] = $controls['to_date'] = $from_date;
+                        }
+                        \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
+                    }
+                }
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+        }
+    }
+
+    public function actionGenerateSdCollectionFile() {
+        try {
+            $model = new TblMccShiftLockStaging();
+            $modelData = $model->getLockShift(25);
+            if (!empty($modelData)) {
+                $ids = array_map(function($e) {
+                    return $e->staging_code;
+                }, $modelData);
+                $model->updateFileStatus($ids);
+                foreach ($modelData as $data) {
+                    $file_data = new TblFileCreator();
+                    $mcc = $data->mccPlantCode;
+                    $file_data->union_code = $mcc->union_code;
+                    $file_data->mcc_plant_code = $data->mcc_plant_code;
+                    $file_data->shift_code = $data->shift_code;
+                    $file_data->applicable_date = date('Y-m-d H:i:s', strtotime($data->date_time_of_collection));
+                    $file_data->module_code = $mcc->ref_code;
+                    $file_data->module_name = 'TblMilkCollection';
+                    $data_array = [];
+                    $data_array['bmc_code'] = 0;
+                    $data_array['from_date'] = $data_array['to_date'] = $file_data->applicable_date;
+                    $ftp_model = new TblFtpTxnLog();
+                    $FTPProcess = Bkgprocess::FTPProcess()[$file_data->module_name];
+                    $param = explode(',', $FTPProcess['param']);
+                    $controls = [];
+                    foreach ($param as $key => $val) {
+                        $controls[$val] = isset($file_data->{$val}) ? $file_data->{$val} : $data_array[$val];
+                    }
+                    $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+                    if (!empty($output)) {
+                        unset($output[count($output) - 1]);
+                        $result = $ftp_model->generateFiles($output, $FTPProcess, $file_data);
+                        if ($result) {
+                            $data->resp_desc = $result;
+                            $data->data_post_status = 2;
+                        } else {
+                            $data->data_post_status = 3;
+                        }
+                        $data->response_datetime = date('Y-m-d H:i:s');
+                        $data->save(FALSE);
+                    }
+                }
+            }
+        } catch (\Throwable $ex) {
+            var_dump($ex);
+        }
+    }
+
+    public function actionGenerateReportFile() {
+        $model = new TblGenerateReportParam();
+        $modelData = $model->getPickRecords(10);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->report_param_code;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                $data = \app\modules\misreports\controllers\ReportsController::getLabels($row->report_key);
+                $controls = [];
+                $param = explode(',', $data['param']);
+                foreach ($param as $key => $value) {
+                    $value_array = explode(':', $value);
+                    $value = $value_array[0];
+                    $controls[$value] = $row->{$value};
+                }
+                $sp_name = $data['sp_name'];
+                $output = \Yii::$app->general->getSpData($sp_name, $controls);
+
+                if (!empty($output)) {
+                    try {
+                        $fileName = $data['title'] . '-' . date('Ymdhis') . '-' . $row->report_param_code . '.xls';
+                        $file_path = $this->CreateFile(str_replace(' ', '', $fileName), $output, '/web/reports-files/');
+                        $row->data_post_status = 2;
+                        $row->resp_desc = 'File Generated';
+                        $row->file_name = $file_path;
+                        $row->save(FALSE);
+                        $update = $model->updateFileName($row->report_param_code, 2, $file_path, $row->resp_desc);
+                    } catch (\Throwable $ex) {
+                        $row->status = 3;
+                        $row->resp_desc = 'Unable to Generated file.';
+                        $row->save(FALSE);
+                        $update = $model->updateFileName($row->report_param_code, 3, '', $row->resp_desc);
+                        var_dump($ex->getMessage());
+                    }
+                } else {
+                    $row->data_post_status = 2;
+                    $row->resp_desc = 'No Data Available.';
+                    $row->file_name = '';
+                    $row->save(FALSE);
+                    $update = $model->updateFileName($row->report_param_code, 2, '', $row->resp_desc);
+                }
+            }
+        }
+    }
+
+    public function actionProcessImportFilesBackground() {
+        $model = new TblImportFileLog();
+        $model->status = 0;
+        $modelData = $model->getPickRecords([], 1, ['background'], false);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->log_id;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                $model->updateCronPickedDate($row);
+                if (strtolower($row->process_type) == 'background') {
+                    $this->bulk_files_data($row);
+                } else {
+                    $this->process_files_data($row);
+                }
+            }
+        }
+    }
+
+    public function actionSapFileUpload() {
+        $model = new TblMilkCollectionSummary();
+        $modelData = $model->getPickRecords(10);
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->milk_collection_summary_code;
+            }, $modelData);
+            $update = $model->updateFileStatus($ids);
+            $output = [];
+            foreach ($modelData as $row) {
+                $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+                $data_array['module_code'] = $row->dcs_code;
+                $data_array['mcc_plant_code'] = $row->mcc_plant_code;
+                $data_array['union_code'] = $row->union_code;
+                $data_array['applicable_date'] = $row->date_time_of_collection;
+                $data_array['shift_code'] = $row->shift_code;
+                $data_array['bmc_code'] = $row->bmc_code;
+                $data_array['dcs_code'] = $row->dcs_code;
+                $data_array['from_date'] = $row->date_time_of_collection;
+                $data_array['to_date'] = $row->date_time_of_collection;
+
+                $ftp_model = new TblFtpTxnLog();
+                $ftp_model->exportData($data_array, $title = '', $output);
+                $update = $model->updateFileUploadStatus($row->milk_collection_summary_code);
             }
         }
     }

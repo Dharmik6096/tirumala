@@ -166,8 +166,14 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
                     [
                         'columns' => [
                             [
+                                'attribute' => 'bmc_code',
+                                'label' => Yii::t('app', 'Channel'),
+                                'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
                                 'attribute' => 'remarks',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
@@ -196,13 +202,13 @@ $this->title = Yii::$app->label->title('view', 'BMC Milk Dispatch');
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
             </div>
-        <div class="form-grid">
-            <?=
-            $this->render('_transaction_detail', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-            ?>
-        </div>
-    </div> 
-</div>
+            <div class="form-grid">
+                <?=
+                $this->render('_transaction_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);
+                ?>
+            </div>
+        </div> 
+    </div>

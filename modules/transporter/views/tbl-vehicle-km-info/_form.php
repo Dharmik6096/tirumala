@@ -38,6 +38,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'morning_kms')->textInput() ?>
     </div>
@@ -45,7 +46,56 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'evening_kms')->textInput() ?>
     </div>
     <div class="col-sm-2">
+        <?= $form->field($model, 'extra_kms')->textInput(['class' => 'form-control extra_km']) ?>
+    </div>
+    <div class="col-sm-2">
         <?= $form->field($model, 'total_kms')->textInput(['readOnly' => true]) ?>
+    </div>    
+    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'morning_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'morning_grace_time')->textInput();
+        ?>
+    </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'evening_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'evening_grace_time')->textInput();
+        ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'morning_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'morning_grace_time')->textInput();
+        ?>
+    </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'evening_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'evening_grace_time')->textInput();
+        ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -67,17 +117,24 @@ $script = "
     $('#tblvehiclekminfo-evening_kms').change(function(){
         totalKm();
     });
+    $('#tblvehiclekminfo-extra_kms').change(function(){
+        totalKm();
+    });
     function totalKm(){
         var totalKm = 0;
         var mrng = parseFloat($('#tblvehiclekminfo-morning_kms').val());
         var evng = parseFloat($('#tblvehiclekminfo-evening_kms').val());
+        var extra_km = parseFloat($('#tblvehiclekminfo-extra_kms').val());
         if(mrng == '' || isNaN(mrng)){
             mrng = 0;
         }
         if(evng == '' || isNaN(evng)){
             evng = 0;
         }
-        totalKm = mrng + evng;
+        if(isNaN(extra_km)){
+            extra_km = 0;
+        }
+        totalKm = mrng + evng + extra_km;
         $('#tblvehiclekminfo-total_kms').val(totalKm.toFixed(2));
     }
 ";

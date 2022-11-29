@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => FALSE],
+        }, 'visible' => true],
     ['attribute' => 'transporter_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
         },
@@ -30,8 +30,12 @@ $attribute = [
     ['attribute' => 'shift_code', 'filter' => false, 'value' => 'shiftCode.shift'],
     ['attribute' => 'morning_kms'],
     ['attribute' => 'evening_kms'],
-//    ['attribute' => 'extra_kms'],
+    ['attribute' => 'extra_kms'],
     ['attribute' => 'total_kms'],
+    ['attribute' => 'morning_arrival_time'],
+    ['attribute' => 'morning_grace_time'],
+    ['attribute' => 'evening_arrival_time'],
+    ['attribute' => 'evening_grace_time'],
 ];
 
 $grid_option = [

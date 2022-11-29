@@ -49,6 +49,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
 
     public $from_date, $to_date, $from_shift, $to_shift, $status, $date_time_of_dispatch, $shift_code, $bmc_code, $union_code, $dispatch_type;
     public $plant_code, $mcc_plant_code, $ref_code, $antibiotic;
+    public $saveDeleteChildRecords = TRUE;
 
     /**
      * @inheritdoc
@@ -62,56 +63,56 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['shift_code'], function ($attribute, $params) {
+                [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-            [['milk_type_code'], function ($attribute, $params) {
+                [['milk_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_type_code');
                 }, 'on' => 'importCsv'],
-            [['milk_quality_type_code'], function ($attribute, $params) {
+                [['milk_quality_type_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'milk_quality_type_code');
                 }, 'on' => 'importCsv'],
-            [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-            [['date_time_of_dispatch'], 'convertDateDot', 'on' => ['importCsv']],
-            [['date_time_of_dispatch'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['date_time_of_dispatch'], 'convertDate', 'on' => ['importCsv']],
-            [['dcs_milk_dispatch_code', 'dcs_milk_dispatch_txn_code'], 'safe', 'on' => ['androidsync']],
-            [['dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'safe'],
-            [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount', 'purchase_rate_code', 'rtpl', 'antibiotic'], 'safe'],
-            [['dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['created_at', 'updated_at', 'dcs_milk_dispatch_txn_code'], 'safe'],
-            [['dcs_code', 'milk_type_code', 'milk_quality_type_code', 'dispatch_qty', 'avg_fat', 'avg_snf'], 'required', 'on' => ['create', 'update', 'importCsv']],
-            [['rtpl'], 'required', 'on' => ['create', 'update']],
-            [['water', 'avg_clr', 'nos_of_can'], 'default', 'value' => 0],
-            [['nos_of_can'], 'integer', 'min' => 0, 'on' => ['create', 'update']],
-            [['avg_clr'], 'double', 'min' => 0, 'on' => ['create', 'update']],
-            [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
-            [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
-            [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code', 'received_timestamp'], 'safe'],
-            [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
+                [['date_time_of_dispatch'], 'convertDateDot', 'on' => ['importCsv']],
+                [['date_time_of_dispatch'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['date_time_of_dispatch'], 'convertDate', 'on' => ['importCsv']],
+                [['dcs_milk_dispatch_code', 'dcs_milk_dispatch_txn_code'], 'safe', 'on' => ['androidsync']],
+                [['dcs_milk_dispatch_code', 'milk_quality_type_code', 'milk_type_code', 'nos_of_can', 'converted_qty_mode'], 'safe'],
+                [['dispatch_qty', 'qty_mode', 'converted_qty', 'avg_fat', 'avg_snf', 'avg_clr', 'water', 'temperature', 'total_amount', 'purchase_rate_code', 'rtpl', 'antibiotic'], 'safe'],
+                [['dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['created_at', 'updated_at', 'dcs_milk_dispatch_txn_code'], 'safe'],
+                [['dcs_code', 'milk_type_code', 'milk_quality_type_code', 'dispatch_qty', 'avg_fat', 'avg_snf'], 'required', 'on' => ['create', 'update', 'importCsv']],
+                [['rtpl'], 'required', 'on' => ['create', 'update']],
+                [['water', 'avg_clr', 'nos_of_can'], 'default', 'value' => 0],
+                [['nos_of_can'], 'integer', 'min' => 0, 'on' => ['create', 'update']],
+                [['avg_clr'], 'double', 'min' => 0, 'on' => ['create', 'update']],
+                [['milk_type_code'], 'validateUpdate', 'on' => ['update']],
+                [['dispatch_qty'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0'), 'on' => ['create', 'update']],
+                [['bmc_code', 'shift_code', 'date_time_of_dispatch', 'union_code', 'received_timestamp'], 'safe'],
+                [['bmc_code', 'shift_code', 'date_time_of_dispatch'], 'required', 'on' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
-            [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
-            [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
-            [['dcs_code'], 'importSet', 'on' => ['importCsv']],
-            [['date_time_of_dispatch'], function ($attribute, $params) {
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+                [['milk_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAnimalType::className(), 'targetAttribute' => ['milk_type_code' => 'animal_type_code'], 'on' => ['importCsv']],
+                [['milk_quality_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMilkQualityType::className(), 'targetAttribute' => ['milk_quality_type_code' => 'milk_quality_type_code'], 'on' => ['importCsv']],
+                [['dcs_code'], 'importSet', 'on' => ['importCsv']],
+                [['date_time_of_dispatch'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->paymentCycleLock($this, 'date_time_of_dispatch', 'bmc_code', 'BMC', 'DCS', ['data_lock_bmc', 'billing_lock_bmc']);
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['importCsv']],
-            [['dcs_code'], function ($attribute, $params) {
+                [['dcs_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->validateRateRange($this, 'avg_fat', 'avg_snf');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['update']],
-            [['dcs_milk_dispatch_code', 'dcs_code'], 'validateCanNo'],
-            [['antibiotic'], function ($attribute, $params) {
+                [['dcs_milk_dispatch_code', 'dcs_code'], 'validateCanNo'],
+                [['antibiotic'], function ($attribute, $params) {
                     !empty($this->antibiotic) ? Yii::$app->general->validateGlobalStatic($this, 'antibiotic', 'antibiotic') : '';
                 }, 'skipOnEmpty' => TRUE, 'on' => 'importCsv'],
-            [['antibiotic'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                [['antibiotic'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->session->get('eiplCode') == 'PRABHAT';
                 }, 'on' => ['importCsv']],
         ];
@@ -245,7 +246,7 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
         $mainmodel->antibiotic = $model->antibiotic;
         $existMainData = $mainmodel->getExistingData($mainmodel);
         if (empty($existMainData)) {
-            $mainmodel->dcs_milk_dispatch_code = Yii::$app->general->getPrimaryCode($mainmodel);
+            $mainmodel->dcs_milk_dispatch_code = Yii::$app->general->getUuid(); //Yii::$app->general->getPrimaryCode($mainmodel);
             $mainmodel->union_code = Yii::$app->general->getforeignkey($mainmodel->bmcCode, 'union_code');
             $mainmodel->plant_code = Yii::$app->general->getforeignkey($mainmodel->bmcCode, 'plant_code');
             $mainmodel->mcc_plant_code = Yii::$app->general->getforeignkey($mainmodel->bmcCode, 'mcc_plant_code');
@@ -335,6 +336,27 @@ class TblDcsMilkDispatchTxn extends \app\models\ChildModel {
             $noOfCan = $this->dispatch_qty / 40;
             $noOfCan = ceil($noOfCan);
             $this->nos_of_can = $noOfCan;
+        }
+    }
+
+    public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
+        $dispModel = new TblDcsMilkDispatch();
+        $dispModel->x_col2 = $model->dcs_milk_dispatch_code;
+        $dispModelData = $dispModel->find()->where(['x_col2' => $dispModel->x_col2])->orderBy('created_at desc')->one();
+        if (!empty($dispModelData)) {
+            $model->x_col2 = $model->dcs_milk_dispatch_txn_code;
+            $model->dcs_milk_dispatch_code = $dispModelData->dcs_milk_dispatch_code;
+            $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);
+        } else {
+            $modelData = $model->find()->where(['dcs_milk_dispatch_txn_code' => $model->dcs_milk_dispatch_txn_code])->one();
+            if (!empty($modelData)) {
+                if ($model->x_col1 == $modelData->x_col1) {
+                    $model = $modelData;
+                } else {
+                    $model->x_col2 = $model->dcs_milk_dispatch_txn_code;
+                    $model->dcs_milk_dispatch_txn_code = Yii::$app->general->getTransactionCode($model, $model->dcs_milk_dispatch_code);
+                }
+            }
         }
     }
 

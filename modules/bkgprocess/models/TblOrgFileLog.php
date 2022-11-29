@@ -50,9 +50,9 @@ class TblOrgFileLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_type', 'file_path', 'module_name', 'module_code', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'created_by', 'actual_file'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status'], 'safe'],
-            [['updated_at', 'pick_datetime', 'created_at', 'ref_code'], 'safe'],
+                [['file_type', 'file_path', 'module_name', 'module_code', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'created_by', 'actual_file'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'file_status', 'status'], 'safe'],
+                [['updated_at', 'pick_datetime', 'created_at', 'ref_code'], 'safe'],
         ];
     }
 
@@ -108,7 +108,9 @@ class TblOrgFileLog extends \app\models\ChildModel {
                     if ($flag) {
                         chdir($utility_path);
                         $enc_path = $path . '/myvendor.VEN';
-                        $command = 'milkvendor_cmd_i386-win32_B.exe -i ' . $file . ' -o ' . $enc_path;
+//                        $command = 'milkvendor_cmd_i386-win32_B.exe -i ' . $file . ' -o ' . $enc_path;
+                        $command = 'cd ' . $utility_path . ' && ./milkven_cmd_x86_64-linux_B -i ' . $file . ' -o ' . $enc_path;
+//                        cd /var/www/biplExeTest/ && ./milkven_cmd_x86_64-linux_B -i members.csv -o /var/www/biplExeTest/test20220124.VEN
                         exec($command);
                         chdir($crnt_dir);
                         $this->saveLog($org_code, 'TblDcs', $cp_code, $ftp_conn_code, $enc_path, $file_type, $file);
@@ -129,7 +131,8 @@ class TblOrgFileLog extends \app\models\ChildModel {
                     $ratefile = $value[key($value)];
                     $ratefile = \Yii::getAlias('@webroot') . '/' . $ratefile;
                     chdir($utility_path);
-                    $command = 'rfgb ' . $ratefile . ' ' . $path;
+//                    $command = 'rfgb ' . $ratefile . ' ' . $path;
+                    $command = 'cd ' . $utility_path . ' && ./rfgB-32 ' . $ratefile . ' ' . $path;
                     exec($command);
                     chdir($crnt_dir);
                     $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');

@@ -31,9 +31,17 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         $report_type = ($model->report_type == 0) ? Yii::t('app', 'VM') : (($model->report_type == 1) ? Yii::t('app', 'WQ') : Yii::t('app', 'SD'));
         $codeToAppend = '';
         if (!empty($model->bmc_code)) {
-            $codeToAppend = $model->getBmcCode($model->bmc_code);
-        } else {
-            $codeToAppend = $model->getMccCode($model->mcc_code);
+            if (is_array($model->bmc_code) && count($model->bmc_code) > 1) {
+                $codeToAppend = 'All';
+            } else {
+                $codeToAppend = $model->getBmcCode($model->bmc_code);
+            }
+        } else if (!empty($model->mcc_code)) {
+            if (is_array($model->mcc_code) && count($model->mcc_code) > 1) {
+                $codeToAppend = 'All';
+            } else {
+                $codeToAppend = $model->getMccCode($model->mcc_code);
+            }
         }
         $this->title = $codeToAppend . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($model->from_date)) . '_' . $model->from_shift;
         $removeExportType = ['CSV'];
@@ -45,9 +53,14 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         $removeExportType = $data['removeExportType'];
     }
     $this->title = !empty($data['export_file_name']) ? $data['export_file_name'] : $this->title;
+    $multiArray = !empty($data['multiArray']) ? $data['multiArray'] : [];
+    $reportClass = 'report-area';
+    if (!empty($result) && isset($data['kartik_grid_view'])) {
+        $reportClass = '';
+    }
     ?>
     <div class="panel-body padding-0">
-        <div class="report-area not_ellipsis">
+        <div class="<?= $reportClass ?> not_ellipsis">
             <div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -111,19 +124,21 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         <?php } if (in_array($value, array('mcc_code'))) { ?>
                                             <div class="col-sm-3 val_mcc_code">
                                                 <?php
+                                                $multiple = in_array($value, $multiArray) ? true : false;
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
-                                                    Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodelold-union_code', $value, $model->getAttributeLabel('mcc_code'));
+                                                    echo Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodelold-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodelold-plant_code', $value, 'MCC');
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodelold-plant_code', $value, Yii::t('app', 'MCC'), $multiple);
                                                 }
                                                 ?>                
                                             </div>
                                             <?php
                                         }
                                         if (in_array($value, array('bmc_code'))) {
+                                            $multiple = in_array($value, $multiArray) ? true : false;
                                             ?>
                                             <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodelold-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodelold-mcc_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), $multiple); ?>
                                             </div>
                                             <?php
                                         }
@@ -240,6 +255,9 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                     <div class="modal-footer mt10 col-sm-12">
                                         <?php
                                         if ($param) {
+                                            if (!empty($fileDownloadArr)) {
+                                                echo Html::hiddenInput('upload_ftp_file', '0', ['id' => 'reportsmodelold-upload_ftp_file']);
+                                            }
                                             echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
@@ -316,6 +334,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
         <?php
         if (!empty($fileDownloadArr)) {
             echo GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn downloadSapFiles apply-shortcut', 'name' => 'download', 'value' => 'download', 'id' => 'download', 'title' => Yii::t('app', 'download')]);
+            echo GhostHtml::submitButton('FTP Upload', ['class' => 'btn btn-default apply-shortcut uploadSapFiles', 'name' => 'ftp-upload', 'value' => 'ftp-upload', 'id' => 'ftp-upload', 'title' => Yii::t('app', 'Ftp Upload')]);
         }
         ?>
     </div>
@@ -350,6 +369,11 @@ $(document).on('click', '.downloadSapFiles', function(e){
         $('#pageloader').hide();
     }, timeOutForLoader);
     return false;
+});
+
+$(document).on('click', '.uploadSapFiles', function(e){
+    $('#reportsmodelold-upload_ftp_file').val('1');
+    $('#report-form').submit();
 });
 
 ";

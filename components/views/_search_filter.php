@@ -291,6 +291,14 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->customer_code($model, $form, $depend_str, 'vendor_code', FALSE, FALSE); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('transfer_types'))) {
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownStatic('transfer_type', $model, $form, 'form-group', false, false, 'transfer_types', false); ?>
+                                        </div>
+                                    <?php } ?>
                                 <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">

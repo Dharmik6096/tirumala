@@ -112,13 +112,23 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
         $sentboxArray = [];
 
         if (!empty($this->masterCode->dcs_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->masterCode->dcs_code);
+            $array = [];
+            $array['code'] = $this->masterCode->dcs_code;
+            $array['type'] = 'VLC';
+            $sentboxArray = [$array]; //Yii::$app->general->getSentBoxCodes('', '', '', '', $this->masterCode->dcs_code);
         } else if (!empty($this->masterCode->bmc_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->masterCode->bmc_code, '', '');
+            $array = [];
+            $array['code'] = $this->masterCode->bmc_code;
+            $array['type'] = 'BMC';
+            $sentboxArray = [$array]; //Yii::$app->general->getSentBoxCodes('', '', $this->masterCode->bmc_code, '', '');
         } else if (!empty($this->masterCode->mcc_plant_code)) {
-            $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->masterCode->mcc_plant_code, '', '', '');
+            $array = [];
+            $array['code'] = $this->masterCode->mcc_plant_code;
+            $array['type'] = 'MCC';
+            $sentboxArray = [$array]; //Yii::$app->general->getSentBoxCodes('', $this->masterCode->mcc_plant_code, '', '', '');
         }
         foreach ($sentboxArray as $sent) {
+            sleep(10);
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {

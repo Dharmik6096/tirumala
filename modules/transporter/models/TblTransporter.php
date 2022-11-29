@@ -12,6 +12,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblBanks;
 use app\modules\organisation\models\TblBranch;
 use app\modules\organisation\models\TblUnionsDistrictMapping;
+use app\modules\transporter\models\TblBillingType;
 use app\modules\details\models\TblBankDetails;
 use app\modules\details\models\TblContactDetails;
 use app\modules\general\models\TblDepartment;
@@ -70,67 +71,79 @@ class TblTransporter extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['transporter_name', 'address', 'union_code', 'hamlet_code'], 'required'],
-            [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
-            [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string'],
-            [['registration_no'], 'unique', 'skipOnEmpty' => true],
-            [['transporter_code', 'state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
-//            [['tds_per'], 'number'],
-            [['transporter_code'], 'integer'],
-            [['email'], 'email'],
-            [['local_contact_person', 'local_name'], function ($attribute, $params) {
+                [['transporter_name', 'address', 'union_code', 'hamlet_code', 'vendor_code', 'billing_type_code'], 'required', 'except' => ['importCsv', 'activation']],
+                [['transporter_name', 'address', 'hamlet_code', 'vendor_code', 'union_code', 'billing_type_code'], 'required', 'on' => 'importCsv'],
+                [['transporter_name', 'local_name', 'address', 'phone_no', 'mobile_no', 'email', 'contact_person', 'local_contact_person', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'gstin', 'pan_no', 'beneficiary_name', 'agreement_no', 'declaration', 'security_cheque_no', 'union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
+                [['registration_no'], 'unique', 'skipOnEmpty' => true, 'except' => ['activation']],
+                [['transporter_code', 'state_code', 'district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'activation']],
+                [['vendor_code'], 'number', 'except' => ['activation']],
+                [['transporter_code'], 'integer', 'except' => ['activation']],
+                [['email'], 'email', 'except' => ['activation']],
+                [['local_contact_person', 'local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['transporter_name', 'contact_person', 'beneficiary_name'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['transporter_name', 'contact_person', 'beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['mobile_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
-            [['phone_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => true, 'except' => ['activation']],
+                [['phone_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['registration_no'], 'string', 'max' => 20],
-            [['created_at', 'updated_at', 'security_amount', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'department'], 'safe'],
-            ['bank_account_no', 'unique', 'when' => function($model) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
+                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['activation']],
+                [['registration_no'], 'string', 'max' => 20],
+                [['created_at', 'updated_at', 'security_amount', 'middle_name', 'local_middlename', 'surname', 'local_surname', 'department', 'vendor_code', 'beneficiary_name', 'vendor_name', 'transporter_type', 'agreement_from_date', 'agreement_to_date', 'billing_type_code'], 'safe'],
+                ['bank_account_no', 'unique', 'when' => function($model) {
                     $data = $this->find()->where(['ifsc' => $model->ifsc])->one();
                     return ($data) ? true : false;
-                }, 'skipOnEmpty' => true, /* 'targetAttribute' => 'bank_code' */],
-            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['bank_account_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => true, /* 'targetAttribute' => 'bank_code' */ 'except' => ['activation']],
+                ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['activation']],
+                [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
-                }],
-            [['pan_no', 'email', 'mobile_no'], 'unique'],
-            [['pan_no'], function ($attribute, $params) {
+                }, 'except' => ['activation']],
+                [['pan_no', 'email', 'mobile_no'], 'unique', 'except' => ['activation']],
+                [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            [['ifsc'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'when' => function() {
                     return !empty($this->branch_code);
-                }],
-            [['tds_per'], 'number'],
-            [['security_amount', 'tds_per'], 'string', 'max' => 16, 'tooLong' => Yii::t('app/validation', '{attribute} should contain at most 16 digit '), 'skipOnEmpty' => true],
-            [['gstin'], 'string', 'max' => 11, 'skipOnEmpty' => true],
-            [['agreement_no', 'declaration', 'security_cheque_no'], 'string', 'max' => 20, 'skipOnEmpty' => true],
-            [['is_active'], 'integer'],
-            [['is_active'], 'default', 'value' => 1],
-            [['agreement_no', 'security_cheque_no', 'registration_no'], function ($attribute, $params) {
+                }, 'except' => ['activation']],
+                [['tds_per'], 'number', 'except' => ['activation']],
+                [['security_amount', 'tds_per'], 'string', 'max' => 16, 'tooLong' => Yii::t('app/validation', '{attribute} should contain at most 16 digit '), 'skipOnEmpty' => true, 'except' => ['activation']],
+                [['gstin'], 'string', 'max' => 11, 'skipOnEmpty' => true],
+                [['agreement_no', 'declaration', 'security_cheque_no'], 'string', 'max' => 20, 'skipOnEmpty' => true, 'except' => ['activation']],
+                [['is_active'], 'integer'],
+                [['agreement_no', 'security_cheque_no', 'registration_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateNumericField($this, $attribute, $params);
-                }, 'skipOnEmpty' => false],
-            ['security_amount', 'number', 'min' => 1],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
-            [['department'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                ['security_amount', 'number', 'min' => 1],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
+                [['department'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'department');
                 }, 'on' => ['importCsv']],
-            [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
-            [['hamlet_code'], 'validateHamlet'],
-            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['department'], 'exist', 'skipOnError' => true, 'targetClass' => TblDepartment::className(), 'targetAttribute' => ['department' => 'department_id'], 'on' => ['importCsv']],
+                [['hamlet_code'], 'validateHamlet'],
+                [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['branch_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateBranch($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['activation']],
+                [['hamlet_code'], 'validateHamlet', 'on' => 'importCsv'],
+                [['agreement_to_date'], 'validateAgreeTo', 'except' => ['activation']],
+                [['agreement_from_date', 'agreement_to_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
+//                    [['transporter_type'], function ($attribute, $params) {
+//                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'transporter_type');
+//                }, 'on' => 'importCsv'],
+            [['is_active'], 'default', 'value' => 1],
+                [['billing_type_code'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalData($this, $attribute, 'billing_type_code');
+                }, 'except' => ['activation']],
+                [['vendor_code'], 'unique', 'except' => ['activation']]
         ];
     }
 
@@ -172,7 +185,8 @@ class TblTransporter extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'security_amount' => Yii::t('app', 'Security Amount')
+            'security_amount' => Yii::t('app', 'Security Amount'),
+            'billing_type_code' => Yii::t('app', 'Billing Type')
         ];
     }
 
@@ -341,7 +355,6 @@ class TblTransporter extends \app\models\ChildModel {
             } else {
                 $hamlet = $hamlet['model'];
                 $vilage = Yii::$app->general->validateActiveRelation($hamlet, 'TblVillages', 'village_code', 'village_code', 'village', 'dcs', 'sub_district_code');
-
                 if ($vilage['msg'] != '') {
                     $this->addError($attribute, Yii::t('app/validation', $vilage['msg']));
                     return false;
@@ -389,6 +402,17 @@ class TblTransporter extends \app\models\ChildModel {
         }
     }
 
+    public function validateAgreeTo($attribute, $params) {
+        if (!empty($this->agreement_from_date) && !empty($this->agreement_to_date) && ($this->agreement_to_date < $this->agreement_from_date )) {
+            $this->addError('agreement_to_date', Yii::t('app/validation', $this->getAttributeLabel('agreement_to_date') . ' Must be Greater than ' . $this->getAttributeLabel('agreement_from_date')));
+            return FALSE;
+        }
+    }
+
+    public function getBillingType() {
+        return $this->hasOne(TblBillingType::className(), ['billing_type_code' => 'billing_type_code']);
+    }
+
     public function getIfscDetail() {
         return $this->hasOne(TblBranch::className(), ['ifsc' => 'ifsc'])->andwhere(['is_active' => 1]);
     }
@@ -400,7 +424,9 @@ class TblTransporter extends \app\models\ChildModel {
     public function getDefaultContactDetail() {
         return $this->hasOne(TblContactDetails::className(), ['module_code' => 'transporter_code'])->where(['tbl_contact_details.module_name' => 'transporter', 'tbl_contact_details.is_default' => 1]);
     }
+
     public function setPanNumber($attribute, $params) {
         $this->pan_no = strtoupper($this->pan_no);
     }
+
 }

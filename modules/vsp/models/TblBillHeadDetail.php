@@ -51,7 +51,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     public function rules() {
         return [
             [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'created_by', 'updated_by'], 'string'],
-            [['bill_head_code', 'bmc_code', 'amount', 'transaction_date'], 'required'],
+//                [['bill_head_code', 'bmc_code', 'amount', 'transaction_date'], 'required'],
             [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
             [['member_code'], 'required', 'on' => ['importDetailCsv']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
@@ -81,14 +81,14 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             [['customer_code'], 'required', 'on' => ['importCsv']],
             [['customer_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
+//                        $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
                         $customer_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
-                        if (empty($this->dcs_code) && $customer_type == 'DCS' && $billingType == '1') {
-                           
-                        } else {
-                            $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
-                            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
-                        }
+//                        if (empty($this->dcs_code) && $customer_type == 'DCS' && $billingType == '1') {
+//                            
+//                        } else {
+                        $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
+                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+//                    }
                     }
                 }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
         ];
@@ -103,7 +103,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             'union_code' => 'Union',
             'bill_head_code' => 'Bill Head',
             'payment_cycle_code' => 'Payment Cycle',
-            'dcs_code' => 'DCS',
+            'dcs_code' => Yii::t('app', 'DCS'),
             'amount' => 'Amount',
             'is_installment' => 'Is Installment',
             'no_installment' => 'No. of Installment',
@@ -115,7 +115,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             'installment_amount' => 'Installment Amount',
             'bmc_code' => 'BMC',
             'plant_code' => 'Plant',
-            'mcc_plant_code' => 'MCC',
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'customer_code' => 'Code',
             'customer_type' => 'Type',
         ];
@@ -150,7 +150,7 @@ class TblBillHeadDetail extends \app\models\ChildModel {
     }
 
     public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['mcc_plant_code' => 'bmc_code']);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
     public function getCustomerType() {
@@ -212,10 +212,10 @@ class TblBillHeadDetail extends \app\models\ChildModel {
             if (!array_key_exists($this->bill_head_code, $list)) {
                 $this->addError('bill_head_code', Yii::t('app/validation', $this->getAttributeLabel('bill_head_code') . ' is invalid'));
             }
-            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
-            if ($billingType != 1 && $customer_type != 'DCS') {
-                Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
-            }
+//            $billingType = Yii::$app->general->getforeignkey($this->bmcCode, 'billing_type');
+//            if ($billingType != 1 && $customer_type != 'DCS') {
+            Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
+//            }
         }
     }
 

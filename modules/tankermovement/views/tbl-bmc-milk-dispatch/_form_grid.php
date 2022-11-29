@@ -60,6 +60,26 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
         }],
+    ['attribute' => 'qty', 'label' => 'QTY',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'dispatch_qty');
+        }],
+    ['attribute' => 'fat', 'label' => 'FAT',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'fat');
+        }],
+    ['attribute' => 'snf', 'label' => 'SNF',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'snf');
+        }],
+    ['attribute' => 'balance_qty', 'label' => 'Balance Qty',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'balance_qty');
+        }],
+    ['attribute' => 'milk_type_code', 'label' => 'Milk Type',
+        'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->bmcMilkDispatchTxn, ['milkType'], 'animal_type_name');
+        }],
     [
         'attribute' => 'to_date',
         'value' => function($model) {
@@ -96,6 +116,9 @@ $attribute = [
         'value' => function($model) {
             return $model->is_last_destination == 1 ? 'Yes' : 'No';
         }, 'filter' => false],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc');
+        }, 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [

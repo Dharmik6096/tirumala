@@ -61,9 +61,10 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
         return [
                 [['user_code', 'username', 'name', 'password', 'mobile_no', 'repeat_password', 'plant_code', 'mcc_plant_code'], 'required', 'except' => ['installation', 'importCsv']],
                 [['username', 'name', 'password', 'repeat_password', 'mobile_no', 'org_type', 'org_code'], 'required', 'on' => 'importCsv'],
-                [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no','device_id'], 'safe'],
+                [['created_at', 'updated_at', 'user_code', 'password', 'org_type', 'org_code', 'originating_org_code', 'role_code', 'is_active', 'mobile_no', 'device_id'], 'safe'],
                 [['originating_type'], 'integer'],
-                [['username'], 'unique'],
+            //  [['username'], 'unique'],
+            ['username', 'unique', 'targetAttribute' => ['username', 'union_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Username already Exists')],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['name', 'username', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
                 [['email'], 'string', 'max' => 128],
@@ -124,9 +125,9 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
     public function getExistData($org_type, $data, $notIn = '') {
         $query = $this->find()->where(['union_code' => $data->union_code, 'is_active' => 1]);
         if (strtoupper($org_type == 'MCC')) {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code]);
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
+            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code]);
         }

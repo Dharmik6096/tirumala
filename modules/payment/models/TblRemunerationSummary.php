@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblMccPlant;
 
 /**
  * This is the model class for table "tbl_remuneration_summary".
@@ -30,6 +31,8 @@ use yii\helpers\ArrayHelper;
  */
 class TblRemunerationSummary extends \app\models\ChildModel {
 
+    public $p_bmc_code;
+
     /**
      * @inheritdoc
      */
@@ -42,10 +45,11 @@ class TblRemunerationSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
-            [['union_code', 'bmc_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'p_bmc_code'], 'safe'],
+                [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
+                [['bmc_code'], 'required', 'on' => 'processpayment'],
 //            [['from_datetime'], function ($attribute, $params) {
 //                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
 //                }, 'skipOnError' => true, 'on' => 'processpayment'],
@@ -77,7 +81,12 @@ class TblRemunerationSummary extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'p_bmc_code' => Yii::t('app', 'BMC'),
         ];
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function ValidateDate($attribute, $params, $process_alert = FALSE) {
@@ -87,6 +96,15 @@ class TblRemunerationSummary extends \app\models\ChildModel {
             $this->addError($attribute, Yii::t('app/validation', 'To Date must be greater than From Date'));
             return false;
         }
+        if (\Yii::$app->session->get('eiplCode') == 'MMD') {
+            $first_day_month = date('Y-m-01', strtotime($this->from_datetime));
+            $last_day_month = date('Y-m-t', strtotime($this->from_datetime));
+            if ($from_date != $first_day_month || $to_date != $last_day_month) {
+                $this->addError($attribute, Yii::t('app/validation', 'From Date and To Date must be Start Date and End Date of month.'));
+                return false;
+            }
+        }
+
         $query = TblRemunerationSummary::find()
                 ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
         if ($process_alert) {
@@ -95,11 +113,11 @@ class TblRemunerationSummary extends \app\models\ChildModel {
             $query->andWhere(['not in', 'status', ['processed']]);
         }
         $count = $query->andWhere(['or',
-                    ['or',
-                        ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
-                        ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
+                        ['or',
+                            ['between', 'CAST(from_datetime as date)', $from_date, $to_date],
+                            ['between', 'CAST(to_datetime as date)', $from_date, $to_date]
                     ],
-                    ['or',
+                        ['or',
                         "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                         "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
             ]])->count();
@@ -112,11 +130,11 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                 $pending_disburse = $this->find()
                                 ->where(['status' => 'processed', 'bmc_code' => $this->bmc_code])
                                 ->andWhere(['or',
-                                    ['or',
-                                        ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
-                                        ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
+                                        ['or',
+                                            ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
+                                            ['NOT BETWEEN', 'CAST(to_datetime as date)', $from_date, $to_date]
                                     ],
-                                    ['or',
+                                        ['or',
                                         "'$from_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                                         "'$to_date' NOT BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
                             ]])->one();
@@ -132,11 +150,11 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                             'applicable_for' => 'BMC',
                             'applicable_type' => 'DCS'])
                         ->andWhere(['or',
-                            ['or',
-                                ['between', 'CAST(from_date as date)', $from_date, $to_date],
-                                ['between', 'CAST(to_date as date)', $from_date, $to_date]
+                                ['or',
+                                    ['between', 'CAST(from_date as date)', $from_date, $to_date],
+                                    ['between', 'CAST(to_date as date)', $from_date, $to_date]
                             ],
-                            ['or',
+                                ['or',
                                 "'$from_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)",
                                 "'$to_date' BETWEEN CAST([from_date] as date) AND CAST([to_date] as date)"
                     ]])

@@ -16,12 +16,16 @@ use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateDetails;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\collection\models\TblCollectionDataAlias;
+use app\modules\syncutility\models\TblInbox;
+use app\modules\syncutility\models\TblSyncLog;
 use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\collection\models\TblMilkCollectionHistory;
 use app\modules\organisation\models\TblUnions;
 use app\modules\collection\models\OnlineCollectionModel;
 use app\modules\organisation\models\TblBmcMilkType;
+use app\modules\bkgprocess\models\TblFtpTxnLog;
+use PHPExcel;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -29,6 +33,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 class TblMilkCollectionController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'qlty-type-config', 'check-fat-range'];
+    public $fileDownloadArr = [];
 
     /**
      * Lists all TblMilkCollection models.
@@ -986,6 +991,297 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     'detailModel' => $detailModel,
                     'config' => $config,
         ]);
+    }
+
+    public function actionAndroidCollection() {
+        $model = new TblMilkCollection();
+        if ($model->load(Yii::$app->request->post())) {
+            $error_file = [];
+            $fileName = Yii::$app->request->post()['TblFtpTxnLog']['file_name'];
+            $files = array_filter(explode(',', $fileName));
+            $path = Yii::$app->basePath . '/web/android/';
+            $msg = '';
+            if (Yii::$app->general->checkDirectory($path)) {
+                $file_name = Yii::$app->basePath . '/web/android/' . $files[1];
+                $status = 'error';
+                $msg = 'Invalid File Uploaded<br/>';
+                $cnt = 0;
+                $file_id = [];
+                $saveModel = [];
+                $file_data = file($file_name);
+                $str = '';
+                try {
+                    foreach ($file_data as $key => $value) {
+                        if (trim(substr($value, -2)) == '=' || strlen($value) <= 35) {
+                            $str = trim($str) . trim($value);
+                            $keyA = Yii::$app->general->SetSecurityEncryptionKey('UNION', $model->union_code);
+                            Yii::$app->encrypter->setGlobalPassword($keyA);
+                            $filedata = Yii::$app->general->decryptData(str_replace(' ', '', $str));
+                            $jsonData = (array) json_decode($filedata);
+                            $request = $this->camelCaseToUnderscore($jsonData);
+                            $inbox = new TblInbox();
+                            $inbox->setAttributes($request);
+                            $existData = $inbox->find()->where(['uuid' => $inbox->uuid])->one();
+                            $sync_log = new TblSyncLog();
+                            $existSync = $sync_log->find()->where(['uuid' => $inbox->uuid])->one();
+                            if (empty($existData) && empty($existSync)) {
+                                $saveModel[] = $inbox;
+                            }
+                            $str = '';
+                            $status = 'success';
+                            $msg = 'Files Uploaded Successfully<br/>';
+                        } else {
+                            $str = $str . $value;
+                        }
+                    }
+                    if (!empty($saveModel)) {
+                        $transaction = $this->generalModel->saveTransaction($saveModel, ['file uploaded', 'create']);
+                        if ($transaction == 'customRedirect') {
+                            $msg = 'Files Uploaded Successfully<br/>';
+                        }
+                    }
+                } catch (\yii\db\Exception $e) {
+                    $msg .= 'Following files not uploaded' . implode('<br/>', $e);
+                }
+                if (!empty($error_file)) {
+                    $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                }
+            } else {
+                $status = 'error';
+                $msg = 'Error While Save data';
+            }
+            $result = ['status' => $status, 'data' => $msg];
+            Yii::$app->getSession()->setFlash('success', ['type' => $status,
+                'message' => $msg]);
+            return (Json::encode($result));
+        } else {
+            return $this->render('import_collection', ['model' => $model]);
+        }
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/android/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . $file->name;
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name, 'datefile' => $file->name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function &camelCaseToUnderscore(&$post_data) {
+        if (is_array($post_data)) {
+            $post_data = array_combine(array_map(function($str) {
+                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                    }, array_keys($post_data)), array_values($post_data));
+            foreach ($post_data as $key => $val) {
+                if (is_array($post_data[$key])) {
+                    $arr1 = array_combine(array_map(function($str) {
+                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
+                    $post_data[$key] = $arr1;
+                    $this->camelCaseToUnderscore($post_data[$key]);
+                }
+            }
+            return $post_data;
+        }
+        return $post_data;
+    }
+
+    public function actionSapUpload() {
+        $searchModel = new TblMilkCollectionSearch();
+        $searchModel->scenario = 'sap-upload';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation']) : '';
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+                $data_array = [];
+                $controls = [];
+                $output = [];
+                $fileArray = [];
+                $checkArray = [];
+                $eiplCode = Yii::$app->session->get('eiplCode');
+                foreach ($codes as $code) {
+                    $data = explode('###', $code);
+                    $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+                    $data_array['module_code'] = $data[4];
+                    $data_array['mcc_plant_code'] = $data[2];
+                    $data_array['union_code'] = $data[0];
+                    $data_array['applicable_date'] = $data[5];
+                    $data_array['shift_code'] = $data[6];
+                    $data_array['bmc_code'] = $data[3];
+                    $data_array['dcs_code'] = $data[4];
+                    $data_array['from_date'] = $data[5];
+                    $data_array['to_date'] = $data[5];
+                    if ($status == 'upload') {
+                        $ftp_model = new TblFtpTxnLog();
+                        $ftp_model->exportData($data_array, $title = '', $output);
+                    } elseif ($status == 'download') {
+                        if ($eiplCode == 'DODLA') {
+                            $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];
+                            if (empty($checkArray[$key]['dcs_code'])) {
+                                $checkArray[$key]['dcs_code'] = [];
+                            }
+                            $checkArray[$key]['union_code'] = $data[0];
+                            $checkArray[$key]['mcc_plant_code'] = $data[2];
+                            $checkArray[$key]['bmc_code'] = $data[3];
+                            $checkArray[$key]['dcs_code'][] = $data[4];
+                        } else {
+                            $controls['union_code'] = $data[0];
+                            $controls['mcc_plant_code'] = $data[2];
+                            $controls['bmc_code'] = $data[3];
+                            $controls['dcs_code'] = $data[4];
+                            $controls['from_date'] = $data[5];
+                            $controls['to_date'] = $data[5];
+                            $sp = 'mis_vmcc_collection_date_wise';
+
+                            if ($eiplCode == 'DODLA') {
+                                $sp = 'mis_vmcc_collection_date_wise_dodla';
+                            }
+                            $output = \Yii::$app->general->getSpData($sp, $controls);
+
+                            if (!empty($output)) {
+                                $downLoadArray = [];
+                                foreach ($output as $detail) {
+                                    $plant = 'Agent_Code';
+                                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                                        if (empty($downLoadArray[$detail[$plant]])) {
+                                            $downLoadArray[$detail[$plant]] = [];
+                                        }
+                                        $downLoadArray[$detail[$plant]][] = $detail;
+                                    }
+                                }
+                                foreach ($downLoadArray as $bmc => $download) {
+                                $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    if ($eiplCode == 'DODLA') {
+                                        $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    }
+                                    $this->downloadData($title, $download, $fileArray);
+                                }
+                                $this->fileDownloadArr = $fileArray;
+                            }
+                        }
+                    }
+                }
+                if ($eiplCode == 'DODLA') {
+                    foreach ($checkArray as $checkKey => $checkAr) {
+                        $dateArr = explode('~~', $checkKey);
+                        $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
+                        $controls['union_code'] = $checkAr['union_code'];
+                        $controls['mcc_plant_code'] = $checkAr['mcc_plant_code'];
+                        $controls['bmc_code'] = $checkAr['bmc_code'];
+                        $controls['dcs_code'] = ',' . implode(',', $checkAr['dcs_code']) . ',';
+                        $controls['from_date'] = $date;
+                        $controls['to_date'] = $date;
+                        $sp = 'mis_vmcc_collection_date_wise';
+
+                        if ($eiplCode == 'DODLA') {
+                            $sp = 'mis_vmcc_collection_date_wise_dodla';
+                        }
+                        $output = \Yii::$app->general->getSpData($sp, $controls);
+                        if (!empty($output)) {
+                            $downLoadArray = [];
+                            $downLoadArray[] = $output;
+                            foreach ($downLoadArray as $bmc => $download) {
+                                if ($eiplCode == 'DODLA') {
+                                    $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                } else {
+                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                }
+                                $this->downloadData($title, $download, $fileArray);
+                            }
+                            $this->fileDownloadArr = $fileArray;
+                        }
+                    }
+                }
+                if ($status == 'upload') {
+                    $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'FTP Uploaded Successfully.']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->searchsapupload(Yii::$app->request->queryParams);
+        return $this->render('sap_upload', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'fileDownloadArr' => $this->fileDownloadArr
+        ]);
+    }
+
+    public function actionMemberWiseDetail() {
+        $searchModel = new TblMilkCollectionSearch();
+        $dataProvider = $searchModel->detailmembersearch(Yii::$app->request->queryParams);
+
+        return $this->renderAjax('_member_wise_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionDcsWiseFtpUpload($union_code, $mcc_plant_code, $bmc_code, $dcs_code, $date_time_of_collection, $shift_id) {
+        $data_array = [];
+        $output = [];
+        $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
+        $data_array['module_code'] = $dcs_code;
+        $data_array['mcc_plant_code'] = $mcc_plant_code;
+        $data_array['union_code'] = $union_code;
+        $data_array['applicable_date'] = $date_time_of_collection;
+        $data_array['shift_code'] = $shift_id;
+        $data_array['bmc_code'] = $bmc_code;
+        $data_array['dcs_code'] = $dcs_code;
+        $data_array['from_date'] = $date_time_of_collection;
+        $data_array['to_date'] = $date_time_of_collection;
+        $ftp_model = new TblFtpTxnLog();
+        $ftp_model->exportData($data_array, $title = '', $output);
+        $record = ['status' => 'success', 'msg' => 'FTP Uploaded Successfully.'];
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function downloadData($title, $download, &$fileArray) {
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        $file_header = !empty($download) ? array_keys($download[0]) : [];
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $download, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $file_name = $title . '.' . 'xls';
+        $path = Yii::$app->basePath . '/web/sap_data_files/';
+        Yii::$app->general->checkDirectory($path);
+        $fileArray[] = $file_name;
+        $fileName = $path . '/' . $file_name;
+        fopen($fileName, "w+");
+        $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
+        $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save($fileName);
     }
 
 }

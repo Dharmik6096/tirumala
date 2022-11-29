@@ -34,7 +34,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list', 'all-route-list'];
+    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route'];
 
     /**
      * @inheritdoc
@@ -308,19 +308,21 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
                     if ($modelRouteSource->route_type == 'Can') {
                         $societyCodes = TblSocietyCodes::find()->where(['dcs_code' => $d[0]])->one();
-                        $historyModel = new TblSocietyCodesHistory();
-                        Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
-                        $societyCodes->route_code = $modelRouteSource->route_code;
+                        if (!empty($societyCodes)) {
+                            $historyModel = new TblSocietyCodesHistory();
+                            Yii::$app->operation->history($societyCodes, $historyModel, UPDATE);
+                            $societyCodes->route_code = $modelRouteSource->route_code;
 //                        $societyCodes->pooling_point_code = str_pad((int) $societyCodes->getPpCode() + $i, 3, '0', STR_PAD_LEFT);
 //                        $societyCodes->bmc_code = $modelRouteSource->getBmcCode();
+                            array_push($mapping, $historyModel);
+                            array_push($mapping, $societyCodes);
+                        }
                         $dcsCode = TblDcs::findOne($d[0]);
                         $dcsCode->scenario = 'routeMapping';
                         $dcsHistoryModel = new TblDcsHistory();
                         Yii::$app->operation->history($dcsCode, $dcsHistoryModel, UPDATE);
                         $dcsCode->route_code = $modelRouteSource->route_code;
 
-                        array_push($mapping, $societyCodes);
-                        array_push($mapping, $historyModel);
                         array_push($mapping, $dcsCode);
                         array_push($mapping, $dcsHistoryModel);
                     }
@@ -368,7 +370,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 $plant = $parents[0];
                 $mcc = !empty($parents[1]) ? $parents[1] : NULL;
                 $bmc = !empty($parents[2]) ? $parents[2] : NULL;
-                $data = $routes->routeFromDestination($plant, $mcc, $bmc);
+                $data = $routes->routeFromDestination($plant, $mcc, $bmc, TRUE, FALSE, TRUE);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -443,6 +445,19 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 }
             }
         }
+    }
+
+    public function actionGetBmcRoute() {
+        $bmcList = [];
+        if (!empty($_POST['bmc'])) {
+            $bmc = explode(',', $_POST['bmc']);
+            $plant = explode(',', $_POST['plant']);
+            $mcc = explode(',', $_POST['mcc']);
+            $RLS = $_POST['RLS'];
+            $model = new TblRouteMapping();
+            $bmcList = $model->routeFromDestination($plant, $mcc, $bmc, FALSE, TRUE);
+        }
+        return Json::encode(['status' => 'success', 'data' => $bmcList]);
     }
 
 }

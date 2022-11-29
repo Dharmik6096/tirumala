@@ -27,7 +27,7 @@ use app\modules\tankermovement\models\TblConfigTxnResultSearch;
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list','check-trip','view-config'];
+    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -98,7 +98,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 if (empty($model->bmc_milk_dispatch_code)) {
                     $new_rec = TRUE;
                     $model->originating_org_code = $model->union_code;
-                    $model->bmc_milk_dispatch_code = Yii::$app->general->getPrimaryCode($model);
+                    $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->trip_code . '/' . $model->bmc_code . '/1';
                     $model->driver_name = $model->vehicleCode->driver_name;
                     $model->driver_contact_no = $model->vehicleCode->driver_contact_no;

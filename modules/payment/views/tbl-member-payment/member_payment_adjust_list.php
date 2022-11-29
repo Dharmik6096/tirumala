@@ -249,17 +249,17 @@ $tot_amt = array_sum(array_map(function($array) {
                                                    totalRec=totalRec+recovery;
                                                    totaladjRec=totaladjRec+adjustRec;
                                                });
-                                                if(totalRec != totaladjRec) {
+                                              //  if(totalRec != totaladjRec) {
                                                 
-                                                    $("#loadercontent").hide();
-                                                    $("#pageloader").hide(); 
-                                                    var dispmessage = "' . Yii::t('app', 'Sum of Adjust Recovery and Sum of Reovery Must be Same.') . '";
-                                                    bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispmessage+"</span>");
-                                                    return false;
-                                                } else {
+                                                //    $("#loadercontent").hide();
+                                                  //  $("#pageloader").hide(); 
+                                                  //  var dispmessage = "' . Yii::t('app', 'Sum of Adjust Recovery and Sum of Reovery Must be Same.') . '";
+                                                   // bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispmessage+"</span>");
+                                                   // return false;
+                                               // } else {
                                                     $("#loadercontent").show();
                                                     $("#pageloader").show(); 
-                                                }
+                                               // }
 //                                                return false;
                                             }
                                         }'),

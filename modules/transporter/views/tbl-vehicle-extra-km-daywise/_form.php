@@ -32,6 +32,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'extra_kms')->textInput() ?>
     </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'rate')->textInput() ?>
+    </div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>

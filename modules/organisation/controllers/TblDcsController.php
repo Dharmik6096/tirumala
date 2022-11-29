@@ -44,6 +44,8 @@ use app\modules\details\models\TblContactDetailsHistory;
 use yii\base\UserException;
 use ReflectionClass;
 use app\models\ChildModel;
+use app\modules\bkgprocess\models\TblOrgFileCreator;
+use app\modules\bkgprocess\models\TblOrgFileLog;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -52,7 +54,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
 
     /**
      * Lists all TblDcs models.
@@ -191,6 +193,14 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                $this->model->cutoff = '0000';
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val);
+                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
+                }
                 $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -265,6 +275,11 @@ class TblDcsController extends ChildController {
         if (empty($this->model->vendor)) {
             $this->model->vendor = 'NA';
             $oldVendor = 'NA';
+        } else {
+            $oldVendor = 'NA';
+        }
+        if (!empty($this->model->cutoff_val) && !empty($this->model->lower_milk_type)) {
+            $this->model->cutoff = 1;
         }
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsHistory();
@@ -351,7 +366,14 @@ class TblDcsController extends ChildController {
                 if ($oldVendor == 'NA' && $this->model->vendor != 'NA') {
                     $vendorModel = new TblSocietyVendor();
                     $vendorModel->dcs_code = $this->model->dcs_code;
+                    $vendorModelData = $vendorModel->find()->where(['dcs_code' => $this->model->dcs_code])->one();
+                    if (!empty($vendorModelData)) {
+                        $vendorModel = $vendorModelData;
+                    }
                     $vendorModel->vendor_code = $this->model->vendor;
+                    if ($this->model->vendor == 'BIPL') {
+                        Yii::$app->general->generateFTPDir($this->model, 'dcs_code', [], $this->model->mcc_plant_code, $this->model->ref_code);
+                    }
                     array_push($mappingList, $vendorModel);
                     $userModel = new User();
                     $users = $userModel->findByRole([$vendorModel->vendor_code]);
@@ -376,6 +398,14 @@ class TblDcsController extends ChildController {
                             FileHelper::createDirectory($path);
                         }
                     }
+                }
+                $this->model->cutoff = '0000';
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val);
+                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $mappingList, ['society', 'edit']);
                 if ($transaction !== FALSE) {
@@ -842,9 +872,10 @@ class TblDcsController extends ChildController {
         $mccList = [];
         if (!empty($_POST['bmc'])) {
             $palnt = explode(',', $_POST['bmc']);
+            $route = !empty($_POST['route']) ? explode(',', $_POST['route']) : '';
             $RLS = $_POST['RLS'];
             $model = new TblDcs();
-            $mccList = $model->getBMCDCSList($palnt, $RLS);
+            $mccList = $model->getBMCDCSList($palnt, $RLS, '', '', $route);
         }
         return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
@@ -885,11 +916,19 @@ class TblDcsController extends ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0])) {
+                $for = !empty($parents[1]) ? $parents[1] : '';
+                $route = !empty($parents[2]) ? $parents[2] : '';
                 $mccs = new TblDcs();
-                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS');
+                $bmc = $mccs->getBMCDCSList($parents[0], 'TRUE', $type = 'DCS', '', $route);
                 $model = new TblCustomerMaster();
-                $customer = $model->getCustomerList($parents[0]);
-                $data = $bmc + $customer;
+                $customer = $model->getCustomerList($parents[0], $route);
+                if (empty($for)) {
+                    $data = $bmc + $customer;
+                } elseif ($for == 1) {
+                    $data = $bmc;
+                } elseif ($for == 2) {
+                    $data = $customer;
+                }
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -1168,6 +1207,106 @@ class TblDcsController extends ChildController {
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return false;
         }
+    }
+
+    public function actionExportSentbox($id) {
+        $this->model = $this->findModel($id);
+
+        $MemberModel = new TblMember();
+        $memberArray = $MemberModel->getMembers($id);
+
+        $jsonData = [];
+        ob_clean();
+        foreach ($memberArray as $member) {
+            $operation = !empty($member->updated_at) ? 'UPDATE' : 'INSERT';
+            $sentbox = $member->sentboxModel($id, 'VLC');
+            $sentboxData = $sentbox->setSentboxDownload($member, $operation);
+            $jsonData[] = Json::encode($sentbox->jsonModel($sentboxData), JSON_UNESCAPED_UNICODE);
+        }
+        if (true || count($memberArray) == count($jsonData)) {
+            $extention = 'txt';
+            $header = [
+                'mime' => 'text/plain',
+                'extension' => $extention,
+                'writer' => 'Excel2007',
+            ];
+
+            $labelT = $id . '-' . date('Ymdhis');
+            $fileName = $labelT . '.' . $header['extension'] .
+                    header('Content-Type: ' . $header['mime']);
+//        header('Content-Type: text/plain');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            header('Cache-Control: max-age=0');
+//        header("Content-Type: application/xls");
+//        header("Content-Disposition: attachment; filename={$fileName}");
+//        header("Pragma: no-cache");
+//        header("Expires: 0");
+            foreach ($jsonData as $json) {
+                $key = Yii::$app->general->SetSecurityEncryptionKey('UNION', $this->model->union_code);
+                Yii::$app->encrypter->setGlobalPassword($key);
+                echo Yii::$app->general->encryptData($json) . PHP_EOL;
+            }
+            exit();
+        }
+    }
+
+    public function actionUploadFtpFile($id) {
+        $dcsModel = $this->findModel($id);
+        $saveModel = [];
+        for ($x = 1; $x <= 2; $x += 1) {
+            $file_type = $x == 1 ? 'MEMBER' : 'RATE';
+            $model = new TblOrgFileCreator();
+            $model->file_status = 1;
+            $model->status = 2;
+            $model->vendor_code = 'BIPL';
+            $model->module_code = $dcsModel->dcs_code;
+            $model->ref_code = $dcsModel->ref_code;
+            $model->module_name = 'TblDcs';
+            $model->file_type = $file_type;
+            $model->value1 = '';
+            if ($file_type == 'RATE') {
+                $applicability = new TblPurchaseRateApplicability();
+                $applicableData = $applicability->getDcsApplicability($dcsModel->dcs_code, date('Y-m-d'));
+                $purchaseRate = !empty($applicableData) ? $applicableData->purchase_rate_code : '';
+                if (!empty($purchaseRate)) {
+                    $org_model = new TblOrgFileLog();
+                    $org_model->module_code = $model->module_code;
+                    $model->value1 = $purchaseRate;
+                    $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                    $model->status = 2;
+                    $model->file_status = 1;
+                    $saveModel[] = $model;
+                }
+            } else {
+                $org_model = new TblOrgFileLog();
+                $org_model->module_code = $model->module_code;
+                $org_model->generateBiplFiles($model->module_code, $model->file_type, $model->value1);
+                $model->status = 2;
+                $model->file_status = 1;
+                $saveModel[] = $model;
+            }
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['NAME/RATE Uploaded', 'create']);
+        if ($transaction == 'customRedirect') {
+            return $this->redirect(['index']);
+        }
+    }
+
+    public function actionMergeBmcDcsList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $dcs = new TblDcs();
+                $mccCode = !empty($parents[1]) ? $parents[1] : '';
+                $data = $dcs->getMergeBmcDcsList($parents[0], $mccCode);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

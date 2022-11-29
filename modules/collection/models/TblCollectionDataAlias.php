@@ -113,7 +113,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
             [['table_name', 'action_perform', 'member_code', 'dcs_code', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'name', 'mobile_no', 'type_of_data_receive', 'purchase_rate_code', 'route_code', 'remarks', 'sync_status', 'transporter_code', 'vehicle_no', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty_mode', 'no_of_can', 'qlty_auto', 'qty_auto', 'converted_qty_mode', 'send_status', 'collection_type', 'doc_no', 'old_no_of_can', 'old_purchase_rate_code', 'originating_type'], 'integer'],
             [['fat', 'snf', 'clr', 'water', 'qty', 'rtpl', 'amount', 'converted_qty', 'protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'converted_can', 'old_qty', 'old_fat', 'old_snf', 'old_rtpl', 'old_clr', 'old_amount'], 'number'],
-            [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code', 'own_bmc_code', 'antibiotic_sms_sent', 'antibiotic'], 'safe'],
+            [['date_time_of_collection', 'date_time_of_recieve', 'qlty_time', 'qty_time', 'date_time_of_testing', 'route_arrival_time', 'created_at', 'updated_at', 'old_milk_quality_type_code', 'old_milk_type_code', 'shift_code', 'own_bmc_code', 'antibiotic_sms_sent', 'antibiotic', 'is_sms_sent', 'old_customer_code', 'can_no'], 'safe'],
             [['dcs_code'], 'validateMilkCollection', 'on' => ['MilkCollection']],
             [['customer_code'], 'validateBmcCollection', 'on' => ['BmcCollection']],
             [['dcs_code'], 'validateMilkDispatch', 'on' => ['MilkDispatch']],
@@ -134,9 +134,15 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection', 'MilkDispatch']],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
-                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code');
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'member_lock');
                     }
-                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection', 'BmcCollection']],
+                }, 'skipOnEmpty' => TRUE, 'on' => ['MilkCollection']],
+            [['bmc_code'], function ($attribute, $params) {
+                    if (empty($this->getErrors())) {
+                        Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', '', 'bmc_lock');
+                    }
+                }, 'skipOnEmpty' => TRUE, 'on' => ['BmcCollection']],
+            [['bmc_code'], 'setNoOfCan'],
         ];
     }
 
@@ -223,6 +229,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'old_customer_code' => Yii::t('app', 'Old Code'),
         ];
     }
 
@@ -308,7 +315,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
 
     public function validateBmcCollection($attribute, $params) {
         $MainModel = new TblBmcCollection();
-        if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code)) {
+        if (($this->customer_code != $this->old_customer_code || $this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code)) {
             $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, FALSE, TRUE);
         } else {
             $MainModel->milkTypeWiseUnique($MainModel, $this);
@@ -342,6 +349,15 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
     public function getExistApproval() {
         return $this->find()->where(['dcs_code' => $this->dcs_code, 'member_code' => $this->member_code, 'date_time_of_collection' => $this->date_time_of_collection, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'qty' => $this->qty, 'fat' => $this->fat, 'snf' => $this->snf, 'table_name' => 'tbl_milk_collection', 'action_perform' => 'DELETE'])
                         ->one();
+    }
+
+    public function setNoOfCan() {
+        if (empty($this->getErrors())) {
+            $configCanParLtr = Yii::$app->general->getUnionConfiguration($this->union_code, 'can_per_ltr', 'BMC');
+            if (!empty($configCanParLtr)) {
+                $this->no_of_can = ceil($this->qty / $configCanParLtr);
+            }
+        }
     }
 
 }

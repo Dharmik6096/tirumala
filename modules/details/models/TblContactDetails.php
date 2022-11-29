@@ -36,6 +36,8 @@ class TblContactDetails extends \app\models\ChildModel {
     public function rules() {
         $main_rules = [
             [['detail_code'], 'required'],
+            [['detail_code'], 'required', 'on' => ['additional']],
+            [['detail_code'], 'required', 'except' => ['additional']],
             [['email'], 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['detail_code', 'mobile_no'], 'integer'],
             [['firstname', 'lastname', 'surname'], function ($attribute, $params) {
@@ -52,6 +54,7 @@ class TblContactDetails extends \app\models\ChildModel {
             [['email_to', 'email_cc', 'email_bcc'], function ($attribute, $params) {
                     Yii::$app->general->validateEmail($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => 'verification'],
+            [['is_verified', 'is_contact_verified'], 'default', 'value' => 0]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblContactDetails', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

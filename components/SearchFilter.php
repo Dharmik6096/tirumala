@@ -337,6 +337,7 @@ class SearchFilter {
             ],
             'TblMccShiftLockSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+                'action' => ['index-other', 'index']
             ],
             'TblMilkCollectionCreamBaseDataSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
@@ -352,6 +353,45 @@ class SearchFilter {
             ],
             'TblInventoryTransferSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+            ],
+            'TblCollectionApprovalSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
+            'TblRouteWiseLateArrivalSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblRecoveryParamDetailSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'from_date', 'to_date'],
+            ],
+            'TblTransporterTimeWisePenaltySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblMccWiseTransportationCostSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblWeighBridgeDataSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblAppLockPasswordSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblMilkcostParamSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'from_date', 'to_date'],
+            ],
+            'TblGenerateReportParamSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblMilkTransferSearch' => [
+                'filter' => ['f_union_code', 'transfer_types'],
+            ],
+            'TblGateEntrySearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'route_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblBmcCollectionTransferSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblVspPaymentDataConfigSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

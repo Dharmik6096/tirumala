@@ -9,6 +9,13 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\bkgprocess\models\TblFileCreator;
 use yii\db\ActiveQuery;
 use app\modules\organisation\models\TblDcs;
+use app\modules\bkgprocess\Bkgprocess;
+use app\components\FTPConnection;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\sms\models\TblApiMaster;
+use yii\helpers\Url;
+use app\modules\sms\models\TblAlertNotification;
+use app\modules\details\models\TblContactDetails;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -60,8 +67,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return [
             [['file_status', 'status'], 'default', 'value' => 0],
             [['txn_type'], 'default', 'value' => 'EIPL'],
-            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'string'],
-            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'integer'],
+            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
+            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
             [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
         ];
     }
@@ -110,30 +117,120 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return new TblFtpTxnLogQuery(get_called_class());
     }
 
-    public function generateFiles($output, $FTPProcess, $data) {
-        $name_formate = explode('+', $FTPProcess['export_title']);
-        $fileName = '';
-        foreach ($name_formate as $k => $v) {
-            $name_part_array = explode(':', $v);
-            $name_part = $name_part_array[0];
-            $val = isset($data->{$name_part}) ? $data->{$name_part} : $name_part;
-            if (isset($name_part_array[1]) && $name_part_array[1] == 'date') {
-                $val = str_replace('-', '_', Yii::$app->controls->view_date($val));
+    public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false) {
+        $eiplCode = Yii::$app->session->get('eiplCode');
+        if (empty($eiplCode)) {
+            $mccModelData = TblUnions::find()->where(['union_code' => $data_array['union_code']])->one();
+            $eiplCode = !empty($mccModelData) ? $mccModelData->eipl_code : $eiplCode;
+        }
+        $data = new TblFileCreator();
+        $data->attributes = $data_array;
+        $txn = new TblFtpTxnLog();
+        $FTPProcess = Bkgprocess::FTPProcess()[$data->module_name];
+        if (empty($output)) {
+            $param = explode(',', $FTPProcess['param']);
+            $controls = [];
+            foreach ($param as $key => $val) {
+                $controls[$val] = $data_array[$val];
             }
-            $fileName .= $val;
+            $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
+            $downLoadArray = [];
+            foreach ($output as $detail) {
+                $plant = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'Plant Code' : (($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'PLANT_CODE' : (($data_array['module_name'] == 'TblMilkCollection_cdpl_VM') ? 'Agent_Code' : 'Plant'));
+                if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                    if (empty($downLoadArray[$detail[$plant]])) {
+                        $downLoadArray[$detail[$plant]] = [];
+                    }
+                    $downLoadArray[$detail[$plant]][] = $detail;
+                }
+            }
+            foreach ($downLoadArray as $bmc => $download) {
+                if ($eiplCode == 'JERSEY') {
+                    $report_type = 'VMCC';
+                    $mccCode = (!empty($download[0]) && !empty($download[0]['Plant_Code'])) ? $download[0]['Plant_Code'] : $data_array['mcc_plant_code'];
+                    $title = $mccCode . '_' . $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                } elseif ($eiplCode == 'DODLA') {
+                    $report_type = ($data_array['module_name'] == 'TblBmcCollection_dodla_WQ') ? 'WQ' : 'VM';
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                } else {
+                    $report_type = ($data_array['module_name'] == 'TblBmcCollection' || $data_array['module_name'] == 'TblBmcCollectionWqSd' || $data_array['module_name'] == 'TblBmcCollection_collection' || $data_array['module_name'] == 'TblBmcCollection_dispatch') ? 'WQ' : 'SD';
+                    $title = $bmc . '_' . $report_type . '_' . str_replace('-', '_', Yii::$app->controls->view_date($data_array['from_date'])) . '_' . $data_array['shift_code'];
+                }
+                $txn->ref_code = $bmc;
+                $bmc_data = $txn->bmcCode;
+                if (!empty($bmc_data)) {
+                    $data->module_code = $bmc_data->bmc_code;
+                    $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+                }
+                $this->generateFiles($download, $FTPProcess, $data, TRUE, $title, $mccRefCode, $email);
+            }
+        } else {
+            $txn->ref_code = $data_array['module_code'];
+            $bmc_data = $txn->bmcCode;
+            if (!empty($bmc_data)) {
+                $data->module_code = $bmc_data->bmc_code;
+                $data->mcc_plant_code = $bmc_data->mcc_plant_code;
+                $data->union_code = $bmc_data->union_code;
+            }
+            return $this->generateFiles($output, $FTPProcess, $data, TRUE, $title, $mccRefCode, $email);
+        }
+    }
+
+    public function generateFiles($output, $FTPProcess, $data, $ftp_upload = FALSE, $title = '', $mccRefCode = '', $email = FALSE) {
+        $name_formate = explode('+', $FTPProcess['export_title']);
+        $fileName = $title;
+        if (empty($fileName)) {
+            foreach ($name_formate as $k => $v) {
+                $name_part_array = explode(':', $v);
+                $name_part = $name_part_array[0];
+                $val = isset($data->{$name_part}) ? $data->{$name_part} : $name_part;
+                if (isset($name_part_array[1]) && $name_part_array[1] == 'date') {
+                    $val = str_replace('-', '_', Yii::$app->controls->view_date($val));
+                }
+                $fileName .= $val;
+            }
         }
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
+        $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
+
+        $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
+        $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
+        $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
+
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
-            $header = array_keys($output[0]);
-            $txt_file = fopen($filePath . $fileName, "w");
-            fwrite($txt_file, implode(',', $header) . PHP_EOL);
-            foreach ($output as $line) {
-                fwrite($txt_file, implode(',', $line) . PHP_EOL);
+            if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+                $objPHPExcel = new PHPExcel();
+                $sheet = $objPHPExcel->getActiveSheet();
+                $sheet->setTitle('Sheet1');
+                $sheet->fromArray(
+                        array_keys($output[0]), // The data to set
+                        NULL, // Array values with this value will not be set
+                        'A1'         // Top left coordinate of the worksheet range where
+                        //    we want to set these values (default is A1)
+                );
+                $sheet->fromArray(
+                        $output, // The data to set
+                        NULL, // Array values with this value will not be set
+                        'A2'         // Top left coordinate of the worksheet range where
+                        //    we want to set these values (default is A1)
+                );
+                $successfilePath = $filePath . $fileName;
+                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter->save($successfilePath);
+            } else {
+                $header = array_keys($output[0]);
+                $txt_file = fopen($filePath . $fileName, "w");
+                if (!$skip_header) {
+                    fwrite($txt_file, implode($implode_char, $header) . PHP_EOL);
+                }
+                foreach ($output as $line) {
+                    fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
+                }
+                fclose($txt_file);
             }
-            fclose($txt_file);
-            return $this->saveLog($data, $filePath, $fileName, count($output));
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
         }
         return FALSE;
         /** csv generate * */
@@ -178,34 +275,76 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
         if (!empty($ftpData)) {
+            $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
             $ftp_file = new TblFtpTxnLog();
             $ftp_file->attributes = $ftpData->attributes;
             $ftp_file->attributes = $data->attributes;
             $ftp_file->total_count = $ftp_file->success_count = $count;
             $ftp_file->txn_datetime = date('Y-m-d H:i:s');
-            $ftp_file->file_path = $ftpData->ftp_path . '/' . $fileName;
+            $ftp_file->file_path = $ftp_file_path . '/' . $fileName;
             $ftp_file->file_name = $fileName;
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
+            $ftp_file->ftp_path = $ftp_file_path;
+
+            if ($ftp_upload) {
+                $ftp = new FTPConnection();
+                $ftp->ftp_type = $ftp_file->ftp_type;
+                $ftp->ftp_host = $ftp_file->ftp_host;
+                $ftp->ftp_username = $ftp_file->ftp_username;
+                $ftp->ftp_password = $ftp_file->ftp_password;
+                $ftp->ftp_port = $ftp_file->ftp_port;
+                $ftp->conn_init = FALSE;
+                $ftp->conn_close = FALSE;
+                $ftp->make_dir = FALSE;
+                $connection = $ftp->ConnectServer();
+                $ftp_file->status = 3;
+                $ftp_file->file_status = 0;
+                if ($connection) {
+                    $ftp_path = explode('/', $ftp_file->file_path);
+                    unset($ftp_path[count($ftp_path) - 1]);
+                    $ftp_path = implode('/', $ftp_path);
+                    $local_path = explode('/', $ftp_file->local_path);
+                    unset($local_path[count($local_path) - 1]);
+                    $local_path = implode('/', $local_path);
+                    $file_name = $ftp_file->file_name;
+                    $ftp->ftp_path = $ftp_path;
+                    $ftp->local_path = $local_path . '/';
+                    $ftp->file_name = $file_name;
+                    if ($ftp->UploadFile()) {
+                        $ftp_file->status = 2;
+                        $ftp_file->file_status = 1;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                            'message' => \Yii::t('app', 'FTP Files Uploaded Successfully.')]);
+                        if ($email) {
+                            $this->GenerateMail($data->mcc_plant_code, $fileName);
+                        }
+                    }
+                    $ftp->CloseConnection();
+                }
+                $ftp_file->save();
+                return $fileName;
+            }
+
             if ($ftp_file->save()) {
-                $model_name = Yii::$app->path->define($data->module_name);
-                $model = new $model_name();
-                //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
-                //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
-                $table = $model->tableSchema->name;
-                $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
-                        . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
-                        . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
-                $connection = \Yii::$app->db;
-                $command = $connection->createCommand($query);
-                $command->execute();
-                return TRUE;
+                /* $model_name = Yii::$app->path->define($data->module_name);
+                  $model = new $model_name();
+                  //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
+                  //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
+                  $table = $model->tableSchema->name;
+                  $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
+                  . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
+                  . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
+                  $connection = \Yii::$app->db;
+                  $command = $connection->createCommand($query);
+                  $command->execute(); */
+                return $fileName;
             }
         }
         return FALSE;
@@ -262,6 +401,60 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['ref_code' => 'ref_code']);
+    }
+
+    public function GenerateMail($mcc, $FileName) {
+        $contactModelData = TblContactDetails::find()->where(['module_code' => $mcc, 'module_name' => 'mccPlant', 'is_active' => 1, 'is_default' => 1])->one();
+        if (!empty($contactModelData) && !empty($contactModelData->email_to) && !empty($FileName)) {
+            $apiMaster = new TblApiMaster();
+            $apiMaster->receiver_type = 'EMAIL';
+            $apiMasterData = $apiMaster->getAPI();
+            if (!empty($apiMasterData)) {
+                $htmlContent = "";
+                $message = "";
+                $file_name = "";
+                $file_path = "";
+                $absoluteBaseUrl = Url::base(true);
+                $path = str_replace('\\', '/', realpath(\Yii::$app->basePath . '/../')) . \Yii::$app->params['FTPDirPath'] . 'upload/';
+//                $path = $absoluteBaseUrl . \Yii::$app->params['FTPDirPath'] . 'upload/';
+                $file_name = $FileName;
+                $file_path = $path . $file_name;
+                $this->setHtmlContent($mcc, $htmlContent, $message);
+                $notificationModel = new TblAlertNotification();
+                $notificationModel->receiver_type = 'EMAIL';
+                $notificationModel->message = $htmlContent;
+                $notificationModel->header_info = $message;
+                $notificationModel->send_status = 0;
+                $notificationModel->content_id = $apiMasterData->api_master_id;
+//                $notificationModel->refecence_code = $appModel->purchase_rate_code;
+                $notificationModel->module_type = "FTP Upload";
+                $notificationModel->entry_datetime = date('Y-m-d H:i:s');
+                $notificationModel->send_mail = 1;
+                $notificationModel->receiver_detail = $contactModelData->email_to; //'procurement@dodladairy.com,ccpdr@dodladairy.com';
+                $notificationModel->other_receiver_detail = $contactModelData->email_cc;
+                $notificationModel->filename = $file_name;
+                $notificationModel->file_path = $file_path;
+                $notificationModel->has_attachment = 2;
+                $notificationModel->save();
+            }
+        }
+    }
+
+    public function setHtmlContent($mcc, &$htmlContent, &$message) {
+        $mccModelData = TblMccPlant::find()->where(['mcc_plant_code' => $mcc])->one();
+        $message = 'RMRD Report (' . $mccModelData->ref_code . '-' . $mccModelData->name . ')';
+        $baseUrl = Yii::$app->request->baseUrl;
+        $hostUrl = Url::base('http');
+        $hostUrl = str_replace($baseUrl, '', $hostUrl);
+        $htmlContent = '<p>Dear Sir, <br/><br/>';
+        $htmlContent .= '<br/><br/>Please find the attached ' . $mccModelData->ref_code . '-' . $mccModelData->name . ' RMRD files. </p>';
+        $htmlContent .= '<br/><br/>';
+        $htmlContent .= '<p>Regards,';
+//        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
 }

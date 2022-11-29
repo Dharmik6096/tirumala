@@ -16,14 +16,14 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
     /**
      * @inheritdoc
      */
-    public $shift_code;
+    public $shift_code, $plant_code, $mcc_plant_code;
     public $from_date, $to_date;
 
     public function rules() {
         return [
-            [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'wef_date', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'expiry_date', 'average', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'fuel_type_code', 'parsing_no', 'billing_method', 'from_date', 'to_date'], 'safe'],
-            [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active'], 'integer'],
-            [['bmc_code', 'transporter_code', 'wef_date', 'shift_code'], 'required', 'on' => 'km_info_create']
+                [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'wef_date', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'expiry_date', 'average', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'fuel_type_code', 'parsing_no', 'vendor_code', 'billing_method', 'from_date', 'to_date'], 'safe'],
+                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active', 'billing_type_code', 'vehicle_use_type', 'billing_with_capacity'], 'safe'],
+                [['union_code', 'plant_code', 'transporter_code', 'wef_date', 'shift_code', 'bmc_code'], 'required', 'on' => 'km_info_create']
         ];
     }
 
@@ -59,21 +59,23 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['vehicleType', 'transporter']);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'vehicle_type_code' => $this->vehicle_type_code,
+//            'vehicle_type_code' => $this->vehicle_type_code,
             'capacity_code' => $this->capacity_code,
+            'tbl_vehicle_master.transporter_code' => $this->transporter_code,
+            'wef_date' => $this->wef_date,
             'pollution_certificate' => $this->pollution_certificate,
             'insurance' => $this->insurance,
             'expiry_date' => $this->expiry_date,
-            'rent' => $this->rent,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'billing_method' => $this->billing_method,
+            'tbl_vehicle_master.billing_type_code' => $this->billing_type_code,
+            'tbl_vehicle_master.billing_with_capacity' => $this->billing_with_capacity,
+            'tbl_vehicle_master.is_active' => $this->is_active,
         ]);
-        if (!empty($this->wef_date))
-            $query->andFilterWhere(['and', ['>=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))], ['<=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]]);
+//        if (!empty($this->wef_date))
+//            $query->andFilterWhere(['and', ['>=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))], ['<=', 'wef_date', date('Y-m-d', strtotime($this->wef_date))]]);
 
         if (!empty($this->from_date)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
@@ -90,14 +92,15 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
                 ->andFilterWhere(['like', 'driver_name', $this->driver_name])
                 ->andFilterWhere(['like', 'driver_contact_no', $this->driver_contact_no])
                 ->andFilterWhere(['like', 'driving_license_number', $this->driving_license_number])
-                ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
+//                ->andFilterWhere(['like', 'transporter_code', $this->transporter_code])
                 ->andFilterWhere(['like', 'mapped_route', $this->mapped_route])
                 ->andFilterWhere(['like', 'rc_book_no', $this->rc_book_no])
                 ->andFilterWhere(['like', 'average', $this->average])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'parsing_no', $this->parsing_no])
-                ->andFilterWhere(['like', 'fuel_type_code', $this->fuel_type_code]);
+                ->andFilterWhere(['like', 'fuel_type_code', $this->fuel_type_code])
+                ->andFilterWhere(['like', 'tbl_vehicle_type.vehicle_type_name', $this->vehicle_type_code])
+                ->andFilterWhere(['like', 'tbl_transporter.vendor_code', $this->vendor_code])
+                ->andFilterWhere(['like', 'vehicle_use_type', $this->vehicle_use_type]);
 
         return $dataProvider;
     }
@@ -127,6 +130,33 @@ class TblVehicleMasterSearch extends TblVehicleMaster {
         ]);
         $query->andFilterWhere(['NOT IN', 'vehicle_code', $data])
                 ->andFilterWhere(['NOT IN', 'vehicle_code', $payment_data]);
+        return $dataProvider;
+    }
+
+    public function searchwiseflag($params) {
+        $query = TblVehicleWiseQtyFlag::find();
+
+        // add conditions that should always apply here
+        $query->orderBy('wef_date Desc');
+        $query->orderBy(['wef_date' => SORT_DESC, 'vehicle_wise_qty_flag_code' => SORT_ASC]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+//        Yii::$app->general->filterByOrg($query, $this);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andWhere([
+            'vehicle_code' => $this->vehicle_code,
+        ]);
+
         return $dataProvider;
     }
 

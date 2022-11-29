@@ -86,7 +86,7 @@ $attribute = [
     ],
     ['attribute' => 'vehicle_no', 'value' => function($model) {
             return $model->dcsMilkDispatch->vehicle_no;
-        }, 'filter' => false, 'visible' => FALSE],
+        }],
     ['attribute' => 'vehicle_in_time', 'value' => function($model) {
             return $model->dcsMilkDispatch->vehicle_in_time;
         }, 'filter' => false, 'visible' => FALSE],
@@ -105,6 +105,12 @@ $attribute = [
     ['attribute' => 'antibiotic', 'value' => function($model) {
             return Yii::$app->general->getStaticValue($model->dcsMilkDispatch->antibiotic, 'antibiotic');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('antibiotic', $searchModel, 'antibiotic')],
+    ['attribute' => 'challan_no', 'value' => function($model) {
+            return $model->dcsMilkDispatch->challan_no;
+        }],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function($model) {
+            return Yii::$app->general->getmultiforeignkey($model->dcsMilkDispatch, ['bmcCode', 'channelMaster'], 'channel_desc');
+        }, 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [

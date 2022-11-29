@@ -67,12 +67,20 @@ class ClientPaymentConfig extends Component {
                 ],
                 'primary_tpt_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
-                    'sp_name' => 'sp_tpt_primary_payment',
+                    'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
                     'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code',
                     'sp_name' => 'sp_disburse_vendor_payment',
-                ]
+                ],
+                'secondary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
+                    'sp_name' => 'sp_tpt_sec_payment_new',
+                ],
+                'member_payment_disburse' => [
+                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
+                    'sp_name' => 'member_payment_disburse',
+                ],
             ],
             'VARDDAN' => [
                 'vsp_payment' => [
@@ -84,6 +92,12 @@ class ClientPaymentConfig extends Component {
                 'remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
                     'sp_name' => 'sp_remuneration_payment_mmd',
+                ],
+            ],
+            'UMANG' => [
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
+                    'sp_name' => 'sp_vsp_payment_umang',
                 ],
             ],
         ];

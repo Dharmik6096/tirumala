@@ -1,4 +1,5 @@
 <?php
+
 /*
  *
  */
@@ -81,7 +82,7 @@ class Grid extends Widget {
             'options' => ['class' => 'grid-content',]]);
 
         $columns = [
-            ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
+                ['class' => 'kartik\grid\SerialColumn', 'order' => DynaGrid::ORDER_FIX_LEFT, 'mergeHeader' => false, 'headerOptions' => ['class' => 'seq-cell'], 'vAlign' => 'top'],
         ];
 
         if (isset($grid_option->actions)) {
@@ -181,11 +182,18 @@ class Grid extends Widget {
         }
         //$export_column = $grid_option->attributes;
         foreach ($grid_option->attributes as $col) {
-            if (is_array($col))
+            $is_export = TRUE;
+            if (is_array($col)) {
                 if (array_key_exists('visible', $col)) {
                     $col['visible'] = true;
                 }
-            $export_column[] = $col;
+                if (array_key_exists('hiddenFromExport', $col)) {
+                    $is_export = FALSE;
+                }
+            }
+            if ($is_export) {
+                $export_column[] = $col;
+            }
         }
 
         if ($grid_option->active_column) {
@@ -246,10 +254,10 @@ class Grid extends Widget {
                     'after' => '<div class="text-right padding-right-5">{pager}</div>',
                     'footer' => false],
                 'toolbar' => [
-                    ['content' =>
+                        ['content' =>
                         Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
-                    ['content' => '{dynagrid}'],
+                        ['content' => '{dynagrid}'],
                     //  '{export}',
                     $fullExportMenu
                 ],
@@ -413,4 +421,5 @@ class Grid extends Widget {
     }
 
 }
+
 ?>
