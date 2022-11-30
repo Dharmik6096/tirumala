@@ -880,8 +880,8 @@ class SchedulerController extends ChildController {
                         $ftp_model->ref_code = $data_array['module_code'];
                         $bmc_data = $ftp_model->bmcCode;
                         if (!empty($bmc_data)) {
-                            $controls['mcc_plant_code'] = $bmc_data->bmc_code;
-                            $controls['bmc_code'] = $bmc_data->mcc_plant_code;
+                            $controls['mcc_plant_code'] = $bmc_data->mcc_plant_code; // $bmc_data->bmc_code;
+                            $controls['bmc_code'] = $bmc_data->bmc_code; // $bmc_data->mcc_plant_code;
                             $controls['from_date'] = $controls['to_date'] = $from_date;
                         }
                         \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);
