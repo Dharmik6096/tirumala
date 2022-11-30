@@ -167,10 +167,10 @@ class TblMccPaymentController extends \app\controllers\ChildController {
         }
         if ($model->billing_type == 'mcc_remuneration') {
             $query = $model->getRemunerationRecords();
-            $title = 'Remuneration Payment Process : Step 2';
+            $title = 'MCC Payment Process : Step 2';
         } else {
             $query = $model->getRecords();
-            $title = 'Vendor Payment Process : Step 2';
+            $title = 'MCC Payment Process : Step 2';
         }
 
         $dataProvider = new ActiveDataProvider([

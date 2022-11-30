@@ -108,7 +108,7 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
         return $this->render('disburse_payment', [
                     'searchModel' => $model,
                     'dataProvider' => $dataProvider,
-                    'title' => 'Remuneration Payment Disburse : Step 1'
+                    'title' => 'MCC Payment Disburse : Step 1'
         ]);
     }
 
@@ -141,7 +141,7 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
                     ]);
                     $tot_cnt = count($query);
                     Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                        'message' => 'Out of (<b>' . $tot_cnt . '</b>) Remuneration Payment of (<b>' . $pay_cnt . '</b>)  BMC will be only done.<br/>Total Payable :: <b>' . $pay_amount . '</b>']);
+                        'message' => 'Out of (<b>' . $tot_cnt . '</b>) BMC Payment of (<b>' . $pay_cnt . '</b>)  BMC will be only done.<br/>Total Payable :: <b>' . $pay_amount . '</b>']);
 
                     return $this->render('@app/modules/payment/views/tbl-mcc-payment/confirm-payment', [
                                 'pay_amount' => $pay_amount,

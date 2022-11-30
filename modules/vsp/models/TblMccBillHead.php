@@ -53,7 +53,7 @@ class TblMccBillHead extends \app\models\ChildModel {
             [['is_disburse_allowed'], 'default', 'value' => '1'],
             [['is_default', 'has_slab', 'is_hold', 'milk_type_code'], 'default', 'value' => '0'],
             [['payment_cycle_type'], 'default', 'value' => 'consecutive'],
-            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code', 'bill_head_for'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
+//            ['default_bill_head_code', 'unique', 'targetAttribute' => ['default_bill_head_code', 'union_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Default Bill Head Type has already been taken.')],
             ['default_bill_head_code', 'required', 'when' => function ($model) {
                     return $model->is_default == 1;
                 }, 'whenClient' => "function (attribute, value) { 
@@ -134,10 +134,10 @@ class TblMccBillHead extends \app\models\ChildModel {
         return $this->find()->select(['bill_head_type'])->where(['mcc_bill_head_code' => $bill_head_code])->one();
     }
 
-    public function billHeadTypeWise($union, $type, $code, $headFor) {
+    public function billHeadTypeWise($union, $code) {
         $query = $this->find()
                 ->innerJoinWith('billHeadCode as apl')
-                ->where(['is_active' => 1, 'is_default' => 0, 'tbl_mcc_bill_head.bill_head_for' => $headFor, 'apl.union_code' => $union, 'apl.applicable_for' => $type, 'apl.applicable_code' => $code])
+                ->where(['is_active' => 1, 'is_default' => 0, 'apl.union_code' => $union, 'apl.applicable_code' => $code])
                 ->andWhere(['or', ['general_formula_code' => ''], ['general_formula_code' => null]]);
         $list = $query->all();
 

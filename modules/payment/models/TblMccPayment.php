@@ -79,7 +79,7 @@ class TblMccPayment extends \app\models\ChildModel {
             'kg_snf' => Yii::t('app', 'KgSNF'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'total_loss' => Yii::t('app', 'Total Loss'),
-            'amount' => Yii::t('app', 'Milk Amount(+)'),
+            'amount' => Yii::t('app', 'chilling cost(+)'),
             'addition' => Yii::t('app', 'Addition(+)'),
             'deduction' => Yii::t('app', 'Deduction(-)'),
             'net_payable' => Yii::t('app', 'Net Payable'),

@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 
-$this->title = 'Remuneration Payment Process : Step 1';
+$this->title = 'MCC Payment Process : Step 1';
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {

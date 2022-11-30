@@ -201,7 +201,9 @@ $this->title = Yii::$app->label->title('view', 'MCC Payment');
                             return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
                         },],
                     ['attribute' => 'amount'],
-                   
+                    ['attribute' => 'milk_type_code', 'label' => Yii::t('app', 'Milk Type'), 'value' => function($model) {
+                            return Yii::$app->general->getmultiforeignkey($model->billHeadCode, ['milkTypeCode'], 'animal_type_name');
+                        }, 'vAlign' => 'middle', 'filter' => false],
                 ];
                 $grid_option = [
                     'id' => 'bill-head-detail-list',

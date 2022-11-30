@@ -144,6 +144,7 @@ class importData extends \yii\base\Module {
             'bmc-collection-bulk-route-can' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'bmc_code,route_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time,can_no', 'scenario' => 'bmc_collection_route_can', 'validate_length' => FALSE],
             'bmc-collection-bulk-bmc-route-can' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'own_bmc_code,bmc_code,route_code,bmc_silos_info_code,date_time_of_collection,shift_code,customer_type,customer_code,sample_no,milk_type_code,milk_quality_type_code,qty,fat,snf,rtpl,amount,collection_type,vehicle_code,route_arrival_time,can_no', 'scenario' => 'bmc_collection_bmc_route_can', 'validate_length' => FALSE],
             'vsp-payment' => ['table_name' => 'tbl_vsp_payment_data_config', 'fields' => 'bmc_code,dcs_code,date_time_of_collection,shift_code', 'scenario' => 'importCsv', 'default_fields' => 'originating_type:1'],
+            'mcc-bill-head-detail' => ['table_name' => 'tbl_mcc_bill_head_detail', 'fields' => 'bmc_code,transaction_date,mcc_bill_head_code,amount,no_installment', 'scenario' => 'importCsv', 'increment' => 1, 'default_fields' => 'is_active:1,originating_type:1', 'save_child' => true],
         ];
         return $label[$l];
     }

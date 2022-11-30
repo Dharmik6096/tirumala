@@ -258,11 +258,9 @@ class TblMccBillHeadController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $value = $_POST['depdrop_parents'];
             $unionCode = $value[0];
-            $type = $value[1];
-            $code = $value[2];
-            $headFor = $value[3];
+            $code = $value[1];
             $model = new TblMccBillHead();
-            $list = $model->billHeadTypeWise($unionCode, $type, $code, $headFor);
+            $list = $model->billHeadTypeWise($unionCode, $code);
             $list = array_unique($list);
             foreach ($list as $key => $r) {
                 $out[] = array('id' => $key,
@@ -272,38 +270,6 @@ class TblMccBillHeadController extends \app\controllers\ChildController {
             return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
-    }
-
-    public function actionDcsWiseBillHead() {
-        $model = new TblMccBillHead();
-        $model->scenario = 'dcsWiseHead';
-
-        $dcs = [];
-        $head = [];
-        if (!empty(Yii::$app->request->get('TblMccBillHead'))) {
-            $data = Yii::$app->request->get('TblMccBillHead');
-            $model->union_code = $data['union_code'];
-            $model->plant_code = $data['plant_code'];
-            $model->mcc_plant_code = $data['mcc_plant_code'];
-            $model->bmc_code = $data['bmc_code'];
-            $model->customer_type = !empty($data['customer_type']) ? $data['customer_type'] : 'DCS';
-            $data['customer_type'] = $model->customer_type;
-            $model->from_date = !empty($data['from_date']) ? $data['from_date'] : '';
-            $model->to_date = !empty($data['to_date']) ? $data['to_date'] : '';
-            $model->bill_head_for = $data['bill_head_for'];
-            if ($model->validate()) {
-                $head = $model->getBillHead($model);
-                $dcs = $model->getDcs($data);
-            }
-        } else {
-            $model->from_date = date('Y-m-d');
-            $model->to_date = date('Y-m-d', strtotime('+ 1 year'));
-        }
-        return $this->render('dcs_bill_head', [
-                    'model' => $model,
-                    'dcs' => $dcs,
-                    'head' => $head,
-        ]);
     }
 
     public function actionSaveApplicability() {
