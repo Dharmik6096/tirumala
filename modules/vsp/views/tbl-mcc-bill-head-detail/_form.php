@@ -111,10 +111,10 @@ $form = ActiveForm::begin([
 <?php
 $script = "
     $(document).ready(function(){
-//        $('#tblbillheaddetail-no_installment').prop('disabled', true);
-        $('#tblbillheaddetail-installment_amount').prop('disabled', true); 
+//        $('#tblmccbillheaddetail-no_installment').prop('disabled', true);
+        $('#tblmccbillheaddetail-installment_amount').prop('disabled', true); 
     });
-//     $('#tblbillheaddetail-bill_head_code').on('change',function(){
+//     $('#tblmccbillheaddetail-bill_head_code').on('change',function(){
 //     var bill_head_code= $(this).val();
 //     if(bill_head_code !=''){
 //        $.ajax({
@@ -124,45 +124,45 @@ $script = "
 //            success: function(data) {
 //                var type = $.parseJSON(data);
 //                if(type.status == 'success' && type.data.bill_head_type==0){
-//                     $('#tblbillheaddetail-no_installment').prop('disabled', false);
+//                     $('#tblmccbillheaddetail-no_installment').prop('disabled', false);
 //                }
 //                 else {
-//                     $('#tblbillheaddetail-no_installment').prop('disabled', true);
-//                     $('#tblbillheaddetail-no_installment').val('');
-//                     $('#tblbillheaddetail-installment_amount').val('');
+//                     $('#tblmccbillheaddetail-no_installment').prop('disabled', true);
+//                     $('#tblmccbillheaddetail-no_installment').val('');
+//                     $('#tblmccbillheaddetail-installment_amount').val('');
 //                 }
 //            },
 //        });
 //      } else {
-//            $('#tblbillheaddetail-no_installment').prop('disabled', true);
-//            $('#tblbillheaddetail-no_installment').val('');
-//            $('#tblbillheaddetail-installment_amount').val('');
+//            $('#tblmccbillheaddetail-no_installment').prop('disabled', true);
+//            $('#tblmccbillheaddetail-no_installment').val('');
+//            $('#tblmccbillheaddetail-installment_amount').val('');
 //      }
 //    });
   
-    $('#tblbillheaddetail-no_installment').on('change',function(){
+    $('#tblmccbillheaddetail-no_installment').on('change',function(){
         dispDefBillHead();
     });
-    $('#tblbillheaddetail-amount').on('change',function(){
+    $('#tblmccbillheaddetail-amount').on('change',function(){
         dispDefBillHead();
     });
     
     function dispDefBillHead(){
-        var amount = $('#tblbillheaddetail-amount').val();
-        var install = $('#tblbillheaddetail-no_installment').val();
+        var amount = $('#tblmccbillheaddetail-amount').val();
+        var install = $('#tblmccbillheaddetail-no_installment').val();
         if(amount != '' && install != '' && install != 0){
             amount = parseFloat(amount);
             install = parseFloat(install);
             if(!isNaN(amount) && !isNaN(install)){
                 var inst = '';
                 inst=amount/install;
-                $('#tblbillheaddetail-installment_amount').val(inst.toFixed(2));
+                $('#tblmccbillheaddetail-installment_amount').val(inst.toFixed(2));
             } else {
-                $('#tblbillheaddetail-installment_amount').val('');
+                $('#tblmccbillheaddetail-installment_amount').val('');
             }
         }
         else{
-            $('#tblbillheaddetail-installment_amount').val('');
+            $('#tblmccbillheaddetail-installment_amount').val('');
         }
     }
      $(document).on('change', '#tblmccbillheaddetail-transaction_date', function() {  
