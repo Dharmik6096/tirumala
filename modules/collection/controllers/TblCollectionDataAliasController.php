@@ -301,10 +301,6 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                         $existData->scenario = 'approve';
                         $saveModel[] = $existData;
                     }
-                    echo '<pre>';
-                    print_r($deleteModel);
-                    echo '</pre>';
-                    die;
                     $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Milk Dispatch Approval', 'edit']);
                 }
                 $msg = $operation == 'approve' ? ('Milk Dispatch ' . strtolower($action) . ' approved successfully. <br />Approved count : ' . $succCount . '<br />Not approved count : ' . $errorCount) : ('MPP Dispatch ' . strtolower($action) . ' rejected successfully.  <br />Rejected count : ' . $succCount . '<br />Not Rejected count : ' . $errorCount);
