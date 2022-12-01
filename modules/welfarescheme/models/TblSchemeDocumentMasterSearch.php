@@ -10,24 +10,22 @@ use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 /**
  * TblSchemeDocumentMasterSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblSchemeDocumentMaster`.
  */
-class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster
-{
+class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['doc_id', 'is_active', 'originating_type'], 'integer'],
-            [['doc_group', 'doc_name', 'doc_ext', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['doc_id', 'is_active', 'originating_type'], 'integer'],
+                [['doc_id', 'is_active', 'originating_type', 'doc_group', 'doc_name', 'doc_ext', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblSchemeDocumentMaster::find();
 
         // add conditions that should always apply here
@@ -50,6 +47,8 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['unionCode']);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -67,14 +66,14 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster
         ]);
 
         $query->andFilterWhere(['like', 'doc_group', $this->doc_group])
-            ->andFilterWhere(['like', 'doc_name', $this->doc_name])
-            ->andFilterWhere(['like', 'doc_ext', $this->doc_ext])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'doc_name', $this->doc_name])
+                ->andFilterWhere(['like', 'doc_ext', $this->doc_ext])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
+                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
 
         return $dataProvider;
     }
+
 }

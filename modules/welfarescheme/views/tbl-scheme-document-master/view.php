@@ -1,47 +1,64 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use app\components\GeneralFunctions;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeDocumentMaster */
-
-$this->title = $model->doc_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Scheme Document Masters', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Scheme Document Master');
 ?>
-<div class="tbl-scheme-document-master-view">
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            ['attribute' => 'doc_group',
+                            'value' => isset($model->doc_group) ? Yii::$app->dropdown->getRecords('doc_group')['data'][$model->doc_group] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'doc_name',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'doc_ext',
+                            'value' => !empty($model->doc_ext) && !empty(Yii::$app->dropdown->getRecords('doc_ext')['data'][$model->doc_ext]) ? Yii::$app->dropdown->getRecords('doc_ext')['data'][$model->doc_ext] : (!empty($model->doc_ext) ? $model->doc_ext : ''),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+            ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->doc_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->doc_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'doc_id',
-            'doc_group',
-            'doc_name',
-            'doc_ext',
-            'is_active',
-            'union_code',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_type',
-            'originating_org_code',
-            'originating_org_type',
-        ],
-    ]) ?>
-
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
+        </div>
+    </div>
 </div>

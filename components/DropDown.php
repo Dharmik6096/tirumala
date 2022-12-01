@@ -771,7 +771,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1394,6 +1394,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Approved')],
             ],
+            'doc_group' => [
+                'name' => 'doc_group',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['address_proof' => Yii::t('app', 'Address Proof'), 'application_form' => Yii::t('app', 'Application Form'), 'other' => Yii::t('app', 'Other'), 'bank_related' => Yii::t('app', 'Bank Related')],
+            ],
+            'doc_ext' => [
+                'name' => 'doc_ext',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['.docx' => Yii::t('app', 'Word'), '.pdf' => Yii::t('app', 'Pdf')],
+            ],
         ];
         return $records[$l];
     }
@@ -1591,7 +1601,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
