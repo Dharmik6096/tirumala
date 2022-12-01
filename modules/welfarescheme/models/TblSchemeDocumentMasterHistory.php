@@ -1,0 +1,79 @@
+<?php
+
+namespace app\modules\welfarescheme\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "tbl_scheme_document_master_history".
+ *
+ * @property integer $id
+ * @property string $operation_type
+ * @property string $history_created_at
+ * @property string $history_created_by
+ * @property integer $doc_id
+ * @property string $doc_group
+ * @property string $doc_name
+ * @property string $doc_ext
+ * @property integer $is_active
+ * @property string $union_code
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property integer $originating_type
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ */
+class TblSchemeDocumentMasterHistory extends \yii\db\ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'tbl_scheme_document_master_history';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['history_created_at', 'created_at', 'updated_at'], 'safe'],
+            [['doc_id', 'is_active', 'originating_type'], 'integer'],
+            [['operation_type', 'doc_ext'], 'string', 'max' => 10],
+            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
+            [['doc_group', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['doc_name'], 'string', 'max' => 255],
+            [['union_code'], 'string', 'max' => 3],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'operation_type' => 'Operation Type',
+            'history_created_at' => 'History Created At',
+            'history_created_by' => 'History Created By',
+            'doc_id' => 'Doc ID',
+            'doc_group' => 'Doc Group',
+            'doc_name' => 'Doc Name',
+            'doc_ext' => 'Doc Ext',
+            'is_active' => 'Is Active',
+            'union_code' => 'Union Code',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
+            'updated_at' => 'Updated At',
+            'updated_by' => 'Updated By',
+            'originating_type' => 'Originating Type',
+            'originating_org_code' => 'Originating Org Code',
+            'originating_org_type' => 'Originating Org Type',
+        ];
+    }
+}

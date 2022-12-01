@@ -20,23 +20,23 @@ $config = [
         // 'session' => ['name' => 'tirumala'],
         'session' => [
             'cookieParams' => [
-            'httpOnly' => true,
-            'secure' => false
+                'httpOnly' => true,
+                'secure' => false
             ]
         ],
         'cookies' => [
-                'class' => 'yii\web\Cookie',
-                'httpOnly' => true,
-                'secure' => true
+            'class' => 'yii\web\Cookie',
+            'httpOnly' => true,
+            'secure' => true
         ],
         // 'cache' => ['class' => 'yii\caching\FileCache'],
         'cache' => [
-                'class' => 'yii\redis\Cache',
-                'redis' => [
-                        'hostname' => '10.1.0.13',
-                        'port' => 6379,
-                        'database' => 1,
-                ]
+            'class' => 'yii\redis\Cache',
+            'redis' => [
+                'hostname' => '10.1.0.13',
+                'port' => 6379,
+                'database' => 1,
+            ]
         ],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'dropdown' => ['class' => 'app\components\DropDown'],
@@ -76,7 +76,7 @@ $config = [
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
                 'webservice/emilkprolite/v1' => 'webservice/emilkprolite/v1/request-master',
-                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
+                    ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',],
 //              ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
         /* 'urlManager' => [
@@ -148,7 +148,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                [
+                    [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -270,6 +270,7 @@ $config = [
         'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
         'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
         'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
+        'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
     ],
     'params' => $params,
 ];
