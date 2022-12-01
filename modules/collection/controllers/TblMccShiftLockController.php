@@ -346,7 +346,12 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     public function actionIndexOther() {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->scenario = 'shiftLock';
-        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, 'portal_mcc_shift_lock_data_other');
+        $client_code = \Yii::$app->session->get('eiplCode');
+        $sp = 'portal_mcc_shift_lock_data_other';
+        if ($client_code == 'NIFPL') {
+            $sp = 'portal_mcc_shift_lock_data_nif';
+        }
+        $dataProvider = $searchModel->shiftlocksearch(Yii::$app->request->queryParams, $sp);
 
         return $this->render('index_other', [
                     'searchModel' => $searchModel,

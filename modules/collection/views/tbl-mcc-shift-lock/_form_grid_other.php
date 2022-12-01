@@ -8,6 +8,9 @@ use yii\web\View;
 use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use webvimark\modules\UserManagement\models\User;
+
+$client_code = \Yii::$app->session->get('eiplCode');
+$visible = $client_code == 'NIFPL' ? TRUE : FALSE;
 ?>
 
 <?php
@@ -29,6 +32,8 @@ $attribute = [
     ['attribute' => 'avgFAT', 'filter' => FALSE],
     ['attribute' => 'avgSNF', 'filter' => FALSE],
     ['attribute' => 'amount', 'filter' => FALSE],
+    ['attribute' => 'weight_sample', 'label' => Yii::t('app', 'Weight Sample'), 'filter' => FALSE, 'visible' => $visible],
+    ['attribute' => 'quality_sample', 'label' => Yii::t('app', 'Quality Sample'), 'filter' => FALSE, 'visible' => $visible],
     ['attribute' => 'bmc_lock', 'label' => Yii::t('app', 'BMC Data'), 'value' => function($model) {
 
             $class = $model['bmc_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
