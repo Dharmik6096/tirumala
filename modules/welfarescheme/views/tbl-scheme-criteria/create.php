@@ -1,21 +1,24 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeCriteria */
-
-$this->title = 'Create Tbl Scheme Criteria';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Scheme Criterias', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Scheme Criteria');
 ?>
-<div class="tbl-scheme-criteria-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model, 'type' => 'create'
+        ])
+        ?>
+        <div class="row">
+            <div class="form-grid">
+                <?=
+                $this->render('_form_grid', [
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                ])
+                ?>
+            </div>
+        </div>
+    </div>
 </div>
+

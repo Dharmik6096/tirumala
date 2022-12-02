@@ -1,47 +1,47 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeCriteria */
-/* @var $form yii\widgets\ActiveForm */
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
-<div class="tbl-scheme-criteria-form">
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+            'fieldConfig' => [
+        ]]);
+?>
+<?php echo $form->errorSummary($model); ?>
+<div class="row">
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'scheme_id')->textInput() ?>
-
-    <?= $form->field($model, 'wef_date')->textInput() ?>
-
-    <?= $form->field($model, 'min_pouring_day')->textInput() ?>
-
-    <?= $form->field($model, 'min_pouring_qty')->textInput() ?>
-
-    <?= $form->field($model, 'scheme_value')->textInput() ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, false, false); ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'min_pouring_day')->textInput(['maxlength' => true]) ?>  
+    </div>
 
+    <div class="col-sm-2">
+        <?= $form->field($model, 'min_pouring_qty')->textInput(['maxlength' => true]) ?>  
+    </div>
+
+    <div class="col-sm-2">
+        <?= $form->field($model, 'scheme_value')->textInput(['maxlength' => true]) ?>  
+    </div>
+
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>  
+    </div>
 </div>
+<?php ActiveForm::end(); ?>

@@ -35,6 +35,21 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'end_date', '', false, false, false); ?>
     </div>
 
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'min_pouring_day')->textInput(['maxlength' => true]) ?>  
+        </div>
+
+        <div class="col-sm-2">
+            <?= $form->field($model, 'min_pouring_qty')->textInput(['maxlength' => true]) ?>  
+        </div>
+
+        <div class="col-sm-2">
+            <?= $form->field($model, 'scheme_value')->textInput(['maxlength' => true]) ?>  
+        </div>
+
+    <?php } ?>
+
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textArea(['maxlength' => true]) ?>
     </div>

@@ -8,8 +8,18 @@ $this->title = Yii::$app->label->title('create', 'Scheme Master');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
-            'disableDpuProduct' => false
         ])
         ?>
+    </div>
+
+    <div class="row">
+        <div class="form-grid">
+            <?=
+            $this->render('_form_grid', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ])
+            ?>
+        </div>
     </div>
 </div>

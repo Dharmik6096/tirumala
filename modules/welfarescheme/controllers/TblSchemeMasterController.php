@@ -6,6 +6,8 @@ use Yii;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use app\modules\welfarescheme\models\TblSchemeMasterHistory;
 use app\modules\welfarescheme\models\TblSchemeMasterSearch;
+use app\modules\welfarescheme\models\TblSchemeCriteria;
+use app\modules\welfarescheme\models\TblSchemeCriteriaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -15,6 +17,8 @@ use yii\filters\VerbFilter;
  */
 class TblSchemeMasterController extends \app\controllers\ChildController {
 
+    public $schemeCriteria;
+    
     public function actionIndex() {
         $searchModel = new TblSchemeMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -47,7 +51,14 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->start_date = !empty($this->model->start_date) ? date('Y-m-d', strtotime($this->model->start_date)) : '';
             $this->model->end_date = !empty($this->model->end_date) ? date('Y-m-d', strtotime($this->model->end_date)) : '';
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Master', 'create']);
+            $mapList = [];
+            $schemeCriteria = new TblSchemeCriteria();
+            $schemeCriteria->wef_date = $this->model->start_date;
+            $schemeCriteria->min_pouring_day = $this->model->min_pouring_day;
+            $schemeCriteria->min_pouring_qty = $this->model->min_pouring_qty;
+            $schemeCriteria->scheme_value = $this->model->scheme_value;
+            array_push($mapList, $schemeCriteria);
+            $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Scheme Master', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -92,6 +103,23 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionSchemeCriteria($id) {
+        $schemeCriterias = new TblSchemeCriteria();
+        $searchModel = new TblSchemeCriteriaSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('../../../welfarescheme/views/tbl-scheme-criteria/create', [
+                    'model' => $schemeCriterias,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
+        ]);
+    }
+
+    protected function customRender() {
+        return $this->render($this->viewFile, ['model' => $this->model,
+                    'schemeCriterias' => $this->schemeCriteria,
+        ]);
     }
 
 }

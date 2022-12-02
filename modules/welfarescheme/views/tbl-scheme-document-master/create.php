@@ -8,7 +8,6 @@ $this->title = Yii::$app->label->title('create', 'Scheme Document Master');
         $this->render('_form', [
             'model' => $model,
             'type' => 'create',
-            'disableDpuProduct' => false
         ])
         ?>
     </div>

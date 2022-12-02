@@ -26,37 +26,28 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeCriteriaHistory extends \yii\db\ActiveRecord
-{
+class TblSchemeCriteriaHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_criteria_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['scheme_criteria_id', 'scheme_id', 'originating_type'], 'integer'],
-            [['min_pouring_day', 'min_pouring_qty', 'scheme_value'], 'number'],
-            [['operation_type'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['union_code'], 'string', 'max' => 3],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['originating_org_code', 'originating_org_type', 'union_code', 'history_created_by', 'created_by', 'updated_by', 'operation_type', 'min_pouring_day', 'min_pouring_qty', 'scheme_value', 'scheme_criteria_id', 'scheme_id', 'originating_type', 'history_created_at', 'wef_date', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'operation_type' => 'Operation Type',
@@ -78,4 +69,5 @@ class TblSchemeCriteriaHistory extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
 }
