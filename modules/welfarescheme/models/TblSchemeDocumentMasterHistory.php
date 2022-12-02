@@ -25,37 +25,28 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMasterHistory extends \yii\db\ActiveRecord
-{
+class TblSchemeDocumentMasterHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_document_master_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'created_at', 'updated_at'], 'safe'],
-            [['doc_id', 'is_active', 'originating_type'], 'integer'],
-            [['operation_type', 'doc_ext'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['doc_group', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['doc_name'], 'string', 'max' => 255],
-            [['union_code'], 'string', 'max' => 3],
+                [['doc_name', 'union_code', 'doc_group', 'originating_org_code', 'originating_org_type', 'doc_id', 'is_active', 'originating_type', 'operation_type', 'doc_ext', 'history_created_at', 'created_at', 'updated_at', 'history_created_by', 'created_by', 'updated_by'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'operation_type' => 'Operation Type',
@@ -76,4 +67,5 @@ class TblSchemeDocumentMasterHistory extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
 }
