@@ -444,6 +444,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $sp_param[] = $searchModel->customer_type;
             $sp_param[] = $from_date;
             $sp_param[] = $to_date;
+            $sp_param[] = 'data_lock_bmc';
+            $sp_param[] = 'billing_lock_bmc';
             $sp_name = 'sp_validate_payment_cycle_lock_collection';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
             $type = 'success';
@@ -468,6 +470,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                 $sp_param[] = $searchModel->mcc_plant_code;
                 $sp_param[] = $from_date;
                 $sp_param[] = $to_date;
+                $sp_param[] = 'bmc_collection';
                 $sp_name = 'sp_validate_mcc_shift_lock_collection';
                 $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $type = 'success';
