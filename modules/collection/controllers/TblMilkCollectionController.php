@@ -446,6 +446,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $sp_param[] = 'DCS';
             $sp_param[] = $from_date;
             $sp_param[] = $to_date;
+            $sp_param[] = 'data_lock_member';
+            $sp_param[] = 'billing_lock_member';
             $sp_name = 'sp_validate_payment_cycle_lock_collection';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
             $type = 'success';
@@ -470,6 +472,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $sp_param[] = $searchModel->mcc_plant_code;
                 $sp_param[] = $from_date;
                 $sp_param[] = $to_date;
+                $sp_param[] = 'milk_collection';
                 $sp_name = 'sp_validate_mcc_shift_lock_collection';
                 $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $type = 'success';
@@ -1163,7 +1166,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                                     }
                                 }
                                 foreach ($downLoadArray as $bmc => $download) {
-                                $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
                                     if ($eiplCode == 'DODLA') {
                                         $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
                                     }
