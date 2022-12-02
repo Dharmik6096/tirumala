@@ -1,21 +1,15 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeMaster */
-
-$this->title = 'Create Tbl Scheme Master';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Scheme Masters', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Scheme Master');
 ?>
-<div class="tbl-scheme-master-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create',
+            'disableDpuProduct' => false
+        ])
+        ?>
+    </div>
 </div>

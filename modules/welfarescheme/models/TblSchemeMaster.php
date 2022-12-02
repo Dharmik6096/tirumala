@@ -3,6 +3,7 @@
 namespace app\modules\welfarescheme\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_scheme_master".
@@ -22,36 +23,31 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeMaster extends \yii\db\ActiveRecord
-{
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
+class TblSchemeMaster extends \app\models\ChildModel {
+
+    public $min_pouring_day, $min_pouring_qty, $scheme_value;
+
+    public static function tableName() {
         return 'tbl_scheme_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
-            [['is_active', 'originating_type'], 'integer'],
-            [['scheme_name', 'remarks'], 'string', 'max' => 255],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['min_pouring_day', 'min_pouring_qty', 'scheme_value', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'union_code', 'scheme_name', 'remarks', 'start_date', 'end_date', 'created_at', 'updated_at', 'is_active', 'originating_type'], 'safe'],
+                [['is_active', 'originating_type'], 'integer'],
+                [['is_active'], 'default', 'value' => 1],
+                [['scheme_name', 'start_date', 'end_date', 'union_code'], 'required'],
+                [['end_date'], 'customValidate'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'scheme_id' => 'Scheme ID',
             'scheme_name' => 'Scheme Name',
@@ -67,6 +63,25 @@ class TblSchemeMaster extends \yii\db\ActiveRecord
             'originating_type' => 'Originating Type',
             'originating_org_code' => 'Originating Org Code',
             'originating_org_type' => 'Originating Org Type',
+            'min_pouring_day' => 'Min Pouring Day',
+            'min_pouring_qty' => 'Min Pouring Qty',
+            'scheme_value' => 'Scheme Value',
         ];
     }
+
+    public function customValidate($attribute, $params) {
+
+        if (!empty($this->start_date) && !empty($this->end_date)) {
+
+            if ($this->end_date < $this->start_date) {
+                $this->addError($attribute, Yii::t('app/validation', 'End Date Must be Greater Than Start Date.'));
+                return false;
+            }
+        }
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
 }

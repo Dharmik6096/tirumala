@@ -396,6 +396,9 @@ class SearchFilter {
             'TblSchemeDocumentMasterSearch' => [
                 'filter' => ['f_union_code'],
             ],
+            'TblSchemeMasterSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

@@ -10,24 +10,22 @@ use app\modules\welfarescheme\models\TblSchemeMaster;
 /**
  * TblSchemeMasterSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblSchemeMaster`.
  */
-class TblSchemeMasterSearch extends TblSchemeMaster
-{
+class TblSchemeMasterSearch extends TblSchemeMaster {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['scheme_id', 'is_active', 'originating_type'], 'integer'],
-            [['scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['scheme_id', 'is_active', 'originating_type'], 'integer'],
+                [['scheme_id', 'is_active', 'originating_type', 'scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblSchemeMaster::find();
 
         // add conditions that should always apply here
@@ -50,6 +47,8 @@ class TblSchemeMasterSearch extends TblSchemeMaster
         ]);
 
         $this->load($params);
+        Yii::$app->general->filterByOrg($query, $this);
+        $query->joinWith(['unionCode']);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -60,22 +59,27 @@ class TblSchemeMasterSearch extends TblSchemeMaster
         // grid filtering conditions
         $query->andFilterWhere([
             'scheme_id' => $this->scheme_id,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'is_active' => $this->is_active,
+//            'start_date' => $this->start_date,
+//            'end_date' => $this->end_date,
+            'tbl_scheme_master.is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
         ]);
 
+        if (!empty($this->start_date))
+            $query->andFilterWhere(['like', 'cast(tbl_scheme_master.start_date as DATE)', date('Y-m-d', strtotime($this->start_date))]);
+        if (!empty($this->end_date))
+            $query->andFilterWhere(['like', 'cast(tbl_scheme_master.end_date as DATE)', date('Y-m-d', strtotime($this->end_date))]);
+
         $query->andFilterWhere(['like', 'scheme_name', $this->scheme_name])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
+                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
 
         return $dataProvider;
     }
+
 }
