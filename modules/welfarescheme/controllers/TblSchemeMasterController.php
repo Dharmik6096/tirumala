@@ -164,9 +164,11 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
                 $modelSave[] = $aprv_model;
             }
             if ($validate) {
-                $transaction = $this->generalModel->saveTransaction($modelSave, ['Scheme Approval Stages', 'edit']);
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['Scheme Approval Stages', 'create']);
                 if ($transaction == 'customRedirect') {
-                    return $this->{$transaction}();
+                    $model = new TblSchemeApprovalStages();
+                    $model->scheme_id = $id;
+                    // return $this->{$transaction}();
                 }
             } else {
                 $model->addErrors($error_msg);
