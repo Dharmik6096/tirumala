@@ -11,6 +11,12 @@ use app\modules\welfarescheme\models\TblSchemeCriteriaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\welfarescheme\models\TblSchemeApprovalStages;
+use app\modules\welfarescheme\models\TblSchemeApprovalStagesHistory;
+use app\modules\welfarescheme\models\TblSchemeApprovalStagesSearch;
+use app\modules\usermanagement\models\User;
+use yii\helpers\Json;
+use yii\web\Response;
 
 /**
  * TblSchemeMasterController implements the CRUD actions for TblSchemeMaster model.
@@ -18,7 +24,7 @@ use yii\filters\VerbFilter;
 class TblSchemeMasterController extends \app\controllers\ChildController {
 
     public $schemeCriteria;
-    
+
     public function actionIndex() {
         $searchModel = new TblSchemeMasterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -120,6 +126,64 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         return $this->render($this->viewFile, ['model' => $this->model,
                     'schemeCriterias' => $this->schemeCriteria,
         ]);
+    }
+
+    public function actionApprovalStages($id) {
+        $model = new TblSchemeApprovalStages();
+        $model->scheme_id = $id;
+        $user = new User();
+        $user_list = $user->userList;
+
+        $searchModel = new TblSchemeApprovalStagesSearch();
+        $searchModel->scheme_id = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if (Yii::$app->request->post()) {
+            $modelSave = [];
+            $model->load(Yii::$app->request->post());
+            $validate = TRUE;
+            $error_msg = [];
+            foreach ($model->user_code as $user_code) {
+                $aprv_model = new TblSchemeApprovalStages();
+                $aprv_model->attributes = $model->attributes;
+                $aprv_model->user_code = $user_code;
+                $aprv_model->old_approval_mode = ($aprv_model->approval_mode == 'strict') ? 'flexi' : 'strict';
+                if (!$aprv_model->validate()) {
+                    $validate = FALSE;
+                    $error = $aprv_model->getErrors();
+                    if (!empty($error['user_code'])) {
+                        $u_detail = $aprv_model->userCode;
+                        $error['user_code'][0] = Yii::t('app', 'User (' . $u_detail->name . '-' . $u_detail->department . ') has already been taken.');
+                    }
+                    if (!empty($error['approval_mode'])) {
+                        $error_app_mode = TRUE;
+                        $error['approval_mode'][0] = Yii::t('app', 'Approval Mode must be ' . Yii::$app->general->getStaticValue($aprv_model->old_approval_mode, 'approval_mode') . '.');
+                    }
+                    $error_msg[] = $error;
+                }
+                $modelSave[] = $aprv_model;
+            }
+            if ($validate) {
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['Scheme Approval Stages', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->{$transaction}();
+                }
+            } else {
+                $model->addErrors($error_msg);
+            }
+        }
+        return $this->render('approval-stages', ['model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider, 'user_list' => $user_list]);
+    }
+
+    public function actionDeleteApprovalStage() {
+        $this->model = TblSchemeApprovalStages::findOne(Yii::$app->request->post('id'));
+        $historyModel = new TblSchemeApprovalStagesHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

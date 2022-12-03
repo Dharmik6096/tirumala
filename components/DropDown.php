@@ -1404,6 +1404,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['.docx' => Yii::t('app', 'Word'), '.pdf' => Yii::t('app', 'Pdf')],
             ],
+            'approval_level' => [
+                'name' => 'level',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Level 1'), 2 => Yii::t('app', 'Level 2'), 3 => Yii::t('app', 'Level 3'), 4 => Yii::t('app', 'Level 4'), 5 => Yii::t('app', 'Level 5'), 6 => Yii::t('app', 'Level 6')],
+            ],
+            'approval_mode' => [
+                'name' => 'approval_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
+            ],
         ];
         return $records[$l];
     }

@@ -59,6 +59,10 @@ $grid_option = [
             $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Scheme Criteria'];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/welfarescheme/tbl-scheme-master/scheme-criteria', 'id' => $model->scheme_id], $options);
         },
+        'approval-stages' => function ($url, $model) {
+            $options = ['title' => Yii::t('app', 'Approval Stages')];
+            return GhostHtml::a('<i class="fa fa-list-ol"></i>', ['/welfarescheme/tbl-scheme-master/approval-stages', 'id' => $model->scheme_id], $options);
+        },
     ]
 ];
 
