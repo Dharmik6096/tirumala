@@ -9,6 +9,11 @@ use app\modules\welfarescheme\models\TblSchemeCriteriaHistory;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\web\Response;
+use yii\helpers\Json;
+
 
 /**
  * TblSchemeCriteriaController implements the CRUD actions for TblSchemeCriteria model.
@@ -45,15 +50,29 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate() {
+    public function actionCreate($id) {
         $this->model = new TblSchemeCriteria();
         $this->viewFile = 'create';
+        $this->model->scheme_id = $id;
         if ($this->model->load(Yii::$app->request->post())) {
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Criteria', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->union_code = Yii::$app->general->getforeignkey($this->model->schemeId, 'union_code');
+            if (!$this->model->validate()) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
+            } else {
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Criteria', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $record = ['status' => 'success', 'msg' => ''];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
             }
         }
+
         return $this->customRender();
     }
 
@@ -70,6 +89,8 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
             $historyModel = new TblSchemeCriteriaHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
+            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->union_code = Yii::$app->general->getforeignkey($this->model->schemeId, 'union_code');
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Scheme Criteria', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -94,4 +115,17 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
         }
     }
 
+    protected function customRender() {
+        $request = Yii::$app->request->queryParams;
+        $searchModel = new TblSchemeCriteriaSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render($this->viewFile, ['model' => $this->model, 'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider, 'id' => $request['id'], 'dist' => '']);
+    }
+
+    protected function customRedirect() {
+        return $this->redirect(Url::previous());
+    }
+    
+    
 }

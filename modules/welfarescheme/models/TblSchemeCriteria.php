@@ -3,6 +3,7 @@
 namespace app\modules\welfarescheme\models;
 
 use Yii;
+use app\modules\welfarescheme\models\TblSchemeMaster;
 
 /**
  * This is the model class for table "tbl_scheme_criteria".
@@ -62,6 +63,10 @@ class TblSchemeCriteria extends \yii\db\ActiveRecord {
             'originating_org_code' => 'Originating Org Code',
             'originating_org_type' => 'Originating Org Type',
         ];
+    }
+
+    public function getSchemeId() {
+        return $this->hasOne(TblSchemeMaster::className(), ['scheme_id' => 'scheme_id']);
     }
 
 }

@@ -114,9 +114,11 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
     public function actionSchemeCriteria($id) {
         $schemeCriterias = new TblSchemeCriteria();
         $searchModel = new TblSchemeCriteriaSearch();
+        $searchModel->scheme_id = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('../../../welfarescheme/views/tbl-scheme-criteria/create', [
                     'model' => $schemeCriterias,
+                    'id' => $id,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
