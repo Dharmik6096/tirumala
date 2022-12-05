@@ -259,7 +259,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         // add conditions that should always apply here
         $flag = Yii::$app->general->getUnionConfiguration($this->union_code, 'collection_approval', 'PORTAL');
         if ($flag == 1) {
-            $query->joinWith(['approvalData']);
+           // $query->joinWith(['approvalData']);
+		 $query->join('LEFT JOIN', 'tbl_collection_data_alias', "tbl_collection_data_alias.member_code = tbl_milk_collection.member_code and tbl_collection_data_alias.date_time_of_collection = tbl_milk_collection.date_time_of_collection and tbl_collection_data_alias.shift_code = tbl_milk_collection.shift_code and tbl_collection_data_alias.old_milk_type_code = tbl_milk_collection.milk_type_code and tbl_collection_data_alias.amount = tbl_milk_collection.amount and tbl_collection_data_alias.table_name = 'tbl_milk_collection' and tbl_collection_data_alias.action_perform = 'DELETE'");
         }
         $query->join('LEFT JOIN', 'tbl_mcc_shift_lock', 'tbl_mcc_shift_lock.mcc_plant_code = tbl_milk_collection.mcc_plant_code and CAST(tbl_mcc_shift_lock.date_time_of_collection as date) = CAST(tbl_milk_collection.date_time_of_collection as date) and tbl_mcc_shift_lock.shift_code = tbl_milk_collection.shift_code and tbl_mcc_shift_lock.member_lock = 1');
 
