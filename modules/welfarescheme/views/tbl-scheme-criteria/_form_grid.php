@@ -31,12 +31,13 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'edit' => function ($url, $model) {
-            $disable = '';
-            $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-criteria/update', 'id' => $model->scheme_criteria_id], $options);
+            $class = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record' . $class, 'data-val' => $model->scheme_criteria_id, 'data-name' => $model->scheme_criteria_id, 'title' => Yii::t('app', 'Edit')];
+            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-criteria/update-criteria'], $options);
         },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+

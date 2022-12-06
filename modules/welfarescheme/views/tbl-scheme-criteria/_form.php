@@ -19,6 +19,7 @@ $form = ActiveForm::begin([
 ?>
 
 <div class="row">
+    <?= Html::activeHiddenInput($model, 'scheme_criteria_id', ['value' => $model->scheme_criteria_id]) ?>
 
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, false, false); ?>
@@ -36,13 +37,6 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'scheme_value')->textInput(['maxlength' => true]) ?>  
     </div>
 
-    <!--    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
-                Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-                Yii::$app->controls->reset(); ?>
-              Yii::$app->controls->cancel($model); ?>
-            </div>  
-        </div>-->
 </div>
 
 <?php ActiveForm::end(); ?>

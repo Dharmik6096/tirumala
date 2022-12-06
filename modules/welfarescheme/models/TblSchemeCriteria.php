@@ -23,7 +23,7 @@ use app\modules\welfarescheme\models\TblSchemeMaster;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeCriteria extends \yii\db\ActiveRecord {
+class TblSchemeCriteria extends \app\models\ChildModel {
 
     /**
      * @inheritdoc

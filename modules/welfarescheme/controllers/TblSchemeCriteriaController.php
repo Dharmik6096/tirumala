@@ -14,7 +14,6 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use yii\helpers\Json;
 
-
 /**
  * TblSchemeCriteriaController implements the CRUD actions for TblSchemeCriteria model.
  */
@@ -54,14 +53,28 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
         $this->model = new TblSchemeCriteria();
         $this->viewFile = 'create';
         $this->model->scheme_id = $id;
+        $modelSave = [];
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
-            $this->model->union_code = Yii::$app->general->getforeignkey($this->model->schemeId, 'union_code');
+            $update = FALSE;
+            if (!empty(Yii::$app->request->post()['TblSchemeCriteria']['scheme_criteria_id'])) {
+                $this->model = $this->findModel(Yii::$app->request->post()['TblSchemeCriteria']['scheme_criteria_id']);
+                $historyModel = new TblSchemeCriteriaHistory();
+                Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+                $modelSave[] = $historyModel;
+                $this->model->load(Yii::$app->request->post());
+                $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                $this->model->union_code = Yii::$app->general->getforeignkey($this->model->schemeId, 'union_code');
+                $update = TRUE;
+            } else {
+                $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                $this->model->union_code = Yii::$app->general->getforeignkey($this->model->schemeId, 'union_code');
+            }
             if (!$this->model->validate()) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model));
             } else {
-                $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Criteria', 'create']);
+                $modelSave[] = $this->model;
+                $transaction = $this->generalModel->saveTransaction($modelSave, ['Scheme Criteria', ($update) ? 'edit' : 'create']);
                 if ($transaction == 'customRedirect') {
                     $record = ['status' => 'success', 'msg' => ''];
                 } else {
@@ -126,6 +139,21 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
     protected function customRedirect() {
         return $this->redirect(Url::previous());
     }
-    
-    
+
+    public function actionUpdateCriteria() {
+        $data = [];
+        $data['status'] = 'error';
+        $data['message'] = '';
+        $modelData = [];
+        if (!empty($_POST['scheme_criteria_id'])) {
+            $modelData = $this->findModel($_POST['scheme_criteria_id']);
+            if (!empty($modelData)) {
+                $data['status'] = 'success';
+            }
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return ['data' => $data, 'modelData' => $modelData];
+    }
+
 }

@@ -98,4 +98,35 @@ $this->title = Yii::$app->label->title('create', 'Scheme Criteria');
     </div>
 </div>
 
+<?php
+$script = "
+     $('.edit-record').on('click',function(event){       
+        var id= $(this).attr('data-val');
+        editSchemeCriteria(id);
+    });
+    
+    function editSchemeCriteria(scheme_criteria_id){
+            if(scheme_criteria_id != ''){         
+            $.ajax({
+                    type: 'post',
+                    url: '" . Url::to(['/welfarescheme/tbl-scheme-criteria/update-criteria']) . "',
+                    data: {'scheme_criteria_id' : scheme_criteria_id},
+                    beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
+                    },
+                    success: function(data) {
+                        $.each(data.modelData, function(index, value) {
+                            $('#tblschemecriteria-'+index).val(value);
+                        });
+                         $('#loadercontent').hide();
+                         $('#pageloader').hide();
+                         $(window).scrollTop(0);
 
+                    },
+                });
+            }
+    };
+";
+$this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>
