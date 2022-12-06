@@ -76,4 +76,27 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
         return $dataProvider;
     }
 
+    public function mappingsearch($params) {
+        $query = TblSchemeDocumentMaster::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->andWhere([
+            'is_active' => $this->is_active,
+        ]);
+
+
+        return $dataProvider;
+    }
+
 }

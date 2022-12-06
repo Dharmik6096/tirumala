@@ -1,43 +1,31 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
+use yii\helpers\Url;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeDocumentMapping */
-/* @var $form yii\widgets\ActiveForm */
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
-<div class="tbl-scheme-document-mapping-form">
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+            'fieldConfig' => [
+        ]]);
+?>
 
-    <?php $form = ActiveForm::begin(); ?>
+<div class="row">
+    <?= Html::activeHiddenInput($model, 'doc_id', ['value' => $model->doc_id]) ?>
 
-    <?= $form->field($model, 'scheme_id')->textInput() ?>
-
-    <?= $form->field($model, 'doc_id')->textInput() ?>
-
-    <?= $form->field($model, 'is_mandate')->textInput() ?>
-
-    <?= $form->field($model, 'union_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+    <!--    <div class="col-sm-2">
+             $form->field($model, 'is_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>-->
 
 </div>
+
+<?php ActiveForm::end(); ?>
+

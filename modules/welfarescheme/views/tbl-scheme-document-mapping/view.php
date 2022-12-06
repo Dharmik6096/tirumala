@@ -16,16 +16,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->mapping_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->mapping_id], [
+        <?=
+        Html::a('Delete', ['delete', 'id' => $model->mapping_id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
-        ]) ?>
+        ])
+        ?>
     </p>
 
-    <?= DetailView::widget([
+    <?=
+    DetailView::widget([
         'model' => $model,
         'attributes' => [
             'mapping_id',
@@ -41,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'originating_org_code',
             'originating_org_type',
         ],
-    ]) ?>
+    ])
+    ?>
 
 </div>

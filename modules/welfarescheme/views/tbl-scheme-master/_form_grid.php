@@ -63,6 +63,10 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Approval Stages')];
             return GhostHtml::a('<i class="fa fa-list-ol"></i>', ['/welfarescheme/tbl-scheme-master/approval-stages', 'id' => $model->scheme_id], $options);
         },
+        'scheme-document-mapping' => function ($url, $model) {
+            $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Scheme Document Mapping'];
+            return GhostHtml::a('<i class="fa fa-file-text"></i>', ['/welfarescheme/tbl-scheme-master/scheme-document-mapping', 'id' => $model->scheme_id], $options);
+        },
     ]
 ];
 

@@ -8,6 +8,9 @@ use app\modules\welfarescheme\models\TblSchemeMasterHistory;
 use app\modules\welfarescheme\models\TblSchemeMasterSearch;
 use app\modules\welfarescheme\models\TblSchemeCriteria;
 use app\modules\welfarescheme\models\TblSchemeCriteriaSearch;
+use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
+use app\modules\welfarescheme\models\TblSchemeDocumentMappingSearch;
+use app\modules\welfarescheme\models\TblSchemeDocumentMasterSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,7 +26,7 @@ use yii\web\Response;
  */
 class TblSchemeMasterController extends \app\controllers\ChildController {
 
-    public $schemeCriteria;
+    public $schemeCriteria, $schemeDocumentMapping;
 
     public function actionIndex() {
         $searchModel = new TblSchemeMasterSearch();
@@ -188,6 +191,36 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionSchemeDocumentMapping($id) {
+        $schemeDocumentMapping = new TblSchemeDocumentMapping();
+        $schemeDocumentMapping->doc_id = $id;
+        $schemeDocumentMapping->load(Yii::$app->request->queryParams);
+        $searchModels = new TblSchemeDocumentMappingSearch();
+        $searchModel = new TblSchemeDocumentMasterSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->doc_id = $id;
+        $searchModel->is_active = 1;
+        $dataProvider = $searchModel->mappingsearch(Yii::$app->request->queryParams);
+        $selectedArray = [];
+        $selectedArray = $schemeDocumentMapping->getExistingMapping();
+        if ($schemeDocumentMapping->load(Yii::$app->request->post())) {
+            $schemeDocumentMapping->union_code = Yii::$app->general->getforeignkey($schemeDocumentMapping->schemeId, 'union_code');
+            $schemeDocumentMapping->doc_id = Yii::$app->general->getforeignkey($schemeDocumentMapping->docId, 'doc_name');
+            $transaction = $this->generalModel->saveTransaction([$schemeDocumentMapping], ['Scheme Document Mapping', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
+        }
+        return $this->render('../../../welfarescheme/views/tbl-scheme-document-mapping/create', [
+                    'model' => $schemeDocumentMapping,
+                    'id' => $id,
+                    'searchModel' => $searchModel,
+                    'searchModels' => $searchModels,
+                    'dataProvider' => $dataProvider,
+                    'selectedArray' => $selectedArray
+        ]);
     }
 
 }

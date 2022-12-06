@@ -6,28 +6,27 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
+use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 
 /**
  * TblSchemeDocumentMappingSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblSchemeDocumentMapping`.
  */
-class TblSchemeDocumentMappingSearch extends TblSchemeDocumentMapping
-{
+class TblSchemeDocumentMappingSearch extends TblSchemeDocumentMapping {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['mapping_id', 'scheme_id', 'doc_id', 'is_mandate', 'originating_type'], 'integer'],
-            [['union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['mapping_id', 'scheme_id', 'doc_id', 'is_mandate', 'originating_type'], 'integer'],
+                [['mapping_id', 'scheme_id', 'doc_id', 'is_mandate', 'originating_type', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +38,7 @@ class TblSchemeDocumentMappingSearch extends TblSchemeDocumentMapping
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblSchemeDocumentMapping::find();
 
         // add conditions that should always apply here
@@ -69,11 +67,12 @@ class TblSchemeDocumentMappingSearch extends TblSchemeDocumentMapping
         ]);
 
         $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
+                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
 
         return $dataProvider;
     }
+
 }
