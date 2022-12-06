@@ -1,21 +1,19 @@
 <?php
-
-use yii\helpers\Html;
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeApplication */
-
-$this->title = 'Update Tbl Scheme Application: ' . $model->application_id;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Scheme Applications', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->application_id, 'url' => ['view', 'id' => $model->application_id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = Yii::$app->label->title('edit', 'Scheme Application');
 ?>
-<div class="tbl-scheme-application-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading">
+        <ul class="progressbar">
+            <li><?= $this->title ?></li>
+            <li class="inactive"> > Upload Scheme Documents</li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'edit',
+        ])
+        ?>
+    </div>
 </div>

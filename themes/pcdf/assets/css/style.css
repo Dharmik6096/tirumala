@@ -4861,3 +4861,9 @@ tr.highlightRow {
 .width_100-50_per {
     width: calc(100% - 50%);
 }
+.progressbar li {
+    display: inline-block;
+}
+.progressbar li.inactive {
+    color: #607188;
+}

@@ -1,21 +1,19 @@
 <?php
-
-use yii\helpers\Html;
-
-
-/* @var $this yii\web\View */
-/* @var $model app\modules\welfarescheme\models\TblSchemeApplication */
-
-$this->title = 'Create Tbl Scheme Application';
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Scheme Applications', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('create', 'Scheme Application');
 ?>
-<div class="tbl-scheme-application-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
+<div class="panel panel-default panel-main">
+    <div class="panel-heading">
+        <ul class="progressbar">
+            <li><?= $this->title ?></li>
+            <li class="inactive"> > Upload Scheme Documents</li>
+        </ul>
+    </div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'create',
+        ])
+        ?>
+    </div>
 </div>

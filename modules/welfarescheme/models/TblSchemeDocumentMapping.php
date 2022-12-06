@@ -3,6 +3,8 @@
 namespace app\modules\welfarescheme\models;
 
 use Yii;
+use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
+use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 
 /**
  * This is the model class for table "tbl_scheme_document_mapping".
@@ -20,35 +22,34 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMapping extends \yii\db\ActiveRecord
-{
+class TblSchemeDocumentMapping extends \app\models\ChildModel {
+
+    public $application_id;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_document_mapping';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['scheme_id', 'doc_id', 'is_mandate', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['scheme_id', 'doc_id', 'is_mandate', 'originating_type'], 'integer'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'mapping_id' => 'Mapping ID',
             'scheme_id' => 'Scheme ID',
@@ -64,4 +65,13 @@ class TblSchemeDocumentMapping extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
+    public function getApplicationDocument() {
+        return $this->hasOne(TblSchemeApplicationDocuments::className(), ['scheme_id' => 'scheme_id', 'doc_id' => 'doc_id'])->andOnCondition(['tbl_scheme_application_documents.application_id' => $this->application_id]);
+    }
+
+    public function getDocumentMaster() {
+        return $this->hasOne(TblSchemeDocumentMaster::className(), ['doc_id' => 'doc_id']);
+    }
+
 }
