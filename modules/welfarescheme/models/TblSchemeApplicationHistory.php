@@ -13,7 +13,8 @@ use Yii;
  * @property string $history_created_by
  * @property integer $application_id
  * @property integer $scheme_id
- * @property string $member_code
+ * @property string $customer_code
+ * @property string $customer_type
  * @property string $application_date
  * @property string $min_pouring_day
  * @property string $min_pouring_qty
@@ -39,41 +40,38 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeApplicationHistory extends \yii\db\ActiveRecord
-{
+class TblSchemeApplicationHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_application_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'application_date', 'status_date', 'created_at', 'updated_at'], 'safe'],
-            [['application_id', 'scheme_id', 'originating_type'], 'integer'],
-            [['min_pouring_day', 'min_pouring_qty', 'actual_pouring_day', 'actual_pouring_qty', 'scheme_value', 'approved_value'], 'number'],
-            [['operation_type'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['member_code', 'application_status', 'status_by'], 'string', 'max' => 20],
-            [['remarks', 'status_remarks'], 'string', 'max' => 255],
-            [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
-            [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
-            [['union_code'], 'string', 'max' => 3],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['history_created_at', 'application_date', 'status_date', 'created_at', 'updated_at'], 'safe'],
+                [['application_id', 'scheme_id', 'originating_type'], 'integer'],
+                [['min_pouring_day', 'min_pouring_qty', 'actual_pouring_day', 'actual_pouring_qty', 'scheme_value', 'approved_value'], 'number'],
+                [['operation_type'], 'string', 'max' => 10],
+                [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
+                [['customer_code', 'customer_type', 'application_status', 'status_by'], 'string', 'max' => 20],
+                [['remarks', 'status_remarks'], 'string', 'max' => 255],
+                [['dcs_code', 'bmc_code'], 'string', 'max' => 12],
+                [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
+                [['union_code'], 'string', 'max' => 3],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'operation_type' => 'Operation Type',
@@ -81,7 +79,8 @@ class TblSchemeApplicationHistory extends \yii\db\ActiveRecord
             'history_created_by' => 'History Created By',
             'application_id' => 'Application ID',
             'scheme_id' => 'Scheme ID',
-            'member_code' => 'Member Code',
+            'customer_code' => 'Customer Code',
+            'customer_type' => 'Customer Type',
             'application_date' => 'Application Date',
             'min_pouring_day' => 'Min Pouring Day',
             'min_pouring_qty' => 'Min Pouring Qty',
@@ -108,4 +107,5 @@ class TblSchemeApplicationHistory extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
 }

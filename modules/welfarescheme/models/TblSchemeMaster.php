@@ -4,6 +4,7 @@ namespace app\modules\welfarescheme\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_scheme_master".
@@ -82,6 +83,22 @@ class TblSchemeMaster extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getUnionSchemeList($unionCode, $date) {
+        $value = $this->getUnionScheme($unionCode, $date);
+        return ArrayHelper::map($value, 'scheme_id', 'scheme_name');
+    }
+
+    public function getUnionScheme($unionCode = [], $date = NULL) {
+        $query = $this->find()->select(['scheme_id', 'scheme_name'])->where(['is_active' => 1]);
+        $query->andFilterWhere(['union_code' => $unionCode]);
+        if (!empty($date)) {
+            $date = date('Y-m-d', strtotime($date));
+            $query->where(['<=', 'start_date', $date]);
+            $query->andWhere(['OR', ['>=', 'end_date', $date], ['IS', 'end_date', NULL]]);
+        }
+        return $query->all();
     }
 
 }
