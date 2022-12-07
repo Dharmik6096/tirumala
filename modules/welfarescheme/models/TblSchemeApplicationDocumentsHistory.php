@@ -24,37 +24,34 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeApplicationDocumentsHistory extends \yii\db\ActiveRecord
-{
+class TblSchemeApplicationDocumentsHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_application_documents_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['history_created_at', 'created_at', 'updated_at'], 'safe'],
-            [['app_doc_id', 'application_id', 'doc_id', 'originating_type'], 'integer'],
-            [['operation_type'], 'string', 'max' => 10],
-            [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
-            [['file_name'], 'string', 'max' => 100],
-            [['file_path'], 'string', 'max' => 255],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['history_created_at', 'created_at', 'updated_at', 'scheme_id'], 'safe'],
+                [['app_doc_id', 'application_id', 'doc_id', 'originating_type'], 'integer'],
+                [['operation_type'], 'string', 'max' => 10],
+                [['history_created_by', 'created_by', 'updated_by'], 'string', 'max' => 14],
+                [['file_name'], 'string', 'max' => 100],
+                [['file_path'], 'string', 'max' => 255],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'operation_type' => 'Operation Type',
@@ -74,4 +71,5 @@ class TblSchemeApplicationDocumentsHistory extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
 }

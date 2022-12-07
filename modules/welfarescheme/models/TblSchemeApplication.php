@@ -49,7 +49,7 @@ use app\modules\usermanagement\models\User;
  */
 class TblSchemeApplication extends \app\models\ChildModel {
 
-    public $customer_name, $ex_code;
+    public $customer_name, $ex_code, $app_approval_id;
 
     /**
      * @inheritdoc

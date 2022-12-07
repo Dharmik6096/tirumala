@@ -1,6 +1,10 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Scheme Application'));
-$this->params['menu'][] = Yii::$app->controls->add('Scheme Application');
+if ($pending_approval) {
+    $this->title = Yii::t('app', Yii::$app->label->title('list', 'Scheme Application Pending Approval'));
+} else {
+    $this->title = Yii::t('app', Yii::$app->label->title('list', 'Scheme Application'));
+    $this->params['menu'][] = Yii::$app->controls->add('Scheme Application');
+}
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
@@ -12,6 +16,7 @@ $this->params['menu'][] = Yii::$app->controls->add('Scheme Application');
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
+                'pending_approval' => $pending_approval
             ])
             ?>
         </div>

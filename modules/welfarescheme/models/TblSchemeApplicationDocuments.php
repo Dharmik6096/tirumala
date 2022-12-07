@@ -38,7 +38,7 @@ class TblSchemeApplicationDocuments extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['application_id', 'doc_id', 'originating_type'], 'safe'],
+                [['application_id', 'doc_id', 'originating_type', 'scheme_id'], 'safe'],
                 [['created_at', 'updated_at'], 'safe'],
                 [['file_name'], 'string', 'max' => 100],
                 [['file_path'], 'string', 'max' => 255],

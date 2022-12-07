@@ -42,6 +42,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => FALSE
         ]);
     }
 
@@ -184,28 +185,61 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
 
     public function actionPendingApproval() {
         $searchModel = new TblSchemeApplicationSearch();
-        $dataProvider = $searchModel->pendingApproval(Yii::$app->request->queryParams);
-
-        return $this->render('pending_approval', [
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => TRUE
         ]);
     }
 
-    public function actionApproveApplication($id, $app_approval_id) {
-        $model = TblSchemeApplicationApproval::findOne($app_approval_id);
+    public function actionApproveApplication($id) {
+        $model = TblSchemeApplicationApproval::findOne($id);
+        $model->scenario = 'approve';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save = [];
             $model->status_date = date('Y-m-d');
             $model->status_by = \Yii::$app->user->identity->user_code;
-            $model_save[] = $model;
             if ($model->approval_mode == 'flexi') {
-                //find all pending approval for same level and update
-                // update application status 
+                $level_user = TblSchemeApplicationApproval::find()
+                        ->where(['application_id' => $model->application_id, 'level' => $model->level])
+                        ->andWhere(['IS', 'application_status', NULL])
+                        ->all();
+                foreach ($level_user as $approval) {
+                    $approval->status_date = $model->status_date;
+                    $approval->status_by = $model->status_by;
+                    $approval->approved_value = $model->approved_value;
+                    $approval->application_status = $model->application_status;
+                    $approval->status_remarks = $model->status_remarks;
+                    $model_save[] = $approval;
+                }
+            } else {
+                $model->status_date = date('Y-m-d');
+                $model->status_by = \Yii::$app->user->identity->user_code;
+                $model_save[] = $model;
             }
-            $transaction = $this->generalModel->saveTransaction($model_save, ['Scheme Application Approval', 'edit']);
-            if ($transaction == 'customRedirect') {
-                return $this->redirect(['pending-approval']);
+            if (!empty($model_save)) {
+                $next_count = TblSchemeApplicationApproval::find()
+                        ->where(['application_id' => $model->application_id, 'level' => $model->level + 1])
+                        ->count();
+                $status = ($next_count > 0) ? 'inprocess' : $model->application_status;
+                $application = $this->findModel($model->application_id);
+                $historyModel = new TblSchemeApplicationHistory();
+                Yii::$app->operation->history($application, $historyModel, UPDATE);
+                $model_save[] = $historyModel;
+                $application->application_status = $status;
+                $application->status_date = $model->status_date;
+                $application->status_by = $model->status_by;
+                $application->approved_value = $model->approved_value;
+                $application->status_remarks = $model->status_remarks;
+                $model_save[] = $application;
+                $transaction = $this->generalModel->saveTransaction($model_save, ['Scheme Application Approval', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['pending-approval']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Application already approved by other user.']);
             }
         }
         return $this->render('approve_application', [

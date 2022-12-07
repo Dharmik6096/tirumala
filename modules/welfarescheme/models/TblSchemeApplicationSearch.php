@@ -40,7 +40,7 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $pending_approval = FALSE) {
         $query = TblSchemeApplication::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -48,6 +48,22 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
 
         $this->load($params);
         $query->joinWith(['schemeId']);
+        if ($pending_approval) {
+            $levelQuery = TblSchemeApplicationApproval::find()
+                    ->select(['application_id', 'MIN(level) AS level'])
+                    ->where(['IS', 'application_status', NULL])
+                    ->groupBy('application_id');
+
+            $subQuery = TblSchemeApplicationApproval::find()
+                    ->select(['tbl_scheme_application_approval.application_id', 'tbl_scheme_application_approval.app_approval_id'])
+                    ->innerJoin(['lq' => $levelQuery], 'tbl_scheme_application_approval.application_id = lq.application_id AND tbl_scheme_application_approval.level = lq.level')
+                    ->where(['IS', 'tbl_scheme_application_approval.application_status', NULL])
+                    ->andWhere(['tbl_scheme_application_approval.user_code' => \Yii::$app->user->identity->user_code]);
+
+            $query->innerJoin(['ap' => $subQuery], 'tbl_scheme_application.application_id = ap.application_id');
+            $query->addSelect(['tbl_scheme_application.*', 'ap.app_approval_id as app_approval_id']);
+        }
+
         Yii::$app->general->filterByOrg($query, $this, 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application');
 
         $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-30 DAYS'));
@@ -66,52 +82,6 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
         $query->andFilterWhere(['like', 'tbl_scheme_application.customer_type', $this->customer_type])
                 ->andFilterWhere(['like', 'tbl_scheme_application.remarks', $this->remarks])
                 ->andFilterWhere(['like', 'tbl_scheme_master.scheme_name', $this->scheme_id]);
-
-        return $dataProvider;
-    }
-
-    public function pendingApproval($params) {
-        $query = TblSchemeApplication::find();
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'application_id' => $this->application_id,
-            'scheme_id' => $this->scheme_id,
-            'application_date' => $this->application_date,
-            'min_pouring_day' => $this->min_pouring_day,
-            'min_pouring_qty' => $this->min_pouring_qty,
-            'actual_pouring_day' => $this->actual_pouring_day,
-            'actual_pouring_qty' => $this->actual_pouring_qty,
-            'scheme_value' => $this->scheme_value,
-            'approved_value' => $this->approved_value,
-            'status_date' => $this->status_date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
-
-        $query->andFilterWhere(['like', 'customer_code', $this->customer_code])
-                ->andFilterWhere(['like', 'customer_type', $this->customer_type])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'application_status', $this->application_status])
-                ->andFilterWhere(['like', 'status_by', $this->status_by])
-                ->andFilterWhere(['like', 'status_remarks', $this->status_remarks])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
 
         return $dataProvider;
     }

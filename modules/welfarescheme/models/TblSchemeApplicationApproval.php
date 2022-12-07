@@ -41,7 +41,8 @@ class TblSchemeApplicationApproval extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['application_id', 'level', 'originating_type'], 'integer'],
+                [['approved_value', 'application_status'], 'required', 'on' => 'approve'],
+                [['application_id', 'level', 'originating_type', 'scheme_id'], 'safe'],
                 [['approved_value'], 'number'],
                 [['status_date', 'created_at', 'updated_at'], 'safe'],
                 [['user_code', 'application_status', 'status_by'], 'string', 'max' => 20],
@@ -63,10 +64,10 @@ class TblSchemeApplicationApproval extends \app\models\ChildModel {
             'user_code' => 'User Code',
             'approval_mode' => 'Approval Mode',
             'approved_value' => 'Approved Value',
-            'application_status' => 'Application Status',
+            'application_status' => 'Status',
             'status_date' => 'Status Date',
             'status_by' => 'Status By',
-            'status_remarks' => 'Status Remarks',
+            'status_remarks' => 'Remarks',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

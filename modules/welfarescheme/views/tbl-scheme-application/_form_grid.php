@@ -66,10 +66,15 @@ $grid_option = [
     'active_column' => FALSE,
     'actions' => [
         'view' => true,
-        'add-document' => function ($url, $model) {
-            $disable = ($model->application_status == 'pending') ? '' : 'disabled';
-            $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-file"></i>', ['/welfarescheme/tbl-scheme-application/add-document', 'id' => $model->application_id], $options);
+        'add-document' => function ($url, $model) use ($pending_approval) {
+            if ($pending_approval) {
+                $options = ['title' => Yii::t('app', 'Approve Application')];
+                return GhostHtml::a('<i class="fa fa-check-square"></i>', ['/welfarescheme/tbl-scheme-application/approve-application', 'id' => $model->app_approval_id], $options);
+            } else {
+                $disable = ($model->application_status == 'pending') ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
+                return GhostHtml::a('<i class="fa fa-file"></i>', ['/welfarescheme/tbl-scheme-application/add-document', 'id' => $model->application_id], $options);
+            }
         },
     ]
 ];
