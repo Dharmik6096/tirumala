@@ -140,6 +140,7 @@ $script = "
         var qty = $('#tblplantdispatchtxn-qty').val();
         var amount = $('#tblplantdispatchtxn-amount').val();
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
+        var lr_no = $('#tblplantdispatchtxn-lr_no').val();
 
       if(product_code != ''){
             var existData = $('.selected_'+product_code).not('.edit_product').text().length;
@@ -160,7 +161,8 @@ $script = "
             add_row += '<td>' + sap_batch_no + '<input type=\"hidden\" class=\"added_sap_batch_no\" value=\"'+sap_batch_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][sap_batch_no]\" ></td>';
             add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + rate + '<input type=\"hidden\" class=\"added_rate\" value=\"'+rate+'\" name=\"TblPlantDispatchTxn['+product_code+'][rate]\" ></td>';
-            add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+rate+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
+            add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+amount+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
+            add_row += '<td>' + lr_no + '<input type=\"hidden\" class=\"added_lr_no\" value=\"'+lr_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][lr_no]\" ></td>';
             add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+product_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+product_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';
             add_row += '</tr>';
             $('tbody').append(add_row);
@@ -173,6 +175,7 @@ $script = "
             $('#tblplantdispatchtxn-rate').val('');
             $('#tblplantdispatchtxn-qty').val('');
             $('#tblplantdispatchtxn-amount').val('');
+            $('#tblplantdispatchtxn-lr_no').val('');
             $('tbody tr.edit_product').remove();
             $('.single_entry_area').addClass('disabled no_pointer');
             $('.sap_batch_no').addClass('disabled no_pointer');
@@ -195,6 +198,7 @@ $script = "
         $('#tblplantdispatchtxn-qty').val($('.'+select_raw_class+' .added_qty').val());
         $('#tblplantdispatchtxn-rate').val($('.'+select_raw_class+' .added_rate').val());
         $('#tblplantdispatchtxn-amount').val($('.'+select_raw_class+' .added_amount').val());
+        $('#tblplantdispatchtxn-lr_no').val($('.'+select_raw_class+' .added_lr_no').val());
         $('.add-asset-record').removeClass('disabled no_pointer');
     }
     

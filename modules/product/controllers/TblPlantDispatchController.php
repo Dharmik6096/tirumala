@@ -66,17 +66,19 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
             $model->dispatch_date = Yii::$app->formatter->asDate($model->dispatch_date, DATE_FORMAT);
             $model->document_date = Yii::$app->formatter->asDate($model->document_date, DATE_FORMAT);
 
-
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
+            $batchNo = $txnData['sap_batch_no'];
+            $model->sap_batch_no = $batchNo;
+            $saveModel[] = $model;
             unset($txnData['product_code']);
             unset($txnData['unit_code']);
             unset($txnData['rate']);
             unset($txnData['qty']);
             unset($txnData['amount']);
             unset($txnData['sap_batch_no']);
+            unset($txnData['lr_no']);
             $i = 1;
             foreach ($txnData as $key => $product) {
-                $batchNo = $product['sap_batch_no'];
                 $txModel = new TblPlantDispatchTxn();
                 $txModel->product_code = $product['product_code'];
                 $txModel->qty = $product['qty'];
@@ -84,17 +86,14 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $txModel->amount = $product['amount'];
                 $txModel->unit_code = $product['unit_code'];
                 $txModel->sap_batch_no = $product['sap_batch_no'];
-                $txModel->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($model, $i);
+                $txModel->lr_no = $product['lr_no'];
+                $txModel->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txModel, $i);
                 $txModel->plant_dispatch_code = $model->plant_dispatch_code;
                 $txModel->union_code = $model->union_code;
                 $saveModel[] = $txModel;
                 $i++;
             }
-            if (!empty($batchNo)) {
-                $model->sap_batch_no = $batchNo;
-            }
 
-            $saveModel[] = $model;
             if ($model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($saveModel, $HisModel, ['Plant Dispatch', 'create']);
                 if ($transaction == 'customRedirect') {

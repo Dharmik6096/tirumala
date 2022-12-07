@@ -19,6 +19,7 @@ use kartik\grid\GridView;
         ['attribute' => 'rate', 'filter' => false],
         ['attribute' => 'qty', 'filter' => false],
         ['attribute' => 'amount', 'filter' => FALSE],
+        ['attribute' => 'lr_no', 'filter' => FALSE],
     ];
 
 
@@ -26,7 +27,7 @@ use kartik\grid\GridView;
         'id' => 'plant-dispatch-txn-grid',
         'attributes' => $attribute,
         'active_column' => FALSE,
-//        'default_sorting' => FALSE
+        'default_sorting' => FALSE
     ];
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     ?>

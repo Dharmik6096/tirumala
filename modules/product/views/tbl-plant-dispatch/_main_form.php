@@ -74,6 +74,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($txModel, 'amount')->textInput(['readonly' => TRUE]) ?>
         </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($txModel, 'lr_no')->textInput() ?>
+        </div>
 
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
@@ -99,6 +102,7 @@ $form = ActiveForm::begin([
                 <th><?= $txModel->getAttributeLabel('rate') ?></th>
                 <th><?= $txModel->getAttributeLabel('qty') ?></th>
                 <th><?= $txModel->getAttributeLabel('amount') ?></th>
+                <th><?= $txModel->getAttributeLabel('lr_no') ?></th>
                 <th><?= Yii::t('app', 'Action') ?></th>
             </tr> 
         </thead>
