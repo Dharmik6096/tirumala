@@ -6,6 +6,7 @@ use Yii;
 use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_scheme_document_mapping".
@@ -76,9 +77,10 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     }
 
     public function getExistingMapping() {
-        $model = new TblSchemeDocumentMapping();
+        $model = new TblSchemeDocumentMaster();
         $config = $model->find()
                 ->select('doc_id')
+                ->where(['is_active' => 1])
                 ->all();
         if (!empty($config)) {
             $codes = [];
@@ -87,6 +89,28 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
             }
             $query = $this->find()
                     ->where(['IN', 'doc_id', $codes])
+                    ->andWhere(['scheme_id' => $this->scheme_id])
+                    ->all();
+            return ArrayHelper::map($query, 'doc_id', 'doc_id');
+        } else {
+            return [];
+        }
+    }
+
+    public function getExistingMappingIsmandate() {
+        $model = new TblSchemeDocumentMaster();
+        $config = $model->find()
+                ->select('doc_id')
+                ->where(['is_active' => 1])
+                ->all();
+        if (!empty($config)) {
+            $codes = [];
+            foreach ($config as $code) {
+                $codes[] = $code->doc_id;
+            }
+            $query = $this->find()
+                    ->where(['IN', 'doc_id', $codes])
+                    ->andWhere(['scheme_id' => $this->scheme_id, 'is_mandate' => 1])
                     ->all();
             return ArrayHelper::map($query, 'doc_id', 'doc_id');
         } else {
@@ -96,7 +120,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
 
     public function getExistMappedControl() {
         return $this->find()
-                        ->where(['doc_id' => $this->doc_id])
+                        ->where(['scheme_id' => $this->scheme_id, 'doc_id' => $this->doc_id])
                         ->one();
     }
 

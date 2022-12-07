@@ -63,11 +63,15 @@ $defaultToggle = true;
                                                         <?php
                                                         $val = $data[$i]['doc_id'];
                                                         $selected = in_array($val, $selectedArray);
-                                                        echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
+                                                        echo Html::checkbox('docId[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
                                                         ?>
                                                     </td>
-                                                    <td><?= $data[$i]->doc_name ?></td>
-                                                    <td><?= Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
+                                                    <td>
+                                                        <?= $data[$i]->doc_name ?></td>
+                                                    <?php
+                                                    $mandateselected = in_array($val, $mandateselectedArray);
+                                                    ?>
+                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
                                                 </tr>
 
                                             <?php } ?>
@@ -93,11 +97,14 @@ $defaultToggle = true;
                                                         <?php
                                                         $val = $data[$i]['doc_id'];
                                                         $selected = in_array($val, $selectedArray);
-                                                        echo Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
+                                                        echo Html::checkbox('docId[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]);
                                                         ?>
                                                     </td>
                                                     <td><?= $data[$i]->doc_name ?></td>
-                                                    <td><?= Html::checkbox('configCodes[]', $selected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
+                                                    <?php
+                                                    $mandateselected = in_array($val, $mandateselectedArray);
+                                                    ?>
+                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
                                                 </tr>
 
                                             <?php } ?>
@@ -125,23 +132,3 @@ $defaultToggle = true;
         </div>
     </div>
 </div>
-<?php
-$script = "
-    hideDiv();
-    $('#allowCashCheckAll').click(function () {
-        var check =this.checked;
-        $('.allow-cash-checkbox').each(function () {
-            this.checked = check;
-        });
-    });
-    $('.allow-cash-checkbox').each(function () {
-        $('#allowCashCheckAll').prop('checked', true);
-        if(this.checked == false){
-            $('#allowCashCheckAll').prop('checked', false);
-        }
-    });
-  
-
-";
-
-$this->registerJs($script, View::POS_END, 'force-rate-download');

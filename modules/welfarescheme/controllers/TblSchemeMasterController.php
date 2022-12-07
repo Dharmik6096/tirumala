@@ -10,6 +10,7 @@ use app\modules\welfarescheme\models\TblSchemeCriteria;
 use app\modules\welfarescheme\models\TblSchemeCriteriaSearch;
 use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
 use app\modules\welfarescheme\models\TblSchemeDocumentMappingSearch;
+use app\modules\welfarescheme\models\TblSchemeDocumentMappingHistory;
 use app\modules\welfarescheme\models\TblSchemeDocumentMasterSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -194,9 +195,11 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
     }
 
     public function actionSchemeDocumentMapping($id) {
-        $schemeDocumentMapping = new TblSchemeDocumentMapping();
-        $schemeDocumentMapping->doc_id = $id;
-        $schemeDocumentMapping->load(Yii::$app->request->queryParams);
+        $this->model = new TblSchemeDocumentMapping();
+        $this->model->scheme_id = $id;
+        $schemeModel = new TblSchemeMaster();
+        $schemeData = $schemeModel->find()->where(['scheme_id' => $id])->one();
+        $this->model->load(Yii::$app->request->queryParams);
         $searchModels = new TblSchemeDocumentMappingSearch();
         $searchModel = new TblSchemeDocumentMasterSearch();
         $searchModel->load(Yii::$app->request->queryParams);
@@ -204,22 +207,65 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         $searchModel->is_active = 1;
         $dataProvider = $searchModel->mappingsearch(Yii::$app->request->queryParams);
         $selectedArray = [];
-        $selectedArray = $schemeDocumentMapping->getExistingMapping();
-        if ($schemeDocumentMapping->load(Yii::$app->request->post())) {
-            $schemeDocumentMapping->union_code = Yii::$app->general->getforeignkey($schemeDocumentMapping->schemeId, 'union_code');
-            $schemeDocumentMapping->doc_id = Yii::$app->general->getforeignkey($schemeDocumentMapping->docId, 'doc_name');
-            $transaction = $this->generalModel->saveTransaction([$schemeDocumentMapping], ['Scheme Document Mapping', 'create']);
+        $selectedArray = $this->model->getExistingMapping();
+        $mandateselectedArray = [];
+        $mandateselectedArray = $this->model->getExistingMappingIsmandate();
+        if (Yii::$app->request->post()) {
+            $data = Yii::$app->request->post();
+            $postArray = !empty($data['docId']) ? $data['docId'] : [];
+            $postMendateArray = !empty($data['isMandate']) ? $data['isMandate'] : [];
+            $master = [];
+            $auto_inc = 1;
+            $newAssignments = [];
+            if (!empty($postArray)) {
+                $newAssignments = $postArray;
+            }
+            $oldAssignments = [];
+            if (!empty($selectedArray)) {
+                $oldAssignments = array_keys($selectedArray);
+            }
+            $toAssign = array_diff($newAssignments, $oldAssignments);
+            $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
+            $delete = [];
+            if (!empty($toRevoke)) {
+                foreach ($toRevoke as $revoke_widget) {
+                    $model = new TblSchemeDocumentMapping();
+                    $model->doc_id = $revoke_widget;
+                    $model->scheme_id = $id;
+                    $model->is_mandate = $this->model->is_mandate;
+                    $record = $model->getExistMappedControl();
+                    $historyModel = new TblSchemeDocumentMappingHistory();
+                    Yii::$app->operation->history($record, $historyModel, 'DELETE');
+                    $master[] = $historyModel;
+                    if (!empty($record)) {
+                        $delete[] = $record;
+                    }
+                }
+            }
+            if (!empty($toAssign)) {
+                foreach ($toAssign as $Assign_widget) {
+                    $model = new TblSchemeDocumentMapping();
+                    $model->doc_id = $Assign_widget;
+                    $model->scheme_id = $id;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($Assign_widget, $postMendateArray) ? 1 : 0;
+                    $model->union_code = $schemeData->union_code;
+                    $master[] = $model;
+                    $auto_inc++;
+                }
+            }
+            $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Control Mapping', 'edit']);
+            $selectedArray = !empty($postArray) ? $postArray : [];
+
             if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+                return $this->redirect(['index']);
             }
         }
         return $this->render('../../../welfarescheme/views/tbl-scheme-document-mapping/create', [
-                    'model' => $schemeDocumentMapping,
-                    'id' => $id,
+                    'model' => $this->model,
                     'searchModel' => $searchModel,
-                    'searchModels' => $searchModels,
                     'dataProvider' => $dataProvider,
-                    'selectedArray' => $selectedArray
+                    'selectedArray' => $selectedArray,
+                    'mandateselectedArray' => $mandateselectedArray,
         ]);
     }
 
