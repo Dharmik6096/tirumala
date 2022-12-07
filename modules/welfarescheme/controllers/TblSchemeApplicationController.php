@@ -150,6 +150,18 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                     }
                 }
                 if (empty($error_msg)) {
+                    $approval_stages = $model->approvalStages;
+                    foreach ($approval_stages as $stage) {
+                        $stage_model = new TblSchemeApplicationApproval();
+                        $stage_model->application_id = $model->application_id;
+                        $stage_model->scheme_id = $model->scheme_id;
+                        $stage_model->level = $stage->level;
+                        $stage_model->user_code = $stage->user_code;
+                        $stage_model->approval_mode = $stage->approval_mode;
+                        $save_model[] = $stage_model;
+                    }
+                    $model->application_status = 'registered';
+                    $save_model[] = $model;
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Scheme Application Registration', 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->customRedirect();
@@ -163,6 +175,37 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
         return $this->render('add_document', [
                     'model' => $model,
                     'doc_model' => $doc_model
+        ]);
+    }
+
+    public function actionPendingApproval() {
+        $searchModel = new TblSchemeApplicationSearch();
+        $dataProvider = $searchModel->pendingApproval(Yii::$app->request->queryParams);
+
+        return $this->render('pending_approval', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionApproveApplication($id, $app_approval_id) {
+        $model = TblSchemeApplicationApproval::findOne($app_approval_id);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model_save = [];
+            $model->status_date = date('Y-m-d');
+            $model->status_by = \Yii::$app->user->identity->user_code;
+            $model_save[] = $model;
+            if ($model->approval_mode == 'flexi') {
+                //find all pending approval for same level and update
+                // update application status 
+            }
+            $transaction = $this->generalModel->saveTransaction($model_save, ['Scheme Application Approval', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['pending-approval']);
+            }
+        }
+        return $this->render('approve_application', [
+                    'model' => $model,
         ]);
     }
 

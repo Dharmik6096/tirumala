@@ -145,6 +145,18 @@ class TblSchemeApplication extends \app\models\ChildModel {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
+    public function getApprovalStages() {
+        return $this->hasMany(TblSchemeApprovalStages::className(), ['scheme_id' => 'scheme_id']);
+    }
+
+    public function getApplicationDocuments() {
+        return $this->hasMany(TblSchemeApplicationDocuments::className(), ['application_id' => 'application_id']);
+    }
+
+    public function getApplicationApproval() {
+        return $this->hasMany(TblSchemeApplicationApproval::className(), ['application_id' => 'application_id'])->andOnCondition(['IS NOT', 'tbl_scheme_application_approval.application_status', NULL])->orderBy('level ASC');
+    }
+
     public function getSchemeDetail() {
         $application_date = date('Y-m-d', strtotime($this->application_date));
         $scheme_detail = \Yii::$app->general->getSpData('sp_welfarescheme_customer_detail', [$this->customer_code, $this->customer_type, $this->scheme_id, $application_date]);

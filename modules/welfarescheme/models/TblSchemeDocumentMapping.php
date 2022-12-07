@@ -5,6 +5,7 @@ namespace app\modules\welfarescheme\models;
 use Yii;
 use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 use app\modules\welfarescheme\models\TblSchemeMaster;
+use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
 
 /**
  * This is the model class for table "tbl_scheme_document_mapping".
@@ -23,6 +24,8 @@ use app\modules\welfarescheme\models\TblSchemeMaster;
  * @property string $originating_org_type
  */
 class TblSchemeDocumentMapping extends \app\models\ChildModel {
+
+    public $application_id;
 
     /**
      * @inheritdoc
@@ -97,4 +100,12 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
                         ->one();
     }
 
+    public function getApplicationDocument() {
+        return $this->hasOne(TblSchemeApplicationDocuments::className(), ['scheme_id' => 'scheme_id', 'doc_id' => 'doc_id'])->andOnCondition(['tbl_scheme_application_documents.application_id' => $this->application_id]);
     }
+
+    public function getDocumentMaster() {
+        return $this->hasOne(TblSchemeDocumentMaster::className(), ['doc_id' => 'doc_id']);
+    }
+
+}

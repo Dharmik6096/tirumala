@@ -1423,6 +1423,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
             ],
+            'ws_approval_status' => [
+                'name' => 'application_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['approved' => Yii::t('app', 'Approve'), 'rejected' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }

@@ -49,11 +49,48 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'application_id' => $this->application_id,
+            'scheme_id' => $this->scheme_id,
+            'application_date' => $this->application_date,
+            'min_pouring_day' => $this->min_pouring_day,
+            'min_pouring_qty' => $this->min_pouring_qty,
+            'actual_pouring_day' => $this->actual_pouring_day,
+            'actual_pouring_qty' => $this->actual_pouring_qty,
+            'scheme_value' => $this->scheme_value,
+            'approved_value' => $this->approved_value,
+            'status_date' => $this->status_date,
+        ]);
+
+        $query->andFilterWhere(['like', 'customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'customer_type', $this->customer_type])
+                ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'application_status', $this->application_status])
+                ->andFilterWhere(['like', 'status_by', $this->status_by])
+                ->andFilterWhere(['like', 'status_remarks', $this->status_remarks])
+                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
+                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
+                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
+                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
+                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+
+        return $dataProvider;
+    }
+
+    public function pendingApproval($params) {
+        $query = TblSchemeApplication::find();
+
+
+
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
 
         // grid filtering conditions
         $query->andFilterWhere([
