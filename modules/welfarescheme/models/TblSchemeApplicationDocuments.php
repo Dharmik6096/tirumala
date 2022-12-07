@@ -24,7 +24,7 @@ use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
  */
 class TblSchemeApplicationDocuments extends \app\models\ChildModel {
 
-    public $is_mandate, $doc_name;
+    public $is_mandate, $doc_name, $doc_ext;
 
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class TblSchemeApplicationDocuments extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['application_id', 'doc_id', 'originating_type'], 'integer'],
+                [['application_id', 'doc_id', 'originating_type'], 'safe'],
                 [['created_at', 'updated_at'], 'safe'],
                 [['file_name'], 'string', 'max' => 100],
                 [['file_path'], 'string', 'max' => 255],

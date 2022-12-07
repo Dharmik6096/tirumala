@@ -74,6 +74,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
             $model->min_pouring_qty = $scheme_detail['min_pouring_qty'];
             $model->actual_pouring_day = $scheme_detail['p_day'];
             $model->actual_pouring_qty = $scheme_detail['p_qty'];
+            $model->application_date = date('Y-m-d', strtotime($model->application_date));
             $transaction = $this->generalModel->saveTransaction([$model], ['Scheme Application', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['add-document', 'id' => $model->application_id]);
@@ -117,6 +118,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                 $app_doc->doc_id = $doc->doc_id;
             }
             $app_doc->is_mandate = $doc->is_mandate;
+            $app_doc->doc_ext = $master_doc->doc_ext;
             $app_doc->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
             $doc_model[] = $app_doc;
         }
@@ -161,6 +163,8 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                         $save_model[] = $stage_model;
                     }
                     $model->application_status = 'registered';
+                    $model->status_date = date('Y-m-d');
+                    $model->status_by = \Yii::$app->user->identity->user_code;
                     $save_model[] = $model;
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Scheme Application Registration', 'create']);
                     if ($transaction == 'customRedirect') {

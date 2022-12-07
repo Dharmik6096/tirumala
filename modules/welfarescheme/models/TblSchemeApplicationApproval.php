@@ -4,6 +4,7 @@ namespace app\modules\welfarescheme\models;
 
 use Yii;
 use app\modules\welfarescheme\models\TblSchemeApplication;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_scheme_application_approval".
@@ -78,6 +79,14 @@ class TblSchemeApplicationApproval extends \app\models\ChildModel {
 
     public function getSchemeApplication() {
         return $this->hasOne(TblSchemeApplication::className(), ['application_id' => 'application_id']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getStatusBy() {
+        return $this->hasOne(User::className(), ['user_code' => 'status_by']);
     }
 
 }

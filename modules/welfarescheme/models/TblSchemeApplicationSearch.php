@@ -12,12 +12,14 @@ use app\modules\welfarescheme\models\TblSchemeApplication;
  */
 class TblSchemeApplicationSearch extends TblSchemeApplication {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['application_id', 'scheme_id', 'originating_type'], 'integer'],
+                [['application_id', 'scheme_id', 'originating_type', 'from_date', 'to_date'], 'safe'],
                 [['customer_code', 'customer_type', 'application_date', 'remarks', 'application_status', 'status_date', 'status_by', 'status_remarks', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['min_pouring_day', 'min_pouring_qty', 'actual_pouring_day', 'actual_pouring_qty', 'scheme_value', 'approved_value'], 'number'],
         ];
@@ -40,50 +42,36 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
      */
     public function search($params) {
         $query = TblSchemeApplication::find();
-
-        // add conditions that should always apply here
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
+        $query->joinWith(['schemeId']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application');
 
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-30 DAYS'));
+        $query->andFilterWhere(['>=', 'tbl_scheme_application.application_date', $from_date]);
+
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_scheme_application.application_date', $to_date]);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'application_id' => $this->application_id,
-            'scheme_id' => $this->scheme_id,
-            'application_date' => $this->application_date,
-            'min_pouring_day' => $this->min_pouring_day,
-            'min_pouring_qty' => $this->min_pouring_qty,
-            'actual_pouring_day' => $this->actual_pouring_day,
-            'actual_pouring_qty' => $this->actual_pouring_qty,
-            'scheme_value' => $this->scheme_value,
-            'approved_value' => $this->approved_value,
-            'status_date' => $this->status_date,
+            'tbl_scheme_application.application_id' => $this->application_id,
+            'tbl_scheme_application.application_status' => $this->application_status,
         ]);
 
-        $query->andFilterWhere(['like', 'customer_code', $this->customer_code])
-                ->andFilterWhere(['like', 'customer_type', $this->customer_type])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'application_status', $this->application_status])
-                ->andFilterWhere(['like', 'status_by', $this->status_by])
-                ->andFilterWhere(['like', 'status_remarks', $this->status_remarks])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'union_code', $this->union_code]);
+        $query->andFilterWhere(['like', 'tbl_scheme_application.customer_type', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_scheme_application.remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_scheme_master.scheme_name', $this->scheme_id]);
 
         return $dataProvider;
     }
 
     public function pendingApproval($params) {
         $query = TblSchemeApplication::find();
-
-
-
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -292,11 +292,11 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('transfer_type', $model, $form, 'form-group', false, false, 'transfer_types', false); ?>
+                                            <?= Yii::$app->dropdown->dropdownStatic(($value == 'transfer_types') ? 'transfer_type' : $value, $model, $form, 'form-group', false, false, $value, false); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
