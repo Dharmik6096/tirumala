@@ -3,6 +3,9 @@
 namespace app\modules\welfarescheme\models;
 
 use Yii;
+use app\modules\welfarescheme\models\TblSchemeMaster;
+use \app\modules\organisation\models\TblUnions;
+use app\modules\welfarescheme\models\TblSchemeApplication;
 
 /**
  * This is the model class for table "tbl_scheme_application_disbursement".
@@ -28,43 +31,35 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeApplicationDisbursement extends \yii\db\ActiveRecord
-{
+class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_scheme_application_disbursement';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['application_id', 'originating_type'], 'integer'],
-            [['disburse_date', 'created_at', 'updated_at'], 'safe'],
-            [['disburse_value'], 'number'],
-            [['disburse_by', 'party_relation'], 'string', 'max' => 20],
-            [['payment_mode'], 'string', 'max' => 15],
-            [['bank_name', 'party_name'], 'string', 'max' => 100],
-            [['branch_name'], 'string', 'max' => 150],
-            [['payment_ref_id'], 'string', 'max' => 50],
-            [['payment_detail', 'remarks'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['application_id', 'originating_type'], 'integer'],
+                [['union_code', 'scheme_id', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_name', 'bank_name', 'party_name', 'payment_mode', 'disburse_by', 'party_relation', 'application_id', 'originating_type', 'disburse_value', 'disburse_date', 'created_at', 'updated_at'], 'safe'],
+                [['disburse_value'], 'number'],
+                [['union_code', 'scheme_id', 'application_id', 'disburse_value', 'party_relation', 'payment_ref_id', 'branch_name', 'bank_name', 'party_name', 'payment_mode', 'disburse_date'], 'required'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'disburse_id' => 'Disburse ID',
+            'scheme_id' => 'Scheme ID',
+            'union_code' => 'Union Code',
             'application_id' => 'Application ID',
             'disburse_date' => 'Disburse Date',
             'disburse_value' => 'Disburse Value',
@@ -86,4 +81,17 @@ class TblSchemeApplicationDisbursement extends \yii\db\ActiveRecord
             'originating_org_type' => 'Originating Org Type',
         ];
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getSchemeId() {
+        return $this->hasOne(TblSchemeMaster::className(), ['scheme_id' => 'scheme_id']);
+    }
+
+    public function getApplicationId() {
+        return $this->hasOne(TblSchemeApplication::className(), ['application_id' => 'application_id']);
+    }
+
 }

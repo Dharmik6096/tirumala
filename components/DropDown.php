@@ -1423,6 +1423,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
             ],
+            'payment_mode' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['online' => Yii::t('app', 'Online'), 'cash' => Yii::t('app', 'Cash'), 'draft' => Yii::t('app', 'Draft'), 'check' => Yii::t('app', 'Check')],
+            ],
         ];
         return $records[$l];
     }
@@ -1534,6 +1539,8 @@ class DropDown extends Component {
             'mcc_default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblMccBillHeadDefault'],
             'mcc_general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblMccGeneralFormula', 'depend' => 'union_code'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
+            'application_id' => ['name' => 'application_id', 'fields' => 'application_id,application_id,', 'prompt' => Yii::t('app', 'Select Application'), 'model' => 'TblSchemeApplication', 'depend' => 'scheme_id', 'dependArray' => ['application_status']],
+            'scheme_id' => ['name' => 'scheme_id', 'fields' => 'scheme_id,scheme_name,', 'prompt' => Yii::t('app', 'Select Scheme'), 'model' => 'TblSchemeMaster', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }
