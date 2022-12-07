@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_scheme_application".
@@ -82,34 +83,36 @@ class TblSchemeApplication extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'application_id' => 'Application ID',
-            'scheme_id' => 'Scheme ID',
-            'customer_code' => 'Customer Code',
-            'customer_type' => 'Customer Type',
-            'application_date' => 'Application Date',
-            'min_pouring_day' => 'Min Pouring Day',
-            'min_pouring_qty' => 'Min Pouring Qty',
-            'actual_pouring_day' => 'Actual Pouring Day',
-            'actual_pouring_qty' => 'Actual Pouring Qty',
-            'remarks' => 'Remarks',
-            'scheme_value' => 'Scheme Value',
-            'approved_value' => 'Approved Value',
-            'application_status' => 'Application Status',
-            'status_date' => 'Status Date',
-            'status_by' => 'Status By',
-            'status_remarks' => 'Status Remarks',
-            'dcs_code' => 'Dcs Code',
-            'bmc_code' => 'Bmc Code',
-            'mcc_plant_code' => 'Mcc Plant Code',
-            'plant_code' => 'Plant Code',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'originating_type' => 'Originating Type',
-            'originating_org_code' => 'Originating Org Code',
-            'originating_org_type' => 'Originating Org Type',
+            'application_id' => Yii::t('app', 'Appl.ID'),
+            'scheme_id' => Yii::t('app', 'Scheme'),
+            'customer_code' => Yii::t('app', 'Code'),
+            'customer_type' => Yii::t('app', 'Type'),
+            'application_date' => Yii::t('app', 'Appl.Date'),
+            'min_pouring_day' => Yii::t('app', 'Day(min)'),
+            'min_pouring_qty' => Yii::t('app', 'Qty(min)'),
+            'actual_pouring_day' => Yii::t('app', 'Day(act)'),
+            'actual_pouring_qty' => Yii::t('app', 'Qty(act)'),
+            'remarks' => Yii::t('app', 'Remarks'),
+            'scheme_value' => Yii::t('app', 'Scheme Value'),
+            'approved_value' => Yii::t('app', 'Approved Value'),
+            'application_status' => Yii::t('app', 'Appl.Status'),
+            'status_date' => Yii::t('app', 'Status Date'),
+            'status_by' => Yii::t('app', 'Status By'),
+            'status_remarks' => Yii::t('app', 'Status Remarks'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'PLANT'),
+            'union_code' => Yii::t('app', 'Union'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'customer_name' => Yii::t('app', 'Name'),
+            'ex_code' => Yii::t('app', 'Code Ex.')
         ];
     }
 
@@ -143,6 +146,30 @@ class TblSchemeApplication extends \app\models\ChildModel {
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
+    public function getApprovalStages() {
+        return $this->hasMany(TblSchemeApprovalStages::className(), ['scheme_id' => 'scheme_id']);
+    }
+
+    public function getApplicationDocuments() {
+        return $this->hasMany(TblSchemeApplicationDocuments::className(), ['application_id' => 'application_id']);
+    }
+
+    public function getApplicationApproval() {
+        return $this->hasMany(TblSchemeApplicationApproval::className(), ['application_id' => 'application_id'])->andOnCondition(['IS NOT', 'tbl_scheme_application_approval.application_status', NULL])->orderBy('level ASC');
+    }
+
+    public function getSchemeId() {
+        return $this->hasOne(TblSchemeMaster::className(), ['scheme_id' => 'scheme_id']);
+    }
+
+    public function getStatusBy() {
+        return $this->hasOne(User::className(), ['user_code' => 'status_by']);
+    }
+
+    public function getApplicationApprovalStages() {
+        return $this->hasMany(TblSchemeApplicationApproval::className(), ['application_id' => 'application_id'])->orderBy('level ASC');
     }
 
     public function getSchemeDetail() {

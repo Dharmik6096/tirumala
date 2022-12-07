@@ -1428,6 +1428,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['online' => Yii::t('app', 'Online'), 'cash' => Yii::t('app', 'Cash'), 'draft' => Yii::t('app', 'Draft'), 'check' => Yii::t('app', 'Check')],
             ],
+            'ws_approval_status' => [
+                'name' => 'application_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['approved' => Yii::t('app', 'Approve'), 'rejected' => Yii::t('app', 'Reject')],
+            ],
+            'application_status' => [
+                'name' => 'application_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['pending' => Yii::t('app', 'Pending'), 'registered' => Yii::t('app', 'Registered'), 'inprocess' => Yii::t('app', 'Inprocess'), 'approved' => Yii::t('app', 'Approved'), 'rejected' => Yii::t('app', 'Rejected'), 'disbursed' => Yii::t('app', 'Disbursed')],
+            ],
         ];
         return $records[$l];
     }

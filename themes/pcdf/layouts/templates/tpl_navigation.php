@@ -70,7 +70,8 @@ echo GhostMenu::widget([
                     'items' => [
                             ['label' => Yii::t('app', 'Scheme Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
                             ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
-                            ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application')],
+                            ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'index')],
+                            ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/welfarescheme/tbl-scheme-application/pending-approval'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'pending-approval')],
                             ['label' => Yii::t('app', 'Scheme Application Disbursement'), 'url' => ['/welfarescheme/tbl-scheme-application-disbursement/index'], 'active' => ($cntrl == 'tbl_scheme_application_disbursement')],
                     ]
                 ],

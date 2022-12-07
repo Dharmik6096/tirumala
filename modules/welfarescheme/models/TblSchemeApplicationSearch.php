@@ -12,12 +12,14 @@ use app\modules\welfarescheme\models\TblSchemeApplication;
  */
 class TblSchemeApplicationSearch extends TblSchemeApplication {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-                [['application_id', 'scheme_id', 'originating_type'], 'integer'],
+                [['application_id', 'scheme_id', 'originating_type', 'from_date', 'to_date'], 'safe'],
                 [['customer_code', 'customer_type', 'application_date', 'remarks', 'application_status', 'status_date', 'status_by', 'status_remarks', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['min_pouring_day', 'min_pouring_qty', 'actual_pouring_day', 'actual_pouring_qty', 'scheme_value', 'approved_value'], 'number'],
         ];
@@ -40,8 +42,36 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
      */
     public function search($params) {
         $query = TblSchemeApplication::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
 
-        // add conditions that should always apply here
+        $this->load($params);
+        $query->joinWith(['schemeId']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application');
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime('-30 DAYS'));
+        $query->andFilterWhere(['>=', 'tbl_scheme_application.application_date', $from_date]);
+
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_scheme_application.application_date', $to_date]);
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'tbl_scheme_application.application_id' => $this->application_id,
+            'tbl_scheme_application.application_status' => $this->application_status,
+        ]);
+
+        $query->andFilterWhere(['like', 'tbl_scheme_application.customer_type', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_scheme_application.remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_scheme_master.scheme_name', $this->scheme_id]);
+
+        return $dataProvider;
+    }
+
+    public function pendingApproval($params) {
+        $query = TblSchemeApplication::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -49,11 +79,6 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
 
         // grid filtering conditions
         $query->andFilterWhere([

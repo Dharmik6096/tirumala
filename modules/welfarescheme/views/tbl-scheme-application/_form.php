@@ -58,9 +58,6 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
     </div>
     <div class="col-sm-1 reset_field">
-        <?= $form->field($model, 'scheme_value')->textInput(['readOnly' => true]) ?>
-    </div>
-    <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'min_pouring_day')->textInput(['readOnly' => true]) ?>
     </div>
     <div class="col-sm-1 reset_field">
@@ -72,8 +69,11 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'actual_pouring_qty')->textInput(['readOnly' => true]) ?>
     </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'remarks')->textarea(); ?>
+    <div class="col-sm-1 reset_field">
+        <?= $form->field($model, 'scheme_value')->textInput(['readOnly' => true]) ?>
+    </div>
+    <div class="col-sm-3">
+        <?= $form->field($model, 'remarks')->textarea([]); ?>
     </div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
