@@ -159,7 +159,7 @@ use kartik\detail\DetailView;
                             <div class="form-group">
                                 <?= Yii::$app->controls->save('SAVE', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->cancel($model); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
                             </div>  
                         </div>
                     </div>

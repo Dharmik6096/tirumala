@@ -223,7 +223,7 @@ $approval_detail = $application->applicationApproval;
                             <div class="form-group">
                                 <?= Yii::$app->controls->save('save', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->cancel($model); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
                             </div>  
                         </div>
                     </div>
