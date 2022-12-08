@@ -48,21 +48,23 @@ class TblGrn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['mcc_plant_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
-                [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
-                [['grn_date', 'mcc_plant_code', 'vendor_master_code', 'invoice_date'], 'required'],
-                [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code'], 'safe'],
-                [['remarks', 'originating_type', 'union_code'], 'safe'],
-                [['grn_no', 'invoice_no'], 'string', 'max' => 30],
-                [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
-                [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
-                [['grn_date', 'invoice_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['grn_date', 'invoice_date'], 'convertDate', 'on' => ['importCsv']],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe']
+            [['mcc_plant_code', 'grn_date', 'vendor_code', 'invoice_date', 'invoice_no', 'product_code', 'rate', 'received_qty', 'tax', 'rejected_qty'], 'required', 'on' => 'importCsv'],
+            [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
+            [['grn_date', 'mcc_plant_code', 'invoice_date'], 'required', 'on' => ['batchcreate']],
+            [['plant_code'], 'required', 'on' => ['batchcreate']],
+            [['vendor_master_code'], 'required', 'except' => ['batchcreate']],
+            [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code'], 'safe'],
+            [['remarks', 'originating_type', 'union_code', 'mcc_plant_code'], 'safe'],
+            [['grn_no', 'invoice_no'], 'string', 'max' => 30],
+            [['vendor_master_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVendorMaster::className(), 'targetAttribute' => ['vendor_master_code' => 'vendor_master_code'], 'on' => 'importCsv'],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
+            [['grn_date', 'invoice_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['grn_date', 'invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['grn_date', 'invoice_date'], 'convertDate', 'on' => ['importCsv']],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe']
         ];
     }
 
@@ -87,11 +89,16 @@ class TblGrn extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'plant_code' => Yii::t('app', 'Plant'),
         ];
     }
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(\app\modules\organisation\models\TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
     public function getMccPlantCode() {

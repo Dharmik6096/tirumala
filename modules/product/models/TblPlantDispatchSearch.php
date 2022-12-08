@@ -101,4 +101,30 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
         return $dataProvider;
     }
 
+    public function docnosearch($params) {
+        $query = TblPlantDispatchTxn::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        $query->join('INNER JOIN', 'tbl_plant_dispatch', 'tbl_plant_dispatch.plant_dispatch_code=tbl_plant_dispatch_txn.plant_dispatch_code');
+
+        $query->andWhere([
+            'tbl_plant_dispatch.document_no' => $this->document_no]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+
+        return $dataProvider;
+    }
+
 }

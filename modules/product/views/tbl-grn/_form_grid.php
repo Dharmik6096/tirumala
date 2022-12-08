@@ -8,6 +8,9 @@
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
+
+$vendor = $batchNoWiseInventory == 1 ? FALSE : TRUE;
+$plant = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 ?>
 
 <?php
@@ -16,12 +19,15 @@ $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false],
+    ['attribute' => 'plant_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+        }, 'visible' => $plant, 'filter' => false],
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => TRUE, 'filter' => false],
     ['attribute' => 'vendor_master_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
-        }, 'visible' => TRUE,],
+        }, 'visible' => $vendor,],
     ['attribute' => 'grn_no'],
     ['label' => Yii::t('app', 'GRN Date'), 'attribute' => 'grn_date',
         'filterType' => GridView::FILTER_DATE,

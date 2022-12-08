@@ -15,6 +15,9 @@ use app\modules\product\models\TblGrnTxnSearch;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\product\models\TblProductStockHistory;
+use app\modules\product\models\TblPlantDispatchSearch;
+use app\modules\product\models\TblPlantDispatch;
+use app\modules\product\models\TblPlantDispatchHistory;
 
 /**
  * TblGrnController implements the CRUD actions for TblGrn model.
@@ -208,6 +211,112 @@ class TblGrnController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
+    }
+
+    public function actionCreateOther() {
+        $this->model = new TblGrn();
+        $this->model->grn_no = rand(1000, 9999);
+        $searchModel = new TblGrnTxnSearch();
+        $dataProvider = $searchModel->createsearch(Yii::$app->request->get());
+        $dataProvider->sort = false;
+        $txModel = new TblGrnTxn();
+//        $txModel->scenario = 'create';
+
+        $this->viewFile = 'create';
+//        $this->model->scenario = 'create';
+        $modelSave = [];
+        $errors = [];
+        $message = 'GRN';
+        $type = 'create';
+        if (Yii::$app->request->post()) {
+            $postData = Yii::$app->request->post();
+            $grnData = Yii::$app->request->post()['TblGrn'];
+            $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
+            $this->model->setAttributes($grnData);
+            $this->model->grn_code = Yii::$app->general->getPrimaryCode($this->model, 1);
+            $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
+            $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : '';
+            $this->model->scenario = 'batchcreate';
+            $modelSave[] = $this->model;
+            $i = 1;
+            foreach ($txnData as $txn) {
+                $txModel = new TblGrnTxn();
+                $txModel->setAttributes($txn);
+                $txModel->union_code = $this->model->union_code;
+                $txModel->grn_code = $this->model->grn_code;
+                $txModel->gross_amount = $txn['amount'];
+                $txModel->basic_amount = $txn['amount'];
+                $txModel->grn_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->grn_code, $i);
+                $txModel->scenario = 'batchcreate';
+                $modelSave[] = $txModel;
+                if (!$txModel->validate()) {
+                    $errors[] = $txModel->getErrors();
+                }
+                $i++;
+            }
+            $dispatchModel = new TblPlantDispatch();
+            $dispatchData = $dispatchModel->find()->where(['union_code' => $this->model->union_code, 'plant_code' => $this->model->plant_code, 'mcc_plant_code' => $this->model->mcc_plant_code, 'document_no' => $this->model->ref_no])->one();
+
+            if (!empty($dispatchData)) {
+                $historyModel = new TblPlantDispatchHistory();
+                Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
+                $modelSave[] = $historyModel;
+                $dispatchData->status = '1';
+                $modelSave[] = $dispatchData;
+            }
+
+            if (empty($this->model->getErrors()) && $this->model->validate() && empty($errors)) {
+                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                $err = [];
+                foreach ($this->model->getErrors() as $key => $value) {
+                    $err[$key] = $value;
+                }
+
+                foreach ($errors as $array) {
+                    foreach ($array as $key => $value) {
+                        if (isset($err[$key])) {
+                            $err[$key] .= $value . '<br>';
+                        } else {
+                            $err[$key] = $value[0] . '<br>';
+                        }
+                    }
+                }
+
+                return Json::encode($err);
+//                return Json::encode(ActiveForm::validate($this->model, $txModel));
+            }
+        } else {
+            return $this->render('create_other', [
+                        'model' => $this->model,
+                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel,
+            ]);
+        }
+        return $this->render('create_other', [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'txModel' => $txModel,
+        ]);
+    }
+
+    public function actionListGridOther() {
+        $postData = Yii::$app->request->get()['TblGrn'];
+        $searchModel = new TblPlantDispatchSearch();
+        $searchModel->document_no = isset($postData['ref_no']) ? $postData['ref_no'] : NULL;
+        $dataProvider = $searchModel->docnosearch([]);
+        $model = new TblGrn();
+        $model->setAttributes($postData);
+        return $this->renderAjax('_list_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'model' => $model]);
     }
 
 }

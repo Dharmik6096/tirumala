@@ -761,7 +761,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1488,6 +1488,7 @@ class DropDown extends Component {
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
+            'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
         ];
         return $label[$l];
     }
@@ -1574,7 +1575,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
