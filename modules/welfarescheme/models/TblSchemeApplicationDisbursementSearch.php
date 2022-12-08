@@ -61,12 +61,13 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
             'scheme_id' => $this->scheme_id,
             'union_code' => $this->union_code,
             'application_id' => $this->application_id,
-            'disburse_date' => $this->disburse_date,
             'disburse_value' => $this->disburse_value,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'originating_type' => $this->originating_type,
         ]);
+        if (!empty($this->disburse_date))
+            $query->andFilterWhere(['like', 'cast(tbl_scheme_application_disbursement.disburse_date as DATE)', date('Y-m-d', strtotime($this->disburse_date))]);
 
         $query->andFilterWhere(['like', 'disburse_by', $this->disburse_by])
                 ->andFilterWhere(['like', 'payment_mode', $this->payment_mode])

@@ -47,8 +47,8 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-application-disbursement/update', 'id' => $model->disburse_id], $options);
         },
-        'delete' => ['option' => 'disburse_id,disburse_id,/welfarescheme/tbl-scheme-application-disbursement/delete'],
-    ]
+        'delete' => ['option' => 'party_name,disburse_id,/welfarescheme/tbl-scheme-application-disbursement/delete'],
+    ]  
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

@@ -6,6 +6,8 @@ use Yii;
 use app\modules\welfarescheme\models\TblSchemeApplicationDisbursement;
 use app\modules\welfarescheme\models\TblSchemeApplicationDisbursementSearch;
 use app\modules\welfarescheme\models\TblSchemeApplicationDisbursementHistory;
+use app\modules\welfarescheme\models\TblSchemeApplication;
+use app\modules\welfarescheme\models\TblSchemeApplicationHistory;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,9 +50,24 @@ class TblSchemeApplicationDisbursementController extends \app\controllers\ChildC
     public function actionCreate() {
         $this->model = new TblSchemeApplicationDisbursement();
         $this->viewFile = 'create';
+        $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->disburse_date = !empty($this->model->disburse_date) ? date('Y-m-d', strtotime($this->model->disburse_date)) : '';
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Application Disbursement', 'create']);
+            $this->model->disburse_by = \Yii::$app->user->identity->user_code;
+            $master[] = $this->model;
+            $app_scheme = TblSchemeApplication::findOne(['application_id' => $this->model->application_id, 'application_status' => 'approved']);
+
+            $historyModel = new TblSchemeApplicationHistory();
+            Yii::$app->operation->history($app_scheme, $historyModel, 'Update');
+            $master[] = $historyModel;
+
+            $app_scheme->application_status = 'disbursed';
+            $app_scheme->status_date = $this->model->disburse_date;
+            $app_scheme->status_by = \Yii::$app->user->identity->user_code;
+            $app_scheme->status_remarks = $this->model->remarks;
+            $master[] = $app_scheme;
+
+            $transaction = $this->generalModel->saveTransaction($master, ['Scheme Application Disbursement', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -87,10 +104,13 @@ class TblSchemeApplicationDisbursementController extends \app\controllers\ChildC
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $historyModel = new TblSchemeApplicationDisbursementHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**
