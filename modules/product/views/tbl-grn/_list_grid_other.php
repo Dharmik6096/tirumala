@@ -18,15 +18,15 @@ $form = ActiveForm::begin([
 <div class="col-sm-12 padding-left-0 padding-right-0 ">
     <h5 class="panel-heading"><?= Yii::t('app', 'Product Details') ?></h5>
     <?php
-    echo Html::activeTextInput($model, 'union_code', ['id' => 'set_union_code']);
-    echo Html::activeTextInput($model, 'plant_code', ['id' => 'set_plant_code']);
-    echo Html::activeTextInput($model, 'mcc_plant_code', ['id' => 'set_mcc_plant_code']);
-    echo Html::activeTextInput($model, 'grn_no', ['id' => 'set_grn_no']);
-    echo Html::activeTextInput($model, 'grn_date', ['id' => 'set_grn_date']);
-    echo Html::activeTextInput($model, 'invoice_date', ['id' => 'set_invoice_date']);
-    echo Html::activeTextInput($model, 'invoice_no', ['id' => 'set_invoice_no']);
-    echo Html::activeTextInput($model, 'ref_no', ['id' => 'set_ref_no']);
-    echo Html::activeTextInput($model, 'remarks', ['id' => 'set_remarks']);
+    echo Html::activeHiddenInput($model, 'union_code', ['id' => 'set_union_code']);
+    echo Html::activeHiddenInput($model, 'plant_code', ['id' => 'set_plant_code']);
+    echo Html::activeHiddenInput($model, 'mcc_plant_code', ['id' => 'set_mcc_plant_code']);
+    echo Html::activeHiddenInput($model, 'grn_no', ['id' => 'set_grn_no']);
+    echo Html::activeHiddenInput($model, 'grn_date', ['id' => 'set_grn_date']);
+    echo Html::activeHiddenInput($model, 'invoice_date', ['id' => 'set_invoice_date']);
+    echo Html::activeHiddenInput($model, 'invoice_no', ['id' => 'set_invoice_no']);
+    echo Html::activeHiddenInput($model, 'ref_no', ['id' => 'set_ref_no']);
+    echo Html::activeHiddenInput($model, 'remarks', ['id' => 'set_remarks']);
 
     $attribute = [
         ['attribute' => 'product_code', 'value' => function ($model, $key, $index) {

@@ -50,11 +50,11 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_stock_code'], 'required', 'on' => ['androidsync']],
-                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['stock'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['product_stock_code'], 'required', 'on' => ['androidsync']],
+            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['stock', 'sap_batch_no'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
         ];
     }
 
@@ -110,8 +110,11 @@ class TblProductStock extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getExistStock($type) {
+    public function getExistStock($type, $batch = '') {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
+        if (!empty($batch)) {
+            $query->andWhere(['sap_batch_no' => $batch]);
+        }
         if (strtoupper($type) == 'MCC') {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
