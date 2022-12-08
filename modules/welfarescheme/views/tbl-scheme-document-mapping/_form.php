@@ -20,11 +20,6 @@ $form = ActiveForm::begin([
 
 <div class="row">
     <?= Html::activeHiddenInput($model, 'doc_id', ['value' => $model->doc_id]) ?>
-
-    <!--    <div class="col-sm-2">
-             $form->field($model, 'is_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>-->
-
 </div>
 
 <?php ActiveForm::end(); ?>

@@ -15,11 +15,6 @@ $defaultToggle = true;
     <div class="panel-body">
         <div class="padding-0">
             <?php
-            echo $this->render('_form', [
-                'type' => 'create',
-                'model' => $model]);
-            ?>
-            <?php
             $form = ActiveForm::begin(['options' => [
                             'field-class' => 'form-group col-sm-3'
                         ], 'validateOnBlur' => FALSE,
@@ -71,7 +66,7 @@ $defaultToggle = true;
                                                     <?php
                                                     $mandateselected = in_array($val, $mandateselectedArray);
                                                     ?>
-                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
+                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => '', 'label' => '', 'value' => $val]); ?></td>
                                                 </tr>
 
                                             <?php } ?>
@@ -104,7 +99,7 @@ $defaultToggle = true;
                                                     <?php
                                                     $mandateselected = in_array($val, $mandateselectedArray);
                                                     ?>
-                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => 'allow-cash-checkbox checkbox', 'label' => '', 'value' => $val]); ?></td>
+                                                    <td><?= Html::checkbox('isMandate[]', $mandateselected, ['class' => '', 'label' => '', 'value' => $val]); ?></td>
                                                 </tr>
 
                                             <?php } ?>
@@ -132,3 +127,21 @@ $defaultToggle = true;
         </div>
     </div>
 </div>
+<?php
+$script = "
+  
+    $('#allowCashCheckAll').click(function () {
+        var check =this.checked;
+        $('.allow-cash-checkbox').each(function () {
+            this.checked = check;
+        });
+    });
+    $('.allow-cash-checkbox').each(function () {
+        $('#allowCashCheckAll').prop('checked', true);
+        if(this.checked == false){
+            $('#allowCashCheckAll').prop('checked', false);
+        }
+    });
+";
+
+$this->registerJs($script, View::POS_END, 'force-rate-download');

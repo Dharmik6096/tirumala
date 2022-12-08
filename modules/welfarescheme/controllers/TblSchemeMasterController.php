@@ -226,13 +226,15 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
             }
             $toAssign = array_diff($newAssignments, $oldAssignments);
             $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
+            $toUpdate = array_diff($newAssignments, array_merge($toAssign, $toRevoke));
+
             $delete = [];
             if (!empty($toRevoke)) {
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblSchemeDocumentMapping();
                     $model->doc_id = $revoke_widget;
                     $model->scheme_id = $id;
-                    $model->is_mandate = $this->model->is_mandate;
+                    $model->union_code = $schemeData->union_code;
                     $record = $model->getExistMappedControl();
                     $historyModel = new TblSchemeDocumentMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
@@ -253,6 +255,24 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
                     $auto_inc++;
                 }
             }
+
+            if (!empty($toUpdate)) {
+                foreach ($toUpdate as $update_widget) {
+                    $model = new TblSchemeDocumentMapping();
+                    $model->doc_id = $update_widget;
+                    $model->scheme_id = $id;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($update_widget, $postMendateArray) ? 1 : 0;
+                    $record = $model->getExistMappedControl();
+                    if (!empty($record) && ($model->is_mandate != $record->is_mandate)) {
+                        $historyModel = new TblSchemeDocumentMappingHistory();
+                        Yii::$app->operation->history($record, $historyModel, 'UPDATE');
+                        $master[] = $historyModel;
+                        $record->is_mandate = $model->is_mandate;
+                        $master[] = $record;
+                    }
+                }
+            }
+
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Control Mapping', 'edit']);
             $selectedArray = !empty($postArray) ? $postArray : [];
 
