@@ -62,6 +62,7 @@ class TblSchemeApplicationSearch extends TblSchemeApplication {
 
             $query->innerJoin(['ap' => $subQuery], 'tbl_scheme_application.application_id = ap.application_id');
             $query->addSelect(['tbl_scheme_application.*', 'ap.app_approval_id as app_approval_id']);
+            $this->application_status = ['registered', 'inprocess'];
         }
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application', 'tbl_scheme_application');

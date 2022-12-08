@@ -222,7 +222,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                 $next_count = TblSchemeApplicationApproval::find()
                         ->where(['application_id' => $model->application_id, 'level' => $model->level + 1])
                         ->count();
-                $status = ($next_count > 0) ? 'inprocess' : $model->application_status;
+                $status = ($next_count > 0 && $model->application_status == 'approved') ? 'inprocess' : $model->application_status;
                 $application = $this->findModel($model->application_id);
                 $historyModel = new TblSchemeApplicationHistory();
                 Yii::$app->operation->history($application, $historyModel, UPDATE);
