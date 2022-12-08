@@ -29,7 +29,7 @@ use yii\base\Model;
  */
 class TblSchemeApplicationController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-customer', 'scheme-list'];
+    public $freeAccessActions = ['validate-customer', 'scheme-list', 'application-list'];
 
     /**
      * Lists all TblSchemeApplication models.
@@ -343,6 +343,22 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
             if (!empty($parents[0]) && !empty($parents[1])) {
                 $scheme = new TblSchemeMaster();
                 $data = $scheme->getUnionSchemeList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionApplicationList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $application = new TblSchemeApplication();
+                $data = $application->getApplicationList($parents[0], $parents[1]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

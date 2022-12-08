@@ -28,9 +28,9 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('scheme_id', $model, $form, 'tblschemeapplicationdisbursement-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('scheme_id')); ?>
     </div>
 
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <?= Html::hiddenInput('application_status', 'approved', ['id' => 'application_status']); ?>
-        <?php Yii::$app->dropdown->depend_dropdown('application_id', $model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('application_id')); ?>
+        <?php echo Yii::$app->dropdown->welfareSchemeApplication($model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status', 'application_id', $model->getAttributeLabel('application_id')); ?>
     </div>
 
     <div class="col-sm-2">
@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, '', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', FALSE, FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('ws_payment_mode', $model, $form, '', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', FALSE, FALSE, FALSE); ?>
     </div>
 
     <div class="col-sm-2">

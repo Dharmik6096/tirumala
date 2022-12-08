@@ -533,6 +533,15 @@ class DropDown extends Component {
         }
     }
 
+    public function welfareSchemeApplication($model, $form, $depends, $name = 'application_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/application-list', Yii::t('app', 'Select Application'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/application-list', Yii::t('app', 'Select Application'), $multiple, $extra_param, $readonly);
+        }
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1423,7 +1432,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
             ],
-            'payment_mode' => [
+            'ws_payment_mode' => [
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['online' => Yii::t('app', 'Online'), 'cash' => Yii::t('app', 'Cash'), 'draft' => Yii::t('app', 'Draft'), 'check' => Yii::t('app', 'Check')],

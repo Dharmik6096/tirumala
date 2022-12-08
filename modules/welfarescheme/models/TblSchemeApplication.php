@@ -14,6 +14,7 @@ use app\modules\dcsoperation\models\TblMember;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
 use app\modules\usermanagement\models\User;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_scheme_application".
@@ -182,6 +183,16 @@ class TblSchemeApplication extends \app\models\ChildModel {
             $scheme_detail['scheme_value'] = $scheme_detail['min_pouring_day'] = $scheme_detail['min_pouring_qty'] = $scheme_detail['p_qty'] = $scheme_detail['p_day'] = 0.00;
         }
         return $scheme_detail;
+    }
+
+    public function getApplicationList($scheme_id, $status) {
+        $data = TblSchemeApplication::find()
+                ->where(['scheme_id' => $scheme_id, 'application_status' => $status])
+                ->all();
+        return ArrayHelper::map($data, 'application_id', function($d) {
+                    return $d->application_id . '/' . $d->customer_type . '/' . Yii::$app->general->getCustomer($d, $d->customer_type) . '(' . Yii::$app->general->getCustomer($d, $d->customer_type, true) . ')/' . Yii::$app->general->getCustomer($d, $d->customer_type, FALSE, FALSE, true);
+                }
+        );
     }
 
 }
