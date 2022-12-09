@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_product_stock".
@@ -199,4 +200,27 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
+    public function getProductBatchList($type, $code, $product) {
+        $query = $this->find()->where([
+                    'product_code' => $product])
+                ->andWhere(['>', 'tbl_product_stock.stock', 0]);
+
+        $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (strtoupper($type) == 'MCC') {
+            $query->andWhere(['mcc_plant_code' => $code])
+                    ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['dcs_code' => $code]);
+        }
+        $data = $query->all();
+        if (!empty($data)) {
+            $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
+            asort($data, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        return $data;
+    }
+
 }

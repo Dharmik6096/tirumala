@@ -729,13 +729,14 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $from_type = Yii::$app->request->post('type');
         $from_code = Yii::$app->request->post('code');
         $union_code = Yii::$app->request->post('union_code');
+        $sap_batch_no = Yii::$app->request->post('sap_batch_no');
         $sale_type = strtoupper($from_type) == 'MEMBER' ? 'DCS' : 'BMC';
 
         $stockModel = new TblProductStock();
         $stockModel->setCodes(strtoupper($sale_type), $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-        $existtoStock = $stockModel->getExistStock($sale_type);
+        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {

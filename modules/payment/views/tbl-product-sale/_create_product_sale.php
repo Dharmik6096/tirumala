@@ -11,6 +11,7 @@ $message = !empty($message) ? $message : 'Product Sale';
 $this->title = Yii::$app->label->title('create', $message);
 $type = !empty($type) ? $type : '';
 //memberWiseSale
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -77,7 +78,16 @@ $type = !empty($type) ? $type : '';
                 <div class="col-sm-1 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
-
+                <?php
+                if ($batchNoWiseInventory == 1) {
+                    $sale_type = $type == 'memberWiseSale' ? 'DCS' : 'BMC';
+                    echo Html::hiddenInput('type', $sale_type, ['id' => 'batch_type_depends']);
+                    $depends = $type == 'memberWiseSale' ? 'tblproductsale-dcs_code' : 'tblproductsale-bmc_code';
+                    ?>
+                    <div class="col-sm-2 reset_field">
+                        <?= Yii::$app->dropdown->productBatch($detailModel, $form, 'batch_type_depends,' . $depends . ',tblproductsaletransaction-product_code', 'sap_batch_no', $detailModel->getAttributeLabel('sap_batch_no'), FALSE); ?> 
+                    </div>
+                <?php } ?>
                 <div class=" col-sm-1 reset_field unit disabledDiv">
                     <?= Yii::$app->dropdown->dropdown('unit_code', $detailModel, $form, 'form-group col-sm-2', $detailModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
                 </div>
@@ -536,11 +546,19 @@ $script = "
     $('#tblproductsale-dcs_code').on('change', function(){
         getAvailableStock();
     });
+    
+    $('#tblproductsaletransaction-sap_batch_no').on('change', function(){
+        var sap_batch_no = $('#tblproductsaletransaction-sap_batch_no').val();
+        if(setData(sap_batch_no)){
+            getAvailableStock();
+        }
+    });
 
     function getAvailableStock(){
         var type = $('#tblproductsale-customer_type').val();
         var product = $('#tblproductsaletransaction-product_code').val();
         var union = $('#tblproductsale-union_code').val();
+        var sap_batch_no = $('#tblproductsaletransaction-sap_batch_no').val();
         var code ='';
         if(type=='Member'){
             var code = $('#tblproductsale-dcs_code').val();
@@ -552,7 +570,7 @@ $script = "
              $.ajax({
                     type: 'post',
                     url:'" . Url::to(['get-available-stock']) . "',
-                    data: {'product':product,'type':type,'code':code,'union_code':union},
+                    data: {'product':product,'type':type,'code':code,'union_code':union,'sap_batch_no':sap_batch_no},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

@@ -159,8 +159,8 @@ $script = "
             add_row += '<td class=\"product_name\">' + productName + '</td>';
             add_row += '<td class=\"unit_name\">' + unitName + '<input type=\"hidden\" class=\"added_unit_code\" value=\"'+unit_code+'\" name=\"TblPlantDispatchTxn['+product_code+'][unit_code]\" ></td>';
             add_row += '<td>' + sap_batch_no + '<input type=\"hidden\" class=\"added_sap_batch_no\" value=\"'+sap_batch_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][sap_batch_no]\" ></td>';
-            add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + rate + '<input type=\"hidden\" class=\"added_rate\" value=\"'+rate+'\" name=\"TblPlantDispatchTxn['+product_code+'][rate]\" ></td>';
+            add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+amount+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
             add_row += '<td>' + lr_no + '<input type=\"hidden\" class=\"added_lr_no\" value=\"'+lr_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][lr_no]\" ></td>';
             add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+product_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+product_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';

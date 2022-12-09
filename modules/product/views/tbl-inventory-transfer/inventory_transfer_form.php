@@ -33,11 +33,16 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
             </div>
             <div class="col-sm-2 create_fields">
-                <?= $form->field($model, 'inventory_transfer_no')->textInput()->label(Yii::t('app', 'inventory transfer no')) ?>
+                <?= $form->field($model, 'inventory_transfer_no')->textInput() ?>
             </div>
             <div class="col-sm-2 create_fields">
                 <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', false, false, false, true); ?>
             </div>
+            <?php if ($batchNoWiseInventory == 1) { ?>
+                <div class="col-sm-2 create_fields">
+                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false, true); ?>
+                </div>
+            <?php } ?>
             <div class="col-sm-2 create_fields">
                 <?= Yii::$app->dropdown->dropdownStatic('org_type', $model, $form, 'form-group', $model->getAttributeLabel('from_type'), false, 'from_type', false); ?>
             </div>
@@ -80,6 +85,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblinventorytransfer-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $txModel->getAttributeLabel('product_code'), 'product_code'); ?>
         </div>
+        <?php if ($batchNoWiseInventory == 1) { ?>
+            <div class="col-sm-2 create_fields">
+                <?= Yii::$app->dropdown->productBatch($txModel, $form, 'tblinventorytransfer-from_type,f_code,tblinventorytransfertxn-product_code', 'sap_batch_no', $txModel->getAttributeLabel('sap_batch_no'), FALSE); ?> 
+            </div>
+        <?php } ?>
         <div class=" col-sm-2 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>

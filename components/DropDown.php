@@ -1706,4 +1706,9 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/dpu-chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
     }
 
+    public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
 }

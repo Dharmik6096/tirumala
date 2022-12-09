@@ -72,14 +72,17 @@ class TblGrn extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function attributeLabels() {
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         return [
             'grn_code' => Yii::t('app', 'Grn Code'),
             'grn_no' => Yii::t('app', 'Grn No'),
             'grn_date' => Yii::t('app', 'Grn Date'),
             'vendor_master_code' => Yii::t('app', 'Vendor'),
             'mcc_plant_code' => Yii::t('app', 'MCC'),
-            'invoice_date' => Yii::t('app', 'Invoice Date'),
-            'invoice_no' => Yii::t('app', 'Invoice No'),
+            'invoice_date' => ($batchNoWiseInventory == 1) ? \Yii::t('app', 'Document Date') : \Yii::t('app', 'Invoice Date'),
+            'invoice_no' => ($batchNoWiseInventory == 1) ? \Yii::t('app', 'Document No') : \Yii::t('app', 'Invoice No'),
+//            'invoice_date' => Yii::t('app', 'Invoice Date'),
+//            'invoice_no' => Yii::t('app', 'Invoice No'),
             'remarks' => Yii::t('app', 'Remarks'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),

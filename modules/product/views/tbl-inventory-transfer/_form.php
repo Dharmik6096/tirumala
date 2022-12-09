@@ -12,13 +12,13 @@ use kartik\grid\GridView;
 ?>
 <div id="maincontent">
     <?=
-    $this->render('inventory_transfer_form', ['model' => $model, 'type' => 'create', 'txModel' => $txModel])
+    $this->render('inventory_transfer_form', ['model' => $model, 'type' => 'create', 'txModel' => $txModel, 'batchNoWiseInventory' => $batchNoWiseInventory,])
     ?>
 </div>
 <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
     <div class="QltyParamDivGrid">
         <?=
-        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel])
+        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel, 'batchNoWiseInventory' => $batchNoWiseInventory,])
         ?>
     </div>
 </div>
@@ -184,17 +184,21 @@ $(document).ready(function(){
     $('#f_code').on('change', function(){
         getAvailableStock();
     });
+    $('#tblinventorytransfertxn-sap_batch_no').on('change', function(){
+        getAvailableStock();
+    });
     function getAvailableStock(){
         var from_type = $('#tblinventorytransfer-from_type').val();
         var from_code = $('#f_code').val();
         var product = $('#tblinventorytransfertxn-product_code').val();
         var union = $('#tblinventorytransfer-union_code').val();
+        var batch_no = $('#tblinventorytransfertxn-sap_batch_no').val();
        
          if(setData(from_type) && setData(from_code) && setData(product)){
              $.ajax({
                     type: 'post',
                     url:'" . Url::to(['get-available-stock']) . "',
-                    data: {'product':product,'from_type':from_type,'from_code':from_code,'union_code':union},
+                    data: {'product':product,'from_type':from_type,'from_code':from_code,'union_code':union,'batch_no':batch_no},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

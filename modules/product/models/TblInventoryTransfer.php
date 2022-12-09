@@ -57,20 +57,20 @@ class TblInventoryTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
-                [['inventory_transfer_code'], 'safe'],
-                [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code'], 'safe'],
-                [['remarks'], 'string'],
-                [['originating_type'], 'integer'],
-                [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-                [['from_type', 'to_type'], function ($attribute, $params) {
+            [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
+            [['inventory_transfer_code'], 'safe'],
+            [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date'], 'safe'],
+            [['remarks'], 'string'],
+            [['originating_type'], 'integer'],
+            [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
+            [['union_code'], 'string', 'max' => 3],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
+            [['from_type', 'to_type'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'org_type');
                 }, 'on' => 'importCsv'],
-                [['from_code'], function ($attribute, $params) {
+            [['from_code'], function ($attribute, $params) {
                     if (strtoupper($this->from_type == 'BMC')) {
                         return Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                     } else if (strtoupper($this->from_type == 'MCC')) {
@@ -83,7 +83,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         return !empty($this->from_code) ? $this->from_code : $this->addError('from_code', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
                     }
                 }, 'on' => ['importCsv']],
-                [['to_code'], function ($attribute, $params) {
+            [['to_code'], function ($attribute, $params) {
                     if (strtoupper($this->to_type == 'BMC')) {
                         return Yii::$app->general->validateBMC($this, 'to_code', 'bmc_code');
                     } else if (strtoupper($this->to_type == 'MCC')) {
@@ -96,18 +96,24 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                         return !empty($this->to_code) ? $this->to_code : $this->addError('to_code', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' is Invalid.'));
                     }
                 }, 'on' => ['importCsv']],
-                [['inventory_transfer_no'], 'setImport', 'on' => ['importCsv']],
-                [['from_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['from_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['from_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
-                [['from_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['from_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
-                [['to_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-                [['to_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['to_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
-                [['to_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['to_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
-                [['inventory_transfer_no'], 'checkStock', 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['inventory_transfer_date'], 'convertDate', 'on' => ['importCsv']],
-                [['to_code'], 'validateToTransfer', 'except' => ['androidsync']]
+            [['inventory_transfer_no'], 'setImport', 'on' => ['importCsv']],
+            [['from_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['from_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['from_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['from_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
+            [['from_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['from_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
+            [['to_mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['to_mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['to_bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['to_bmc_code' => 'bmc_code'], 'on' => 'importCsv'],
+            [['to_dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['to_dcs_code' => 'dcs_code'], 'on' => 'importCsv'],
+            [['inventory_transfer_no'], 'checkStock', 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['inventory_transfer_date'], 'convertDate', 'on' => ['importCsv']],
+            [['to_code'], 'validateToTransfer', 'except' => ['androidsync']],
+            [
+                ['transaction_date'], 'required', 'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    return $batchNoWiseInventory == 1;
+                },
+            ],
         ];
     }
 
@@ -115,10 +121,13 @@ class TblInventoryTransfer extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function attributeLabels() {
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         return [
             'inventory_transfer_code' => Yii::t('app', 'Inventory Transfer Code'),
-            'inventory_transfer_no' => Yii::t('app', 'Inventory Transfer No'),
-            'inventory_transfer_date' => Yii::t('app', 'Inventory Transfer Date'),
+            'inventory_transfer_no' => ($batchNoWiseInventory == 1) ? \Yii::t('app', 'Challan No') : \Yii::t('app', 'Inventory Transfer No'),
+            'inventory_transfer_date' => ($batchNoWiseInventory == 1) ? \Yii::t('app', 'Challan Date') : \Yii::t('app', 'Inventory Transfer Date'),
+//            'inventory_transfer_no' => Yii::t('app', 'Inventory Transfer No'),
+//            'inventory_transfer_date' => Yii::t('app', 'Inventory Transfer Date'),
             'from_type' => Yii::t('app', 'From Type'),
             'from_code' => Yii::t('app', 'From Code'),
             'to_type' => Yii::t('app', 'To Type'),
@@ -138,6 +147,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             'to_bmc_code' => Yii::t('app', 'To BMC'),
             'from_dcs_code' => Yii::t('app', 'From DCS'),
             'to_dcs_code' => Yii::t('app', 'To DCS'),
+            'transaction_date' => Yii::t('app', 'Actual Date'),
         ];
     }
 
