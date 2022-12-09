@@ -59,12 +59,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
         // grid filtering conditions
         $query->andFilterWhere([
             'scheme_id' => $this->scheme_id,
-//            'start_date' => $this->start_date,
-//            'end_date' => $this->end_date,
             'tbl_scheme_master.is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
 
         if (!empty($this->start_date))
@@ -73,11 +68,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
             $query->andFilterWhere(['like', 'cast(tbl_scheme_master.end_date as DATE)', date('Y-m-d', strtotime($this->end_date))]);
 
         $query->andFilterWhere(['like', 'scheme_name', $this->scheme_name])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }

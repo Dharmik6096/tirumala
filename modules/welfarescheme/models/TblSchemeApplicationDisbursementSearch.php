@@ -62,26 +62,18 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
             'union_code' => $this->union_code,
             'application_id' => $this->application_id,
             'disburse_value' => $this->disburse_value,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
         if (!empty($this->disburse_date))
             $query->andFilterWhere(['like', 'cast(tbl_scheme_application_disbursement.disburse_date as DATE)', date('Y-m-d', strtotime($this->disburse_date))]);
 
-        $query->andFilterWhere(['like', 'disburse_by', $this->disburse_by])
-                ->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
+        $query->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
                 ->andFilterWhere(['like', 'bank_name', $this->bank_name])
                 ->andFilterWhere(['like', 'branch_name', $this->branch_name])
                 ->andFilterWhere(['like', 'party_name', $this->party_name])
                 ->andFilterWhere(['like', 'party_relation', $this->party_relation])
                 ->andFilterWhere(['like', 'payment_ref_id', $this->payment_ref_id])
                 ->andFilterWhere(['like', 'payment_detail', $this->payment_detail])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;
     }

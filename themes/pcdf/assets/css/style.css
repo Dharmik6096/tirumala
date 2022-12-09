@@ -4867,3 +4867,7 @@ tr.highlightRow {
 .progressbar li.inactive {
     color: #607188;
 }
+
+.whiteSpaceAllowTable .table-bordered > tbody > tr > td {
+    white-space: normal !important;
+}

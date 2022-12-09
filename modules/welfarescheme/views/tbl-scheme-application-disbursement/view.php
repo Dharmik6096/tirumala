@@ -24,7 +24,7 @@ $this->title = Yii::$app->label->title('view', 'Scheme Application Disbursement'
                         ],
                             [
                             'attribute' => 'scheme_id',
-                            'value' => !empty($model->schemeId) ? $model->schemeId->scheme_name : '',
+                            'value' => Yii::$app->general->getforeignkey($model->schemeId, 'scheme_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -33,7 +33,7 @@ $this->title = Yii::$app->label->title('view', 'Scheme Application Disbursement'
                     'columns' => [
                             [
                             'attribute' => 'application_id',
-                          //  'value' => !empty($model->ApplicationId) ? $model->ApplicationId->member_code : '',
+                            'value' => $model->application_id . '/' . $model->applicationId->customer_type . '/' . Yii::$app->general->getCustomer($model->applicationId, $model->applicationId->customer_type) . '(' . Yii::$app->general->getCustomer($model->applicationId, $model->applicationId->customer_type, true) . ')/' . Yii::$app->general->getCustomer($model->applicationId, $model->applicationId->customer_type, FALSE, FALSE, true),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
@@ -75,7 +75,7 @@ $this->title = Yii::$app->label->title('view', 'Scheme Application Disbursement'
                         ],
                             [
                             'attribute' => 'party_relation',
-                           // 'value' => !empty($model->relationship) ? $model->relationship->relationship : '',
+                            'value' => Yii::$app->general->getforeignkey($model->relationshipId, 'relationship'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],

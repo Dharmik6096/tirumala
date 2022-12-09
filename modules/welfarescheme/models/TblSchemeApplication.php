@@ -185,10 +185,13 @@ class TblSchemeApplication extends \app\models\ChildModel {
         return $scheme_detail;
     }
 
-    public function getApplicationList($scheme_id, $status) {
-        $data = TblSchemeApplication::find()
-                ->where(['scheme_id' => $scheme_id, 'application_status' => $status])
-                ->all();
+    public function getApplicationList($scheme_id, $status, $appid = '') {
+        $query = TblSchemeApplication::find()
+                ->where(['scheme_id' => $scheme_id, 'application_status' => $status]);
+        if (!empty($appid)) {
+            $query->orWhere(['application_id' => $appid]);
+        }
+        $data = $query->all();
         return ArrayHelper::map($data, 'application_id', function($d) {
                     return $d->application_id . '/' . $d->customer_type . '/' . Yii::$app->general->getCustomer($d, $d->customer_type) . '(' . Yii::$app->general->getCustomer($d, $d->customer_type, true) . ')/' . Yii::$app->general->getCustomer($d, $d->customer_type, FALSE, FALSE, true);
                 }

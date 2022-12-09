@@ -357,8 +357,9 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1])) {
+                $appId = isset($parents[2]) ? $parents[2] : '';
                 $application = new TblSchemeApplication();
-                $data = $application->getApplicationList($parents[0], $parents[1]);
+                $data = $application->getApplicationList($parents[0], $parents[1], $appId);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

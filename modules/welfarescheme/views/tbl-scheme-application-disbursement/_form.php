@@ -5,7 +5,10 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
-$readonly = $type == 'create' ? FALSE : TRUE;
+//$readonly = $type == 'create' ? FALSE : TRUE;
+
+$class = $type == 'edit' ? 'disabled' : '';
+$readonly = $type == 'edit' ? true : false;
 ?>
 
 <?php
@@ -28,9 +31,12 @@ $form = ActiveForm::begin([
         <?php Yii::$app->dropdown->depend_dropdown('scheme_id', $model, $form, 'tblschemeapplicationdisbursement-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('scheme_id')); ?>
     </div>
 
-    <div class="col-sm-3">
-        <?= Html::hiddenInput('application_status', 'approved', ['id' => 'application_status']); ?>
-        <?php echo Yii::$app->dropdown->welfareSchemeApplication($model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status', 'application_id', $model->getAttributeLabel('application_id')); ?>
+    <div class="col-sm-3 <?= $class ?>">
+        <?php
+        echo Html::hiddenInput('application_status', 'approved', ['id' => 'application_status']);
+        echo Html::hiddenInput('application_id', $model->application_id, ['id' => 'application_id']);
+        echo Yii::$app->dropdown->welfareSchemeApplication($model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status,application_id', 'application_id', $model->getAttributeLabel('application_id'), false, false, $readonly);
+        ?>
     </div>
 
     <div class="col-sm-2">

@@ -30,7 +30,7 @@ $defaultToggle = true;
                 <div class="clearfix"></div>
                 <div class="panel-subheading hide_help_block">
                     <div class="row">
-                        <div class="table-responsive">
+                        <div class="table-responsive whiteSpaceAllowTable">
                             <?php
                             if (!empty($dataProvider->getModels())) {
                                 $data = $dataProvider->getModels();

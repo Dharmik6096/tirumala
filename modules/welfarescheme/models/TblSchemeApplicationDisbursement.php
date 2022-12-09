@@ -6,6 +6,7 @@ use Yii;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use \app\modules\organisation\models\TblUnions;
 use app\modules\welfarescheme\models\TblSchemeApplication;
+use \app\modules\general\models\TblRelationship;
 
 /**
  * This is the model class for table "tbl_scheme_application_disbursement".
@@ -92,6 +93,10 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
 
     public function getApplicationId() {
         return $this->hasOne(TblSchemeApplication::className(), ['application_id' => 'application_id']);
+    }
+
+    public function getRelationshipId() {
+        return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'party_relation']);
     }
 
 }

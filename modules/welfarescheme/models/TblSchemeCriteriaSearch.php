@@ -59,21 +59,15 @@ class TblSchemeCriteriaSearch extends TblSchemeCriteria {
         $query->andFilterWhere([
             'scheme_criteria_id' => $this->scheme_criteria_id,
             'scheme_id' => $this->scheme_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
         if (!empty($this->wef_date))
             $query->andFilterWhere(['like', 'cast(tbl_scheme_criteria.wef_date as DATE)', date('Y-m-d', strtotime($this->wef_date))]);
 
         $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'min_pouring_day', $this->min_pouring_day])
                 ->andFilterWhere(['like', 'min_pouring_qty', $this->min_pouring_qty])
-                ->andFilterWhere(['like', 'scheme_value', $this->scheme_value])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'scheme_value', $this->scheme_value]);
+
 
         return $dataProvider;
     }
