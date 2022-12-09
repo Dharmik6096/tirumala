@@ -100,7 +100,7 @@ class TblGrnController extends \app\controllers\ChildController {
                 $stockModel->attributes = $txModel->attributes;
                 unset($stockModel->created_at);
                 unset($stockModel->created_by);
-                $existStock = $stockModel->getExistStock('MCC');
+                $existStock = $stockModel->getExistStock('MCC', $txModel->sap_batch_no);
                 $stock = 0;
                 $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
                 $qty = $txModel->received_qty - $rejectedQty;

@@ -11,6 +11,8 @@ use yii\web\JsExpression;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
 $list = array('0' => 'No', '1' => 'Yes');
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
 ?>
 
 <?php
@@ -63,7 +65,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 reset_field">
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblgrn-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
         </div>
-
+        <?php if ($batchNoWiseInventory == 1 && $withoutDispatch == 1) { ?>
+            <div class="col-sm-1 reset_field number-validate">
+                <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
+            </div>
+        <?php } ?>
         <div class=" col-sm-2 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>

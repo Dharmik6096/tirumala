@@ -22,6 +22,7 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $eiplCode = Yii::$app->session->get('eiplCode');
 $rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
 
@@ -180,7 +181,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
                     'items' => [
-                        ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch')],
+                        ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $batchNoWise],
                         ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
                         ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                     ]

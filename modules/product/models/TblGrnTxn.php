@@ -58,6 +58,12 @@ class TblGrnTxn extends \app\models\ChildModel {
             [['received_qty'], 'number', 'min' => 1],
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code']],
             [['unit_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnits::className(), 'targetAttribute' => ['unit_code' => 'unit_code']],
+            [['sap_batch_no'], 'required', 'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
+                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1;
+                },
+            ],
         ];
     }
 
