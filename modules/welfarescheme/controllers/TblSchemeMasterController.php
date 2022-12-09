@@ -67,6 +67,7 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
             $schemeCriteria->min_pouring_day = $this->model->min_pouring_day;
             $schemeCriteria->min_pouring_qty = $this->model->min_pouring_qty;
             $schemeCriteria->scheme_value = $this->model->scheme_value;
+            $schemeCriteria->union_code = $this->model->union_code;
             array_push($mapList, $schemeCriteria);
             $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Scheme Master', 'create']);
             if ($transaction == 'customRedirect') {
