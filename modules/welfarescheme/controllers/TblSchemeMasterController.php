@@ -61,15 +61,18 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->start_date = !empty($this->model->start_date) ? date('Y-m-d', strtotime($this->model->start_date)) : '';
             $this->model->end_date = !empty($this->model->end_date) ? date('Y-m-d', strtotime($this->model->end_date)) : '';
-            $mapList = [];
+            $saveModel = [];
             $schemeCriteria = new TblSchemeCriteria();
             $schemeCriteria->wef_date = $this->model->start_date;
             $schemeCriteria->min_pouring_day = $this->model->min_pouring_day;
             $schemeCriteria->min_pouring_qty = $this->model->min_pouring_qty;
             $schemeCriteria->scheme_value = $this->model->scheme_value;
             $schemeCriteria->union_code = $this->model->union_code;
-            array_push($mapList, $schemeCriteria);
-            $transaction = $this->generalModel->saveTransaction([$this->model], $mapList, ['Scheme Master', 'create']);
+            $saveModel[] = $this->model;
+            $saveModel[] = $schemeCriteria;
+            $auto_key_config = [];
+            $auto_key_config['TblSchemeCriteria'][] = ['self_key' => 'scheme_id', 'parent_key' => 'scheme_id', 'parent_index' => 0];
+            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Scheme Master', 'create'], $auto_key_config);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
