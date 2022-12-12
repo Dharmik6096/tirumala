@@ -23,6 +23,7 @@ use yii\helpers\Json;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\base\Model;
+use yii\helpers\Url;
 
 /**
  * TblSchemeApplicationController implements the CRUD actions for TblSchemeApplication model.
@@ -169,13 +170,20 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                     $save_model[] = $model;
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Scheme Application Registration', 'create']);
                     if ($transaction == 'customRedirect') {
-                        return $this->customRedirect();
+                        //$msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'success', 'msg' => Url::to(['index'])];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'msg' => $msg];
                     }
                 } else {
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Please Upload Following Document <br/><br/>' . $error_msg]);
+                    $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
                 }
+            } else {
+                $record = ['status' => 'error', 'msg' => 'Error while create directory.'];
             }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
         }
         return $this->render('add_document', [
                     'model' => $model,

@@ -1,10 +1,12 @@
 <?php
 $this->title = 'Upload Scheme Documents';
 
-use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use kartik\detail\DetailView;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
+use yii\helpers\Url;
 ?>
 
 <div class="panel panel-default panel-main">
@@ -157,7 +159,41 @@ use kartik\detail\DetailView;
                         </div>
                         <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">
-                                <?= Yii::$app->controls->save('SAVE', $model); ?>
+                                <?php
+                                AjaxSubmitButton::begin([
+                                    'label' => Yii::t('app', 'Save'),
+                                    'useWithActiveForm' => 'create-scheme-document-form',
+                                    'ajaxOptions' => [
+                                        'type' => 'POST',
+                                        'url' => Url::to(['add-document', 'id' => $model->application_id]),
+                                        'processData' => false,
+                                        'contentType' => false,
+                                        'data' => new JsExpression("new FormData($('#create-scheme-document-form')[0])"),
+                                        'beforeSend' => new JsExpression("function(data){
+                                                $('#loadercontent').show();
+                                                $('#pageloader').show();
+                                                }"),
+                                        'success' => new JsExpression('function(data){
+                                                                var data=$.parseJSON(data);
+                                                                $("#loadercontent").hide();
+                                                                $("#pageloader").hide();
+                                                                if (data.status == "success"){ 
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();
+                                                                    window.location=data.msg;                                                                     
+                                                                }else{                                                       
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();                                                                   
+                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
+                                                                }
+                                                 }'),
+                                    ],
+                                    'options' => ['class' => 'btn btn-default btn-raised',
+                                        'type' => 'submit'],
+                                ]);
+                                AjaxSubmitButton::end();
+                                ?>
+                                <?php //Yii::$app->controls->save('SAVE', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
                                 <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
                             </div>  
