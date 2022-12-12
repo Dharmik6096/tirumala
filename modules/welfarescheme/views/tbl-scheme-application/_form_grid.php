@@ -51,7 +51,7 @@ $attribute = [
         ['attribute' => 'application_status', 'filter' => FALSE],
         ['attribute' => 'status_date',
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->status_date);
+            return Yii::$app->controls->view_datetime($model->status_date);
         }, 'filter' => false, 'visible' => FALSE],
         ['attribute' => 'status_by', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->statusBy, 'name');

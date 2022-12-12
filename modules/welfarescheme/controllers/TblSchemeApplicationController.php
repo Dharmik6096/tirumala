@@ -165,7 +165,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                         $save_model[] = $stage_model;
                     }
                     $model->application_status = 'registered';
-                    $model->status_date = date('Y-m-d');
+                    $model->status_date = date('Y-m-d H:i:s');
                     $model->status_by = \Yii::$app->user->identity->user_code;
                     $save_model[] = $model;
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Scheme Application Registration', 'create']);
@@ -206,7 +206,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
         $model->scenario = 'approve';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save = [];
-            $model->status_date = date('Y-m-d');
+            $model->status_date = date('Y-m-d H:i:s');
             $model->status_by = \Yii::$app->user->identity->user_code;
             if ($model->approval_mode == 'flexi') {
                 $level_user = TblSchemeApplicationApproval::find()
@@ -222,7 +222,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                     $model_save[] = $approval;
                 }
             } else {
-                $model->status_date = date('Y-m-d');
+                $model->status_date = date('Y-m-d H:i:s');
                 $model->status_by = \Yii::$app->user->identity->user_code;
                 $model_save[] = $model;
             }

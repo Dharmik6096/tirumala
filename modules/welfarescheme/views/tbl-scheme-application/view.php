@@ -107,7 +107,7 @@ $approval_detail = $model->applicationApprovalStages;
                     'columns' => [
                             [
                             'attribute' => 'status_date',
-                            'value' => Yii::$app->controls->view_date($model->status_date),
+                            'value' => Yii::$app->controls->view_datetime($model->status_date),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
@@ -194,7 +194,7 @@ $approval_detail = $model->applicationApprovalStages;
                                 <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
                                 <td><?= Yii::$app->general->getforeignkey($approval->statusBy, 'name') ?></td>
                                 <td><?= $approval->application_status; ?></td>
-                                <td><?= Yii::$app->controls->view_date($approval->status_date); ?></td>
+                                <td><?= Yii::$app->controls->view_datetime($approval->status_date); ?></td>
                                 <td><?= $approval->approved_value; ?></td>
                                 <td><?= $approval->status_remarks; ?></td>
                             </tr>
