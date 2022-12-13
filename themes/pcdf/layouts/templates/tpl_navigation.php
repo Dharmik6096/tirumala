@@ -64,17 +64,6 @@ echo GhostMenu::widget([
                 ],
                     ['label' => Yii::t('app', 'Vendor Master'), 'url' => ['/product/tbl-vendor-master/index'], 'active' => ($cntrl == 'tbl-vendor-master')],
                     ['label' => Yii::t('app', 'Device Master'), 'url' => ['/globalmaster/tbl-device-master/index'], 'active' => ($cntrl == 'tbl-device-master')],
-                    [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Welfare Scheme<b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'Scheme Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
-                            ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
-                            ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'index')],
-                            ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/welfarescheme/tbl-scheme-application/pending-approval'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'pending-approval')],
-                            ['label' => Yii::t('app', 'Scheme Application Disbursement'), 'url' => ['/welfarescheme/tbl-scheme-application-disbursement/index'], 'active' => ($cntrl == 'tbl_scheme_application_disbursement')],
-                    ]
-                ],
             ],
         ],
             [
@@ -691,6 +680,17 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Asset SAP Code'), 'url' => ['/assetmanagement/tbl-asset-set/index'], 'active' => ($cntrl == 'tbl-asset-set/index')],
                             ['label' => Yii::t('app', 'Asset Detail'), 'url' => ['/assetmanagement/tbl-asset-detail/index'], 'active' => ($cntrl == 'tbl-asset-detail/index')],
                     ],
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Welfare Scheme<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Scheme Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
+                            ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
+                            ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'index')],
+                            ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/welfarescheme/tbl-scheme-application/pending-approval'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'pending-approval')],
+                            ['label' => Yii::t('app', 'Scheme Application Disbursement'), 'url' => ['/welfarescheme/tbl-scheme-application-disbursement/index'], 'active' => ($cntrl == 'tbl_scheme_application_disbursement')],
+                    ]
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
