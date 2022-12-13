@@ -49,17 +49,17 @@ class TblImportFileLogSearch extends TblImportFileLog {
         $this->load($params);
         $query->where(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (Yii::$app->session->get('organizations_type') != 'UNION') {
-            $query->andWhere(['created_by' => Yii::$app->session->get('UserCode')]);
+            $query->andWhere(['tbl_import_file_log.created_by' => Yii::$app->session->get('UserCode')]);
         }
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'log_id' => $this->log_id,
-            'total_count' => $this->total_count,
-            'success_count' => $this->success_count,
-            'error_count' => $this->error_count,
+            'tbl_import_file_log.log_id' => $this->log_id,
+            'tbl_import_file_log.total_count' => $this->total_count,
+            'tbl_import_file_log.success_count' => $this->success_count,
+            'tbl_import_file_log.error_count' => $this->error_count,
 //            'tbl_import_file_log.created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'tbl_import_file_log.updated_at' => $this->updated_at,
             'tbl_import_file_log.status' => $this->status,
 //            'pick_datetime' => $this->pick_datetime,
         ]);
@@ -72,14 +72,14 @@ class TblImportFileLogSearch extends TblImportFileLog {
         if (!empty($this->response_datetime)) {
             $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), tbl_import_file_log.response_datetime, 126)', date('Y-m-d', strtotime($this->response_datetime))]);
         }
-        $query->andFilterWhere(['like', 'file_type', $this->file_type])
-                ->andFilterWhere(['like', 'file_name', $this->file_name])
-                ->andFilterWhere(['like', 'file_path', $this->file_path])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
+        $query->andFilterWhere(['like', 'tbl_import_file_log.file_type', $this->file_type])
+                ->andFilterWhere(['like', 'tbl_import_file_log.file_name', $this->file_name])
+                ->andFilterWhere(['like', 'tbl_import_file_log.file_path', $this->file_path])
+                ->andFilterWhere(['like', 'tbl_import_file_log.union_code', $this->union_code])
                 ->andFilterWhere(['like', 'user.name', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'response_msg', $this->response_msg])
-                ->andFilterWhere(['like', 'error_file_path', $this->error_file_path]);
+                ->andFilterWhere(['like', 'tbl_import_file_log.updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'tbl_import_file_log.response_msg', $this->response_msg])
+                ->andFilterWhere(['like', 'tbl_import_file_log.error_file_path', $this->error_file_path]);
         return $dataProvider;
     }
 
