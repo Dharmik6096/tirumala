@@ -46,7 +46,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
     /**
      * @inheritdoc
      */
-    public $from_dcs_code, $from_mcc_plant_code, $from_bmc_code, $to_dcs_code, $to_mcc_plant_code, $to_bmc_code, $product_code, $qty, $available_stock, $unit_code;
+    public $from_dcs_code, $from_mcc_plant_code, $from_bmc_code, $to_dcs_code, $to_mcc_plant_code, $to_bmc_code, $product_code, $qty, $available_stock, $unit_code, $sap_batch_no;
 
     public static function tableName() {
         return 'tbl_inventory_transfer';
@@ -59,7 +59,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         return [
             [['inventory_transfer_no', 'inventory_transfer_date', 'from_type', 'from_code', 'to_type', 'to_code'], 'required'],
             [['inventory_transfer_code'], 'safe'],
-            [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date'], 'safe'],
+            [['inventory_transfer_date', 'created_at', 'updated_at', 'from_mcc_plant_code', 'from_bmc_code', 'from_dcs_code', 'to_mcc_plant_code', 'to_bmc_code', 'to_dcs_code', 'product_code', 'qty', 'available_stock', 'unit_code', 'transaction_date', 'sap_batch_no'], 'safe'],
             [['remarks'], 'string'],
             [['originating_type'], 'integer'],
             [['inventory_transfer_code', 'inventory_transfer_no'], 'string', 'max' => 30],
@@ -114,6 +114,10 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                     return $batchNoWiseInventory == 1;
                 },
             ],
+            [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
         ];
     }
 
@@ -232,11 +236,17 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         } catch (\Exception $e) {
             $this->inventory_transfer_date = '-';
         }
+        try {
+            $this->transaction_date = Yii::$app->controls->view_date($this->transaction_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->transaction_date = '-';
+        }
     }
 
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->inventory_transfer_date = !empty($this->inventory_transfer_date) ? Yii::$app->controls->view_date($this->inventory_transfer_date, 'php:Y-m-d') : NULL;
+            $this->transaction_date = !empty($this->transaction_date) ? Yii::$app->controls->view_date($this->transaction_date, 'php:Y-m-d') : NULL;
         }
     }
 
@@ -249,8 +259,8 @@ class TblInventoryTransfer extends \app\models\ChildModel {
             $txModel->available_stock = $model->available_stock;
             $txModel->unit_code = $model->unit_code;
             $txModel->qty = $model->qty;
-
             $txModel->union_code = $model->union_code;
+            $txModel->sap_batch_no = $model->sap_batch_no;
 
             if (!$txModel->validate()) {
                 $errors[] = $txModel->getErrors();
@@ -335,6 +345,29 @@ class TblInventoryTransfer extends \app\models\ChildModel {
     public function validateToTransfer($attribute, $param) {
         if ($this->from_type == $this->to_type && $this->from_code == $this->from_code) {
             $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Not Allow to Transfer to its self.'));
+        }
+    }
+
+    public function validateSapBatchNo($attribute, $param) {
+        $type = $this->from_type;
+        $code = $this->from_code;
+        $stockModel = new TblProductStock();
+        $query = $stockModel->find()->where([
+                    'product_code' => $this->product_code, 'sap_batch_no' => $this->sap_batch_no])
+                ->andWhere(['>', 'tbl_product_stock.stock', 0]);
+        $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (strtoupper($type) == 'MCC') {
+            $query->andWhere(['mcc_plant_code' => $code])
+                    ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['dcs_code' => $code]);
+        }
+        $data = $query->all();
+        if (empty($data)) {
+            $this->addError('sap_batch_no', 'Batch No Is Invalid');
         }
     }
 

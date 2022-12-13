@@ -72,7 +72,10 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->active($model, $form); ?>
-    </div>   
+    </div>  
+    <div class="col-sm-2">
+        <?= $form->field($model, 'item_code')->textInput() ?>
+    </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'product_desc')->textarea() ?>
     </div>
