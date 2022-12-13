@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Plant Dispatch'));
 $this->params['menu'][] = Yii::$app->controls->add('Plant Dispatch');
-//$this->params['menu'][] = Yii::$app->controls->import('plant_dispatch', $this);
+$this->params['menu'][] = Yii::$app->controls->import('plant_dispatch', $this);
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

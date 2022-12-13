@@ -52,7 +52,15 @@ class TblGrn extends \app\models\ChildModel {
             [['vendor_code'], 'checkVendorCode', 'on' => ['importCsv']],
             [['grn_date', 'mcc_plant_code', 'invoice_date'], 'required', 'on' => ['batchcreate']],
             [['plant_code'], 'required', 'on' => ['batchcreate']],
-            [['vendor_master_code'], 'required', 'except' => ['batchcreate']],
+            [['plant_code'], 'required', 'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
+                    return $batchNoWiseInventory == 1 && $withoutDispatch == 1;
+                }, 'except' => ['batchcreate']],
+            [['vendor_master_code'], 'required', 'when' => function ($model) {
+                    $withoutDispatch = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL');
+                    return $withoutDispatch != 1;
+                }, 'except' => ['batchcreate']],
             [['grn_code', 'grn_date', 'invoice_date', 'created_at', 'updated_at', 'product_code', 'unit_code', 'rate', 'received_qty', 'tax', 'rejected_qty', 'vendor_code', 'ref_no', 'plant_code'], 'safe'],
             [['remarks', 'originating_type', 'union_code', 'mcc_plant_code'], 'safe'],
             [['grn_no', 'invoice_no'], 'string', 'max' => 30],

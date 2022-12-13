@@ -68,7 +68,7 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
 
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
             $batchNo = $txnData['sap_batch_no'];
-            $model->sap_batch_no = $batchNo;
+//            $model->sap_batch_no = $batchNo;
             $saveModel[] = $model;
             unset($txnData['product_code']);
             unset($txnData['unit_code']);

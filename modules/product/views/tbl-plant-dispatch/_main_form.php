@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 reset_field">
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
         </div>
-        <div class="col-sm-1 sap_batch_no">
+        <div class="col-sm-2 sap_batch_no">
             <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
         </div>
         <div class=" col-sm-2 reset_field unit disabledDiv">
@@ -95,7 +95,7 @@ $form = ActiveForm::begin([
     <table class="table table-bordered table-striped table-main table-language br_grey bl_grey asset_transaction_table">
         <thead>
             <tr>
-                <th><?= Yii::t('app', 'Produt Code') ?></th>
+                <th><?= Yii::t('app', 'Product Code') ?></th>
                 <th><?= $txModel->getAttributeLabel('product_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('unit_code') ?></th>
                 <th><?= $txModel->getAttributeLabel('sap_batch_no') ?></th>

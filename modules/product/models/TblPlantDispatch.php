@@ -6,6 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\product\models\TblProduct;
 
 /**
  * This is the model class for table "tbl_plant_dispatch".
@@ -34,6 +35,8 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblPlantDispatch extends \app\models\ChildModel {
 
+    public $product_code, $rate, $qty, $sap_batch_no, $lr_no;
+
     /**
      * @inheritdoc
      */
@@ -46,13 +49,22 @@ class TblPlantDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['plant_dispatch_code'], 'required'],
-            [['union_code', 'mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
-            [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks', 'sap_batch_no'], 'safe'],
+            [['plant_dispatch_code', 'union_code'], 'required', 'except' => ['importCsv']],
+            [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
+            [['mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
+            [['product_code', 'rate', 'qty', 'sap_batch_no'], 'required', 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
             [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
             [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['status'], 'default', 'value' => '0'],
+            [['document_no'], 'unique', 'except' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
+            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => 'importCsv'],
+            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
+            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -95,6 +107,80 @@ class TblPlantDispatch extends \app\models\ChildModel {
 
     public function getMccPlantCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function setChildTable(&$model, &$saveModel, &$errors) {
+        if (!empty($model->document_no)) {
+            $existBatch = $model->find()->where(['document_no' => $model->document_no])->one();
+            if (!empty($existBatch)) {
+                if ($existBatch->plant_code != $model->plant_code || $existBatch->mcc_plant_code != $model->mcc_plant_code) {
+                    $model->addError('document_no', Yii::t('app/validation', $this->getAttributeLabel('document_no') . ' is already available in another Dispatch'));
+                } else {
+                    $txn_model = new TblPlantDispatchTxn();
+                    $txn_model->attributes = $model->attributes;
+                    $txn_model->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txn_model, 1);
+                    $txn_model->product_code = $model->product_code;
+                    $txn_model->union_code = $model->union_code;
+                    $txn_model->plant_dispatch_code = $existBatch->plant_dispatch_code;
+                    $txn_model->unit_code = Yii::$app->general->getforeignkey($this->productCode, 'unit_code');
+                    $txn_model->rate = $model->rate;
+                    $txn_model->sap_batch_no = $model->sap_batch_no;
+                    $txn_model->qty = $model->qty;
+                    $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
+                    if (!$txn_model->validate()) {
+                        $errors[] = $txn_model->getErrors();
+                    }
+                    if (empty($txn_model->getErrors()) && $txn_model->validate()) {
+                        $model = $txn_model;
+                    }
+                }
+            } else {
+                $txn_model = new TblPlantDispatchTxn();
+                $txn_model->attributes = $model->attributes;
+                $txn_model->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txn_model, 1);
+                $txn_model->product_code = $model->product_code;
+                $txn_model->union_code = $model->union_code;
+                $txn_model->unit_code = Yii::$app->general->getforeignkey($this->productCode, 'unit_code');
+                $txn_model->rate = $model->rate;
+                $txn_model->sap_batch_no = $model->sap_batch_no;
+                $txn_model->qty = $model->qty;
+                $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
+                if (!$txn_model->validate()) {
+                    $errors[] = $txn_model->getErrors();
+                }
+                if (empty($txn_model->getErrors()) && $txn_model->validate()) {
+                    array_push($saveModel, $txn_model);
+                }
+            }
+        }
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->dispatch_date = Yii::$app->controls->view_date($this->dispatch_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->dispatch_date = '-';
+        }
+        try {
+            $this->document_date = Yii::$app->controls->view_date($this->document_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->document_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->dispatch_date = !empty($this->dispatch_date) ? Yii::$app->controls->view_date($this->dispatch_date, 'php:Y-m-d') : NULL;
+            $this->document_date = !empty($this->document_date) ? Yii::$app->controls->view_date($this->document_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function setImport($attribute, $params) {
+        $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');
     }
 
 }

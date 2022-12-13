@@ -142,7 +142,7 @@ $script = "
         var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         var lr_no = $('#tblplantdispatchtxn-lr_no').val();
 
-      if(product_code != ''){
+        if(product_code != ''){
             var existData = $('.selected_'+product_code).not('.edit_product').text().length;
             if(parseInt(existData) > 0){
                 var msg = '" . Yii::t('app', 'Product already added') . "';
@@ -175,10 +175,11 @@ $script = "
             $('#tblplantdispatchtxn-rate').val('');
             $('#tblplantdispatchtxn-qty').val('');
             $('#tblplantdispatchtxn-amount').val('');
+            $('#tblplantdispatchtxn-sap_batch_no').val('');
             $('#tblplantdispatchtxn-lr_no').val('');
             $('tbody tr.edit_product').remove();
             $('.single_entry_area').addClass('disabled no_pointer');
-            $('.sap_batch_no').addClass('disabled no_pointer');
+//            $('.sap_batch_no').addClass('disabled no_pointer');
             $('.btn-save-txn').removeClass('disabled no_pointer');
         }
     });
@@ -214,16 +215,6 @@ $script = "
                 }
          }});   
     }
-    
-    
-    
-   
-  
-
-
-  
-    
-   
       
 ";
 $this->registerJs($script, View::POS_END, 'create-plant-dispatch');
