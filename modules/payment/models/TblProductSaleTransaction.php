@@ -60,13 +60,14 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
             [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
-            [['union_code', 'sap_batch_no'], 'safe'],
+            [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
             [
                 ['sap_batch_no'], 'required', 'when' => function ($model) {
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     return $batchNoWiseInventory == 1;
                 },
                 'on' => ['saleProduct']],
+            [['data_lock'], 'default', 'value' => 0]
         ];
     }
 
