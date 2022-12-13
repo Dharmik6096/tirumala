@@ -15,7 +15,8 @@ use kartik\grid\GridView;
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => false,],
+        }, 'visible' => false, 'filter' => false,],
+        ['attribute' => 'scheme_id'],
         ['attribute' => 'scheme_name'],
         [
         'attribute' => 'start_date',
@@ -23,24 +24,22 @@ $attribute = [
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true,
-                'filter' => true]
+                'autoclose' => true]
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->start_date);
-        }],
+        }, 'filter' => false,],
         [
         'attribute' => 'end_date',
         'vAlign' => 'middle',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true,
-                'filter' => true]
+                'autoclose' => true]
         ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->end_date);
-        }],
+        }, 'filter' => false,],
         ['attribute' => 'remarks'],
 ];
 

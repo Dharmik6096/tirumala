@@ -40,7 +40,7 @@ class TblSchemeMaster extends \app\models\ChildModel {
                 [['min_pouring_day', 'min_pouring_qty', 'scheme_value', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'union_code', 'scheme_name', 'remarks', 'start_date', 'end_date', 'created_at', 'updated_at', 'is_active', 'originating_type'], 'safe'],
                 [['is_active', 'originating_type'], 'integer'],
                 [['is_active'], 'default', 'value' => 1],
-                [['scheme_name', 'start_date', 'end_date', 'union_code'], 'required'],
+                [['scheme_name', 'start_date', 'union_code', 'min_pouring_day', 'min_pouring_qty', 'scheme_value'], 'required'],
                 [['end_date'], 'customValidate'],
         ];
     }
@@ -50,23 +50,23 @@ class TblSchemeMaster extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'scheme_id' => 'Scheme ID',
-            'scheme_name' => 'Scheme Name',
-            'start_date' => 'Start Date',
-            'end_date' => 'End Date',
-            'remarks' => 'Remarks',
-            'is_active' => 'Is Active',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'originating_type' => 'Originating Type',
-            'originating_org_code' => 'Originating Org Code',
-            'originating_org_type' => 'Originating Org Type',
-            'min_pouring_day' => 'Min Pouring Day',
-            'min_pouring_qty' => 'Min Pouring Qty',
-            'scheme_value' => 'Scheme Value',
+            'scheme_id' => Yii::t('app', 'Scheme ID'),
+            'scheme_name' => Yii::t('app', 'Scheme Name'),
+            'start_date' => Yii::t('app', 'Start Date'),
+            'end_date' => Yii::t('app', 'End Date'),
+            'remarks' => Yii::t('app', 'Remarks'),
+            'is_active' => Yii::t('app', 'Is Active'),
+            'union_code' => Yii::t('app', 'Union'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_code' => Yii::t('app', 'Scheme ID'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'min_pouring_day' => Yii::t('app', 'Min Pouring Day'),
+            'min_pouring_qty' => Yii::t('app', 'Min Pouring Qty'),
+            'scheme_value' => Yii::t('app', 'Scheme Value'),
         ];
     }
 

@@ -14,7 +14,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 $attribute = [
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'visible' => false,],
+        }, 'visible' => false, 'filter' => false],
         ['attribute' => 'doc_group', 'value' => function($model) {
             return isset($model->doc_group) ? Yii::$app->dropdown->getRecords('doc_group')['data'][$model->doc_group] : '';
         }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilterStatic('doc_group', $searchModel, 'doc_group'),],

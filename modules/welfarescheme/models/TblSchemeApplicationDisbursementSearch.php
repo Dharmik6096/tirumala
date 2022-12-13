@@ -12,6 +12,8 @@ use app\modules\welfarescheme\models\TblSchemeApplicationDisbursement;
  */
 class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisbursement {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -49,6 +51,11 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
 
         $this->load($params);
 
+        $query->joinWith(['schemeId', 'applicationId', 'relationshipId']);
+
+        Yii::$app->general->filterByOrg($query, $this);
+
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -58,19 +65,19 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
         // grid filtering conditions
         $query->andFilterWhere([
             'disburse_id' => $this->disburse_id,
-            'scheme_id' => $this->scheme_id,
             'union_code' => $this->union_code,
-            'application_id' => $this->application_id,
-            'disburse_value' => $this->disburse_value,
         ]);
         if (!empty($this->disburse_date))
             $query->andFilterWhere(['like', 'cast(tbl_scheme_application_disbursement.disburse_date as DATE)', date('Y-m-d', strtotime($this->disburse_date))]);
 
         $query->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
                 ->andFilterWhere(['like', 'bank_name', $this->bank_name])
+                ->andFilterWhere(['like', 'tbl_scheme_application.application_id', $this->application_id])
+                ->andFilterWhere(['like', 'tbl_scheme_master.scheme_name', $this->scheme_id])
+                ->andFilterWhere(['like', 'disburse_value', $this->disburse_value])
                 ->andFilterWhere(['like', 'branch_name', $this->branch_name])
                 ->andFilterWhere(['like', 'party_name', $this->party_name])
-                ->andFilterWhere(['like', 'party_relation', $this->party_relation])
+                ->andFilterWhere(['like', 'tbl_relationship.relationship', $this->party_relation])
                 ->andFilterWhere(['like', 'payment_ref_id', $this->payment_ref_id])
                 ->andFilterWhere(['like', 'payment_detail', $this->payment_detail])
                 ->andFilterWhere(['like', 'remarks', $this->remarks]);

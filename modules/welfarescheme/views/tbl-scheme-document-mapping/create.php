@@ -46,7 +46,7 @@ $defaultToggle = true;
                                         <thead>
                                             <tr>
                                                 <th width='5%' height='35' class='center-align center_text'><?= Html::checkbox('allowCashCheckAll', false, ['id' => 'allowCashCheckAll', 'class' => 'checkbox', 'label' => '']) ?></th>
-                                                <th width='80%' height='35'><?php echo $model->getAttributeLabel('doc_name') ?></th>
+                                                <th width='80%' height='35'><?php echo $model->getAttributeLabel('document_name') ?></th>
                                                 <th width='5%' height='35'><?php echo $model->getAttributeLabel('is_mandate') ?></th>
 
                                             </tr>
@@ -78,7 +78,7 @@ $defaultToggle = true;
                                         <thead>
                                             <tr>
                                                 <th width='5%' height='35'></th>
-                                                <th width='80%' height='35'><?php echo $model->getAttributeLabel('doc_name') ?></th>
+                                                <th width='80%' height='35'><?php echo $model->getAttributeLabel('document_name') ?></th>
                                                 <th width='5%' height='35'><?php echo $model->getAttributeLabel('is_mandate') ?></th>
 
                                             </tr>

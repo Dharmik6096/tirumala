@@ -24,11 +24,11 @@ $form = ActiveForm::begin([
 <div class="row">
 
     <div class="col-sm-2" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
 
     <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('scheme_id', $model, $form, 'tblschemeapplicationdisbursement-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('scheme_id')); ?>
+        <?php Yii::$app->dropdown->depend_dropdown('scheme_id', $model, $form, 'tblschemeapplicationdisbursement-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('scheme_id'), 'scheme_id', $readonly); ?>
     </div>
 
     <div class="col-sm-3 <?= $class ?>">
@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'disburse_date', '', false, false, false); ?>
+        <?= Yii::$app->controls->date($model, $form, 'disburse_date', '', false, false, $readonly); ?>
     </div>
 
     <div class="col-sm-2 number-validate">

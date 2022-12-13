@@ -397,11 +397,14 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblSchemeMasterSearch' => [
-                'filter' => ['f_union_code'],
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
             'TblSchemeApplicationSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'application_status', 'from_date', 'to_date'],
                 'action' => ['index', 'pending-approval']
+            ],
+            'TblSchemeApplicationDisbursementSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

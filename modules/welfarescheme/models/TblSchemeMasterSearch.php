@@ -12,6 +12,8 @@ use app\modules\welfarescheme\models\TblSchemeMaster;
  */
 class TblSchemeMasterSearch extends TblSchemeMaster {
 
+    public $from_date, $to_date;
+
     /**
      * @inheritdoc
      */
@@ -48,7 +50,6 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
 
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this);
-        $query->joinWith(['unionCode']);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -58,7 +59,6 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'scheme_id' => $this->scheme_id,
             'tbl_scheme_master.is_active' => $this->is_active,
         ]);
 
@@ -68,6 +68,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
             $query->andFilterWhere(['like', 'cast(tbl_scheme_master.end_date as DATE)', date('Y-m-d', strtotime($this->end_date))]);
 
         $query->andFilterWhere(['like', 'scheme_name', $this->scheme_name])
+                ->andFilterWhere(['like', 'scheme_id', $this->scheme_id])
                 ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;

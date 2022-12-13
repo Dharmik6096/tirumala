@@ -48,20 +48,20 @@ class TblSchemeCriteria extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'scheme_criteria_id' => 'Scheme Criteria ID',
-            'scheme_id' => 'Scheme ID',
-            'wef_date' => 'Wef Date',
-            'min_pouring_day' => 'Min Pouring Day',
-            'min_pouring_qty' => 'Min Pouring Qty',
-            'scheme_value' => 'Scheme Value',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'originating_type' => 'Originating Type',
-            'originating_org_code' => 'Originating Org Code',
-            'originating_org_type' => 'Originating Org Type',
+            'scheme_criteria_id' => Yii::t('app', 'Scheme Criteria ID'),
+            'scheme_id' => Yii::t('app', 'Scheme ID'),
+            'wef_date' => Yii::t('app', 'Wef Date'), 'Wef Date',
+            'min_pouring_day' => Yii::t('app', 'Min Pouring Day'),
+            'min_pouring_qty' => Yii::t('app', 'Min Pouring Qty'),
+            'scheme_value' => Yii::t('app', 'Scheme Value'),
+            'union_code' => Yii::t('app', 'Union'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
 

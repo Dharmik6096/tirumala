@@ -6,6 +6,7 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
+$class = $type == 'create' ? '' : 'disabled';
 ?>
 
 <?php
@@ -28,7 +29,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
-        <?= Yii::$app->controls->date($model, $form, 'start_date', '', false, false, false); ?>
+        <?= Yii::$app->controls->date($model, $form, 'start_date', '', false, false, $readonly); ?>
     </div>
 
     <div class="col-sm-2">
@@ -36,15 +37,15 @@ $form = ActiveForm::begin([
     </div>
 
     <?php if ($type == 'create') { ?>
-        <div class="col-sm-2">
+        <div class="col-sm-2 number-validate">
             <?= $form->field($model, 'min_pouring_day')->textInput(['maxlength' => true]) ?>  
         </div>
 
-        <div class="col-sm-2">
+        <div class="col-sm-2 number-validate">
             <?= $form->field($model, 'min_pouring_qty')->textInput(['maxlength' => true]) ?>  
         </div>
 
-        <div class="col-sm-2">
+        <div class="col-sm-2 number-validate">
             <?= $form->field($model, 'scheme_value')->textInput(['maxlength' => true]) ?>  
         </div>
 

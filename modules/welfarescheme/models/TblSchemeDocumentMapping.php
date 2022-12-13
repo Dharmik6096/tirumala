@@ -53,18 +53,18 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'mapping_id' => 'Mapping ID',
-            'scheme_id' => 'Scheme ID',
-            'doc_id' => 'Doc ID',
-            'is_mandate' => 'Is Mandate',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'originating_type' => 'Originating Type',
-            'originating_org_code' => 'Originating Org Code',
-            'originating_org_type' => 'Originating Org Type',
+            'mapping_id' => Yii::t('app', 'Mapping ID'),
+            'scheme_id' => Yii::t('app', 'Scheme ID'),
+            'doc_id' => Yii::t('app', 'Doc ID'),
+            'is_mandate' => Yii::t('app', 'Is Mandate ?'),
+            'union_code' => Yii::t('app', 'Union'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
 

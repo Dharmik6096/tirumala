@@ -48,19 +48,19 @@ class TblSchemeDocumentMaster extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'doc_id' => 'Doc ID',
-            'doc_group' => 'Doc Group',
-            'doc_name' => 'Doc Name',
-            'doc_ext' => 'Doc Ext',
-            'is_active' => 'Is Active',
-            'union_code' => 'Union Code',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'originating_type' => 'Originating Type',
-            'originating_org_code' => 'Originating Org Code',
-            'originating_org_type' => 'Originating Org Type',
+            'doc_id' => Yii::t('app', 'Doc ID'),
+            'doc_group' => Yii::t('app', 'Doc Group'),
+            'doc_name' => Yii::t('app', 'Document Name'),
+            'doc_ext' => Yii::t('app', 'Doc Ext'),
+            'is_active' => Yii::t('app', 'Is Active'),
+            'union_code' => Yii::t('app', 'Union'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
 
