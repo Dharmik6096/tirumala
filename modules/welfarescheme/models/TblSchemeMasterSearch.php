@@ -20,7 +20,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
     public function rules() {
         return [
                 [['scheme_id', 'is_active', 'originating_type'], 'integer'],
-                [['scheme_id', 'is_active', 'originating_type', 'scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_date', 'to_date', 'scheme_id', 'is_active', 'originating_type', 'scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
@@ -51,6 +51,12 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
         $this->load($params);
         Yii::$app->general->filterByOrg($query, $this);
 
+        if (!empty($this->from_date) && !empty($this->to_date)) {
+            $query->andWhere(['or',
+                    ['between', 'tbl_scheme_master.start_date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))],
+                    ['between', 'tbl_scheme_master.end_date', date('Y-m-d', strtotime($this->from_date)), date('Y-m-d', strtotime($this->to_date))]]);
+        }
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -61,11 +67,6 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
         $query->andFilterWhere([
             'tbl_scheme_master.is_active' => $this->is_active,
         ]);
-
-        if (!empty($this->start_date))
-            $query->andFilterWhere(['like', 'cast(tbl_scheme_master.start_date as DATE)', date('Y-m-d', strtotime($this->start_date))]);
-        if (!empty($this->end_date))
-            $query->andFilterWhere(['like', 'cast(tbl_scheme_master.end_date as DATE)', date('Y-m-d', strtotime($this->end_date))]);
 
         $query->andFilterWhere(['like', 'scheme_name', $this->scheme_name])
                 ->andFilterWhere(['like', 'scheme_id', $this->scheme_id])

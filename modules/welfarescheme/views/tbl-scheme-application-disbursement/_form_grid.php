@@ -22,7 +22,7 @@ $attribute = [
         }, 'filter' => false],
         ['attribute' => 'scheme_id', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->schemeId, 'scheme_name');
-        }],
+        }, 'filter' => false],
         [
         'attribute' => 'disburse_date',
         'vAlign' => 'middle',

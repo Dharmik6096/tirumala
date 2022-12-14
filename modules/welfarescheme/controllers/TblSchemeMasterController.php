@@ -45,8 +45,16 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $dsearchModel = new TblSchemeCriteriaSearch();
+        $dsearchModel->scheme_id = $id;
+        $ddataProvider = $dsearchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new TblSchemeDocumentMappingSearch();
+        $searchModel->scheme_id = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'ddataProvider' => $ddataProvider, 'dsearchModel' => $dsearchModel,
+                    'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
         ]);
     }
 

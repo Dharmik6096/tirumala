@@ -404,7 +404,7 @@ class SearchFilter {
                 'action' => ['index', 'pending-approval']
             ],
             'TblSchemeApplicationDisbursementSearch' => [
-                'filter' => ['f_union_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'scheme_id', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

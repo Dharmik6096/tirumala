@@ -147,6 +147,7 @@ class TblSchemeCriteriaController extends \app\controllers\ChildController {
         $modelData = [];
         if (!empty($_POST['scheme_criteria_id'])) {
             $modelData = $this->findModel($_POST['scheme_criteria_id']);
+            $modelData->wef_date = !empty($modelData->wef_date) ? date('d-m-Y', strtotime($modelData->wef_date)) : '';
             if (!empty($modelData)) {
                 $data['status'] = 'success';
             }

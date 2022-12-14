@@ -20,7 +20,7 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
     public function rules() {
         return [
                 [['disburse_id', 'application_id', 'originating_type'], 'integer'],
-                [['union_code', 'scheme_id', 'disburse_value', 'disburse_id', 'application_id', 'originating_type', 'disburse_date', 'disburse_by', 'payment_mode', 'bank_name', 'branch_name', 'party_name', 'party_relation', 'payment_ref_id', 'payment_detail', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_date', 'to_date', 'union_code', 'scheme_id', 'disburse_value', 'disburse_id', 'application_id', 'originating_type', 'disburse_date', 'disburse_by', 'payment_mode', 'bank_name', 'branch_name', 'party_name', 'party_relation', 'payment_ref_id', 'payment_detail', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['disburse_value'], 'number'],
         ];
     }
@@ -51,9 +51,16 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
 
         $this->load($params);
 
-        $query->joinWith(['schemeId', 'applicationId', 'relationshipId']);
+        $query->joinWith(['applicationId', 'relationshipId']);
 
         Yii::$app->general->filterByOrg($query, $this);
+
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime($this->disburse_date));
+        $query->andFilterWhere(['>=', 'tbl_scheme_application_disbursement.disburse_date', $from_date]);
+
+
+        $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
+        $query->andFilterWhere(['<=', 'tbl_scheme_application_disbursement.disburse_date', $to_date]);
 
 
         if (!$this->validate()) {
@@ -66,14 +73,12 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
         $query->andFilterWhere([
             'disburse_id' => $this->disburse_id,
             'union_code' => $this->union_code,
+            'tbl_scheme_application_disbursement.scheme_id' => $this->scheme_id,
         ]);
-        if (!empty($this->disburse_date))
-            $query->andFilterWhere(['like', 'cast(tbl_scheme_application_disbursement.disburse_date as DATE)', date('Y-m-d', strtotime($this->disburse_date))]);
 
         $query->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
                 ->andFilterWhere(['like', 'bank_name', $this->bank_name])
                 ->andFilterWhere(['like', 'tbl_scheme_application.application_id', $this->application_id])
-                ->andFilterWhere(['like', 'tbl_scheme_master.scheme_name', $this->scheme_id])
                 ->andFilterWhere(['like', 'disburse_value', $this->disburse_value])
                 ->andFilterWhere(['like', 'branch_name', $this->branch_name])
                 ->andFilterWhere(['like', 'party_name', $this->party_name])
