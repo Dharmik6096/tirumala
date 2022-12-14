@@ -18,7 +18,7 @@ use yii\helpers\Json;
  */
 class TblPlantDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-unit'];
+    public $freeAccessActions = ['get-unit', 'plant-batch-list'];
 
     /**
      * Lists all TblPlantDispatch models.
@@ -174,6 +174,23 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
         } else {
             return Json::encode(['status' => 'error']);
         }
+    }
+
+    public function actionPlantBatchList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $product = new TblPlantDispatchTxn();
+                $data = $product->getPlantBatchList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

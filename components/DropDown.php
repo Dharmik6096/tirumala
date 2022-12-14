@@ -761,7 +761,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1575,7 +1575,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -1709,6 +1709,11 @@ class DropDown extends Component {
     public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
 }

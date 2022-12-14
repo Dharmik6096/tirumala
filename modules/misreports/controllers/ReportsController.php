@@ -790,6 +790,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionStockDispatchToMccReport() {
+        $this->report = 'StockDispatchToMccReport';
+        return $this->actionIndex();
+    }
+
+    public function actionStockReceivedToMccReport() {
+        $this->report = 'StockReceivedToMccReport';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -2370,6 +2380,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_wise_rate_different',
                 'scenario' => 'SocietyWiseRateDifferenceReport',
                 'title' => '915 - Society Wise Rate Difference Report',
+            ],
+            'StockDispatchToMccReport' => [
+                'param' => 'union_code,plant_code,product_code,sap_batch_no,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_dispatch_to_cc_from',
+                'scenario' => 'StockDispatchToMccReport',
+                'title' => 'Stock Dispatch To MCC Report',
+            ],
+            'StockReceivedToMccReport' => [
+                'param' => 'union_code,plant_code,product_code,sap_batch_no,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_received_to_cc_from',
+                'scenario' => 'StockReceivedToMccReport',
+                'title' => 'Stock Received To MCC Report',
             ],
         ];
         return $label[$l];
