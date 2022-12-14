@@ -155,10 +155,10 @@ var initDepdropMs;
                 name: 'q'
             }).appendTo(frm);
             $('#qstr').val(encrypted);
-            if (frm.attr('id') != 'report-form') {
-                frm.find('select').not($('#qstr')).attr('disabled', 'disabled');
-                frm.find('input').not($('#qstr')).attr('disabled', 'disabled');
-            }
+//            if (frm.attr('id') != 'report-form') {
+            frm.find('select').not($('#qstr')).attr('disabled', 'disabled');
+            frm.find('input').not($('#qstr')).attr('disabled', 'disabled');
+//            }
         }
         function Base64UrlEncode(s)
         {
