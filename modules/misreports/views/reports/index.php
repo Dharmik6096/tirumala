@@ -405,6 +405,20 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('month'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('year'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->year($model, $form, 'year', 'Year', '', false, true, 5, 5) ?> 
+                                            </div>
+                                            <?php
+                                        }
                                     }
 
                                     if (isset($data['report_type'])) {

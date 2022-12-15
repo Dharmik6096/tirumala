@@ -150,6 +150,16 @@ class DropDown extends Component {
         }
     }
 
+    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start, $end) {
+        $yearStart = date('Y') - $start;
+        $yearEnd = date('Y') + $end;
+        $years = [];
+        for ($yearStart; $yearStart <= $yearEnd; $yearStart++) {
+            $years[] = $yearStart;
+        }
+        echo $form->field($model, $name)->dropDownList($years, ['prompt' => 'Select Year', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
+    }
+
     private function setClass($form, $name) {
         if (array_key_exists($name, $form->options))
             $this->class = $form->options[$name];
@@ -1378,6 +1388,11 @@ class DropDown extends Component {
                 'name' => 'approved_status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Approved')],
+            ],
+            'month' => [
+                'name' => 'month',
+                'prompt' => Yii::t('app', 'Select Month'),
+                'data' => ['01' => Yii::t('app', 'Jan'), '02' => Yii::t('app', 'Feb'), '03' => Yii::t('app', 'Mar'), '04' => Yii::t('app', 'Apr'), '05' => Yii::t('app', 'May'), '06' => Yii::t('app', 'Jun'), '07' => Yii::t('app', 'Jul'), '08' => Yii::t('app', 'Aug'), '09' => Yii::t('app', 'Sep'), '10' => Yii::t('app', 'Oct'), '11' => Yii::t('app', 'Nov'), '12' => Yii::t('app', 'Dec')],
             ],
         ];
         return $records[$l];
