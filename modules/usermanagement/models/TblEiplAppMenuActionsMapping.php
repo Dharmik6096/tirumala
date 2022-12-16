@@ -54,9 +54,9 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
     }
 
     public function getExistMapingMenu() {
-        if (!empty($this->login_type) && !empty($this->department)) {
+        if (!empty($this->login_type)) {
             $query = $this->find()
-                    ->where(['login_type' => $this->login_type, 'department' => $this->department])
+                    ->where(['login_type' => $this->login_type])
                     ->all();
             return ArrayHelper::map($query, 'action_code', 'action_code');
         } else {
@@ -66,7 +66,7 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
 
     public function getExistMappedmenus() {
         return $this->find()
-                        ->where(['login_type' => $this->login_type, 'department' => $this->department, 'action_code' => $this->action_code])
+                        ->where(['login_type' => $this->login_type, 'action_code' => $this->action_code])
                         ->one();
     }
 

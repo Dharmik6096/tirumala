@@ -314,12 +314,12 @@ class User extends UserIdentity {
             ['email', 'email'],
             ['email', 'validateEmailConfirmedUnique'],
             ['bind_to_ip', 'validateBindToIp'],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department'], 'safe'],
+            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type'], 'safe'],
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             ['password', 'required', 'on' => ['newUser', 'changePassword']],
             ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
 //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
@@ -327,13 +327,13 @@ class User extends UserIdentity {
             ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
             ['repeat_password', 'compare', 'compareAttribute' => 'password'],
             [['allow_app_login'], 'default', 'value' => 0],
-            [['department', 'mobile_no'], 'required', 'when' => function($model) {
-            return $model->allow_app_login == 1;
-        }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
+            [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
+                    return $model->allow_app_login == 1;
+                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
             [['mobile_no'], 'unique'],
             [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
         ];
     }
 

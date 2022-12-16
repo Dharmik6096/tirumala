@@ -64,6 +64,9 @@ $form = ActiveForm::begin([
         </div>
 
     <?php endif; ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
+    </div>
     <div class="col-sm-2 user_type_show">
         <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>

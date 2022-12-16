@@ -69,6 +69,11 @@ $attribute = [
         'value' => function (User $model) {
             return isset($model->allow_app_login) ? Yii::$app->dropdown->getRecords('allow_app_login')['data'][$model->allow_app_login] : '';
         },],
+    ['attribute' => 'login_type',
+        'filter' => FALSE,
+        'value' => function (User $model) {
+            return isset($model->login_type) ? (!empty(Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type]) ? Yii::$app->dropdown->getRecords('user_login_type')['data'][$model->login_type] : '') : '';
+        },],
     [
         'attribute' => 'department',
         'value' => function(User $model) {
