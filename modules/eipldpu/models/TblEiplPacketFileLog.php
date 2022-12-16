@@ -40,7 +40,7 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
         return [
                 [['dcs_code', 'file_path', 'file_name', 'created_by', 'updated_by', 'union_code'], 'safe'],
                 [['file_status', 'total_record', 'processed_record', 'source_type', 'status'], 'safe'],
-                [['created_at', 'updated_at', 'pick_datetime', 'zip_name'], 'safe'],
+                [['created_at', 'updated_at', 'pick_datetime', 'zip_name', 'response_msg', 'dpu_type'], 'safe'],
         ];
     }
 
