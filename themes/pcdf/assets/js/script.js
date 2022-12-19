@@ -149,16 +149,16 @@ var initDepdropMs;
             });
             var encrypted = window.btoa(formString);
             encrypted = Base64UrlEncode(encrypted);
-            $('<input>').attr({
-                type: 'hidden',
-                id: 'qstr',
-                name: 'q'
-            }).appendTo(frm);
-            $('#qstr').val(encrypted);
-//            if (frm.attr('id') != 'report-form') {
-            frm.find('select').not($('#qstr')).attr('disabled', 'disabled');
-            frm.find('input').not($('#qstr')).attr('disabled', 'disabled');
-//            }
+            if (frm.attr('id') != 'report-form') {
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'qstr',
+                    name: 'q'
+                }).appendTo(frm);
+                $('#qstr').val(encrypted);
+                frm.find('select').not($('#qstr')).attr('disabled', 'disabled');
+                frm.find('input').not($('#qstr')).attr('disabled', 'disabled');
+            }
         }
         function Base64UrlEncode(s)
         {
