@@ -17,6 +17,7 @@ use yii\helpers\Url;
 </div>
 <?php
 $client_code = \Yii::$app->session->get('eiplCode');
+$client_code = !empty($client_code) ? strtolower($client_code) : '';
 
 $script = "
     
