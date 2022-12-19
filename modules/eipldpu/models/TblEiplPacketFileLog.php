@@ -40,7 +40,7 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
         return [
                 [['dcs_code', 'file_path', 'file_name', 'created_by', 'updated_by', 'union_code'], 'safe'],
                 [['file_status', 'total_record', 'processed_record', 'source_type', 'status'], 'safe'],
-                [['created_at', 'updated_at', 'pick_datetime', 'zip_name', 'response_msg', 'dpu_type'], 'safe'],
+                [['created_at', 'updated_at', 'pick_datetime', 'zip_name', 'response_msg', 'dpu_type', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'safe'],
         ];
     }
 
@@ -76,7 +76,7 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
                 ->where(['file_status' => $this->file_status, 'status' => $this->status])
                 ->andWhere(['!=', 'zip_name', '']);
         if (!empty($file_id)) {
-          $query->andWhere(['file_id'=>$file_id]);
+            $query->andWhere(['file_id' => $file_id]);
         }
         return $query->limit(25)->all();
     }

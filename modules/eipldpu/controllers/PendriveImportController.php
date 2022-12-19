@@ -369,52 +369,64 @@ class PendriveImportController extends \app\controllers\ChildController {
                     $cnt = 0;
                     $file_id = [];
                     $error_file = [];
+                    $considerBulkFolder = '';
+                    foreach ($dcs_folder as $dFolder) {
+                        $considerBulkFolder = '';
+                        if (!in_array($dFolder, array(".", ".."))) {
+                            $considerBulkFolder = $dFolder;
 
-                    foreach ($dcs_folder as $folder) {
-                        if (in_array($folder, array(".", "..")))
-                            continue;
-                        $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $folder . '/';
-                        if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
-                            if ($dh = opendir($sub_folder . $folder)) {
-                                while (($file = readdir($dh)) !== false) {
-                                    if (strtoupper(pathinfo($file, PATHINFO_EXTENSION)) == 'EIP') {
-                                        $status = 'success';
-                                        try {
-                                            $old_path = $sub_folder . $folder . '/' . $file;
-                                            $file_path = $CollectionData . $file;
-                                            if (copy($old_path, $file_path)) {
-                                                $file_log = new TblEiplPacketFileLog ();
-                                                $file_log->attributes = $model->attributes;
-                                                $file_log->zip_name = $model->file_name;
-                                                $file_log->file_path = str_replace('\\', '/', $file_path);
-                                                $file_log->file_name = $file;
-                                                $file_log->file_status = 0;
-                                                $file_log->source_type = 1;
-                                                $file_log->status = 0;
-                                                $file_log->dpu_type = $this->validateFileName($file_log->file_name);
-                                                $file_log->dcs_code = substr($folder, -12);
-                                                if ($file_log->save(FALSE)) {
-                                                    $file_id[] = $file_log->file_id;
-                                                    $cnt++;
-                                                    unlink($old_path);
-                                                } else {
-                                                    $error_file[] = $file;
+                            if (!empty($considerBulkFolder) && is_dir($sub_folder . '/' . $considerBulkFolder)) {
+                                $sub_bulk_folder = $sub_folder . $considerBulkFolder . '/';
+                                $bulkFolder = scandir($sub_bulk_folder);
+                                foreach ($bulkFolder as $folder) {
+                                    if (!in_array($folder, array(".", "..", "Log"))) {
+                                        $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $dFolder . '/' . $folder . '/';
+                                        if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
+                                            if ($dh = opendir($sub_bulk_folder . $folder)) {
+                                                while (($file = readdir($dh)) !== false) {
+                                                    if (strtoupper(pathinfo($file, PATHINFO_EXTENSION)) == 'EIP') {
+                                                        $status = 'success';
+                                                        try {
+                                                            $old_path = $sub_bulk_folder . $folder . '/' . $file;
+                                                            $file_path = $CollectionData . $file;
+                                                            if (copy($old_path, $file_path)) {
+                                                                $file_log = new TblEiplPacketFileLog ();
+                                                                $file_log->attributes = $model->attributes;
+                                                                $file_log->zip_name = $model->file_name;
+                                                                $file_log->file_path = str_replace('\\', '/', $file_path);
+                                                                $file_log->file_name = $file;
+                                                                $file_log->file_status = 0;
+                                                                $file_log->source_type = 1;
+                                                                $file_log->status = 0;
+                                                                $file_log->dpu_type = $this->validateFileName($file_log->file_name);
+                                                                $file_log->dcs_code = substr($folder, -12);
+                                                                if ($file_log->save(FALSE)) {
+                                                                    $file_id[] = $file_log->file_id;
+                                                                    $cnt++;
+                                                                    unlink($old_path);
+                                                                } else {
+                                                                    $error_file[] = $file;
+                                                                }
+                                                            } else {
+                                                                $error_file[] = $file;
+                                                            }
+                                                        } catch (\Throwable $ex) {
+                                                            $status = 'error';
+                                                            $msg = 'Error While Save data';
+                                                        }
+                                                    } else {
+                                                        $status = 'error';
+                                                        $msg = 'Error While Save data';
+                                                    }
                                                 }
-                                            } else {
-                                                $error_file[] = $file;
                                             }
-                                        } catch (\Throwable $ex) {
-                                            $status = 'error';
-                                            $msg = 'Error While Save data';
                                         }
-                                    } else {
-                                        $status = 'error';
-                                        $msg = 'Error While Save data';
                                     }
                                 }
                             }
                         }
                     }
+
                     Yii::$app->general->RemoveDirectory($ExtractPath);
                     $msg = $cnt . ' Files Uploaded Successfully<br/>';
                     if (!empty($error_file)) {
