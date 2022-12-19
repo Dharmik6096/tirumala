@@ -40,6 +40,7 @@ class TblSchemeCriteriaSearch extends TblSchemeCriteria {
      */
     public function search($params) {
         $query = TblSchemeCriteria::find();
+        $query->orderBy(['tbl_scheme_criteria.wef_date' => SORT_DESC]);
 
         // add conditions that should always apply here
 

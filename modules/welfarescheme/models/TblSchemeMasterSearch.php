@@ -20,7 +20,7 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
     public function rules() {
         return [
                 [['scheme_id', 'is_active', 'originating_type'], 'integer'],
-                [['from_date', 'to_date', 'scheme_id', 'is_active', 'originating_type', 'scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['min_pouring_day', 'min_pouring_qty', 'scheme_value', 'wef_date', 'from_date', 'to_date', 'scheme_id', 'is_active', 'originating_type', 'scheme_name', 'start_date', 'end_date', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
@@ -63,6 +63,9 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
             return $dataProvider;
         }
 
+        if (!empty($this->wef_date))
+            $query->andFilterWhere(['like', 'tbl_scheme_criteria.wef_date', date('Y-m-d', strtotime($this->wef_date))]);
+
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_scheme_master.is_active' => $this->is_active,
@@ -70,7 +73,10 @@ class TblSchemeMasterSearch extends TblSchemeMaster {
 
         $query->andFilterWhere(['like', 'scheme_name', $this->scheme_name])
                 ->andFilterWhere(['like', 'scheme_id', $this->scheme_id])
-                ->andFilterWhere(['like', 'remarks', $this->remarks]);
+                ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_scheme_criteria.min_pouring_day', $this->min_pouring_day])
+                ->andFilterWhere(['like', 'tbl_scheme_criteria.min_pouring_qty', $this->min_pouring_qty])
+                ->andFilterWhere(['like', 'tbl_scheme_criteria.scheme_value', $this->scheme_value]);
 
         return $dataProvider;
     }

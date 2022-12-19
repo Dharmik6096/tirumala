@@ -4,6 +4,7 @@ namespace app\modules\welfarescheme\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use app\modules\welfarescheme\models\TblSchemeCriteria;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -26,7 +27,7 @@ use yii\helpers\ArrayHelper;
  */
 class TblSchemeMaster extends \app\models\ChildModel {
 
-    public $min_pouring_day, $min_pouring_qty, $scheme_value;
+    public $min_pouring_day, $min_pouring_qty, $scheme_value, $wef_date;
 
     public static function tableName() {
         return 'tbl_scheme_master';
@@ -37,7 +38,7 @@ class TblSchemeMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['min_pouring_day', 'min_pouring_qty', 'scheme_value', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'union_code', 'scheme_name', 'remarks', 'start_date', 'end_date', 'created_at', 'updated_at', 'is_active', 'originating_type'], 'safe'],
+                [['wef_date', 'min_pouring_day', 'min_pouring_qty', 'scheme_value', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'union_code', 'scheme_name', 'remarks', 'start_date', 'end_date', 'created_at', 'updated_at', 'is_active', 'originating_type'], 'safe'],
                 [['is_active', 'originating_type'], 'integer'],
                 [['is_active'], 'default', 'value' => 1],
                 [['scheme_name', 'start_date', 'union_code', 'min_pouring_day', 'min_pouring_qty', 'scheme_value'], 'required'],
@@ -99,6 +100,11 @@ class TblSchemeMaster extends \app\models\ChildModel {
             $query->andWhere(['OR', ['>=', 'end_date', $date], ['IS', 'end_date', NULL]]);
         }
         return $query->all();
+    }
+
+    public function getDefaultCriteriaDetail() {
+        return TblSchemeCriteria::find()
+                        ->where(['scheme_id' => $this->scheme_id])->orderBy('wef_date desc')->one();
     }
 
 }

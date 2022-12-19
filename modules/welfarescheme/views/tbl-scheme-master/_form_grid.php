@@ -41,6 +41,19 @@ $attribute = [
             return Yii::$app->controls->view_date($model->end_date);
         }, 'filter' => false,],
         ['attribute' => 'remarks'],
+//criteria details
+    ['label' => ' WEF Date', 'attribute' => 'wef_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function ($model) {
+            return Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->defaultCriteriaDetail, 'wef_date'));
+        }, 'filter' => false],
+        ['attribute' => 'min_pouring_day', 'value' => 'defaultCriteriaDetail.min_pouring_day', 'filter' => false],
+        ['attribute' => 'min_pouring_qty', 'value' => 'defaultCriteriaDetail.min_pouring_qty', 'filter' => false],
+        ['attribute' => 'scheme_value', 'value' => 'defaultCriteriaDetail.scheme_value', 'filter' => false],
 ];
 
 $grid_option = [
