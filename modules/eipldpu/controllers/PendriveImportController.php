@@ -16,9 +16,11 @@ class PendriveImportController extends \app\controllers\ChildController {
     public function actionCreate() {
         $model = new TblEiplPacketFileLog();
         if ($model->load(Yii::$app->request->post())) {
+            $postData = Yii::$app->request->post();
+            $folderPath = !empty($postData['file_folder']) ? $postData['file_folder'] . '/' : '';
             $error_file = [];
-            $path = Yii::$app->basePath . '/web/import/collection/';
-            $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'];
+            $path = Yii::$app->basePath . '/web/import/collection/' . $folderPath;
+            $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $folderPath;
             if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
                 $status = 'success';
                 $files = array_filter(explode(',', $model->file_name));
@@ -228,8 +230,9 @@ class PendriveImportController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionImportFile() {
+    public function actionImportFile($fileFolder = '') {
         $path = Yii::$app->basePath . '/web/import/collection/';
+        $path .= $fileFolder . '/';
         Yii::$app->general->checkDirectory($path, '0777');
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
