@@ -11,7 +11,7 @@ use app\modules\eipldpu\models\TblEiplPacketProcessSearch;
 
 class PendriveImportController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['import-file', 'process-files', 'import-zip'];
+    public $freeAccessActions = ['import-file', 'process-files', 'import-zip', 'add-zip'];
 
     public function actionCreate() {
         $model = new TblEiplPacketFileLog();
@@ -337,86 +337,145 @@ class PendriveImportController extends \app\controllers\ChildController {
 
     public function actionAddZip() {
         $model = new TblEiplPacketFileLog();
+
         if ($model->load(Yii::$app->request->post())) {
-            $zipPath = Yii::$app->basePath . '/web/import/collection/zip/';
-            $ExtractPath = $zipPath . explode('.', $model->file_name)[0];
-            $zipPath .= $model->file_name;
-            if (!is_dir($ExtractPath)) {
-                $oldmask = umask(0);
-                Yii::$app->general->checkDirectory($ExtractPath, '0777');
-                umask($oldmask);
-            } else {
-                $files = glob($ExtractPath . '*'); // get all file names
-                foreach ($files as $file) { // iterate files
-                    if (is_file($file))
-                        unlink($file); // delete file
+            $status = '';
+            $msg = '';
+            $msgArr = [];
+            $fromDate = '';
+            $fromShift = '';
+            $toDate = '';
+            $toShift = '';
+            $allowFileArray = [];
+            if (empty($model->from_date)) {
+                $status = 'date_error';
+                $msgArr[] = 'From Date cannot be blank.';
+            }
+            if (empty($model->from_shift)) {
+                $status = 'date_error';
+                $msgArr[] = 'From Shift cannot be blank.';
+            }
+            if (empty($model->to_date)) {
+                $status = 'date_error';
+                $msgArr[] = 'To Date cannot be blank.';
+            }
+            if (empty($model->to_shift)) {
+                $status = 'date_error';
+                $msgArr[] = 'To Shift cannot be blank.';
+            }
+            if (empty($status)) {
+                $fromDate = date('Y-m-d', strtotime($model->from_date)) . ' ' . Yii::$app->general->getshift($model->from_shift);
+                $toDate = date('Y-m-d', strtotime($model->to_date)) . ' ' . Yii::$app->general->getshift($model->to_shift);
+                $fromDate = date('Y-m-d H:i:s', strtotime($fromDate));
+                $toDate = date('Y-m-d H:i:s', strtotime($toDate));
+                $model->from_date = $fromDate;
+                $model->to_date = $toDate;
+                if ($fromDate > $toDate) {
+                    $status = 'date_error';
+                    $msgArr[] = 'To Date must be greater then or equal to From Date.';
+                } else {
+                    $toDate = date('Y-m-d H:i:s', strtotime($toDate) + 43200);
+                    $begin = new \DateTime($fromDate);
+                    $end = new \DateTime($toDate);
+
+                    $interval = \DateInterval::createFromDateString('12 hours');
+                    $period = new \DatePeriod($begin, $interval, $end);
+
+                    foreach ($period as $dt) {
+                        $shift = $dt->format("H:i:s");
+                        $date = $dt->format("dmy");
+                        $setKey = 'MST_' . $date . '_';
+                        $setKey .= $shift == '06:00:00' ? 'M' : 'E';
+                        $allowFileArray[] = strtolower($setKey . '.EIP');
+                        $msgArr[] = $setKey;
+                    }
                 }
             }
-
-            if (Yii::$app->general->ZipOperation($zipPath, FALSE, $ExtractPath)) {
-                $status = '';
-                $msg = '';
-                $folders = scandir($ExtractPath);
-                $main_folder = '';
-                foreach ($folders as $folder) {
-                    if (in_array($folder, array(".", "..")))
-                        continue;
-                    $main_folder = $folder;
+//            $status = 'date_error';
+//            $msgArr[] = 'teeste';
+            if (!empty($status)) {
+                $msg = implode('<br>', $msgArr);
+            } else {
+                $zipPath = Yii::$app->basePath . '/web/import/collection/zip/';
+                $ExtractPath = $zipPath . explode('.', $model->file_name)[0];
+                $zipPath .= $model->file_name;
+                if (!is_dir($ExtractPath)) {
+                    $oldmask = umask(0);
+                    Yii::$app->general->checkDirectory($ExtractPath, '0777');
+                    umask($oldmask);
+                } else {
+                    $files = glob($ExtractPath . '*'); // get all file names
+                    foreach ($files as $file) { // iterate files
+                        if (is_file($file))
+                            unlink($file); // delete file
+                    }
                 }
-                if (!empty($main_folder) && is_dir($ExtractPath . '/' . $main_folder)) {
-                    $sub_folder = $ExtractPath . '/' . $main_folder . '/';
-                    $dcs_folder = scandir($sub_folder);
-                    $cnt = 0;
-                    $file_id = [];
-                    $error_file = [];
-                    $considerBulkFolder = '';
-                    foreach ($dcs_folder as $dFolder) {
-                        $considerBulkFolder = '';
-                        if (!in_array($dFolder, array(".", ".."))) {
-                            $considerBulkFolder = $dFolder;
 
-                            if (!empty($considerBulkFolder) && is_dir($sub_folder . '/' . $considerBulkFolder)) {
-                                $sub_bulk_folder = $sub_folder . $considerBulkFolder . '/';
-                                $bulkFolder = scandir($sub_bulk_folder);
-                                foreach ($bulkFolder as $folder) {
-                                    if (!in_array($folder, array(".", "..", "Log"))) {
-                                        $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $dFolder . '/' . $folder . '/';
-                                        if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
-                                            if ($dh = opendir($sub_bulk_folder . $folder)) {
-                                                while (($file = readdir($dh)) !== false) {
-                                                    if (strtoupper(pathinfo($file, PATHINFO_EXTENSION)) == 'EIP') {
-                                                        $status = 'success';
-                                                        try {
-                                                            $old_path = $sub_bulk_folder . $folder . '/' . $file;
-                                                            $file_path = $CollectionData . $file;
-                                                            if (copy($old_path, $file_path)) {
-                                                                $file_log = new TblEiplPacketFileLog ();
-                                                                $file_log->attributes = $model->attributes;
-                                                                $file_log->zip_name = $model->file_name;
-                                                                $file_log->file_path = str_replace('\\', '/', $file_path);
-                                                                $file_log->file_name = $file;
-                                                                $file_log->file_status = 0;
-                                                                $file_log->source_type = 1;
-                                                                $file_log->status = 0;
-                                                                $file_log->dpu_type = $this->validateFileName($file_log->file_name);
-                                                                $file_log->dcs_code = substr($folder, -12);
-                                                                if ($file_log->save(FALSE)) {
-                                                                    $file_id[] = $file_log->file_id;
-                                                                    $cnt++;
-                                                                    unlink($old_path);
-                                                                } else {
-                                                                    $error_file[] = $file;
+                if (Yii::$app->general->ZipOperation($zipPath, FALSE, $ExtractPath)) {
+                    $folders = scandir($ExtractPath);
+                    $main_folder = '';
+                    foreach ($folders as $folder) {
+                        if (in_array($folder, array(".", "..")))
+                            continue;
+                        $main_folder = $folder;
+                    }
+                    if (!empty($main_folder) && is_dir($ExtractPath . '/' . $main_folder)) {
+                        $sub_folder = $ExtractPath . '/' . $main_folder . '/';
+                        $dcs_folder = scandir($sub_folder);
+                        $cnt = 0;
+                        $file_id = [];
+                        $error_file = [];
+                        $considerBulkFolder = '';
+                        foreach ($dcs_folder as $dFolder) {
+                            $considerBulkFolder = '';
+                            if (!in_array($dFolder, array(".", ".."))) {
+                                $considerBulkFolder = $dFolder;
+
+                                if (!empty($considerBulkFolder) && is_dir($sub_folder . '/' . $considerBulkFolder)) {
+                                    $sub_bulk_folder = $sub_folder . $considerBulkFolder . '/';
+                                    $bulkFolder = scandir($sub_bulk_folder);
+                                    foreach ($bulkFolder as $folder) {
+                                        if (!in_array($folder, array(".", "..", "Log"))) {
+                                            $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . $dFolder . '/' . $folder . '/';
+                                            if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
+                                                if ($dh = opendir($sub_bulk_folder . $folder)) {
+                                                    while (($file = readdir($dh)) !== false) {
+                                                        if (strtoupper(pathinfo($file, PATHINFO_EXTENSION)) == 'EIP') {
+                                                            $status = 'success';
+                                                            try {
+                                                                $old_path = $sub_bulk_folder . $folder . '/' . $file;
+                                                                $file_path = $CollectionData . $file;
+                                                                if (in_array(strtolower($file), $allowFileArray)) {
+                                                                    if (copy($old_path, $file_path)) {
+                                                                        $file_log = new TblEiplPacketFileLog ();
+                                                                        $file_log->attributes = $model->attributes;
+                                                                        $file_log->zip_name = $model->file_name;
+                                                                        $file_log->file_path = str_replace('\\', '/', $file_path);
+                                                                        $file_log->file_name = $file;
+                                                                        $file_log->file_status = 0;
+                                                                        $file_log->source_type = 1;
+                                                                        $file_log->status = 0;
+                                                                        $file_log->dpu_type = $this->validateFileName($file_log->file_name);
+                                                                        $file_log->dcs_code = substr($folder, -12);
+                                                                        if ($file_log->save(FALSE)) {
+                                                                            $file_id[] = $file_log->file_id;
+                                                                            $cnt++;
+                                                                            unlink($old_path);
+                                                                        } else {
+                                                                            $error_file[] = $file;
+                                                                        }
+                                                                    } else {
+                                                                        $error_file[] = $file;
+                                                                    }
                                                                 }
-                                                            } else {
-                                                                $error_file[] = $file;
+                                                            } catch (\Throwable $ex) {
+                                                                $status = 'error';
+                                                                $msg = 'Error While Save data';
                                                             }
-                                                        } catch (\Throwable $ex) {
+                                                        } else {
                                                             $status = 'error';
                                                             $msg = 'Error While Save data';
                                                         }
-                                                    } else {
-                                                        $status = 'error';
-                                                        $msg = 'Error While Save data';
                                                     }
                                                 }
                                             }
@@ -425,24 +484,28 @@ class PendriveImportController extends \app\controllers\ChildController {
                                 }
                             }
                         }
-                    }
 
-                    Yii::$app->general->RemoveDirectory($ExtractPath);
-                    $msg = $cnt . ' Files Uploaded Successfully<br/>';
-                    if (!empty($error_file)) {
-                        $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                        Yii::$app->general->RemoveDirectory($ExtractPath);
+                        $msg = $cnt . ' Files Uploaded Successfully<br/>';
+                        if (!empty($error_file)) {
+                            $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+                        }
+                    } else {
+                        $status = 'error';
+                        $msg = 'Empty Zip Found';
                     }
                 } else {
                     $status = 'error';
-                    $msg = 'Empty Zip Found';
+                    $msg = 'Error While Zip Extract';
                 }
-            } else {
-                $status = 'error';
-                $msg = 'Error While Zip Extract';
             }
             $result = ['status' => $status, 'data' => $msg];
             echo (Json::encode($result));
         } else {
+            $model->from_date = date('d-m-Y');
+            $model->from_shift = '1';
+            $model->to_date = date('d-m-Y');
+            $model->to_shift = '2';
             return $this->render('import_zip', ['model' => $model]);
         }
     }

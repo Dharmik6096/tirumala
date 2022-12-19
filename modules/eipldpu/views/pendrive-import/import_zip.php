@@ -25,6 +25,18 @@ $this->title = 'EIPL Collection Zip File';
         <div class="modal-body">
             <div class="row">
                 <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
+                <div class="col-sm-2 rtpl_validate create_fields">
+                    <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, false, true); ?>
+                </div>
+                <div class="col-sm-2 shift rtpl_validate create_fields">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift', $model->getAttributeLabel('from_shift'), false, 'from_shift'); ?>
+                </div>
+                <div class="col-sm-2 rtpl_validate create_fields">
+                    <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, false, true); ?>
+                </div>
+                <div class="col-sm-2 shift rtpl_validate create_fields">
+                    <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
+                </div>
                 <div class="col-sm-3">
                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
                 </div>
@@ -52,7 +64,7 @@ $this->title = 'EIPL Collection Zip File';
                                             }
                                                 
                                         }",
-                         'removedfile' => "function(file){
+                            'removedfile' => "function(file){
                           var file_str = $('#file_name').val();
                           var res = file_str.replace(file.name,''); 
                            $('#file_name').val(res);
@@ -82,11 +94,21 @@ $this->title = 'EIPL Collection Zip File';
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet-zip")[0].reset();
+                                                $("#tbleiplpacketfilelog-from_shift").trigger("change");
+                                                $("#tbleiplpacketfilelog-from_shift").trigger("select2:select");
+                                                $("#tbleiplpacketfilelog-to_shift").trigger("change");
+                                                $("#tbleiplpacketfilelog-to_shift").trigger("select2:select");
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            }else if (obj1.status == "date_error"){
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }else{
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet-zip")[0].reset();
+                                                $("#tbleiplpacketfilelog-from_shift").trigger("change");
+                                                $("#tbleiplpacketfilelog-from_shift").trigger("select2:select");
+                                                $("#tbleiplpacketfilelog-to_shift").trigger("change");
+                                                $("#tbleiplpacketfilelog-to_shift").trigger("select2:select");
                                                 Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }

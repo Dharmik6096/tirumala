@@ -64,6 +64,10 @@ class TblEiplPacketFileLog extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union Code'),
             'status' => Yii::t('app', 'Status'),
             'pick_datetime' => Yii::t('app', 'Pick Datetime'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'from_shift' => Yii::t('app', 'From Shift'),
+            'to_date' => Yii::t('app', 'To Date'),
+            'to_shift' => Yii::t('app', 'To Shift'),
         ];
     }
 
