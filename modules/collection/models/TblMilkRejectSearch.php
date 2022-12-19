@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\collection\models\TblMilkReject;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMilkRejectSearch represents the model behind the search form about `app\modules\collection\models\TblMilkReject`.
@@ -19,10 +20,11 @@ class TblMilkRejectSearch extends TblMilkReject {
      */
     public function rules() {
         return [
-            [['milk_reject_code', 'shift_code', 'milk_type_code', 'no_of_can'], 'integer'],
-            [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'date_time_of_collection', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['fat', 'snf', 'qty', 'clr'], 'number'],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'sample_no', 'clr'], 'safe']
+                [['milk_reject_code', 'shift_code', 'milk_type_code', 'no_of_can'], 'integer'],
+                [['source_org_type', 'source_org_code', 'dest_org_type', 'dest_org_code', 'date_time_of_collection', 'return_type', 'action_taken', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+                [['fat', 'snf', 'qty', 'clr'], 'number'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'sample_no', 'clr', 'bmc_code', 'mcc_plant_code'], 'safe'],
+                [['plant_code', 'union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['responsibilityMapping']],
         ];
     }
 
@@ -87,6 +89,71 @@ class TblMilkRejectSearch extends TblMilkReject {
                 ->andFilterWhere(['like', 'qty', $this->qty])
                 ->andFilterWhere(['like', 'union_code', $this->union_code]);
 
+        return $dataProvider;
+    }
+
+    public function responsibilityMapping($params, $sp = 'sp_portal_rejection_penalty_mapping') {
+        $this->load($params);
+        $output = [];
+        if (!empty($params) && $this->validate()) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'from_date' => '',
+                'from_shift' => '',
+                'to_date' => '',
+                'to_shift' => ''];
+
+            $sp_params = array_merge($sp_params, $params['TblMilkRejectSearch']);
+            $bmc_array = $bmc_string = $params['TblMilkRejectSearch']['bmc_code'];
+            $mcc_array = $mcc_string = $params['TblMilkRejectSearch']['mcc_plant_code'];
+            if (empty($this->bmc_code)) {
+                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+            } else if (is_array($bmc_array)) {
+                $bmc_string = implode(',', $bmc_array);
+                $this->bmc_code = ',' . $bmc_string . ',';
+            }
+
+            if (empty($this->mcc_plant_code)) {
+                $this->mcc_plant_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            } else if (is_array($mcc_array)) {
+                $mcc_string = implode(',', $mcc_array);
+                $this->mcc_plant_code = ',' . $mcc_string . ',';
+            }
+
+            $from_shift = Yii::$app->general->getshift($sp_params['from_shift']);
+            $to_shift = Yii::$app->general->getshift($sp_params['to_shift']);
+            $sp_params['from_date'] = date('Y-m-d H:i:s', strtotime($sp_params['from_date'] . ' ' . $from_shift));
+            $sp_params['to_date'] = date('Y-m-d H:i:s', strtotime($sp_params['to_date'] . ' ' . $to_shift));
+            $sp_params['bmc_code'] = $this->bmc_code;
+            $sp_params['mcc_plant_code'] = $this->mcc_plant_code;
+            unset($sp_params['from_shift']);
+            unset($sp_params['to_shift']);
+
+
+            $output = \Yii::$app->general->getSpData($sp, $sp_params);
+            $this->bmc_code = $bmc_array;
+            $this->mcc_plant_code = $mcc_array;
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
         return $dataProvider;
     }
 

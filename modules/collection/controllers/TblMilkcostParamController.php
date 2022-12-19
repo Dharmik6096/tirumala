@@ -40,6 +40,7 @@ class TblMilkcostParamController extends ChildController {
 
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($this->model->validate()) {
                 $transaction = $this->generalModel->saveTransaction([$this->model], ['Milk Cost Param', 'create']);
                 if ($transaction !== FALSE) {
@@ -64,6 +65,7 @@ class TblMilkcostParamController extends ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = ($this->model->wef_date == '') ? null : Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Milk Cost Param', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();

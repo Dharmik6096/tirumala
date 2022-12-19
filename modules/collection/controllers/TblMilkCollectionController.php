@@ -446,6 +446,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $sp_param[] = 'DCS';
             $sp_param[] = $from_date;
             $sp_param[] = $to_date;
+            $sp_param[] = 'data_lock_member';
+            $sp_param[] = 'billing_lock_member';
             $sp_name = 'sp_validate_payment_cycle_lock_collection';
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
             $type = 'success';
@@ -470,6 +472,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $sp_param[] = $searchModel->mcc_plant_code;
                 $sp_param[] = $from_date;
                 $sp_param[] = $to_date;
+                $sp_param[] = 'milk_collection';
                 $sp_name = 'sp_validate_mcc_shift_lock_collection';
                 $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
                 $type = 'success';
@@ -1110,6 +1113,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 $controls = [];
                 $output = [];
                 $fileArray = [];
+                $checkArray = [];
+                $eiplCode = Yii::$app->session->get('eiplCode');
                 foreach ($codes as $code) {
                     $data = explode('###', $code);
                     $data_array['module_name'] = 'TblMilkCollection_cdpl_VM';
@@ -1126,27 +1131,77 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         $ftp_model = new TblFtpTxnLog();
                         $ftp_model->exportData($data_array, $title = '', $output);
                     } elseif ($status == 'download') {
-                        $controls['union_code'] = $data[0];
-                        $controls['mcc_plant_code'] = $data[2];
-                        $controls['bmc_code'] = $data[3];
-                        $controls['dcs_code'] = $data[4];
-                        $controls['from_date'] = $data[5];
-                        $controls['to_date'] = $data[5];
-                        $output = \Yii::$app->general->getSpData('mis_vmcc_collection_date_wise', $controls);
+                        if ($eiplCode == 'DODLA') {
+                            $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];
+                            if (empty($checkArray[$key]['dcs_code'])) {
+                                $checkArray[$key]['dcs_code'] = [];
+                            }
+                            $checkArray[$key]['union_code'] = $data[0];
+                            $checkArray[$key]['mcc_plant_code'] = $data[2];
+                            $checkArray[$key]['bmc_code'] = $data[3];
+                            $checkArray[$key]['dcs_code'][] = $data[4];
+                        } else {
+                            $controls['union_code'] = $data[0];
+                            $controls['mcc_plant_code'] = $data[2];
+                            $controls['bmc_code'] = $data[3];
+                            $controls['dcs_code'] = $data[4];
+                            $controls['from_date'] = $data[5];
+                            $controls['to_date'] = $data[5];
+                            $sp = 'mis_vmcc_collection_date_wise';
 
+                            if ($eiplCode == 'DODLA') {
+                                $sp = 'mis_vmcc_collection_date_wise_dodla';
+                            }
+                            $output = \Yii::$app->general->getSpData($sp, $controls);
+
+                            if (!empty($output)) {
+                                $downLoadArray = [];
+                                foreach ($output as $detail) {
+                                    $plant = 'Agent_Code';
+                                    if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
+                                        if (empty($downLoadArray[$detail[$plant]])) {
+                                            $downLoadArray[$detail[$plant]] = [];
+                                        }
+                                        $downLoadArray[$detail[$plant]][] = $detail;
+                                    }
+                                }
+                                foreach ($downLoadArray as $bmc => $download) {
+                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    if ($eiplCode == 'DODLA') {
+                                        $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                    }
+                                    $this->downloadData($title, $download, $fileArray);
+                                }
+                                $this->fileDownloadArr = $fileArray;
+                            }
+                        }
+                    }
+                }
+                if ($eiplCode == 'DODLA') {
+                    foreach ($checkArray as $checkKey => $checkAr) {
+                        $dateArr = explode('~~', $checkKey);
+                        $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
+                        $controls['union_code'] = $checkAr['union_code'];
+                        $controls['mcc_plant_code'] = $checkAr['mcc_plant_code'];
+                        $controls['bmc_code'] = $checkAr['bmc_code'];
+                        $controls['dcs_code'] = ',' . implode(',', $checkAr['dcs_code']) . ',';
+                        $controls['from_date'] = $date;
+                        $controls['to_date'] = $date;
+                        $sp = 'mis_vmcc_collection_date_wise';
+
+                        if ($eiplCode == 'DODLA') {
+                            $sp = 'mis_vmcc_collection_date_wise_dodla';
+                        }
+                        $output = \Yii::$app->general->getSpData($sp, $controls);
                         if (!empty($output)) {
                             $downLoadArray = [];
-                            foreach ($output as $detail) {
-                                $plant = 'Agent_Code';
-                                if (!empty($detail[$plant]) && strtolower($detail[$plant]) != 'total') {
-                                    if (empty($downLoadArray[$detail[$plant]])) {
-                                        $downLoadArray[$detail[$plant]] = [];
-                                    }
-                                    $downLoadArray[$detail[$plant]][] = $detail;
-                                }
-                            }
+                            $downLoadArray[] = $output;
                             foreach ($downLoadArray as $bmc => $download) {
-                                $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($data[5])) . '_' . $data[6];
+                                if ($eiplCode == 'DODLA') {
+                                    $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                } else {
+                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                }
                                 $this->downloadData($title, $download, $fileArray);
                             }
                             $this->fileDownloadArr = $fileArray;

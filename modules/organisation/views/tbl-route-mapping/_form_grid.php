@@ -87,6 +87,7 @@ $attribute = [
             return $detail;
         }
     ],
+    ['attribute' => 'sap_route_code'],
 ];
 
 $grid_option = [

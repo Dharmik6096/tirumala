@@ -370,7 +370,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
                 $plant = $parents[0];
                 $mcc = !empty($parents[1]) ? $parents[1] : NULL;
                 $bmc = !empty($parents[2]) ? $parents[2] : NULL;
-                $data = $routes->routeFromDestination($plant, $mcc, $bmc);
+                $data = $routes->routeFromDestination($plant, $mcc, $bmc, TRUE, FALSE, TRUE);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

@@ -65,11 +65,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['file_status', 'status'], 'default', 'value' => 0],
-                [['txn_type'], 'default', 'value' => 'EIPL'],
-                [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
-                [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-                [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
+            [['file_status', 'status'], 'default', 'value' => 0],
+            [['txn_type'], 'default', 'value' => 'EIPL'],
+            [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
+            [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
+            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
         ];
     }
 
@@ -193,6 +193,11 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         $fileName .= $FTPProcess['ext'];
         $filePath = $FTPProcess['file_path'];
         $ftpPath = !empty($mccRefCode) ? $mccRefCode : $FTPProcess['ftp_path'];
+
+        $implode_char = isset($FTPProcess['implode_char']) ? $FTPProcess['implode_char'] : ',';
+        $append_ftp_path = isset($FTPProcess['append_ftp_path']) ? TRUE : FALSE;
+        $skip_header = isset($FTPProcess['skip_header']) ? TRUE : FALSE;
+
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             if (Yii::$app->session->get('eiplCode') == 'DODLA') {
@@ -217,13 +222,15 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             } else {
                 $header = array_keys($output[0]);
                 $txt_file = fopen($filePath . $fileName, "w");
-                fwrite($txt_file, implode(',', $header) . PHP_EOL);
+                if (!$skip_header) {
+                    fwrite($txt_file, implode($implode_char, $header) . PHP_EOL);
+                }
                 foreach ($output as $line) {
-                    fwrite($txt_file, implode(',', $line) . PHP_EOL);
+                    fwrite($txt_file, implode($implode_char, $line) . PHP_EOL);
                 }
                 fclose($txt_file);
             }
-            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email);
+            return $this->saveLog($data, $filePath, $fileName, count($output), $ftp_upload, $ftpPath, $email, $append_ftp_path);
         }
         return FALSE;
         /** csv generate * */
@@ -268,22 +275,23 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
     }
 
-    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email) {
+    private function saveLog($data, $filePath, $fileName, $count, $ftp_upload, $ftpPath, $email, $append_ftp_path) {
         $ftpDetail = new TblFtpDetail();
         $ftpDetail->ftp_connection_code = $data->union_code;
         $ftpData = $ftpDetail->getData();
         if (!empty($ftpData)) {
+            $ftp_file_path = (empty($ftpPath) ? $ftpData->ftp_path : ($append_ftp_path ? $ftpData->ftp_path . $ftpPath : $ftpPath));
             $ftp_file = new TblFtpTxnLog();
             $ftp_file->attributes = $ftpData->attributes;
             $ftp_file->attributes = $data->attributes;
             $ftp_file->total_count = $ftp_file->success_count = $count;
             $ftp_file->txn_datetime = date('Y-m-d H:i:s');
-            $ftp_file->file_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath) . '/' . $fileName;
+            $ftp_file->file_path = $ftp_file_path . '/' . $fileName;
             $ftp_file->file_name = $fileName;
             $ftp_file->local_path = $filePath . $fileName;
             $ftp_file->updated_at = NULL;
             $ftp_file->file_status = $ftp_file->status = 0;
-            $ftp_file->ftp_path = (empty($ftpPath) ? $ftpData->ftp_path : $ftpPath);
+            $ftp_file->ftp_path = $ftp_file_path;
 
             if ($ftp_upload) {
                 $ftp = new FTPConnection();
@@ -325,17 +333,17 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             }
 
             if ($ftp_file->save()) {
-                $model_name = Yii::$app->path->define($data->module_name);
-                $model = new $model_name();
-                //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
-                //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
-                $table = $model->tableSchema->name;
-                $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
-                        . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
-                        . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
-                $connection = \Yii::$app->db;
-                $command = $connection->createCommand($query);
-                $command->execute();
+                /* $model_name = Yii::$app->path->define($data->module_name);
+                  $model = new $model_name();
+                  //$model->updateAll(['t.tag_2' => 'A', 't.ftp_txn_file_name' => $fileName], ['tbl_dcs.mcc_plant_code' => $data->mcc_plant_code, 't.date_time_of_collection' => $data->applicable_date])
+                  //      ->innerJoin('tbl_dcs', 'tbl_dcs.dcs_code = t.dcs_code');
+                  $table = $model->tableSchema->name;
+                  $query = "UPDATE t SET t.tag_2='A',t.ftp_txn_file_name='" . $fileName . "'"
+                  . " from " . $table . " t inner join tbl_dcs d on d.dcs_code=t.dcs_code"
+                  . " where d.mcc_plant_code='" . $data->mcc_plant_code . "' and t.date_time_of_collection='" . $data->applicable_date . "'";
+                  $connection = \Yii::$app->db;
+                  $command = $connection->createCommand($query);
+                  $command->execute(); */
                 return $fileName;
             }
         }

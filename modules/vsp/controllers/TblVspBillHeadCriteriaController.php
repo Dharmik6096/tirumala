@@ -240,6 +240,7 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
         $appModel->assignStaticData = [
+            'bill_head_for' => $model->billHead->bill_head_for,
             'bill_head_code' => $model->bill_head_code,
         ];
         $appModel->header_title = ' [Criteria: ' . $model->criteria_name . '] ';

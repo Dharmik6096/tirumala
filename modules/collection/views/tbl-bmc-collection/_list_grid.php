@@ -2,6 +2,10 @@
 
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
+
+$allowCanSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_can_selection', 'PORTAL') == 1 ? TRUE : FALSE;
+$allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
+$client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
 ?>
 <div class="col-sm-12 padding-left-0 padding-right-0 ">
     <h5 class="panel-heading"><?= Yii::t('app', 'BMC Collection Details') ?></h5>
@@ -9,10 +13,16 @@ use kartik\grid\GridView;
 
     <?php
     $attribute = [
+        ['attribute' => 'route_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+            }, 'filter' => FALSE, 'visible' => $allowRouteSelection],
         ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
-        ['attribute' => 'customer_code', 'filter' => false],
+        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
+                return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE);
+            }, 'filter' => FALSE, 'visible' => $client_code],
+        ['attribute' => 'customer_code', 'filter' => FALSE],
         ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }],
@@ -49,6 +59,7 @@ use kartik\grid\GridView;
         ['attribute' => 'converted_qty', 'value' => 'converted_qty', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'rtpl', 'value' => 'rtpl', 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'amount', 'value' => 'amount', 'vAlign' => 'middle', 'filter' => false],
+        ['attribute' => 'can_no', 'filter' => FALSE, 'visible' => $allowCanSelection],
         ['attribute' => 'status', 'filter' => FALSE],
     ];
 

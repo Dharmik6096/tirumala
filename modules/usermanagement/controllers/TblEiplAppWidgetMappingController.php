@@ -23,7 +23,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProviderOther = $searchModel->search(Yii::$app->request->queryParams, 2);
         $selectedArray = [];
-        $this->model->department = $this->model->login_type == 'MEMBER' ? 'MEMBER' : $this->model->department;
+//        $this->model->department = $this->model->login_type == 'MEMBER' ? 'MEMBER' : $this->model->department;
         $selectedArray = $this->model->getWidgets();
 
         if (Yii::$app->request->post()) {
@@ -49,7 +49,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = (string) $revoke_widget;
                     $model->login_type = $this->model->login_type;
-                    $model->department = $this->model->department;
+//                    $model->department = $this->model->department;
                     $record = $model->getExistMappedWidgets();
                     $historyModel = new TblEiplAppWidgetMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
@@ -65,12 +65,12 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = $Assign_widget;
                     $model->login_type = $this->model->login_type;
-                    $model->department = $this->model->department;
+//                    $model->department = $this->model->department;
                     $master[] = $model;
                     $auto_inc++;
                 }
             }
-
+           
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Mobile Dashboard Permission', 'edit']);
             $selectedArray = !empty($postArray) ? $postArray : [];
             if ($transaction == 'customRedirect') {

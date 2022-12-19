@@ -38,6 +38,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-2 number-validate">
         <?= $form->field($model, 'morning_kms')->textInput() ?>
     </div>
@@ -49,6 +50,29 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'total_kms')->textInput(['readOnly' => true]) ?>
+    </div>    
+    <div class="clearfix"></div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'morning_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'morning_grace_time')->textInput();
+        ?>
+    </div>
+    <div class="col-sm-2">
+        <?=
+        $form->field($model, 'evening_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '99:99',]);
+        ?>
+    </div>
+    <div class="col-sm-2 number-validate">
+        <?=
+        $form->field($model, 'evening_grace_time')->textInput();
+        ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">

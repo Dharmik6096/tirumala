@@ -31,6 +31,7 @@ class CustomValidation extends Component {
                 'TblDcs' => [
                     'default' => [
                         [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                     ]
                 ],
                 'TblContactDetails' => [
@@ -107,6 +108,7 @@ class CustomValidation extends Component {
                     [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                     [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
                     [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 ],
                 'TblContactDetails' => [
                     [['firstname', 'mobile_no'], 'required'],
@@ -145,6 +147,7 @@ class CustomValidation extends Component {
                 'TblDcs' => [
                     'default' => [
                         [['dcs_type_code'], 'required'],
+                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                     ]
                 ],
                 'TblContactDetails' => [
@@ -323,9 +326,9 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                        [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
-                                return $model->is_active;
-                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
+//                        [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
+//                                return $model->is_active;
+//                            }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync']],
                     ],
                 ],
             ],
@@ -384,6 +387,17 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
+                    ],
+                ],
+            ],
+            'UMANG' => [
+                'TblDcs' => [
+                    'default' => [
+                        [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
+                        [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
+                        [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
+                        [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                     ],
                 ],
             ],

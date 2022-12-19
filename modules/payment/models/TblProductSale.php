@@ -69,22 +69,22 @@ class TblProductSale extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['payment_mode'], function ($attribute, $params) {
+            [['payment_mode'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'payment_mode');
                 }, 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport']],
-                [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport']],
-                [['union_code', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
-                [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
-                [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
-                [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit'], 'safe'],
-                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
-                [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
-                [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
-                [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
-                [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync']],
-                [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
+            [['product_sale_code', 'dcs_code', 'union_code'], 'required', 'except' => ['saleProduct', 'androidsync', 'productSaleImport', 'productSaleMemberImport']],
+            [['bmc_code', 'customer_type', 'customer_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['saleProduct', 'productSaleImport']],
+            [['union_code', 'ex_code', 'customer_name'], 'required', 'on' => ['saleProduct']],
+            [['product_code'], 'required', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['dcs_code', 'member_code', 'invoice_date', 'payment_mode'], 'required', 'on' => ['productSaleMemberImport']],
+            [['product_sale_code', 'dcs_code', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['productSaleImport']],
+            [['invoice_date', 'created_at', 'updated_at', 'dcs_code', 'union_code', 'invoice_date', 'no_of_installment', 'is_installment', 'payment_cycle_code', 'available_credit', 'type', 'customer_type', 'customer_code', 'payment_mode', 'originating_org_code', 'originating_org_type', 'originating_type', 'bmc_code', 'deduction_start_date', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'mcc_plant_code', 'product_code', 'quantity', 'discount', 'member_code', 'available_stock', 'avl_credit'], 'safe'],
+            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due', 'no_of_installment'], 'number'],
+            [['other_amount', 'discount', 'paid_amount', 'amount_due', 'quantity'], 'number', 'min' => 0],
+            [['discount'], 'validateDisccount', 'except' => ['productSaleImport', 'productSaleMemberImport']],
+            [['amount_due'], 'checkAmount', 'on' => 'validate_credit'],
+            [['paid_amount'], 'validatePaidAmount', 'except' => ['saleProduct', 'androidsync']],
+            [['other_amount', 'discount', 'paid_amount', 'amount_due'], 'default', 'value' => 0],
 //            [['is_installment'], 'integer'],
 //            [['is_installment'], 'integer','min'=>1,'on'=>'payment','when'=>function(){
 //                return ($this->amount_due>0);
@@ -94,12 +94,12 @@ class TblProductSale extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-payment_mode').val() == 1; 
           }"],
-                [['no_of_installment'], 'integer', 'min' => 1, 'on' => 'saleProduct', 'when' => function() {
+            [['no_of_installment'], 'integer', 'min' => 1, 'on' => 'saleProduct', 'when' => function() {
                     return ($this->payment_mode == 1);
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblproductsale-payment_mode').val() == 1; 
           }", 'tooSmall' => 'You must have atleast 1 installment to pay the due'],
-                [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function() {
+            [['dcs_code'], 'required', 'on' => 'saleProduct', 'when' => function() {
                     return ($this->customer_type == 'Member');
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblproductsale-customer_type').val() == 'Member'; 
@@ -112,19 +112,19 @@ class TblProductSale extends \app\models\ChildModel {
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['productSaleImport']],
-                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['productSaleImport']],
-                [['customer_type'], function ($attribute, $params) {
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['productSaleImport']],
+            [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['productSaleImport']],
-                [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['productSaleImport']],
-                [['invoice_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
-                [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
-                [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['productSaleImport']],
+            [['invoice_date'], 'convertDateDot', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['invoice_date'], 'convertDate', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['invoice_date'], 'setImport', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['invoice_date'], 'validatePaymentCycle', 'skipOnError' => true, 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
+            [['quantity'], 'validateQty', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+            [['customer_code'], 'validateUnionConfig', 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']],
                 /*    [['bmc_code'], function ($attribute, $params) {
                   if (empty($this->getErrors())) {
                   $flag = strtolower($this->customer_type) == 'member' ? 'member_lock' : 'bmc_lock';
@@ -226,10 +226,10 @@ class TblProductSale extends \app\models\ChildModel {
         return new TblProductSaleQuery(get_called_class());
     }
 
-    public function getCode() {
-        $data = $this->find()->select(["MAX(CAST(product_sale_code AS INT)) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
-        return $data['product_sale_code'] + 1;
-    }
+//    public function getCode() {
+//        $data = $this->find()->select(["MAX(CAST(product_sale_code AS INT)) as product_sale_code"])->where(['union_code' => $this->union_code])->one();
+//        return $data['product_sale_code'] + 1;
+//    }
 
     public function addProductSaleData($jsonData) {
         $this->union_code = $jsonData['union_code'];
@@ -300,47 +300,50 @@ class TblProductSale extends \app\models\ChildModel {
                 if (!empty($modelData)) {
                     if ($modelData->data_lock_bmc == 1) {
                         $this->addError($attribute, "Payment Cycle is locked for Sale Date.");
+                        return false;
                     }
-                    $fromDate = date('Y-m-d', strtotime($modelData->from_date));
-                    $toDate = date('Y-m-d', strtotime($modelData->to_date));
-                    $saledAmount = 0;
-                    $where = [];
-                    $where = ['payment_mode' => $this->payment_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+                    $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
+                    if ($config == 1) {
+                        $fromDate = date('Y-m-d', strtotime($modelData->from_date));
+                        $toDate = date('Y-m-d', strtotime($modelData->to_date));
+                        $saledAmount = 0;
+                        $where = [];
+                        $where = ['payment_mode' => $this->payment_mode, 'customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
 //                if (strtolower($this->sale_type) == 'member') {
 //                    $where['member_code'] = $this->member_code;
 //                }
-                    $data = $this->find()
-                            ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
-                            ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
-                            ->andWhere($where)
-                            ->one();
-                    if (!empty($data->amount_due)) {
-                        $saledAmount = $data->amount_due;
-                    }
-                    $model = new TblBmcCollection();
-                    $collWhere = [];
-                    $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
-                    if (strtolower($this->customer_type) == 'member') {
-                        $model = new TblMilkCollection();
-                        $collWhere = ['member_code' => $this->customer_code];
-                    }
-                    $modelData = $model->find()
-                            ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
-                            ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
-                            ->andWhere($collWhere)
-                            ->one();
-                    $creditAmount = 0;
-                    if (!empty($modelData->amount)) {
-                        $creditAmount = $modelData->amount;
-                    }
-                    $availableCredit = $creditAmount - $saledAmount;
-                    $amt = !empty($this->amount_due) ? $this->amount_due : 0;
-                    $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
-                    $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
-                    $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'check_credit_limit', 'PORTAL');
-                    if ($config == 1 && $due > $availableCredit) {
-                        $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
-                        return false;
+                        $data = $this->find()
+                                ->select(['amount_due' => 'ISNULL(SUM(ISNULL(amount_due, 0)),0)'])
+                                ->where(['between', 'cast(invoice_date as date)', $fromDate, $toDate])
+                                ->andWhere($where)
+                                ->one();
+                        if (!empty($data->amount_due)) {
+                            $saledAmount = $data->amount_due;
+                        }
+                        $model = new TblBmcCollection();
+                        $collWhere = [];
+                        $collWhere = ['customer_type' => $this->customer_type, 'customer_code' => $this->customer_code];
+                        if (strtolower($this->customer_type) == 'member') {
+                            $model = new TblMilkCollection();
+                            $collWhere = ['member_code' => $this->customer_code];
+                        }
+                        $modelData = $model->find()
+                                ->select(['amount' => 'ISNULL(SUM(ISNULL(amount, 0)), 0)'])
+                                ->where(['between', 'date_time_of_collection', $modelData->from_date, $modelData->to_date])
+                                ->andWhere($collWhere)
+                                ->one();
+                        $creditAmount = 0;
+                        if (!empty($modelData->amount)) {
+                            $creditAmount = $modelData->amount;
+                        }
+                        $availableCredit = $creditAmount - $saledAmount;
+                        $amt = !empty($this->amount_due) ? $this->amount_due : 0;
+                        $noOfIn = !empty($this->no_of_installment) ? $this->no_of_installment : 0;
+                        $due = !empty($noOfIn) ? $amt / $noOfIn : $amt;
+                        if ($config == 1 && $due > $availableCredit) {
+                            $this->addError('amount_due', "Available Credit Limit is " . $availableCredit);
+                            return false;
+                        }
                     }
                 } else {
                     $this->addError($attribute, "Payment Cycle aplicability not available for Sale Date.");
@@ -416,7 +419,7 @@ class TblProductSale extends \app\models\ChildModel {
                     $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
                 } else {
                     $dcs_data = $this->mainDcsCode;
-                    $this->bmc_code = Yii::$app->general->getforeignkey($this->mainDcsCode, 'bmc_code');
+                    $this->bmc_code = $dcs_data->bmc_code; //Yii::$app->general->getforeignkey($this->mainDcsCode, 'bmc_code');
                     $this->union_code = $dcs_data->union_code;
                     if ($this->union_code != $this->import_union_code) {
                         $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . 'Code is invalid for Mapped Union.'));
@@ -444,9 +447,10 @@ class TblProductSale extends \app\models\ChildModel {
                     }
                 }
             }
+            $bmcData = $this->bmcCode;
             $this->no_of_installment = $this->payment_mode == 1 ? (isset($this->no_of_installment) ? $this->no_of_installment : 1) : 0;
-            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
-            $this->plant_code = Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
+            $this->mcc_plant_code = $bmcData->mcc_plant_code; //Yii::$app->general->getforeignkey($this->bmcCode, 'mcc_plant_code');
+            $this->plant_code = $bmcData->plant_code; //Yii::$app->general->getforeignkey($this->bmcCode, 'plant_code');
         }
     }
 
@@ -464,7 +468,7 @@ class TblProductSale extends \app\models\ChildModel {
         if (!empty($detailModel->product_code) && !empty($model->customer_type) && !empty($model->customer_code)) {
             $date = !empty($model->invoice_date) ? date('Y-m-d', strtotime($model->invoice_date)) : date('Y-m-d');
             $memberRate = 0;
-            if ($model->customer_type == 'member') {
+            if (strtoupper($model->customer_type) == 'MEMBER') {
                 $memberRate = 1;
             }
             $applicable_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->customer_code;
@@ -482,11 +486,12 @@ class TblProductSale extends \app\models\ChildModel {
                 $detailModel->x_col1 = $app['sale_rate'];
                 $detailModel->unit_code = $app['unit_code'];
                 $model->amount = $detailModel->quantity * $detailModel->rate;
+                $model->amount_due = $model->amount - $model->discount;
             }
         } else {
             $this->loadRate($model, $detailModel);
         }
-        $detailModel->tax_code = Yii::$app->general->getforeignkey($detailModel->productCode, 'tax_code');
+        $detailModel->tax_code = NULL; //Yii::$app->general->getforeignkey($detailModel->productCode, 'tax_code');
 
         if ($this->calculateTax) {
             $configModel = new TblDcsGeneralConfig();
@@ -741,38 +746,45 @@ class TblProductSale extends \app\models\ChildModel {
                 }
             }
         }
-        $fstockModel = new TblProductStock();
-        $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
-        $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
-        $fstockModel->setCodes($sale_type, $sale_code);
-        $fstockModel->product_code = $detailModel->product_code;
-        $fstockModel->union_code = $model->union_code;
-        $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-        $existfromStock = $fstockModel->getExistStock($sale_type);
+        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        if ($config == 1) {
+            $fstockModel = new TblProductStock();
+            $sale_type = strtoupper($model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+            $sale_code = strtoupper($model->customer_type) == 'MEMBER' ? $model->dcs_code : $model->bmc_code;
+            $fstockModel->plant_code = $model->plant_code;
+            $fstockModel->mcc_plant_code = $model->mcc_plant_code;
+            $fstockModel->bmc_code = $model->bmc_code;
+            $fstockModel->dcs_code = $model->dcs_code;
+            //$fstockModel->setCodes($sale_type, $sale_code);
+            $fstockModel->product_code = $detailModel->product_code;
+            $fstockModel->union_code = $model->union_code;
+            $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+            $existfromStock = $fstockModel->getExistStock($sale_type);
 
-        $f_stock = 0;
-        $qty = $detailModel->quantity;
-        if (!empty($existfromStock)) {
-            $historyModel = new TblProductStockHistory();
-            Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
-            $modelSave[] = $historyModel;
-            $f_stock = $existfromStock->stock;
-            $existfromStock->stock = $f_stock - $qty;
-            $fstockModel = $existfromStock;
-            $modelSave[] = $fstockModel;
+            $f_stock = 0;
+            $qty = $detailModel->quantity;
+            if (!empty($existfromStock)) {
+                $historyModel = new TblProductStockHistory();
+                Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                $modelSave[] = $historyModel;
+                $f_stock = $existfromStock->stock;
+                $existfromStock->stock = $f_stock - $qty;
+                $fstockModel = $existfromStock;
+                $modelSave[] = $fstockModel;
 
-            $i = 1;
-            $fstockTxnModel = new TblProductStockTransaction();
-            $fstockTxnModel->attributes = $fstockModel->attributes;
-            $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-            $fstockTxnModel->old_value = $f_stock;
-            $fstockTxnModel->new_value = $qty;
-            $fstockTxnModel->final_value = $fstockModel->stock;
-            $fstockTxnModel->transaction_type = $txn_type;
-            $fstockTxnModel->transaction_date = date('Y-m-d');
-            $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
-            $modelSave[] = $fstockTxnModel;
-            $i++;
+                $i = 1;
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = $txn_type;
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
+                $modelSave[] = $fstockTxnModel;
+                $i++;
+            }
         }
     }
 
@@ -807,13 +819,18 @@ class TblProductSale extends \app\models\ChildModel {
     }
 
     public function validateQty($attribute, $param) {
-        $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
+        $config = Yii::$app->general->getUnionConfiguration($this->union_code, 'stock_check_on_sale', 'PORTAL');
+        //   $config = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['stock_check_on_sale'] : '';
         $productType = Yii::$app->general->getforeignkey($this->productCode, 'x_col3');
         if ($config == 1 && $productType != 1) {
             $sale_type = strtoupper($this->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
             $sale_code = strtoupper($this->customer_type) == 'MEMBER' ? $this->dcs_code : $this->bmc_code;
             $stockModel = new TblProductStock();
-            $stockModel->setCodes(strtoupper($sale_type), $sale_code);
+            //$stockModel->setCodes(strtoupper($sale_type), $sale_code);
+            $stockModel->plant_code = $this->plant_code;
+            $stockModel->mcc_plant_code = $this->mcc_plant_code;
+            $stockModel->bmc_code = $this->bmc_code;
+            $stockModel->dcs_code = $this->dcs_code;
             $stockModel->product_code = $this->product_code;
             $stockModel->union_code = $this->union_code;
             $existtoStock = $stockModel->getExistStock($sale_type);
