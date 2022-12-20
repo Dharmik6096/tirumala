@@ -29,6 +29,11 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\collection\models\TblMilkCollectionSummary;
+use app\models\GeneralModel;
+use app\models\UserHistory;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 
 class SchedulerController extends ChildController {
 
@@ -1032,6 +1037,39 @@ class SchedulerController extends ChildController {
                 $ftp_model = new TblFtpTxnLog();
                 $ftp_model->exportData($data_array, $title = '', $output);
                 $update = $model->updateFileUploadStatus($row->milk_collection_summary_code);
+            }
+        }
+    }
+
+    public function actionUserDeactiveWefDateWise() {
+        $model = new User();
+        $modelData = $model->getPickRecords(10);
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->id;
+            }, $modelData);
+//            $update = $model->updateFileStatus($ids);
+            $saveModel = [];
+
+            foreach ($modelData as $row) {
+                $historyModel = new UserHistory();
+                Yii::$app->operation->history($row, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $row->is_active = 0;
+                $saveModel[] = $row;
+
+                $appmodel = new TblEiplAppLogin();
+                $appData = $appmodel->getAppDetail($row);
+                if (!empty($appData)) {
+                    $appHistoryModel = new TblEiplAppLoginHistory();
+                    Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
+                    $saveModel[] = $appHistoryModel;
+                    $appData->is_active = 0;
+                    $saveModel[] = $appData;
+                }
+                $generalModel = new GeneralModel();
+                $transaction = $generalModel->saveTransaction($saveModel, [], ['User Deactivated', 'edit']);
             }
         }
     }

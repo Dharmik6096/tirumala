@@ -26,7 +26,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <?php
-
 $attribute = [
     [
         'attribute' => 'username',
@@ -80,6 +79,12 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->departmentCode, 'department');
         },
     ],
+    [
+        'attribute' => 'wef_date',
+        'value' => function(User $model) {
+            return Yii::$app->controls->view_date($model->wef_date);
+        },
+    ],
         /* [
           'class' => 'webvimark\components\StatusColumn',
           'attribute' => 'status',
@@ -99,11 +104,6 @@ $grid_option = [
     'active_column' => true,
     'actions' => [
         'update' => true,
-        'delete_user' => function ($url, $model) {
-            $disable = ($model->checkNotSelf() && $model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'data-val' => $model->id, 'data-name' => $model->name, 'class' => 'user-record ' . $disable];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user'], $options);
-        },
         'role' => function ($url, $model) {
             $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role', 'class' => $disable];
@@ -115,14 +115,25 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization', 'class' => $disable];
             return Html::a('<i class="fa fa-link"></i>', ['/user-management/user/organization-map', 'id' => $model->id], $options);
         },
+        'user-recovery' => function ($url, $model) {
+            $date = Yii::$app->controls->view_date($model->wef_date);
+            if ($model->is_active == 1) {
+                $disable = ($model->checkNotSelf() && (empty($date))) ? '' : 'link-disable';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive-user ' . $disable, 'data-val' => $model->id];
+                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user', 'id' => $model->id], $options);
+            } else {
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-val' => $model->id, 'data-name' => $model->name];
+                return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/user-management/user/activate-user', 'id' => $model->id], $options);
+            }
+        },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?> 
+<div id='deactive_user'></div>
 
 <?php
-
 $script = "
             $('#user-grid').on('click','.user-record',function(e){
             //$('.delete-property').on('click',function(){
@@ -172,5 +183,76 @@ $script = "
                         }
                     });
                 });";
+
+
+$script .= "$(document).ready(function(){
+    $(document).on('click','.deactive-user',function(e){
+    var id= $(this).attr('data-val');
+         AddRecoveryData(id);
+    });
+    function AddRecoveryData(id){
+        if(id != ''){         
+        $.ajax({
+                type: 'get',
+                url: '" . Url::to(['/user-management/user/deactive-user']) . "',
+                data: {'id' : id},
+                beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+                },
+                success: function(data) {
+                  $('#deactive_user').html(data);
+                   $('#UserModal').modal('toggle');              
+                   $('#loadercontent').hide();
+                   $('#pageloader').hide();                                                                  
+                },
+                error: function(data) {  
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                }
+            });
+        }
+    }
+    
+
+    $(document).on('click','.react-user',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    bootbox.confirm({
+        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to Activate \"'+name+'\"?</span></div></div>',
+        buttons: {
+            'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+              },
+            'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+             }
+        },
+        callback: function(result) {
+            if (result) {
+              $('#loader').show();
+                 $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['activate-user']) . "',
+                        data:{'id':id},
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                                $.pjax.reload({container: '#user-grid'});
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                            else if (obj1.status == 'error'){
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                        }
+            });
+            }
+        }
+    });
+    });  
+});";
 $this->registerJs($script, View::POS_END, 'delete-manager-user');
 ?>
