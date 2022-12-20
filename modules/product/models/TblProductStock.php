@@ -203,7 +203,8 @@ class TblProductStock extends \app\models\ChildModel {
     public function getProductBatchList($type, $code, $product) {
         $query = $this->find()->where([
                     'product_code' => $product])
-                ->andWhere(['>', 'tbl_product_stock.stock', 0]);
+                ->andWhere(['>', 'tbl_product_stock.stock', 0])
+                ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
 
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (strtoupper($type) == 'MCC') {
