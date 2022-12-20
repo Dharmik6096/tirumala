@@ -1382,7 +1382,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'vsp' => Yii::t('app', 'VSP'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Procurement Staff'), 'gyan_dhara_plant' => Yii::t('app', 'Gyan Dhara Plant User')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'VSP'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Procurement Staff'), 'gyan_dhara_plant' => Yii::t('app', 'Gyan Dhara Plant User')],
                 'remove_key' => ['all']
             ],
         ];
