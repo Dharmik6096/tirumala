@@ -23,7 +23,7 @@ $form = ActiveForm::begin(['options' => [
 <div class="modal-body">
     <div class="row">
         <?php echo Html::hiddenInput('TblEiplPacketFileLog[file_name]', '', ['id' => 'file_name']); ?>
-        <?php echo Html::textInput('file_folder', $dateFolder, ['id' => 'file_folder']); ?>
+        <?php echo Html::hiddenInput('file_folder', $dateFolder, ['id' => 'file_folder']); ?>
         <div class="col-sm-3">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
         </div>
