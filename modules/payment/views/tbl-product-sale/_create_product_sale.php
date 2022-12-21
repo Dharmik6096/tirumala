@@ -553,7 +553,15 @@ $script = "
             getAvailableStock();
         }
     });
-
+    $('#tblproductsaletransaction-sap_batch_no').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        let varVal = $('#tblproductsaletransaction-sap_batch_no option:nth-child(2)').val();
+        if(varVal == undefined) {
+            varVal = '';
+        }
+        $('#tblproductsaletransaction-sap_batch_no').val(varVal);
+        $('#tblproductsaletransaction-sap_batch_no').trigger('change');
+        $('#tblproductsaletransaction-sap_batch_no').trigger('select2:select');
+    });
     function getAvailableStock(){
         var type = $('#tblproductsale-customer_type').val();
         var product = $('#tblproductsaletransaction-product_code').val();

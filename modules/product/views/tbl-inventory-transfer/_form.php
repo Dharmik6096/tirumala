@@ -184,6 +184,16 @@ $(document).ready(function(){
     $('#f_code').on('change', function(){
         getAvailableStock();
     });
+    
+    $('#tblinventorytransfertxn-sap_batch_no').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        let varVal = $('#tblinventorytransfertxn-sap_batch_no option:nth-child(2)').val();
+        if(varVal == undefined) {
+            varVal = '';
+        }
+        $('#tblinventorytransfertxn-sap_batch_no').val(varVal);
+        $('#tblinventorytransfertxn-sap_batch_no').trigger('change');
+        $('#tblinventorytransfertxn-sap_batch_no').trigger('select2:select');
+    });
     $('#tblinventorytransfertxn-sap_batch_no').on('change', function(){
         getAvailableStock();
     });

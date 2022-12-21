@@ -275,8 +275,6 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $fstockTxnModel->transaction_type = $txn_type;
                 $fstockTxnModel->transaction_date = date('Y-m-d');
                 $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
-
-
                 $childModel[] = $fstockModel;
                 $childModel[] = $fstockTxnModel;
                 $i++;

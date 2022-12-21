@@ -124,7 +124,7 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }
-        return $query->one();
+        return $query->orderBy(['created_at' => SORT_ASC])->one();
     }
 
     public function getCode($autoInc = 1) {
@@ -216,10 +216,9 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['dcs_code' => $code]);
         }
-        $data = $query->all();
+        $data = $query->orderBy(['created_at' => SORT_ASC])->all();
         if (!empty($data)) {
             $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
-            asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         }
         return $data;
     }
