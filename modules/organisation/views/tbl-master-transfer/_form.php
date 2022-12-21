@@ -86,9 +86,23 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 DCSFARMER">
             <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
         </div>
+        <div class="col-sm-2 mt10 UPDATETRANSACTION">
+            <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
     </div>
-    <div class="col-sm-2  UPDATETRANSACTION">
-        <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    <div class="UPDATETRANSACTIONDETAIL">
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'from_datetime', '', FALSE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->shift($model, $form, 'from_shift', 'From Shift', 'shift', false) ?>    
+        </div>  
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'to_datetime', '', FALSE); ?>
+        </div> 
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->shift($model, $form, 'to_shift', 'To Shift', 'shift', false) ?>    
+        </div>
     </div>
     <?= Html::hiddenInput('plant', $model->plant_code, ['id' => 'plant']); ?>
 </div>
@@ -105,7 +119,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "$(document).ready(function(){
      setvisible();
-    $(document).on('change', '#tblmastertransfer-master_type', function() {  
+    $(document).on('change', '#tblmastertransfer-master_type', function() { 
       setvisible();
     });
     $(document).on('change', '#tblmastertransfer-transfer_type', function() {
@@ -118,13 +132,15 @@ $script = "$(document).ready(function(){
                 $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
                 $('#master-transfer-form .reset_field input').val('');
                 $('#master-transfer-form .reset_field select').val('');
-            }
+            }             
         setvisible();
     });
 function setvisible(){
     $('.CURRENTINFO').hide();
-    $('.NEWINFO').hide();
-        $('.UPDATETRANSACTION').hide();
+    $('.NEWINFO').hide();        
+    $('.UPDATETRANSACTION').hide();
+    $('.UPDATETRANSACTIONDETAIL').hide();    
+
         var master_type = $('#tblmastertransfer-master_type').val();
         var transfer_type = $('#tblmastertransfer-transfer_type').val();
         if(master_type!=''){
@@ -136,6 +152,10 @@ function setvisible(){
                 $('.vendor_type').hide();
                 $('.vendor_code').hide();
                 $('.dcs_code').show();
+            if($('#tblmastertransfer-update_transaction').val()=='1'){
+                $('.UPDATETRANSACTION').show();
+                $('.UPDATETRANSACTIONDETAIL').show();    
+                }
             }else if(master_type=='FARMER'){
                 $('.DCS').hide();
                 $('.vendor_type').hide();
@@ -160,6 +180,7 @@ function setvisible(){
         }
      }
 }
+
 $('#tblmastertransfer-old_mcc_plant_code').on('change', function() {
     $('#tblmastertransfer-old_mcc_plant_code').trigger('select2:select');
     var old_mcc = $(this).val();
@@ -201,9 +222,7 @@ $('#tblmastertransfer-new_bmc_code').on('change', function() {
     }
 });
 
-$(document).on('change', '#tblmastertransfer-wef_date', function() {
-    $('#tblmastertransfer-update_transaction').prop('checked', false);
-    $('.UPDATETRANSACTION').hide();
+$(document).on('change', '#tblmastertransfer-wef_date', function() {   
             if($('#tblmastertransfer-master_type').val()=='DCS'){
             var req_date = $(this).val().split('-');
             var d = new Date();
@@ -221,9 +240,25 @@ $(document).on('change', '#tblmastertransfer-wef_date', function() {
             secondDate.setHours(0, 0, 0, 0)
             if(firstDate <= secondDate){
             $('.UPDATETRANSACTION').show();
+            }else{
+             $('#tblmastertransfer-update_transaction').prop('checked', false);
+             $('.UPDATETRANSACTION').hide();
+             $('.UPDATETRANSACTIONDETAIL').hide();
             }
+            }else{
+            $('#tblmastertransfer-update_transaction').prop('checked', false);
+            $('.UPDATETRANSACTION').hide();
+            $('.UPDATETRANSACTIONDETAIL').hide();            
             }
 });
+
+$('#tblmastertransfer-update_transaction').on('change', function() {
+        $('.UPDATETRANSACTIONDETAIL').hide();
+   if($('#tblmastertransfer-update_transaction').is(':checked')){
+        $('.UPDATETRANSACTIONDETAIL').show();
+   }
+});
+
 });
 ";
 $this->registerJs($script, View::POS_END, 'transfer-utility-form');

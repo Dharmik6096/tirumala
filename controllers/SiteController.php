@@ -2098,7 +2098,7 @@ class SiteController extends Controller {
             $update = $model->updateFileStatus($ids);
             foreach ($modelData as $row) {
                 try {
-                    $result = \Yii::$app->db->createCommand("{CALL sp_process_transfer_request (:master_type,:transfer_type,:union_code,:plant_code,:old_mcc_plant_code,:new_mcc_plant_code,:old_bmc_code,:new_bmc_code,:old_dcs_code,:new_dcs_code,:old_route_code,:new_route_code,:old_member_code,:new_member_code,:wef_date,:operation_by,:update_transaction,:customer_code)}")
+                    $result = \Yii::$app->db->createCommand("{CALL sp_process_transfer_request (:master_type,:transfer_type,:union_code,:plant_code,:old_mcc_plant_code,:new_mcc_plant_code,:old_bmc_code,:new_bmc_code,:old_dcs_code,:new_dcs_code,:old_route_code,:new_route_code,:old_member_code,:new_member_code,:wef_date,:operation_by,:update_transaction,:customer_code,:from_datetime,:to_datetime)}")
                             ->bindValue(':master_type', $row->master_type)
                             ->bindValue(':transfer_type', $row->transfer_type)
                             ->bindValue(':union_code', $row->union_code)
@@ -2116,7 +2116,9 @@ class SiteController extends Controller {
                             ->bindValue(':wef_date', $row->wef_date)
                             ->bindValue(':operation_by', $row->created_by)
                             ->bindValue(':update_transaction', $row->update_transaction)
-                            ->bindValue(':customer_code', $row->customer_code);
+                            ->bindValue(':customer_code', $row->customer_code)
+                            ->bindValue(':from_datetime', $row->from_datetime)
+                            ->bindValue(':to_datetime', $row->to_datetime);
                     $query = $result->execute();
                     $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 2;
