@@ -1119,7 +1119,7 @@ class TblDcs extends ChildModel {
 
     public function getFtpCredentials() {
         return $this->find()
-                        ->select(['module_code' => 'tbl_dcs.dcs_code', 'CP_Code' => 'tbl_dcs.ref_code', 'ftp_connection_code' => 'tbl_dcs.mcc_plant_code', 'sfd.ftp_type', 'sfd.ftp_host', 'sfd.ftp_username', 'sfd.ftp_password', 'sfd.ftp_port', 'sfd.ftp_path'])
+                        ->select(['module_code' => 'tbl_dcs.dcs_code', 'CP_Code' => 'tbl_dcs.ref_code', 'ftp_connection_code' => 'tbl_dcs.mcc_plant_code', 'sfd.ftp_type', 'sfd.ftp_host', 'sfd.ftp_username', 'sfd.ftp_password', 'sfd.ftp_port', 'sfd.ftp_path', 'sfd.ftp_mode'])
                         ->join('LEFT JOIN', 'tbl_society_vendor sv', 'sv.dcs_code = tbl_dcs.dcs_code')
                         ->join('LEFT JOIN', 'tbl_ftp_detail sfd', 'sfd.ftp_connection_code = tbl_dcs.mcc_plant_code')
                         ->where(['sv.vendor_code' => 'BIPL'])

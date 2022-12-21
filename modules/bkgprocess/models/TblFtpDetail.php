@@ -34,9 +34,9 @@ class TblFtpDetail extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['ftp_connection_code', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'created_by', 'description'], 'string'],
-            [['created_at'], 'safe'],
-            [['is_active'], 'integer'],
+                [['ftp_connection_code', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'created_by', 'description'], 'safe'],
+                [['created_at', 'ftp_mode'], 'safe'],
+                [['is_active'], 'safe'],
         ];
     }
 
