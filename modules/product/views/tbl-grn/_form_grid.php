@@ -39,7 +39,7 @@ $attribute = [
             return Yii::$app->controls->view_date($model->grn_date);
         }],
     ['attribute' => 'invoice_no'],
-    ['label' => Yii::t('app', 'Invoice Date'), 'attribute' => 'invoice_date',
+    ['attribute' => 'invoice_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',

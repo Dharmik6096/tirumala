@@ -51,6 +51,7 @@ $script = "
     
     $('#tblgrn-ref_no').on('change', function(){
         var ref_no = $('#tblgrn-ref_no').val();
+        setRefData();
         if(setData(ref_no)){
             reloadGrid(ref_no);
         }
@@ -160,6 +161,31 @@ $script = "
         e.preventDefault();
         $('#product-wise-detail').submit();
     }); 
+    
+    function setRefData(){
+        var ref_no = $('#tblgrn-ref_no').val();
+         if(setData(ref_no)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['set-ref-no-data']) . "',
+                    data: {'ref_no':ref_no},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblgrn-invoice_no').val(obj.document_no);
+                            $('#tblgrn-invoice_date').parent().kvDatepicker('update',obj.document_date);
+                             var date = $('#tblgrn-invoice_date').val();
+                            console.log(date);
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+        } 
+    
+    }
     
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

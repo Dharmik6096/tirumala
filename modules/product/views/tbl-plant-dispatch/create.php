@@ -33,6 +33,7 @@ $script = "
         addBtnEnable();
     });
     $('#tblplantdispatch-document_no').on('change', function(){
+        checkUniqueDocNo();
         addBtnEnable();
     });
     $('#tblplantdispatch-document_date').on('change', function(){
@@ -216,6 +217,31 @@ $script = "
          }});   
     }
       
+    function checkUniqueDocNo(){
+        var docNo = $('#tblplantdispatch-document_no').val();
+         if(setData(docNo)){
+             $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['check-unique-doc-no']) . "',
+                    data: {'docNo':docNo},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'error')
+                        {
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Document No. Is Already available.') . "</span></div></div>', function(result){
+                            setTimeout(function(){
+                                $('#tblplantdispatch-document_no').focus();},100);
+                            }); 
+                            $('#tblplantdispatch-document_no').val('');
+                                   }
+                               },
+                    error:function(data){
+
+                    }
+                });
+        } 
+    
+    }
 ";
 $this->registerJs($script, View::POS_END, 'create-plant-dispatch');
 ?>

@@ -24,7 +24,7 @@ use app\modules\product\models\TblPlantDispatchHistory;
  */
 class TblGrnController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['list-grid', 'get-unit'];
+    public $freeAccessActions = ['list-grid', 'get-unit', 'list-grid-other', 'set-ref-no-data'];
 
     /**
      * Lists all TblGrn models.
@@ -353,6 +353,20 @@ class TblGrnController extends \app\controllers\ChildController {
         $model = new TblGrn();
         $model->setAttributes($postData);
         return $this->renderAjax('_list_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'model' => $model]);
+    }
+
+    public function actionSetRefNoData() {
+        $ref_no = Yii::$app->request->post('ref_no');
+        $dispModel = new TblPlantDispatch();
+        $dispatchData = $dispModel->find()->where(['document_no' => $ref_no])->one();
+        if (!empty($dispatchData->document_date)) {
+            $dispatchData->document_date = date('d-m-Y', strtotime($dispatchData->document_date));
+        }
+        if (!empty($dispatchData)) {
+            return Json::encode(['status' => 'success', 'document_date' => $dispatchData->document_date, 'document_no' => $dispatchData->document_no]);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
     }
 
 }

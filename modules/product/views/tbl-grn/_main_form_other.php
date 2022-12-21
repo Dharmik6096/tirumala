@@ -44,16 +44,15 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->union_mcc($model, $form, 'tblgrn-union_code', 'mcc_plant_code', Yii::t('app', 'Own MCC')); ?>
         </div>
         <div class="col-sm-2 create_fields">
+            <?php echo Html::hiddenInput('status', 0, ['id' => 'status']); ?>
+            <?= Yii::$app->dropdown->depend_dropdown('ref_no', $model, $form, 'tblgrn-plant_code,tblgrn-mcc_plant_code,status', 'form-group col-sm-4', $model->getAttributeLabel('ref_no'), 'ref_no', FALSE); ?>
+        </div>
+        <div class="col-sm-2 create_fields">
             <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', false, false, false, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= $form->field($model, 'invoice_no')->textInput() ?>
         </div>
-        <div class="col-sm-2 create_fields">
-            <?php echo Html::hiddenInput('status', 0, ['id' => 'status']); ?>
-            <?= Yii::$app->dropdown->depend_dropdown('ref_no', $model, $form, 'tblgrn-plant_code,tblgrn-mcc_plant_code,status', 'form-group col-sm-4', $model->getAttributeLabel('ref_no'), 'ref_no', FALSE); ?>
-        </div>
-
         <div class="col-sm-4 create_fields">
             <?= $form->field($model, 'remarks')->textInput() ?>
         </div>

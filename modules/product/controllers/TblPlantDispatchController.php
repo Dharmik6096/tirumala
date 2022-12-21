@@ -18,7 +18,7 @@ use yii\helpers\Json;
  */
 class TblPlantDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-unit', 'plant-batch-list'];
+    public $freeAccessActions = ['get-unit', 'plant-batch-list', 'check-unique-doc-no'];
 
     /**
      * Lists all TblPlantDispatch models.
@@ -191,6 +191,17 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
             }
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionCheckUniqueDocNo() {
+        $docNo = Yii::$app->request->post('docNo');
+        $Model = new TblPlantDispatch();
+        $data = $Model->find()->where(['document_no' => $docNo])->one();
+        if (empty($data)) {
+            return Json::encode(['status' => 'success']);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
     }
 
 }
