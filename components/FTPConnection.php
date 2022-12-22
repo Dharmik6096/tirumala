@@ -21,6 +21,7 @@ class FTPConnection extends Component {
     public $make_dir = TRUE;
     public $conn_init = TRUE;
     public $ftp_pasv = false;
+    public $isPassiveFtp = true;
 
     public function ConnectServer() {
         if ($this->ftp_type == 'SELF') {
@@ -48,7 +49,7 @@ class FTPConnection extends Component {
         try {
             if ($this->connection = ftp_connect($this->ftp_host, $this->ftp_port)) {
                 if (ftp_login($this->connection, $this->ftp_username, $this->ftp_password)) {
-//                     ftp_pasv($this->connection, TRUE);
+                    ftp_pasv($this->connection, $this->isPassiveFtp);
                     return TRUE;
                 }
                 ftp_close($this->connection);
@@ -95,7 +96,7 @@ class FTPConnection extends Component {
     private function FTPUpload() {
         try {
             ftp_set_option($this->connection, FTP_USEPASVADDRESS, false);
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_put($this->connection, $this->file_name, $this->local_path . $this->file_name, FTP_BINARY)) {
                 ($this->conn_close) ? ftp_close($this->connection) : '';
@@ -150,7 +151,7 @@ class FTPConnection extends Component {
 
     private function FTPDownload() {
         try {
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_get($this->connection, $this->local_path . $this->file_name, $this->file_name, FTP_BINARY)) {
                 ($this->conn_close) ? ftp_close($this->connection) : '';
@@ -205,7 +206,7 @@ class FTPConnection extends Component {
 
     private function FTPListFile() {
         try {
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
 //            ftp_chdir($this->connection, $this->ftp_path);
             $files = array();
             $list = ftp_nlist($this->connection, $this->ftp_path);
@@ -276,7 +277,7 @@ class FTPConnection extends Component {
 
     private function FTPCreateDirectory() {
         try {
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
             $directory = explode('/', $this->ftp_path);
             $path = '/';
             foreach ($directory as $dir) {
@@ -326,7 +327,7 @@ class FTPConnection extends Component {
 
     private function FTPDeleteFile() {
         try {
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
             ftp_chdir($this->connection, $this->ftp_path);
             if (ftp_delete($this->connection, $this->file_name)) {
                 ($this->conn_close) ? ftp_close($this->connection) : '';
@@ -373,7 +374,7 @@ class FTPConnection extends Component {
 
     private function FTPFileContent() {
         try {
-            ftp_pasv($this->connection, true);
+            ftp_pasv($this->connection, $this->isPassiveFtp);
             $contents = fopen('ftp://' . $this->ftp_username . ':' . $this->ftp_password . '@' . $this->ftp_host . '/' . $this->ftp_path . '/' . $this->file_name, 'r');
             $array = [];
             while (!feof($contents)) {

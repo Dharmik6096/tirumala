@@ -16,7 +16,7 @@ $client_code = \Yii::$app->session->get('eiplCode');
                 if ($client_code == 'UMANG') {
                     return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
                 } else {
-                    $model->vehicle_code;
+                    return $model->vehicle_code;
                 }
             }, 'filter' => false],
         ['attribute' => 'date_time_of_collection',
