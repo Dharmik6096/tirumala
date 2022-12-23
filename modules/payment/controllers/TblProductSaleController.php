@@ -801,4 +801,28 @@ class TblProductSaleController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionCreateProductSaleCash() {
+        $model = new TblProductSale();
+        $model->scenario = 'saleProduct';
+        $detailModel = new TblProductSaleTransaction();
+        $detailModel->scenario = 'saleProduct';
+        $searchModel = new TblProductSaleSearch();
+        $searchModel->grid_filter = false;
+        $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
+        $message = 'Product Sale';
+        if (Yii::$app->request->post()) {
+            return $this->createProductSaleData($model, $detailModel, $message);
+        } else {
+            return $this->render('_create_product_sale', [
+                        'model' => $model,
+                        'detailModel' => $detailModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => 'vendorWiseSale',
+                        'message' => $message,
+                        'cashSale' => TRUE,
+            ]);
+        }
+    }
+
 }

@@ -4,6 +4,8 @@ $this->params['menu'][] = Yii::$app->controls->add('Product Sale', 'create-produ
 $this->params['menu'][] = Yii::$app->controls->add('Product Sale to Member', 'create-product-sale-to-member');
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 if ($batchNoWiseInventory == 1) {
+    $this->params['menu'][] = Yii::$app->controls->add('Product Sale On Cash', 'create-product-sale-cash');
+
     $this->params['menu'][] = Yii::$app->controls->import('productsalebatch-bulk', $this, Yii::t('app', 'Product Sale Import'));
     $this->params['menu'][] = Yii::$app->controls->import('productsalememberbatch-bulk', $this, Yii::t('app', 'Product Sale Member Import'), [], 'productsale_member');
 } else {

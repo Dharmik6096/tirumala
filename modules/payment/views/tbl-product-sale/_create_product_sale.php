@@ -10,6 +10,7 @@ use yii\web\JsExpression;
 $message = !empty($message) ? $message : 'Product Sale';
 $this->title = Yii::$app->label->title('create', $message);
 $type = !empty($type) ? $type : '';
+$cashSale = isset($cashSale) ? $cashSale : '';
 //memberWiseSale
 $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 ?>
@@ -69,9 +70,22 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                     <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
                 </div>
                 <!--<div class="clearfix"></div>-->
-                <div class="col-sm-1 reset_field">
-                    <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
-                </div>
+
+                <?php if ($cashSale) { ?>
+                    <div class="col-sm-1 reset_field">
+                        <?= Yii::$app->dropdown->dropdownStatic('cash_payment', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false); ?>
+                    </div>
+                    <?php
+                } else {
+                    $removeKey = FALSE;
+                    if ($batchNoWiseInventory == 1) {
+                        $removeKey = TRUE;
+                    }
+                    ?>
+                    <div class="col-sm-1 reset_field">
+                        <?= Yii::$app->dropdown->dropdownStatic('payment_mode', $model, $form, 'form-group', $model->getAttributeLabel('payment_mode'), false, 'payment_mode', false, $removeKey); ?>
+                    </div>
+                <?php } ?>
                 <div class="col-sm-1 avlCredit reset_field">
                     <?= $form->field($model, 'avl_credit')->textInput(['readOnly' => true]) ?>
                 </div>
@@ -105,7 +119,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 </div>
                 <div class="col-sm-1 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('depend_tax_code', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-1 padding-right-5 padding-left-0', $detailModel->getAttributeLabel('tax_code'), 'tax_code'); ?>
-                    <?php // Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-1', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code'); ?>
+                    <?php // Yii::$app->dropdown->dropdown('tax_code', $detailModel, $form, 'form-group col-sm-1', $detailModel->getAttributeLabel('tax_code'), false, 'tax_code');  ?>
                 </div>
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($model, 'discount')->textInput() ?>
@@ -483,7 +497,10 @@ $script = "
         setVendorCode();
     });
     $('#tblproductsale-invoice_date').change(function(){
-        $('#tblproductsale-ex_code').val('');     
+        $('#tblproductsale-ex_code').val('');
+        if($('#tblproductsale-payment_mode').val() == 1) {
+            setAvailableCredit();
+        }
     });
     
     function setVendorCode(){
@@ -537,6 +554,9 @@ $script = "
     
     $('#tblproductsale-customer_type').on('change', function(){
         getAvailableStock();
+        if($('#tblproductsale-payment_mode').val() == 1) {
+            setAvailableCredit();
+        }
     });
     
     $('#tblproductsale-bmc_code').on('change', function(){
@@ -594,8 +614,8 @@ $script = "
     
     }
     $('#tblproductsale-payment_mode').on('change', function(){
-            if($('#tblproductsale-payment_mode').val() == 1) {
-        setAvailableCredit();
+        if($('#tblproductsale-payment_mode').val() == 1) {
+            setAvailableCredit();
         }
     });
     function setAvailableCredit(){

@@ -771,7 +771,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1002,6 +1002,7 @@ class DropDown extends Component {
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
+                'remove_key' => ['0'],
             ],
             'sap_file_status' => [
                 'name' => 'sap_file_status',
@@ -1394,6 +1395,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Month'),
                 'data' => ['01' => Yii::t('app', 'Jan'), '02' => Yii::t('app', 'Feb'), '03' => Yii::t('app', 'Mar'), '04' => Yii::t('app', 'Apr'), '05' => Yii::t('app', 'May'), '06' => Yii::t('app', 'Jun'), '07' => Yii::t('app', 'Jul'), '08' => Yii::t('app', 'Aug'), '09' => Yii::t('app', 'Sep'), '10' => Yii::t('app', 'Oct'), '11' => Yii::t('app', 'Nov'), '12' => Yii::t('app', 'Dec')],
             ],
+            'cash_payment' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash')],
+            ],
         ];
         return $records[$l];
     }
@@ -1590,7 +1596,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
