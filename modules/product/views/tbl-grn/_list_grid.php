@@ -12,19 +12,23 @@ $visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 
     <?php
     $attribute = [
-        ['attribute' => 'product_code', 'value' => function($model) {
+            ['attribute' => 'product_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
             }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'sap_batch_no', 'filter' => false, 'visible' => $visible],
-        ['attribute' => 'unit_code', 'value' => function($model) {
+            ['attribute' => 'sap_batch_no', 'filter' => false, 'visible' => $visible],
+            ['attribute' => 'unit_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
             }, 'visible' => TRUE, 'filter' => false],
-        ['attribute' => 'rate', 'filter' => false],
-        ['attribute' => 'received_qty', 'filter' => false],
-        ['attribute' => 'rejected_qty', 'filter' => false],
-        ['attribute' => 'basic_amount', 'filter' => false],
-        ['attribute' => 'tax', 'filter' => FALSE],
-        ['attribute' => 'gross_amount', 'filter' => FALSE],
+            ['attribute' => 'rate', 'filter' => false],
+            ['attribute' => 'dispatch_qty', 'filter' => false],
+            ['attribute' => 'received_qty', 'filter' => false],
+            ['attribute' => 'rejected_qty', 'filter' => false],
+            ['attribute' => 'missing_qty', 'filter' => false],
+            ['attribute' => 'basic_amount', 'filter' => false],
+            ['attribute' => 'tax', 'filter' => FALSE],
+            ['attribute' => 'gross_amount', 'filter' => FALSE],
+            ['attribute' => 'rejection_remarks', 'filter' => FALSE],
+            ['attribute' => 'missing_remarks', 'filter' => FALSE],
     ];
 
 

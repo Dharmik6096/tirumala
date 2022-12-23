@@ -65,6 +65,16 @@ $attribute = [
             }
         }, 'filter' => false],
         ['attribute' => 'remarks'],
+        ['label' => Yii::t('app', 'Created date'), 'attribute' => 'created_at',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->created_at);
+        }],
+        ['attribute' => 'created_by', 'filter' => false],
 ];
 
 $grid_option = [

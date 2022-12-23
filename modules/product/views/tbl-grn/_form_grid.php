@@ -16,20 +16,20 @@ $plant = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false],
-    ['attribute' => 'plant_code', 'value' => function($model) {
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => $plant, 'filter' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => TRUE, 'filter' => false],
-    ['attribute' => 'vendor_master_code', 'value' => function($model) {
+        ['attribute' => 'vendor_master_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name');
         }, 'visible' => $vendor,],
-    ['attribute' => 'grn_no'],
-    ['label' => Yii::t('app', 'GRN Date'), 'attribute' => 'grn_date',
+        ['attribute' => 'grn_no'],
+        ['label' => Yii::t('app', 'GRN Date'), 'attribute' => 'grn_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -38,8 +38,8 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->grn_date);
         }],
-    ['attribute' => 'invoice_no'],
-    ['attribute' => 'invoice_date',
+        ['attribute' => 'invoice_no'],
+        ['attribute' => 'invoice_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -48,6 +48,16 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->invoice_date);
         }],
+        ['label' => Yii::t('app', 'Created date'), 'attribute' => 'created_at',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->created_at);
+        }],
+        ['attribute' => 'created_by', 'filter' => false],
 ];
 
 $grid_option = [

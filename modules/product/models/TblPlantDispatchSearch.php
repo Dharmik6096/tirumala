@@ -18,8 +18,8 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
      */
     public function rules() {
         return [
-            [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['originating_type'], 'integer'],
+                [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['originating_type'], 'integer'],
         ];
     }
 
@@ -65,6 +65,9 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
         }
         if (!empty($this->dispatch_date)) {
             $query->andFilterWhere(['like', 'cast(tbl_plant_dispatch.dispatch_date as date)', date('Y-m-d', strtotime($this->dispatch_date))]);
+        }
+        if (!empty($this->created_at)) {
+            $query->andFilterWhere(['like', 'cast(tbl_plant_dispatch.created_at as date)', date('Y-m-d', strtotime($this->created_at))]);
         }
         $query->andFilterWhere(['like', 'plant_dispatch_code', $this->plant_dispatch_code])
                 ->andFilterWhere(['like', 'document_no', $this->document_no])
