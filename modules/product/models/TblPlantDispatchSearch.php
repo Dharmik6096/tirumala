@@ -18,8 +18,8 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
      */
     public function rules() {
         return [
-                [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['originating_type'], 'integer'],
+            [['plant_dispatch_code', 'dispatch_date', 'mcc_plant_code', 'plant_code', 'union_code', 'document_date', 'document_no', 'status', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['originating_type'], 'integer'],
         ];
     }
 
@@ -116,9 +116,8 @@ class TblPlantDispatchSearch extends TblPlantDispatch {
         $this->load($params);
         $query->join('INNER JOIN', 'tbl_plant_dispatch', 'tbl_plant_dispatch.plant_dispatch_code=tbl_plant_dispatch_txn.plant_dispatch_code');
 
-        $query->andWhere([
-            'tbl_plant_dispatch.document_no' => $this->document_no]);
-
+        $query->andWhere(['tbl_plant_dispatch.document_no' => $this->document_no]);
+        $query->andWhere(['>', 'ISNULL(tbl_plant_dispatch_txn.grn_missing_qty,0)', 0]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');

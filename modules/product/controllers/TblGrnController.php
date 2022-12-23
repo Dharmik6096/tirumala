@@ -18,6 +18,8 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblPlantDispatchSearch;
 use app\modules\product\models\TblPlantDispatch;
 use app\modules\product\models\TblPlantDispatchHistory;
+use app\modules\product\models\TblPlantDispatchTxn;
+use app\modules\product\models\TblPlantDispatchTxnHistory;
 
 /**
  * TblGrnController implements the CRUD actions for TblGrn model.
@@ -228,8 +230,8 @@ class TblGrnController extends \app\controllers\ChildController {
         $errors = [];
         $message = 'GRN';
         $type = 'create';
+        $updateDispatch = TRUE;
         if (Yii::$app->request->post()) {
-            $postData = Yii::$app->request->post();
             $grnData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
             $this->model->setAttributes($grnData);
@@ -288,17 +290,29 @@ class TblGrnController extends \app\controllers\ChildController {
                 $stockTxnModel->reference_code = $txModel->grn_txn_code;
                 $modelSave[] = $stockTxnModel;
                 $i++;
+                $dispatchTxnModel = new TblPlantDispatchTxn();
+                $dispatchTxnData = $dispatchTxnModel->find()->where(['plant_dispatch_txn_code' => $txn['plant_dispatch_txn_code']])->one();
+                if (!empty($dispatchTxnData)) {
+                    $historyTxnModel = new TblPlantDispatchTxnHistory();
+                    Yii::$app->operation->history($dispatchTxnData, $historyTxnModel, 'UPDATE');
+                    $modelSave[] = $historyTxnModel;
+                    $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
+                    $modelSave[] = $dispatchTxnData;
+                }
+                if ($txModel->missing_qty > 0) {
+                    $updateDispatch = FALSE;
+                }
             }
-
-            $dispatchModel = new TblPlantDispatch();
-            $dispatchData = $dispatchModel->find()->where(['union_code' => $this->model->union_code, 'plant_code' => $this->model->plant_code, 'mcc_plant_code' => $this->model->mcc_plant_code, 'document_no' => $this->model->ref_no])->one();
-
-            if (!empty($dispatchData)) {
-                $historyModel = new TblPlantDispatchHistory();
-                Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
-                $modelSave[] = $historyModel;
-                $dispatchData->status = '1';
-                $modelSave[] = $dispatchData;
+            if ($updateDispatch) {
+                $dispatchModel = new TblPlantDispatch();
+                $dispatchData = $dispatchModel->find()->where(['union_code' => $this->model->union_code, 'plant_code' => $this->model->plant_code, 'mcc_plant_code' => $this->model->mcc_plant_code, 'document_no' => $this->model->ref_no])->one();
+                if (!empty($dispatchData)) {
+                    $historyModel = new TblPlantDispatchHistory();
+                    Yii::$app->operation->history($dispatchData, $historyModel, 'UPDATE');
+                    $modelSave[] = $historyModel;
+                    $dispatchData->status = '1';
+                    $modelSave[] = $dispatchData;
+                }
             }
 
             if (empty($this->model->getErrors()) && $this->model->validate() && empty($errors)) {

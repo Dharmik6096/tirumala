@@ -52,7 +52,7 @@ class TblGrnTxn extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['rejected_qty'], 'default', 'value' => 0],
+            [['rejected_qty', 'received_qty'], 'default', 'value' => 0],
             [['rejected_qty'], 'number', 'min' => 0],
             [['received_qty', 'rate', 'tax', 'basic_amount', 'gross_amount'], 'number', 'min' => 1, 'except' => ['batchcreate']],
             [['received_qty'], 'number', 'min' => 1],

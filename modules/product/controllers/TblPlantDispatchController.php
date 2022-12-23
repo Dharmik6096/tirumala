@@ -82,6 +82,7 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $txModel = new TblPlantDispatchTxn();
                 $txModel->product_code = $product['product_code'];
                 $txModel->qty = $product['qty'];
+                $txModel->grn_missing_qty = $txModel->qty;
                 $txModel->rate = $product['rate'];
                 $txModel->amount = $product['amount'];
                 $txModel->unit_code = $product['unit_code'];

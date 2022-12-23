@@ -41,24 +41,50 @@ $form = ActiveForm::begin([
                 return Yii::$app->general->getforeignkey($model->unitCode, 'unit_name');
             }, 'visible' => TRUE, 'filter' => false],
         ['attribute' => 'rate', 'filter' => false],
+        ['attribute' => 'dispatch_qty',
+            'format' => 'raw',
+            'filter' => FALSE,
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'dispatch_qty_change\'>' . $form->field($model, '[' . $index . ']dispatch_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
+            },
+        ],
         ['attribute' => 'received_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return Html::activeHiddenInput($model, '[' . $index . ']rate', ['value' => $model->rate, 'class' => 'rateField']) . '<span class=\'received_qty_change\'>' . $form->field($model, '[' . $index . ']received_qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+                return Html::activeHiddenInput($model, '[' . $index . ']rate', ['value' => $model->rate, 'class' => 'rateField']) . '<span class=\'received_qty_change\'>' . $form->field($model, '[' . $index . ']received_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js',])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'rejected_qty',
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'rejected_qty_change\'>' . $form->field($model, '[' . $index . ']rejected_qty')->textInput(['value' => $model->rejected_qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
+                return '<span class=\'rejected_qty_change\'>' . $form->field($model, '[' . $index . ']rejected_qty')->textInput(['value' => $model->rejected_qty, 'class' => 'form-control number-validate-js',])->label(FALSE) . '</span>';
+            },
+        ],
+        ['attribute' => 'missing_qty',
+            'format' => 'raw',
+            'filter' => FALSE,
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control amountField', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+        ['attribute' => 'rejection_remarks',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']rejection_remarks')->textInput(['class' => 'form-control'])->label(FALSE);
+            },
+        ],
+        ['attribute' => 'missing_remarks',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']missing_remarks')->textInput(['class' => 'form-control'])->label(FALSE);
             },
         ],
     ];
