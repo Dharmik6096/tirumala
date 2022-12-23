@@ -84,6 +84,7 @@ class BiplSchedulerController extends ChildController {
                         $ftp->conn_init = FALSE;
                         $ftp->conn_close = FALSE;
                         $ftp->make_dir = FALSE;
+                        $ftp->isPassiveFtp = !empty($records['ftp_mode']) && $records['ftp_mode'] == 'active' ? false : true;
                         $connection = $ftp->ConnectServer();
                     }
                     $cnt++;
