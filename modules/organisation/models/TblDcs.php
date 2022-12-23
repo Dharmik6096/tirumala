@@ -297,7 +297,10 @@ class TblDcs extends ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
                 [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number']
+                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['bmc_code'], 'unique', 'targetAttribute' => ['bmc_code', 'is_bmc'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
+                    return $model->is_bmc;
+                }, 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcs', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

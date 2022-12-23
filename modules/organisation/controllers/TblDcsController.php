@@ -55,6 +55,7 @@ class TblDcsController extends ChildController {
     public $bankDetails;
     public $contactDetails;
     public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
+    public $showIsBMC;
 
     /**
      * Lists all TblDcs models.
@@ -117,9 +118,11 @@ class TblDcsController extends ChildController {
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
+        $this->showIsBMC = $is_bmc == 1 ? true : false;
         $validate = 1;
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
+
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
 
@@ -248,7 +251,7 @@ class TblDcsController extends ChildController {
         $oldVillage = $this->model->village_code;
         $validate = 1;
         $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-
+        $this->showIsBMC = FALSE;
         $address = explode(',', $this->model->address);
         if (isset($address)) {
             if (isset($address[0]))
@@ -525,7 +528,8 @@ class TblDcsController extends ChildController {
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
                     'bankDetails' => $this->bankDetails,
-                    'contactDetails' => $this->contactDetails
+                    'contactDetails' => $this->contactDetails,
+                    'showIsBMC' => $this->showIsBMC
         ]);
     }
 

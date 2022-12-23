@@ -69,7 +69,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
         </div>
-        <?= Html::activeHiddenInput($model, 'is_bmc') ?>
+        <?php if ($showIsBMC == 1) { ?>
+            <?= Html::activeTextInput($model, 'is_bmc') ?>
+        <?php } ?>
         <?= Html::activeHiddenInput($model, 'destination_type') ?>
         <?= Html::activeHiddenInput($model, 'destination_code') ?>
         <?= Html::activeHiddenInput($model, 'route_code') ?>
@@ -204,7 +206,11 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
         </div>
-
+        <?php if ($showIsBMC == 0) { ?>
+            <div class="col-sm-2 mt15">
+                <?= $form->field($model, 'is_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+        <?php } ?>
     </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
