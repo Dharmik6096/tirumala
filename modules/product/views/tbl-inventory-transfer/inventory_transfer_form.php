@@ -35,14 +35,19 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 create_fields">
                 <?= $form->field($model, 'inventory_transfer_no')->textInput() ?>
             </div>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', false, false, false, true); ?>
-            </div>
+
             <?php if ($batchNoWiseInventory == 1) { ?>
                 <div class="col-sm-2 create_fields">
-                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false, true); ?>
+                    <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', TRUE, date('Y-m-d'), false, true); ?>
                 </div>
-            <?php } ?>
+                <div class="col-sm-2 create_fields">
+                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, date('Y-m-d'), false, true); ?>
+                </div>
+            <?php } else { ?>
+                <div class="col-sm-2 create_fields">
+                    <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', false, false, false, true); ?>
+                </div>
+            <?php } ?> 
             <div class="col-sm-2 create_fields">
                 <?= Yii::$app->dropdown->dropdownStatic('org_type', $model, $form, 'form-group', $model->getAttributeLabel('from_type'), false, 'from_type', false); ?>
             </div>

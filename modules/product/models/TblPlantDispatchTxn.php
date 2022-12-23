@@ -47,14 +47,14 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['plant_dispatch_txn_code'], 'required'],
-                [['product_code', 'sap_batch_no', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
-                [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty'], 'safe'],
-                [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
-                [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv']],
-                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
+            [['plant_dispatch_txn_code'], 'required'],
+            [['product_code', 'sap_batch_no', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
+            [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty'], 'safe'],
+            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
+            [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv']],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
         ];
     }
 

@@ -229,6 +229,10 @@ class TblGrnController extends \app\controllers\ChildController {
         $message = 'GRN';
         $type = 'create';
         if (Yii::$app->request->post()) {
+              echo '<pre>';
+            print_r(Yii::$app->request->post());
+            echo '</pre>';
+            die;
             $postData = Yii::$app->request->post();
             $grnData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];

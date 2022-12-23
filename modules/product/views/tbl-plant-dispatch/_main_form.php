@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', TRUE, date('Y-m-d'), false, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblplantdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
@@ -44,7 +44,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'document_no')->textInput() ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'document_date', '', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'document_date', '', TRUE, date('Y-m-d'), false, true); ?>
         </div>
         <div class="col-sm-4 create_fields">
             <?= $form->field($model, 'remarks')->textInput() ?>

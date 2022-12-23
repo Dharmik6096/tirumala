@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'grn_no')->textInput(['readonly' => TRUE]) ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'grn_date', '', false, false, false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'grn_date', '', TRUE, date('Y-m-d'), false, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblgrn-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>

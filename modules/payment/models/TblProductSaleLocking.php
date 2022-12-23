@@ -42,7 +42,7 @@ class TblProductSaleLocking extends \app\models\ChildModel {
     public function rules() {
         return [
             [['total_count', 'locking_code'], 'safe'],
-            [['union_code', 'from_date', 'to_date', 'locking_date', 'originating_type'], 'safe'],
+            [['union_code', 'from_date', 'to_date', 'locking_date', 'originating_type', 'type'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];

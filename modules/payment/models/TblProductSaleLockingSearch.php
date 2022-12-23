@@ -13,7 +13,7 @@ use yii\data\ArrayDataProvider;
  */
 class TblProductSaleLockingSearch extends TblProductSaleLocking {
 
-    public $type, $plant_code, $mcc_plant_code, $bmc_code;
+    public $plant_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc

@@ -47,7 +47,7 @@ class TblPlantDispatchTxnHistory extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['plant_dispatch_txn_code', 'plant_dispatch_code'], 'safe'],
-            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
+            [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no', 'grn_missing_qty'], 'safe'],
             [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by', 'history_created_at'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
