@@ -85,18 +85,58 @@ $(document).ready(function(){
             $('#tblinventorytransfer-to_mcc_plant_code').val('');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
+            var f_bmc =$('#tblinventorytransfer-from_bmc_code').val();
+            var f_dcs =$('#tblinventorytransfer-from_dcs_code').val();
+
         if($(this).val()=='MCC'){
             $('#to_mcc').show();
             $('#to_bmc').hide(); 
             $('#to_dcs').hide();
+                if(setData(f_mcc)){
+                    $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                    $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+                }
         }else if($(this).val()=='BMC'){
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').hide();
+            
+            if(setData(f_mcc)){
+                $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            }
+            if(setData(f_bmc)){
+                $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
+                $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_bmc_code').trigger('change');
+            }
         }else if($(this).val()=='DCS'){
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').show();
+            
+            if(setData(f_mcc)){
+                $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            }
+            if(setData(f_bmc)){
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
+                    $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                });
+            }
+            if(setData(f_dcs)){
+                $('#tblinventorytransfer-to_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblinventorytransfer-to_dcs_code').val(f_dcs);
+                    $('#tblinventorytransfer-to_dcs_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_dcs_code').trigger('change');
+                });
+            }
         }else{
             $('#to_mcc').hide(); 
             $('#to_bmc').hide(); 

@@ -223,6 +223,9 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         }
         if ($manageStock) {
             $qty = !empty($model->quantity) ? $model->quantity : 0;
+
+            $stockManageIndex = 0;
+
             if (!empty($qty) && !empty($model->productSaleCode->product_sale_code)) {
                 $productSaleData = $model->productSaleCode;
                 $fstockModel = new TblProductStock();
@@ -245,39 +248,128 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $fstockModel->product_code = $model->product_code;
                 $fstockModel->union_code = $productSaleData->union_code;
                 $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                $existfromStock = $fstockModel->getExistStock($sale_type);
-
-                $f_stock = 0;
+                $existfromStock = $fstockModel->getAvailableStock($sale_type);
+                $considerQty = 0;
                 $i = 1;
-//                $qty = $model->quantity;
-                if (!empty($existfromStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existfromStock, $historyModel, 'UPDATE');
-                    $childModel[] = $historyModel;
-                    $f_stock = $existfromStock->stock;
-                    $existfromStock->stock = $f_stock - $qty;
-                    $fstockModel = $existfromStock;
-//                    $child[] = $fstockModel;
-                } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
-                    $fstockModel->stock = $f_stock - $qty;
-                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                foreach ($existfromStock as $stockData) {
+                    if ($qty > 0) {
+                        $considerQty = $stockData->stock;
+                        if ($considerQty >= $qty) {
+                            $considerQty = $qty;
+                        }
+                        $qty = $qty - $considerQty;
+                        $f_stock = 0;
+
+                        $stockData->setCodes($sale_type, $sale_code);
+                        $stockData->product_code = $model->product_code;
+                        $stockData->union_code = $productSaleData->union_code;
+
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($stockData, $historyModel, 'UPDATE');
+                        $childModel[] = $historyModel;
+                        $f_stock = $stockData->stock;
+                        $stockData->stock = $f_stock - $considerQty;
+
+
+                        $setTxnCode = $model->product_sale_transaction_code;
+                        if ($stockManageIndex > 0) {
+                            $saleTxnModel = new TblProductSaleTransaction();
+                            $saleTxnModel->attributes = $model->attributes;
+                            $saleTxnModel->quantity = $considerQty;
+                            $saleTxnModel->sap_batch_no = $stockData->sap_batch_no;
+                            $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;
+                            $saleTxnModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code, $i);
+                            $setTxnCode = $saleTxnModel->product_sale_transaction_code;
+                            $childModel[] = $saleTxnModel;
+                        } else {
+                            $model->quantity = $considerQty;
+                            $model->sap_batch_no = $stockData->sap_batch_no;
+                            $model->amount = $model->quantity * $model->rate;
+                        }
+                        $stockManageIndex++;
+
+
+                        $loopStockTxnModel = new TblProductStockTransaction();
+                        $loopStockTxnModel->attributes = $stockData->attributes;
+                        unset($loopStockTxnModel->created_at);
+                        unset($loopStockTxnModel->created_by);
+                        $loopStockTxnModel->product_stock_transaction_code = $loopStockTxnModel->getCode($i);
+                        $loopStockTxnModel->old_value = $f_stock;
+                        $loopStockTxnModel->new_value = $considerQty;
+                        $loopStockTxnModel->final_value = $stockData->stock;
+                        $loopStockTxnModel->transaction_type = $txn_type;
+                        $loopStockTxnModel->transaction_date = date('Y-m-d');
+                        $loopStockTxnModel->reference_code = $setTxnCode; //$model->product_sale_transaction_code;
+                        $childModel[] = $stockData;
+                        $childModel[] = $loopStockTxnModel;
+                        $i++;
+                    } else {
+                        break;
+                    }
                 }
 
-                $fstockTxnModel = new TblProductStockTransaction();
-                $fstockTxnModel->attributes = $fstockModel->attributes;
-                unset($fstockTxnModel->created_at);
-                unset($fstockTxnModel->created_by);
-                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-                $fstockTxnModel->old_value = $f_stock;
-                $fstockTxnModel->new_value = $qty;
-                $fstockTxnModel->final_value = $fstockModel->stock;
-                $fstockTxnModel->transaction_type = $txn_type;
-                $fstockTxnModel->transaction_date = date('Y-m-d');
-                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
-                $childModel[] = $fstockModel;
-                $childModel[] = $fstockTxnModel;
-                $i++;
+                if ($qty > 0) {
+                    $fstockModel->product_stock_code = $fstockModel->getCode();
+                    $fstockModel->stock = 0 - $qty;
+                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+
+                    if (empty($existfromStock)) {
+                        $saleTxnModel = new TblProductSaleTransaction();
+                        $saleTxnModel->attributes = $model->attributes;
+                        $saleTxnModel->quantity = $qty;
+                        $saleTxnModel->sap_batch_no = NULL; //$stockData->sap_batch_no;
+                        $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;
+                        $saleTxnModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code, $i);
+                        $childModel[] = $saleTxnModel;
+                    }
+
+                    $fstockTxnModel = new TblProductStockTransaction();
+                    $fstockTxnModel->attributes = $fstockModel->attributes;
+                    unset($fstockTxnModel->created_at);
+                    unset($fstockTxnModel->created_by);
+                    $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                    $fstockTxnModel->old_value = 0;
+                    $fstockTxnModel->new_value = $qty;
+                    $fstockTxnModel->final_value = $fstockModel->stock;
+                    $fstockTxnModel->transaction_type = $txn_type;
+                    $fstockTxnModel->transaction_date = date('Y-m-d');
+                    $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+                    $childModel[] = $fstockModel;
+                    $childModel[] = $fstockTxnModel;
+                }
+
+
+//                $f_stock = 0;
+//                $i = 1;
+////                $qty = $model->quantity;
+//                if (!empty($existfromStock)) {
+//                    $historyModel = new TblProductStockHistory();
+//                    Yii::$app->operation->history($existfromStock, $historyModel, 'UPDATE');
+//                    $childModel[] = $historyModel;
+//                    $f_stock = $existfromStock->stock;
+//                    $existfromStock->stock = $f_stock - $qty;
+//                    $fstockModel = $existfromStock;
+////                    $child[] = $fstockModel;
+//                } else {
+//                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
+//                    $fstockModel->stock = $f_stock - $qty;
+//                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
+//                }
+//
+//                $fstockTxnModel = new TblProductStockTransaction();
+//                $fstockTxnModel->attributes = $fstockModel->attributes;
+//                unset($fstockTxnModel->created_at);
+//                unset($fstockTxnModel->created_by);
+//                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+//                $fstockTxnModel->old_value = $f_stock;
+//                $fstockTxnModel->new_value = $qty;
+//                $fstockTxnModel->final_value = $fstockModel->stock;
+//                $fstockTxnModel->transaction_type = $txn_type;
+//                $fstockTxnModel->transaction_date = date('Y-m-d');
+//                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+//                $childModel[] = $fstockModel;
+//                $childModel[] = $fstockTxnModel;
+//                $i++;
             }
         }
     }

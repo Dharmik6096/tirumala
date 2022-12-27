@@ -20,11 +20,11 @@ class TblProductSaleLockingSearch extends TblProductSaleLocking {
      */
     public function rules() {
         return [
-                [['locking_code', 'from_date', 'to_date', 'locking_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type'], 'safe'],
-                [['total_count', 'originating_type'], 'integer'],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'type'], 'safe'],
-                [['from_date', 'to_date', 'locking_date', 'union_code', 'type'], 'required', 'on' => ['saleLockData']],
-                [['to_date'], function ($attribute, $params) {
+            [['locking_code', 'from_date', 'to_date', 'locking_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type'], 'safe'],
+            [['total_count', 'originating_type'], 'integer'],
+            [['plant_code', 'mcc_plant_code', 'bmc_code', 'type'], 'safe'],
+            [['from_date', 'to_date', 'locking_date', 'union_code', 'type'], 'required', 'on' => ['saleLockData']],
+            [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 10, '>', 'Day Difference can not be greater than 10.');
                 }, 'skipOnEmpty' => false, 'on' => ['saleLockData']],
         ];
@@ -76,7 +76,8 @@ class TblProductSaleLockingSearch extends TblProductSaleLocking {
 
 
         $query->andFilterWhere(['like', 'locking_code', $this->locking_code])
-                ->andFilterWhere(['like', 'total_count', $this->total_count]);
+                ->andFilterWhere(['like', 'total_count', $this->total_count])
+                ->andFilterWhere(['like', 'type', $this->type]);
 
         return $dataProvider;
     }
@@ -97,17 +98,87 @@ class TblProductSaleLockingSearch extends TblProductSaleLocking {
                 'to_date' => '',
                 'type' => '',
             ];
+            $sp_params = array_merge($sp_params, $params['TblProductSaleLockingSearch']);
+
+            if (empty($this->plant_code)) {
+                $this->plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+            }
+            if (empty($this->mcc_plant_code)) {
+                $this->mcc_plant_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
             if (empty($this->bmc_code)) {
                 $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
             }
-            $sp_params = array_merge($sp_params, $params['TblProductSaleLockingSearch']);
-            $sp_params['bmc_code'] = is_array($params['TblProductSaleLockingSearch']['bmc_code']) ? ',' . implode(',', $params['TblProductSaleLockingSearch']['bmc_code']) . ',' : $params['TblProductSaleLockingSearch']['bmc_code'];
-
             $sp_params['from_date'] = date('Y-m-d', strtotime($sp_params['from_date']));
             $sp_params['to_date'] = date('Y-m-d', strtotime($sp_params['to_date']));
-
+            $sp_params['plant_code'] = $this->plant_code;
+            $sp_params['mcc_plant_code'] = $this->mcc_plant_code;
+            $sp_params['bmc_code'] = $this->bmc_code;
             unset($sp_params['locking_date']);
+
             $output = \Yii::$app->general->getSpData('Portal_product_sale_data_lock', $sp_params);
+        }
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+
+            $output = [];
+        }
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
+        return $dataProvider;
+    }
+
+    public function downloadsearch($params) {
+        //var_dump($params); exit;
+        $this->load($params);
+
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'union_code' => '',
+                'plant_code' => '',
+                'union_code' => '',
+                'mcc_plant_code' => '',
+                'bmc_code' => '',
+                'from_date' => '',
+                'to_date' => '',
+                'type' => '',
+            ];
+            $sp_params = array_merge($sp_params, $params['TblProductSaleLockingSearch']);
+
+            if (empty($this->plant_code)) {
+                $this->plant_code = !empty(Yii::$app->session->get('Plant')) ? ',' . Yii::$app->session->get('Plant') . ',' : 0;
+            }
+            if (empty($this->mcc_plant_code)) {
+                $this->mcc_plant_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            if (empty($this->bmc_code)) {
+                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+            }
+            $sp_params['from_date'] = date('Y-m-d', strtotime($sp_params['from_date']));
+            $sp_params['to_date'] = date('Y-m-d', strtotime($sp_params['to_date']));
+            $sp_params['plant_code'] = $this->plant_code;
+            $sp_params['mcc_plant_code'] = $this->mcc_plant_code;
+            $sp_params['bmc_code'] = $this->bmc_code;
+            unset($sp_params['locking_date']);
+
+            $output = \Yii::$app->general->getSpData('Portal_download_product_sale_lock_data_view', $sp_params);
         }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

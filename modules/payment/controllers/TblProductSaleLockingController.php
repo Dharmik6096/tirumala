@@ -69,23 +69,28 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
             $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
             $model->locking_date = !empty($model->locking_date) ? date('Y-m-d', strtotime($model->locking_date)) : '';
             $model->total_count = count($postCodes);
-            $saveModel[] = $model;
-            foreach ($postCodes as $updateData) {
-                if (!empty($updateData)) {
-                    $modelSale = new TblProductSaleTransaction();
-                    $existSale = $modelSale->find()->where(['product_sale_transaction_code' => $updateData])->one();
-                    $historyModel = new TblProductSaleTransactionHistory();
-                    Yii::$app->operation->history($existSale, $historyModel, UPDATE);
-                    $saveModel[] = $historyModel;
-                    $existSale->data_lock = 1;
-                    $existSale->lock_date = $model->locking_date;
-                    $existSale->reference_code = $model->locking_code;
-                    $saveModel[] = $existSale;
+            if (Yii::$app->request->post()['submitType'] == 'lock') {
+                $saveModel[] = $model;
+                foreach ($postCodes as $updateData) {
+                    if (!empty($updateData)) {
+                        $modelSale = new TblProductSaleTransaction();
+                        $existSale = $modelSale->find()->where(['product_sale_transaction_code' => $updateData])->one();
+                        $historyModel = new TblProductSaleTransactionHistory();
+                        Yii::$app->operation->history($existSale, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
+                        $existSale->data_lock = 1;
+                        $existSale->lock_date = $model->locking_date;
+                        $existSale->reference_code = $model->locking_code;
+                        $saveModel[] = $existSale;
+                    }
                 }
-            }
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Product Sale Data Lock', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Product Sale Data Lock', 'create']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            } else {
+                $dataProviderDownload = $searchModel->downloadsearch(Yii::$app->request->queryParams);
+                $this->downloadData($dataProviderDownload->getModels());
             }
         }
         $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
@@ -176,6 +181,50 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
 //    we want to set these values (default is A1)
         );
         $labelArray = !empty($output) ? array_keys($output[0]) : [];
+        $labelT = 'ProductSaleLock' . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
+    }
+
+    public function downloadData($downloadDetail) {
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        $file_header = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $downloadDetail, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $labelArray = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];
         $labelT = 'ProductSaleLock' . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'] .
                 header('Content-Type: ' . $header['mime']);

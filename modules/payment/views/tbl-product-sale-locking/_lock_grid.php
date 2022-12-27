@@ -19,6 +19,7 @@ $form = ActiveForm::begin([
 
     <?php
     echo Html::activeHiddenInput($searchModel, 'union_code', ['id' => 'set_union_code']);
+    echo Html::hiddenInput('submitType', '', ['id' => 'submitType']);
     echo Html::activeHiddenInput($searchModel, 'plant_code', ['id' => 'set_plant_code']);
     echo Html::activeHiddenInput($searchModel, 'mcc_plant_code', ['id' => 'set_mcc_plant_code']);
     echo Html::activeHiddenInput($searchModel, 'bmc_code', ['id' => 'set_bmc_code']);
@@ -59,7 +60,10 @@ $form = ActiveForm::begin([
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Lock'), ['class' => 'btn btn-primary', 'id' => 'lock']);
+        echo Html::submitButton(Yii::t('app', 'Lock'), ['class' => 'btn btn-primary submit', 'id' => 'lock', 'value' => 'lock', 'name' => 'lock']);
+    }
+    if (!empty($dataProvider->getModels())) {
+        echo Html::submitButton(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary submit', 'id' => 'download', 'value' => 'download', 'name' => 'lock']);
     }
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
@@ -70,7 +74,9 @@ $form = ActiveForm::begin([
 <?php
 $script = '
     $(".kv-panel-before").hide();
-    $("#lock").click(function() {
+    $(".submit").click(function() {
+    
+        $("#submitType").val($(this).val());
         $("#product-sale-lock-grid").submit();
             
     });

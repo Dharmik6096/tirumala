@@ -47,6 +47,7 @@ $attribute = [
             return Yii::$app->controls->view_date($model->locking_date);
         }],
     ['attribute' => 'total_count'],
+    ['attribute' => 'type'],
 ];
 
 $grid_option = [

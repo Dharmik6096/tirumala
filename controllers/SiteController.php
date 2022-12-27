@@ -1800,7 +1800,7 @@ class SiteController extends Controller {
             $i = 1;
             if (!empty($modelData)) {
                 $update_ids = array_column($modelData, 'uuid');
-                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
+//                $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
 //                $model->updateAll(['data_post_status' => 1], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
@@ -1954,6 +1954,10 @@ class SiteController extends Controller {
                             $transaction_data->save();
                         }
                     } catch (\Throwable $ex) {
+                        echo '<pre>';
+                        print_r($ex);
+                        echo '</pre>';
+                        die;
                         $transaction_data->error_log = 'Throwable Exception';
                         $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                         $transaction_data->data_post_status = 3;

@@ -51,6 +51,15 @@ $this->title = Yii::$app->label->title('view', 'Product Sale Lock');
                             ],
                         ],
                     ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'type',
+                                'format' => 'html',
+                                'valueColOptions' => ['style' => 'width:80%']
+                            ],
+                        ],
+                    ],
                 ];
 
                 // View file rendering the widget
