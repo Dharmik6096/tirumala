@@ -175,6 +175,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 $ftp->conn_close = FALSE;
                 $ftp->make_dir = FALSE;
                 $ftp->ftp_pasv = false;
+                $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
                 $connection = $ftp->ConnectServer();
 
                 if ($connection) {
