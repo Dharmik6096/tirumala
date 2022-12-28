@@ -14,7 +14,7 @@ class TblDcsPurchaseRateSearch extends TblDcsPurchaseRate {
 
     public $federation_code;
     public $union_code;
-    public $dcs_code;
+    public $dcs_code, $rate_type, $rate_value;
 
     /**
      * @inheritdoc
