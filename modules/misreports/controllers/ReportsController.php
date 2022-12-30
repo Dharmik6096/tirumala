@@ -2459,13 +2459,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vendor Sale Report',
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,month,year',
+                'param' => 'union_code,plant_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',
             ],
             'SummaryReportDcs' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,month,year',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_vlcc_stock_summary_report',
                 'scenario' => 'SummaryReportDcs',
                 'title' => 'Summary Report - DCS',

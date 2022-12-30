@@ -96,8 +96,8 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => ['RecoveryFromOtherMember']],
             [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['RecoveryFromDifferentVendor']],
             [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingCollectionShiftBmcCrossTab']],
-            [['union_code', 'plant_code', 'mcc_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummarySocietyWise']],
-            [['union_code', 'plant_code', 'mcc_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummaryMccWise']],
+            [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummarySocietyWise']],
+            [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummaryMccWise']],
             [['union_code', 'plant_code', 'p_date'], 'required', 'on' => ['MemberWiseOutstanding', 'DcsWiseOutstanding', 'VendorWiseOutstanding', 'MccWiseOutstanding']],
             [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk']],
             [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['NewMemberPouringMilk', 'NewCustomerPouringMilk']],
@@ -117,11 +117,11 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['SocietyWiseRateDifferenceReport']],
             [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['StockDispatchToMccFromStore', 'StockReceivedToMcc']],
             [['union_code', 'p_date'], 'required', 'on' => ['StockTransferToDcs', 'StockAtMcc']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'p_date'], 'required', 'on' => ['StockAtDcs']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportFarmer']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
-            [['union_code', 'plant_code', 'month', 'year'], 'required', 'on' => ['SummaryReportMcc']],
-            [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'month', 'year'], 'required', 'on' => ['SummaryReportDcs']],
+            [['union_code', 'p_date'], 'required', 'on' => ['StockAtDcs']],
+            [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportFarmer']],
+            [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
+            [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportMcc']],
+            [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportDcs']],
         ];
     }
 

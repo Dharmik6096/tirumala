@@ -112,6 +112,23 @@ $(document).ready(function(){
                 $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
                 $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
                 $('#tblinventorytransfer-to_bmc_code').trigger('change');
+            }else{
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }
+                });
             }
         }else if($(this).val()=='DCS'){
             $('#to_mcc').show(); 
@@ -128,6 +145,23 @@ $(document).ready(function(){
                     $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
                     $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
                     $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                });
+            }else{
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }    
                 });
             }
             if(setData(f_dcs)){
