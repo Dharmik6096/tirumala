@@ -15,15 +15,12 @@ $form = ActiveForm::begin([
 echo $form->errorSummary($model);
 ?>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
     </div>
-    <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); ?>
-
-    <?php
-    //Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); 
-//    Html::hiddenInput('transporter_type', 0, ['id' => 'tbltransporterpayment-transporter_type']);
-    ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('transporter_type', $model, $form, 'form-group', $model->getAttributeLabel('transporter_type'), false, 'transporter_type', false); ?>
+    </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', '', false, false); ?>
     </div>
@@ -31,9 +28,16 @@ echo $form->errorSummary($model);
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', '', false, false); ?>
     </div>
     <div class="col-sm-2">
-        <?php
-        echo Yii::$app->dropdown->datewise_bmc_list($model, $form, 'tbltransporterpayment-union_code,tbltransporterpayment-transporter_type,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, '', FALSE, TRUE);
-        ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tbltransporterpayment-union_code', 'plant_code', TRUE); ?>
+    </div> 
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbltransporterpayment-plant_code', 'mcc_plant_code', TRUE); ?>
+    </div>      
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->datewise_bmc_list($model, $form, 'tbltransporterpayment-union_code,tbltransporterpayment-plant_code,tbltransporterpayment-mcc_plant_code,tbltransporterpayment-transporter_type,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, '', FALSE, TRUE); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->all_route_transporter($model, $form, 'tbltransporterpayment-plant_code,tbltransporterpayment-mcc_plant_code,tbltransporterpayment-bmc_code', 'transporter_code', $model->getAttributeLabel('transporter_code'), FALSE, '', FALSE, TRUE); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -42,26 +46,3 @@ echo $form->errorSummary($model);
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-</div>
-</div>
-<?php
-$script = "$(document).ready(function(){     
-       setPrimaryTransportation();
-       $(document).on('change','#tbltransporterpayment-transporter_type', function() { 
-        setPrimaryTransportation();
-       });   
-});
-
-function setPrimaryTransportation(){
-    $('#tbltransporterpayment-primary_tpt_cost').parent('div').hide();            
-     var billing_type=$('#tbltransporterpayment-transporter_type').val();
-           if(billing_type==1){
-                $('#tbltransporterpayment-primary_tpt_cost').parent('div').show();            
-            }else{
-                $('#tbltransporterpayment-primary_tpt_cost').parent('div').hide();            
-            }
-
-}
-";
-$this->registerJs($script, View::POS_READY, 'tpt-cost-script');
-

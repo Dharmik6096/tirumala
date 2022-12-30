@@ -26,6 +26,7 @@ use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblCustomerMasterSearch;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblCustomerMasterHistory;
+use app\modules\transporter\models\TblVehicleKmInfo;
 
 /**
  * TblRouteMappingController implements the CRUD actions for TblRouteMapping model.
@@ -34,7 +35,7 @@ class TblRouteMappingController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route'];
+    public $freeAccessActions = ['route-list', 'all-route-list', 'get-bmc-route', 'all-route-transporter-list'];
 
     /**
      * @inheritdoc
@@ -458,6 +459,32 @@ class TblRouteMappingController extends \app\controllers\ChildController {
             $bmcList = $model->routeFromDestination($plant, $mcc, $bmc, FALSE, TRUE);
         }
         return Json::encode(['status' => 'success', 'data' => $bmcList]);
+    }
+
+    public function actionAllRouteTransporterList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $routes = new TblRouteMapping();
+                $plant = $parents[0];
+                $mcc = !empty($parents[1]) ? $parents[1] : NULL;
+                $bmc = !empty($parents[2]) ? $parents[2] : NULL;
+                $data = $routes->routeFromDestination($plant, $mcc, $bmc);
+                $route_codes_array = array_keys($data);
+                $route_codes = [];
+                foreach ($route_codes_array as $i => $v) {
+                    $route_codes[] = (string) $v;
+                }
+                $model = new TblVehicleKmInfo();
+                $data = $model->getRouteTransporterList($route_codes);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

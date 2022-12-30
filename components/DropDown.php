@@ -542,6 +542,11 @@ class DropDown extends Component {
         }
     }
 
+    public function all_route_transporter($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

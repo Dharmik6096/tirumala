@@ -121,6 +121,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
                     'sp_name' => 'sp_remuneration_payment_cargill',
                 ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_cargill',
+                ],
             ],
             'KOTMALE' => [
                 'member_payment' => [
@@ -135,11 +139,21 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
                     'sp_name' => 'sp_remuneration_payment_cargill',
                 ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_cargill',
+                ],
             ],
             'SNMILK' => [
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment_snmilk',
+                ],
+            ],
+            'ITC' => [
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_itc',
                 ],
             ],
         ];

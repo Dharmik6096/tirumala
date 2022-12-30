@@ -44,13 +44,12 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date));
             $model->to_date = date('Y-m-d', strtotime($model->to_date));
-            $model->plant_code = $model->bmcCode->plant_code;
-            $model->mcc_plant_code = $model->bmcCode->mcc_plant_code;
             $data = [];
             $data['union_code'] = $model->union_code;
             $data['plant_code'] = $model->plant_code;
             $data['mcc_plant_code'] = $model->mcc_plant_code;
             $data['bmc_code'] = $model->bmc_code;
+            $data['transporter_code'] = $model->transporter_code;
             $data['from_date'] = $model->from_date;
             $data['to_date'] = $model->to_date;
             $data['user_code'] = \Yii::$app->user->identity->user_code;
@@ -211,17 +210,16 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[2]) && !empty($parents[3])) {
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[4]) && !empty($parents[5])) {
                 $mccs = new TblTransporterPayment();
-                $data = $mccs->getdatewiseBmcList($parents[0], $parents[1], $parents[2], $parents[3]);
+                $data = $mccs->getdatewiseBmcList($parents[0], $parents[1], $parents[2], $parents[3], $parents[4], $parents[5]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
-                echo Json::encode(['output' => $out, 'selected' => '']);
-                return;
+                return Json::encode(['output' => $out, 'selected' => '']);
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     /**
