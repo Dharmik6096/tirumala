@@ -303,6 +303,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $ftp->conn_init = FALSE;
                 $ftp->conn_close = FALSE;
                 $ftp->make_dir = FALSE;
+                $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
                 $connection = $ftp->ConnectServer();
                 $ftp_file->status = 3;
                 $ftp_file->file_status = 0;

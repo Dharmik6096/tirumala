@@ -1167,6 +1167,12 @@ class TblDcsController extends ChildController {
                         $memberModel->gender_code = 1;
                         $memberModel->caste_category_code = 1;
                         $memberModel->member_type_code = 1;
+                        $memberModel->bank_code = NULL;
+                        $memberModel->branch_code = NULL;
+                        $memberModel->bank_account_no = NULL;
+                        $memberModel->ifsc = NULL;
+                        $memberModel->beneficiary_name = NULL;
+                        $memberModel->adhar_no = NULL;
                         $master[] = $memberModel->save();
                     }
                 }
