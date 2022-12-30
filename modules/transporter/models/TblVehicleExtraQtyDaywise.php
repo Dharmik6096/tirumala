@@ -8,34 +8,32 @@ use app\modules\organisation\models\TblVehicleMaster;
 use app\modules\organisation\models\TblUnions;
 
 /**
- * This is the model class for table "tbl_vehicle_extra_km_daywise".
+ * This is the model class for table "tbl_vehicle_extra_qty_daywise".
  *
- * @property integer $extra_km_code
+ * @property integer $extra_qty_code
+ * @property string $additional_qty
+ * @property string $deduction_qty
+ * @property string $rate
+ * @property string $date
  * @property string $vehicle_code
  * @property string $transporter_code
- * @property string $date
- * @property string $extra_kms
+ * @property string $union_code
+ * @property string $remarks
  * @property string $created_at
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
- * @property string $union_code
  * @property string $originating_org_code
  * @property string $originating_org_type
  * @property integer $originating_type
- * @property string $x_col1
- * @property string $x_col2
- * @property string $x_col3
- * @property string $x_col4
- * @property string $x_col5
  */
-class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
+class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_vehicle_extra_km_daywise';
+        return 'tbl_vehicle_extra_qty_daywise';
     }
 
     /**
@@ -43,11 +41,12 @@ class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+                [['vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type'], 'string'],
                 [['date', 'created_at', 'updated_at', 'rate'], 'safe'],
-                [['extra_kms'], 'number'],
+                [['remarks', 'date', 'created_at', 'updated_at', 'rate', 'vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['additional_qty', 'deduction_qty'], 'number', 'min' => 0],
                 [['originating_type'], 'integer'],
-                [['vehicle_code', 'date', 'extra_kms'], 'required'],
+                [['vehicle_code', 'date', 'additional_qty', 'deduction_qty'], 'required'],
                 [['transporter_code'], 'required', 'except' => ['importCsv']],
                 [['union_code'], 'required', 'except' => ['importCsv']],
                 [['date'], 'convertDateDot', 'on' => ['importCsv']],
@@ -64,25 +63,22 @@ class TblVehicleExtraKmDaywise extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'extra_km_code' => Yii::t('app', 'Extra Km Code'),
-            'vehicle_code' => Yii::t('app', 'Vehicle'),
-            'transporter_code' => Yii::t('app', 'Transporter'),
+            'extra_qty_code' => Yii::t('app', 'Extra Qty Code'),
+            'additional_qty' => Yii::t('app', 'Additional Qty'),
+            'deduction_qty' => Yii::t('app', 'Deduction Qty'),
+            'rate' => Yii::t('app', 'Rate'),
             'date' => Yii::t('app', 'Date'),
-            'extra_kms' => Yii::t('app', 'Extra Kms'),
+            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
+            'transporter_code' => Yii::t('app', 'Transporter Code'),
+            'union_code' => Yii::t('app', 'Union Code'),
+            'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'union_code' => Yii::t('app', 'Union'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'x_col1' => Yii::t('app', 'X Col1'),
-            'x_col2' => Yii::t('app', 'X Col2'),
-            'x_col3' => Yii::t('app', 'X Col3'),
-            'x_col4' => Yii::t('app', 'X Col4'),
-            'x_col5' => Yii::t('app', 'X Col5'),
-            'rate' => Yii::t('app', 'Rate'),
         ];
     }
 

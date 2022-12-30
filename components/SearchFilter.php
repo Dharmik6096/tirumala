@@ -406,6 +406,12 @@ class SearchFilter {
             'TblSchemeApplicationDisbursementSearch' => [
                 'filter' => ['f_union_code', 'scheme_id', 'from_date', 'to_date'],
             ],
+            'TblQtyWiseRateSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
+            'TblVehicleExtraQtyDaywiseSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
