@@ -57,7 +57,11 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->created_at);
         }],
-        ['attribute' => 'created_by', 'filter' => false],
+        [
+        'attribute' => 'created_by',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }, 'filter' => false],
 ];
 
 $grid_option = [

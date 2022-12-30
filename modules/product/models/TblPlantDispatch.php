@@ -7,6 +7,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\product\models\TblProduct;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * This is the model class for table "tbl_plant_dispatch".
@@ -49,22 +50,22 @@ class TblPlantDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['plant_dispatch_code', 'union_code'], 'required', 'except' => ['importCsv']],
-            [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
-            [['mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
-            [['product_code', 'rate', 'qty', 'sap_batch_no'], 'required', 'on' => ['importCsv']],
-            [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
-            [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
-            [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['status'], 'default', 'value' => '0'],
-            [['document_no'], 'unique', 'except' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
-            [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
-            [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
+                [['plant_dispatch_code', 'union_code'], 'required', 'except' => ['importCsv']],
+                [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
+                [['mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
+                [['product_code', 'rate', 'qty', 'sap_batch_no'], 'required', 'on' => ['importCsv']],
+                [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
+                [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
+                [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['status'], 'default', 'value' => '0'],
+                [['document_no'], 'unique', 'except' => ['importCsv']],
+                [['dispatch_date', 'document_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['dispatch_date', 'document_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['dispatch_date', 'document_date'], 'convertDate', 'on' => ['importCsv']],
+                [['plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPlant::className(), 'targetAttribute' => ['plant_code' => 'plant_code'], 'on' => 'importCsv'],
+                [['mcc_plant_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblMccPlant::className(), 'targetAttribute' => ['mcc_plant_code' => 'mcc_plant_code'], 'on' => 'importCsv'],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => 'importCsv'],
+                [['mcc_plant_code'], 'setImport', 'on' => ['importCsv']],
         ];
     }
 
@@ -181,6 +182,10 @@ class TblPlantDispatch extends \app\models\ChildModel {
 
     public function setImport($attribute, $params) {
         $this->union_code = Yii::$app->general->getforeignkey($this->mccPlantCode, 'union_code');
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
 }

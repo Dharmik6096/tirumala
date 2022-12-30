@@ -61,7 +61,11 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->created_at);
         }, 'visible' => false],
-        ['attribute' => 'created_by', 'filter' => false, 'visible' => false],
+        [
+        'attribute' => 'created_by',
+        'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->userCode, 'name');
+        }, 'filter' => false, 'visible' => false],
         // 'is_installment',
         // 'no_of_installment',
         // 'created_at',
