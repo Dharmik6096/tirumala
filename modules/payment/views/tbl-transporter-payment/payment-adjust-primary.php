@@ -38,8 +38,6 @@ $net_amt = array_sum(array_map(function($array) {
         ?>
         <?php
         $attribute = [
-            //  ['attribute' => 'transporter_code'],
-
                 ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
                 }, 'label' => Yii::t('app', 'Route Code')],
@@ -47,28 +45,11 @@ $net_amt = array_sum(array_map(function($array) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
                 }
             ],
-                ['attribute' => 'transporter_code',
-                'value' => function ($model) {
-                    return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
-                },
-            ],
-//                ['attribute' => 'vehicle_code',
-//                'value' => function ($model) {
-//                    return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
-//                },
-//            ],
-//            ['attribute' => 'no_of_days', 'pageSummary' => true],
-//            ['attribute' => 'fixed_rent'],
-//            ['attribute' => 'total_qty'],
-//            ['attribute' => 'total_kms'],
-//            ['attribute' => 'fuel_consumption'],
-//            ['attribute' => 'vehicle_average'],
-//            ['attribute' => 'fuel_rate'],
-            ['attribute' => 'total_amount', 'pageSummary' => true],
-                ['attribute' => 'total_rejected_amount', 'pageSummary' => true],
-                ['attribute' => 'total_penalty_amount', 'pageSummary' => true],
-//            ['attribute' => 'fixed_amount', 'pageSummary' => true],
-            ['attribute' => 'total_addition', 'pageSummary' => true],
+                ['attribute' => 'transporter_name'],
+                ['attribute' => 'parsing_no'],
+                ['attribute' => 'fixed_amount', 'pageSummary' => true],
+                ['attribute' => 'total_amount', 'pageSummary' => true],
+                ['attribute' => 'total_addition', 'pageSummary' => true],
                 ['attribute' => 'total_deduction', 'pageSummary' => true],
                 ['attribute' => 'net_amount',
                 'pageSummary' => true,

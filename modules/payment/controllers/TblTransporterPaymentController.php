@@ -58,7 +58,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
                 return $this->redirect(['payment-adjust', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'union_code' => $model->union_code]]);
             } else {
                 Yii::$app->ClientPaymentConfig->processPayment('primary_tpt_payment', $data);
-                return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code]]);
+                return $this->redirect(['payment-adjust-primary', 'TblTransporterPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code]]);
             }
         }
         return $this->render('create', [
@@ -115,7 +115,9 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblTransporterPayment();
         $model->load(Yii::$app->request->get());
-        $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code])->all();
+        $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code])
+                ->andFilterWhere(['transporter_code' => $model->transporter_code])
+                ->all();
         if (!empty($detailModel)) {
             if (Yii::$app->request->post('TblTransporterPayment')) {
                 $hisModel = [];
