@@ -401,12 +401,11 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $existData->attributes = $detalData->attributes;
                             $existData->date_time_of_collection = $detalData->date_time_of_collection . ' ' . \Yii::$app->general->getshift($detalData->shift_code);
                             $saveModel[] = $existData;
+                            if ($detalData->route_code != $detalData->oldAttributes['route_code'] && $detalData->customer_type == 'DCS') {
+                                $collectionUpdate = new TblBmcCollection();
+                                $collectionUpdate->milkCollectionUpdate($detalData);
+                            }
                         }
-                    }
-
-                    if ($detalData->route_code != $detalData->oldAttributes['route_code'] && $detalData->customer_type == 'DCS') {
-                        $collectionUpdate = new TblBmcCollection();
-                        $collectionUpdate->milkCollectionUpdate($detalData);
                     }
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
