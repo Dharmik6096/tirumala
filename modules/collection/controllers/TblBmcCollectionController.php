@@ -403,6 +403,11 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                             $saveModel[] = $existData;
                         }
                     }
+
+                    if ($detalData->route_code != $detalData->oldAttributes['route_code'] && $detalData->customer_type == 'DCS') {
+                        $collectionUpdate = new TblBmcCollection();
+                        $collectionUpdate->milkCollectionUpdate($detalData);
+                    }
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, [$message, $type]);
                 if ($transaction == 'customRedirect') {

@@ -22,6 +22,8 @@ use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\collection\models\TblCollectionDataAlias;
 use app\modules\configuration\models\TblUnionRatechartRange;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\report\models\TblMilkCollection;
+use app\modules\collection\models\TblDcsMilkDispatch;
 
 /**
  * This is the model class for table "tbl_bmc_collection".
@@ -730,6 +732,15 @@ class TblBmcCollection extends \app\models\ChildModel {
                 $this->no_of_can = ceil($this->qty / $configCanParLtr);
             }
         }
+    }
+
+    public function milkCollectionUpdate($model) {
+        $model->date_time_of_collection = ($model->date_time_of_collection) ? Yii::$app->formatter->asDate($model->date_time_of_collection, DATE_FORMAT) : '';
+        $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code) . '.000';
+
+        TblMilkCollection::updateAll(['route_code' => $model->route_code], ['date_time_of_collection' => $model->date_time_of_collection, 'dcs_code' => $model->customer_code]);
+
+        TblDcsMilkDispatch::updateAll(['route_code' => $model->route_code], ['date_time_of_dispatch' => $model->date_time_of_collection, 'dcs_code' => $model->customer_code]);
     }
 
 }
