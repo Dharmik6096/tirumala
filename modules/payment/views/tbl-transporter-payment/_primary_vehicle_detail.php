@@ -7,111 +7,6 @@ use kartik\grid\GridView;
 <div id="maincontent">
     <div class="table-responsive">
         <?php
-//        $attributes = [
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'from_date',
-//                        'label' => Yii::t('app', 'Period'),
-//                        'value' => Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date),
-//                        'valueColOptions' => ['style' => 'width:30%']
-//                    ],
-//                    [
-//                        'attribute' => 'bill_no',
-//                        'valueColOptions' => ['style' => 'width:30%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'billing_method',
-//                        'valueColOptions' => ['style' => 'width:80%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'no_of_days',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'fixed_rent',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'total_qty',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//
-//                    [
-//                        'attribute' => 'total_kms',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'fuel_consumption',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'vehicle_average',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'fuel_rate',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'total_amount',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'fixed_amount',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'total_addition',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'total_deduction',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'net_amount',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                ],
-//            ],
-//            [
-//                'columns' => [
-//                    [
-//                        'attribute' => 'adjust_amount',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'final_amount',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                    [
-//                        'attribute' => 'adjust_remark',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-//                ],
-//            ],
-//        ];
         $attributes = [
                 [
                 'columns' => [
@@ -137,7 +32,7 @@ use kartik\grid\GridView;
                     ],
                         [
                         'attribute' => 'transporter_code',
-                        'value' => Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . '(' . Yii::$app->general->getforeignkey($model->transporterCode, 'vendor_code') . ')',
+                        'value' => $model->transporter_name . '(' . Yii::$app->general->getforeignkey($model->transporterCode, 'vendor_code') . ')',
                         'valueColOptions' => ['style' => 'width:30%']
                     ],
                 ],
@@ -145,22 +40,7 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'route_code',
-                        'label' => Yii::t('app', 'Route Code'),
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                        [
-                        'attribute' => 'route_code',
-                        'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                ],
-            ],
-                [
-                'columns' => [
-                        [
-                        'attribute' => 'billing_type_code',
-                        'value' => Yii::$app->general->getforeignkey($model->billingTypeCode, 'billing_type') . ($model->billing_type_code == 2 ? ($model->is_day_wise == 1 ? '(Day Wise)' : '(Month Wise)') : ''),
+                        'attribute' => 'billing_method',
                         'valueColOptions' => ['style' => 'width:30%']
                     ],
                         [
@@ -188,15 +68,29 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'total_kms',
+                        'attribute' => 'parsing_no',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
-//                        [
-//                        'attribute' => 'total_vts_kms',
-//                        'valueColOptions' => ['style' => 'width:15%']
-//                    ],
-                    [
-                        'attribute' => 'total_least_kms',
+                        [
+                        'attribute' => 'route_code',
+                        'label' => Yii::t('app', 'Route Code'),
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'route_code',
+                        'value' => Yii::$app->general->getforeignkey($model->routeCode, 'route_name'),
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                ],
+            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'no_of_days',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'total_kms',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
@@ -208,39 +102,55 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'total_rejected_qty',
+                        'attribute' => 'vehicle_average',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'fuel_consumption',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'fuel_rate',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                ],
+            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'avg_rate',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'fixed_rent',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
                         'attribute' => 'qty_amount',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
+                ],
+            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'fixed_amount',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
                         [
                         'attribute' => 'total_amount',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
-                ],
-            ],
-                [
-                'columns' => [
                         [
                         'attribute' => 'total_addition',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
-                        [
-                        'attribute' => 'total_deduction',
-                        'valueColOptions' => ['style' => 'width:15%']
-                    ],
-                        [
-                        'attribute' => 'total_penalty_amount',
-                        'valueColOptions' => ['style' => 'width:15%']
-                    ],
                 ],
             ],
                 [
                 'columns' => [
                         [
-                        'attribute' => 'total_rejected_amount',
+                        'attribute' => 'total_deduction',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
@@ -248,15 +158,23 @@ use kartik\grid\GridView;
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
-                        'attribute' => 'final_amount',
+                        'attribute' => 'adjust_amount',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                 ],
             ],
-//                [
-//                'columns' => [
-//                ],
-//            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'final_amount',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'adjust_remark',
+                        'valueColOptions' => ['style' => 'width:60%']
+                    ],
+                ],
+            ],
         ];
         // View file rendering the widget
         echo DetailView::widget([
@@ -280,64 +198,19 @@ use kartik\grid\GridView;
     <h4 class="theme-box-heading padding_top_10"><?= Yii::t('app', 'Date wise Payment Details') ?></h4>
     <?php
     $attribute = [
-//            ['attribute' => 'dispatch_date',
-//            'filterType' => GridView::FILTER_DATE,
-//            'filterWidgetOptions' => [
-//                'pluginOptions' => ['format' => 'dd-mm-yyyy',
-//                    'autoclose' => true]
-//            ],
-//            'value' => function($model) {
-//                return Yii::$app->controls->view_date($model->dispatch_date);
-//            }, 'filter' => false],
-//            ['attribute' => 'morning_qty', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'evening_qty', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'qty', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'rec_kg_fat', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'rec_kg_snf', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'morning_kms', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'evening_kms', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'total_kms', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'fuel_consumption', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'fuel_rate', 'filter' => false],
-//            ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'fixed_amount', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'total_amount', 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'dispatch_date',
-            'filterType' => GridView::FILTER_DATE,
-            'filterWidgetOptions' => [
-                'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                    'autoclose' => true]
-            ],
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->dispatch_date);
             }, 'filter' => false],
-            ['attribute' => 'parsing_no', 'label' => 'Vehicle', 'filter' => false],
             ['attribute' => 'morning_qty', 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'evening_qty', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'qty', 'label' => 'Qty', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'qty_amount', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'morning_rejected_qty', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'evening_rejected_qty', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'rejected_qty', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'primary_tpt_cost', 'filter' => false],
-            ['attribute' => 'incentive_value', 'filter' => false],
-            ['attribute' => 'e_basic_price', 'filter' => false],
-            ['attribute' => 'm_basic_price', 'filter' => false],
-            ['attribute' => 'rejected_amount', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'morning_late_minute', 'filter' => false],
-            ['attribute' => 'morning_applicable_penalty', 'filter' => false],
-            ['attribute' => 'evening_late_minute', 'filter' => false],
-            ['attribute' => 'evening_applicable_penalty', 'filter' => false],
-            ['attribute' => 'penalty_amount', 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'qty', 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'avg_rate', 'filter' => false],
             ['attribute' => 'morning_kms', 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'evening_kms', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'total_kms', 'label' => 'Total(KM)', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'morning_vts_kms', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'evening_vts_kms', 'filter' => false, 'pageSummary' => true],
-//            ['attribute' => 'total_vts_kms', 'filter' => false, 'pageSummary' => true],
-        ['attribute' => 'morning_least_kms', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'evening_least_kms', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'total_least_kms', 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'extra_kms', 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'total_kms', 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'km_rate', 'filter' => false],
             ['attribute' => 'fuel_consumption', 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'fuel_rate', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],

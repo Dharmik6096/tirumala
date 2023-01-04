@@ -83,11 +83,11 @@ class TblTransporterPaymentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['transporter_payment_code', 'transporter_type', 'is_verified', 'basic_price', 'billing_type_code'], 'safe'],
-            [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
-            [['from_date', 'to_date', 'payment_date', 'disburse_date', 'process_date', 'created_at', 'updated_at', 'history_created_at', 'mcc_plant_code'], 'safe'],
-            [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost'], 'safe'],
-            [['billing_type_code', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'rejected_kg_fat', 'rejected_kg_snf', 'total_rejected_qty', 'total_rejected_amount', 'total_penalty_amount', 'total_least_kms'], 'safe']
+                [['transporter_payment_code', 'transporter_type', 'is_verified', 'basic_price', 'billing_type_code'], 'safe'],
+                [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
+                [['from_date', 'to_date', 'payment_date', 'disburse_date', 'process_date', 'created_at', 'updated_at', 'history_created_at', 'mcc_plant_code'], 'safe'],
+                [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost'], 'safe'],
+                [['billing_type_code', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'rejected_kg_fat', 'rejected_kg_snf', 'total_rejected_qty', 'total_rejected_amount', 'total_penalty_amount', 'total_least_kms', 'parsing_no', 'transporter_name'], 'safe']
         ];
     }
 

@@ -71,11 +71,11 @@ class TblTransporterPaymentDetail extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['transporter_payment_code'], 'integer'],
-            [['vehicle_code', 'parsing_no', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
-            [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'avg_rate', 'morning_qty', 'evening_qty', 'qty', 'morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'km_rate', 'fuel_rate', 'fuel_consumption', 'amount', 'toll_amount', 'fastag_amount', 'fixed_amount', 'other_amount', 'total_amount', 'weighing_cost'], 'number'],
-            [['dispatch_date', 'created_at', 'updated_at', 'weighing_cost'], 'safe'],
-            [['rejected_kg_fat', 'rejected_kg_snf', 'morning_rejected_qty', 'evening_rejected_qty', 'rejected_qty', 'rejected_amount', 'qty_amount', 'morning_vts_kms', 'evening_vts_kms', 'total_vts_kms', 'primary_tpt_cost', 'morning_late_minute', 'morning_applicable_penalty', 'morning_penalty_amount', 'evening_late_minute', 'evening_applicable_penalty', 'evening_penalty_amount', 'penalty_amount', 'morning_least_kms', 'evening_least_kms', 'total_least_kms', 'incentive_value', 'e_basic_price', 'm_basic_price', 'chilling_cost', 'basic_price'], 'safe']
+                [['transporter_payment_code'], 'integer'],
+                [['vehicle_code', 'parsing_no', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_by', 'updated_by'], 'string'],
+                [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'avg_rate', 'morning_qty', 'evening_qty', 'qty', 'morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'km_rate', 'fuel_rate', 'fuel_consumption', 'amount', 'toll_amount', 'fastag_amount', 'fixed_amount', 'other_amount', 'total_amount', 'weighing_cost'], 'number'],
+                [['dispatch_date', 'created_at', 'updated_at', 'weighing_cost'], 'safe'],
+                [['rejected_kg_fat', 'rejected_kg_snf', 'morning_rejected_qty', 'evening_rejected_qty', 'rejected_qty', 'rejected_amount', 'qty_amount', 'morning_vts_kms', 'evening_vts_kms', 'total_vts_kms', 'primary_tpt_cost', 'morning_late_minute', 'morning_applicable_penalty', 'morning_penalty_amount', 'evening_late_minute', 'evening_applicable_penalty', 'evening_penalty_amount', 'penalty_amount', 'morning_least_kms', 'evening_least_kms', 'total_least_kms', 'incentive_value', 'e_basic_price', 'm_basic_price', 'chilling_cost', 'basic_price'], 'safe']
         ];
     }
 
@@ -107,18 +107,18 @@ class TblTransporterPaymentDetail extends \yii\db\ActiveRecord {
             'rd_qty_diff' => Yii::t('app', 'Rd Qty Diff'),
             'rd_kg_fat_diff' => Yii::t('app', 'Rd Kg Fat Diff'),
             'rd_kg_snf_diff' => Yii::t('app', 'Rd Kg Snf Diff'),
-            'avg_rate' => Yii::t('app', 'Avg Rate'),
+            'avg_rate' => Yii::t('app', 'Rate(Qty)'),
             'morning_qty' => Yii::t('app', 'Qty(M)'),
             'evening_qty' => Yii::t('app', 'Qty(E)'),
-            'qty' => Yii::t('app', 'QTY.'),
+            'qty' => Yii::t('app', 'QTY'),
             'morning_kms' => Yii::t('app', 'Morning(KM)'),
             'evening_kms' => Yii::t('app', 'Evening(KM)'),
-            'extra_kms' => Yii::t('app', 'Extra KM'),
-            'total_kms' => Yii::t('app', 'KM'),
-            'km_rate' => Yii::t('app', 'RATE'),
-            'fuel_rate' => Yii::t('app', 'Rate/Liter'),
-            'fuel_consumption' => Yii::t('app', 'Consumption(Liter)'),
-            'amount' => Yii::t('app', 'HSD AMOUNT'),
+            'extra_kms' => Yii::t('app', 'Extra(KM)'),
+            'total_kms' => Yii::t('app', 'Total(KM)'),
+            'km_rate' => Yii::t('app', 'Rate(KM)'),
+            'fuel_rate' => Yii::t('app', 'Rate(Fuel)'),
+            'fuel_consumption' => Yii::t('app', 'Consumption(Ltr.)'),
+            'amount' => Yii::t('app', 'Amount'),
             'toll_amount' => Yii::t('app', 'TOLL'),
             'fastag_amount' => Yii::t('app', 'FASTAG'),
             'fixed_amount' => Yii::t('app', 'Fixed Amount'),
