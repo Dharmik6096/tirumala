@@ -111,6 +111,7 @@ class TblTransporterPaymentDetail extends \yii\db\ActiveRecord {
             'morning_qty' => Yii::t('app', 'Qty(M)'),
             'evening_qty' => Yii::t('app', 'Qty(E)'),
             'qty' => Yii::t('app', 'QTY'),
+            'extra_qty' => Yii::t('app', 'QTY(Extra)'),
             'morning_kms' => Yii::t('app', 'Morning(KM)'),
             'evening_kms' => Yii::t('app', 'Evening(KM)'),
             'extra_kms' => Yii::t('app', 'Extra(KM)'),

@@ -24,7 +24,8 @@ $attribute = [
         'visible' => true],
         ['attribute' => 'billing_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->billingType, 'billing_type');
-        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('billing_type_code', $searchModel, 'billing_type_code', Yii::t('app', 'Select'))],
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('billing_type_code', $searchModel, 'billing_type_code', Yii::t('app', 'Select')),
+        'visible' => FALSE],
         ['attribute' => 'vehicle_type_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->vehicleType, 'vehicle_type_name');
         },
