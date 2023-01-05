@@ -53,8 +53,7 @@ class TblQtyWiseRate extends \app\models\ChildModel {
                 [['created_by', 'updated_by'], 'string'],
                 [['wef_date'], 'setFieldImport', 'on' => 'importCsv'],
                 [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
-                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
-                [['parsing_no', 'wef_date', 'from_qty', 'to_qty', 'rate', 'union_code', 'transporter_code', 'vehicle_code'], 'required', 'on' => 'importCsv'],
+                [['parsing_no', 'wef_date', 'from_qty', 'to_qty', 'rate'], 'required', 'on' => 'importCsv'],
         ];
     }
 
@@ -68,9 +67,9 @@ class TblQtyWiseRate extends \app\models\ChildModel {
             'to_qty' => Yii::t('app', 'To Qty'),
             'rate' => Yii::t('app', 'Rate'),
             'wef_date' => Yii::t('app', 'Wef Date'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
-            'transporter_code' => Yii::t('app', 'Transporter Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
+            'transporter_code' => Yii::t('app', 'Transporter'),
+            'union_code' => Yii::t('app', 'Union'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -117,9 +116,11 @@ class TblQtyWiseRate extends \app\models\ChildModel {
     }
 
     public function setFieldImport($attribute, $params) {
-        if (!empty($this->parsing_no)) {
-            $this->vehicle_code = Yii::$app->general->getforeignkey($this->parsingNo, 'vehicle_code');
-            $this->transporter_code = Yii::$app->general->getforeignkey($this->parsingNo, 'transporter_code');
+        $parsingNo = $this->parsingNo;
+        if (!empty($parsingNo)) {
+            $this->vehicle_code = $parsingNo->vehicle_code;
+            $this->transporter_code = $parsingNo->transporter_code;
+            $this->union_code = $parsingNo->union_code;
         }
     }
 

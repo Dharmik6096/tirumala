@@ -29,6 +29,8 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
 
+    public $parsing_no;
+
     /**
      * @inheritdoc
      */
@@ -42,18 +44,17 @@ class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['date', 'created_at', 'updated_at', 'rate'], 'safe'],
                 [['remarks', 'date', 'created_at', 'updated_at', 'rate', 'vehicle_code', 'transporter_code', 'created_by', 'updated_by', 'union_code', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['additional_qty', 'deduction_qty'], 'number', 'min' => 0],
+                [['rate', 'additional_qty', 'deduction_qty'], 'number', 'min' => 0],
                 [['originating_type'], 'integer'],
-                [['vehicle_code', 'date', 'additional_qty', 'deduction_qty'], 'required'],
-                [['transporter_code'], 'required', 'except' => ['importCsv']],
-                [['union_code'], 'required', 'except' => ['importCsv']],
+                [['date', 'additional_qty', 'deduction_qty', 'rate'], 'required'],
+                [['transporter_code', 'union_code', 'vehicle_code'], 'required', 'except' => ['importCsv']],
                 [['date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['date'], 'convertDate', 'on' => ['importCsv']],
-                [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
-                [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
+                [['parsing_no'], 'required', 'on' => ['importCsv']],
+                [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
+                [['date'], 'setFieldImport', 'skipOnError' => true, 'on' => 'importCsv'],
                 [['date'], 'unique', 'targetAttribute' => ['date', 'vehicle_code', 'transporter_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
         ];
     }
@@ -63,14 +64,14 @@ class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'extra_qty_code' => Yii::t('app', 'Extra Qty Code'),
+            'extra_qty_code' => Yii::t('app', 'Extra Qty'),
             'additional_qty' => Yii::t('app', 'Additional Qty'),
             'deduction_qty' => Yii::t('app', 'Deduction Qty'),
             'rate' => Yii::t('app', 'Rate'),
             'date' => Yii::t('app', 'Date'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
-            'transporter_code' => Yii::t('app', 'Transporter Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
+            'transporter_code' => Yii::t('app', 'Transporter'),
+            'union_code' => Yii::t('app', 'Union'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -94,11 +95,8 @@ class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
     }
 
-    public function importFieldSet($attribute, $params) {
-        if (empty($this->getErrors())) {
-            $this->transporter_code = Yii::$app->general->getforeignkey($this->vehicle, 'transporter_code');
-            $this->union_code = Yii::$app->general->getforeignkey($this->transporterCode, 'union_code');
-        }
+    public function getParsingNo() {
+        return $this->hasOne(TblVehicleMaster::className(), ['parsing_no' => 'parsing_no']);
     }
 
     public function convertDateDot() {
@@ -112,6 +110,15 @@ class TblVehicleExtraQtyDaywise extends \app\models\ChildModel {
     public function convertDate() {
         if (empty($this->getErrors())) {
             $this->date = !empty($this->date) ? Yii::$app->controls->view_date($this->date, 'php:Y-m-d') : NULL;
+        }
+    }
+
+    public function setFieldImport($attribute, $params) {
+        $parsingNo = $this->parsingNo;
+        if (!empty($parsingNo)) {
+            $this->vehicle_code = $parsingNo->vehicle_code;
+            $this->transporter_code = $parsingNo->transporter_code;
+            $this->union_code = $parsingNo->union_code;
         }
     }
 
