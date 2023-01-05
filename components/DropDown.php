@@ -367,9 +367,13 @@ class DropDown extends Component {
         }
     }
 
-    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
+    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        if ($is_return) {
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
@@ -576,7 +580,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '') {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -599,23 +603,43 @@ class DropDown extends Component {
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
-        echo $form->field($model, $name)
-                ->widget(DepDrop::classname(), [
-                    'type' => $dropDownType,
-                    'data' => [$model->{$name} => $model->{$name}],
-                    'name' => $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
-                    'options' => ['multiple' => $multiple],
-                    'pluginOptions' => [
-                        'depends' => $depends,
-                        'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
-                        'allParam' => ["'" . $extraParam . "'"],
-                        'initialize' => true,
-                        'allowClear' => true,
-                    ],
-                    'options' => $options
-                ])->label($islable);
+        if ($is_return) {
+            return $form->field($model, !empty($input_name) ? $input_name : $name)
+                            ->widget(DepDrop::classname(), [
+                                'type' => $dropDownType,
+                                'data' => [$model->{$name} => $model->{$name}],
+                                'name' => !empty($input_name) ? $input_name : $name,
+                                'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
+                                'options' => ['multiple' => $multiple],
+                                'pluginOptions' => [
+                                    'depends' => $depends,
+                                    'placeholder' => $placeholder,
+                                    'url' => Url::to([$url]),
+                                    'allParam' => ["'" . $extraParam . "'"],
+                                    'initialize' => true,
+                                    'allowClear' => true,
+                                ],
+                                'options' => $options
+                            ])->label($islable);
+        } else {
+            echo $form->field($model, $name)
+                    ->widget(DepDrop::classname(), [
+                        'type' => $dropDownType,
+                        'data' => [$model->{$name} => $model->{$name}],
+                        'name' => $name,
+                        'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
+                        'options' => ['multiple' => $multiple],
+                        'pluginOptions' => [
+                            'depends' => $depends,
+                            'placeholder' => $placeholder,
+                            'url' => Url::to([$url]),
+                            'allParam' => ["'" . $extraParam . "'"],
+                            'initialize' => true,
+                            'allowClear' => true,
+                        ],
+                        'options' => $options
+                    ])->label($islable);
+        }
 
         if (!empty($selected)) {
             $script = "$(document).ready(function() {

@@ -77,8 +77,8 @@ $form = ActiveForm::begin([
             ['attribute' => 'route_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
-                return Yii::$app->dropdown->dropdown('route_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']route_code', FALSE, TRUE);
-                //          return Yii::$app->dropdown->all_routes($detailModel, $form, 'tblbmccollection-' . $index . '-plant_code,tblbmccollection-' . $index . '-mcc_plant_code,tblbmccollection-' . $index . '-bmc_code', '[' . $index . ']route_code', false, false, false);
+                // return Yii::$app->dropdown->dropdown('route_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']route_code', FALSE, TRUE);
+                return Yii::$app->dropdown->all_routes($model, $form, 'tblbmccollection-' . $index . '-plant_code,tblbmccollection-' . $index . '-mcc_plant_code,tblbmccollection-' . $index . '-bmc_code', 'route_code', false, false, false, TRUE, '[' . $index . ']route_code');
             },],
             ['attribute' => 'milk_type_code',
             'format' => 'raw',
