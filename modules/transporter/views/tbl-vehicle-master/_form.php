@@ -38,8 +38,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tblvehiclemaster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Transporter'); ?>
         </div>
-        <div class="col-sm-2 <?= $class ?>">
+        <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('billing_type_code', $model, $form, 'form-group col-sm-3', $model->getAttributeLabel('billing_type_code'), false, '', false, false); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->dropdownStatic('billing_method', $model, $form, 'form-group', $model->getAttributeLabel('billing_method'), false, 'billing_method', false); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('vehicle_type_code', $model, $form, 'form-group col-sm-2', 'Vehicle Type'); ?>
@@ -83,11 +86,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'average')->textInput() ?>
         </div>
-        <!--<div class="col-sm-2">-->
-        <?php // Yii::$app->dropdown->dropdownStatic('billing_method', $model, $form, 'form-group', $model->getAttributeLabel('billing_method'), false, 'billing_method', false); ?>
-        <!--</div>-->
         <!--<div class="col-sm-2 mt25">-->
-            <!--<? Yii::$app->controls->active($model, $form); ?>-->
+       <!--<? Yii::$app->controls->active($model, $form); ?>-->
         <!--</div>-->
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'billing_with_capacity', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
@@ -95,7 +95,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($model, $form, 'flag_wef_date', '', FALSE, FALSE); ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('billing_qty_flag', $model, $form, 'form-group', $model->getAttributeLabel('billing_qty_flag')); ?>
         </div>
@@ -166,8 +165,8 @@ $script = "
 	    }
 	});
         }
-    }
-        $('#tblvehiclemaster-parsing_no').keyup(function() {
+    }";
+$script = "  $('#tblvehiclemaster-parsing_no').keyup(function() {
 		$(this).val($(this).val().toUpperCase());
 	});
         ";

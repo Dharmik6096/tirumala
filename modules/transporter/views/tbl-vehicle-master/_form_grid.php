@@ -58,7 +58,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getStaticDropdownVal('billing_method', $model, 'billing_method');
         },
-        'visible' => false, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('billing_method', $searchModel, 'billing_method')],
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('billing_method', $searchModel, 'billing_method')],
 ];
 
 $grid_option = [

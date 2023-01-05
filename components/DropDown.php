@@ -1225,7 +1225,7 @@ class DropDown extends Component {
             'billing_method' => [
                 'name' => 'billing_method',
                 'prompt' => Yii::t('app', 'Billing Type'),
-                'data' => ['fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Engine Oil')],
+                'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'km_wise_rate' => Yii::t('app', 'Km Wise Rate'), 'qty_wise_rate' => Yii::t('app', 'Qty Wise Rate'), 'fix_rent_daily_fuel_consumption' => Yii::t('app', 'Fix Rent Daily Fuel Consumption'), 'fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Engine Oil')],
             ],
             'default_milk_type' => [
                 'name' => 'default_milk_type',
