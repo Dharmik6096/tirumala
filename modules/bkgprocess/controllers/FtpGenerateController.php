@@ -15,7 +15,7 @@ use app\modules\bkgprocess\models\TblFtpDetail;
  */
 class FtpGenerateController extends \app\controllers\ChildController {
 
-    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $status;
+    private $data = [], $type = 'html', $output = '', $report = '', $dataProvider = '', $status, $fileDownloadArr = [];
 
     public function actionIndex() {
         $model = new FtpGenerate();
@@ -39,7 +39,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 $this->output = Yii::t('app', 'No Data Available.');
             }
         }
-        return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider]);
+        return $this->render('index', ['result' => $this->output, 'report' => $this->report, 'data' => $this->data, 'model' => $model, 'dataProvider' => $this->dataProvider, 'fileDownloadArr' => $this->fileDownloadArr]);
     }
 
     public function actionFtpMilkCollection() {
@@ -101,6 +101,9 @@ class FtpGenerateController extends \app\controllers\ChildController {
         }
         $this->output = $output;
         if (!empty($output)) {
+            if (Yii::$app->request->post('ftp-submit') == 'download') {
+                $this->downloadData($output, $model);
+            }
             if (Yii::$app->request->post('ftp-submit') == 'ftp-submit') {
                 $this->GenerateFileFTP($output, $model);
                 $this->output = [];
@@ -175,6 +178,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
                 $ftp->conn_close = FALSE;
                 $ftp->make_dir = FALSE;
                 $ftp->ftp_pasv = false;
+                $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
                 $connection = $ftp->ConnectServer();
 
                 if ($connection) {
@@ -211,6 +215,90 @@ class FtpGenerateController extends \app\controllers\ChildController {
             ],
         ];
         return $label[$l];
+    }
+
+    public function downloadData($output, $Ftpmodel) {
+
+//        $header = [
+//            'mime' => 'application/vnd.ms-excel',
+//            'extension' => 'xls',
+//            'writer' => 'Excel2007',
+//        ];
+//        $objPHPExcel = new PHPExcel();
+//        $sheet = $objPHPExcel->getActiveSheet();
+//        /* $objPHPExcel->getDefaultStyle()
+//          ->getNumberFormat()
+//          ->setFormatCode(
+//          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+//          ); */
+//        $file_header = !empty($output) ? array_keys($output[0]) : [];
+//        /* $file_header = array_map(function($file_header) {
+//          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+//          }, array_values($file_header)); */
+//
+//        $sheet->fromArray(
+//                $file_header, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A1'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $sheet->fromArray(
+//                $output, // The data to set
+//                NULL, // Array values with this value will not be set
+//                'A2'         // Top left coordinate of the worksheet range where
+////    we want to set these values (default is A1)
+//        );
+//        $labelArray = !empty($output) ? array_keys($output[0]) : [];
+//        $shifts = $model->from_shift == "1" ? " Am" : " Pm";
+//        $file_name = date("d-m-Y", strtotime($model->from_date)) . $shifts . ".csv";
+//        $labelT = $file_name;
+//        $fileName = $labelT . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+////        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+////                header('Content-Type: ' . $header['mime']);
+//        header('Content-Disposition: attachment;filename=' . $fileName);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        ob_end_clean();
+//        $objWriter->save('php://output');
+//        exit();
+
+
+        $success = 0;
+        $error = 0;
+        $cnt = 0;
+        $connection = FALSE;
+        $text = '';
+
+        //date('YmdHis',)
+        //var_dump($Ftpmodel->from_shift);die;
+
+        if (!empty($output)) {
+            $keydata = array_keys($output[0]);
+            $txtrowA = implode(',', $keydata);
+            $text .= $txtrowA . PHP_EOL;
+        }
+        foreach ($output as $rows) {
+            $txtrowA = implode(',', $rows);
+            $text .= $txtrowA . PHP_EOL;
+        }
+        if ($text != '') {
+            $local_path = Yii::$app->basePath . '/web/FtpUpload/';
+            Yii::$app->general->checkDirectory($local_path);
+            $shifts = $Ftpmodel->from_shift == "1" ? " Am" : " Pm";
+            $file_name = date("d-m-Y", strtotime($Ftpmodel->from_date)) . $shifts . ".csv";
+            $fileName = $local_path . $file_name;
+            $vfile = fopen($fileName, "w") or die("Unable to open file!");
+            if (fwrite($vfile, $text)) {
+                $data_write = TRUE;
+                fclose($vfile);
+            } else {
+                fclose($vfile);
+                unlink($vfile);
+            }
+            $downloadFile = $file_name;
+            $this->fileDownloadArr = [$downloadFile];
+        }
     }
 
 }
