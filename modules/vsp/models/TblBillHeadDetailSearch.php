@@ -106,7 +106,9 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-        $query->joinWith(['customerType', 'installmentCode']);
+        $query->joinWith(['customerType']);
+        $query->join('LEFT JOIN', 'tbl_bill_head_installment', 'tbl_bill_head_installment.bill_head_detail_code = tbl_bill_head_detail.bill_head_detail_code');
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -157,7 +159,9 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-        $query->joinWith(['installmentCode']);
+//        $query->joinWith(['installmentCode']);
+        $query->join('LEFT JOIN', 'tbl_bill_head_installment', 'tbl_bill_head_installment.bill_head_detail_code = tbl_bill_head_detail.bill_head_detail_code');
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
