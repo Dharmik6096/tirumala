@@ -960,7 +960,8 @@ class TblDcsController extends ChildController {
 
     public function actionMasterVerification() {
         $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
-        $searchModel->scenario = 'verification';
+        $eiplCode = \Yii::$app->session->get('eiplCode');
+        $searchModel->scenario = $eiplCode == 'MMD' ? 'mmd-verification' : 'verification';
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -1029,7 +1030,8 @@ class TblDcsController extends ChildController {
 
     public function actionContactVerification() {
         $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
-        $searchModel->scenario = 'verification';
+        $eiplCode = \Yii::$app->session->get('eiplCode');
+        $searchModel->scenario = $eiplCode == 'MMD' ? 'mmd-verification' : 'verification';
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
