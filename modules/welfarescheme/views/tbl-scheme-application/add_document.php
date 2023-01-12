@@ -124,6 +124,8 @@ use yii\helpers\Url;
                                 'fieldConfig' => [
                     ]]);
                     ?>
+                <?= $form->errorSummary($doc_model) ?>
+
                     <div class="row">
                         <div class="col-sm-12">
                             <table class="table table-bordered table-striped table-main table-language table-rate">
@@ -137,7 +139,7 @@ use yii\helpers\Url;
                                                 <?= Html::activeHiddenInput($doc, '[' . $key . ']scheme_id'); ?>
                                                 <?= Html::activeHiddenInput($doc, '[' . $key . ']doc_id'); ?>
                                                 <?php
-                                                $accept = !empty($doc->doc_ext) ? $doc->doc_ext : 'application/pdf,image/jpeg';
+                                                $accept = !empty($doc->doc_ext) ? $doc->doc_ext : 'application/pdf,image/jpeg,.docx';
                                                 echo $form->field($doc, '[' . $key . ']file_name')->fileInput(['accept' => $accept])->label(FALSE);
                                                 ?>
                                                 <?php

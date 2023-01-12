@@ -1449,7 +1449,7 @@ class DropDown extends Component {
             'doc_ext' => [
                 'name' => 'doc_ext',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['.docx' => Yii::t('app', 'Word'), '.pdf' => Yii::t('app', 'Pdf')],
+                'data' => ['.docx' => Yii::t('app', 'Word'), '.pdf' => Yii::t('app', 'Pdf'), 'image/jpeg' => Yii::t('app', 'JPG/JPEG')],
             ],
             'approval_level' => [
                 'name' => 'level',

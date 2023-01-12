@@ -44,6 +44,7 @@ class TblSchemeApplicationDocuments extends \app\models\ChildModel {
                 [['file_path'], 'string', 'max' => 255],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                ['file_name', 'file', 'extensions' => ['pdf', 'jpg', 'jpeg', 'docx'], 'maxSize' => 1024 * 1024 * 2],
         ];
     }
 
