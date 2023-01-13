@@ -58,6 +58,7 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
     public function actionCreate() {
         $model = new TblPlantDispatch();
         $txModel = new TblPlantDispatchTxn();
+        $model->dispatch_date = date('d-m-Y');
         if (Yii::$app->request->post()) {
             $saveModel = [];
             $HisModel = [];

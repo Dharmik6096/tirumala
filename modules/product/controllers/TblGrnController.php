@@ -231,6 +231,7 @@ class TblGrnController extends \app\controllers\ChildController {
         $message = 'GRN';
         $type = 'create';
         $updateDispatch = TRUE;
+        $this->model->grn_date = date('d-m-Y');
         if (Yii::$app->request->post()) {
             $grnData = Yii::$app->request->post()['TblGrn'];
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
@@ -238,7 +239,7 @@ class TblGrnController extends \app\controllers\ChildController {
             $this->model->grn_code = Yii::$app->general->getPrimaryCode($this->model, 1);
             $dispModel = new TblPlantDispatch();
             $dispatchData = $dispModel->find()->where(['document_no' => $this->model->ref_no])->one();
-            $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : '';
+            $this->model->grn_date = !empty($this->model->grn_date) ? date('Y-m-d', strtotime($this->model->grn_date)) : date('Y-m-d');
             $this->model->invoice_date = !empty($this->model->invoice_date) ? date('Y-m-d', strtotime($this->model->invoice_date)) : $dispatchData->document_date;
             $this->model->invoice_no = !empty($this->model->invoice_no) ? $this->model->invoice_no : $dispatchData->document_no;
             $this->model->scenario = 'batchcreate';

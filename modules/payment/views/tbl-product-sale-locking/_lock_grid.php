@@ -15,7 +15,7 @@ $form = ActiveForm::begin([
             'id' => 'product-sale-lock-grid',
         ]);
 ?>
-<div class="grid-search no-effect" >
+<div class="grid-search no-effect modal_product_sale_lock" >
 
     <?php
     echo Html::activeHiddenInput($searchModel, 'union_code', ['id' => 'set_union_code']);

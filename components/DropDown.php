@@ -1442,7 +1442,7 @@ class DropDown extends Component {
             'quality_param' => ['name' => 'quality_param', 'fields' => 'code,type', 'prompt' => 'Select Quality Param', 'model' => 'TblMilkType'],
             'criteria_type_code' => ['name' => 'criteria_type_code', 'fields' => 'code,criteria_name', 'prompt' => 'Select Criteria', 'model' => 'TblHeadLoadCriteria'],
             'product_group_code' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup'],
-            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code'],
+            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['x_col3']],
             'member_classification_type_code' => ['name' => 'member_classification_type_code', 'fields' => 'member_classification_type_code,member_classification_type', 'prompt' => 'Select Member Classification Type', 'model' => 'TblMemberClassificationType'],
             'member-type' => ['name' => 'member_type_code', 'fields' => 'member_type_code,member_type_name', 'prompt' => Yii::t('app', 'Select Member Type'), 'model' => 'TblMemberTypes'],
             'blood-group' => ['name' => 'bloodgroup_code', 'fields' => 'blood_group_code,blood_group', 'prompt' => 'Select Blood Group', 'model' => 'TblBloodgroup'],

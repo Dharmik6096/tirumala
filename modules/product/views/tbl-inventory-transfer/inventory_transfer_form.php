@@ -38,10 +38,13 @@ $form = ActiveForm::begin([
 
             <?php if ($batchNoWiseInventory == 1) { ?>
                 <div class="col-sm-2 create_fields">
-                    <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', TRUE, date('Y-m-d'), false, true); ?>
+                    <?php
+                    $minDate = date('Y-m-d', strtotime("-4 days"));
+                    ?>
+                    <?= Yii::$app->controls->date($model, $form, 'inventory_transfer_date', '', date('Y-m-d'), $minDate, false, true); ?>
                 </div>
                 <div class="col-sm-2 create_fields">
-                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, date('Y-m-d'), false, true); ?>
+                    <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', TRUE, date('Y-m-d'), TRUE, true); ?>
                 </div>
             <?php } else { ?>
                 <div class="col-sm-2 create_fields">
@@ -87,8 +90,9 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Inventory Transfer Txn Details</h4>
         </div>
         <?= $form->field($model, 'inventory_transfer_code')->hiddenInput()->label(FALSE) ?>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblinventorytransfer-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $txModel->getAttributeLabel('product_code'), 'product_code'); ?>
+        <div class="col-sm-2"> 
+            <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblinventorytransfer-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', $txModel->getAttributeLabel('product_code'), 'product_code'); ?>
         </div>
         <?php if ($batchNoWiseInventory == 1) { ?>
             <div class="col-sm-2 create_fields">

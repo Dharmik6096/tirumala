@@ -74,7 +74,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'Inventory Transfer';
         $type = 'create';
-
+        $this->model->transaction_date = date('d-m-Y');
         if (Yii::$app->request->post()) {
             $masterData = Yii::$app->request->post()['TblInventoryTransfer'];
             $txnData = Yii::$app->request->post()['TblInventoryTransferTxn'];
@@ -165,7 +165,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $stockModel->union_code = $txModel->union_code;
                 $stockModel->sap_batch_no = $batch;
                 $existtoStock = $stockModel->getExistStock($this->model->to_type, $batch);
-             
+
                 $t_stock = 0;
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
                 if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0) {
@@ -197,7 +197,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $stockTxnModel->transaction_date = date('Y-m-d');
                 $stockTxnModel->reference_code = $txModel->inventory_transfer_txn_code;
                 $modelSave[] = $stockTxnModel;
-               
+
                 $receiptTo = new TblProductReceipt();
                 $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
                 $receiptTo->grn_no = '1234';

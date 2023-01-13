@@ -32,7 +32,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', TRUE, date('Y-m-d'), false, true); ?>
+            <?= Yii::$app->controls->date($model, $form, 'dispatch_date', '', TRUE, date('Y-m-d'), TRUE, true); ?>
         </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->union_plant($model, $form, 'tblplantdispatch-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
@@ -44,7 +44,10 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'document_no')->textInput() ?>
         </div>
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'document_date', '', TRUE, date('Y-m-d'), false, true); ?>
+            <?php
+            $minDate = date('Y-m-d', strtotime("-4 days"));
+            ?>
+            <?= Yii::$app->controls->date($model, $form, 'document_date', '', date('Y-m-d'), $minDate, false, true); ?>
         </div>
         <div class="col-sm-4 create_fields">
             <?= $form->field($model, 'remarks')->textInput() ?>
@@ -57,7 +60,8 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Product Details</h4>
         </div>
         <div class="col-sm-2 reset_field">
-            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+            <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'product_code', FALSE); ?>
         </div>
         <div class="col-sm-2 sap_batch_no">
             <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>

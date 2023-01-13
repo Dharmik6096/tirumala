@@ -59,6 +59,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
         $searchModel = new TblProductSaleLockingSearch();
         $searchModel->scenario = 'saleLockData';
         $saveModel = [];
+        $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {
             $searchData = Yii::$app->request->post()['TblProductSaleLockingSearch'];
             $postCodes = Yii::$app->request->post()['product_sale_transaction_code'];
@@ -89,8 +90,8 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
                     return $this->redirect(['index']);
                 }
             } else {
-                $dataProviderDownload = $searchModel->downloadsearch(Yii::$app->request->queryParams);
-                $this->downloadData($dataProviderDownload->getModels());
+//                $dataProviderDownload = $searchModel->downloadsearch(Yii::$app->request->queryParams);
+                $this->downloadData($dataProvider->getModels());
             }
         }
         $dataProvider = $searchModel->locksearch(Yii::$app->request->queryParams);
@@ -207,6 +208,14 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
           ->setFormatCode(
           \PHPExcel_Style_NumberFormat::FORMAT_TEXT
           ); */
+        if (!empty($downloadDetail)) {
+            for ($i = 0; $i < count($downloadDetail); $i++) {
+                if(isset($downloadDetail[$i]['product_sale_transaction_code'])) {
+                    unset($downloadDetail[$i]['product_sale_transaction_code']);
+                }
+                
+            }
+        }
         $file_header = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];
         /* $file_header = array_map(function($file_header) {
           return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));

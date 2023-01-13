@@ -83,61 +83,130 @@ $script = "
     });
    
     
-    $(document).on('change','span.received_qty_change input', function() { 
+//    $(document).on('change','span.received_qty_change input', function() { 
+//        $('tr').removeClass('changeTr');
+//         var tr_key = $(this).closest('tr').addClass('changeTr');
+//        var received_qty = parseFloat($('tr.changeTr .received_qty_change input').val());
+//        var rejected_qty = parseFloat($('tr.changeTr .rejected_qty_change input').val());
+//        var dispatch_qty = parseFloat($('tr.changeTr .dispatch_qty_change input').val());
+//        if(rejected_qty == '' || isNaN(rejected_qty)){
+//            rejected_qty = 0;
+//        }
+//        if(dispatch_qty == '' || isNaN(dispatch_qty)){
+//            dispatch_qty = 0;
+//        }
+//        if(!setData(received_qty)){
+//           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty is More than 0.</span></div></div>');
+//            $('tr.changeTr .received_qty_change input').focus();
+//        }
+//        if(received_qty == '' || isNaN(received_qty)){
+//            received_qty = 0;
+//        }
+//        var totalQty = received_qty + rejected_qty;
+//        if(totalQty > dispatch_qty){
+//           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty Not Match Dispatch Qty.</span></div></div>');
+//            $('tr.changeTr .received_qty_change input').focus();
+//            $('tr.changeTr .received_qty_change input').val('');
+//        }else if(received_qty < rejected_qty){
+//         
+//            bootbox.confirm({
+//                message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>',
+//                buttons: {
+//                    'confirm': {
+//                                    label: 'Ok',
+//                                    className: 'btn btn-primary'
+//                     }
+//                },
+//                callback: function(result) {
+//                    console.log('asdasd');
+//                    $('tr.changeTr .received_qty_change input').focus();
+//                }
+//            });
+////            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>');
+//            
+//        }else{
+//            amount();
+//                var missingQty = dispatch_qty - (received_qty + rejected_qty);
+//                $('tr.changeTr .missing_qty_change input').val(missingQty);
+//        }
+//    });
+//    $(document).on('change','span.rejected_qty_change input', function() { 
+//        $('tr').removeClass('changeTr');
+//        var tr_key = $(this).closest('tr').addClass('changeTr');
+//        var received_qty = parseFloat($('tr.changeTr .received_qty_change input').val());
+//        var rejected_qty = parseFloat($('tr.changeTr .rejected_qty_change input').val());
+//        var dispatch_qty = parseFloat($('tr.changeTr .dispatch_qty_change input').val());
+//        if(received_qty == '' || isNaN(received_qty)){
+//            received_qty = 0;
+//        }
+//        if(rejected_qty == '' || isNaN(rejected_qty)){
+//            rejected_qty = 0;
+//        }
+//        if(dispatch_qty == '' || isNaN(dispatch_qty)){
+//            dispatch_qty = 0;
+//        }
+//        var totalQty = received_qty + rejected_qty;
+//        if(totalQty > dispatch_qty){
+//           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Rejected Qty Not Match Dispatch Qty.</span></div></div>');
+//            $('tr.changeTr .rejected_qty_change input').focus();
+//            $('tr.changeTr .rejected_qty_change input').val('');
+//        }else if(received_qty < rejected_qty){
+//            bootbox.confirm({
+//                message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>',
+//                buttons: {
+//                    'confirm': {
+//                                    label: 'Ok',
+//                                    className: 'btn btn-primary'
+//                     }
+//                },
+//                callback: function(result) {
+//                    $('tr.changeTr .rejected_qty_change input').focus();
+//                }
+//            });
+////            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>');
+////            $('tr.changeTr .rejected_qty_change input').focus();
+//        }else{
+//            amount();
+//                var missingQty = dispatch_qty - (received_qty + rejected_qty);
+//                $('tr.changeTr .missing_qty_change input').val(missingQty);
+//        }
+//    });
+
+
+    $(document).on('change','span.missing_qty_change input', function() { 
         $('tr').removeClass('changeTr');
-         var tr_key = $(this).closest('tr').addClass('changeTr');
-        var received_qty = parseFloat($('tr.changeTr .received_qty_change input').val());
+        var tr_key = $(this).closest('tr').addClass('changeTr');
+        var missing_qty = parseFloat($('tr.changeTr .missing_qty_change input').val());
         var rejected_qty = parseFloat($('tr.changeTr .rejected_qty_change input').val());
         var dispatch_qty = parseFloat($('tr.changeTr .dispatch_qty_change input').val());
+        if(missing_qty == '' || isNaN(missing_qty)){
+            missing_qty = 0;
+        }
         if(rejected_qty == '' || isNaN(rejected_qty)){
             rejected_qty = 0;
         }
         if(dispatch_qty == '' || isNaN(dispatch_qty)){
             dispatch_qty = 0;
         }
-        if(!setData(received_qty)){
-           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty is More than 0.</span></div></div>');
-            $('tr.changeTr .received_qty_change input').focus();
-        }
-        if(received_qty == '' || isNaN(received_qty)){
-            received_qty = 0;
-        }
-        var totalQty = received_qty + rejected_qty;
-        if(totalQty > dispatch_qty){
-           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty Not Match Dispatch Qty.</span></div></div>');
-            $('tr.changeTr .received_qty_change input').focus();
-            $('tr.changeTr .received_qty_change input').val('');
-        }else if(received_qty < rejected_qty){
-         
-            bootbox.confirm({
-                message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>',
-                buttons: {
-                    'confirm': {
-                                    label: 'Ok',
-                                    className: 'btn btn-primary'
-                     }
-                },
-                callback: function(result) {
-                    console.log('asdasd');
-                    $('tr.changeTr .received_qty_change input').focus();
-                }
-            });
-//            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>');
-            
+       
+        var receivedQty = dispatch_qty -( rejected_qty + missing_qty);
+        if(receivedQty < 0){
+           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty Must More than 0.</span></div></div>');
+            $('tr.changeTr .missing_qty_change input').focus();
+            $('tr.changeTr .missing_qty_change input').val('');
         }else{
+            $('tr.changeTr .received_qty_change input').val(receivedQty);
             amount();
-                var missingQty = dispatch_qty - (received_qty + rejected_qty);
-                $('tr.changeTr .missing_qty_change input').val(missingQty);
         }
     });
     $(document).on('change','span.rejected_qty_change input', function() { 
         $('tr').removeClass('changeTr');
         var tr_key = $(this).closest('tr').addClass('changeTr');
-        var received_qty = parseFloat($('tr.changeTr .received_qty_change input').val());
+        var missing_qty = parseFloat($('tr.changeTr .missing_qty_change input').val());
         var rejected_qty = parseFloat($('tr.changeTr .rejected_qty_change input').val());
         var dispatch_qty = parseFloat($('tr.changeTr .dispatch_qty_change input').val());
-        if(received_qty == '' || isNaN(received_qty)){
-            received_qty = 0;
+        if(missing_qty == '' || isNaN(missing_qty)){
+            missing_qty = 0;
         }
         if(rejected_qty == '' || isNaN(rejected_qty)){
             rejected_qty = 0;
@@ -145,30 +214,15 @@ $script = "
         if(dispatch_qty == '' || isNaN(dispatch_qty)){
             dispatch_qty = 0;
         }
-        var totalQty = received_qty + rejected_qty;
-        if(totalQty > dispatch_qty){
-           bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Rejected Qty Not Match Dispatch Qty.</span></div></div>');
+        var receivedQty = dispatch_qty -( rejected_qty + missing_qty);
+        
+        if(receivedQty < 0){
+            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Received Qty Must More than 0.</span></div></div>');
             $('tr.changeTr .rejected_qty_change input').focus();
             $('tr.changeTr .rejected_qty_change input').val('');
-        }else if(received_qty < rejected_qty){
-            bootbox.confirm({
-                message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>',
-                buttons: {
-                    'confirm': {
-                                    label: 'Ok',
-                                    className: 'btn btn-primary'
-                     }
-                },
-                callback: function(result) {
-                    $('tr.changeTr .rejected_qty_change input').focus();
-                }
-            });
-//            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Amount is More than 0.</span></div></div>');
-//            $('tr.changeTr .rejected_qty_change input').focus();
         }else{
-            amount();
-                var missingQty = dispatch_qty - (received_qty + rejected_qty);
-                $('tr.changeTr .missing_qty_change input').val(missingQty);
+            $('tr.changeTr .received_qty_change input').val(receivedQty);
+            amount(); 
         }
     });
     
@@ -186,8 +240,8 @@ $script = "
         if(rate == '' || isNaN(rate)){
             rate = 0;
         }
-        amount = rate * (received_qty - rejected_qty);
-         console.log(amount);
+//        amount = rate * (received_qty - rejected_qty);
+        amount = rate * (received_qty);
         $('tr.changeTr  input.amountField').val(amount.toFixed(2));
     }
 

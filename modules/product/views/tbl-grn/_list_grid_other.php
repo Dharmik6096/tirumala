@@ -52,7 +52,7 @@ $form = ActiveForm::begin([
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return Html::activeHiddenInput($model, '[' . $index . ']rate', ['value' => $model->rate, 'class' => 'rateField']) . '<span class=\'received_qty_change\'>' . $form->field($model, '[' . $index . ']received_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js',])->label(FALSE) . '</span>';
+                return Html::activeHiddenInput($model, '[' . $index . ']rate', ['value' => $model->rate, 'class' => 'rateField']) . '<span class=\'received_qty_change\'>' . $form->field($model, '[' . $index . ']received_qty')->textInput(['value' => $model->grn_missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'rejected_qty',
@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
             'format' => 'raw',
             'filter' => FALSE,
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js', 'readonly' => TRUE])->label(FALSE) . '</span>';
+                return '<span class=\'missing_qty_change\'>' . $form->field($model, '[' . $index . ']missing_qty')->textInput(['value' => $model->missing_qty, 'class' => 'form-control number-validate-js'])->label(FALSE) . '</span>';
             },
         ],
         ['attribute' => 'amount',

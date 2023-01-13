@@ -23,15 +23,10 @@ use kartik\grid\GridView;
     </div>
 </div>
 <?php
+$userType = Yii::$app->session->get('UserType');
+
 $script = "
-$(document).ready(function(){
-    $('#from_mcc').hide(); 
-    $('#from_bmc').hide(); 
-    $('#from_dcs').hide(); 
-    $('#to_mcc').hide(); 
-    $('#to_bmc').hide(); 
-    $('#to_dcs').hide();
-    });
+var userType ='$userType';
     $('#tblinventorytransfer-from_type').on('change', function(){
             $('#tblinventorytransfer-from_mcc_plant_code').val('');
             $('#tblinventorytransfer-from_mcc_plant_code').trigger('select2:select');
@@ -55,6 +50,26 @@ $(document).ready(function(){
             $('#from_dcs').hide(); 
         }
     });
+    $(document).ready(function(){
+        $('#from_mcc').hide(); 
+        $('#from_bmc').hide(); 
+        $('#from_dcs').hide(); 
+        $('#to_mcc').hide(); 
+        $('#to_bmc').hide(); 
+        $('#to_dcs').hide();
+        if(userType == 5){
+            $('#tblinventorytransfer-from_type').val('MCC');
+            $('#tblinventorytransfer-from_type').trigger('select2:select');
+            $('#tblinventorytransfer-from_type').trigger('change');
+            $('.field-tblinventorytransfer-from_type').addClass('disabledDiv');
+            
+            $('#tblinventorytransfer-to_type').val('DCS');
+            $('#tblinventorytransfer-to_type').trigger('select2:select');
+            $('#tblinventorytransfer-to_type').trigger('change');
+            $('.field-tblinventorytransfer-to_type').addClass('disabledDiv');
+        }
+    });
+    
     $('#tblinventorytransfer-from_mcc_plant_code').on('change', function(){
         setFromCode();
     });
