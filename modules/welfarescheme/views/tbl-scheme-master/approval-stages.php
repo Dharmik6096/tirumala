@@ -33,8 +33,9 @@ $this->title = Yii::$app->label->title('create', 'Approval Stages');
                         <?= Yii::$app->dropdown->dropdownStatic('approval_mode', $model, $form, '', $model->getAttributeLabel('approval_mode'), false, 'approval_mode', FALSE, FALSE, FALSE); ?>
                     </div>
                     <div class="col-sm-12 margin-top-10">
-                        <div class="col-sm-6  margin-bottom-10">
-                            <div class="btn-group">
+                        <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'User List') ?></h4>
+                        <div class="col-sm-12  margin-bottom-10 margin-top-10">
+                            <div class="col-sm-2 btn-group">
                                 <span class="input-group-btn">
                                     <span id="show-only-selected-users" class="btn btn-default btn-sm">
                                         <i class="fa fa-minus"></i> Show only selected
@@ -44,7 +45,11 @@ $this->title = Yii::$app->label->title('create', 'Approval Stages');
                                     </span>
                                 </span>
                             </div>
+                            <div class="col-sm-10 form-group">
+                                <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => 'user', 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                            </div>
                         </div>
+
                         <div class="col-sm-12">
                             <?php
                             $selected = !empty($model->user_code) ? $model->user_code : [];
@@ -147,7 +152,21 @@ $('#show-all-users').on('click', function(){
 });
 
 ";
-$script .= "$('.kv-panel-before').hide();";
-
-$this->registerJs($script);
+$script .= "$('.kv-panel-before').hide();
+    function checkBoxFilter(val){
+        var id = $(val).attr('id');
+        var value = $(val).val();
+        count = 0;
+        $('#'+id+'-list div').each(function() {
+            if ($(this).text().search(new RegExp(value, 'i')) < 0) {
+                $(this).hide();
+                $(this).find(':input').prop('disabled', true);
+            } else {
+                $(this).show();
+                $(this).find(':input').prop('disabled', false);
+                count++;
+            }
+        });
+    }";
+$this->registerJs($script, View::POS_END, 'scheme-approval-stages-create');
 ?>
