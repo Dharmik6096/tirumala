@@ -52,10 +52,12 @@ class TblSchemeApplicationDisbursementController extends \app\controllers\ChildC
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
+            $app_scheme = TblSchemeApplication::findOne(['application_id' => $this->model->application_id, 'application_status' => 'approved']);
+
             $this->model->disburse_date = !empty($this->model->disburse_date) ? date('Y-m-d', strtotime($this->model->disburse_date)) : '';
             $this->model->disburse_by = \Yii::$app->user->identity->user_code;
+            $this->model->disburse_value = $app_scheme->approved_value;
             $master[] = $this->model;
-            $app_scheme = TblSchemeApplication::findOne(['application_id' => $this->model->application_id, 'application_status' => 'approved']);
 
             $historyModel = new TblSchemeApplicationHistory();
             Yii::$app->operation->history($app_scheme, $historyModel, 'Update');

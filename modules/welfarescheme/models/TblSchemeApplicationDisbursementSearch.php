@@ -20,7 +20,7 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
     public function rules() {
         return [
                 [['disburse_id', 'application_id', 'originating_type'], 'integer'],
-                [['from_date', 'to_date', 'union_code', 'scheme_id', 'disburse_value', 'disburse_id', 'application_id', 'originating_type', 'disburse_date', 'disburse_by', 'payment_mode', 'bank_name', 'branch_name', 'party_name', 'party_relation', 'payment_ref_id', 'payment_detail', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_date', 'to_date', 'union_code', 'scheme_id', 'disburse_value', 'disburse_id', 'application_id', 'originating_type', 'disburse_date', 'disburse_by', 'payment_mode', 'bank_code', 'branch_code', 'beneficiary_name', 'party_relation', 'payment_ref_id', 'payment_detail', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'ifsc', 'bank_account_no'], 'safe'],
                 [['disburse_value'], 'number'],
         ];
     }
@@ -77,14 +77,16 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
         ]);
 
         $query->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
-                ->andFilterWhere(['like', 'bank_name', $this->bank_name])
+                ->andFilterWhere(['like', 'bank_code', $this->bank_code])
                 ->andFilterWhere(['like', 'tbl_scheme_application.application_id', $this->application_id])
                 ->andFilterWhere(['like', 'disburse_value', $this->disburse_value])
-                ->andFilterWhere(['like', 'branch_name', $this->branch_name])
-                ->andFilterWhere(['like', 'party_name', $this->party_name])
+                ->andFilterWhere(['like', 'branch_code', $this->branch_code])
+                ->andFilterWhere(['like', 'beneficiary_name', $this->beneficiary_name])
                 ->andFilterWhere(['like', 'tbl_relationship.relationship', $this->party_relation])
                 ->andFilterWhere(['like', 'payment_ref_id', $this->payment_ref_id])
                 ->andFilterWhere(['like', 'payment_detail', $this->payment_detail])
+                ->andFilterWhere(['like', 'bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'ifsc', $this->ifsc])
                 ->andFilterWhere(['like', 'remarks', $this->remarks]);
 
         return $dataProvider;

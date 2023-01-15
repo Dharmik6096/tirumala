@@ -1464,7 +1464,7 @@ class DropDown extends Component {
             'ws_payment_mode' => [
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['online' => Yii::t('app', 'Online'), 'cash' => Yii::t('app', 'Cash'), 'draft' => Yii::t('app', 'Draft'), 'check' => Yii::t('app', 'Check')],
+                'data' => ['online' => Yii::t('app', 'Online'), 'cheque' => Yii::t('app', 'Cheque')],
             ],
             'ws_approval_status' => [
                 'name' => 'application_status',

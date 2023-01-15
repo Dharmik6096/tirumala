@@ -17,9 +17,9 @@ use Yii;
  * @property string $disburse_value
  * @property string $disburse_by
  * @property string $payment_mode
- * @property string $bank_name
- * @property string $branch_name
- * @property string $party_name
+ * @property string $bank_code
+ * @property string $branch_code
+ * @property string $beneficiary_name
  * @property string $party_relation
  * @property string $payment_ref_id
  * @property string $payment_detail
@@ -46,7 +46,7 @@ class TblSchemeApplicationDisbursementHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['union_code', 'scheme_id', 'disburse_id', 'application_id', 'originating_type', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_name', 'bank_name', 'party_name', 'payment_mode', 'disburse_by', 'party_relation', 'history_created_by', 'created_by', 'updated_by', 'operation_type', 'disburse_value', 'originating_org_code', 'originating_org_type', 'history_created_at', 'disburse_date', 'created_at', 'updated_at'], 'safe'],
+                [['union_code', 'scheme_id', 'disburse_id', 'application_id', 'originating_type', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_code', 'bank_code', 'beneficiary_name', 'payment_mode', 'disburse_by', 'party_relation', 'history_created_by', 'created_by', 'updated_by', 'operation_type', 'disburse_value', 'originating_org_code', 'originating_org_type', 'history_created_at', 'disburse_date', 'created_at', 'updated_at', 'ifsc', 'bank_account_no'], 'safe'],
         ];
     }
 
@@ -67,9 +67,9 @@ class TblSchemeApplicationDisbursementHistory extends \yii\db\ActiveRecord {
             'disburse_value' => 'Disburse Value',
             'disburse_by' => 'Disburse By',
             'payment_mode' => 'Payment Mode',
-            'bank_name' => 'Bank Name',
-            'branch_name' => 'Branch Name',
-            'party_name' => 'Party Name',
+            'bank_code' => 'Bank Name',
+            'branch_code' => 'Branch Name',
+            'beneficiary_name' => 'Party Name',
             'party_relation' => 'Party Relation',
             'payment_ref_id' => 'Payment Ref ID',
             'payment_detail' => 'Payment Detail',

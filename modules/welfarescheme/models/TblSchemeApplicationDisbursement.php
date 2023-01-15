@@ -17,9 +17,9 @@ use \app\modules\general\models\TblRelationship;
  * @property string $disburse_value
  * @property string $disburse_by
  * @property string $payment_mode
- * @property string $bank_name
- * @property string $branch_name
- * @property string $party_name
+ * @property string $bank_code
+ * @property string $branch_code
+ * @property string $beneficiary_name
  * @property string $party_relation
  * @property string $payment_ref_id
  * @property string $payment_detail
@@ -47,9 +47,9 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['application_id', 'originating_type'], 'integer'],
-                [['union_code', 'scheme_id', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_name', 'bank_name', 'party_name', 'payment_mode', 'disburse_by', 'party_relation', 'application_id', 'originating_type', 'disburse_value', 'disburse_date', 'created_at', 'updated_at'], 'safe'],
+                [['union_code', 'scheme_id', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_code', 'bank_code', 'beneficiary_name', 'payment_mode', 'disburse_by', 'party_relation', 'application_id', 'originating_type', 'disburse_value', 'disburse_date', 'created_at', 'updated_at'], 'safe'],
                 [['disburse_value'], 'number'],
-                [['union_code', 'scheme_id', 'application_id', 'disburse_value', 'party_relation', 'payment_ref_id', 'branch_name', 'bank_name', 'party_name', 'payment_mode', 'disburse_date'], 'required'],
+                [['union_code', 'scheme_id', 'application_id', 'disburse_value', 'party_relation', 'payment_ref_id', 'branch_code', 'bank_code', 'beneficiary_name', 'payment_mode', 'disburse_date', 'bank_account_no', 'ifsc'], 'required'],
         ];
     }
 
@@ -66,9 +66,9 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
             'disburse_value' => Yii::t('app', 'Disburse Value'),
             'disburse_by' => Yii::t('app', 'Disburse By'),
             'payment_mode' => Yii::t('app', 'Payment Mode'),
-            'bank_name' => Yii::t('app', 'Bank Name'),
-            'branch_name' => Yii::t('app', 'Branch Name'),
-            'party_name' => Yii::t('app', 'Party Name'),
+            'bank_code' => Yii::t('app', 'Bank'),
+            'branch_code' => Yii::t('app', 'Branch'),
+            'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
             'party_relation' => Yii::t('app', 'Party Relation'),
             'payment_ref_id' => Yii::t('app', 'Payment Ref ID'),
             'payment_detail' => Yii::t('app', 'Payment Detail'),
@@ -80,6 +80,8 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'bank_account_no' => Yii::t('app', 'Bank Account No.'),
+            'ifsc' => Yii::t('app', 'IFSC'),
         ];
     }
 

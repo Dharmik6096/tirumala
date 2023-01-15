@@ -44,7 +44,7 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2 number-validate">
-        <?= $form->field($model, 'disburse_value')->textInput(['maxlength' => true]) ?>   
+        <?php // $form->field($model, 'disburse_value')->textInput(['maxlength' => true]) ?>   
     </div>
 
     <div class="col-sm-2">
