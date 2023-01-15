@@ -71,7 +71,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                 $model->dcs_code = NULL;
             }
             $scheme_detail = $model->getSchemeDetail();
-            $model->scheme_value = $scheme_detail['scheme_value'];
+            $model->scheme_value = $model->approved_value = $scheme_detail['scheme_value'];
             $model->min_pouring_day = $scheme_detail['min_pouring_day'];
             $model->min_pouring_qty = $scheme_detail['min_pouring_qty'];
             $model->actual_pouring_day = $scheme_detail['p_day'];
@@ -159,6 +159,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                         $stage_model = new TblSchemeApplicationApproval();
                         $stage_model->application_id = $model->application_id;
                         $stage_model->scheme_id = $model->scheme_id;
+                        $stage_model->approved_value = $model->approved_value;
                         $stage_model->level = $stage->level;
                         $stage_model->user_code = $stage->user_code;
                         $stage_model->approval_mode = $stage->approval_mode;
@@ -216,7 +217,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                 foreach ($level_user as $approval) {
                     $approval->status_date = $model->status_date;
                     $approval->status_by = $model->status_by;
-                    $approval->approved_value = $model->approved_value;
+                    //  $approval->approved_value = $model->approved_value;
                     $approval->application_status = $model->application_status;
                     $approval->status_remarks = $model->status_remarks;
                     $model_save[] = $approval;
@@ -238,7 +239,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
                 $application->application_status = $status;
                 $application->status_date = $model->status_date;
                 $application->status_by = $model->status_by;
-                $application->approved_value = $model->approved_value;
+                //  $application->approved_value = $model->approved_value;
                 $application->status_remarks = $model->status_remarks;
                 $model_save[] = $application;
                 $transaction = $this->generalModel->saveTransaction($model_save, ['Scheme Application Approval', 'edit']);

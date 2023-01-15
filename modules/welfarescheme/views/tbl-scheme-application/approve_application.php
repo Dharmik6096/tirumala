@@ -214,7 +214,7 @@ $approval_detail = $application->applicationApproval;
                             <?= Yii::$app->dropdown->dropdownStatic('ws_approval_status', $model, $form, '', $model->getAttributeLabel('application_status'), false, 'application_status', FALSE, FALSE, FALSE); ?>
                         </div>
                         <div class="col-sm-2 number-validate">
-                            <?= $form->field($model, 'approved_value')->textInput(); ?>   
+                            <?= $form->field($model, 'approved_value')->textInput(['readOnly' => true]); ?>   
                         </div>
                         <div class="col-sm-2">
                             <?= $form->field($model, 'status_remarks')->textarea(); ?>
