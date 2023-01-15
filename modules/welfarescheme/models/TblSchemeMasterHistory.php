@@ -40,7 +40,7 @@ class TblSchemeMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'union_code', 'scheme_name', 'remarks', 'history_created_by', 'created_by', 'updated_by', 'operation_type', 'scheme_id', 'is_active', 'originating_type', 'history_created_at', 'start_date', 'end_date', 'created_at', 'updated_at'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'union_code', 'scheme_name', 'remarks', 'history_created_by', 'created_by', 'updated_by', 'operation_type', 'scheme_id', 'is_active', 'originating_type', 'history_created_at', 'start_date', 'end_date', 'created_at', 'updated_at', 'applicable_for'], 'safe'],
         ];
     }
 

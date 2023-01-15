@@ -18,6 +18,9 @@ $attribute = [
         }, 'visible' => false, 'filter' => false,],
         ['attribute' => 'scheme_id'],
         ['attribute' => 'scheme_name'],
+        ['attribute' => 'applicable_for', 'value' => function($model) {
+            return Yii::$app->general->getStaticValue($model->applicable_for, 'applicable_for');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('applicable_for', $searchModel, 'applicable_for')],
         [
         'attribute' => 'start_date',
         'vAlign' => 'middle',

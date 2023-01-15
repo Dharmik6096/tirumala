@@ -24,6 +24,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $originating_type
  * @property string $originating_org_code
  * @property string $originating_org_type
+ * @property string $applicable_for
  */
 class TblSchemeMaster extends \app\models\ChildModel {
 
@@ -41,7 +42,7 @@ class TblSchemeMaster extends \app\models\ChildModel {
                 [['wef_date', 'min_pouring_day', 'min_pouring_qty', 'scheme_value', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'union_code', 'scheme_name', 'remarks', 'start_date', 'end_date', 'created_at', 'updated_at', 'is_active', 'originating_type'], 'safe'],
                 [['is_active', 'originating_type'], 'integer'],
                 [['is_active'], 'default', 'value' => 1],
-                [['scheme_name', 'start_date', 'union_code', 'min_pouring_day', 'min_pouring_qty', 'scheme_value'], 'required'],
+                [['scheme_name', 'start_date', 'union_code', 'min_pouring_day', 'min_pouring_qty', 'scheme_value', 'applicable_for'], 'required'],
                 [['end_date'], 'customValidate'],
         ];
     }
@@ -68,6 +69,7 @@ class TblSchemeMaster extends \app\models\ChildModel {
             'min_pouring_day' => Yii::t('app', 'Min Pouring Day'),
             'min_pouring_qty' => Yii::t('app', 'Min Pouring Qty'),
             'scheme_value' => Yii::t('app', 'Scheme Value'),
+            'applicable_for' => Yii::t('app', 'Applicable For'),
         ];
     }
 

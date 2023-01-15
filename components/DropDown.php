@@ -1476,6 +1476,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['pending' => Yii::t('app', 'Pending'), 'registered' => Yii::t('app', 'Registered'), 'inprocess' => Yii::t('app', 'Inprocess'), 'approved' => Yii::t('app', 'Approved'), 'rejected' => Yii::t('app', 'Rejected'), 'disbursed' => Yii::t('app', 'Disbursed')],
             ],
+            'applicable_for' => [
+                'name' => 'applicable_for',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['self' => Yii::t('app', 'SELF'), 'other' => Yii::t('app', 'OTHER')],
+            ],
         ];
         return $records[$l];
     }

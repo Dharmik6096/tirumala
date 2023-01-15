@@ -29,6 +29,10 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('applicable_for', $model, $form, '', $model->getAttributeLabel('applicable_for'), false, 'applicable_for', FALSE, FALSE, FALSE); ?>
+    </div>
+
+    <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'start_date', '', false, false, $readonly); ?>
     </div>
 

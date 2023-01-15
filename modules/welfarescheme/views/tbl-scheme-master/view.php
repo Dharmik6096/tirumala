@@ -45,8 +45,13 @@ $this->title = Yii::$app->label->title('view', 'Scheme Master');
                     [
                     'columns' => [
                             [
+                            'attribute' => 'applicable_for',
+                            'value' => Yii::$app->general->getStaticValue($model->applicable_for, 'applicable_for'),
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
                             'attribute' => 'remarks',
-                            'valueColOptions' => ['style' => 'width:80%'],
+                            'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
                 ],
