@@ -141,14 +141,21 @@ class TblMasterTransfer extends \app\models\ChildModel {
         $record = $data->one();
         if (!empty($record)) {
             $this->addError('master_type', Yii::t('app', 'Transfer Request already open.'));
-        } else if ($this->master_type == 'DCS' && $this->update_transaction == '1' && empty($this->getErrors())) {
-            $this->from_datetime = Yii::$app->formatter->asDate($this->from_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->from_shift);
-            $this->to_datetime = Yii::$app->formatter->asDate($this->to_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->to_shift);
-            $shift_detail = \Yii::$app->general->getSpData('sp_mcc_unlock_shift_count', [$this->from_datetime, $this->to_datetime, $this->old_mcc_plant_code]);
-            if (!empty($shift_detail) && $shift_detail[0]['unlock_count'] == 0) {
-                
-            } else {
-                $this->addError('old_mcc_plant_code', Yii::t('app', 'Lock data for all shift of current MCC.'));
+        } else {
+            if (empty($this->getErrors())) {
+                if ($this->master_type == 'DCS' && $this->update_transaction == '1') {
+                    $this->from_datetime = Yii::$app->formatter->asDate($this->from_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->from_shift);
+                    $this->to_datetime = Yii::$app->formatter->asDate($this->to_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->to_shift);
+                    $shift_detail = \Yii::$app->general->getSpData('sp_mcc_unlock_shift_count', [$this->from_datetime, $this->to_datetime, $this->old_mcc_plant_code]);
+                    if (!empty($shift_detail) && $shift_detail[0]['unlock_count'] == 0) {
+                        
+                    } else {
+                        $this->addError('old_mcc_plant_code', Yii::t('app', 'Lock data for all shift of current MCC.'));
+                    }
+                } else {
+                    $this->from_datetime = $this->to_datetime = NULL;
+                    $this->update_transaction = 0;
+                }
             }
         }
     }

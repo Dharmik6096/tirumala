@@ -64,27 +64,29 @@ $form = ActiveForm::begin([
         </div>
 
     </div>
-    <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO reset_field">
+    <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'New Details') ?></h4>
         </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
-        </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
-        </div>
-        <div class="col-sm-2 FARMER">
-            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
-        </div>
-        <!--        <div class="col-sm-2 number-validate FARMER">
-        <?php //$form->field($model, 'ex_member_code')->textInput()  ?>
-                </div>-->
-        <div class="col-sm-2 DCS route">
-            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
-        </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
+        <div class="reset_field">
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
+            </div>
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
+            </div>
+            <div class="col-sm-2 FARMER">
+                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
+            </div>
+            <!--        <div class="col-sm-2 number-validate FARMER">
+            <?php //$form->field($model, 'ex_member_code')->textInput()  ?>
+                    </div>-->
+            <div class="col-sm-2 DCS route">
+                <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
+            </div>
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
+            </div>
         </div>
         <div class="col-sm-2 mt10 UPDATETRANSACTION">
             <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
