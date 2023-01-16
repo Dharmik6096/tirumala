@@ -552,7 +552,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getExistingCollection($data) {
-        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf])->one();
+        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf,'sample_no'=> $data->sample_no])->one();
     }
 
     public function getRateRange() {
