@@ -168,6 +168,10 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 $sent_box_model = new TblSentbox();
                 $sent_box_model->setAttributes($data);
                 $sent_box_model->device_id = !empty($device->device_id) ? $device->device_id : '';
+                $sent_box_model->originating_org_id = !empty($sent_box_model->originating_org_id) ? $sent_box_model->originating_org_id : '001';
+                $sent_box_model->originating_org_type = !empty($sent_box_model->originating_org_type) ? $sent_box_model->originating_org_type : 'UNION';
+                $sent_box_model->source_org_id = !empty($sent_box_model->source_org_id) ? $sent_box_model->source_org_id : '001';
+                $sent_box_model->source_org_type = !empty($sent_box_model->source_org_type) ? $sent_box_model->source_org_type : 'UNION';
                 $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
                 $sent_box_model->uuid = $command['id'];
                 $save_model[] = $sent_box_model;
