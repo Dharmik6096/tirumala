@@ -11,11 +11,14 @@ use app\modules\welfarescheme\models\TblSchemeApplicationHistory;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 
 /**
  * TblSchemeApplicationDisbursementController implements the CRUD actions for TblSchemeApplicationDisbursement model.
  */
 class TblSchemeApplicationDisbursementController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['bank-detail'];
 
     /**
      * Lists all TblSchemeApplicationDisbursement models.
@@ -128,6 +131,38 @@ class TblSchemeApplicationDisbursementController extends \app\controllers\ChildC
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionBankDetail() {
+        $status = 'error';
+        $data = [];
+        $app_id = !empty($_POST['id']) ? $_POST['id'] : NULL;
+        if (!empty($app_id) && is_numeric($app_id)) {
+            $application = TblSchemeApplication::findOne($app_id);
+            if (!empty($application)) {
+                $scheme_detail = $application->schemeId;
+                if (!empty($scheme_detail) && $scheme_detail->applicable_for == 'self') {
+                    if ($application->customer_type == 'MEMBER') {
+                        $bank_detail = $application->memberCode;
+                    } else if ($application->customer_type == 'DCS') {
+                        $dcs = $application->dcsCode;
+                        $bank_detail = !empty($dcs) ? $dcs->defaultBankDetail : NULL;
+                    } else {
+                        $customer = $application->mainCustomerCode;
+                        $bank_detail = !empty($customer) ? $customer->defaultBankDetail : NULL;
+                    }
+                    if (!empty($bank_detail)) {
+                        $status = 'success';
+                        $data['bank_code'] = $bank_detail->bank_code;
+                        $data['branch_code'] = $bank_detail->branch_code;
+                        $data['ifsc'] = $bank_detail->ifsc;
+                        $data['bank_account_no'] = $bank_detail->bank_account_no;
+                        $data['beneficiary_name'] = $bank_detail->beneficiary_name;
+                    }
+                }
+            }
+        }
+        return Json::encode(['status' => $status, 'data' => $data]);
     }
 
 }

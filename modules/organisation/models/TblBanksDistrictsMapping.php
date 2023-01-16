@@ -40,13 +40,13 @@ class TblBanksDistrictsMapping extends ChildModel {
      */
     public function rules() {
         return [
-            [['bank_code', 'district_code', 'local_name'], 'safe'],
-            [['created_at', 'is_active', 'updated_at', 'created_by', 'updated_by'], 'safe'],
-            [['bank_code'], 'string', 'max' => 4],
-            [['bank_code'], 'validateBank'],
-            [['bank_code'], 'validateDistrict'],
-            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
-            [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
+                [['bank_code', 'district_code', 'local_name'], 'safe'],
+                [['created_at', 'is_active', 'updated_at', 'created_by', 'updated_by'], 'safe'],
+                [['bank_code'], 'string', 'max' => 4],
+                [['bank_code'], 'validateBank'],
+                [['bank_code'], 'validateDistrict'],
+                [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
+                [['district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDistricts::className(), 'targetAttribute' => ['district_code' => 'district_code']],
         ];
     }
 
@@ -122,6 +122,7 @@ class TblBanksDistrictsMapping extends ChildModel {
     }
 
     public function getBankList($districtCode) {
+        $districtCode = !is_array($districtCode) ? explode(',', $districtCode) : $districtCode;
         $unionQuery = TblBanks::find()
                         ->select(['bank_code', 'bank_name', 'local_name'])
                         ->where(['nationalized_bank' => '1', 'is_active' => 1])
@@ -142,7 +143,7 @@ class TblBanksDistrictsMapping extends ChildModel {
         $fed = TblFederations::find()->where(['bank_code' => $bankCode, 'district_code' => $districtCode])->count();
         $union = TblUnions::find()->where(['bank_code' => $bankCode, 'district_code' => $districtCode])->count();
         $dcs = TblDcs::find()->where(['bank_code' => $bankCode, 'district_code' => $districtCode])->count();
-       
+
 
         if ($fed != 0 || $union != 0 || $dcs != 0)
             return 1;
@@ -194,7 +195,7 @@ class TblBanksDistrictsMapping extends ChildModel {
         }
         $array = $query->all();
         $data = \yii\helpers\ArrayHelper::map($array, 'district_code', function($array, $key) {
-                    if (!($array['local_name']=='' || $array['local_name']==null))
+                    if (!($array['local_name'] == '' || $array['local_name'] == null))
                         return $array['district_name'] . '(' . $array['local_name'] . ')';
                     else
                         return $array['district_name'];

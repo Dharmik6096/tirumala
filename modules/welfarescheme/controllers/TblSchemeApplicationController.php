@@ -365,7 +365,7 @@ class TblSchemeApplicationController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1])) {
+            if (!empty($parents[0]) && !empty($parents[1]) && is_numeric($parents[0])) {
                 $appId = isset($parents[2]) ? $parents[2] : '';
                 $application = new TblSchemeApplication();
                 $data = $application->getApplicationList($parents[0], $parents[1], $appId);

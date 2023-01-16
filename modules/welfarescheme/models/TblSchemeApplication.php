@@ -193,7 +193,7 @@ class TblSchemeApplication extends \app\models\ChildModel {
         }
         $data = $query->all();
         return ArrayHelper::map($data, 'application_id', function($d) {
-                    return $d->application_id . '/' . $d->customer_type . '/' . Yii::$app->general->getCustomer($d, $d->customer_type) . '(' . Yii::$app->general->getCustomer($d, $d->customer_type, true) . ')/' . Yii::$app->general->getCustomer($d, $d->customer_type, FALSE, FALSE, true);
+                    return $d->application_id . '/' . $d->customer_type . '/' . Yii::$app->general->getCustomer($d, $d->customer_type) . '(' . Yii::$app->general->getCustomer($d, $d->customer_type, true) . ')/' . Yii::$app->general->getCustomer($d, $d->customer_type, FALSE, FALSE, true) . '/' . $d->approved_value;
                 }
         );
     }

@@ -7,6 +7,7 @@ use app\modules\welfarescheme\models\TblSchemeMaster;
 use \app\modules\organisation\models\TblUnions;
 use app\modules\welfarescheme\models\TblSchemeApplication;
 use \app\modules\general\models\TblRelationship;
+use app\modules\organisation\models\TblBanks;
 
 /**
  * This is the model class for table "tbl_scheme_application_disbursement".
@@ -50,6 +51,20 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
                 [['union_code', 'scheme_id', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'payment_detail', 'remarks', 'payment_ref_id', 'branch_code', 'bank_code', 'beneficiary_name', 'payment_mode', 'disburse_by', 'party_relation', 'application_id', 'originating_type', 'disburse_value', 'disburse_date', 'created_at', 'updated_at'], 'safe'],
                 [['disburse_value'], 'number'],
                 [['union_code', 'scheme_id', 'application_id', 'disburse_value', 'party_relation', 'payment_ref_id', 'branch_code', 'bank_code', 'beneficiary_name', 'payment_mode', 'disburse_date', 'bank_account_no', 'ifsc'], 'required'],
+                [['ifsc'], function ($attribute, $params) {
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['bank_account_no'], function ($attribute, $params) {
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                }],
+                [['beneficiary_name'], function ($attribute, $params) {
+                    $error = Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                    if ($error != NULL) {
+                        $this->addError($attribute, Yii::t('app/validation', 'Beneficiary Name Is Invalid'));
+                    }
+                }, 'skipOnEmpty' => false],
         ];
     }
 
@@ -69,7 +84,7 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
             'bank_code' => Yii::t('app', 'Bank'),
             'branch_code' => Yii::t('app', 'Branch'),
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
-            'party_relation' => Yii::t('app', 'Party Relation'),
+            'party_relation' => Yii::t('app', 'Beneficiary Relation'),
             'payment_ref_id' => Yii::t('app', 'Payment Ref ID'),
             'payment_detail' => Yii::t('app', 'Payment Detail'),
             'remarks' => Yii::t('app', 'Remarks'),
