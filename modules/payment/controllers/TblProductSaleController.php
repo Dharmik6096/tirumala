@@ -675,7 +675,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->product_code = $detailModel->product_code;
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                    $existfromStock = $fstockModel->getExistStock($sale_type);
+                    $batch = $model->sap_batch_no;
+                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch);
 
                     $f_stock = 0;
                     $qty = $detailModel->quantity;

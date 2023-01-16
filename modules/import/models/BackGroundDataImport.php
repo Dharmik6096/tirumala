@@ -34,10 +34,10 @@ class BackGroundDataImport extends Model {
             [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['rateapplicability', 'sale_rate_applicability', 'product_sale_rate']],
             [['wef_date'], 'validateRateId', 'on' => ['rateapplicability']],
             ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['rateapplicability']],
-            [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale']],
-            [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member']],
-            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member']],
-            ['payment_mode', 'in', 'range' => ['1', '0'], 'on' => ['product_sale', 'product_sale_member']],
+            [['bmc_code', 'customer_code', 'customer_type', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale', 'product_sale_batch']],
+            [['invoice_date'], 'convertDateDot', 'on' => ['product_sale', 'product_sale_member', 'product_sale_batch', 'product_sale_member_batch']],
+            [['invoice_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['product_sale', 'product_sale_member', 'product_sale_batch', 'product_sale_member_batch']],
+            ['payment_mode', 'in', 'range' => ['1', '0'], 'on' => ['product_sale', 'product_sale_member', 'product_sale_batch', 'product_sale_member_batch']],
             [['dcs_code', 'member_code', 'invoice_date', 'payment_mode', 'product_code', 'quantity'], 'required', 'on' => ['product_sale_member']],
             [['bmc_code', 'applicable_code', 'applicable_for', 'wef_date', 'product_sale_rate_code'], 'required', 'on' => ['sale_rate_applicability']],
             [['product_group_code', 'product_name', 'tax_code', 'product_type'], 'required', 'on' => ['product_master']],
@@ -51,7 +51,7 @@ class BackGroundDataImport extends Model {
                 }, 'on' => ['product_sale_rate']
             ],
             ['rate_class', 'in', 'range' => ['A', 'B', 'C'], 'on' => ['member_rateclass']],
-            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
+//            [['sap_batch_no'], 'required', 'on' => ['product_sale_batch', 'product_sale_member_batch']]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('BackGroundDataImport', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);

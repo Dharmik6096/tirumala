@@ -105,7 +105,8 @@ class TblGrnController extends \app\controllers\ChildController {
                 $existStock = $stockModel->getExistStock('MCC', $txModel->sap_batch_no);
                 $stock = 0;
                 $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
-                $qty = $txModel->received_qty - $rejectedQty;
+//                $qty = $txModel->received_qty - $rejectedQty;
+                $qty = $txModel->received_qty;
                 if (!empty($existStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existStock, $historyModel, UPDATE);
@@ -266,7 +267,8 @@ class TblGrnController extends \app\controllers\ChildController {
                 $existStock = $stockModel->getExistStock('MCC', $txModel->sap_batch_no);
                 $stock = 0;
                 $rejectedQty = !empty($txModel->rejected_qty) ? $txModel->rejected_qty : 0;
-                $qty = $txModel->received_qty - $rejectedQty;
+//                $qty = $txModel->received_qty - $rejectedQty;
+                $qty = $txModel->received_qty;
                 if (!empty($existStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existStock, $historyModel, UPDATE);
