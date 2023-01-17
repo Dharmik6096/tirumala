@@ -17,9 +17,9 @@ class TblLoanProductSaleDetailsSearch extends TblLoanProductSaleDetails {
      */
     public function rules() {
         return [
-                [['sale_detail_code', 'product_code', 'entry_type', 'send_status', 'txfarmer_id'], 'safe'],
-                [['dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'response_datetime', 'picked_datetime', 'resp_desc', 'data_inserted_from', 'dcs_name', 'member_name', 'received_timestamp'], 'safe'],
-                [['amount'], 'number'],
+            [['sale_detail_code', 'product_code', 'entry_type', 'send_status', 'txfarmer_id'], 'safe'],
+            [['dcs_code', 'union_code', 'member_code', 'sale_date_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'response_datetime', 'picked_datetime', 'resp_desc', 'data_inserted_from', 'dcs_name', 'member_name', 'received_timestamp', 'reference_code', 'data_lock', 'lock_date'], 'safe'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -82,6 +82,36 @@ class TblLoanProductSaleDetailsSearch extends TblLoanProductSaleDetails {
             'tbl_member.member_code' => $this->member_code,
             'tbl_member.member_name' => $this->member_name,
         ]);
+
+        return $dataProvider;
+    }
+
+    public function viewsearch($params) {
+        $query = TblLoanProductSaleDetails::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+//        Yii::$app->general->filterByNumber($query, $this, ['rate', 'quantity', 'amount']);
+        // grid filtering conditions
+        $query->andWhere([
+            'tbl_loan_product_sale_details.reference_code' => $this->reference_code,
+            'tbl_loan_product_sale_details.lock_date' => $this->lock_date,
+            'tbl_loan_product_sale_details.data_lock' => $this->data_lock,
+        ]);
+
+
 
         return $dataProvider;
     }

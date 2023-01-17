@@ -396,6 +396,12 @@ class SearchFilter {
             'TblPlantDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
             ],
+            'TblLoanProductSaleLockingSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductSaleLockingSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
