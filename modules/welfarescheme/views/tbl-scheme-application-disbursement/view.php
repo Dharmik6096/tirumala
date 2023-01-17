@@ -58,11 +58,13 @@ $this->title = Yii::$app->label->title('view', 'Scheme Application Disbursement'
                     [
                     'columns' => [
                             [
-                            'attribute' => 'bank_name',
+                            'attribute' => 'bank_code',
+                            'value' => Yii::$app->general->getforeignkey($model->bankCode, 'bank_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [
-                            'attribute' => 'branch_name',
+                            'attribute' => 'branch_code',
+                            'value' => Yii::$app->general->getforeignkey($model->branchCode, 'branch_name'),
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                     ],
@@ -70,7 +72,19 @@ $this->title = Yii::$app->label->title('view', 'Scheme Application Disbursement'
                     [
                     'columns' => [
                             [
-                            'attribute' => 'party_name',
+                            'attribute' => 'ifsc',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                            [
+                            'attribute' => 'bank_account_no',
+                            'valueColOptions' => ['style' => 'width:30%'],
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'beneficiary_name',
                             'valueColOptions' => ['style' => 'width:30%'],
                         ],
                             [

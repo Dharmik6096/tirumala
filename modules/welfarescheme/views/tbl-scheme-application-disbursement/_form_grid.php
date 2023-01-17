@@ -36,12 +36,18 @@ $attribute = [
         }, 'filter' => false,],
         ['attribute' => 'disburse_value'],
         ['attribute' => 'payment_mode'],
+        ['attribute' => 'bank_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bankCode, 'bank_name');
+        }],
+        ['attribute' => 'branch_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->branchCode, 'branch_name');
+        }],
+        ['attribute' => 'ifsc'],
+        ['attribute' => 'bank_account_no'],
+        ['attribute' => 'beneficiary_name'],
         ['attribute' => 'party_relation', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->relationshipId, 'relationship');
         }],
-        ['attribute' => 'bank_name'],
-        ['attribute' => 'branch_name'],
-        ['attribute' => 'party_name'],
         ['attribute' => 'payment_ref_id'],
         ['attribute' => 'payment_detail', 'visible' => false],
         ['attribute' => 'remarks', 'visible' => false],
@@ -58,7 +64,7 @@ $grid_option = [
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-application-disbursement/update', 'id' => $model->disburse_id], $options);
         },
-    //  'delete' => ['option' => 'party_name,disburse_id,/welfarescheme/tbl-scheme-application-disbursement/delete'],
+    //  'delete' => ['option' => 'beneficiary_name,disburse_id,/welfarescheme/tbl-scheme-application-disbursement/delete'],
     ]
 ];
 

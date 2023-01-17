@@ -51,7 +51,7 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
 
         $this->load($params);
 
-        $query->joinWith(['applicationId', 'relationshipId']);
+        $query->joinWith(['applicationId', 'relationshipId', 'bankCode', 'branchCode']);
 
         Yii::$app->general->filterByOrg($query, $this);
 
@@ -71,23 +71,22 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'disburse_id' => $this->disburse_id,
-            'union_code' => $this->union_code,
+            'tbl_scheme_application_disbursement.union_code' => $this->union_code,
             'tbl_scheme_application_disbursement.scheme_id' => $this->scheme_id,
         ]);
 
-        $query->andFilterWhere(['like', 'payment_mode', $this->payment_mode])
-                ->andFilterWhere(['like', 'bank_code', $this->bank_code])
+        $query->andFilterWhere(['like', 'tbl_scheme_application_disbursement.payment_mode', $this->payment_mode])
+                ->andFilterWhere(['like', 'tbl_banks.bank_name', $this->bank_code])
                 ->andFilterWhere(['like', 'tbl_scheme_application.application_id', $this->application_id])
-                ->andFilterWhere(['like', 'disburse_value', $this->disburse_value])
-                ->andFilterWhere(['like', 'branch_code', $this->branch_code])
-                ->andFilterWhere(['like', 'beneficiary_name', $this->beneficiary_name])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.disburse_value', $this->disburse_value])
+                ->andFilterWhere(['like', 'tbl_branch.branch_name', $this->branch_code])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.beneficiary_name', $this->beneficiary_name])
                 ->andFilterWhere(['like', 'tbl_relationship.relationship', $this->party_relation])
-                ->andFilterWhere(['like', 'payment_ref_id', $this->payment_ref_id])
-                ->andFilterWhere(['like', 'payment_detail', $this->payment_detail])
-                ->andFilterWhere(['like', 'bank_account_no', $this->bank_account_no])
-                ->andFilterWhere(['like', 'ifsc', $this->ifsc])
-                ->andFilterWhere(['like', 'remarks', $this->remarks]);
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.payment_ref_id', $this->payment_ref_id])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.payment_detail', $this->payment_detail])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.bank_account_no', $this->bank_account_no])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.ifsc', $this->ifsc])
+                ->andFilterWhere(['like', 'tbl_scheme_application_disbursement.remarks', $this->remarks]);
 
         return $dataProvider;
     }

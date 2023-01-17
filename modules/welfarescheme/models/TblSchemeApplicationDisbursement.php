@@ -8,6 +8,7 @@ use \app\modules\organisation\models\TblUnions;
 use app\modules\welfarescheme\models\TblSchemeApplication;
 use \app\modules\general\models\TblRelationship;
 use app\modules\organisation\models\TblBanks;
+use app\modules\organisation\models\TblBranch;
 
 /**
  * This is the model class for table "tbl_scheme_application_disbursement".
@@ -114,6 +115,14 @@ class TblSchemeApplicationDisbursement extends \app\models\ChildModel {
 
     public function getRelationshipId() {
         return $this->hasOne(TblRelationship::className(), ['relationship_code' => 'party_relation']);
+    }
+
+    public function getBankCode() {
+        return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code']);
+    }
+
+    public function getBranchCode() {
+        return $this->hasOne(TblBranch::className(), ['branch_code' => 'branch_code']);
     }
 
 }

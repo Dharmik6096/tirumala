@@ -31,7 +31,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-4 <?= $class ?>">
         <?php
         echo Html::hiddenInput('application_status', 'approved', ['id' => 'application_status']);
-        echo Yii::$app->dropdown->welfareSchemeApplication($model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status', 'application_id', $model->getAttributeLabel('application_id'), false, false, $readonly);
+        echo Html::hiddenInput('application_id', $model->application_id, ['id' => 'application_id']);
+        echo Yii::$app->dropdown->welfareSchemeApplication($model, $form, 'tblschemeapplicationdisbursement-scheme_id,application_status,application_id', 'application_id', $model->getAttributeLabel('application_id'), false, false, $readonly);
         ?>
     </div>
     <div class="col-sm-2">
@@ -93,7 +94,13 @@ $script = "
             if(branch != '' && ifsc != ''){
                 $('#tblschemeapplicationdisbursement-branch_code').val(branch).trigger('select2:select');
                 $('#tblschemeapplicationdisbursement-ifsc').val(ifsc);
-            }else{
+ 
+                setTimeout(function(){
+                    $('#branch_code').val('');
+                    $('#ifsc').val('');
+                }, 5000);
+               
+            } else {
             var id = $('#tblschemeapplicationdisbursement-branch_code').val();
             $.ajax({
                         type: 'post',
@@ -107,11 +114,14 @@ $script = "
            } 
     });
     $('#tblschemeapplicationdisbursement-application_id').on('change',function(e){
+        if($('#application_id').val() == ''){ 
             var id = $('#tblschemeapplicationdisbursement-application_id').val();
             $('#branch_code').val('');
             $('#ifsc').val('');
-            $('#tblschemeapplicationdisbursement-bank_code').val('').change();
-            $('#tblschemeapplicationdisbursement-branch_code').val('').change();
+            $('#tblschemeapplicationdisbursement-bank_code').val('').trigger('change');
+            $('#tblschemeapplicationdisbursement-bank_code').val('').trigger('select2:select');
+            $('#tblschemeapplicationdisbursement-branch_code').val('').trigger('change');
+            $('#tblschemeapplicationdisbursement-branch_code').val('').trigger('select2:select');                                                          
             $('#tblschemeapplicationdisbursement-bank_account_no').val('');
             $('#tblschemeapplicationdisbursement-beneficiary_name').val('');
             $.ajax({
@@ -131,6 +141,7 @@ $script = "
                                 }
                         }
             });
+    }        
     });
 ";
 $this->registerJs($script, View::POS_END, 'welfarescheme-bank-detail');
