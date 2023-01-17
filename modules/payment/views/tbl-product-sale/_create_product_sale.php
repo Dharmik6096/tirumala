@@ -44,6 +44,10 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
 
                 <div class="col-sm-2">
                     <?php
+                    if ($cashSale) {
+                        $model->customer_type = 'DCS';
+                        echo $form->field($model, 'customer_type')->textInput(['readOnly' => True]);
+                    } else
                     if ($type == 'memberWiseSale') {
                         echo Html::activeHiddenInput($model, 'customer_type');
                         echo Yii::$app->dropdown->bmc_society($model, $form, 'tblproductsale-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'));
