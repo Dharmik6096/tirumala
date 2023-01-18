@@ -31,6 +31,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use yii\helpers\Url;
+use app\modules\dcsoperation\models\TblDcsPurchaseRateHistory;
 
 /**
  * TblDcsPurchaseRateController implements the CRUD actions for TblDcsPurchaseRate model.
@@ -887,6 +888,27 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
             return $res_data;
         }
         return $res_data;
+    }
+
+    public function actionActiveDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblDcsPurchaseRateHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
+        if ($this->model->is_active == 1) {
+            $this->model->is_active = 0;
+        } else {
+            $this->model->is_active = 1;
+        }
+        $saveModel[] = $this->model;
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Purchase Rate(BMC)', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Purchase Rate(BMC) ' . (($this->model->is_active == 0) ? 'Dectivated' : 'Activated') . ' Successfully'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Purchase Rate(BMC) Not Updated.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

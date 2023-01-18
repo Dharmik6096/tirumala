@@ -37,39 +37,36 @@ use Yii;
  * @property TblDcsPurchaseRateMaster $purchaseRateCode
  * @property User $updatedBy
  */
-class TblDcsPurchaseRateHistory extends \yii\db\ActiveRecord
-{
+class TblDcsPurchaseRateHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_dcs_purchase_rate_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['purchase_rate_code'], 'required'],
-            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
-            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'integer'],
-            [['purchase_rate_code', 'description', 'rate_method'], 'string', 'max' => 255],
-            [['originating_org_type'], 'string', 'max' => 50],
-            [['originating_org_id'], 'string', 'max' => 25],
-            [['flg_sentbox_entry', 'sync_status'], 'string', 'max' => 1],
-            [['operation_type'], 'string', 'max' => 10],
-            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
+                [['purchase_rate_code'], 'safe'],
+                [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default'], 'safe'],
+                [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'safe'],
+                [['purchase_rate_code', 'description', 'rate_method'], 'safe'],
+                [['originating_org_type'], 'safe'],
+                [['originating_org_id'], 'safe'],
+                [['flg_sentbox_entry', 'sync_status'], 'safe'],
+                [['operation_type'], 'safe'],
+                [['created_by', 'is_delete', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'shift_id', 'originating_type', 'union_code', 'qty_mode', 'reference_code', 'is_process', 'for_member', 'ts_rate', 'rate_type', 'rate_value'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
@@ -100,32 +97,28 @@ class TblDcsPurchaseRateHistory extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
-    {
+    public function getCreatedBy() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDeletedBy()
-    {
+    public function getDeletedBy() {
         return $this->hasOne(User::className(), ['id' => 'deleted_by']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPurchaseRateCode()
-    {
+    public function getPurchaseRateCode() {
         return $this->hasOne(TblDcsPurchaseRateMaster::className(), ['purchase_rate_code' => 'purchase_rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
-    {
+    public function getUpdatedBy() {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
     }
 
@@ -133,8 +126,8 @@ class TblDcsPurchaseRateHistory extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return TblDcsPurchaseRateHistoryQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new TblDcsPurchaseRateHistoryQuery(get_called_class());
     }
+
 }
