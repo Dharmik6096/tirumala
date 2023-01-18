@@ -8,26 +8,13 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'bmc_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'dcs_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'member_code', 'filter' => false],
-    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member Name'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'vAlign' => 'middle'],
-    [
+        ['attribute' => 'login_type', 'value' => function($model) {
+            return Yii::$app->general->getStaticDropdownVal('user_login_type', $model, 'login_type');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('user_login_type', $searchModel, 'login_type')],
+        ['attribute' => 'receiver_type', 'value' => function($model) {
+            return isset($model->receiver_type) ? Yii::$app->dropdown->getRecords('receiver_type')['data'][$model->receiver_type] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('receiver_type', $searchModel, 'receiver_type')],
+        [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -37,19 +24,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    [
-        'attribute' => 'status',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('file_status', $searchModel, 'status'),
-        'value' => function($model) {
-            return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
-        }],
-    ['attribute' => 'app_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->apiMaster, 'api_name');
-        }, 'vAlign' => 'middle'],
-    'login_type',
-    'campaign_name',
-    'title',
-    'message',
+        ['attribute' => 'message'],
 ];
 
 $grid_option = [
@@ -57,15 +32,18 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
-        'view' => true,
-        'edit' => function ($url, $model) {
-            $class = $model->status == 0 ? '' : 'disabled';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/sms/tbl-bulk-notification/update', 'id' => $model->bulk_notification_id], $options);
+        'update' => function ($url, $model) {
+            $class = !empty($model->status) ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->bulk_notification_id];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete,disableDelete()'],
+        'mapping' => function ($url, $model) {
+            $class = ($model->login_type == 'all') ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => '' . $class,];
+            return GhostHtml::a('<i class="fa fa-plus"></i>', ['/sms/tbl-bulk-notification/bulk-notification-applicability', 'id' => $model->bulk_notification_id], $options);
+        },
+        'delete' => ['option' => 'bulk_notification_id,bulk_notification_id,tbl-bulk-notification/delete'],
     ]
 ];
-
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

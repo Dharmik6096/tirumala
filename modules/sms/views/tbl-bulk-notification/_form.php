@@ -1,73 +1,41 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
+use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\sms\models\TblBulkNotification */
-/* @var $form yii\widgets\ActiveForm */
-
-$readonly = $type == 'create' ? FALSE : TRUE;
+$title = Yii::$app->label->title($type, 'Bulk Notification');
+$button = Yii::$app->label->button($type);
+$this->title = Yii::t('app', $title);
 ?>
 
 <?php
 $form = ActiveForm::begin([
+            'id' => 'role-form',
             'validateOnBlur' => false,
-            
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+        ])
 ?>
 
-<?= $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('app_type', $model, $form, '', TRUE, false, 'app_type'); ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('receiver_type', $model, $form, '', $model->getAttributeLabel('receiver_type'), false, 'receiver_type', false); ?>  
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), TRUE, 'login_type', false); ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>  
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, date('Y-m-d'), false, true); ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbulknotification-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
-    </div> 
-
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbulknotification-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
-    </div>      
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbulknotification-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblbulknotification-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code')); ?>         
-    </div>  
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblbulknotification-dcs_code', '', Yii::t('app', 'Member')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->valid_date($model, $form, 'wef_date'); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'campaign_name')->textInput() ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'title')->textInput() ?>
-    </div>
-    <div class="col-sm-4">
-        <?= $form->field($model, 'message')->textarea() ?>
+    <div class="col-sm-6">
+        <?= $form->field($model, 'message')->textarea(['maxlength' => 255]) ?>
     </div>
 
-    <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->save($button, $model); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
 </div>
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end() ?>

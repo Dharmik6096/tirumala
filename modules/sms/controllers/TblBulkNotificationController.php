@@ -12,6 +12,8 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblBulkNotificationHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\sms\models\TblBulkNotificationApplicability;
+use app\modules\sms\models\TblBulkNotificationApplicabilityHistory;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
@@ -117,6 +119,88 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionBulkNotificationApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblBulkNotificationApplicability();
+        $value = [];
+        if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'area_manager', 'route_supervisor'])) {
+            $value['DCS'] = 'VLCC';
+        } elseif (in_array(strtolower($model->login_type), ['mcc_incharge'])) {
+            $value['MCC'] = 'MCC';
+        } elseif (in_array(strtolower($model->login_type), ['maintenance_staff', 'procurement_staff'])) {
+            $value['USER'] = 'USER';
+        } else {
+            $value['USER'] = 'USER';
+        }
+        $appModel->model->wef_date = $model->wef_date;
+        $appModel->model->company_code = $model->company_code;
+        $appModel->is_union = false;
+        $appModel->union_code = $model->company_code;
+        $appModel->field_name = 'bulk_notification_id';
+        $appModel->field_value = $id;
+        $appModel->trans_label = 'Bulk Notification Applicability';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['dcs_mcc_user'];
+        $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
+        $appModel->dcs_filters = $value;
+        $appModel->login_type = $model->login_type;
+
+        $appModel->fields = [
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }, 'filter' => FALSE],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'applicable_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Applicable Name'), 'value' => function($model) {
+                    if (strtolower($model->applicable_for) == 'dcs') {
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'villagename');
+                    } else if (strtolower($model->applicable_for) == 'mcc') {
+                        return Yii::$app->general->getforeignkey($model->mccCode, 'mccname');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->userCode, 'name');
+                    }
+                }],
+            'status' => ['view' => ['grid'], 'value' => 'status', 'value' => function($model) {
+                    return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
+                }, 'filter' => FALSE],
+        ];
+        $appModel->actions = [
+            'delete' => ['option' => 'applicable_code,bulk_notification_app_code,tbl-bulk-notification/delete-mapping'],
+        ];
+
+
+        return $appModel->createApp();
+    }
+
+    public function actionDeleteMapping() {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $detailHistory = new TblBulkNotificationApplicabilityHistory();
+            $record = TblBulkNotificationApplicability::find()->where(['bulk_notification_app_code' => Yii::$app->request->post('id')])->one();
+            Yii::$app->operation->history($record, $detailHistory, DELETE);
+            $master[] = $detailHistory->save(FALSE);
+            $master[] = $record->delete();
+            if (in_array(FALSE, $master)) {
+                $transaction->rollback();
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            } else {
+                $transaction->commit();
+                $record = ['status' => 'success', 'msg' => 'Record is successfuly deleted.'];
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => $e->getMessage()];
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }
