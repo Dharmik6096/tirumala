@@ -240,6 +240,7 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
         $appModel->assignStaticData = [
+            'bill_head_for' => $model->billHead->bill_head_for,
             'bill_head_code' => $model->bill_head_code,
         ];
         $appModel->header_title = ' [Criteria: ' . $model->criteria_name . '] ';
@@ -328,7 +329,7 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
                 ->where(['vsp_criteria_code' => Yii::$app->request->post('id')])
                 ->one();
 
-        $data = !empty($existdata->to_val) ? $existdata->to_val + 0.1 : 0;
+        $data = !empty($existdata->to_val) ? $existdata->to_val + 0.01 : 0;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
     }

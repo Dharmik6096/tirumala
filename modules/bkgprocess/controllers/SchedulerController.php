@@ -108,7 +108,6 @@ class SchedulerController extends ChildController {
     public function actionGenerateFile() {
         try {
             $model = new TblFileCreator();
-            $model->file_status = 0;
             $model->status = 0;
             $modelData = $model->getPendingData();
             if (!empty($modelData)) {
@@ -118,7 +117,6 @@ class SchedulerController extends ChildController {
                 $model->updateFileStatus($ids);
                 foreach ($modelData as $data) {
                     $ftp_model = new TblFtpTxnLog();
-                    $ftp_model->module_code = $data->attributes;
                     $FTPProcess = Bkgprocess::FTPProcess()[$data->module_name];
                     $param = explode(',', $FTPProcess['param']);
                     $controls = [];
@@ -126,12 +124,13 @@ class SchedulerController extends ChildController {
                         $controls[$val] = $data->{$val};
                     }
                     $output = \Yii::$app->general->getSpData($FTPProcess['sp_name'], $controls);
-                    if ($ftp_model->generateFiles($output, $FTPProcess, $data)) {
+                    if ($ftp_model->generateFiles($output, $FTPProcess, $data, FALSE, $data->file_name)) {
                         $data->status = 2;
                         $data->file_status = 1;
                     } else {
                         $data->status = 3;
                     }
+                    $data->response_datetime = date('Y-m-d H:i:s');
                     $data->save(FALSE);
                 }
             }
@@ -280,6 +279,24 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_mapped_allow') {
                 $flag = 'bmc-mapped-collection-allow-bulk';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection_Allow';
+            } else if ($row->file_type == 'bmc_collection_route') {
+                $flag = 'bmc-collection-bulk-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_can') {
+                $flag = 'bmc-collection-bulk-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route') {
+                $flag = 'bmc-collection-bulk-bmc-route';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_can') {
+                $flag = 'bmc-collection-bulk-bmc-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_route_can') {
+                $flag = 'bmc-collection-bulk-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_bmc_route_can') {
+                $flag = 'bmc-collection-bulk-bmc-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -306,6 +323,7 @@ class SchedulerController extends ChildController {
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
                     $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                    $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
                     $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
@@ -862,8 +880,8 @@ class SchedulerController extends ChildController {
                         $ftp_model->ref_code = $data_array['module_code'];
                         $bmc_data = $ftp_model->bmcCode;
                         if (!empty($bmc_data)) {
-                            $controls['mcc_plant_code'] = $bmc_data->bmc_code;
-                            $controls['bmc_code'] = $bmc_data->mcc_plant_code;
+                            $controls['mcc_plant_code'] = $bmc_data->mcc_plant_code; // $bmc_data->bmc_code;
+                            $controls['bmc_code'] = $bmc_data->bmc_code; // $bmc_data->mcc_plant_code;
                             $controls['from_date'] = $controls['to_date'] = $from_date;
                         }
                         \Yii::$app->general->getSpData($FTPProcess['sp_name'] . '_update', $controls, TRUE);

@@ -84,6 +84,7 @@ class BiplSchedulerController extends ChildController {
                         $ftp->conn_init = FALSE;
                         $ftp->conn_close = FALSE;
                         $ftp->make_dir = FALSE;
+                        $ftp->isPassiveFtp = !empty($records['ftp_mode']) && $records['ftp_mode'] == 'active' ? false : true;
                         $connection = $ftp->ConnectServer();
                     }
                     $cnt++;
@@ -131,6 +132,10 @@ class BiplSchedulerController extends ChildController {
                                                         $ftp_txn_model->file_status = 1;
                                                         $ftp_txn_model->status = 0;
                                                         $ftp_txn_model->save();
+                                                        if (strstr($path, 'EKOMILK')) {
+                                                            $command = 'chmod 777 -R ' . $local_path . $file;
+                                                            exec($command);
+                                                        }
                                                         $process_count++;
                                                     }
                                                 }

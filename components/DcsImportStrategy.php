@@ -128,8 +128,10 @@ class DcsImportStrategy extends ARImportStrategy {
 
                     if (empty($model->getErrors()) && $model->validate()) {
                         $societyVendor = $model->societyVendors;
-                        if (!empty($societyVendor)) {
-                            $model->vendor = $societyVendor->vendor_code;
+                        if (empty($model->vendor)) {
+                            if (!empty($societyVendor)) {
+                                $model->vendor = $societyVendor->vendor_code;
+                            }
                         } else {
                             $vendorModel = new TblSocietyVendor();
                             $vendorModel->dcs_code = $model->dcs_code;
@@ -280,6 +282,12 @@ class DcsImportStrategy extends ARImportStrategy {
                                 $memberModel->member_type_code = 1;
                                 $memberModel->mobile_no = NULL;
                                 $memberModel->pan_no = NULL;
+                                $memberModel->bank_code = NULL;
+                                $memberModel->branch_code = NULL;
+                                $memberModel->bank_account_no = NULL;
+                                $memberModel->ifsc = NULL;
+                                $memberModel->beneficiary_name = NULL;
+                                $memberModel->adhar_no = NULL;
                                 $master[] = $memberModel->save();
                             }
                         }

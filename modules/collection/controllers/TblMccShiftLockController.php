@@ -450,7 +450,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             }
             $record = ['status' => 'success', 'msg' => $title . ' Successfully.'];
             if (Yii::$app->session->get('eiplCode') == 'UMANG') {
-                $this->generateSapDataUmang($mcc, $date, $shift);
+                if ($updateField == 'bmc_lock' && $val == 1) {
+                    $this->generateSapDataUmang($mcc, $date, $shift);
+                }
             }
         } else {
             $record = ['status' => 'error', 'msg' => $title . 'Not Successfully.'];
@@ -615,7 +617,10 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $model = new TblMccShiftLock();
         $model->mcc_plant_code = $mcc;
         $model->union_code = Yii::$app->general->getforeignkey($model->mccPlantCode, 'union_code');
-        $mccRefCode = Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+        $mccRefCode = '';
+        if (Yii::$app->session->get('eiplCode') == 'DODLA') {
+            $mccRefCode = Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+        }
         $data_array = [];
         $data_array['module_name'] = $module_name;
         $data_array['module_code'] = $mcc;

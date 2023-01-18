@@ -267,13 +267,15 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                 $MainModel = new TblDcsMilkDispatch();
                                 $existMainData = $MainModel->getExistingDispatch($existData);
                                 $txCount = TblDcsMilkDispatchTxn::find()->where(['dcs_milk_dispatch_code' => $existMainData->dcs_milk_dispatch_code])->count();
-                                if ($txCount == 1) {
+                                if (!empty($existMainData) && $txCount <= 1) {
                                     $deleteModel[] = $existMainData;
                                 }
                                 $TxModel = new TblDcsMilkDispatchTxn();
                                 $TxModel->dcs_milk_dispatch_code = $existMainData->dcs_milk_dispatch_code;
                                 $existTxModel = $TxModel->getTxnExistingCollection($existData);
-                                $deleteModel[] = $existTxModel;
+                                if (!empty($existTxModel)) {
+                                    $deleteModel[] = $existTxModel;
+                                }
                             }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();

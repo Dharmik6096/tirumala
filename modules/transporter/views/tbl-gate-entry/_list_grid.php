@@ -1,6 +1,8 @@
 <?php
 
 use webvimark\modules\UserManagement\components\GhostHtml;
+
+$client_code = \Yii::$app->session->get('eiplCode');
 ?>
 <div class="col-sm-12 padding-left-0 padding-right-0 ">
     <h5 class="panel-heading"><?= Yii::t('app', 'Gate Entry Details') ?></h5>
@@ -10,10 +12,13 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         ['attribute' => 'route_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
             }, 'filter' => false],
-//            ['attribute' => 'vehicle_code', 'value' => function($model) {
-//                return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
-//            }, 'filter' => false],
-        ['attribute' => 'vehicle_code', 'filter' => false],
+        ['attribute' => 'vehicle_code', 'value' => function($model)use($client_code) {
+                if ($client_code == 'UMANG') {
+                    return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+                } else {
+                    return $model->vehicle_code;
+                }
+            }, 'filter' => false],
         ['attribute' => 'date_time_of_collection',
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
@@ -42,6 +47,12 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             'print-gate-pass' => function ($url, $model) {
                 $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Gate Pass'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Print Gate Pass')];
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/transporter/tbl-gate-entry/print-gate-pass', 'id' => $model->gate_entry_code], $options);
+            },
+            'gate-out-entry' => function ($url, $model) {
+                $name = Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+                $class = $model->status == 1 ? 'link-disable' : '';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Gate Out Entry', 'class' => 'gate-out ' . $class, 'data-val' => $model->gate_entry_code, 'data-name' => $name];
+                return GhostHtml::a_alert('<i class="fa fa-sign-out"></i>', ['/transporter/tbl-gate-entry/get-out-entry'], $options);
             },
         ]
     ];

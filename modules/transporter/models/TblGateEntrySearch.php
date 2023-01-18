@@ -19,9 +19,9 @@ class TblGateEntrySearch extends TblGateEntry {
      */
     public function rules() {
         return [
-                [['gate_entry_code', 'shift_code', 'responsibility_code', 'originating_type'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'transporter_code', 'vehicle_code', 'date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['grace_time', 'late_by_time', 'from_date', 'to_date', 'from_shift', 'to_shift', 'no_of_filled_can', 'no_of_empty_can'], 'safe'],
+            [['gate_entry_code', 'shift_code', 'responsibility_code', 'originating_type', 'status', 'status_time'], 'safe'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'route_code', 'transporter_code', 'vehicle_code', 'date_time_of_collection', 'define_arrival_time', 'actual_arrival_time', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['grace_time', 'late_by_time', 'from_date', 'to_date', 'from_shift', 'to_shift', 'no_of_filled_can', 'no_of_empty_can'], 'safe'],
         ];
     }
 
@@ -83,7 +83,7 @@ class TblGateEntrySearch extends TblGateEntry {
 
     public function createsearch($params) {
         $this->load($params);
-        $query = $this->find()->alias('t')->select(['t.gate_entry_code', 't.bmc_code', 't.date_time_of_collection', 't.shift_code', 't.route_code', 't.vehicle_code', 't.define_arrival_time', 't.grace_time', 't.actual_arrival_time', 't.no_of_filled_can', 't.no_of_empty_can']);
+        $query = $this->find()->alias('t')->select(['t.gate_entry_code', 't.bmc_code', 't.date_time_of_collection', 't.shift_code', 't.route_code', 't.vehicle_code', 't.define_arrival_time', 't.grace_time', 't.actual_arrival_time', 't.no_of_filled_can', 't.no_of_empty_can', 't.status']);
 
         $query->joinWith(['bmcCode', 'routeCode', 'vehicleCode']);
         $query->andWhere(['t.bmc_code' => $this->bmc_code]);

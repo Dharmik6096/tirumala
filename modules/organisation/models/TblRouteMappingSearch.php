@@ -19,10 +19,10 @@ class TblRouteMappingSearch extends TblRouteMapping {
      */
     public function rules() {
         return [
-                [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
-                [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
-                [['route_length_kms'], 'number'],
-                [['route_code_ex', 'ref_code'], 'safe'],
+            [['route_code', 'morning_start_time', 'morning_end_time', 'route_name', 'union_code', 'local_name', 'evening_start_time', 'evening_end_time', 'route_type', 'from_type', 'from_dest', 'to_type', 'to_dest', 'created_at', 'created_by', 'updated_at', 'updated_by', 'unit', 'valid_from'], 'safe'],
+            [['capacity', 'vehicle_type_code', 'is_active'], 'integer'],
+            [['route_length_kms'], 'number'],
+            [['route_code_ex', 'ref_code', 'sap_route_code'], 'safe'],
         ];
     }
 
@@ -79,16 +79,16 @@ class TblRouteMappingSearch extends TblRouteMapping {
             $plantArr = explode(',', Yii::$app->session->get('Plant'));
             $query->andFilterWhere([
                 'or',
-                    ['tbl_mcc_plant.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'MCC'],
-                    ['tbl_bmc.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'BMC']
+                ['tbl_mcc_plant.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'MCC'],
+                ['tbl_bmc.plant_code' => $plantArr, 'tbl_route_mapping.to_type' => 'BMC']
             ]);
         }
         if (!empty($this->f_plant_code) && empty($this->f_bmc_code)) {
 //            $query->andFilterWhere(['tbl_mcc_plant.plant_code' => $this->f_plant_code]);
             $query->andFilterWhere([
                 'or',
-                    ['tbl_mcc_plant.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'MCC'],
-                    ['tbl_bmc.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'BMC']
+                ['tbl_mcc_plant.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'MCC'],
+                ['tbl_bmc.plant_code' => $this->f_plant_code, 'tbl_route_mapping.to_type' => 'BMC']
             ]);
         }
 
@@ -156,6 +156,7 @@ class TblRouteMappingSearch extends TblRouteMapping {
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_type', $this->from_type])
                 ->andFilterWhere(['like', 'tbl_route_mapping.from_dest', $this->from_dest])
                 ->andFilterWhere(['like', 'tbl_route_mapping.to_type', $this->to_type])
+                ->andFilterWhere(['like', 'tbl_route_mapping.sap_route_code', $this->sap_route_code])
                 ->andFilterWhere(['like', 'tbl_route_mapping.to_dest', $this->to_dest]);
 
         return $dataProvider;

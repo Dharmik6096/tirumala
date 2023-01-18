@@ -580,14 +580,15 @@ $script = "
            var pay_mode=$('#tblproductsale-payment_mode').val();
            var amount_due=$('#tblproductsale-amount_due').val();
            var noi=$('#tblproductsale-no_of_installment').val();
+           var code = $('#tblproductsale-customer_code').val();
 
 
-        var code ='';
-        if(type=='Member'){
-            var code = $('#tblproductsale-dcs_code').val();
-        }else{
-            var code = $('#tblproductsale-bmc_code').val();
-        }
+//        var code ='';
+//        if(type=='Member'){
+//            var code = $('#tblproductsale-dcs_code').val();
+//        }else{
+//            var code = $('#tblproductsale-bmc_code').val();
+//        }
 
         if(setData(date) && setData(type) && setData(code)){
              $.ajax({

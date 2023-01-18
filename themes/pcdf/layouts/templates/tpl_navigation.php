@@ -21,6 +21,7 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 }
 $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $eiplCode = Yii::$app->session->get('eiplCode');
+$rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
 
@@ -150,6 +151,14 @@ echo GhostMenu::widget([
                 ['label' => 'Rate Recalculation', 'url' => ['/dcsoperation/tbl-rate-recalculation/index'], 'active' => ($cntrl == 'tbl-rate-recalculation')],
                 ['label' => 'Collection Penalty Rate', 'url' => ['/collection/tbl-collection-penalty-rate/index'], 'active' => ($cntrl == 'tbl-collection-penalty-rate')],
                 ['label' => 'Milk Cost Param', 'url' => ['/collection/tbl-milkcost-param/index'], 'active' => ($cntrl == 'tbl-milkcost-param')],
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => $rateAppApproval,
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Rate Applicability Approval<b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
+                        ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
+                    ]
+                ],
             ],
         ],
         [
@@ -189,6 +198,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Transporter Payment Process'), 'url' => ['/payment/tbl-transporter-payment/index'], 'active' => ($cntrl == 'tbl-transporter-payment')],
                 ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
                 ['label' => Yii::t('app', 'Bank Payment Log'), 'url' => ['/payment/tbl-bank-payment-log/index'], 'active' => ($cntrl == 'tbl-bank-payment-log')],
+                ['label' => Yii::t('app', 'Data Consider in VSP Payment'), 'url' => ['/payment/tbl-vsp-payment-data-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-data-config')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -215,6 +225,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
                 ['label' => Yii::t('app', 'Bill Head Transaction'), 'url' => ['/vsp/tbl-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-bill-head-detail')],
                 ['label' => Yii::t('app', 'Head Load'), 'url' => ['/vsp/tbl-head-load/index'], 'active' => ($cntrl == 'tbl-head-load')],
+                ['label' => Yii::t('app', 'Rejection Resp. Mapping'), 'url' => ['/collection/tbl-milk-reject/responsibility-mapping'], 'active' => ($cntrl == 'tbl-milk-reject')],
                 ['label' => Yii::t('app', 'Transit Loss'), 'url' => ['/vsp/tbl-bmc-transit-loss/index'], 'active' => ($cntrl == 'tbl-bmc-transit-loss')],
                 ['label' => Yii::t('app', 'Transit Recovery'), 'url' => ['/vsp/transit-recovery/transit-loss-shortage'], 'active' => ($cntrl == 'transit-loss-shortage')],
                 ['label' => Yii::t('app', 'VSP Outstanding'), 'url' => ['/payment/tbl-vsp-outstanding/index'], 'active' => ($cntrl == 'tbl-vsp-outstanding')],
@@ -582,6 +593,8 @@ echo GhostMenu::widget([
                         ['label' => '911-' . Yii::t('app', 'Shift Wise Auto Manual'), 'url' => ['/misreports/reports/shift-wise-auto-manual']],
                         ['label' => '912-' . Yii::t('app', 'Monthly Comparison Report'), 'url' => ['/misreports/reports/milk-and-bmc-collection-monthly-comparision']],
                         ['label' => '913-' . Yii::t('app', 'Rate Applicability Detail History'), 'url' => ['/misreports/reports/rate-applicability-details-history']],
+                        ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
+                        ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
                     ]
                 ],
                 [
@@ -591,6 +604,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
                         ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
                         ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
+                        ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
                     ]
                 ],
                 [
@@ -742,6 +756,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Report Download'), 'url' => ['/configuration/tbl-generate-report-param/index'], 'active' => ($cntrl == 'tbl-generate-report-param')],
                         ['label' => Yii::t('app', 'Device SMS Count'), 'url' => ['/dcsoperation/tbl-send-sms-count/index'], 'active' => ($cntrl == 'tbl-send-sms-count')],
                         ['label' => Yii::t('app', 'Device SMS Fail Log'), 'url' => ['/sms/tbl-sms-fail-log/index'], 'active' => ($cntrl == 'tbl-sms-fail-log')],
+                        ['label' => Yii::t('app', 'BMC Collection Tranfer'), 'url' => ['/collection/tbl-bmc-collection-transfer/index'], 'active' => ($cntrl == 'tbl-bmc-collection-transfer')],
                     ]
                 ],
                 [

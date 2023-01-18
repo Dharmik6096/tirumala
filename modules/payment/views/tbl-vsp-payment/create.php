@@ -30,23 +30,35 @@ $this->title = 'Vendor Payment Process : Step 1';
             </div> 
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblvsppayment-plant_code', 'mcc_plant_code', TRUE); ?>
-            </div>      
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', TRUE); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', TRUE, FALSE); ?>
-            </div>
-            <div class="col-sm-2">
                 <?php
                 $where = json_encode(['data_lock_bmc' => 1, 'billing_lock_bmc' => 0]);
                 echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
                 echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
                 echo Html::hiddenInput('member_billing_lock_check', 1, ['id' => 'member_billing_lock_check']);
                 ?>
-                <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc,member_billing_lock_check', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+            </div>      
+            <div id="single-bmc">
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'bmc_code', 'BMC *'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', 'Customer Type *', FALSE); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-bmc_code,tblvsppayment-customer_type,applicable_for,data_lock_bmc,member_billing_lock_check', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code') . ' *', FALSE, FALSE); ?>
+                </div>
             </div>
-
+            <div id="multiple-bmc">
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblvsppayment-mcc_plant_code', 'p_bmc_code', 'BMC *', TRUE); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-p_bmc_code', 'p_customer_type', 'Customer Type *', FALSE); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblvsppayment-union_code,tblvsppayment-p_bmc_code,tblvsppayment-p_customer_type,applicable_for,data_lock_bmc,member_billing_lock_check', 'p_payment_cycle_code', $model->getAttributeLabel('payment_cycle_code') . ' *', FALSE, FALSE); ?>
+                </div>
+            </div>
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                 <div class="form-group">
                     <?= Yii::$app->controls->save('Next', $model, ' saveData '); ?>   
@@ -60,7 +72,8 @@ $this->title = 'Vendor Payment Process : Step 1';
 
 <?php
 $script = "
-
+     $('#single-bmc').hide();
+     $('#multiple-bmc').hide();
     $(document).on('click', '.saveData', function(){
         $('#pageloader').show();
         $('#loadercontent').show();
@@ -106,7 +119,28 @@ $script = "
             }
         });
       }
-}); 
+});
+$('#tblvsppayment-mcc_plant_code').on('change',function(){
+     var mcc_plant_code= $(this).val();
+     if(mcc_plant_code !='' && mcc_plant_code != null){
+            $.ajax({
+            type: 'post',
+            url: '" . Url::to(['/payment/tbl-vsp-payment/check-mcc-type']) . "',
+            data: {'mcc_plant_code' : mcc_plant_code},            
+            success: function(data) {
+                var data = $.parseJSON(data);
+                var multiple_bmc = data.multiple_bmc;
+               if(multiple_bmc == '1'){
+                 $('#single-bmc').hide();
+                 $('#multiple-bmc').show();
+               }else{
+                 $('#multiple-bmc').hide();
+                 $('#single-bmc').show();
+               }   
+            }
+        });
+      }
+});
 ";
 $this->registerJs($script, View::POS_END, 'check-payment-cycle-processed');
 ?>

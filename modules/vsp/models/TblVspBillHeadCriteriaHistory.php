@@ -38,15 +38,15 @@ class TblVspBillHeadCriteriaHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['bill_head_code', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at', 'history_created_at', 'criteria_type'], 'safe'],
-            [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
-            [['criteria_name'], 'string', 'max' => 100],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 255],
-            [['history_created_by'], 'string', 'max' => 14],
-            [['operation_type'], 'string', 'max' => 10],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['bill_head_code', 'originating_type'], 'integer'],
+                [['created_at', 'updated_at', 'history_created_at', 'criteria_type', 'criteria_code'], 'safe'],
+                [['vsp_criteria_code', 'general_formula_code'], 'string', 'max' => 20],
+                [['criteria_name'], 'string', 'max' => 100],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 255],
+                [['history_created_by'], 'string', 'max' => 14],
+                [['operation_type'], 'string', 'max' => 10],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 

@@ -26,6 +26,7 @@ use kartik\grid\GridView;
 $script = "
     var action = '" . $type . "';
     gridChange();
+    CheckProductHead();
         if(action == 'edit'){
             reloadGrid();
             $('.DisableAferAdd').addClass('disabledDiv');                                                                  
@@ -35,7 +36,8 @@ $script = "
     $(document).on('change', '#tblvspbillheadcriteria-criteria_name', function() {  
         gridChange();
     });
-    $(document).on('change', '#tblvspbillheadcriteria-bill_head_code', function() {  
+    $(document).on('change', '#tblvspbillheadcriteria-bill_head_code', function() {
+       CheckProductHead();
        gridChange();
     });
     $(document).on('change', '#tblvspbillheadcriteria-general_formula_code', function() { 
@@ -229,9 +231,18 @@ $script = "
                     }
                 });
             }
-    };
-   
-    
+    };    
+   function CheckProductHead(){
+    var default_head_type=$('#tblvspbillheadcriteria-bill_head_code option:selected').text();
+        default_head_type = default_head_type.split('(');
+        default_head_type = default_head_type[default_head_type.length-1];
+        default_head_type = default_head_type.substring(0,default_head_type.length - 1);        
+        if(default_head_type=='5'){
+             $('#product-wise-slab').show();
+        }else{
+             $('#product-wise-slab').hide();
+        }
+   };   
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide-form');
 ?>

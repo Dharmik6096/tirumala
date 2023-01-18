@@ -40,8 +40,6 @@ use app\modules\organisation\models\TblDcsBmc;
  */
 class TblCollectionPenaltyRateApplicability extends \app\models\ChildModel {
 
-    public $dcs_code;
-
     /**
      * @inheritdoc
      */
@@ -54,11 +52,11 @@ class TblCollectionPenaltyRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
-            [['penalty_rate_code'], 'validateApplicability', 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['wef_date', 'created_at', 'updated_at', 'penalty_rate_applicability_code', 'penalty_rate', 'originating_type', 'penalty_rate_code'], 'safe'],
-            [['penalty_type', 'created_by', 'updated_by', 'applicable_code', 'applicable_for', 'applicable_type'], 'safe'],
-            [['bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
+                [['penalty_rate_code'], 'validateApplicability', 'skipOnEmpty' => false, 'except' => ['androidsync']],
+                [['wef_date', 'created_at', 'updated_at', 'penalty_rate_applicability_code', 'penalty_rate', 'originating_type', 'penalty_rate_code', 'dcs_code'], 'safe'],
+                [['penalty_type', 'created_by', 'updated_by', 'applicable_code', 'applicable_for', 'applicable_type'], 'safe'],
+                [['bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
 //            [['applicable_code', 'applicable_for', 'penalty_type', 'wef_date'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'penalty_type', 'wef_date'], 'message' => 'The combination of Penalty Type, Wef Date, Applicable Code and Applicable For has already been taken.'],
         ];
     }

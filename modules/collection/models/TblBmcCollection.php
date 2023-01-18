@@ -94,23 +94,24 @@ class TblBmcCollection extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'bmc_silos', FALSE, TRUE, ['module_name' => 'BMC', 'module_code' => $this->bmc_code], TRUE);
                 }, 'on' => ['importCsv']],
             [['milk_type_code', 'shift_code', 'milk_quality_type_code'], 'integer', 'message' => Yii::t('app/validation', '{attribute} is invalid.'), 'on' => ['importCsv']],
-            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync']],
-            [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData']],
+            [['dcs_code', 'name', 'mobile_no', 'auto_flag', 'village_code', 'type_of_data_receive', 'error_log', 'soc_bmc_flag', 'sms_status', 'sms_msgid', 'sms_mobile', 'sms_errorlog', 'remarks'], 'string', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
+            [['rate_code'], 'string', 'except' => ['androidsync', 'saveCreamyData', 'rejectRespMap', 'DataTransfer']],
             [['sample_no'], 'number', 'min' => 0, 'on' => ['importCsv']],
-            [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync']],
+            [['milk_type_code', 'sample_no', 'ack'], 'integer', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
             [['rtpl', 'amount'], 'trim'],
-            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync']],
+            [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'clr'], 'number', 'except' => ['androidsync', 'rejectRespMap', 'DataTransfer']],
             [['transporter_code', 'vehicle_code'], 'required', 'when' => function ($model) {
                     return $model->collection_type == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbmccollection-collection_type').val() == '2'; 
-          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update']],
+
+          }", 'except' => ['post_sap_data', 'androidsync', 'importCsv', 'update', 'rejectRespMap', 'DataTransfer']],
 //            [['dcs_code'], 'validateDcs', 'except' => ['post_sap_data', 'androidsync', 'create', 'create_allow']],
 //            [['customer_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'customer_code', 'sample_no'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
 //                    return $this->shift_code;
 //                }, 'except' => ['androidsync']],
             [['collection_type'], 'default', 'value' => 1, 'on' => ['saveCreamyData', 'saveSapData', 'androidsync', 'importCsv']],
-            [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync']],
+            [['fat', 'snf', 'qty', 'shift_code', 'milk_type_code', 'date_time_of_collection', 'milk_quality_type_code'], 'required', 'except' => ['saveSapData', 'post_sap_data', 'androidsync', 'rejectRespMap', 'DataTransfer']],
             [['date_time_of_collection', 'date_time_of_recieve', 'dt_date', 'sms_timestamp', 'transporter_code', 'vehicle_code', 'collection_type', 'date', 'weigh_time', 'testing_time', 'bmc_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'purchase_rate_code', 'bmc_silos_info_code', 'response_datetime'], 'safe'],
             [['density', 'clr', 'lactose', 'protein', 'qlty_auto', 'qty_mode', 'qty_auto', 'no_of_can', 'avg_qlty_param', 'qlty_time', 'qlty_times_no', 'qty_time', 'date_time_of_testing', 'converted_qty', 'doc_no', 'RouteArivalTime', 'allow_rate_zero', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['own_mcc_plant_code', 'own_bmc_code', 'converted_qty_mode', 'milk_analyser_type_code', 'ws_code', 'vehicle_no', 'route_arrival_time', 'customer_type', 'customer_code', 'union_code', 'plant_code', 'mcc_plant_code', 'route_code', 'dcs_code', 'village_code', 'tag_1', 'tag_2', 'error_desc'], 'safe'],
@@ -165,7 +166,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             [['milk_type_code'], 'validateUpdate', 'on' => ['update', 'update_allow']],
             [['date_time_of_collection'], function ($attribute, $params) {
                     $this->data_post_status = 0;
-                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'rejectRespMap', 'DataTransfer']],
             [['is_rate_recalc'], 'default', 'value' => 0],
             [['bmc_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -173,8 +174,14 @@ class TblBmcCollection extends \app\models\ChildModel {
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
             [['qty'], 'validateMinLimit', 'on' => ['create', 'update']],
-            [['antibiotic', 'tare_weight', 'gross_weight'], 'safe'],
-            [['bmc_code'], 'setNoOfCan'],
+            [['antibiotic', 'tare_weight', 'gross_weight', 'rejection_responsibility_code', 'can_no'], 'safe'],
+            [['bmc_code'], 'setNoOfCan', 'except' => ['rejectRespMap', 'DataTransfer']],
+            [['can_no'], 'required', 'when' => function ($model) {
+                    return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_can_selection', 'PORTAL') == 1;
+                }, 'on' => ['create']],
+            [['route_code'], 'required', 'when' => function ($model) {
+                    return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1;
+                }, 'on' => ['create']],
         ];
     }
 
@@ -237,6 +244,7 @@ class TblBmcCollection extends \app\models\ChildModel {
             'bmc_silos_info_code' => Yii::t('app', 'Silos'),
             'qty_time' => Yii::t('app', 'Qty. Time'),
             'created_at' => Yii::t('app', 'Receive Time'),
+            'route_code' => Yii::t('app', 'Route'),
         ];
     }
 
@@ -540,7 +548,7 @@ class TblBmcCollection extends \app\models\ChildModel {
     }
 
     public function getExistingCollection($data) {
-        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf])->one();
+        return $this->find()->where(['bmc_code' => $data->bmc_code, 'customer_code' => $data->old_customer_code, 'customer_type' => $data->customer_type, 'date_time_of_collection' => $data->date_time_of_collection, 'shift_code' => $data->shift_code, 'milk_type_code' => $data->old_milk_type_code, 'milk_quality_type_code' => $data->old_milk_quality_type_code, 'qty' => $data->old_qty, 'fat' => $data->old_fat, 'snf' => $data->old_snf,'sample_no'=> $data->sample_no])->one();
     }
 
     public function getRateRange() {
@@ -551,12 +559,17 @@ class TblBmcCollection extends \app\models\ChildModel {
         $datetime = date('Y-m-d H:i:s');
         $model->status = 'Accept';
         $model->sms_status = 'n';
+        $allowRouteSelection = Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1 ? TRUE : FALSE;
         if (strtolower($model->customer_type) == 'dcs') {
             $model->village_code = Yii::$app->general->getforeignkey($model->dcsCode, 'village_code');
-            $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
+            if (!$allowRouteSelection) {
+                $model->route_code = Yii::$app->general->getforeignkey($model->dcsCode, 'route_code');
+            }
         } else {
             $model->village_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'village_code');
-            $model->route_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'route_code');
+            if (!$allowRouteSelection) {
+                $model->route_code = Yii::$app->general->getforeignkey($model->mainCustomerCode, 'route_code');
+            }
         }
         $model->own_mcc_plant_code = $model->mcc_plant_code;
 //        $model->own_bmc_code = $model->bmc_code;
