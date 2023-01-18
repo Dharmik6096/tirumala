@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 
+$client_code = \Yii::$app->session->get('eiplCode');
+
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -27,8 +29,12 @@ $attribute = [
     ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }, 'filter' => false],
-    ['attribute' => 'vehicle_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+    ['attribute' => 'vehicle_code', 'value' => function($model) use ($client_code) {
+            if ($client_code == 'UMANG') {
+                return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+            } else {
+                return $model->vehicle_code;
+            }
         }, 'filter' => false],
     ['attribute' => 'date_time_of_collection',
         'filterType' => GridView::FILTER_DATE,

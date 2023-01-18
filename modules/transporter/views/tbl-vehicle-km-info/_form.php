@@ -75,28 +75,6 @@ $form = ActiveForm::begin([
         ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-2">
-        <?=
-        $form->field($model, 'morning_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
-            'mask' => '99:99',]);
-        ?>
-    </div>
-    <div class="col-sm-2 number-validate">
-        <?=
-        $form->field($model, 'morning_grace_time')->textInput();
-        ?>
-    </div>
-    <div class="col-sm-2">
-        <?=
-        $form->field($model, 'evening_arrival_time')->widget(\yii\widgets\MaskedInput::className(), [
-            'mask' => '99:99',]);
-        ?>
-    </div>
-    <div class="col-sm-2 number-validate">
-        <?=
-        $form->field($model, 'evening_grace_time')->textInput();
-        ?>
-    </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>

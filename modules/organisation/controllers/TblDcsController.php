@@ -809,10 +809,10 @@ class TblDcsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+//            return;
         }
-        echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
+        return \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionSocietyStatus($dcs_code, $coll_status) {
@@ -1167,6 +1167,12 @@ class TblDcsController extends ChildController {
                         $memberModel->gender_code = 1;
                         $memberModel->caste_category_code = 1;
                         $memberModel->member_type_code = 1;
+                        $memberModel->bank_code = NULL;
+                        $memberModel->branch_code = NULL;
+                        $memberModel->bank_account_no = NULL;
+                        $memberModel->ifsc = NULL;
+                        $memberModel->beneficiary_name = NULL;
+                        $memberModel->adhar_no = NULL;
                         $master[] = $memberModel->save();
                     }
                 }
