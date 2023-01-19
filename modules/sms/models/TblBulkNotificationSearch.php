@@ -19,8 +19,8 @@ class TblBulkNotificationSearch extends TblBulkNotification {
      */
     public function rules() {
         return [
-            [['bulk_notification_id', 'receiver_type', 'content_id', 'status'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date'], 'safe'],
+                [['bulk_notification_id', 'content_id', 'status'], 'integer'],
+                [['union_code', 'receiver_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'wef_date', 'title', 'message', 'campaign_name', 'created_at', 'created_by', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'from_date', 'to_date'], 'safe'],
         ];
     }
 

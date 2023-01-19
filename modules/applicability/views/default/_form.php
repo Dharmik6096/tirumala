@@ -126,7 +126,29 @@ $modelName = 'TblDcsPurchaseRateApplicabitity';
     }
     $customerClass = "";
     ?>
-
+    <div class="clearfix"></div>
+    <?php
+    $class = 'col-sm-9 padding_10_0';
+    $checkboxClass = 'col-sm-4';
+    if (in_array('dcs_mcc_user', $options)) {
+        // change here for BMC MCC Filter
+        $modelName = \yii\helpers\StringHelper::basename(get_class($model));
+        $class = 'col-sm-12';
+        $checkboxClass = 'col-sm-12';
+        $appendClass = count($filters) == 1 ? 'disp_none' : '';
+        ?>
+        <div class="col-md-12 padding_10_0 theme-box theme_border_left theme_border_right theme_border_bottom mt10 <?= $appendClass ?>">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading">Apply To</h4>
+            </div>
+            <div class="<?= $appendClass ?>">
+                <?= Html::radioList('applicable_for', 'MCC', $filters, ['separator' => " ", 'id' => 'dcs-filter', 'class' => 'app-radio-list radio-list', 'itemOptions' => ['class' => 'applicable_for']]); ?>
+            </div>
+        </div>
+        <?php
+    }
+    $customerClass = "";
+    ?>
     <?php
     if ($customer_type_wise_entry) {
         $customerClass = "customerTypeValidate";
@@ -427,6 +449,7 @@ $('.selectMccArea').show();
         var mname='{$model_name}';
         var wef_date=$('#{$nameforid}-wef_date').val(); 
         var checkdate='{$check_wef_date}';
+        var login_type='{$login_type}';    
             
         selectedBmc = [];
         $('.bmcCheckboxes').each(function () {
@@ -455,7 +478,7 @@ $('.selectMccArea').show();
         $.ajax({
             type: 'post',
             url: '{$furl}',
-            data: {'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute)},
+            data: {'login_type':login_type,'ucode':ucode,'filters':flts,'filter_type':filter_type,'field':fld,'fcode':fldcode, 'mname' : mname,'wef_date':wef_date,'checkdate':checkdate,'selected_mcc':JSON.stringify(selectedMcc),'selected_bmc':JSON.stringify(selectedBmc),'selected_route':JSON.stringify(selectedRoute)},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if (obj1.status == 'success')
@@ -497,49 +520,7 @@ $('.selectMccArea').show();
     }
     function addSociety(flag,id,chkbx)
     {
-        var ucode=$('#{$nameforid}-union_code').val();
-        var fld='{$field_name}';
-        var fldcode='{$field_code}';
-        var mname='{$model_name}';
-        var top_section='{$top_section}';
-        var select_from_all='{$select_from_all}';
-        var payment='{$payment}';
-        var wef_date=$('#{$nameforid}-wef_date').val();    
-        var shift_type='{$shift_type}';
-        var ratechart='{$ratechart}';    
-        $.ajax({
-                        type: 'post',
-                        url: '{$url}',
-                        data: {'flag':flag,'id':id,'ucode':ucode,'field':fld,'fcode':fldcode,'mname':mname,'select_from_all':select_from_all,'payment':payment,'shift_type':shift_type,'wef_date':wef_date,'ratechart':ratechart},
-                        success: function(data) {
-                            var obj1 = $.parseJSON(data);
-                            if (obj1.status == 'success')
-                            {
-                                if(obj1.dcsalert != '' && $(chkbx).is(':checked') && flag=='check'){  
-                                    bootbox.alert('<div class=\'mt15 mb15 display-table\'><div class=\'col-sm-12\'>'+obj1.dcsalert+'</div></div>');
-                                    $.each(obj1.dcsarray, function(index, value) {   
-                                              $('#'+value).prop('checked', false);  
-                                        });              
-                                }
-                                if((!($.isEmptyObject(chkbx)) && chkbx.checked) || (flag=='society')) {
-                                    var flag_check = $('input[type=\'radio\']:checked').val();
-                                    if(flag_check == flag){
-                                        $.each(obj1.data, function(index, value) {
-                                            $('#dcs_code-list').append('<div class=\"col-sm-3 dcs-checklist checklist\" id=\"nd-'+index+'\"><div class=\"checkbox\"><input type=\"checkbox\" class=\"route-checkbox\" name=\"{$cname}[dcs_code][]\" value=\"'+index+'\" id=\"'+index+'\"><label class=\"route-text\" for=\"'+index+'\">'+value+'</label></div></div>');
-                                        });
-                                    }
-                                }
-                                else if(!($.isEmptyObject(chkbx)) && !(chkbx.checked)){
-                                    $.each(obj1.data, function(index, value) {
-                                        $('#nd-'+index).remove();
-                                    });
-                                }
-                            }
-                        },
-                        error:function(data){
-                                    //alert('Your data has not been submitted..Please try again');
-                                }
-            });  
+       
     }
     $('#checkAllMccList').click(function (event) {
         $('#checkAll').prop('checked', false);

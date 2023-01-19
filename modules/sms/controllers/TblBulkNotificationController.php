@@ -54,14 +54,21 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->model = new TblBulkNotification();
         $this->viewFile = 'create';
         $this->model->app_type = 1;
-        $this->model->login_type = 'MEMBER';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->receiver_type = 'APP_NOTIFICATION';
-            $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
-            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+            $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
             $this->model->entry_datetime = date('Y-m-d H:i:s');
+            $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+            $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Bulk Notification', 'create']);
-            if ($transaction !== FALSE) {
+            if ($transaction == 'customRedirect') {
+                if ($this->model->login_type == 'all') {
+                    $appModel = new TblBulkNotificationApplicability();
+                    $appModel->attributes = $this->model->attributes;
+                    $appModel->applicable_for = 'all';
+                    $appModel->applicable_code = '0';
+                    $appModel->save();
+                }
                 return $this->{$transaction}();
             }
         }
@@ -83,12 +90,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
             $this->model->entry_datetime = !empty($this->model->entry_datetime) ? date('Y-m-d', strtotime($this->model->entry_datetime)) : '';
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master', 'edit']);
-            if ($transaction !== FALSE) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bulk Notification', 'edit']);
+            if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -99,9 +108,19 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
      */
     public function actionDelete() {
         $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $deleteModel = [];
+        $saveModel = [];
         $historyModel = new TblBulkNotificationHistory();
-        Yii::$app->operation->history($this->model, $historyModel, 'DELETE');
-        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $deleteModel[] = $this->model;
+        $saveModel[] = $historyModel;
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Bulk Notification', 'delete']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+        }
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
@@ -126,19 +145,19 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblBulkNotificationApplicability();
         $value = [];
-        if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'area_manager', 'route_supervisor'])) {
+        if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'route_supervisor'])) {
             $value['DCS'] = 'VLCC';
         } elseif (in_array(strtolower($model->login_type), ['mcc_incharge'])) {
             $value['MCC'] = 'MCC';
-        } elseif (in_array(strtolower($model->login_type), ['maintenance_staff', 'procurement_staff'])) {
+        } elseif (in_array(strtolower($model->login_type), ['procurement_staff'])) {
             $value['USER'] = 'USER';
         } else {
             $value['USER'] = 'USER';
         }
         $appModel->model->wef_date = $model->wef_date;
-        $appModel->model->company_code = $model->company_code;
+        $appModel->model->company_code = $model->union_code;
         $appModel->is_union = false;
-        $appModel->union_code = $model->company_code;
+        $appModel->union_code = $model->union_code;
         $appModel->field_name = 'bulk_notification_id';
         $appModel->field_value = $id;
         $appModel->trans_label = 'Bulk Notification Applicability';
@@ -156,9 +175,9 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
             'applicable_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Applicable Name'), 'value' => function($model) {
                     if (strtolower($model->applicable_for) == 'dcs') {
-                        return Yii::$app->general->getforeignkey($model->dcsCode, 'villagename');
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
                     } else if (strtolower($model->applicable_for) == 'mcc') {
-                        return Yii::$app->general->getforeignkey($model->mccCode, 'mccname');
+                        return Yii::$app->general->getforeignkey($model->mccCode, 'name');
                     } else {
                         return Yii::$app->general->getforeignkey($model->userCode, 'name');
                     }

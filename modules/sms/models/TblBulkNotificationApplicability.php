@@ -3,9 +3,9 @@
 namespace app\modules\sms\models;
 
 use Yii;
-use app\modules\organisation\models\Mastervillage;
-use app\modules\organisation\models\MasterBmc;
-use app\modules\organisation\models\Mastermcc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
 use app\modules\sms\models\TblBulkNotification;
 use webvimark\modules\UserManagement\models\User;
 
@@ -28,6 +28,8 @@ use webvimark\modules\UserManagement\models\User;
  * @property string $originating_org_type
  */
 class TblBulkNotificationApplicability extends \app\models\ChildModel {
+
+    public $union_code;
 
     /**
      * @inheritdoc
@@ -78,15 +80,15 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(Mastervillage::className(), ['villageid' => 'applicable_code', 'mccid' => 'mcc_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_code']);
     }
 
     public function getBmcCode() {
-        return $this->hasOne(MasterBmc::className(), ['BMCID' => 'applicable_code', 'mccid' => 'mcc_code']);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_code']);
     }
 
     public function getMccCode() {
-        return $this->hasOne(Mastermcc::className(), ['mccid' => 'applicable_code', 'plantid' => 'plant_code']);
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code', 'plant_code' => 'plant_code']);
     }
 
     public function getUserCode() {
@@ -114,21 +116,23 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
         return $this->updateAll(['status' => $this->status, 'resp_desc' => $this->resp_desc, 'response_datetime' => date('Y-m-d H:i:s')], ['bulk_notification_id' => $this->bulk_notification_id, 'wef_date' => $this->wef_date, 'applicable_for' => $this->applicable_for, 'status' => 1]);
     }
 
+    public function getDcsCodes() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code']);
+    }
+
+    public function getMccCodes() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'applicable_code']);
+    }
+
     public function setOrgDetail() {
-        $applicable_code = explode(':', $this->applicable_code);
-        $this->applicable_code = $applicable_code[0];
         if ($this->applicable_for == 'DCS') {
             $this->dcs_code = $this->applicable_code;
-            $hasBmc = !empty(Yii::$app->session->get('has_bmc')) ? true : false;
-            if ($hasBmc) {
-                $this->bmc_code = $applicable_code[1];
-                $this->mcc_code = $applicable_code[2];
-            } else {
-                $this->mcc_code = $applicable_code[1];
-            }
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'plant_code');
+            $this->mcc_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'mcc_plant_code');
+            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'bmc_code');
         } elseif ($this->applicable_for == 'MCC') {
             $this->mcc_code = $this->applicable_code;
-            $this->plant_code = $applicable_code[1];
+            $this->plant_code = Yii::$app->general->getforeignkey($this->mccCodes, 'plant_code');
         }
     }
 

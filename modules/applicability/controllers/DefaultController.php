@@ -113,6 +113,7 @@ class DefaultController extends Controller {
         $model_name = str_replace('_', '\\', Yii::$app->request->post('mname'));
         $field_name = Yii::$app->request->post('field');
         $field_code = Yii::$app->request->post('fcode');
+        $login_type = Yii::$app->request->post('login_type');
         $model = new $model_name();
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
         $isCheck = Yii::$app->request->post('checkdate');

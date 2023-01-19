@@ -12,7 +12,7 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('user_login_type', $model, 'login_type');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('user_login_type', $searchModel, 'login_type')],
         ['attribute' => 'receiver_type', 'value' => function($model) {
-            return isset($model->receiver_type) ? Yii::$app->dropdown->getRecords('receiver_type')['data'][$model->receiver_type] : '';
+            return Yii::$app->general->getStaticDropdownVal('receiver_type', $model, 'receiver_type');
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('receiver_type', $searchModel, 'receiver_type')],
         [
         'attribute' => 'wef_date',

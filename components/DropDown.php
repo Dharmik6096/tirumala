@@ -761,7 +761,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1385,6 +1385,11 @@ class DropDown extends Component {
                 'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'VSP'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Procurement Staff'), 'gyan_dhara_plant' => Yii::t('app', 'Gyan Dhara Plant User')],
                 'remove_key' => ['all']
             ],
+            'receiver_type' => [
+                'name' => 'receiver_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['APP NOTIFICATION' => Yii::t('app', 'APP NOTIFICATION')],
+            ],
         ];
         return $records[$l];
     }
@@ -1580,7 +1585,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
