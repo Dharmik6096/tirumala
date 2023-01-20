@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblLoanProductSaleDetails;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblLoanProductSaleDetailsSearch represents the model behind the search form about `app\modules\payment\models\TblLoanProductSaleDetails`.
@@ -87,32 +88,47 @@ class TblLoanProductSaleDetailsSearch extends TblLoanProductSaleDetails {
     }
 
     public function viewsearch($params) {
-        $query = TblLoanProductSaleDetails::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
         $this->load($params);
 
+        $output = [];
+        if (!empty($params)) {
+            $sp_params = [
+                'reference_code' => '',
+                'lock_date' => '',
+                'data_lock' => '',
+            ];
+//            $sp_params = array_merge($sp_params, $params['TblLoanProductSaleDetailsSearch']);
+
+           
+          $sp_params['reference_code'] = $this->reference_code;
+          $sp_params['lock_date'] = $this->lock_date;
+          $sp_params['data_lock'] = $this->data_lock;
+
+            $output = \Yii::$app->general->getSpData('Portal_loan_product_sale_data_lock_view', $sp_params);
+        }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+
+            $output = [];
         }
-
-//        Yii::$app->general->filterByNumber($query, $this, ['rate', 'quantity', 'amount']);
-        // grid filtering conditions
-        $query->andWhere([
-            'tbl_loan_product_sale_details.reference_code' => $this->reference_code,
-            'tbl_loan_product_sale_details.lock_date' => $this->lock_date,
-            'tbl_loan_product_sale_details.data_lock' => $this->data_lock,
-        ]);
-
-
-
+        $dataProvider = new ArrayDataProvider();
+        if (!empty($output)) {
+            $attr = '';
+            foreach ($output[0] as $att => $value) {
+                $attr .= "'" . $att . "',";
+            }
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => $output,
+                'pagination' => false,
+                'sort' => [
+                    'defaultOrder' => [],
+                    'attributes' => [
+                        $attr
+                    ],
+                ],
+            ]);
+        }
+        //var_dump($output); exit;
         return $dataProvider;
     }
 

@@ -2417,13 +2417,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '915 - Society Wise Rate Difference Report',
             ],
             'StockDispatchToMccFromStore' => [
-                'param' => 'union_code,plant_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_stock_dispatch_to_cc_from',
                 'scenario' => 'StockDispatchToMccFromStore',
                 'title' => 'Stock Dispatch To MCC',
             ],
             'StockReceivedToMcc' => [
-                'param' => 'union_code,plant_code,product_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_stock_received_to_cc_from',
                 'scenario' => 'StockReceivedToMcc',
                 'title' => 'Stock Received To MCC',

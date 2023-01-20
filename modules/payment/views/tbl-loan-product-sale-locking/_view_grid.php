@@ -8,22 +8,17 @@
 use yii\helpers\Html;
 
 $attribute = [
-    ['attribute' => 'dcs_code', 'filter' => false],
-    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-        }, 'filter' => false],
-    ['attribute' => 'member_code', 'filter' => false],
-    ['attribute' => 'member_code', 'label' => Yii::t('app', 'Member'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-        }, 'filter' => false],
-    ['attribute' => 'product_code', 'label' => Yii::t('app', 'Product'), 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
-        }, 'filter' => false],
-    ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
+    ['attribute' => 'bmc_code', 'filter' => false],
+    ['attribute' => 'bmc', 'label' => Yii::t('app', 'BMC'), 'filter' => false],
+    ['attribute' => 'customer_code', 'filter' => false],
+    ['attribute' => 'customer_name', 'filter' => false],
+    ['attribute' => 'invoice_date', 'filter' => false],
+    ['attribute' => 'product', 'filter' => false],
+    ['attribute' => 'amount', 'filter' => false],
 ];
 
 $grid_option = [
-    'id' => 'product-list',
+    'id' => 'product-lock-list',
     'attributes' => $attribute,
     'active_column' => false,
 ];

@@ -59,14 +59,14 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Product Details</h4>
         </div>
-        <div class="col-sm-2 reset_field">
+        <div class="col-sm-3 reset_field">
             <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'product_code', FALSE); ?>
         </div>
         <div class="col-sm-2 sap_batch_no">
             <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
         </div>
-        <div class=" col-sm-2 reset_field unit disabledDiv">
+        <div class=" col-sm-1 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>
         <div class="col-sm-1 reset_field number-validate">

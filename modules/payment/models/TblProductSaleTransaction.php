@@ -276,6 +276,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                         if ($stockManageIndex > 0) {
                             $saleTxnModel = new TblProductSaleTransaction();
                             $saleTxnModel->attributes = $model->attributes;
+                            unset($saleTxnModel->created_at);
+                            unset($saleTxnModel->created_by);
                             $saleTxnModel->quantity = $considerQty;
                             $saleTxnModel->sap_batch_no = $stockData->sap_batch_no;
                             $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;

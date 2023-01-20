@@ -76,6 +76,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'item_code')->textInput() ?>
     </div>
+    <div class="col-sm-2 number-validate">
+        <?= $form->field($model, 'min_stock')->textInput() ?>
+    </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'product_desc')->textarea() ?>
     </div>

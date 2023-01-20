@@ -93,7 +93,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 <div class="col-sm-1 avlCredit reset_field">
                     <?= $form->field($model, 'avl_credit')->textInput(['readOnly' => true]) ?>
                 </div>
-                <div class="col-sm-1 reset_field">
+                <div class="col-sm-3 reset_field">
                     <?php Yii::$app->dropdown->depend_dropdown('product', $detailModel, $form, 'tblproductsale-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
                 </div>
                 <?php
@@ -109,9 +109,11 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 <div class=" col-sm-1 reset_field unit disabledDiv">
                     <?= Yii::$app->dropdown->dropdown('unit_code', $detailModel, $form, 'form-group col-sm-2', $detailModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
                 </div>
+
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'rate')->textInput(['readOnly' => true]) ?>
                 </div>
+                <div class="clearfix">  </div>
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
                 </div>

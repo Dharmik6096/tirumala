@@ -90,7 +90,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Inventory Transfer Txn Details</h4>
         </div>
         <?= $form->field($model, 'inventory_transfer_code')->hiddenInput()->label(FALSE) ?>
-        <div class="col-sm-2"> 
+        <div class="col-sm-3"> 
             <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblinventorytransfer-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', $txModel->getAttributeLabel('product_code'), 'product_code'); ?>
         </div>
@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
         <div class=" col-sm-2 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>
-        <div class="col-sm-2 create_fields reset_field">
+        <div class="col-sm-1 create_fields reset_field">
             <?= $form->field($txModel, 'available_stock')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Available Stock')) ?>
         </div>
         <div class="col-sm-2 create_fields reset_field">

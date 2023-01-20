@@ -780,6 +780,8 @@ class TblProductSale extends \app\models\ChildModel {
                 $i = 1;
                 $fstockTxnModel = new TblProductStockTransaction();
                 $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;

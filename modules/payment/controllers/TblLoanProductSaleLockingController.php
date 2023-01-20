@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\payment\models\TblLoanProductSaleDetails;
 use app\modules\payment\models\TblLoanProductSaleDetailsSearch;
+use app\modules\payment\models\TblProductSaleTransaction;
+use app\modules\payment\models\TblProductSaleTransactionHistory;
 
 /**
  * TblLoanProductSaleLockingController implements the CRUD actions for TblLoanProductSaleLocking model.
@@ -61,6 +63,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
         if (Yii::$app->request->post()) {
             $searchData = Yii::$app->request->post()['TblLoanProductSaleLockingSearch'];
             $postCodes = Yii::$app->request->post()['sale_detail_code'];
+            $data = Yii::$app->request->post()['data'];
             $model = new TblLoanProductSaleLocking();
             $model->setAttributes($searchData);
             $model->locking_code = Yii::$app->general->getCodeAutoIncrement($model);
@@ -70,20 +73,28 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
             $model->total_count = count($postCodes);
             if (Yii::$app->request->post()['submitType'] == 'lock') {
                 $saveModel[] = $model;
-                foreach ($postCodes as $updateData) {
+                foreach ($postCodes as $i => $updateData) {
                     if (!empty($updateData)) {
-                        $modelSale = new TblLoanProductSaleDetails();
-                        $existSale = $modelSale->find()->where(['sale_detail_code' => $updateData])->one();
+                        if ($data[$i] == 'LOANPRODUCT') {
+                            $modelSale = new TblLoanProductSaleDetails();
+                            $existSale = $modelSale->find()->where(['sale_detail_code' => $updateData])->one();
 //                        $historyModel = new TblLoanProductSaleDetailsHistory();
 //                        Yii::$app->operation->history($existSale, $historyModel, UPDATE);
 //                        $saveModel[] = $historyModel;
+                        } elseif ($data[$i] = 'PRODUCT') {
+                            $modelSale = new TblProductSaleTransaction();
+                            $existSale = $modelSale->find()->where(['product_sale_transaction_code' => $updateData])->one();
+                            $historyModel = new TblProductSaleTransactionHistory();
+                            Yii::$app->operation->history($existSale, $historyModel, UPDATE);
+                            $saveModel[] = $historyModel;
+                        }
                         $existSale->data_lock = 1;
                         $existSale->lock_date = $model->locking_date;
                         $existSale->reference_code = $model->locking_code;
                         $saveModel[] = $existSale;
                     }
                 }
-                
+
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['PM Sale Data Lock', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);

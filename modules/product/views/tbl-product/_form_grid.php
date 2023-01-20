@@ -85,6 +85,7 @@ $attribute = [
     ],
     ['attribute' => 'dpu_product_code', 'visible' => false],
     ['attribute' => 'item_code', 'filter' => false, 'visible' => false],
+    ['attribute' => 'min_stock', 'filter' => false, 'visible' => false],
 ];
 
 $grid_option = [

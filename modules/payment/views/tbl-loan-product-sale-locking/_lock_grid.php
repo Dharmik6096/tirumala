@@ -31,14 +31,13 @@ $form = ActiveForm::begin([
         ['attribute' => 'bmc_code',
             'value' => function ($model, $key, $index) {
                 echo Html::hiddenInput('sale_detail_code[' . $index . ']', $model['sale_detail_code'], ['id' => '[' . $index . ']sale_detail_code']);
+                echo Html::hiddenInput('data[' . $index . ']', $model['data'], ['id' => '[' . $index . ']data']);
                 return $model['bmc_code'];
             },
             'filter' => FALSE],
         ['attribute' => 'bmc', 'filter' => FALSE],
-        ['attribute' => 'dcs_code', 'filter' => FALSE],
-        ['attribute' => 'dcs_name', 'filter' => FALSE],
-        ['attribute' => 'member_code', 'filter' => FALSE],
-        ['attribute' => 'member_name', 'filter' => FALSE],
+        ['attribute' => 'customer_code', 'filter' => FALSE],
+        ['attribute' => 'customer_name', 'filter' => FALSE],
         ['attribute' => 'invoice_date', 'filter' => FALSE],
         ['attribute' => 'product', 'filter' => FALSE],
         ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
