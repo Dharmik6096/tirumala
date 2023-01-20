@@ -26,7 +26,7 @@ use kartik\grid\GridView;
 $userType = Yii::$app->session->get('UserType');
 
 $script = "
-var userType ='$userType';
+var userType = '$userType';
     $('#tblinventorytransfer-from_type').on('change', function(){
             $('#tblinventorytransfer-from_mcc_plant_code').val('');
             $('#tblinventorytransfer-from_mcc_plant_code').trigger('select2:select');
@@ -77,6 +77,7 @@ var userType ='$userType';
             $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            $('.field-tblinventorytransfer-to_mcc_plant_code').addClass('disabledDiv');
             
             $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
                     let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();

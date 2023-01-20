@@ -55,11 +55,11 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-//        'download_lock_sale' => function ($url, $model) {
-//            $class = '';
-//            $options = ['title' => Yii::t('app', 'Export Lock Sale'), 'class' => $class, 'target' => '_blank'];
-//            return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/payment/tbl-product-sale-locking/export-product-sale', 'id' => $model->locking_code], $options);
-//        },
+        'download_lock_sale' => function ($url, $model) {
+            $class = '';
+            $options = ['title' => Yii::t('app', 'Export Lock Sale'), 'class' => $class, 'target' => '_blank'];
+            return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/payment/tbl-loan-product-sale-locking/export-product-sale', 'id' => $model->locking_code], $options);
+        },
         'view' => TRUE,
     ]
 ];

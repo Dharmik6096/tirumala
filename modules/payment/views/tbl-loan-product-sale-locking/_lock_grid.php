@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
         echo Html::submitButton(Yii::t('app', 'Lock'), ['class' => 'btn btn-primary submit', 'id' => 'lock', 'value' => 'lock', 'name' => 'lock']);
     }
     if (!empty($dataProvider->getModels())) {
-//        echo Html::submitButton(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary submit', 'id' => 'download', 'value' => 'download', 'name' => 'lock']);
+        echo Html::submitButton(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary submit', 'id' => 'download', 'value' => 'download', 'name' => 'lock']);
     }
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 

@@ -676,7 +676,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
                     $batch = $model->sap_batch_no;
-                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch);
+                    $userType = Yii::$app->session->get('UserType') == '5' ? TRUE : FALSE;
+                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $userType);
 
                     $f_stock = 0;
                     $qty = $detailModel->quantity;
@@ -739,7 +740,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $stockModel->setCodes(strtoupper($sale_type), $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no);
+        $userType = Yii::$app->session->get('UserType') == '5' ? TRUE : FALSE;
+        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $userType);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {

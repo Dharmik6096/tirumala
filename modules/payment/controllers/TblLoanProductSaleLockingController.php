@@ -12,6 +12,7 @@ use app\modules\payment\models\TblLoanProductSaleDetails;
 use app\modules\payment\models\TblLoanProductSaleDetailsSearch;
 use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblProductSaleTransactionHistory;
+use PHPExcel;
 
 /**
  * TblLoanProductSaleLockingController implements the CRUD actions for TblLoanProductSaleLocking model.
@@ -124,6 +125,106 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionExportProductSale($id) {
+        $controls = [];
+        $controls['ref_code'] = $id;
+        $output = \Yii::$app->general->getSpData('Portal_download_pm_lock_data', $controls);
+
+
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        $file_header = !empty($output) ? array_keys($output[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $output, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $labelArray = !empty($output) ? array_keys($output[0]) : [];
+        $labelT = 'ProductSaleLock' . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
+    }
+
+    public function downloadData($downloadDetail) {
+        $header = [
+            'mime' => '	application/vnd.ms-excel',
+            'extension' => 'xls',
+            'writer' => 'Excel2007',
+        ];
+        $objPHPExcel = new PHPExcel();
+        $sheet = $objPHPExcel->getActiveSheet();
+        /* $objPHPExcel->getDefaultStyle()
+          ->getNumberFormat()
+          ->setFormatCode(
+          \PHPExcel_Style_NumberFormat::FORMAT_TEXT
+          ); */
+        if (!empty($downloadDetail)) {
+            for ($i = 0; $i < count($downloadDetail); $i++) {
+                if (isset($downloadDetail[$i]['sale_detail_code'])) {
+                    unset($downloadDetail[$i]['sale_detail_code']);
+                }
+            }
+        }
+        $file_header = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];
+        /* $file_header = array_map(function($file_header) {
+          return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $file_header))));
+          }, array_values($file_header)); */
+
+        $sheet->fromArray(
+                $file_header, // The data to set
+                NULL, // Array values with this value will not be set
+                'A1'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $sheet->fromArray(
+                $downloadDetail, // The data to set
+                NULL, // Array values with this value will not be set
+                'A2'         // Top left coordinate of the worksheet range where
+//    we want to set these values (default is A1)
+        );
+        $labelArray = !empty($downloadDetail) ? array_keys($downloadDetail[0]) : [];
+        $labelT = 'PMSaleLock' . '-' . date('Ymdhis');
+        $fileName = $labelT . '.' . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+//        $fileName = $this->data['title'] . '-' . date('Ymdhis') . '.' . $header['extension'] .
+//                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        ob_end_clean();
+        $objWriter->save('php://output');
+        exit();
     }
 
 }

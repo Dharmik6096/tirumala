@@ -98,12 +98,14 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 </div>
                 <?php
                 if ($batchNoWiseInventory == 1) {
+                    $userType = Yii::$app->session->get('UserType');
                     $sale_type = $type == 'memberWiseSale' ? 'DCS' : 'BMC';
                     echo Html::hiddenInput('type', $sale_type, ['id' => 'batch_type_depends']);
+                    echo Html::hiddenInput('user_type', $userType, ['id' => 'user_type_depends']);
                     $depends = $type == 'memberWiseSale' ? 'tblproductsale-dcs_code' : 'tblproductsale-bmc_code';
                     ?>
                     <div class="col-sm-2 reset_field">
-                        <?= Yii::$app->dropdown->productBatch($detailModel, $form, 'batch_type_depends,' . $depends . ',tblproductsaletransaction-product_code', 'sap_batch_no', $detailModel->getAttributeLabel('sap_batch_no'), FALSE); ?> 
+                        <?= Yii::$app->dropdown->productBatch($detailModel, $form, 'batch_type_depends,' . $depends . ',tblproductsaletransaction-product_code,user_type_depends', 'sap_batch_no', $detailModel->getAttributeLabel('sap_batch_no'), FALSE); ?> 
                     </div>
                 <?php } ?>
                 <div class=" col-sm-1 reset_field unit disabledDiv">
@@ -501,6 +503,8 @@ $script = "
 
     $(document).on('change', '#tblproductsale-ex_code', function() {  
         setVendorCode();
+            $('#tblproductsale-payment_mode').val('');
+            $('#tblproductsale-payment_mode').trigger('change');
     });
     $('#tblproductsale-invoice_date').change(function(){
         $('#tblproductsale-ex_code').val('');

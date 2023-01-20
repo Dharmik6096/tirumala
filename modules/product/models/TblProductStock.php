@@ -111,12 +111,16 @@ class TblProductStock extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getExistStock($type, $batch = '') {
+    public function getExistStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
         if (!empty($batch)) {
             $query->andWhere(['sap_batch_no' => $batch]);
         }
-        if (strtoupper($type) == 'MCC') {
+        $isMcc = FALSE;
+        if ($checkMccStock && strtoupper($type) == 'BMC') {
+            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
+        if (strtoupper($type) == 'MCC' || $isMcc) {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
@@ -200,14 +204,18 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
-    public function getProductBatchList($type, $code, $product) {
+    public function getProductBatchList($type, $code, $product, $loginType) {
         $query = $this->find()->where([
                     'product_code' => $product])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
-
+        $isMcc = FALSE;
+        if ($loginType == '5' && strtoupper($type) == 'BMC') {
+            $this->bmc_code = $code;
+            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
-        if (strtoupper($type) == 'MCC') {
+        if (strtoupper($type) == 'MCC' || $isMcc) {
             $query->andWhere(['mcc_plant_code' => $code])
                     ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
