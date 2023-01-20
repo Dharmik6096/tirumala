@@ -2429,7 +2429,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Stock Received To MCC',
             ],
             'StockTransferToDcs' => [
-                'param' => 'union_code,plant_code,product_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
                 'sp_name' => 'mis_stock_transfer_from_to_destination',
                 'scenario' => 'StockTransferToDcs',
                 'title' => 'Stock Transfer To DCS',

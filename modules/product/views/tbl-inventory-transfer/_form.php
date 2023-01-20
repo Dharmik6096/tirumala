@@ -71,6 +71,31 @@ var userType ='$userType';
     });
     
     $('#tblinventorytransfer-from_mcc_plant_code').on('change', function(){
+    if(userType == 5){
+        var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
+        if(setData(f_mcc)){
+            $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+            $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+            $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            
+            $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }
+                });
+        }
+    }    
         setFromCode();
     });
     $('#tblinventorytransfer-from_bmc_code').on('change', function(){
