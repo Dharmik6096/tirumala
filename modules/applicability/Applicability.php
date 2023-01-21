@@ -333,6 +333,9 @@ class Applicability extends \yii\base\Module {
                                 $primaryKey = $model->tableSchema->primaryKey[0];
                                 unset($appModel->$primaryKey);
                                 $appModel->{$main_field_name} = $value;
+                                if ($appModel->hasMethod('setOrgDetail')) {
+                                    $appModel->setOrgDetail();
+                                }
                                 $appModel->$field_name = $this->field_value;
 //$appModel->union_code = $this->union_code;  
 

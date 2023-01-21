@@ -304,37 +304,37 @@ class User extends UserIdentity {
      */
     public function rules() {
         return [
-            [['username', 'name'], 'required'],
-            [['role'], 'required', 'on' => ['newUser']],
-            [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
+                [['username', 'name'], 'required'],
+                [['role'], 'required', 'on' => ['newUser']],
+                [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
 //			['username', 'unique'],
             ['user_code', 'unique'],
-            ['username', 'trim'],
-            [['status', 'email_confirmed', 'is_active'], 'integer'],
-            ['email', 'email', 'except' => ['DeactiveUser']],
-            ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
-            ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date'], 'safe'],
-            ['bind_to_ip', 'trim'],
-            [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
-            [['mobile_no'], function ($attribute, $params) {
+                ['username', 'trim'],
+                [['status', 'email_confirmed', 'is_active'], 'integer'],
+                ['email', 'email', 'except' => ['DeactiveUser']],
+                ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
+                ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
+                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date'], 'safe'],
+                ['bind_to_ip', 'trim'],
+                [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
-            ['password', 'required', 'on' => ['newUser', 'changePassword']],
-            ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
+                ['password', 'required', 'on' => ['newUser', 'changePassword']],
+                ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
 //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
             ['password', 'match', 'pattern' => '/^\S*$/', 'message' => Yii::t('app', 'Space not allowed in Password.')],
-            ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
-            ['repeat_password', 'compare', 'compareAttribute' => 'password'],
-            [['allow_app_login'], 'default', 'value' => 0],
-            [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
+                ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
+                ['repeat_password', 'compare', 'compareAttribute' => 'password'],
+                [['allow_app_login'], 'default', 'value' => 0],
+                [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
                     return $model->allow_app_login == 1;
                 }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }", 'except' => ['DeactiveUser']],
-            [['mobile_no'], 'unique', 'except' => ['DeactiveUser']],
-            [['name'], function ($attribute, $params) {
+                [['mobile_no'], 'unique', 'except' => ['DeactiveUser']],
+                [['name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
-            [['wef_date'], 'required', 'on' => ['DeactiveUser']],
+                [['wef_date'], 'required', 'on' => ['DeactiveUser']],
         ];
     }
 
@@ -690,6 +690,15 @@ class User extends UserIdentity {
                 ->andWhere(['<=', 'wef_date', $date])
                 ->limit($limit)
                 ->all();
+    }
+
+    public function getAppUserList($login_type) {
+        $data = $this->find()
+                ->where(['allow_app_login' => 1])
+                ->andFilterWhere(['login_type' => $login_type])
+                ->all();
+        $array = ArrayHelper::map($data, 'user_code', 'name');
+        return $array;
     }
 
 }

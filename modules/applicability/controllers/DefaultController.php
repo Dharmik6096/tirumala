@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * Default controller for the `applicability` module
@@ -149,6 +150,10 @@ class DefaultController extends Controller {
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
                 $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'ref_code', $routeCodes);
+                break;
+            case in_array($filter, ['USER']):
+                $userModel = new User();
+                $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();

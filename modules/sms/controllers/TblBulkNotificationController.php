@@ -55,7 +55,6 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->app_type = 1;
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->receiver_type = 'APP_NOTIFICATION';
             $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
             $this->model->entry_datetime = date('Y-m-d H:i:s');
             $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
