@@ -165,6 +165,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
         $appModel->dcs_filters = $value;
         $appModel->login_type = $model->login_type;
+        $appModel->is_bulk_notification = true;
 
         $appModel->fields = [
             'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
