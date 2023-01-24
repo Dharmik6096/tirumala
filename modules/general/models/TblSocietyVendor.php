@@ -33,11 +33,11 @@ class TblSocietyVendor extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_active'], 'integer'],
-            [['vendor_code'], 'string'],
-            [['dcs_code'], 'required'],
-            [['vendor_code'], 'default', 'value' => 'EIPL', 'on' => ['saveCreamyData']],
-            [['is_active'], 'default', 'value' => 1, 'on' => ['saveCreamyData']],
+                [['is_active'], 'integer'],
+                [['vendor_code'], 'string'],
+                [['dcs_code'], 'required'],
+                [['vendor_code'], 'default', 'value' => 'EIPL', 'on' => ['saveCreamyData']],
+                [['is_active'], 'default', 'value' => 1, 'on' => ['saveCreamyData']],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
                 //[['vendor_code'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['vendor_code' => 'id']],
         ];
@@ -80,6 +80,10 @@ class TblSocietyVendor extends \app\models\ChildModel {
     public function getDcsVendor($dcs_code) {
         $data = $this->find()->select('*')->where(['dcs_code' => $dcs_code])->one();
         return $data['vendor_code'];
+    }
+
+    public function getRecord() {
+        return $data = $this->find()->where(['dcs_code' => $this->dcs_code])->one();
     }
 
 }
