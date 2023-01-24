@@ -114,7 +114,7 @@ $form = ActiveForm::begin([
             <div class="form-group">
                 <?php
                 AjaxSubmitButton::begin([
-                    'label' => Yii::t('app', 'Add'),
+                    'label' => Yii::t('app', 'SAVE'),
                     'ajaxOptions' => [
                         'type' => 'POST',
                         'url' => Url::to(['create']),

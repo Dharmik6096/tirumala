@@ -28,6 +28,7 @@ $attribute = [
     ['attribute' => 'rate', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
     ['attribute' => 'quantity', 'filter' => false],
     ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
+    ['attribute' => 'reference_code', 'filter' => false],
     ['attribute' => 'remarks', 'filter' => false],
 ];
 

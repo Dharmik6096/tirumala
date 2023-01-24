@@ -48,6 +48,10 @@ $attribute = [
             $amt = Yii::$app->general->getforeignkey($model->productSaleCode, 'amount_due');
             return !empty($noOfInst) && $noOfInst != 'N/A' ? round($amt / $noOfInst, 2) : 0;
         }, 'vAlign' => 'middle', 'filter' => false, 'enableSorting' => false],
+    ['attribute' => 'transaction_no', 'filter' => false],
+    ['attribute' => 'sales_order_no', 'filter' => false],
+    ['attribute' => 'delivery_no', 'filter' => false],
+    ['attribute' => 'billing_no', 'filter' => false],
 ];
 $grid_option = [
     'id' => 'bill-head-detail-list-grid',

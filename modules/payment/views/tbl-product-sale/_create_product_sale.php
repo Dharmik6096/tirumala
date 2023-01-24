@@ -44,15 +44,16 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
 
                 <div class="col-sm-2">
                     <?php
-                    if ($cashSale) {
-                        $model->customer_type = 'DCS';
-                        echo $form->field($model, 'customer_type')->textInput(['readOnly' => True]);
-                    } else
                     if ($type == 'memberWiseSale') {
                         echo Html::activeHiddenInput($model, 'customer_type');
                         echo Yii::$app->dropdown->bmc_society($model, $form, 'tblproductsale-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'));
                     } else {
-                        $where = json_encode(['is_product_sale' => 1]);
+                        if ($cashSale) {
+                            echo Html::activeTextInput($model, 'is_cash_sale');
+                            $where = json_encode(['is_cash_sale' => 1]);
+                        } else {
+                            $where = json_encode(['is_product_sale' => 1]);
+                        }
                         $notInArr = json_encode(['Member']);
                         echo Html::hiddenInput('customer_type_depends', $where, ['id' => 'customer_type_depends']);
                         echo Html::hiddenInput('customer_type_depends_not_in', $notInArr, ['id' => 'customer_type_depends_not_in']);
@@ -142,6 +143,21 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 <div class="col-sm-1 noOfInstallment reset_field">
                     <?= $form->field($model, 'no_of_installment')->textInput() ?>
                 </div>  
+                <?php if ($cashSale) { ?>
+                    <div class="col-sm-1 reset_field">
+                        <?= $form->field($detailModel, 'transaction_no')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field">
+                        <?= $form->field($detailModel, 'sales_order_no')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field">
+                        <?= $form->field($detailModel, 'delivery_no')->textInput() ?>
+                    </div>
+                    <div class="col-sm-1 reset_field">
+                        <?= $form->field($detailModel, 'billing_no')->textInput() ?>
+                    </div>
+                <?php }
+                ?>
                 <div class="col-sm-2">
                     <?= $form->field($detailModel, 'remarks')->textInput() ?>
                 </div>  
@@ -221,7 +237,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
         </div>
         <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
             <?=
-            $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
+            $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'cashSale' => $cashSale])
             ?>
         </div>
     </div>

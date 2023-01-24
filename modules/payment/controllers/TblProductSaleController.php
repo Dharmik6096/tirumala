@@ -809,6 +809,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
     public function actionCreateProductSaleCash() {
         $model = new TblProductSale();
         $model->scenario = 'saleProduct';
+        $model->is_cash_sale = 1;
         $detailModel = new TblProductSaleTransaction();
         $detailModel->scenario = 'saleProduct';
         $searchModel = new TblProductSaleSearch();

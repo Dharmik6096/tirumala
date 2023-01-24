@@ -15,6 +15,7 @@ $attribute = [
     ['attribute' => 'invoice_date', 'filter' => false],
     ['attribute' => 'product', 'filter' => false],
     ['attribute' => 'amount', 'filter' => false],
+    ['attribute' => 'reference_code', 'filter' => false],
 ];
 
 $grid_option = [

@@ -305,9 +305,9 @@ class TblGrnController extends \app\controllers\ChildController {
                     $dispatchTxnData->grn_missing_qty = !empty($txModel->missing_qty) ? $txModel->missing_qty : 0;
                     $modelSave[] = $dispatchTxnData;
                 }
-                if ($txModel->missing_qty > 0) {
-                    $updateDispatch = FALSE;
-                }
+//                if ($txModel->missing_qty > 0) {
+//                    $updateDispatch = FALSE;
+//                }
             }
             if ($updateDispatch) {
                 $dispatchModel = new TblPlantDispatch();

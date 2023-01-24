@@ -41,6 +41,10 @@ $form = ActiveForm::begin([
         ['attribute' => 'invoice_date', 'filter' => FALSE],
         ['attribute' => 'product', 'filter' => FALSE],
         ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+        ['attribute' => 'created_at', 'value' => function($model) {
+                return Yii::$app->controls->view_datetime($model['created_at']);
+            }, 'filter' => false],
+        ['attribute' => 'created_by', 'filter' => false],
     ];
 
     $grid_option = [

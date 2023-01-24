@@ -68,7 +68,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                     return ($batchNoWiseInventory == 1 && $product_type == 2);
                 },
                 'on' => ['saleProduct', 'SaleImport']],
-            [['data_lock'], 'default', 'value' => 0]
+            [['data_lock'], 'default', 'value' => 0],
+            [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
         ];
     }
 

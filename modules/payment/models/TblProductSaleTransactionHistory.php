@@ -39,7 +39,8 @@ class TblProductSaleTransactionHistory extends \yii\db\ActiveRecord {
             [['product_sale_code', 'product_sale_rate_applicability_code', 'created_by', 'updated_by', 'operation_type'], 'safe'],
             [['rate', 'quantity', 'amount', 'remarks', 'sap_batch_no'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at', 'originating_org_code', 'originating_org_type', 'originating_type', 'reference_code'], 'safe'],
-            [['send_status'], 'default', 'value' => 0]
+            [['send_status'], 'default', 'value' => 0],
+            [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
         ];
     }
 
