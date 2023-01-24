@@ -313,15 +313,15 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = []) {
-        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode);
+    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = []) {
+        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
         $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
                     return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
                 });
         return $value;
     }
 
-    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = []) {
+    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = [], $plant_bmc = []) {
         $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode)) {
             $query->andWhere(['mcc_plant_code' => $plantCode]);
@@ -337,6 +337,9 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         if (Yii::$app->session->get('hasBMC') == 0) {
             $query->andFilterWhere(['is_mcc' => 1]);
+        }
+        if (!empty($plant_bmc)) {
+            $query->andWhere(['plant_code' => $plant_bmc]);
         }
         return $query->orderby('bmc_name asc')->all();
     }

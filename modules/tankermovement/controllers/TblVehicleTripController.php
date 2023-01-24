@@ -11,6 +11,7 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblVehicleTripDetail;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
@@ -55,24 +56,63 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->model = new TblVehicleTrip();
         $this->model->transaction_date = date('Y-m-d');
         $this->viewFile = 'create';
-
-        if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
+        $bmc_array = [];
+        if ($this->model->load(Yii::$app->request->post())) {
+            $bmc_array = $this->model->bmc_code;
+            $this->model->bmc_code = $bmc_array[0];
+            $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
             $this->model->trip_mode = 'offline';
-            $result = $this->model->setModel();
-            if ($result[0]) {
-                $transaction = $this->generalModel->saveTransaction($result[1], ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
-                if ($transaction == 'customRedirect') {
-                    if ($result[2]['inspection_require']) {
-                        return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                    'trip_code' => $result[2]['trip_code'],
-                                    'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
-                        ]);
-                    } else {
-                        return $this->{$transaction}();
+            if ($this->model->validate()) {
+                $result = $this->model->setModel();
+                if ($result[0]) {
+                    $validate = TRUE;
+                    $save_model = $result[1];
+                    foreach ($bmc_array as $key => $bmc) {
+                        $trip_detai = new TblVehicleTripDetail();
+                        if ($key == count($bmc_array) - 1) {
+                            $trip_detai->source_org_code = $bmc;
+                            $trip_detai->source_org_type = 'bmc';
+                            $trip_detai->destination_code = $this->model->dest_plant_code;
+                            $trip_detai->destination_type = 'plant';
+                        } else {
+                            $trip_detai->source_org_code = $bmc;
+                            $trip_detai->source_org_type = 'bmc';
+                            $trip_detai->destination_code = $bmc_array[$key + 1];
+                            $trip_detai->destination_type = 'bmc';
+                        }
+                        $trip_detai->originating_org_code = $this->model->union_code;
+                        $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
+                        $trip_detai->vehicle_code = $this->model->vehicle_code;
+                        $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
+                        $trip_detai->trip_code = $this->model->trip_code;
+                        $trip_detai->arrival_time = date('Y-m-d H:i:s');
+                        $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
+                        if (!$trip_detai->validate()) {
+                            $validate = FALSE;
+                            $errors = $trip_detai->getErrors();
+                            if (isset($errors['destination_code'])) {
+                                $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                            }
+                        }
+                        $save_model[] = $trip_detai;
+                    }
+                    if ($validate) {
+                        $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
+                        if ($transaction == 'customRedirect') {
+                            if ($result[2]['inspection_require']) {
+                                return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                            'trip_code' => $result[2]['trip_code'],
+                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                ]);
+                            } else {
+                                return $this->{$transaction}();
+                            }
+                        }
                     }
                 }
             }
         }
+        $this->model->bmc_code = $bmc_array;
         return $this->customRender();
     }
 

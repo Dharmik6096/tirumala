@@ -34,7 +34,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc'];
 
     /**
      * Lists all TblDcsBmc models.
@@ -499,6 +499,16 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetPlantBmc() {
+        $plantList = [];
+        if (!empty($_POST['plant_code'])) {
+            $plant = explode(',', $_POST['plant_code']);
+            $model = new TblDcsBmc();
+            $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant);
+        }
+        return Json::encode(['status' => 'success', 'data' => $plantList]);
     }
 
 }

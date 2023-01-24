@@ -39,7 +39,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatch;
  */
 class TblVehicleTrip extends \app\models\ChildModel {
 
-    public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf;
+    public $transporter_code, $is_last_destination, $challan_no, $bmc_detail, $total_qty, $rejected_count, $kg_fat, $kg_snf, $dest_plant_code, $filter_plant_code;
 
     /**
      * @inheritdoc
@@ -53,12 +53,12 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_code', 'transaction_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode'], 'safe'],
-            [['trip_status'], 'default', 'value' => 'generated'],
-            [['trip_for'], 'default', 'value' => 'bmcdispatch'],
-            [['trip_mode'], 'default', 'value' => 'online'],
+                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code', 'dest_plant_code', 'bmc_code'], 'required'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode'], 'safe'],
+                [['trip_status'], 'default', 'value' => 'generated'],
+                [['trip_for'], 'default', 'value' => 'bmcdispatch'],
+                [['trip_mode'], 'default', 'value' => 'online'],
         ];
     }
 
