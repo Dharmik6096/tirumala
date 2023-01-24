@@ -119,6 +119,9 @@ class SqliteCreate extends Component {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
+                                } else if ($field['key_field'] == 'source_org_code') {
+                                    $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(source_org_type) = 'bmc'))";
                                 } else if ($field['key_field'] == 'applicable_code') {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
