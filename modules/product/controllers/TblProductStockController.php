@@ -22,9 +22,9 @@ class TblProductStockController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1] && !empty($parents[2]))) {
-                $loginType = !empty($parents[3]) ? $parents[3] : '';
+                $check_is_mcc = !empty($parents[3]) ? TRUE : FALSE;
                 $product = new TblProductStock();
-                $data = $product->getProductBatchList($parents[0], $parents[1], $parents[2], $loginType);
+                $data = $product->getProductBatchList($parents[0], $parents[1], $parents[2], $check_is_mcc);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

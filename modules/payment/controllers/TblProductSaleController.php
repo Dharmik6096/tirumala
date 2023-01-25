@@ -740,8 +740,9 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $stockModel->setCodes(strtoupper($sale_type), $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-        $userType = Yii::$app->session->get('UserType') == '5' ? TRUE : FALSE;
-        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $userType);
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+        $batchNoWiseInventory == '1' ? TRUE : FALSE;
+        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $batchNoWiseInventory);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {

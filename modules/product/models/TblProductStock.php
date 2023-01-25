@@ -204,13 +204,13 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
-    public function getProductBatchList($type, $code, $product, $loginType) {
+    public function getProductBatchList($type, $code, $product, $check_is_mcc = false) {
         $query = $this->find()->where([
                     'product_code' => $product])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0])
                 ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
         $isMcc = FALSE;
-        if ($loginType == '5' && strtoupper($type) == 'BMC') {
+        if ($check_is_mcc && strtoupper($type) == 'BMC') {
             $this->bmc_code = $code;
             $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
         }

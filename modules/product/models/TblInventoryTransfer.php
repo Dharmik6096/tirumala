@@ -345,8 +345,15 @@ class TblInventoryTransfer extends \app\models\ChildModel {
     }
 
     public function validateToTransfer($attribute, $param) {
-        if ($this->from_type == $this->to_type && $this->from_code == $this->from_code) {
+        if ($this->from_type == $this->to_type && $this->from_code == $this->to_code) {
             $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' Not Allow to Transfer to its self.'));
+        }
+        if (strtoupper($this->to_type) == 'BMC') {
+            $is_mcc = Yii::$app->general->getforeignkey($this->bmcToCode, 'is_mcc');
+            $bmc_name = Yii::$app->general->getforeignkey($this->bmcToCode, 'bmc_name');
+            if ($is_mcc == '1') {
+                $this->addError('to_code', Yii::t('app/validation', ' Not Allow to Transfer to BMC ' . $bmc_name));
+            }
         }
     }
 
