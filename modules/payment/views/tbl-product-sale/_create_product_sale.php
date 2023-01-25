@@ -49,7 +49,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                         echo Yii::$app->dropdown->bmc_society($model, $form, 'tblproductsale-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'));
                     } else {
                         if ($cashSale) {
-                            echo Html::activeTextInput($model, 'is_cash_sale');
+                            echo Html::activeHiddenInput($model, 'is_cash_sale');
                             $where = json_encode(['is_cash_sale' => 1]);
                         } else {
                             $where = json_encode(['is_product_sale' => 1]);
