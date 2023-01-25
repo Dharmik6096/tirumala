@@ -54,7 +54,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code', 'dest_plant_code', 'bmc_code'], 'required'],
+                [['vehicle_code', 'transaction_date', 'union_code', 'plant_code', 'dest_plant_code', 'bmc_code'], 'required', 'except' => ['closetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
@@ -251,7 +251,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code,'','',FALSE);
+        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->bmc_code, '', '', FALSE);
         foreach ($sentboxArray as $sent) {
             $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);

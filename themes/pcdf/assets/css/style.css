@@ -4871,3 +4871,7 @@ tr.highlightRow {
 .whiteSpaceAllowTable .table-bordered > tbody > tr > td {
     white-space: normal !important;
 }
+
+.megaSizeDualList .bootstrap-duallistbox-container select {
+    min-height: 150px
+}

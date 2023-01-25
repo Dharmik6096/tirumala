@@ -12,6 +12,9 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTripHistory;
+use yii\helpers\Json;
+use yii\web\Response;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
@@ -58,9 +61,24 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $bmc_array = [];
         if ($this->model->load(Yii::$app->request->post())) {
+            if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
+                $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
+                $bmc_detail = explode(':::', $bmc_string);
+                unset($bmc_detail[count($bmc_detail) - 1]);
+                foreach ($bmc_detail as $k => $v) {
+                    $bmc_index = explode('~~~', $v);
+                    $bmc_array[$bmc_index[0]] = $bmc_index[1];
+                }
+                ksort($bmc_array);
+                $this->model->bmc_code = $bmc_array;
+            } else {
+                $this->model->bmc_code = NULL;
+            }
             $bmc_array = $this->model->bmc_code;
-            $this->model->bmc_code = $bmc_array[0];
-            $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+            if (!empty($bmc_array)) {
+                $this->model->bmc_code = $bmc_array[0];
+                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+            }
             $this->model->trip_mode = 'offline';
             if ($this->model->validate()) {
                 $result = $this->model->setModel();
@@ -187,6 +205,23 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCloseTrip($id) {
+        $tripModel = $this->findModel($id);
+        $historyModel = new TblVehicleTripHistory();
+        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+        $tripModel->scenario = 'closetrip';
+        $tripModel->trip_status = 'closed';
+        $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
+        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

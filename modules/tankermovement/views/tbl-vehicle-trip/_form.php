@@ -43,7 +43,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?php echo $form->field($model, 'filter_plant_code')->dropDownList([], ['prompt' => Yii::t('app', 'Select Plant')])->label(Yii::t('app', 'Plant')); ?>
     </div>
-    <div class="col-sm-12">
+    <div class="col-sm-12 megaSizeDualList">
         <?php
         echo $form->field($model, 'bmc_code', ['options' => ['class' => 'form-group col-sm-12',]])
                 ->widget(DualListbox::className(), [
@@ -58,6 +58,7 @@ $form = ActiveForm::begin([
                         'sortByInputOrder' => TRUE,
                     ],
         ]);
+        echo Html::hiddenInput('selected_bmc_seq', '', ['id' => 'selected_bmc_seq']);
         ?>
     </div>
     <div class="clearfix"></div>
@@ -135,6 +136,14 @@ $script = "
                         }
             });           
   }
+$('#vehicle-trip-form').submit(function(e) {
+ var bmcarray = '';                                      
+ var options = $('#tblvehicletrip-bmc_code option:selected');
+   options.each(function(){
+                  bmcarray += $(this).attr('data-sortindex')+'~~~'+$(this).attr('value')+':::';
+                });
+  $('#selected_bmc_seq').val(bmcarray);  
+});    
 ";
 $this->registerJs($script, View::POS_END, 'vehicle-trip-bmc-list');
 ?>
