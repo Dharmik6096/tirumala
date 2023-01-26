@@ -69,11 +69,12 @@ $attribute = [
 $grid_option = [
     'id' => 'vehicle-trip-list',
     'attributes' => $attribute,
-    'active_column' => FALSE,
+    'active_column' => true,
     'actions' => [
         'view' => TRUE,
         'generate-challan' => function ($url, $model) {
             $disable = ($model->trip_status == 'open') ? FALSE : TRUE;
+            $disable = ($model->is_active == 1) ? $disable : TRUE;
             if ($disable) {
                 return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan'], ['class' => 'disabled']);
             } else {
@@ -87,6 +88,7 @@ $grid_option = [
         },
         'print-challan' => function ($url, $model) {
             $disable = (in_array($model->trip_status, ['tankerfull', 'closed'])) ? FALSE : TRUE;
+            $disable = ($model->is_active == 1) ? $disable : TRUE;
             if ($disable) {
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan'], ['class' => 'disabled']);
             } else {
@@ -97,11 +99,22 @@ $grid_option = [
         },
         'close-trip' => function ($url, $model) {
             $disable = (in_array($model->trip_status, ['closed'])) ? TRUE : FALSE;
+            $disable = ($model->is_active == 1) ? $disable : TRUE;
             if ($disable) {
                 return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip'], ['class' => 'disabled']);
             } else {
                 $options = ['title' => Yii::t('app', 'Close Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Close Trip'), 'class' => 'close-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
                 return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip', 'id' => $model->vehicle_trip_code], $options);
+            }
+        },
+        'inactive-trip' => function ($url, $model) {
+            $disable = (!in_array($model->trip_status, ['generated'])) ? TRUE : FALSE;
+            $disable = ($model->is_active == 1) ? $disable : TRUE;
+            if ($disable) {
+                return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip'], ['class' => 'disabled']);
+            } else {
+                $options = ['title' => Yii::t('app', 'In-Active Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'In-Active Trip'), 'class' => 'inactive-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
+                return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip', 'id' => $model->vehicle_trip_code], $options);
             }
         },
     ]
@@ -152,5 +165,43 @@ $(document).ready(function(){
     }
         });
     });
+ $(document).on('click','.inactive-trip',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    bootbox.confirm({
+        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to In-Active Trip \"'+name+'\" ?</span></div></div>',
+        buttons: {
+            'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+              },
+            'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+             }
+        },
+        callback: function(result) {
+            if (result) {
+              $('#loader').show();
+                 $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['inactive-trip']) . "',
+                        data:{'id':id},
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                                $.pjax.reload({container: '#vehicle-trip-list'});
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                            else if (obj1.status == 'error'){
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                        }
+            });
+       }
+    }
+        });
+    });    
 });";
 $this->registerJs($script, View::POS_END, 'vehicle-trip-index');

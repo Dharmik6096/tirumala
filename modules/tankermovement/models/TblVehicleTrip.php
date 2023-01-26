@@ -56,10 +56,11 @@ class TblVehicleTrip extends \app\models\ChildModel {
         return [
                 [['vehicle_code', 'transaction_date', 'union_code', 'plant_code', 'dest_plant_code', 'bmc_code'], 'required', 'except' => ['closetrip']],
                 [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode'], 'safe'],
+                [['transaction_date', 'created_at', 'updated_at', 'originating_type', 'transporter_code', 'is_last_destination', 'trip_mode', 'is_active'], 'safe'],
                 [['trip_status'], 'default', 'value' => 'generated'],
                 [['trip_for'], 'default', 'value' => 'bmcdispatch'],
                 [['trip_mode'], 'default', 'value' => 'online'],
+                [['is_active'], 'default', 'value' => 1],
         ];
     }
 
@@ -73,7 +74,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
             'trip_code' => Yii::t('app', 'Trip Code'),
             'grn_no' => Yii::t('app', 'GRN No.'),
             'transaction_date' => Yii::t('app', 'Trip Date'),
-            'trip_status' => Yii::t('app', 'Status'),
+            'trip_status' => Yii::t('app', 'Trip Status'),
             'trip_for' => Yii::t('app', 'Trip For'),
             'union_code' => Yii::t('app', 'Union'),
             'plant_code' => Yii::t('app', 'Plant'),
@@ -137,9 +138,15 @@ class TblVehicleTrip extends \app\models\ChildModel {
         $this->originating_org_code = $this->union_code;
         $model = $this->find()->where(['vehicle_code' => $this->vehicle_code])
                 ->andWhere(['!=', 'trip_status', 'closed'])
-                ->orderBy(['transaction_date' => SORT_ASC])
+                ->andWhere(['is_active' => 1])
+                ->andWhere(['transaction_date' => $this->transaction_date])
+                ->orderBy(['transaction_date' => SORT_ASC, 'created_at' => SORT_ASC])
                 ->one();
-        if (!empty($model)) {
+        $same_day_trip_count = $this->find()->where(['vehicle_code' => $this->vehicle_code])
+                        ->andWhere(['!=', 'trip_status', 'closed'])
+                        ->andWhere(['is_active' => 1])
+                        ->andWhere(['transaction_date' => $this->transaction_date])->count();
+        if (!empty($model) && (($this->trip_mode != 'offline') || ($same_day_trip_count > 1))) {
             $api_res = TRUE;
             if ($model->trip_status == 'generated') {
                 $inspection = TRUE;
@@ -151,6 +158,9 @@ class TblVehicleTrip extends \app\models\ChildModel {
             } else if ($model->trip_status == 'tankerfull') {
                 $validate = FALSE;
                 $this->addError('vehicle_code', Yii::t('app', 'Tanker is Full Trip No. ' . $model->trip_code));
+            } else if ($this->trip_mode == 'offline') {
+                $validate = FALSE;
+                $this->addError('vehicle_code', Yii::t('app', '2 Trips are already open for Tanker.'));
             }
             if ($this->is_last_destination == 1) {
                 $model->trip_status = 'tankerfull';

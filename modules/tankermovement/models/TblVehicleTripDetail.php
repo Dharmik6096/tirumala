@@ -55,9 +55,10 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 [['destination_code', 'destination_type', 'source_org_code', 'source_org_type'], 'required'],
                 [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'is_last_destination'], 'safe'],
-                [['travel_km', 'originating_type'], 'safe'],
+                [['travel_km', 'originating_type', 'is_active'], 'safe'],
                 [['is_last_destination'], 'default', 'value' => 0],
-                [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
+                [['is_active'], 'default', 'value' => 1],
+                //   [['destination_code'], 'unique', 'targetAttribute' => ['trip_code', 'destination_code', 'destination_type'], 'message' => Yii::t('app/validation', 'Trip for BMC has been already taken.')]
         ];
     }
 

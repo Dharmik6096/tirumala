@@ -62,7 +62,7 @@ class TblVehicleTripHistory extends \yii\db\ActiveRecord {
                 [['plant_code', 'mcc_plant_code'], 'safe'],
                 [['bmc_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_active'], 'safe'],
         ];
     }
 

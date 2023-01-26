@@ -114,7 +114,14 @@ $this->title = Yii::$app->label->title('view', 'Vehicle Trip');
                         'columns' => [
                                 [
                                 'attribute' => 'grn_no',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'is_active',
+                                'label' => 'Status',
+                                'format' => 'html',
+                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],

@@ -224,4 +224,30 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         return Json::encode($record);
     }
 
+    public function actionInactiveTrip($id) {
+        $saveModel = [];
+        $tripModel = $this->findModel($id);
+        $historyModel = new TblVehicleTripHistory();
+        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+        $tripModel->scenario = 'closetrip';
+        $tripModel->trip_status = 'closed';
+        $tripModel->is_active = 0;
+        $saveModel[] = $historyModel;
+        $saveModel[] = $tripModel;
+        $tripDetail = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $id])->all();
+        foreach ($tripDetail as $detail) {
+            $detail->is_active = 0;
+            $saveModel[] = $detail;
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip In-Active', 'edit']);
+        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
 }
