@@ -6,6 +6,9 @@ use Yii;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
 
 /**
@@ -54,17 +57,18 @@ class TblMilkTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['milk_transfer_code'], 'safe'],
-            [['milk_transfer_code', 'from_date', 'to_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'to_shift'], 'required', 'except' => 'androidsync'],
-            [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
-            [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
-            [['fat', 'snf', 'qty', 'temp'], 'safe'],
-            [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['fat', 'snf', 'qty'], 'number'],
-            [['fat', 'snf', 'qty', 'transfer_type'], 'default', 'value' => 0],
-            [['fat', 'qty', 'snf'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
-            [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
+                [['source_type', 'destination_type'], 'default', 'value' => 'BMC'],
+                [['milk_transfer_code'], 'safe'],
+                [['milk_transfer_code', 'from_date', 'to_date', 'source_code', 'destination_code', 'vehicle_no', 'fat', 'snf', 'qty', 'from_shift', 'to_shift', 'source_type', 'destination_type'], 'required', 'except' => 'androidsync'],
+                [['from_date', 'to_date', 'transaction_id', 'union_code', 'source_code', 'destination_code', 'vehicle_no'], 'safe'],
+                [['from_shift', 'to_shift', 'transfer_type', 'originating_type'], 'safe'],
+                [['fat', 'snf', 'qty', 'temp'], 'safe'],
+                [['remarks', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['created_by', 'updated_by', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['fat', 'snf', 'qty'], 'number'],
+                [['fat', 'snf', 'qty', 'transfer_type'], 'default', 'value' => 0],
+                [['fat', 'qty', 'snf'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
+                [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
         ];
     }
 
@@ -101,6 +105,8 @@ class TblMilkTransfer extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'source_type' => Yii::t('app', 'Source Type'),
+            'destination_type' => Yii::t('app', 'Destination Type'),
         ];
     }
 
@@ -108,12 +114,36 @@ class TblMilkTransfer extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getSourceCode() {
+    public function getCustomerCodeSource() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'source_code']);
+    }
+
+    public function getBmcCodeSource() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'source_code']);
     }
 
-    public function getDestCode() {
+    public function getMccPlantCodeSource() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'source_code']);
+    }
+
+    public function getPlantCodeSource() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'source_code']);
+    }
+
+    public function getCustomerCodeDest() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'destination_code']);
+    }
+
+    public function getBmcCodeDest() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'destination_code']);
+    }
+
+    public function getMccPlantCodeDest() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'destination_code']);
+    }
+
+    public function getPlantCodeDest() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
 
     public function getFromShiftCode() {

@@ -255,7 +255,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+            if (!empty($parents[0]) && !empty($parents[1])) {
                 if (strtolower($parents[0]) == 'bmc') {
                     $model = new TblDcsBmc();
                     $data = $model->getBMCList('');
@@ -264,7 +264,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $data = $model->getPlantList($parents[1]);
                 } else {
                     $model = new TblCustomerMaster();
-                    $data = $model->getCustomerCodeList($parents[0], $parents[2]);
+                    $data = $model->getCustomerCodeList($parents[2], $parents[0], $parents[1]);
                 }
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
