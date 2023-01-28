@@ -98,21 +98,21 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 if (empty($model->bmc_milk_dispatch_code)) {
                     $new_rec = TRUE;
                     $model->originating_org_code = $model->union_code;
-                    $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
+                    $model->bmc_milk_dispatch_code = Yii::$app->general->getPrimaryCode($model); //Yii::$app->general->getUuid();
                     $model->challan_no = $model->trip_code . '/' . $model->bmc_code . '/1';
                     $model->driver_name = $model->vehicleCode->driver_name;
                     $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
-                    $trip_detail = new TblVehicleTripDetail();
-                    $trip_detail->trip_code = $model->trip_code;
-                    $trip_detail->originating_org_code = $model->union_code;
-                    $trip_detail->destination_code = $model->bmc_code;
-                    $trip_detail->destination_type = 'bmc';
-                    $trip_data = $trip_detail->getTripDetailEntry();
-                    if ($trip_data) {
-                        $saveModel[] = $trip_data;
-                    }
+                    /* $trip_detail = new TblVehicleTripDetail();
+                      $trip_detail->trip_code = $model->trip_code;
+                      $trip_detail->originating_org_code = $model->union_code;
+                      $trip_detail->destination_code = $model->bmc_code;
+                      $trip_detail->destination_type = 'bmc';
+                      $trip_data = $trip_detail->getTripDetailEntry();
+                      if ($trip_data) {
+                      $saveModel[] = $trip_data;
+                      } */
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;

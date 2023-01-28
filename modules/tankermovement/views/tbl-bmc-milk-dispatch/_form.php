@@ -12,7 +12,6 @@ $bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -57,7 +56,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
             </div>
             <div class="col-sm-2"> 
-                <?= $form->field($model, 'trip_code')->textInput(['readonly' => 'readonly']) ?>
+                <?= $form->field($model, 'trip_code')->textInput(); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, FALSE, true); ?>
@@ -84,7 +83,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code')); ?>
             </div>
             <!--        <div class="col-sm-2 mt15">
-            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();  ?>
+            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
                     </div>-->
             <div class="col-sm-4"> 
                 <?= $form->field($model, 'remarks')->textInput() ?>
@@ -96,6 +95,7 @@ $form = ActiveForm::begin([
                 <table class="table tab-bordered">
                     <thead>
                         <tr>
+                            <th>Type</th>
                             <th>Milk Type</th>
                             <th>Quality Type</th>
                             <th>Silo No.</th>                 
@@ -108,116 +108,116 @@ $form = ActiveForm::begin([
             </div>
         </div>
     </div>
-        <div class="col-md-12 padding_10_0 theme-box ">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
-            </div>
-            <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
-                <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= Yii::$app->dropdown->dropdown('qty_diff_type', $txn_model, $form, '', true, false, 'qty_diff_type_code'); ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'qty_diff')->textInput() ?>
-            </div>
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
+        </div>
+        <div class="col-sm-1"> 
+            <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
+            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= Yii::$app->dropdown->dropdown('qty_diff_type', $txn_model, $form, '', true, false, 'qty_diff_type_code'); ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'qty_diff')->textInput() ?>
+        </div>
 
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'fat')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'snf')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'water')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'temperature')->textInput() ?>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'clr')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'protein')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'density')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'lactose')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
-            </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'fat')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'snf')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'water')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'temperature')->textInput() ?>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'clr')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'protein')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'density')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'lactose')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
+        </div>
 
-            <div class="col-sm-1"> 
-                <?= $form->field($txn_model, 'hsn_code')->textInput() ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= $form->field($txn_model, 'seal_no_top')->textInput() ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= $form->field($txn_model, 'seal_no_bottom')->textInput() ?>
-            </div>
-            <div class="col-sm-1"> 
-                <?= $form->field($txn_model, 'seal_no_broken')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'dip_open')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'dip_close')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'rtpl')->textInput() ?>
-            </div>
-            <div class="col-sm-1 number-validate"> 
-                <?= $form->field($txn_model, 'amount')->textInput(['readonly' => 'readonly']) ?>
-            </div>
-            <div id="transactions-from">
+        <div class="col-sm-1"> 
+            <?= $form->field($txn_model, 'hsn_code')->textInput() ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= $form->field($txn_model, 'seal_no_top')->textInput() ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= $form->field($txn_model, 'seal_no_bottom')->textInput() ?>
+        </div>
+        <div class="col-sm-1"> 
+            <?= $form->field($txn_model, 'seal_no_broken')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'dip_open')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'dip_close')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'rtpl')->textInput() ?>
+        </div>
+        <div class="col-sm-1 number-validate"> 
+            <?= $form->field($txn_model, 'amount')->textInput(['readonly' => 'readonly']) ?>
+        </div>
+        <div id="transactions-from">
 
-            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12 margin-top-10 shortcut-main mt15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
-                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-                <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
-            </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 margin-top-10 shortcut-main mt15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
         </div>
     </div>
-    <?php ActiveForm::end(); ?>
-        <div class="col-md-12 padding_10_0 theme-box ">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
-            </div>
-            <div id="transactions-detial">
+</div>
+<?php ActiveForm::end(); ?>
+<div class="col-md-12 padding_10_0 theme-box ">
+    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+        <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions Detail') ?></h4>
+    </div>
+    <div id="transactions-detial">
 
-            </div>
-        </div>
+    </div>
+</div>
 <?php
 $script = "$(document).ready(function(){
 var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
@@ -269,7 +269,7 @@ $script .= "
                 success: function(data) {
                   var data=$.parseJSON(data);
                   if (data.status == 'success'){   
-                    $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
+                   // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
                     BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
                 }else {
                     $('#loadercontent').hide();

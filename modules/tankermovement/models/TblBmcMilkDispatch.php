@@ -227,13 +227,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $error_msg = '';
         $trip_code = '';
         if ($this->CheckDateValidation()) {
-            $trip = TblVehicleTrip::find()->where(['vehicle_code' => $this->vehicle_code, 'lower(trip_status)' => ['generated', 'open']])->one();
-            if (!empty($trip)) {
-                $trip_code = $trip->trip_code;
-            } else {
-                $status = 'error';
-                $error_msg = Yii::t('app/validation', 'Trip No. not available.');
-            }
+            /*  $trip = TblVehicleTrip::find()->where(['vehicle_code' => $this->vehicle_code, 'lower(trip_status)' => ['generated', 'open']])->one();
+              if (!empty($trip)) {
+              $trip_code = $trip->trip_code;
+              } else {
+              $status = 'error';
+              $error_msg = Yii::t('app/validation', 'Trip No. not available.');
+              } */
         } else {
             $status = 'error';
             $error_msg = $this->getErrors()['to_date'][0];
