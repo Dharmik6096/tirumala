@@ -51,7 +51,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
 
         $this->load($params);
         $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc', 'tbl_bmc', 'tbl_bmc');
 
 
         if (Yii::$app->session->get('BMC') !== '')
@@ -62,7 +62,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
             // $query->where('0=1');
             return $dataProvider;
         }
-         $query->joinWith(['channelMaster']);
+        $query->joinWith(['channelMaster']);
         if (!empty($this->mcc_plant_code)) {
             $query->joinWith(['tblMccPlant']);
             $query->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code]);
