@@ -138,9 +138,9 @@ class TblOrgFileLog extends \app\models\ChildModel {
                     chdir($crnt_dir);
                     if (strtolower($eiplCode) == 'dodla') {
                         $appendDate = date('dmy');
-                        if (strstr($ratefile, 'cow') == 'cow') {
+                        if (strstr($ratefile, 'cow')) {
                             $fileName = 'CM' . $appendDate . '.RC1';
-                        } else if (strstr($ratefile, 'mix') == 'mix') {
+                        } else if (strstr($ratefile, 'mix')) {
                             $fileName = 'MM' . $appendDate . '.RM1';
                         } else {
                             $fileName = 'BM' . $appendDate . '.RB1';

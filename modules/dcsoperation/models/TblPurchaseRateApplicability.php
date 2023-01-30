@@ -227,7 +227,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         foreach ($milktypes as $milktype) {
             $fileName = $path . '/rate_chart_' . strtolower($milktype->animal_type_name) . '.txt';
             $name = strtolower($milktype->animal_type_name) == 'mix' ? 'MIXED' : $milktype->animal_type_name;
-            $text = $this->prepareData($id, $milktype->animal_type_code, $name, $dcs, $eiplCode);
+            $text = $this->prepareData($id, $milktype->animal_type_code, $name, $dcs, $eiplCode, $milktype->animal_type_name);
             if ($text != false) {
                 $ratefile = fopen($fileName, "w") or die("Unable to open file!");
                 if (fwrite($ratefile, $text)) {
@@ -239,7 +239,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         return $files;
     }
 
-    private function prepareData($id, $milk_type, $name, $dcs, $eiplCode = '') {
+    private function prepareData($id, $milk_type, $name, $dcs, $eiplCode = '', $milkTypeName = '') {
         $purchaseDetail = new TblPurchaseRateDetails();
         $purchaseDetail->milk_type_code = $milk_type;
         $purchaseDetail->purchase_rate_code = $id;
@@ -252,9 +252,9 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 
             if (strtolower($eiplCode) == 'dodla') {
                 $appendDate = date('dmy');
-                if (strtolower($milk_type) == 'cow') {
+                if (strtolower($milkTypeName) == 'cow') {
                     $fileName = 'CM' . $appendDate;
-                } else if (strtolower($milk_type) == 'mix') {
+                } else if (strtolower($milkTypeName) == 'mix') {
                     $fileName = 'MM' . $appendDate;
                 } else {
                     $fileName = 'BM' . $appendDate;
