@@ -551,6 +551,15 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $model->$name, $readonly);
     }
 
+    public function vehicleOpenTrip($model, $form, $depends, $name = 'trip_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly);
+        }
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

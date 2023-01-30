@@ -21,6 +21,8 @@ use yii\web\Response;
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['open-trip-list'];
+
     /**
      * Lists all TblVehicleTrip models.
      * @return mixed
@@ -248,6 +250,23 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionOpenTripList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+                $tripCode = isset($parents[3]) ? $parents[3] : '';
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

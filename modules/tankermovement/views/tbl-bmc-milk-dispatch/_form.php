@@ -8,6 +8,7 @@ use yii\widgets\MaskedInput;
 
 $disabled = empty($model->bmc_milk_dispatch_code) ? '' : 'disabled';
 $bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
+$readonly = $type == 'edit' ? true : false;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -55,11 +56,12 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 filldata"> 
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
             </div>
-            <div class="col-sm-2"> 
-                <?= $form->field($model, 'trip_code')->textInput(); ?>
-            </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, FALSE, true); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false, $readonly); ?>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -67,7 +69,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_out_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
-
             <div class="clearfix"></div>
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'gross_weight')->textInput() ?>
@@ -83,7 +84,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code')); ?>
             </div>
             <!--        <div class="col-sm-2 mt15">
-            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
+            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();    ?>
                     </div>-->
             <div class="col-sm-4"> 
                 <?= $form->field($model, 'remarks')->textInput() ?>

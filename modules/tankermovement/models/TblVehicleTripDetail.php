@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\syncutility\models\TblSentbox;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_trip_detail".
@@ -127,6 +128,10 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
 
+    public function getTripCode() {
+        return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
+    }
+
     public function getTripDetailEntry() {
         $model = TblVehicleTrip::findOne(['trip_code' => $this->trip_code]);
         $last_trip = TblVehicleTripDetail::find()
@@ -176,6 +181,22 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->originating_org_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function getOpenTripList($bmc_code, $vehicle_code, $transaction_date, $tripCode = '') {
+        $transaction_date = date('Y-m-d', strtotime($transaction_date));
+        $query = TblVehicleTripDetail::find()
+                ->select(['tbl_vehicle_trip.trip_code'])
+                ->distinct()
+                ->joinWith(['tripCode'])
+                ->where(['tbl_vehicle_trip.transaction_date' => $transaction_date])
+                ->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']])
+                ->andWhere(['tbl_vehicle_trip_detail.vehicle_code' => $vehicle_code, 'tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code]);
+        if (!empty($tripCode)) {
+            $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode]);
+        }
+        $data = $query->all();
+        return ArrayHelper::map($data, 'trip_code', 'trip_code');
     }
 
 }

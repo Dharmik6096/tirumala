@@ -210,6 +210,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
             if (!empty($stock_date)) {
                 $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+                $dispatch_date .= '.000000';
                 if ($this->from_date < $dispatch_date) {
                     $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date.'));
                     return FALSE;
