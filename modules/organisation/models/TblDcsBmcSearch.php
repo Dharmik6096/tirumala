@@ -51,7 +51,7 @@ class TblDcsBmcSearch extends TblDcsBmc {
 
         $this->load($params);
         $query->joinWith(['dcsCode']);
-        Yii::$app->general->filterByOrg($query, $this);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc', 'tbl_bmc', 'tbl_bmc');
 
 
         if (Yii::$app->session->get('BMC') !== '')
