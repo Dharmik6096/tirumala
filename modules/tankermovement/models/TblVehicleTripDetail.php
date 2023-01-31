@@ -189,9 +189,15 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 ->select(['tbl_vehicle_trip.trip_code'])
                 ->distinct()
                 ->joinWith(['tripCode'])
-                ->where(['tbl_vehicle_trip.transaction_date' => $transaction_date])
-                ->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']])
-                ->andWhere(['tbl_vehicle_trip_detail.vehicle_code' => $vehicle_code, 'tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code]);
+                ->where(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
+        if ($bmc_code == 'receipt') {
+            $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
+        } else {
+            $query->andWhere(['tbl_vehicle_trip.transaction_date' => $transaction_date]);
+            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
+            $query->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code]);
+        }
         if (!empty($tripCode)) {
             $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode]);
         }

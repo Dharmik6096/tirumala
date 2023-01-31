@@ -88,20 +88,21 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $tripModel->trip_code = $this->model->trip_code;
                     $tripExist = $tripModel->getTripData();
                     $tripModel = $tripExist;
+                    $tripModel->scenario = 'closetrip';
                     $tripModel->grn_no = $this->model->grn_no;
                     $tripModel->trip_status = 'closed';
                     $modelSave[] = $tripModel;
-                    $tripDetailModel = new TblVehicleTripDetail();
-                    $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
-                    $trhistoryModel = new TblVehicleTripDetailHistory();
-                    Yii::$app->operation->history($last_trip, $trhistoryModel, UPDATE);
-                    $modelSave[] = $trhistoryModel;
-                    $tripDetailModel = $last_trip;
-                    $tripDetailModel->source_org_code = $last_trip->destination_code;
-                    $tripDetailModel->source_org_type = $last_trip->destination_type;
-                    $tripDetailModel->destination_code = !empty($this->model->customer_code) ? $this->model->customer_code : $this->model->plant_code;
-                    $tripDetailModel->destination_type = !empty($this->model->customer_type) ? $this->model->customer_type : 'PLANT';
-                    $modelSave[] = $tripDetailModel;
+                    /*  $tripDetailModel = new TblVehicleTripDetail();
+                      $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
+                      $trhistoryModel = new TblVehicleTripDetailHistory();
+                      Yii::$app->operation->history($last_trip, $trhistoryModel, UPDATE);
+                      $modelSave[] = $trhistoryModel;
+                      $tripDetailModel = $last_trip;
+                      $tripDetailModel->source_org_code = $last_trip->destination_code;
+                      $tripDetailModel->source_org_type = $last_trip->destination_type;
+                      $tripDetailModel->destination_code = !empty($this->model->customer_code) ? $this->model->customer_code : $this->model->plant_code;
+                      $tripDetailModel->destination_type = !empty($this->model->customer_type) ? $this->model->customer_type : 'PLANT';
+                      $modelSave[] = $tripDetailModel; */
                 }
                 if (!empty($trPost['milk_vehicle_entry_transaction_code'])) {
                     $txnExist = TblMilkVehicleEntryTransaction::findOne($trPost['milk_vehicle_entry_transaction_code']);
@@ -142,16 +143,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model, $txn_model));
             }
-        } else {
-            return $this->render('create', [
-                        'model' => $this->model, 'txn_model' => $txn_model,
-                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
-            ]);
         }
         return $this->render('create', [
-                    'model' => $this->model,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+                    'model' => $this->model, 'txn_model' => $txn_model,
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 

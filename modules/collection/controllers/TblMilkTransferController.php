@@ -121,8 +121,13 @@ class TblMilkTransferController extends \app\controllers\ChildController {
     public function setModel(&$model) {
         $model->from_date = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : '';
         $model->from_date = $model->from_date . ' ' . \Yii::$app->general->getshift($model->from_shift);
-        $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
-        $model->to_date = $model->to_date . ' ' . \Yii::$app->general->getshift($model->to_shift);
+        if ($model->transfer_type == 1) {
+            $model->to_date = $model->from_date;
+            $model->to_shift = $model->from_shift;
+        } else {
+            $model->to_date = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : '';
+            $model->to_date = $model->to_date . ' ' . \Yii::$app->general->getshift($model->to_shift);
+        }
     }
 
 }

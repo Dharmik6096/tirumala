@@ -58,18 +58,18 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required'],
-            [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
-            [['gross_weight', 'tare_weight'], 'number'],
-            [['originating_type'], 'integer'],
-            [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
+                [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required'],
+                [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
+                [['gross_weight', 'tare_weight'], 'number'],
+                [['originating_type'], 'integer'],
+                [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
                     return $model->receipt_at == 'VENDOR';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentry-receipt_at').val() == 'VENDOR';
           }"],
-            [['trip_code'], 'validateBottle'],
-            [['tare_weight_time'], 'validateTime'],
+                [['trip_code'], 'validateBottle'],
+                [['tare_weight_time'], 'validateTime'],
         ];
     }
 
@@ -137,7 +137,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'receipt_sample_testing_count', 'PORTAL');
         $sampleBottle = TblSampleBottleTesting::find()->where(['trip_code' => $this->trip_code])->count();
         if ($sampleBottle < $bottleCount) {
-            $this->addError('trip_code', "Receipt Not Allow.");
+            $this->addError('trip_code', "Receipt Not Allow (Receipt Sample Testing Count mismatch).");
         }
     }
 

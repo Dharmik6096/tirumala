@@ -167,6 +167,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $saveModel[] = $dispact_txn;
                         $cnt++;
                     }
+                    $model->scenario = 'closetrip';
                     $model->trip_status = 'tankerfull';
                     $saveModel[] = $model;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Consolidate Challan with Challan No. ' . $dispact_consolidate->bmc_dispatch_consolidated_code, 'create']);

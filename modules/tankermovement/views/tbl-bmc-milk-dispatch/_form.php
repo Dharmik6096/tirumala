@@ -8,7 +8,7 @@ use yii\widgets\MaskedInput;
 
 $disabled = empty($model->bmc_milk_dispatch_code) ? '' : 'disabled';
 $bmc_milk_dispatch_code = $model->bmc_milk_dispatch_code;
-$readonly = $type == 'edit' ? true : false;
+$readonly = empty($model->bmc_milk_dispatch_code) ? FALSE : TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -31,37 +31,37 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, false, 'to_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE); ?>
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE); ?>
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
             </div>
             <div class="clearfix"></div>
 
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE); ?>
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata"> 
-                <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
+                <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false, $readonly); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -78,10 +78,10 @@ $form = ActiveForm::begin([
             </div>
 
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, false, 'destination_type'); ?>
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'destination_type'); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code')); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <!--        <div class="col-sm-2 mt15">
             <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();    ?>
@@ -249,16 +249,12 @@ $script .= "
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
        if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != '' && vehicle_code !=''){
-            $('#loadercontent').show();
-            $('#pageloader').show();
+          //  $('#loadercontent').show();
+          //  $('#pageloader').show();
             $('#purchase-detial').html('');
             $('#transactions-from').html('');
-            $('#transactions-detial').html('');  
-           if(bmc_milk_dispatch_code == ''){
-            CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code)
-            }else{
-            BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);
-            }
+            $('#transactions-detial').html('');           
+            BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
     
@@ -305,12 +301,12 @@ $script .= "
                 data: {'bmc_milk_dispatch_code' : bmc_milk_dispatch_code},             
                 success: function(data) {
                   $('#transactions-detial').html(data);
-                  $('#loadercontent').hide();
-                  $('#pageloader').hide();  
+               //   $('#loadercontent').hide();
+               //   $('#pageloader').hide();  
                 },
                 error: function(data) {  
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
+                //    $('#loadercontent').hide();
+                 //   $('#pageloader').hide();
                 }
             });     
     }

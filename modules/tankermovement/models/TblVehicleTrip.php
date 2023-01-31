@@ -256,7 +256,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
 
     public function getTripData() {
         return $this->find()
-                        ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['tankerfull', 'open']])->one();
+                        ->where(['trip_code' => $this->trip_code, 'lower(trip_status)' => ['tankerfull', 'open', 'generated']])->one();
     }
 
     public function afterSave($insert, $changedAttributes) {

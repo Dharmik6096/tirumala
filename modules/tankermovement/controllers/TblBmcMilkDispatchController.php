@@ -21,6 +21,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
+use app\modules\tankermovement\models\TblVehicleTrip;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -98,21 +99,29 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 if (empty($model->bmc_milk_dispatch_code)) {
                     $new_rec = TRUE;
                     $model->originating_org_code = $model->union_code;
-                    $model->bmc_milk_dispatch_code = Yii::$app->general->getPrimaryCode($model); //Yii::$app->general->getUuid();
+                    $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
                     $model->challan_no = $model->trip_code . '/' . $model->bmc_code . '/1';
                     $model->driver_name = $model->vehicleCode->driver_name;
                     $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;
                     $model->vehicle_out_time = $model->transaction_date . ' ' . $model->vehicle_out_time;
-                    /* $trip_detail = new TblVehicleTripDetail();
-                      $trip_detail->trip_code = $model->trip_code;
-                      $trip_detail->originating_org_code = $model->union_code;
-                      $trip_detail->destination_code = $model->bmc_code;
-                      $trip_detail->destination_type = 'bmc';
-                      $trip_data = $trip_detail->getTripDetailEntry();
-                      if ($trip_data) {
-                      $saveModel[] = $trip_data;
-                      } */
+                    $tripModel = new TblVehicleTrip();
+                    $tripModel->trip_code = $model->trip_code;
+                    $tripModel = $tripModel->getTripData();
+                    if (!empty($tripModel)) {
+                        $tripModel->scenario = 'closetrip';
+                        $tripModel->trip_status = 'open';
+                        $saveModel[] = $tripModel;
+                    }
+                    $trip_detail = TblVehicleTripDetail::find()
+                                    ->where(['trip_code' => $model->trip_code])
+                                    ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
+                                    ->andWhere(['IS', 'challan_no', NULL])
+                                    ->orderBy(['created_at' => SORT_ASC])->one();
+                    if (!empty($trip_detail)) {
+                        $trip_detail->challan_no = $model->challan_no;
+                        $saveModel[] = $trip_detail;
+                    }
                     $saveModel[] = $model;
                 }
                 $txn_model->attributes = $model->attributes;
