@@ -76,9 +76,12 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
             $this->model->setAttributes($masterPost);
             $txn_model->setAttributes($trPost);
+            if (!empty($masterPost['milk_vehicle_entry_code'])) {
+                $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
+                $txn_model->entry_type = Yii::$app->request->post()['entry_type'];
+            }
             if ($this->model->validate() && $txn_model->validate()) {
                 if (!empty($masterPost['milk_vehicle_entry_code'])) {
-                    $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
                     $this->model->load(Yii::$app->request->post());
                 } else {
                     $this->model->originating_org_code = $this->model->union_code;

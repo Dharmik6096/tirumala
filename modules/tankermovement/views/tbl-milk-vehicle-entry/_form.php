@@ -24,6 +24,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
 <?= Html::activeHiddenInput($model, 'milk_vehicle_entry_code'); ?>
+<?= Html::hiddenInput('entry_type', '', ['id' => 'entry_type']); ?>
 <div class="micro_form">
     <div class="row">
         <div class="col-lg-10 master_fields <?= $disabled ?>">
@@ -181,8 +182,6 @@ $form = ActiveForm::begin([
                         'beforeSend' => new JsExpression('function(data){
                                                 $("#loadercontent").show();
                                                 $("#pageloader").show();
-                                                $("#milk-vehicle-form .master_fields select").attr("disabled", false);
-                                                $("#tblmilkvehicleentrytransaction-entry_type" ).prop("disabled", false);                                                              
                                                 }'),
                         'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
@@ -199,6 +198,7 @@ $form = ActiveForm::begin([
                                                                     reloadGrid();
                                                                     $(".master_fields").addClass("disabled");
                                                                     $(".entry_type").addClass("disabled");
+                                                                    $("#entry_type").val($("#tblmilkvehicleentrytransaction-entry_type" ).val());
                                                                     $("#milk-vehicle-form .master_fields select").attr("disabled", true);
                                                                     $("#tblmilkvehicleentrytransaction-entry_type" ).prop("disabled", true);
                                                                     $("#milk-vehicle-form .reset_field input").val("");
@@ -392,6 +392,10 @@ $script = "
                         $.each(data.modelData, function(index, value) {
                             $('#tblmilkvehicleentrytransaction-'+index).val(value);
                         });
+                            $('#tblmilkvehicleentrytransaction-challan_no').change();
+                            $('#tblmilkvehicleentrytransaction-milk_type_code').change();
+                            $('#tblmilkvehicleentrytransaction-milk_quality_type_code').change();
+                            $('#tblmilkvehicleentrytransaction-chamber_no').change();
                             $('#tblmilkvehicleentrytransaction-source').val(data.source);
                             $('#tblmilkvehicleentrytransaction-destination').val(data.dest);
 //                         $('#tblmilkvehicleentry-milk_vehicle_entry_code').val(data.modelData.milk_vehicle_entry_code);
