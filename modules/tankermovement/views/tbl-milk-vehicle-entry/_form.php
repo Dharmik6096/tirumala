@@ -392,10 +392,14 @@ $script = "
                         $.each(data.modelData, function(index, value) {
                             $('#tblmilkvehicleentrytransaction-'+index).val(value);
                         });
-                            $('#tblmilkvehicleentrytransaction-challan_no').change();
-                            $('#tblmilkvehicleentrytransaction-milk_type_code').change();
-                            $('#tblmilkvehicleentrytransaction-milk_quality_type_code').change();
-                            $('#tblmilkvehicleentrytransaction-chamber_no').change();
+                            $('#tblmilkvehicleentrytransaction-challan_no').trigger('change');
+                            $('#tblmilkvehicleentrytransaction-challan_no').trigger('select2:select');
+                            $('#tblmilkvehicleentrytransaction-milk_type_code').trigger('change');
+                            $('#tblmilkvehicleentrytransaction-milk_type_code').trigger('select2:select');
+                            $('#tblmilkvehicleentrytransaction-milk_quality_type_code').trigger('change');
+                            $('#tblmilkvehicleentrytransaction-milk_quality_type_code').trigger('select2:select');
+                            $('#tblmilkvehicleentrytransaction-chamber_no').trigger('change');
+                            $('#tblmilkvehicleentrytransaction-chamber_no').trigger('select2:select');
                             $('#tblmilkvehicleentrytransaction-source').val(data.source);
                             $('#tblmilkvehicleentrytransaction-destination').val(data.dest);
 //                         $('#tblmilkvehicleentry-milk_vehicle_entry_code').val(data.modelData.milk_vehicle_entry_code);
