@@ -1191,6 +1191,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberCollectionReportForSap() {
+        $this->report = 'MemberCollectionReportForSap';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2370,6 +2375,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_wise_rate_different',
                 'scenario' => 'SocietyWiseRateDifferenceReport',
                 'title' => '915 - Society Wise Rate Difference Report',
+            ],
+            'MemberCollectionReportForSap' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'portal_export_milk_collection',
+                'scenario' => 'MemberCollectionReportForSap',
+                'title' => '112 - Member Collection Report For SAP',
             ],
         ];
         return $label[$l];
