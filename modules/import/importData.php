@@ -147,6 +147,8 @@ class importData extends \yii\base\Module {
             'mcc-bill-head-detail' => ['table_name' => 'tbl_mcc_bill_head_detail', 'fields' => 'bmc_code,transaction_date,mcc_bill_head_code,amount,no_installment', 'scenario' => 'importCsv', 'increment' => 1, 'default_fields' => 'is_active:1,originating_type:1', 'save_child' => true],
             'qty-wise-rate' => ['table_name' => 'tbl_qty_wise_rate', 'fields' => 'parsing_no,rate,from_qty,to_qty,wef_date,remarks', 'scenario' => 'importCsv'],
             'vehicle-extra-qty' => ['table_name' => 'tbl_vehicle_extra_qty_daywise', 'fields' => 'parsing_no,date,additional_qty,deduction_qty,rate,remarks', 'default_fields' => 'is_active:1', 'scenario' => 'importCsv'],
+            'bmc-disptach-trip-update' => ['table_name' => 'tbl_bmc_milk_dispatch', 'fields' => 'bmc_code,transaction_date,challan_no,trip_code', 'scenario' => 'importCsv', 'update_key' => 'bmc_code,transaction_date,challan_no', 'exclude_update' => 'bmc_code,transaction_date,challan_no', 'historyClass' => 'TblBmcMilkDispatchHistory'],
+            'milk-receipt-trip-update' => ['table_name' => 'tbl_milk_vehicle_entry', 'fields' => 'plant_code,vehicle_entry_date,grn_no,trip_code', 'scenario' => 'importCsv', 'update_key' => 'plant_code,vehicle_entry_date,grn_no', 'exclude_update' => 'plant_code,vehicle_entry_date,grn_no', 'historyClass' => 'TblMilkVehicleEntryHistory'],
         ];
         return $label[$l];
     }
