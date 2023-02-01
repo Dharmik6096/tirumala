@@ -135,8 +135,14 @@ class DcsImportStrategy extends ARImportStrategy {
                         } else {
                             $vendorModel = new TblSocietyVendor();
                             $vendorModel->dcs_code = $model->dcs_code;
-                            $vendorModel->vendor_code = $model->vendor;
-                            array_push($modelList, $vendorModel);
+                            $vendorModelData = $vendorModel->getRecord();
+                            if (!empty($vendorModelData)) {
+                                $vendorModelData->vendor_code = $model->vendor;
+                                array_push($modelList, $vendorModelData);
+                            } else {
+                                $vendorModel->vendor_code = $model->vendor;
+                                array_push($modelList, $vendorModel);
+                            }
                         }
 
 //                        array_push($modelList, $model);
