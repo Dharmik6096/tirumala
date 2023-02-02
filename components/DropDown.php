@@ -1499,6 +1499,7 @@ class DropDown extends Component {
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
+            'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
         ];
         return $label[$l];
     }

@@ -85,6 +85,24 @@ $attribute = [
             return Yii::$app->controls->view_date($model->wef_date);
         },
     ],
+    [
+        'attribute' => 'designation_code',
+        'value' => function(User $model) {
+            return Yii::$app->general->getforeignkey($model->designationCode, 'designation_name');
+        },
+    ],
+    [
+        'attribute' => 'primary_parent',
+        'value' => function(User $model) {
+            return Yii::$app->general->getforeignkey($model->primaryParent, 'name');
+        },
+    ],
+    [
+        'attribute' => 'secondary_parent',
+        'value' => function(User $model) {
+            return Yii::$app->general->getforeignkey($model->secondaryParent, 'name');
+        },
+    ],
         /* [
           'class' => 'webvimark\components\StatusColumn',
           'attribute' => 'status',
