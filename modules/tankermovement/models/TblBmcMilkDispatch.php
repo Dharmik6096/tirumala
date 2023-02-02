@@ -251,17 +251,23 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         $check_record = $this->find()->where(['challan_no' => $this->challan_no, 'transaction_date' => $this->transaction_date, 'bmc_code' => $this->bmc_code])->count();
         if ($check_record == 1) {
             $check_trip = TblVehicleTripDetail::find()
-                            ->select(['tbl_vehicle_trip.trip_code'])
+                            ->select(['tbl_vehicle_trip.trip_code', 'tbl_vehicle_trip.vehicle_code'])
                             ->distinct()
                             ->joinWith(['tripCode'])
                             ->where(['tbl_vehicle_trip.trip_code' => $this->trip_code, 'tbl_vehicle_trip.transaction_date' => $this->transaction_date])
-                            ->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $this->bmc_code])->count();
-            if ($check_trip == 0) {
+                            ->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $this->bmc_code])->all();
+            if (count($check_trip) == 0) {
                 $this->addError('to_date', Yii::t('app/validation', 'Invalid Trip Code.'));
+            } else {
+                $this->vehicle_code = $check_trip[0]->vehicle_code;
             }
         } else {
             $this->addError('to_date', Yii::t('app/validation', 'Invalid Combination of Bmc Code/Transaction Date/Challan No.'));
         }
+    }
+
+    public function getTripCode() {
+        return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
 }

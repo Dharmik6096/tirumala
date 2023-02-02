@@ -200,9 +200,11 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             if ($check_record[0]->receipt_at == 'PLANT') {
                 $check_trip->andWhere(['tbl_vehicle_trip_detail.destination_type' => 'plant', 'tbl_vehicle_trip_detail.destination_code' => $this->plant_code]);
             }
-            $check_trip = $check_trip->count();
-            if ($check_trip == 0) {
+            $check_trip = $check_trip->all();
+            if (count($check_trip) == 0) {
                 $this->addError('to_date', Yii::t('app/validation', 'Invalid Trip Code.'));
+            } else {
+                $this->vehicle_code = $check_trip[0]->vehicle_code;
             }
         } else {
             $this->addError('to_date', Yii::t('app/validation', 'Invalid Combination of Plant Code/Vehicle Entry Date/Grn No.'));
