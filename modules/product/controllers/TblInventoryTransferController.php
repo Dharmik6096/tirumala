@@ -168,8 +168,9 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $t_stock = 0;
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
-                $min_stock = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
-                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $txModel->qty > $min_stock) {
+                $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
+                $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
+                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $txModel->available_stock > $min_stock) {
                     $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                     return Json::encode($err);
                 } else if (!empty($existtoStock)) {
