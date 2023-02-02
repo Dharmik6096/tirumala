@@ -151,7 +151,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $dispact_consolidate->bmc_dispatch_consolidated_code = Yii::$app->general->getPrimaryCode($dispact_consolidate);
                     $dispact_consolidate->attributes = $model->attributes;
                     $dispact_consolidate->kg_fat = $model->kg_fat;
-                    $dispact_consolidate->kf_snf = $model->kg_snf;
+                    $dispact_consolidate->kg_snf = $model->kg_snf;
                     $dispact_consolidate->total_qty = $model->total_qty;
                     $dispact_consolidate->rejection_count = $model->rejected_count;
                     $saveModel[] = $dispact_consolidate;
