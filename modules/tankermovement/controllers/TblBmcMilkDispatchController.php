@@ -22,13 +22,15 @@ use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use app\modules\tankermovement\models\TblVehicleTrip;
+use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
  */
 class TblBmcMilkDispatchController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config'];
+    public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code'];
 
     /**
      * Lists all TblBmcMilkDispatch models.
@@ -298,6 +300,56 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionEditTripDetail() {
+        $searchModel = new TblBmcMilkDispatchSearch();
+        $searchModel->scenario = 'changeTrip';
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $searchModel->searchEditTrip(Yii::$app->request->queryParams),
+            'pagination' => FALSE
+        ]);
+        return $this->render('edit_trip', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionGetTripCode() {
+        $id = \Yii::$app->request->post()['bmc_milk_dispatch_code'];
+        $model = $this->findModel($id);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            $trip = new TblVehicleTripDetail();
+            $data = $trip->getOpenTripList('alltrip', '', $model->transaction_date);
+            return ['status' => 'success', 'res' => $data];
+        }
+        return ['status' => 'error', 'res' => []];
+    }
+
+    public function actionChangeTripCode() {
+        $id = \Yii::$app->request->post()['bmc_milk_dispatch_code'];
+        $trip_code = \Yii::$app->request->post()['trip_code'];
+        $model = $this->findModel($id);
+        $msg = '';
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            $historyModel = new TblBmcMilkDispatchHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
+            $model->trip_code = $trip_code;
+            $trip_data = $model->tripCode;
+            if (!empty($trip_data)) {
+                $model->vehicle_code = $trip_data->vehicle_code;
+                $transaction = $this->generalModel->saveTransaction([$historyModel, $model], ['Trip Code', 'edit']);
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                if ($transaction == 'customRedirect') {
+                    return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+                }
+            } else {
+                $msg = 'Invalid Trip Code.';
+            }
+        }
+        return ['status' => 'error', 'msg' => $msg];
     }
 
 }
