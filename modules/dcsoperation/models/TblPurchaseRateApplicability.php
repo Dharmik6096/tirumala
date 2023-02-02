@@ -58,44 +58,44 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_download'], 'default', 'value' => '1'],
-            [['is_active'], 'default', 'value' => '1'],
-            [['shift_code'], 'default', 'value' => '1'],
-            [['wef_date', 'shift_code'], 'required', 'except' => ['importCsv']],
-            [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['importCsv']],
-            [['dcs_code'], 'required', 'message' => 'You must select atleast one society.', 'except' => ['importCsv']],
-            [['bmc_code'], function ($attribute, $params) {
+                [['is_download'], 'default', 'value' => '1'],
+                [['is_active'], 'default', 'value' => '1'],
+                [['shift_code'], 'default', 'value' => '1'],
+                [['wef_date', 'shift_code'], 'required', 'except' => ['importCsv']],
+                [['applicable_for', 'applicable_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['importCsv']],
+                [['dcs_code'], 'required', 'message' => 'You must select atleast one society.', 'except' => ['importCsv']],
+                [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
                 }, 'on' => ['importCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
-            [['applicable_for'], function ($attribute, $params) {
+                [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
+                [['applicable_for'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
-            [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
-            [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code', 'dcs_purchase_rate_code'], 'safe'],
+                [['applicable_for'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['applicable_for' => 'customer_type'], 'on' => ['importCsv']],
+                [['dcs_code', 'is_active', 'created_at', 'shift_code', 'updated_at', 'wef_date', 'rate_gen_method_code', 'rate_type', 'is_download', 'download_date_time', 'reference_code', 'dcs_purchase_rate_code'], 'safe'],
             //[['purchase_rate_code'], 'string', 'max' => 255],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
-            [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code'], 'message' => Yii::t('app/validation', 'Record Is Already Exist For Member Applicability'), 'on' => ['importCsv']],
+                [['dcs_code'], 'AddAutoData', 'on' => ['stellapps'], 'skipOnError' => true,],
+                [['purchase_rate_code'], 'required', 'on' => ['stellapps']],
+                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code', 'purchase_rate_code'], 'on' => ['stellapps']],
+                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date', 'shift_code'], 'message' => Yii::t('app/validation', 'Record Is Already Exist For Member Applicability'), 'on' => ['importCsv']],
 //            [['dcs_code'], 'string', 'max' => 9],
 //            [['union_code'], 'string', 'max' => 3],
             //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
             //[['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['shift_code'], function ($attribute, $params) {
+                [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
-            [['applicable_for'], 'setImport', 'on' => ['importCsv']],
-            [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
+                [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+                [['applicable_for'], 'setImport', 'on' => ['importCsv']],
+                [['dcs_purchase_rate_code'], 'required', 'when' => function ($model) {
                     return strtoupper($model->applicable_for) != 'DCS';
                 }, 'on' => ['importCsv']],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Record Is Alredy Exist.'), 'on' => ['approval']],
+                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'wef_date'], 'message' => Yii::t('app/validation', 'Record Is Alredy Exist.'), 'on' => ['approval']],
         ];
     }
 
@@ -222,11 +222,12 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
 
     private function generateTxtFile($path, $id, $dcs, $milktypes) {
         $purchaseRate = TblPurchaseRate::findOne($id);
+        $eiplCode = !empty($purchaseRate) ? Yii::$app->general->getforeignkey($purchaseRate->unionCode, 'eipl_code') : '';
         $files = [];
         foreach ($milktypes as $milktype) {
             $fileName = $path . '/rate_chart_' . strtolower($milktype->animal_type_name) . '.txt';
             $name = strtolower($milktype->animal_type_name) == 'mix' ? 'MIXED' : $milktype->animal_type_name;
-            $text = $this->prepareData($id, $milktype->animal_type_code, $name, $dcs);
+            $text = $this->prepareData($id, $milktype->animal_type_code, $name, $dcs, $eiplCode, $milktype->animal_type_name);
             if ($text != false) {
                 $ratefile = fopen($fileName, "w") or die("Unable to open file!");
                 if (fwrite($ratefile, $text)) {
@@ -238,7 +239,7 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         return $files;
     }
 
-    private function prepareData($id, $milk_type, $name, $dcs) {
+    private function prepareData($id, $milk_type, $name, $dcs, $eiplCode = '', $milkTypeName = '') {
         $purchaseDetail = new TblPurchaseRateDetails();
         $purchaseDetail->milk_type_code = $milk_type;
         $purchaseDetail->purchase_rate_code = $id;
@@ -246,12 +247,26 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         if (!empty($fat)) {
             $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('snf')->all();
             $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf', 'code'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
+
+            $fileName = 'v1'; //date('ddmmyy');
+
+            if (strtolower($eiplCode) == 'dodla') {
+                $appendDate = date('dmy');
+                if (strtolower($milkTypeName) == 'cow') {
+                    $fileName = 'CM' . $appendDate;
+                } else if (strtolower($milkTypeName) == 'mix') {
+                    $fileName = 'MM' . $appendDate;
+                } else {
+                    $fileName = 'BM' . $appendDate;
+                }
+            }
+
             $txt = '>START_TIME		= ' . date('d.m.Y H:i:s') . PHP_EOL .
                     '>END_TIME		= ' . date('d.m') . '.2099 23:59:59' . PHP_EOL .
                     '>CP_NAME		= ' . $dcs->dcs_name . PHP_EOL .
                     '>CP_ADDRESS		= ' . $dcs->dcs_name . PHP_EOL .
                     '>CP_CODE		= ' . $dcs->ref_code . PHP_EOL .
-                    '>FILE_NAME		= v1' . PHP_EOL .
+                    '>FILE_NAME		= ' . $fileName . PHP_EOL .
                     '>RATE_FAT_BELOW_MIN	= 0.0' . PHP_EOL .
                     '>RATE_SNF_BELOW_MIN	=0.0' . PHP_EOL .
                     '>RATE_FAT_SNF_BELOW_MIN =0.0' . PHP_EOL .
