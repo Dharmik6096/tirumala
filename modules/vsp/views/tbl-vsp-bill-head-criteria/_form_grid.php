@@ -8,16 +8,17 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => false],
-    ['attribute' => 'bill_head_code', 'value' => function($model) {
+        ['attribute' => 'bill_head_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->billHead, 'bill_head_name');
         }],
-    ['attribute' => 'general_formula_code', 'value' => function($model) {
+        ['attribute' => 'general_formula_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->generalFormula, 'formula');
         }],
-    ['attribute' => 'criteria_name'],
+        ['attribute' => 'criteria_name'],
+        ['attribute' => 'criteria_code', 'visible' => FALSE],
 ];
 
 $grid_option = [

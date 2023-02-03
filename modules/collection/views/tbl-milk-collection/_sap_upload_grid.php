@@ -9,6 +9,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $action = Url::to(['sap-upload']);
 $downloadSapFiles = json_encode($fileDownloadArr);
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <div class=""></div>
 
@@ -57,8 +58,9 @@ $form = ActiveForm::begin([
         'active_column' => false,
         'showPageSummary' => false,
         'actions' => [
-            'ftp-upload' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'data-original-title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference']];
+            'ftp-upload' => function ($url, $model) use($eiplCode) {
+                $class = ($eiplCode == 'DODLA') ? 'link-disable' : '';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'data-original-title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference'], 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/collection/tbl-milk-collection/dcs-wise-ftp-upload', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
             },
             'member-detail' => function ($url, $model) {
@@ -73,7 +75,7 @@ $form = ActiveForm::begin([
 </div>
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php
-    if (!empty($dataProvider->getModels())) {
+    if (!empty($dataProvider->getModels() && $eiplCode != 'DODLA')) {
         echo Html::button(Yii::t('app', 'PUSH To FTP'), ['class' => 'btn btn-primary', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
     }
     if (!empty($dataProvider->getModels())) {
@@ -222,8 +224,8 @@ $('#download').click(function() {
 
 
 ";
-if(!empty($downloadSapFiles)) {
-$scriptDownload .= "
+if (!empty($downloadSapFiles)) {
+    $scriptDownload .= "
     var timeOut = 500;
     var baseUrl = '" . $baseUrl . "/web/sap_data_files/';
     var downloadFilesJson = '" . $downloadSapFiles . "';

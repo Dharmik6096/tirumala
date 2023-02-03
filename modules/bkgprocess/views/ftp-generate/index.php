@@ -17,6 +17,7 @@ $showPopup = FALSE;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
+$downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-grid panel-main">
 
@@ -124,11 +125,15 @@ if (isset($data['url1'])) {
 
                 <div class="panel-footer shortcut-main report-actions" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                     <a href="javascript:void(0)" data-toggle="collapse"  data-target="#panel1" class="btn btn-default apply-shortcut" title="<?= Yii::t('app', 'search') ?>"><i class="fa fa-search"></i></a>
-                        <?php
-                        if (is_array($result)) {
-                            echo GhostHtml::submitButton(Yii::t('app ', 'Upload File '), ['class' => 'btn btn-default apply-shortcut', 'name' => 'ftp-submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
-                        }
-                        ?>
+                    <!--<div onclick="exportThisWithParameter('w11-container', '<?= $this->title ?>')" class="widget_table_search_btn downloadDashboardExcel right_30 mis_custom_report"><i class="fa fa-file-excel-o"></i></div>-->
+                    <?php
+                    if (is_array($result)) {
+                        echo GhostHtml::submitButton(Yii::t('app ', 'Upload File '), ['class' => 'btn btn-default apply-shortcut submit', 'name' => 'ftp-submit', 'value' => 'ftp-submit', 'id' => 'ftp-submit']);
+                    }
+                    if (is_array($result)) {
+                        echo GhostHtml::submitButton(Yii::t('app ', 'Download File'), ['class' => 'btn btn-default apply-shortcut submit', 'name' => 'ftp-submit', 'value' => 'download', 'id' => 'download']);
+                    }
+                    ?>
                 </div>
             <?php } ?>
             <?php
@@ -219,4 +224,38 @@ $script = "
 
     ";
 $this->registerJs($script, View::POS_END, 'sap-data');
+?>
+
+<?php
+$baseUrl = Yii::$app->request->baseUrl;
+$count = count($fileDownloadArr);
+$timeOutForLoader = ($count * 1000) + 2000;
+
+
+if (!empty($downloadSapFiles)) {
+    $scriptDownload = "
+
+    $('#loadercontent').show();
+    $('#pageloader').show();
+    timeOut = 500;
+    var baseUrl = '" . $baseUrl . "/web/FtpUpload/';
+    var downloadFilesJson = '" . $downloadSapFiles . "';
+    var timeOutForLoader = " . $timeOutForLoader . ";
+    var downloadFilesJsonAr = JSON.parse(downloadFilesJson);
+    $.each(downloadFilesJsonAr, function(ind, vl) {
+        setTimeout(() => {
+            window.location.href = baseUrl + vl;
+        }, timeOut);
+        timeOut = timeOut + 1000;
+    });
+    setTimeout(() => {
+        $('#loadercontent').hide();
+        $('#pageloader').hide();
+    }, timeOutForLoader);
+
+
+";
+$this->registerJs($scriptDownload, View::POS_READY, 'ftp-upload-file-download');
+}
+
 ?>

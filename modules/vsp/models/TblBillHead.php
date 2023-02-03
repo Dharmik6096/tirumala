@@ -25,6 +25,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  * @property integer $is_disburse_allowed
  * @property integer $bill_head_type
  * @property string $general_formula_code
+ * @property string $calculation_based_on
  */
 class TblBillHead extends \app\models\ChildModel {
 
@@ -45,7 +46,7 @@ class TblBillHead extends \app\models\ChildModel {
             [['bill_head_code', 'bill_head_name', 'bill_head_type', 'union_code', 'sequence_no', 'bill_head_for'], 'required', 'except' => ['dcsWiseHead']],
             [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code'], 'string'],
             [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'sequence_no'], 'integer'],
-            [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code'], 'safe'],
+            [['created_at', 'updated_at', 'general_formula', 'default_bill_head_code', 'calculation_based_on'], 'safe'],
             [['is_active'], 'default', 'value' => '1'],
             [['is_disburse_allowed'], 'default', 'value' => '1'],
             [['is_default', 'has_slab'], 'default', 'value' => '0'],
@@ -55,7 +56,7 @@ class TblBillHead extends \app\models\ChildModel {
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblbillhead-is_default').is(':checked'); 
           }"],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'has_slab', 'sap_seq_no'], 'safe'],
             [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code', 'bill_head_for', 'customer_type'], 'required', 'on' => ['dcsWiseHead']],
 //            ['customer_type', 'required', 'when' => function ($model) {
@@ -86,6 +87,7 @@ class TblBillHead extends \app\models\ChildModel {
             'general_formula_code' => Yii::t('app', 'Formula'),
             'sequence_no' => Yii::t('app', 'Sequence No.'),
             'bill_head_for' => Yii::t('app', 'Head For'),
+            'calculation_based_on' => Yii::t('app', 'Calculation Based On'),
         ];
     }
 

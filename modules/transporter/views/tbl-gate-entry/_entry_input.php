@@ -8,6 +8,7 @@ use yii\helpers\Html;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
+$client_code = \Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -61,45 +62,49 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->all_routes($model, $form, 'tblgateentry-plant_code,tblgateentry-mcc_plant_code,tblgateentry-bmc_code', 'route_code', $model->getAttributeLabel('route_code')); ?>
                     </div>
                     <div class="col-sm-2 reset_field create_fields <?= $disable ?>">
-                        <?= $form->field($model, 'vehicle_code')->textInput() ?>
-                    </div>
-                    <div class="col-sm-2 reset_field">
-                        <?=
-                        $form->field($model, 'actual_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
-                            'mask' => '99:99',])
-                        ?> 
-                    </div>
-                    <div class="col-sm-1 reset_field disabled">
-                        <?=
-                        $form->field($model, 'define_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
-                            'mask' => '99:99',])
-                        ?> 
-                    </div>
-                    <div class="col-sm-1 reset_field number-validate disabled">
-                        <?= $form->field($model, 'grace_time')->textInput() ?>
-                    </div>
-                    <div class="col-sm-2 reset_field number-validate">
-                        <?= $form->field($model, 'no_of_filled_can')->textInput() ?>
-                    </div>
-                    <div class="col-sm-2 reset_field number-validate">
-                        <?= $form->field($model, 'no_of_empty_can')->textInput() ?>
+                        <?php if ($client_code == 'UMANG') { ?>
+                            <?= $form->field($model, 'vehicle_code')->dropDownList([]); ?>
+                        <?php } else { ?>
+                            <?= $form->field($model, 'vehicle_code')->textInput() ?>
+                            <?php } ?>
+                        </div>
+                        <div class="col-sm-2 reset_field">
+                            <?=
+                            $form->field($model, 'actual_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                                'mask' => '99:99',])
+                            ?> 
+                        </div>
+                        <div class="col-sm-1 reset_field disabled">
+                            <?=
+                            $form->field($model, 'define_arrival_time')->widget(\yii\widgets\MaskedInput::className(), ['options' => ['class' => 'form-control'],
+                                'mask' => '99:99',])
+                            ?> 
+                        </div>
+                        <div class="col-sm-1 reset_field number-validate disabled">
+                            <?= $form->field($model, 'grace_time')->textInput() ?>
+                        </div>
+                        <div class="col-sm-2 reset_field number-validate">
+                            <?= $form->field($model, 'no_of_filled_can')->textInput() ?>
+                        </div>
+                        <div class="col-sm-2 reset_field number-validate">
+                            <?= $form->field($model, 'no_of_empty_can')->textInput() ?>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
-                <?php
-                AjaxSubmitButton::begin([
-                    'label' => Yii::t('app', 'Save'),
-                    'ajaxOptions' => [
-                        'type' => 'POST',
-                        'url' => Url::to(['create']),
-                        'beforeSend' => new JsExpression("function(data){
+            <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                <div class="form-group">
+                    <?php
+                    AjaxSubmitButton::begin([
+                        'label' => Yii::t('app', 'Save'),
+                        'ajaxOptions' => [
+                            'type' => 'POST',
+                            'url' => Url::to(['create']),
+                            'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),
-                        'success' => new JsExpression('function(data){
+                            'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
@@ -119,7 +124,11 @@ $form = ActiveForm::begin([
                                                                     $("#gate-entry-form .reset_field textarea").val("");
                                                                     $("#tblgateentry-route_code").change();
                                                                     $(".DisableAferAdd").addClass("disabledDiv");                                                                  
-                                                                    $(".panel-body").scrollTop(0);                                                                    
+                                                                    $(".panel-body").scrollTop(0);  
+                                                                       var dt = new Date($.now());
+                                                                        // var time = dt.getHours() + ":" + dt.getMinutes();
+									var time = ((dt.getHours()<10?"0":"") + dt.getHours()) + ":" + ((dt.getMinutes()<10?"0":"") + dt.getMinutes());
+                                                                        $("#tblgateentry-actual_arrival_time").val(time);    
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
                                                                    $("#tblgateentry-route_code").focus();},100);
@@ -137,17 +146,17 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary").show();
                                                                 }
                                                  }'),
-                    ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
-                        'type' => 'submit'],
-                ]);
-                AjaxSubmitButton::end();
-                ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
-            </div>
+                        ],
+                        'options' => ['class' => 'btn btn-default btn-raised',
+                            'type' => 'submit'],
+                    ]);
+                    AjaxSubmitButton::end();
+                    ?>
+                    <?= Yii::$app->controls->custombutton('Cancel', 'create'); ?> 
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
 
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>

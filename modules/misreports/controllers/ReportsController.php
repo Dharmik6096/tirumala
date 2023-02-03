@@ -586,6 +586,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionAutoManualMilkCollection() {
+        $this->report = 'AutoManualMilkCollection';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AutoManualBMCCollection';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     public function actionCollectionPendriveFile() {
         $this->report = 'CollectionPendriveFile';
         $model = new ReportsModel();
@@ -772,6 +782,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionSdFileSummary() {
         $this->report = 'SdFileSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionSocietyWiseRateDifferenceReport() {
+        $this->report = 'SocietyWiseRateDifferenceReport';
         return $this->actionIndex();
     }
 
@@ -1143,6 +1158,7 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'UmangSapReportWeekly';
             }
         }
+        return $this->actionIndex();
     }
 
     public function actionBmcCollectionHistory() {
@@ -1157,6 +1173,21 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionTankerReport() {
         $this->report = 'TankerReport';
+        return $this->actionIndex();
+    }
+
+    public function actionPaymentDifference() {
+        $this->report = 'PaymentDifference';
+        return $this->actionIndex();
+    }
+
+    public function actionSapUploadSummary() {
+        $this->report = 'SapUploadSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionFileGenerateStatus() {
+        $this->report = 'FileGenerateStatus';
         return $this->actionIndex();
     }
 
@@ -2221,7 +2252,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'kartik_grid_view' => 'UmangSapReportWeekly',
             ],
             'BmcCollectionHistory' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift,action_perform',
                 'sp_name' => 'sp_mis_history_tbl_bmc_collection',
                 'scenario' => 'BmcCollectionHistory',
                 'title' => '216 - BMC Collection History',
@@ -2301,6 +2332,44 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_tanker_dispatch',
                 'scenario' => 'TankerReport',
                 'title' => 'Tanker Report',
+            ],
+            'PaymentDifference' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,payment_cycle_code:type_check',
+                'sp_name' => 'sp_mis_payment_difference',
+                'scenario' => 'PaymentDifference',
+                'title' => '621 - Payment Difference',
+            ],
+            'SapUploadSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string:from_shift,to_date:string:to_shift,sap_file:static:sap_file',
+                'sp_name' => 'sp_mis_WQ_file_summary',
+                'scenario' => 'SapUploadSummary',
+                'title' => 'WQ/VM File Summary',
+            ],
+            'AutoManualMilkCollection' => [
+                'param' => 'union_code,channel_code,bmc_code:channel_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_auto_manual_milk_collection_report',
+                'scenario' => 'AutoManualMilkCollection',
+                'title' => 'Auto Manual Report',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'AutoManualBMCCollection' => [
+                'param' => 'union_code,channel_code,bmc_code:channel_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'sp_mis_auto_manual_bmc_collection_report',
+                'scenario' => 'AutoManualMilkCollection',
+                'title' => 'Auto Manual Report',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'BMC Collection')],
+            ],
+            'FileGenerateStatus' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_file_status',
+                'scenario' => 'FileGenerateStatus',
+                'title' => '914 - File Generate Status',
+            ],
+            'SocietyWiseRateDifferenceReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_society_wise_rate_different',
+                'scenario' => 'SocietyWiseRateDifferenceReport',
+                'title' => '915 - Society Wise Rate Difference Report',
             ],
         ];
         return $label[$l];

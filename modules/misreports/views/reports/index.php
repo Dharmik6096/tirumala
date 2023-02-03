@@ -125,7 +125,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                     Yii::$app->dropdown->union_mcc($model, $form, 'reportsmodel-union_code', $value, $model->getAttributeLabel('mcc_code'), $multiple);
                                                 } else {
-                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, 'MCC', $multiple);
+                                                    echo Yii::$app->dropdown->plant_mcc($model, $form, 'reportsmodel-plant_code', $value, Yii::t('app', 'MCC'), $multiple);
                                                 }
                                                 ?>                
                                             </div>
@@ -246,8 +246,15 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?php
                                             }
                                         }
+                                        if (in_array($value, array('action_perform'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value, false, TRUE) ?> 
+                                            </div>
+                                            <?php
+                                        }
 
-                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans'))) {
+                                        if (in_array($value, array('rate_type', 'bank_type', 'report_status', 'originating_type', 'type_wise_report', 'route_type_trans', 'sap_file'))) {
                                             if (isset($value_array[1]) && $value_array[1] == 'static') {
                                                 ?>
 

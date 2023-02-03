@@ -500,7 +500,24 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                                 'attribute' => 'bmc_code',
                                 'label' => Yii::t('app', 'Channel'),
                                 'value' => Yii::$app->general->getmultiforeignkey($model->bmcCode, ['channelMaster'], 'channel_desc'),
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'lower_milk_type',
+                                'value' => Yii::$app->general->getforeignkey($model->lowerMilkType, 'animal_type_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'cutoff',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'cutoff_val',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

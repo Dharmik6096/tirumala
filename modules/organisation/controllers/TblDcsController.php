@@ -193,6 +193,14 @@ class TblDcsController extends ChildController {
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
+                $this->model->cutoff = '0000';
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val);
+                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
+                }
                 $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
@@ -269,6 +277,9 @@ class TblDcsController extends ChildController {
             $oldVendor = 'NA';
         } else {
             $oldVendor = 'NA';
+        }
+        if (!empty($this->model->cutoff_val) && !empty($this->model->lower_milk_type)) {
+            $this->model->cutoff = 1;
         }
         if (Yii::$app->request->post()) {
             $historyModel = new TblDcsHistory();
@@ -387,6 +398,14 @@ class TblDcsController extends ChildController {
                             FileHelper::createDirectory($path);
                         }
                     }
+                }
+                $this->model->cutoff = '0000';
+                if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
+                    $val = str_replace('.', '', $this->model->cutoff_val);
+                    $val = str_pad($val, 3, '0', STR_PAD_LEFT);
+                    $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
+                    $cutOffVal = $val . strtoupper($milkType);
+                    $this->model->cutoff = substr($cutOffVal, -4);
                 }
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], $mappingList, ['society', 'edit']);
                 if ($transaction !== FALSE) {
@@ -790,10 +809,10 @@ class TblDcsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+//            return;
         }
-        echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
+        return \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionSocietyStatus($dcs_code, $coll_status) {
@@ -1148,6 +1167,12 @@ class TblDcsController extends ChildController {
                         $memberModel->gender_code = 1;
                         $memberModel->caste_category_code = 1;
                         $memberModel->member_type_code = 1;
+                        $memberModel->bank_code = NULL;
+                        $memberModel->branch_code = NULL;
+                        $memberModel->bank_account_no = NULL;
+                        $memberModel->ifsc = NULL;
+                        $memberModel->beneficiary_name = NULL;
+                        $memberModel->adhar_no = NULL;
                         $master[] = $memberModel->save();
                     }
                 }

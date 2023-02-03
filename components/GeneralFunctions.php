@@ -817,7 +817,7 @@ class GeneralFunctions extends Component {
     }
 
     public function base64url_decode($data) {
-        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess'])) {
+        if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
@@ -1358,7 +1358,7 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false) {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1380,6 +1380,12 @@ class GeneralFunctions extends Component {
                 $name = $this->getforeignkey($model->memberCode, 'ref_code');
             } else {
                 $name = $this->getforeignkey($model->mainCustomerCode, 'ref_code');
+            }
+        } else if ($sapCode) {
+            if (strtolower($type) == 'dcs') {
+                $name = $this->getforeignkey($model->dcsCode, 'sap_vendor_code');
+            } else {
+                $name = $this->getforeignkey($model->mainCustomerCode, 'sap_vendor_code');
             }
         } else {
             if (strtolower($type) == 'dcs') {
@@ -1914,6 +1920,16 @@ class GeneralFunctions extends Component {
         return TRUE;
     }
 
+    function validOneDigitDecimal($model, $attribute, $params) {
+        $pattern = "/^[0-9]{2}[.][0-9]{1}$/";
+        if (!preg_match($pattern, $model->$attribute)) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be between 0.1 to 99.9'));
+            return false;
+        }
+
+        return TRUE;
+    }
+
     public function validateBeneficiary($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
@@ -2226,16 +2242,16 @@ class GeneralFunctions extends Component {
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere(['or',
-                ['pd.union_code' => $unions],
-                ['ms.union_code' => $unions],
-                ['md.union_code' => $unions],
-                ['cs.union_code' => $unions],
-                ['cd.union_code' => $unions]
+            ['pd.union_code' => $unions],
+            ['ms.union_code' => $unions],
+            ['md.union_code' => $unions],
+            ['cs.union_code' => $unions],
+            ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-                [$main_table . '.' . $from_dest => $form_to],
-                [$main_table . '.' . $to_dest => $form_to],
+            [$main_table . '.' . $from_dest => $form_to],
+            [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 

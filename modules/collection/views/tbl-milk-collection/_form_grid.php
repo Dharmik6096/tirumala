@@ -11,6 +11,7 @@ $milk_type = $milkType->getAnimalMilkTypeArray();
 //$qty = Yii::$app->general->dropdownRange('TblMilkCollection', 'qty', 100);
 //$amount = Yii::$app->general->dropdownRange('TblMilkCollection', 'amount', 1000);
 $operator = ['=' => '=', '>' => '>', '<' => '<', '>=' => '>=', '<=' => '<='];
+$client_code = \Yii::$app->session->get('eiplCode');
 ?>
 
 <?php

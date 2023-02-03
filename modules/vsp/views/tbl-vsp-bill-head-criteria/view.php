@@ -15,38 +15,42 @@ $this->title = Yii::$app->label->title('view', 'Bill Head Criteria');
         <div class="table-responsive">
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'vsp_criteria_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
                             'attribute' => 'union_code',
                             'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
                             'attribute' => 'criteria_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
-                            'attribute' => 'bill_head_code',
-                            'value' => Yii::$app->general->getforeignkey($model->billHead, 'bill_head_name'),
+                            [
+                            'attribute' => 'criteria_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
+                            'attribute' => 'bill_head_code',
+                            'value' => Yii::$app->general->getforeignkey($model->billHead, 'bill_head_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
                             'attribute' => 'general_formula_code',
                             'value' => Yii::$app->general->getforeignkey($model->generalFormula, 'formula'),
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
