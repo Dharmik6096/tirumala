@@ -321,7 +321,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (!empty($model)) {
             $trip = new TblVehicleTripDetail();
-            $data = $trip->getOpenTripList('alltrip', '', $model->transaction_date);
+            $data = $trip->getOpenTripList($model->bmc_code, '', $model->transaction_date, 'alltrip');
             return ['status' => 'success', 'res' => $data];
         }
         return ['status' => 'error', 'res' => []];
@@ -334,20 +334,26 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $msg = '';
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if (!empty($model)) {
-            $historyModel = new TblBmcMilkDispatchHistory();
-            Yii::$app->operation->history($model, $historyModel, UPDATE);
-            $model->trip_code = $trip_code;
-            $trip_data = $model->tripCode;
-            if (!empty($trip_data)) {
-                $model->vehicle_code = $trip_data->vehicle_code;
-                $transaction = $this->generalModel->saveTransaction([$historyModel, $model], ['Trip Code', 'edit']);
-                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                if ($transaction == 'customRedirect') {
-                    return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+            if ($model->trip_code != $trip_code) {
+                $historyModel = new TblBmcMilkDispatchHistory();
+                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                $model->trip_code = $trip_code;
+                $trip_data = $model->tripCode;
+                if (!empty($trip_data)) {
+                    $model->vehicle_code = $trip_data->vehicle_code;
+                    $transaction = $this->generalModel->saveTransaction([$historyModel, $model], ['Trip Code', 'edit']);
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    if ($transaction == 'customRedirect') {
+                        return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+                    }
+                } else {
+                    $msg = 'Invalid Trip Code.';
                 }
             } else {
-                $msg = 'Invalid Trip Code.';
+                return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
             }
+        } else {
+            $msg = 'Dispatch Detail Not Found.';
         }
         return ['status' => 'error', 'msg' => $msg];
     }

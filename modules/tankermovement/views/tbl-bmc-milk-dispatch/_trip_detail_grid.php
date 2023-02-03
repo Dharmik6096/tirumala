@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'BMC Milk Dispatch - Edit Trip Detail');
         <table id="trip_data_grid" class="table table-striped table-input" id="table">
             <?php
             if (!empty($output)) {
-                $show_column = ['bmc_milk_dispatch_code', 'bmc_code', 'challan_no', 'transaction_date', 'gross_weight', 'tare_weight', 'vehicle_code', 'trip_code'];
+                $show_column = ['bmc_milk_dispatch_code', 'bmc_code', 'challan_no', 'transaction_date', 'gross_weight', 'tare_weight', 'vehicle_code', 'current_trip_code', 'trip_code'];
                 ?>
                 <thead>
                     <tr>
@@ -120,19 +120,9 @@ $script = '
                     $(".trip_code-"+row_number).html(data_append_trip_code);
                     $("#dd_trip_code-"+row_number).val(trip_code_value);
                     $("#dd_trip_code-"+row_number).attr("data-val",trip_code_value);
-                }, 200);
-                setTimeout(function(){
-                    fixTable(document.getElementById("fixed-table-container"));
-                }, 400);
-                setTimeout(function(){
-                    $("#trip_data_grid thead").find("th").each (function() {
-                        $(this).css("width",$(this).width() + 8)
-                    }); 
                     $("#loadercontent").hide();
                     $("#pageloader").hide();
-                }, 600);
-            },
-            error:function(data){
+                }, 200);               
             }
         });      
     });
@@ -151,25 +141,18 @@ $script = '
             data: {trip_code:trip_code_value,bmc_milk_dispatch_code: bmc_milk_dispatch_code_value},
             success: function(data) {
                 var obj = data; 
+                $("#loadercontent").hide();
+                $("#pageloader").hide();
                 if(obj.status=="success"){
                 $(".trip_code-"+row_number).html(trip_code_value);
                 $(".vehicle_code-"+row_number).html(obj.parsing_no);
+                $(".current_trip_code-"+row_number).html(trip_code_value);
                 $("#"+row_id).addClass("disable_div");
                 $("#edit_id_"+row_number).removeClass("disable_div");
                 $("#edit_id_"+row_number).addClass("active_div");
                 } else {
                  bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+ obj.msg +"</span></div></div>");
-                }               
-                setTimeout(function(){
-                    fixTable(document.getElementById("fixed-table-container"));
-                }, 400);
-                setTimeout(function(){
-                    $("#trip_data_grid thead").find("th").each (function() {
-                        $(this).css("width",$(this).width() + 8)
-                    }); 
-                    $("#loadercontent").hide();
-                    $("#pageloader").hide();
-                }, 600);
+                }                              
             }
         });      
     });  

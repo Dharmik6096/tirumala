@@ -126,6 +126,9 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'f_plant_code' => Yii::t('app', 'Plant'),
+            'f_mcc_code' => Yii::t('app', 'MCC'),
+            'f_bmc_code' => Yii::t('app', 'BMC'),
         ];
     }
 

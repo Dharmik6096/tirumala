@@ -98,7 +98,7 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
             }
         }
         $query = TblBmcMilkDispatch::find();
-        $query->select(['tbl_bmc_milk_dispatch.bmc_milk_dispatch_code', 'bmc_code' => "CONCAT(tbl_bmc.bmc_name,'-',tbl_bmc.bmc_code,'-',tbl_bmc.ref_code)", 'tbl_bmc_milk_dispatch.challan_no', 'transaction_date' => 'convert(varchar,tbl_bmc_milk_dispatch.transaction_date,105)', 'tbl_bmc_milk_dispatch.gross_weight', 'tbl_bmc_milk_dispatch.tare_weight', 'vehicle_code' => 'tbl_vehicle_master.parsing_no', 'tbl_bmc_milk_dispatch.trip_code']);
+        $query->select(['tbl_bmc_milk_dispatch.bmc_milk_dispatch_code', 'bmc_code' => "CONCAT(tbl_bmc.bmc_name,'-',tbl_bmc.bmc_code,'-',tbl_bmc.ref_code)", 'tbl_bmc_milk_dispatch.challan_no', 'transaction_date' => 'convert(varchar,tbl_bmc_milk_dispatch.transaction_date,105)', 'tbl_bmc_milk_dispatch.gross_weight', 'tbl_bmc_milk_dispatch.tare_weight', 'vehicle_code' => 'tbl_vehicle_master.parsing_no', 'current_trip_code' => 'tbl_bmc_milk_dispatch.trip_code', 'tbl_bmc_milk_dispatch.trip_code']);
         $query->joinWith(['vehicleCode', 'bmcCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_milk_dispatch', 'tbl_bmc_milk_dispatch', 'tbl_bmc_milk_dispatch');
