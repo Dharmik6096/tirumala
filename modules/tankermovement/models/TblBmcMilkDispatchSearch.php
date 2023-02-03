@@ -105,16 +105,12 @@ class TblBmcMilkDispatchSearch extends TblBmcMilkDispatch {
 
         if (!empty($this->from_date) || !empty($this->from_shift)) {
             $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'tbl_bmc_milk_dispatch.from_date', $from_date]);
+            $query->andFilterWhere(['>=', 'tbl_bmc_milk_dispatch.transaction_date', $from_date]);
         }
 
         if (!empty($this->to_date) || !empty($this->to_shift)) {
             $from_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $from_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['<=', 'tbl_bmc_milk_dispatch.to_date', $from_date]);
+            $query->andFilterWhere(['<=', 'tbl_bmc_milk_dispatch.transaction_date', $from_date]);
         }
 
         $query->andFilterWhere([

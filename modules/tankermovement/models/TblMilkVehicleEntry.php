@@ -193,7 +193,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $check_record = $this->find()->where(['grn_no' => $this->grn_no, 'vehicle_entry_date' => $this->vehicle_entry_date, 'plant_code' => $this->plant_code])->all();
         if (count($check_record) == 1) {
             $check_trip = TblVehicleTripDetail::find()
-                    ->select(['tbl_vehicle_trip.trip_code'])
+                    ->select(['tbl_vehicle_trip.trip_code', 'tbl_vehicle_trip.vehicle_code'])
                     ->distinct()
                     ->joinWith(['tripCode'])
                     ->where(['tbl_vehicle_trip.trip_code' => $this->trip_code]);
