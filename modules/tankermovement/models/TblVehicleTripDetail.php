@@ -192,7 +192,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
                 ->andFilterWhere(['tbl_vehicle_trip.vehicle_code' => $vehicle_code]);
         if ($bmc_code == 'receipt') {
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
-            $query->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
+            if ($tripCode != 'alltrip') {
+                $query->andWhere(['tbl_vehicle_trip.trip_status' => ['open', 'tankerfull']]);
+            }
         } else if ($bmc_code == 'alltrip') {
             $to_date = !empty($tripCode) ? date('Y-m-d', strtotime($tripCode)) : $transaction_date;
             $query->andWhere(['>=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);

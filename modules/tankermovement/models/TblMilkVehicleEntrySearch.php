@@ -12,16 +12,17 @@ use app\modules\tankermovement\models\TblMilkVehicleEntry;
  */
 class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
 
-    public $from_date, $to_date, $bmc_ref_code, $ref_code;
+    public $from_date, $to_date, $bmc_ref_code, $ref_code, $from_shift, $to_shift;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code'], 'safe'],
-            [['gross_weight', 'tare_weight'], 'number'],
-            [['originating_type'], 'integer'],
+                [['from_date', 'to_date', 'milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_entry_date', 'vehicle_code', 'arrival_time', 'tare_weight_time', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'customer_name', 'bmc_ref_code', 'ref_code', 'f_plant_code'], 'safe'],
+                [['gross_weight', 'tare_weight'], 'number'],
+                [['originating_type'], 'integer'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'changeTrip'],
         ];
     }
 
@@ -89,6 +90,35 @@ class TblMilkVehicleEntrySearch extends TblMilkVehicleEntry {
 
 
         return $dataProvider;
+    }
+
+    public function searchEditTrip($params) {
+        $this->load($params);
+        if ($this->scenario == 'changeTrip') {
+            if (empty($params) || !$this->validate()) {
+                return [];
+            }
+        }
+        $query = TblMilkVehicleEntry::find();
+        $query->select(['tbl_milk_vehicle_entry.milk_vehicle_entry_code', 'plant_code' => "CONCAT(tbl_plant.name,'-',tbl_plant.plant_code,'-',tbl_plant.ref_code)", 'tbl_milk_vehicle_entry.grn_no', 'vehicle_entry_date' => 'convert(varchar,tbl_milk_vehicle_entry.vehicle_entry_date,105)', 'tbl_milk_vehicle_entry.qty', 'tbl_milk_vehicle_entry.gross_weight', 'tbl_milk_vehicle_entry.tare_weight', 'vehicle_code' => 'tbl_vehicle_master.parsing_no', 'current_trip_code' => 'tbl_milk_vehicle_entry.trip_code', 'tbl_milk_vehicle_entry.trip_code']);
+        $query->joinWith(['vehicleCode', 'plantCode']);
+
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry', 'tbl_milk_vehicle_entry');
+
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'CAST(tbl_milk_vehicle_entry.vehicle_entry_date as date)', $from_date]);
+        }
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'CAST(tbl_milk_vehicle_entry.vehicle_entry_date as date)', $to_date]);
+        }
+
+        $query->andFilterWhere([
+            'tbl_milk_vehicle_entry.vehicle_code' => $this->vehicle_code,
+            'tbl_milk_vehicle_entry.trip_code' => $this->trip_code
+        ]);
+        return $query->asArray()->all();
     }
 
 }

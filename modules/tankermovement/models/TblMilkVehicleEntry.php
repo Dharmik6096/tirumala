@@ -82,10 +82,10 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return [
             'milk_vehicle_entry_code' => Yii::t('app', 'Milk Vehicle Entry Code'),
             'trip_code' => Yii::t('app', 'Trip Code'),
-            'grn_no' => Yii::t('app', 'Grn No'),
+            'grn_no' => Yii::t('app', 'Grn No.'),
             'receipt_at' => Yii::t('app', 'Receipt At'),
             'vehicle_entry_date' => Yii::t('app', 'Vehicle Entry Date'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
             'arrival_time' => Yii::t('app', 'Arrival Time'),
             'gross_weight' => Yii::t('app', 'Gross Weight'),
             'tare_weight' => Yii::t('app', 'Tare Weight'),
@@ -209,6 +209,10 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         } else {
             $this->addError('to_date', Yii::t('app/validation', 'Invalid Combination of Plant Code/Vehicle Entry Date/Grn No.'));
         }
+    }
+
+    public function getTripCodeAll() {
+        return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
 }

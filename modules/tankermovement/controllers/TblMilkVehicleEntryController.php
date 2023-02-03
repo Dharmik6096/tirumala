@@ -18,13 +18,15 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblVehicleTripDetailHistory;
+use app\modules\tankermovement\models\TblMilkVehicleEntryHistory;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
  */
 class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['transaction-detail'];
+    public $freeAccessActions = ['transaction-detail', 'get-trip-code', 'change-trip-code'];
 
     /**
      * Lists all TblMilkVehicleEntry models.
@@ -268,6 +270,62 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return [$response['status'], 'data' => $data, 'source' => $sourceName, 'dest' => $destName];
+    }
+
+    public function actionEditTripDetail() {
+        $searchModel = new TblMilkVehicleEntrySearch();
+        $searchModel->scenario = 'changeTrip';
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $searchModel->searchEditTrip(Yii::$app->request->queryParams),
+            'pagination' => FALSE
+        ]);
+        return $this->render('edit_trip', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionGetTripCode() {
+        $id = \Yii::$app->request->post()['milk_vehicle_entry_code'];
+        $model = $this->findModel($id);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            $trip = new TblVehicleTripDetail();
+            $data = $trip->getOpenTripList('receipt', '', $model->vehicle_entry_date, 'alltrip');
+            return ['status' => 'success', 'res' => $data];
+        }
+        return ['status' => 'error', 'res' => []];
+    }
+
+    public function actionChangeTripCode() {
+        $id = \Yii::$app->request->post()['milk_vehicle_entry_code'];
+        $trip_code = \Yii::$app->request->post()['trip_code'];
+        $model = $this->findModel($id);
+        $msg = '';
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            if ($model->trip_code != $trip_code) {
+                $historyModel = new TblMilkVehicleEntryHistory();
+                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                $model->trip_code = $trip_code;
+                $trip_data = $model->tripCodeAll;
+                if (!empty($trip_data)) {
+                    $model->vehicle_code = $trip_data->vehicle_code;
+                    $transaction = $this->generalModel->saveTransaction([$historyModel, $model], ['Trip Code', 'edit']);
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    if ($transaction == 'customRedirect') {
+                        return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+                    }
+                } else {
+                    $msg = 'Invalid Trip Code.';
+                }
+            } else {
+                return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+            }
+        } else {
+            $msg = 'Receipt Detail Not Found.';
+        }
+        return ['status' => 'error', 'msg' => $msg];
     }
 
 }
