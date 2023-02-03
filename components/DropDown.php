@@ -761,7 +761,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -950,7 +950,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -1136,7 +1136,7 @@ class DropDown extends Component {
             'EIPL_dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 1 => Yii::t('app', 'Mobile AMCS')],
             ],
             'BIPL_dpu_type' => [
                 'name' => 'dpu_type',
@@ -1586,7 +1586,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
