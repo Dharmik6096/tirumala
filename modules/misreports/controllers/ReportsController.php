@@ -1196,6 +1196,36 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBmcRegister() {
+        $this->report = 'BmcRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionPlantRegister() {
+        $this->report = 'PlantRegister';
+        return $this->actionIndex();
+    }
+
+    public function actionTankerReceiptNote() {
+        $this->report = 'TankerReceiptNote';
+        return $this->actionIndex();
+    }
+
+    public function actionMccDayBookDispatchHubHorizontal() {
+        $this->report = 'MccDayBookDispatchHubHorizontal';
+        return $this->actionIndex();
+    }
+
+    public function actionMccReceiptVsBmcDispatch() {
+        $this->report = 'MccReceiptVsBmcDispatch';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MccReceiptVsBmcDispatchDetail';
+            }
+        }
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2382,6 +2412,44 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MccBilling',
                 'title' => '225 - Mcc Billing',
                 'multiArray' => ['mcc_code', 'bmc_code'],
+            ],
+            'BmcRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_register',
+                'scenario' => 'BmcRegister',
+                'title' => 'BMC Dispatch Register',
+            ],
+            'PlantRegister' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_plant_register',
+                'scenario' => 'PlantRegister',
+                'title' => 'Plant Receipt Register',
+            ],
+            'TankerReceiptNote' => [
+                'param' => 'union_code,from_date:string,to_date:string,trip_code,grn_no',
+                'sp_name' => 'mis_tanker_receipt_note',
+                'scenario' => 'TankerReceiptNote',
+                'title' => 'Tanker Receipt Report',
+            ],
+            'MccReceiptVsBmcDispatch' => [
+                'param' => 'union_code,from_date:string,to_date:string,bmc_code:union_code',
+                'sp_name' => 'mis_mcc_receipt_vs_bmc_dispatch',
+                'scenario' => 'MccReceiptVsBmcDispatch',
+                'title' => 'Trip Wise Detail',
+                'report_type' => [Yii::t('app', 'Summary Wise'), Yii::t('app', 'Detail Wise')],
+            ],
+            'MccReceiptVsBmcDispatchDetail' => [
+                'param' => 'union_code,from_date:string,to_date:string,bmc_code:union_code',
+                'sp_name' => 'mis_mcc_receipt_vs_bmc_dispatch_detail',
+                'scenario' => 'MccReceiptVsBmcDispatch',
+                'title' => 'Trip Wise Detail',
+                'report_type' => [Yii::t('app', 'Summary Wise'), Yii::t('app', 'Detail Wise')],
+            ],
+            'MccDayBookDispatchHubHorizontal' => [
+                'param' => 'union_code,from_date:string,to_date:string,bmc_code:union_code',
+                'sp_name' => 'mis_mcc_day_book_dispatch_hub_horizontal',
+                'scenario' => 'MccDayBookDispatchHubHorizontal',
+                'title' => 'MCC Day Book',
             ],
         ];
         return $label[$l];

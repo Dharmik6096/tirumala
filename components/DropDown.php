@@ -453,6 +453,15 @@ class DropDown extends Component {
         }
     }
 
+    public function union_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/union-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/union-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
+        }
+    }
+
     public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
@@ -1603,6 +1612,8 @@ class DropDown extends Component {
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
             'application_id' => ['name' => 'application_id', 'fields' => 'application_id,application_id,', 'prompt' => Yii::t('app', 'Select Application'), 'model' => 'TblSchemeApplication', 'depend' => 'scheme_id', 'dependArray' => ['application_status']],
             'scheme_id' => ['name' => 'scheme_id', 'fields' => 'scheme_id,scheme_name,', 'prompt' => Yii::t('app', 'Select Scheme'), 'model' => 'TblSchemeMaster', 'depend' => 'union_code'],
+            'trip_code' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code', 'prompt' => 'Select Trip', 'model' => 'TblMilkVehicleEntry'],
+            'grn_no' => ['name' => 'grn_no', 'fields' => 'grn_no,grn_no', 'prompt' => 'Select GRN No', 'model' => 'TblMilkVehicleEntry'],
         ];
         return $label[$l];
     }

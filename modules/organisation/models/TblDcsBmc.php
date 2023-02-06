@@ -529,4 +529,22 @@ class TblDcsBmc extends \app\models\ChildModel {
         return false;
     }
 
+    public function getUnionBMCList($unionCode, $RLS = 'TRUE') {
+        $value = $this->getUnionBMC($unionCode, $RLS);
+        $value = ArrayHelper::map($value, 'bmc_code', function ($value) {
+                    return $value->bmc_name . ' - ' . $value->ref_code;
+                });
+        return $value;
+    }
+
+    public function getUnionBMC($unionCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
+        if (!empty($unionCode))
+            $query->andWhere(['union_code' => $unionCode]);
+        if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        return $query->all();
+    }
+
 }

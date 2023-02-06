@@ -34,7 +34,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc', 'union-bmc-list'];
 
     /**
      * Lists all TblDcsBmc models.
@@ -509,6 +509,24 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             $plantList = $model->getBMCList([], 'TRUE', false, false, [], $plant);
         }
         return Json::encode(['status' => 'success', 'data' => $plantList]);
+    }
+
+    public function actionUnionBmcList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) || (isset($parents[1]) && $parents[1] == true)) {
+                $rls = isset($parents[1]) && $parents[1] == 'false' ? 'FALSE' : 'TRUE';
+                $mccs = new TblDcsBmc();
+                $data = $mccs->getUnionBMCList($parents[0], $rls);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

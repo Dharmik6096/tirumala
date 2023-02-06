@@ -139,6 +139,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                     <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), TRUE); ?>
                                                 </div>
                                                 <?php
+                                            } else
+                                            if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->union_bmc($model, $form, 'reportsmodel-union_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
+                                                </div>
+                                                <?php
                                             } else {
                                                 ?>
                                                 <div class="col-sm-3 val_bmc_code">
@@ -398,8 +405,21 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
                                             <?php
                                         }
+                                        if (in_array($value, array('trip_code'))) {
+                                            ?>
+                                            <div class="col-sm-3 val_dcs_code">
+                                                <?= Yii::$app->dropdown->dropdown('trip_code', $model, $form, '', $model->getAttributeLabel($value), false, 'trip_code'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('grn_no'))) {
+                                            ?>
+                                            <div class="col-sm-3 val_dcs_code">
+                                                <?= Yii::$app->dropdown->dropdown('grn_no', $model, $form, '', $model->getAttributeLabel($value), false, 'grn_no'); ?>
+                                            </div>
+                                            <?php
+                                        }
                                     }
-
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
                                     }

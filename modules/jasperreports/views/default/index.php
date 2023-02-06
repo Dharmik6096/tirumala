@@ -235,11 +235,19 @@ $defaultToggle = true;
                                             <?php
                                         }
                                         if (in_array($value, array('p_bmc_code'))) {
-                                            ?>
-                                            <div class="col-sm-3">
-                                                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-p_mcc_code', 'p_bmc_code', $model->getAttributeLabel('p_bmc_code')); ?>
-                                            </div>     
-                                            <?php
+                                            if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->union_bmc($model, $form, 'reportsmodel-union_code', 'p_bmc_code', Yii::t('app', 'BMC')); ?>
+                                                </div>
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'reportsmodel-p_mcc_code', 'p_bmc_code', $model->getAttributeLabel('p_bmc_code')); ?>
+                                                </div>     
+                                                <?php
+                                            }
                                         }
                                         if (in_array($value, array('p_milk_class'))) {
                                             ?>

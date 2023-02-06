@@ -296,6 +296,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMccDayBookDispatchHub() {
+        $this->report = 'MccDayBookDispatchHub';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -710,6 +715,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/FarmerIncentive',
                 'scenario' => 'FarmerIncentive',
                 'title' => '111 - Farmer Incentive',
+            ],
+            'MccDayBookDispatchHub' => [
+                'param' => 'p_union_code,p_bmc_code:union_code,p_from_date:string,p_to_date:string',
+                'path' => 'TankerMovement/MCCDayBook',
+                'scenario' => 'MccDayBookDispatchHub',
+                'title' => 'MCC Day Book Dispatch Hub',
             ],
         ];
         return $label[$l];
