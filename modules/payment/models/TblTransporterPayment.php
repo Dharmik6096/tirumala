@@ -92,8 +92,9 @@ class TblTransporterPayment extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['adjust_amount', 'transporter_type'], 'default', 'value' => 0],
-                [['union_code', 'transporter_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
-                [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'bmc_code', 'basic_price'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => 'paymentprocess'],
+                [['union_code', 'from_date', 'to_date', 'transporter_code'], 'required', 'on' => 'sec_paymentprocess'],
+                [['union_code', 'transporter_code', 'adjust_remark', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'status', 'utr_no', 'reference_no', 'route_code', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_by', 'updated_by', 'bmc_code', 'basic_price', 'vehicle_code'], 'safe'],
                 [['transporter_type', 'is_verified', 'bill_no', 'primary_tpt_cost', 'incentive_value', 'chilling_cost', 'billing_method', 'is_day_wise', 'qty_amount', 'total_vts_kms', 'total_rejected_qty', 'total_rejected_amount', 'rejected_kg_fat', 'rejected_kg_snf', 'billing_type_code'], 'safe'],
                 [['from_date', 'to_date', 'payment_date', 'disburse_date', 'process_date', 'created_at', 'updated_at', 'mcc_plant_code', 'total_penalty_amount', 'total_least_kms', 'parsing_no', 'transporter_name'], 'safe'],
                 [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days', 'total_kms', 'avg_rate', 'total_qty', 'total_amount', 'total_deduction', 'total_addition', 'net_amount', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_amount', 'final_amount', 'disburse_amount'], 'number'],
@@ -212,12 +213,12 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblTransporterPaymentDetail::className(), ['transporter_payment_code' => 'transporter_payment_code']);
     }
 
-    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $transporter_type, $from_date, $to_date) {
+    public function getdatewiseBmcList($union_code, $plant_code, $mcc_plant_code, $from_date, $to_date) {
         $from_date = date('Y-m-d', strtotime($from_date));
         $to_date = date('Y-m-d', strtotime($to_date));
 
         $exclude = TblTransporterPayment::find()->select(['bmc_code'])
-                ->where(['transporter_type' => $transporter_type, 'union_code' => $union_code])
+                ->where(['transporter_type' => 0, 'union_code' => $union_code])
                 ->andWhere(['not in', 'status', ['processed']])
                 ->andWhere(['or',
                 ['or',

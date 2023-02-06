@@ -7,9 +7,13 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = 'Transporter Payment Process : Step 2';
-$bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
-        Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
-
+if ($transporter_type == 0) {
+    $bmc_info = Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code') . ' > ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' > ' .
+            Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+} else {
+    $bmc_info = $model->vendor_code . ' > ' . $model->transporter_name . ' > ' .
+            Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+}
 
 $array = $dataProvider->getModels();
 $tot_amt = array_sum(array_map(function($array) {
@@ -40,14 +44,14 @@ $net_amt = array_sum(array_map(function($array) {
         $attribute = [
                 ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
-                }, 'label' => Yii::t('app', 'Route Code')],
+                }, 'label' => Yii::t('app', 'Route Code'), 'visible' => ($transporter_type == 0)],
                 ['attribute' => 'route_code', 'value' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
-                }
+                }, 'visible' => ($transporter_type == 0)
             ],
-                ['attribute' => 'transporter_name'],
+                ['attribute' => 'transporter_name', 'visible' => ($transporter_type == 0)],
                 ['attribute' => 'parsing_no'],
-                ['attribute' => 'fixed_amount', 'pageSummary' => true],
+                ['attribute' => 'fixed_amount', 'pageSummary' => true, 'visible' => ($transporter_type == 0)],
                 ['attribute' => 'total_amount', 'pageSummary' => true],
                 ['attribute' => 'total_addition', 'pageSummary' => true],
                 ['attribute' => 'total_deduction', 'pageSummary' => true],
