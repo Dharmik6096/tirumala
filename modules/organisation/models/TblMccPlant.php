@@ -419,6 +419,9 @@ class TblMccPlant extends \app\models\ChildModel {
         if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         }
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
         return $query->all();
     }
 
