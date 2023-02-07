@@ -538,8 +538,7 @@ class TblDcsBmc extends \app\models\ChildModel {
     }
 
     public function getUnionBMC($unionCode = [], $RLS = 'TRUE') {
-        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
-        $query->andWhere(['union_code' => $unionCode]);
+        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1, 'union_code' => $unionCode]);
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         }
