@@ -28,8 +28,7 @@ use webvimark\modules\UserManagement\models\User;
  * @property string $originating_org_type
  */
 class TblBulkNotificationApplicability extends \app\models\ChildModel {
-
-    public $union_code;
+    //public $union_code;
 
     /**
      * @inheritdoc
@@ -47,13 +46,13 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
                 [['bulk_notification_id', 'is_active', 'originating_type'], 'safe'],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['applicable_for', 'applicable_code'], 'safe'],
-                [['company_code'], 'safe'],
+                [['union_code'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
                 [['is_active'], 'default', 'value' => 1],
                 [['status'], 'default', 'value' => 0],
                 [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
-                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
         ];
     }
 
@@ -67,7 +66,7 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
             'wef_date' => Yii::t('app', 'Schedual On'),
             'applicable_for' => Yii::t('app', 'Applicable For'),
             'applicable_code' => Yii::t('app', 'Applicable Code'),
-            'company_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'Union Code'),
             'is_active' => Yii::t('app', 'Is Active'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -80,11 +79,11 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
     }
 
     public function getDcsCode() {
-        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_code']);
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function getBmcCode() {
-        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_code']);
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'applicable_code', 'mcc_plant_code' => 'mcc_plant_code']);
     }
 
     public function getMccCode() {
@@ -128,10 +127,10 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
         if ($this->applicable_for == 'DCS') {
             $this->dcs_code = $this->applicable_code;
             $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'plant_code');
-            $this->mcc_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'mcc_plant_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'mcc_plant_code');
             $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCodes, 'bmc_code');
         } elseif ($this->applicable_for == 'MCC') {
-            $this->mcc_code = $this->applicable_code;
+            $this->mcc_plant_code = $this->applicable_code;
             $this->plant_code = Yii::$app->general->getforeignkey($this->mccCodes, 'plant_code');
         }
     }

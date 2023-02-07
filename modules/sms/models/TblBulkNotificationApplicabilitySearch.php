@@ -18,7 +18,7 @@ class TblBulkNotificationApplicabilitySearch extends TblBulkNotificationApplicab
     public function rules() {
         return [
                 [['bulk_notification_app_code', 'bulk_notification_id', 'is_active', 'originating_type'], 'integer'],
-                [['wef_date', 'applicable_code', 'company_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['wef_date', 'applicable_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc'], 'safe'],
         ];
     }
@@ -68,7 +68,7 @@ class TblBulkNotificationApplicabilitySearch extends TblBulkNotificationApplicab
 
         $query->andFilterWhere(['like', 'applicable_for', $this->applicable_for])
                 ->andFilterWhere(['like', 'applicable_code', $this->applicable_code])
-                ->andFilterWhere(['like', 'company_code', $this->company_code])
+                ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])

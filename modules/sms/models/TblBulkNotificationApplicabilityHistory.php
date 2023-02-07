@@ -47,7 +47,7 @@ class TblBulkNotificationApplicabilityHistory extends \yii\db\ActiveRecord {
                 [['created_by', 'updated_by', 'history_created_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
                 [['operation_type'], 'safe'],
-                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
         ];
     }
 

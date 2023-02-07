@@ -154,7 +154,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $value['USER'] = 'USER';
         }
         $appModel->model->wef_date = $model->wef_date;
-        $appModel->model->company_code = $model->union_code;
+        $appModel->model->union_code = $model->union_code;
         $appModel->is_union = false;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'bulk_notification_id';
