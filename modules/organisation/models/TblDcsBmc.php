@@ -539,10 +539,18 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getUnionBMC($unionCode = [], $RLS = 'TRUE') {
         $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
-        if (!empty($unionCode))
-            $query->andWhere(['union_code' => $unionCode]);
+        $query->andWhere(['union_code' => $unionCode]);
         if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
+        if (Yii::$app->session->get('hasBMC') == 0) {
+            $query->andFilterWhere(['is_mcc' => 1]);
         }
         return $query->all();
     }
