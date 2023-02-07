@@ -57,9 +57,6 @@ class TblBulkNotificationSearch extends TblBulkNotification {
         }
 
         // grid filtering conditions
-
-        $query->joinWith(['memberCode', 'apiMaster']);
-
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bulk_notification', 'tbl_bulk_notification', 'tbl_bulk_notification');
 
         if (!empty($this->wef_date))
