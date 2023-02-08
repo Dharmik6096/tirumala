@@ -26,7 +26,7 @@ echo $form->errorSummary($model);
     </div>
     <?php if ($transporter_type == 1) { ?>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('transporter', $model, $form, 'tbltransporterpayment-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('transporter_code')); ?>
+            <?php Yii::$app->dropdown->datewise_transporter_list($model, $form, 'tbltransporterpayment-union_code,tbltransporterpayment-from_date,tbltransporterpayment-to_date', 'transporter_code', $model->getAttributeLabel('transporter_code'), FALSE, '', FALSE, TRUE); ?>
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('transport_vehicle', $model, $form, 'tbltransporterpayment-transporter_code', 'form-group col-sm-2 padding-right-5 padding-left-0', $model->getAttributeLabel('vehicle_code')); ?>

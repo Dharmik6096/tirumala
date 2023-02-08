@@ -21,7 +21,7 @@ use yii\base\Model;
  */
 class TblTransporterPaymentController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['payment-detail-primary', 'datewise-bmc-list', 'payment-adjust-primary', 'payment-adjust'];
+    public $freeAccessActions = ['payment-detail-primary', 'datewise-bmc-list', 'payment-adjust-primary', 'payment-adjust', 'datewise-transporter-list'];
 
     /**
      * @inheritdoc
@@ -92,7 +92,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
         $model = new TblTransporterPayment();
         $model->load(Yii::$app->request->get());
         $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'transporter_type' => 1])
-                ->andFilterWhere(['vehicle_code' => $model->vendor_code])
+                ->andFilterWhere(['vehicle_code' => $model->vehicle_code])
                 ->all();
         if (!empty($detailModel)) {
             $model = $detailModel[0];
@@ -299,6 +299,22 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
             $controls['p_report_name'] = 'Primary Transporter Bill';
             Yii::$app->general->printDocument($controls, 'transportationpayment/PrimaryTransporterBill', 'PrimaryTransporterBill', 'pdf');
         }
+    }
+
+    public function actionDatewiseTransporterList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+                $mccs = new TblTransporterPayment();
+                $data = $mccs->getdatewiseTransportersList($parents[0], $parents[1], $parents[2]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

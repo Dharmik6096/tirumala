@@ -88,7 +88,7 @@ $grid_option = [
             $icon = ($model->status == 'processed') ? '<i class="fa fa-unlock"></i>' : '<i class="fa fa-lock"></i>';
             $class = ($model->status == 'processed') ? '' : 'disabled';
             $url = Url::to(['lock-bill']);
-            $name = $model->transporter_name . '-' . $model->parsing_no . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
+            $name = $model->transporter_name  . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
             return GhostHtml::a_alert($icon, ['/payment/tbl-transporter-payment/lock-bill'], $options);
         },

@@ -268,4 +268,32 @@ class TblTransporterPayment extends \app\models\ChildModel {
         return $this->hasOne(TblBillingType::className(), ['billing_type_code' => 'billing_type_code']);
     }
 
+    public function getdatewiseTransportersList($union_code, $from_date, $to_date) {
+        $from_date = date('Y-m-d', strtotime($from_date));
+        $to_date = date('Y-m-d', strtotime($to_date));
+
+        $exclude = TblTransporterPayment::find()->select(['transporter_code'])
+                ->where(['transporter_type' => 1, 'union_code' => $union_code])
+                ->andWhere(['not in', 'status', ['processed']])
+                ->andWhere(['or',
+                ['or',
+                    ['between', 'from_date', $from_date, $to_date],
+                    ['between', 'to_date', $from_date, $to_date]
+            ],
+                ['or',
+                "'$from_date' BETWEEN [from_date] AND [to_date]",
+                "'$to_date' BETWEEN [from_date] AND [to_date]"
+        ]]);
+
+        $query = TblTransporter::find()->select(['transporter_code', 'transporter_name', 'vendor_code'])
+                ->where(['union_code' => $union_code, 'is_active' => 1])
+                ->andWhere(['not in', 'transporter_code', $exclude]);
+
+        $value = $query->all();
+        $value = ArrayHelper::map($value, 'transporter_code', function ($value) {
+                    return $value['transporter_name'] . '(' . $value['vendor_code'] . ')';
+                });
+        return $value;
+    }
+
 }

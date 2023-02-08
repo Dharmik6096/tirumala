@@ -11,20 +11,6 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'transporter_type',
-                        'value' => isset($model->transporter_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->transporter_type] : 'N/A',
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                        [
-                        'attribute' => 'transporter_code',
-                        'value' => $model->transporter_name . '(' . Yii::$app->general->getforeignkey($model->transporterCode, 'vendor_code') . ')',
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                ],
-            ],
-                [
-                'columns' => [
-                        [
                         'attribute' => 'billing_method',
                         'valueColOptions' => ['style' => 'width:30%']
                     ],
@@ -39,15 +25,17 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'no_of_days',
+                        'attribute' => 'transporter_type',
+                        'value' => isset($model->transporter_type) ? Yii::$app->dropdown->getRecords('transporter_type')['data'][$model->transporter_type] : 'N/A',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
-                        'attribute' => 'total_kms',
+                        'attribute' => 'transporter_code',
+                        'value' => $model->transporter_name . '(' . Yii::$app->general->getforeignkey($model->transporterCode, 'vendor_code') . ')',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
-                        'attribute' => 'total_qty',
+                        'attribute' => 'parsing_no',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                 ],
@@ -55,15 +43,34 @@ use kartik\grid\GridView;
                 [
                 'columns' => [
                         [
-                        'attribute' => 'parsing_no',
+                        'attribute' => 'disp_qty',
+                        'label' => Yii::t('app', 'Disp.QTY'),
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
-                        'attribute' => 'avg_rate',
+                        'attribute' => 'rec_qty',
+                        'label' => Yii::t('app', 'Rec.QTY'),
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                         [
                         'attribute' => 'qty_amount',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                ],
+            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'no_of_days',
+                        'label' => Yii::t('app', 'No. Of Trip'),
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'total_kms',
+                        'valueColOptions' => ['style' => 'width:15%']
+                    ],
+                        [
+                        'attribute' => 'avg_rate',
                         'valueColOptions' => ['style' => 'width:15%']
                     ],
                 ],
@@ -131,16 +138,16 @@ use kartik\grid\GridView;
     <h4 class="theme-box-heading padding_top_10"><?= Yii::t('app', 'Date wise Payment Details') ?></h4>
     <?php
     $attribute = [
-            ['attribute' => 'dispatch_datetime',
+            ['attribute' => 'dispatch_datetime', 'label' => Yii::t('app', 'Disp.DATE'),
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->dispatch_datetime);
             }, 'filter' => false],
-            ['attribute' => 'receipt_datetime',
+            ['attribute' => 'receipt_datetime', 'label' => Yii::t('app', 'Rec.DATE'),
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model->receipt_datetime);
             }, 'filter' => false],
-            ['attribute' => 'mchallan_no', 'filter' => false],
-            ['attribute' => 'grn_no', 'filter' => false],
+            ['attribute' => 'mchallan_no', 'label' => Yii::t('app', 'Challan No.'), 'filter' => false],
+            ['attribute' => 'grn_no', 'label' => Yii::t('app', 'GRN No.'), 'filter' => false],
             ['attribute' => 'from_dest', 'value' => function($model) {
                 $rel = Yii::$app->general->getDestRelation($model->from_type);
                 $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'vendor' ? 'customer_name' : 'name');
@@ -154,12 +161,12 @@ use kartik\grid\GridView;
                 if (!empty($rel))
                     return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
             }, 'filter' => false],
-            ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Dis.Qty'), 'filter' => false, 'pageSummary' => true],
+            ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Disp.Qty'), 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'rec_qty', 'label' => Yii::t('app', 'Rec.Qty'), 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'total_kms', 'label' => Yii::t('app', 'KM'), 'filter' => false, 'pageSummary' => true],
             ['attribute' => 'km_rate', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
-            ['attribute' => 'qty_amount', 'filter' => false],
+            ['attribute' => 'qty_amount', 'label' => Yii::t('app', 'Cost Per Ltr.'), 'filter' => false],
     ];
 
 
