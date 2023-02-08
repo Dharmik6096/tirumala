@@ -790,6 +790,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRmrdMilkCollectionForSap() {
+        $this->report = 'RmrdMilkCollectionForSap';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -2381,6 +2386,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_milk_collection',
                 'scenario' => 'MemberCollectionReportForSap',
                 'title' => '112 - Member Collection Report For SAP',
+            ],
+            'RmrdMilkCollectionForSap' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'portal_export_bmc_collection',
+                'scenario' => 'RmrdMilkCollectionForSap',
+                'title' => 'BMC Collection Report For SAP',
             ],
         ];
         return $label[$l];
