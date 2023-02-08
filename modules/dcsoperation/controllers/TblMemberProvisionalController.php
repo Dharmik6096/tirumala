@@ -74,7 +74,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             }
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             //var_dump($this->model->unionCode->federationCode);exit();
-            $this->model->provisional_member_code = Yii::$app->general->getPrimaryCode($this->model);
+            $this->model->provisional_member_code = Yii::$app->general->getUuid();
             $this->model->member_code = $this->model->getCode();
             $this->model->pro_ex_member_code = $this->model->ex_member_code;
             $this->setModel();
@@ -130,12 +130,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             } else {
                 $this->model->is_approved = 0;
             }
-            $this->model->member_code = $this->model->getCode();
             $historyModel = new TblMemberProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $historyModel->provisional_member_code = $this->model->provisional_member_code;
             $this->model->load(Yii::$app->request->post());
 //            $this->setModel();
+            $this->model->member_code = $this->model->getCode();
             if ($_POST['warning'] == 0)
                 $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
             if ($validate == 1 && $this->model->validate()) {
@@ -149,6 +149,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $tblMember = new TblMember();
                     $tblMember->scenario = 'ApprovalMember';
                     $tblMember->attributes = $this->model->attributes;
+                    $tblMember->member_code = $tblMember->getCode();
                     $master_model[] = $tblMember;
                     if (strtolower($this->model->provisional_from) == 'collection') {
                         $milkCollectionData = new TblProvisionalMilkCollection();

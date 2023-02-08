@@ -9,6 +9,7 @@ use app\controllers\ChildController;
 use app\modules\sms\models\TblBulkNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\models\GeneralModel;
+use app\modules\sms\models\TblBulkNotificationApplicability;
 
 /**
  * Default controller for the `sms` module
