@@ -2446,7 +2446,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'report_type' => [Yii::t('app', 'Summary Wise'), Yii::t('app', 'Detail Wise')],
             ],
             'MccDayBookDispatchHubHorizontal' => [
-                'param' => 'union_code,from_date:string,to_date:string,bmc_code:union_code',
+                'param' => 'union_code,bmc_code:union_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_mcc_day_book_dispatch_hub_horizontal',
                 'scenario' => 'MccDayBookDispatchHubHorizontal',
                 'title' => 'MCC Day Book',
