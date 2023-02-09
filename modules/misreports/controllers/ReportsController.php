@@ -2420,7 +2420,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'BMC Dispatch Register',
             ],
             'PlantRegister' => [
-                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string,plant_register_type',
                 'sp_name' => 'mis_plant_register',
                 'scenario' => 'PlantRegister',
                 'title' => 'Plant Receipt Register',

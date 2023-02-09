@@ -1504,6 +1504,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['self' => Yii::t('app', 'SELF'), 'other' => Yii::t('app', 'OTHER')],
             ],
+            'plant_register_type' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CONSOLIDATED' => Yii::t('app', 'Consolidated'), 'INDIVIDUAL' => Yii::t('app', 'Individual')],
+            ],
         ];
         return $records[$l];
     }
