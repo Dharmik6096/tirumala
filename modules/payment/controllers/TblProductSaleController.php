@@ -675,7 +675,9 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->product_code = $detailModel->product_code;
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                    $existfromStock = $fstockModel->getExistStock($sale_type);
+                    $batch = $model->sap_batch_no;
+                    $userType = Yii::$app->session->get('UserType') == '5' ? TRUE : FALSE;
+                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $userType);
 
                     $f_stock = 0;
                     $qty = $detailModel->quantity;
@@ -691,6 +693,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $i = 1;
                         $fstockTxnModel = new TblProductStockTransaction();
                         $fstockTxnModel->attributes = $fstockModel->attributes;
+                        unset($fstockTxnModel->created_at);
+                        unset($fstockTxnModel->created_by);
                         $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                         $fstockTxnModel->old_value = $f_stock;
                         $fstockTxnModel->new_value = $qty;
@@ -729,13 +733,16 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $from_type = Yii::$app->request->post('type');
         $from_code = Yii::$app->request->post('code');
         $union_code = Yii::$app->request->post('union_code');
+        $sap_batch_no = Yii::$app->request->post('sap_batch_no');
         $sale_type = strtoupper($from_type) == 'MEMBER' ? 'DCS' : 'BMC';
 
         $stockModel = new TblProductStock();
         $stockModel->setCodes(strtoupper($sale_type), $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-        $existtoStock = $stockModel->getExistStock($sale_type);
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+        $batchNoWiseInventory == '1' ? TRUE : FALSE;
+        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $batchNoWiseInventory);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {
@@ -797,6 +804,31 @@ class TblProductSaleController extends \app\controllers\ChildController {
             } else {
                 return Json::encode(['status' => 'error', 'credit' => 0]);
             }
+        }
+    }
+
+    public function actionCreateProductSaleCash() {
+        $model = new TblProductSale();
+        $model->scenario = 'saleProduct';
+        $model->is_cash_sale = 1;
+        $detailModel = new TblProductSaleTransaction();
+        $detailModel->scenario = 'saleProduct';
+        $searchModel = new TblProductSaleSearch();
+        $searchModel->grid_filter = false;
+        $dataProvider = $searchModel->searchSaleDetails(Yii::$app->request->get());
+        $message = 'Product Sale';
+        if (Yii::$app->request->post()) {
+            return $this->createProductSaleData($model, $detailModel, $message);
+        } else {
+            return $this->render('_create_product_sale', [
+                        'model' => $model,
+                        'detailModel' => $detailModel,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'type' => 'vendorWiseSale',
+                        'message' => $message,
+                        'cashSale' => TRUE,
+            ]);
         }
     }
 

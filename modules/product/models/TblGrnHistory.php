@@ -46,7 +46,7 @@ class TblGrnHistory extends \yii\db\ActiveRecord {
             [['grn_date', 'invoice_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['remarks'], 'safe'],
             [['originating_type'], 'safe'],
-            [['grn_code', 'grn_no', 'vendor_master_code', 'mcc_plant_code', 'invoice_no'], 'safe'],
+            [['grn_code', 'grn_no', 'vendor_master_code', 'mcc_plant_code', 'invoice_no', 'ref_no'], 'safe'],
             [['union_code'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],

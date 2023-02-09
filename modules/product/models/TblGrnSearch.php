@@ -20,9 +20,9 @@ class TblGrnSearch extends TblGrn {
      */
     public function rules() {
         return [
-            [['grn_code', 'grn_no', 'grn_date', 'vendor_master_code', 'mcc_plant_code', 'invoice_date', 'invoice_no', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['originating_type'], 'integer'],
-            [['from_date', 'to_date'], 'safe'],
+                [['grn_code', 'grn_no', 'grn_date', 'vendor_master_code', 'mcc_plant_code', 'invoice_date', 'invoice_no', 'remarks', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['originating_type'], 'integer'],
+                [['from_date', 'to_date'], 'safe'],
         ];
     }
 
@@ -74,7 +74,9 @@ class TblGrnSearch extends TblGrn {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $query->andFilterWhere(['<=', 'cast(tbl_grn.grn_date as date)', $to_date]);
         }
-
+        if (!empty($this->created_at)) {
+            $query->andFilterWhere(['like', 'cast(tbl_grn.created_at as date)', date('Y-m-d', strtotime($this->created_at))]);
+        }
         // grid filtering conditions
 
         $query->andFilterWhere(['like', 'grn_no', $this->grn_no])
