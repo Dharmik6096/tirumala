@@ -2391,7 +2391,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string,to_date:string',
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
-                'title' => 'BMC Collection Report For SAP',
+                'title' => '218 - BMC Collection Report For SAP',
             ],
         ];
         return $label[$l];
