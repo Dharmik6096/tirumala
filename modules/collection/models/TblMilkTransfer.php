@@ -74,6 +74,9 @@ class TblMilkTransfer extends \app\models\ChildModel {
                 [['fat', 'snf', 'qty', 'transfer_type'], 'default', 'value' => 0],
                 [['fat', 'qty', 'snf'], 'double', 'min' => 0.01, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
                 [['conductivity', 'ph_value', 'other_reading', 'freezing_point', 'salt', 'adt_value', 'adt_param', 'lactose', 'density', 'protein', 'water', 'clr'], 'safe'],
+                ['source_code', 'compare', 'compareAttribute' => 'destination_code', 'operator' => '!=', 'when' => function ($model) {
+                    return $model->source_type == $model->destination_type;
+                }, 'message' => Yii::t('app/validation', 'Source and Destination must not be same.')],
         ];
     }
 

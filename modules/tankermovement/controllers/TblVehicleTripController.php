@@ -72,7 +72,11 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $bmc_array[$bmc_index[0]] = $bmc_index[1];
                 }
                 ksort($bmc_array);
-                $this->model->bmc_code = $bmc_array;
+                $bmc_array_sort = [];
+                foreach ($bmc_array as $a) {
+                    $bmc_array_sort[] = $a;
+                }
+                $this->model->bmc_code = $bmc_array_sort;
             } else {
                 $this->model->bmc_code = NULL;
             }

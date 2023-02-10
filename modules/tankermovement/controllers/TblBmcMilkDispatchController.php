@@ -102,7 +102,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $new_rec = TRUE;
                     $model->originating_org_code = $model->union_code;
                     $model->bmc_milk_dispatch_code = Yii::$app->general->getUuid();
-                    $model->challan_no = $model->trip_code . '/' . $model->bmc_code . '/1';
+                    $model->challan_no = $model->getChallanNo(); //$model->trip_code . '/' . $model->bmc_code . '/1';
                     $model->driver_name = $model->vehicleCode->driver_name;
                     $model->driver_contact_no = $model->vehicleCode->driver_contact_no;
                     $model->vehicle_in_time = $model->transaction_date . ' ' . $model->vehicle_in_time;

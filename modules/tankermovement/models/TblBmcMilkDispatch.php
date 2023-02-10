@@ -273,4 +273,17 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
+    public function getChallanNo() {
+        $primaryKey = 'challan_no';
+        $orgCode = $this->trip_code . '/' . $this->bmc_code . '/';
+        $len = strlen($orgCode);
+        $val = $this->find()
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
+        $code = (int) $val[$primaryKey] + 1;
+        $value = $orgCode . $code;
+        return $value;
+    }
+
 }

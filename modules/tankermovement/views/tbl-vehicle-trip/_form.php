@@ -118,18 +118,35 @@ $script = "
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
                             {                          
-                        var mccarray =  $('#tblvehicletrip-bmc_code option:selected').map(function () {
+                        var mccarray =  $('#tblvehicletrip-bmc_code option:selected');
+                        var selarray =  mccarray.map(function () {
                                         return this.value;
                                       }).get();
-                           $('#tblvehicletrip-bmc_code option').remove();                              
-                               var options='';              
+                        $('#tblvehicletrip-bmc_code option').remove();                              
+                        var options='';              
                                 $.each(obj1.data, function(index, value) {
-                                    if(jQuery.inArray(index,mccarray) == -1){   
-                                         options += '<option value=\"'+index+'\">'+value+'</option>';
-                                    }else{
-                                         options += '<option value=\"'+index+'\" selected>'+value+'</option>';
-                                    }
-                                });                        
+                                      if(jQuery.inArray(index,selarray) == -1){   
+                                         options += '<option value=\"'+index+'\">'+value+'</option>';  
+                                       }
+                                });  
+                        var bmc_array = [];
+                        var bmc_array_nonsel = {};
+                                mccarray.each(function(){
+                                    var val = $(this).attr('value');
+                                    var txt = $(this).text();
+                                    var dataindex = $(this).attr('data-sortindex');
+                                    bmc_array[dataindex]= val + '~~~' + txt ;
+                                    bmc_array_nonsel[val]=txt;
+                                });   
+                       $.each(bmc_array_nonsel, function(index, value) {
+                                    options += '<option value=\"'+index+'\">'+value+'</option>'; 
+                                });            
+                       $.each(bmc_array, function(index, value) {
+                                if(value!=''){
+                                    var valtxt=value.split('~~~')
+                                    options += '<option value=\"'+valtxt[0]+'\"  data-sortindex=\"'+index+'\" selected>'+valtxt[1]+'</option>';
+                                }
+                                });          
                        $('#tblvehicletrip-bmc_code').html(options);
                        $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true); 
                             }
@@ -145,5 +162,22 @@ $('#vehicle-trip-form').submit(function(e) {
   $('#selected_bmc_seq').val(bmcarray);  
 });    
 ";
+$script .= "$('#tblvehicletrip-bmc_code').change(function () {
+ var mccarray =  $('#tblvehicletrip-bmc_code option:selected');
+ var nonselarray =  $('#tblvehicletrip-bmc_code option:not(:selected)').map(function () {return this.value;}).get();                        
+ var bmc_array_sel = {};
+     mccarray.each(function(){
+		        var val = $(this).attr('value');
+                        var txt = $(this).text();
+                        bmc_array_sel[val]=txt;
+                     });   
+    $.each(bmc_array_sel, function(index, value) {
+            if(jQuery.inArray(index,nonselarray) == -1){
+	      $('#tblvehicletrip-bmc_code').append($('<option></option>').attr('value', index).text(value)); 
+            }
+            nonselarray.push(index);
+	});  
+});";
+
 $this->registerJs($script, View::POS_END, 'vehicle-trip-bmc-list');
 ?>
