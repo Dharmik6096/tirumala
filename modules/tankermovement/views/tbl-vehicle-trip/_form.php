@@ -177,6 +177,7 @@ $script .= "$('#tblvehicletrip-bmc_code').change(function () {
             }
             nonselarray.push(index);
 	});  
+    $('#tblvehicletrip-bmc_code').bootstrapDualListbox('refresh', true);      
 });";
 
 $this->registerJs($script, View::POS_END, 'vehicle-trip-bmc-list');
