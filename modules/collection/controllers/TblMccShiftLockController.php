@@ -49,10 +49,19 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->shift_lock_code = $model->shift_lock_code;
         $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
+        
+        $bmcsearchModel = new TblBmcCollectionSearch();
+        $bmcsearchModel->mcc_plant_code = $model->mcc_plant_code;
+        $bmcsearchModel->date_time_of_collection = $model->date_time_of_collection;
+        $bmcsearchModel->shift_code = $model->shift_code;
+        $bmcdataProvider = $bmcsearchModel->bmcwisesearch(Yii::$app->request->queryParams);
+        
         return $this->render('view', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'bmcdataProvider' => $bmcdataProvider,
+                    'bmcsearchModel' => $bmcsearchModel,
         ]);
     }
 

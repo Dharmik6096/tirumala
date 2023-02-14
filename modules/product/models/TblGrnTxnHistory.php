@@ -46,10 +46,10 @@ class TblGrnTxnHistory extends \yii\db\ActiveRecord {
         return [
             [['grn_txn_code'], 'safe'],
             [['unit_code', 'originating_type'], 'safe'],
-            [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount'], 'safe'],
+            [['rate', 'received_qty', 'rejected_qty', 'basic_amount', 'tax', 'gross_amount', 'sap_batch_no'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['grn_txn_code', 'grn_code', 'product_code'], 'safe'],
-            [['union_code'], 'safe'],
+            [['union_code', 'dispatch_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['operation_type'], 'safe'],

@@ -378,6 +378,13 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                 <?php
                                             }
                                         }
+                                        if (in_array($value, array('sap_batch_no'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->productBatchNo($model, $form, 'reportsmodel-plant_code,reportsmodel-product_code', 'sap_batch_no', 'Batch', false) ?> 
+                                            </div>
+                                            <?php
+                                        }
                                         if (in_array($value, array('org_type'))) {
                                             ?>
                                             <div class="col-sm-3">
@@ -396,6 +403,20 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->moduleType($model, $form, 'module_type', 'Module Type'); ?>                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('month'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdownStatic($value, $model, $form, 'form-group padding-right-5', $model->getAttributeLabel($value), false, $value) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('year'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->year($model, $form, 'year', 'Year', '', false, true, 5, 5) ?> 
+                                            </div>
                                             <?php
                                         }
                                     }

@@ -120,6 +120,12 @@ class TblRouteMappingSearch extends TblRouteMapping {
             $where_mcc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('MCC'));
             $where_mcc['tbl_mcc_plant.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
             $where_mcc['tbl_route_mapping.to_type'] = 'mcc';
+
+            if (Yii::$app->session->get('BMC') == '') {
+//                $where_bmc['tbl_route_mapping.to_dest'] = explode(',', Yii::$app->session->get('BMC'));
+                $where_bmc['tbl_bmc.mcc_plant_code'] = explode(',', Yii::$app->session->get('MCC'));
+                $where_bmc['tbl_route_mapping.to_type'] = 'bmc';
+            }
         }
         $query->andWhere(['or', $where_bmc, $where_mcc]);
 

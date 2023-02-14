@@ -64,7 +64,7 @@ class TblProductSaleHistory extends \yii\db\ActiveRecord {
             [['customer_type', 'customer_code'], 'safe'],
             [['dcs_code', 'bmc_code'], 'safe'],
             [['mcc_plant_code', 'plant_code'], 'safe'],
-            [['union_code'], 'safe'],
+            [['union_code', 'is_cash_sale'], 'safe'],
             [['created_by', 'updated_by', 'history_created_by'], 'safe'],
             [['operation_type'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
