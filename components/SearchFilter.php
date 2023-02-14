@@ -412,6 +412,15 @@ class SearchFilter {
             'TblVehicleExtraQtyDaywiseSearch' => [
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
+            'TblPlantDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
+            ],
+            'TblLoanProductSaleLockingSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblProductSaleLockingSearch' => [
+                'filter' => ['f_union_code'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }
