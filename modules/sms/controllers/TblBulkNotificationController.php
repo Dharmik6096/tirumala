@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\sms\models\TblBulkNotificationApplicability;
 use app\modules\sms\models\TblBulkNotificationApplicabilityHistory;
+use yii\widgets\ActiveForm;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
@@ -54,24 +55,99 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->model = new TblBulkNotification();
         $this->viewFile = 'create';
         $this->model->app_type = 1;
-        if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
-            $this->model->entry_datetime = date('Y-m-d H:i:s');
-            $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
-            $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Bulk Notification', 'create']);
-            if ($transaction == 'customRedirect') {
-                if ($this->model->login_type == 'all') {
-                    $appModel = new TblBulkNotificationApplicability();
-                    $appModel->attributes = $this->model->attributes;
-                    $appModel->applicable_for = 'all';
-                    $appModel->applicable_code = '0';
-                    $appModel->save();
+        $this->model->login_type = 'MEMBER';
+        $saveModel = [];
+        if (Yii::$app->request->post()) {
+            if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
+                $postData = Yii::$app->request->post();
+                $files = !empty($postData['TblFtpTxnLog']['file_name']) ? $postData['TblFtpTxnLog']['file_name'] : '';
+                $dcsCodes = $this->model->getBMCDCS();
+                $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+                $this->model->entry_datetime = date('Y-m-d H:i:s');
+                $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+                $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
+
+                if ($this->model->notification_type == 4) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+                    $i = 1;
+                    $auto_key_config = [];
+                    foreach ($dcsCodes as $k => $dcs_data) {
+                        $model = new TblBulkNotification();
+                        $model->union_code = $dcs_data['union_code'];
+                        $model->plant_code = $dcs_data['plant_code'];
+                        $model->mcc_plant_code = $dcs_data['mcc_plant_code'];
+                        $model->bmc_code = $dcs_data['bmc_code'];
+                        $model->dcs_code = $dcs_data['dcs_code'];
+                        $model->notification_type = $this->model->notification_type;
+                        $model->login_type = $this->model->login_type;
+                        if ($model->notification_type == 4) {
+                            $model->filename = ((int) $dcs_data['dcs_code_ex']) . '.pdf';
+                            $model->file_path = $file_path . $model->filename;
+                        }
+                        $model->campaign_name = $this->model->campaign_name;
+                        $model->title = $this->model->title;
+                        $model->message = $this->model->message;
+                        $model->receiver_type = 'APP_NOTIFICATION';
+                        $model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+                        $model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                        $model->entry_datetime = date('Y-m-d H:i:s');
+                        $saveModel[$i] = $model;
+                        $i++;
+                        $appModel = new TblBulkNotificationApplicability();
+                        $appModel->attributes = $model->attributes;
+                        $appModel->applicable_for = 'DCS';
+                        $appModel->applicable_code = $model->dcs_code;
+                        $appModel->scenario = 'milkBillApplicability';
+                        $saveModel[$i] = $appModel;
+                        $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
+                        $i++;
+                    }
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Scheme Master', 'create'], $auto_key_config);
+                } else {
+                    $saveModel[] = $this->model;
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
                 }
-                return $this->{$transaction}();
+                if ($transaction == 'customRedirect') {
+                    if ($this->model->login_type == 'all') {
+                        $appModel = new TblBulkNotificationApplicability();
+                        $appModel->attributes = $this->model->attributes;
+                        $appModel->applicable_for = 'all';
+                        $appModel->applicable_code = '0';
+                        $appModel->save();
+                    }
+                    return $this->{$transaction}();
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
+        } else {
+            return $this->render('create', [
+                        'model' => $this->model,
+            ]);
         }
-        return $this->customRender();
+        return $this->render('create', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -220,6 +296,26 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . str_replace(' ', '_', $file->name);
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
     }
 
 }

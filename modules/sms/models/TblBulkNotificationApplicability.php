@@ -42,17 +42,18 @@ class TblBulkNotificationApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'wef_date', 'applicable_for', 'bulk_notification_id'], 'required'],
-                [['bulk_notification_id', 'is_active', 'originating_type'], 'safe'],
-                [['wef_date', 'created_at', 'updated_at'], 'safe'],
-                [['applicable_for', 'applicable_code'], 'safe'],
-                [['union_code'], 'safe'],
-                [['created_by', 'updated_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
-                [['is_active'], 'default', 'value' => 1],
-                [['status'], 'default', 'value' => 0],
-                [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
-                [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+            [['bulk_notification_id'], 'required', 'except' => ['milkBillApplicability']],
+            [['applicable_code', 'wef_date', 'applicable_for'], 'required'],
+            [['bulk_notification_id', 'is_active', 'originating_type'], 'safe'],
+            [['wef_date', 'created_at', 'updated_at'], 'safe'],
+            [['applicable_for', 'applicable_code'], 'safe'],
+            [['union_code'], 'safe'],
+            [['created_by', 'updated_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type'], 'safe'],
+            [['is_active'], 'default', 'value' => 1],
+            [['status'], 'default', 'value' => 0],
+            [['entry_datetime'], 'default', 'value' => date('Y-m-d H:i:s')],
+            [['status', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'resp_desc', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
         ];
     }
 

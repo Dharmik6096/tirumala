@@ -1335,4 +1335,39 @@ class TblDcs extends ChildModel {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'lower_milk_type']);
     }
 
+    public function getAllRlsDCS($unionCode = [], $plantCode = [], $mccCode = [], $bmcCode = [], $dcsCode = []) {
+        $query = $this->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'dcs_code_ex'])->where(['is_active' => 1]);
+        if (!empty($unionCode))
+            $query->andWhere(['union_code' => $unionCode]);
+
+        if (!empty($plantCode))
+            $query->andWhere(['plant_code' => $plantCode]);
+
+        if (!empty($mccCode))
+            $query->andWhere(['mcc_plant_code' => $mccCode]);
+
+        if (!empty($bmcCode))
+            $query->andWhere(['bmc_code' => $bmcCode]);
+
+        if (!empty($dcsCode))
+            $query->andWhere(['dcs_code' => $dcsCode]);
+
+        if (Yii::$app->session->get('Unions') !== '')
+            $query->andWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+
+        if (Yii::$app->session->get('Plant') !== '')
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+
+        if (Yii::$app->session->get('MCC') !== '')
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+
+        if (Yii::$app->session->get('BMC') !== '')
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+
+        if (Yii::$app->session->get('Dcs') !== '')
+            $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
+
+        return $query->all();
+    }
+
 }
