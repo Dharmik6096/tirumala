@@ -83,11 +83,11 @@ class ClientPaymentConfig extends Component {
                 ],
                 'mcc_remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
-                    'sp_name' => 'sp_remuneration_payment_cargill',
+                    'sp_name' => 'sp_mcc_remuneration_payment',
                 ],
                 'mcc_payment_disburse' => [
                     'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
-                    'sp_name' => 'sp_disburse_remuneration_payment_cargill',
+                    'sp_name' => 'sp_disburse_remuneration_payment',
                 ],
             ],
             'VARDDAN' => [
@@ -128,6 +128,14 @@ class ClientPaymentConfig extends Component {
                 'secondary_tpt_payment' => [
                     'param' => 'union_code,from_date,to_date,user_code,transporter_code,vehicle_code',
                     'sp_name' => 'sp_tpt_secondary_payment_cargill',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_cargill',
+                ],
+                'mcc_payment_disburse' => [
+                    'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_disburse_remuneration_payment_cargill',
                 ],
             ],
             'KOTMALE' => [
