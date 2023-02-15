@@ -172,4 +172,5 @@ return [
     'Dcs Count' => 'TMCC Count',
     'Total Dcs' => 'Total TMCC',
     'DCS Register' => 'TMCC Register',
+    'DCS' => 'TMCC',
 ];

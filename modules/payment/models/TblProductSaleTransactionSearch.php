@@ -77,4 +77,37 @@ class TblProductSaleTransactionSearch extends TblProductSaleTransaction {
         return $dataProvider;
     }
 
+    public function viewsearch($params) {
+        $query = TblProductSaleTransaction::find();
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+        $query->joinWith(['productCode']);
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+//        Yii::$app->general->filterByNumber($query, $this, ['rate', 'quantity', 'amount']);
+        // grid filtering conditions
+        $query->andWhere([
+            'tbl_product.x_col3' => 2,
+        ]);
+        $query->andWhere([
+            'tbl_product_sale_transaction.reference_code' => $this->reference_code,
+            'tbl_product_sale_transaction.lock_date' => $this->lock_date,
+            'tbl_product_sale_transaction.data_lock' => $this->data_lock,
+        ]);
+
+
+
+        return $dataProvider;
+    }
+
 }

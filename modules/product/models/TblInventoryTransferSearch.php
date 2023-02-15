@@ -77,7 +77,9 @@ class TblInventoryTransferSearch extends TblInventoryTransfer {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $query->andFilterWhere(['<=', 'tbl_inventory_transfer.inventory_transfer_date', $to_date]);
         }
-
+        if (!empty($this->created_at)) {
+            $query->andFilterWhere(['like', 'cast(tbl_inventory_transfer.created_at as date)', date('Y-m-d', strtotime($this->created_at))]);
+        }
         if (!empty($this->f_dcs_code)) {
             $query->andFilterWhere(['like', 'tbl_inventory_transfer.to_code', $this->f_dcs_code]);
         } elseif (!empty($this->f_bmc_code)) {

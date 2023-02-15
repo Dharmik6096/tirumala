@@ -12,26 +12,21 @@ use kartik\grid\GridView;
 ?>
 <div id="maincontent">
     <?=
-    $this->render('inventory_transfer_form', ['model' => $model, 'type' => 'create', 'txModel' => $txModel])
+    $this->render('inventory_transfer_form', ['model' => $model, 'type' => 'create', 'txModel' => $txModel, 'batchNoWiseInventory' => $batchNoWiseInventory,])
     ?>
 </div>
 <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
     <div class="QltyParamDivGrid">
         <?=
-        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel])
+        $this->render('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel, 'batchNoWiseInventory' => $batchNoWiseInventory,])
         ?>
     </div>
 </div>
 <?php
+$userType = Yii::$app->session->get('UserType');
+
 $script = "
-$(document).ready(function(){
-    $('#from_mcc').hide(); 
-    $('#from_bmc').hide(); 
-    $('#from_dcs').hide(); 
-    $('#to_mcc').hide(); 
-    $('#to_bmc').hide(); 
-    $('#to_dcs').hide();
-    });
+var userType = '$userType';
     $('#tblinventorytransfer-from_type').on('change', function(){
             $('#tblinventorytransfer-from_mcc_plant_code').val('');
             $('#tblinventorytransfer-from_mcc_plant_code').trigger('select2:select');
@@ -55,7 +50,53 @@ $(document).ready(function(){
             $('#from_dcs').hide(); 
         }
     });
+    $(document).ready(function(){
+        $('#from_mcc').hide(); 
+        $('#from_bmc').hide(); 
+        $('#from_dcs').hide(); 
+        $('#to_mcc').hide(); 
+        $('#to_bmc').hide(); 
+        $('#to_dcs').hide();
+        if(userType == 5){
+            $('#tblinventorytransfer-from_type').val('MCC');
+            $('#tblinventorytransfer-from_type').trigger('select2:select');
+            $('#tblinventorytransfer-from_type').trigger('change');
+            $('.field-tblinventorytransfer-from_type').addClass('disabledDiv');
+            
+            $('#tblinventorytransfer-to_type').val('DCS');
+            $('#tblinventorytransfer-to_type').trigger('select2:select');
+            $('#tblinventorytransfer-to_type').trigger('change');
+            $('.field-tblinventorytransfer-to_type').addClass('disabledDiv');
+        }
+    });
+    
     $('#tblinventorytransfer-from_mcc_plant_code').on('change', function(){
+    if(userType == 5){
+        var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
+        if(setData(f_mcc)){
+            $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+            $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+            $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            $('.field-tblinventorytransfer-to_mcc_plant_code').addClass('disabledDiv');
+            
+            $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }
+                });
+        }
+    }    
         setFromCode();
     });
     $('#tblinventorytransfer-from_bmc_code').on('change', function(){
@@ -85,18 +126,92 @@ $(document).ready(function(){
             $('#tblinventorytransfer-to_mcc_plant_code').val('');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
             $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            var f_mcc =$('#tblinventorytransfer-from_mcc_plant_code').val();
+            var f_bmc =$('#tblinventorytransfer-from_bmc_code').val();
+            var f_dcs =$('#tblinventorytransfer-from_dcs_code').val();
+
         if($(this).val()=='MCC'){
             $('#to_mcc').show();
             $('#to_bmc').hide(); 
             $('#to_dcs').hide();
+                if(setData(f_mcc)){
+                    $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                    $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+                }
         }else if($(this).val()=='BMC'){
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').hide();
+            
+            if(setData(f_mcc)){
+                $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            }
+            if(setData(f_bmc)){
+                $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
+                $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_bmc_code').trigger('change');
+            }else{
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }
+                });
+            }
         }else if($(this).val()=='DCS'){
             $('#to_mcc').show(); 
             $('#to_bmc').show();
             $('#to_dcs').show();
+            
+            if(setData(f_mcc)){
+                $('#tblinventorytransfer-to_mcc_plant_code').val(f_mcc);
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('select2:select');
+                $('#tblinventorytransfer-to_mcc_plant_code').trigger('change');
+            }
+            if(setData(f_bmc)){
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblinventorytransfer-to_bmc_code').val(f_bmc);
+                    $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                });
+            }else{
+                $('#tblinventorytransfer-to_bmc_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    let varValBMC = $('#tblinventorytransfer-to_bmc_code option:nth-child(2)').val();
+                    let notSingleSelection = $('#tblinventorytransfer-to_bmc_code option:nth-child(3)').val();
+                   
+                    if(varValBMC == undefined) {
+                        varValBMC = '';
+                    }
+                    if(notSingleSelection == undefined) {
+                        notSingleSelection = '';
+                    }
+                    if(notSingleSelection ==''){
+                        $('#tblinventorytransfer-to_bmc_code').val(varValBMC);
+                        $('#tblinventorytransfer-to_bmc_code').trigger('change');
+                        $('#tblinventorytransfer-to_bmc_code').trigger('select2:select');
+                    }    
+                });
+            }
+            if(setData(f_dcs)){
+                $('#tblinventorytransfer-to_dcs_code').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+                    $('#tblinventorytransfer-to_dcs_code').val(f_dcs);
+                    $('#tblinventorytransfer-to_dcs_code').trigger('select2:select');
+                    $('#tblinventorytransfer-to_dcs_code').trigger('change');
+                });
+            }
         }else{
             $('#to_mcc').hide(); 
             $('#to_bmc').hide(); 
@@ -184,17 +299,31 @@ $(document).ready(function(){
     $('#f_code').on('change', function(){
         getAvailableStock();
     });
+    
+    $('#tblinventorytransfertxn-sap_batch_no').on('depdrop.afterChange', function(event, id, value, jqXHR, textStatus) {
+        let varVal = $('#tblinventorytransfertxn-sap_batch_no option:nth-child(2)').val();
+        if(varVal == undefined) {
+            varVal = '';
+        }
+        $('#tblinventorytransfertxn-sap_batch_no').val(varVal);
+        $('#tblinventorytransfertxn-sap_batch_no').trigger('change');
+        $('#tblinventorytransfertxn-sap_batch_no').trigger('select2:select');
+    });
+    $('#tblinventorytransfertxn-sap_batch_no').on('change', function(){
+        getAvailableStock();
+    });
     function getAvailableStock(){
         var from_type = $('#tblinventorytransfer-from_type').val();
         var from_code = $('#f_code').val();
         var product = $('#tblinventorytransfertxn-product_code').val();
         var union = $('#tblinventorytransfer-union_code').val();
+        var batch_no = $('#tblinventorytransfertxn-sap_batch_no').val();
        
          if(setData(from_type) && setData(from_code) && setData(product)){
              $.ajax({
                     type: 'post',
                     url:'" . Url::to(['get-available-stock']) . "',
-                    data: {'product':product,'from_type':from_type,'from_code':from_code,'union_code':union},
+                    data: {'product':product,'from_type':from_type,'from_code':from_code,'union_code':union,'batch_no':batch_no},
                     success: function(data) {                                        
                         var obj = $.parseJSON(data);
                         if (obj.status == 'success')

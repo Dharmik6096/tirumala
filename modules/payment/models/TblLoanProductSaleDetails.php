@@ -44,11 +44,11 @@ class TblLoanProductSaleDetails extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by', 'resp_desc'], 'safe'],
-                [['product_code', 'entry_type', 'send_status'], 'safe'],
-                [['sale_date_time', 'created_at', 'updated_at', 'response_datetime', 'picked_datetime', 'txfarmer_id', 'txfarmer_id', 'send_status', 'dcs_name', 'member_name', 'received_timestamp'], 'safe'],
-                [['amount'], 'number'],
-                [['send_status'], 'required'],
+            [['dcs_code', 'union_code', 'member_code', 'created_by', 'updated_by', 'resp_desc'], 'safe'],
+            [['product_code', 'entry_type', 'send_status', 'reference_code', 'data_lock', 'lock_date'], 'safe'],
+            [['sale_date_time', 'created_at', 'updated_at', 'response_datetime', 'picked_datetime', 'txfarmer_id', 'txfarmer_id', 'send_status', 'dcs_name', 'member_name', 'received_timestamp'], 'safe'],
+            [['amount'], 'number'],
+            [['send_status'], 'required'],
         ];
     }
 

@@ -150,6 +150,16 @@ class DropDown extends Component {
         }
     }
 
+    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start, $end) {
+        $yearStart = date('Y') - $start;
+        $yearEnd = date('Y') + $end;
+        $years = [];
+        for ($yearStart; $yearStart <= $yearEnd; $yearStart++) {
+            $years[] = $yearStart;
+        }
+        echo $form->field($model, $name)->dropDownList($years, ['prompt' => 'Select Year', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
+    }
+
     private function setClass($form, $name) {
         if (array_key_exists($name, $form->options))
             $this->class = $form->options[$name];
@@ -992,6 +1002,7 @@ class DropDown extends Component {
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
+                'remove_key' => ['0'],
             ],
             'sap_file_status' => [
                 'name' => 'sap_file_status',
@@ -1396,6 +1407,16 @@ class DropDown extends Component {
                 'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test')],
                 'remove_key' => ['2', '3', '5']
             ],
+            'month' => [
+                'name' => 'month',
+                'prompt' => Yii::t('app', 'Select Month'),
+                'data' => ['01' => Yii::t('app', 'Jan'), '02' => Yii::t('app', 'Feb'), '03' => Yii::t('app', 'Mar'), '04' => Yii::t('app', 'Apr'), '05' => Yii::t('app', 'May'), '06' => Yii::t('app', 'Jun'), '07' => Yii::t('app', 'Jul'), '08' => Yii::t('app', 'Aug'), '09' => Yii::t('app', 'Sep'), '10' => Yii::t('app', 'Oct'), '11' => Yii::t('app', 'Nov'), '12' => Yii::t('app', 'Dec')],
+            ],
+            'cash_payment' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash')],
+            ],
         ];
         return $records[$l];
     }
@@ -1438,7 +1459,7 @@ class DropDown extends Component {
             'quality_param' => ['name' => 'quality_param', 'fields' => 'code,type', 'prompt' => 'Select Quality Param', 'model' => 'TblMilkType'],
             'criteria_type_code' => ['name' => 'criteria_type_code', 'fields' => 'code,criteria_name', 'prompt' => 'Select Criteria', 'model' => 'TblHeadLoadCriteria'],
             'product_group_code' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup'],
-            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code'],
+            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['x_col3']],
             'member_classification_type_code' => ['name' => 'member_classification_type_code', 'fields' => 'member_classification_type_code,member_classification_type', 'prompt' => 'Select Member Classification Type', 'model' => 'TblMemberClassificationType'],
             'member-type' => ['name' => 'member_type_code', 'fields' => 'member_type_code,member_type_name', 'prompt' => Yii::t('app', 'Select Member Type'), 'model' => 'TblMemberTypes'],
             'blood-group' => ['name' => 'bloodgroup_code', 'fields' => 'blood_group_code,blood_group', 'prompt' => 'Select Blood Group', 'model' => 'TblBloodgroup'],
@@ -1506,6 +1527,7 @@ class DropDown extends Component {
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
             'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
         ];
         return $label[$l];
     }
@@ -1721,6 +1743,16 @@ class DropDown extends Component {
     public function DpuRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/dpu-chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
+    }
+
+    public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
 }

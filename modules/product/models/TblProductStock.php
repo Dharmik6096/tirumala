@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\syncutility\models\TblSentbox;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_product_stock".
@@ -50,11 +51,11 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_stock_code'], 'required', 'on' => ['androidsync']],
-                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['stock'], 'safe'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['product_stock_code'], 'required', 'on' => ['androidsync']],
+            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['stock', 'sap_batch_no'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
         ];
     }
 
@@ -110,9 +111,16 @@ class TblProductStock extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getExistStock($type) {
+    public function getExistStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
-        if (strtoupper($type) == 'MCC') {
+        if (!empty($batch)) {
+            $query->andWhere(['sap_batch_no' => $batch]);
+        }
+        $isMcc = FALSE;
+        if ($checkMccStock && strtoupper($type) == 'BMC') {
+            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
+        if (strtoupper($type) == 'MCC' || $isMcc) {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
@@ -120,7 +128,7 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }
-        return $query->one();
+        return $query->orderBy(['created_at' => SORT_ASC])->one();
     }
 
     public function getCode($autoInc = 1) {
@@ -196,4 +204,48 @@ class TblProductStock extends \app\models\ChildModel {
 //            }
 //        }
 //    }
+    public function getProductBatchList($type, $code, $product, $check_is_mcc = false) {
+        $query = $this->find()->where([
+                    'product_code' => $product])
+                ->andWhere(['>', 'tbl_product_stock.stock', 0])
+                ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
+        $isMcc = FALSE;
+        if ($check_is_mcc && strtoupper($type) == 'BMC') {
+            $this->bmc_code = $code;
+            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
+        $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (strtoupper($type) == 'MCC' || $isMcc) {
+            $query->andWhere(['mcc_plant_code' => $code])
+                    ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['dcs_code' => $code]);
+        }
+        $data = $query->orderBy(['created_at' => SORT_ASC])->all();
+        if (!empty($data)) {
+            $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
+        }
+        return $data;
+    }
+
+    public function getAvailableStock($type, $batch = '') {
+        $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code])
+                ->andWhere(['>', 'stock', 0]);
+        if (!empty($batch)) {
+            $query->andWhere(['sap_batch_no' => $batch]);
+        }
+        if (strtoupper($type) == 'MCC') {
+            $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $this->bmc_code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
+        }
+        return $query->orderBy(['created_at' => SORT_ASC])->all();
+    }
+
 }

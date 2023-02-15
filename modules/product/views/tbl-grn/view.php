@@ -8,6 +8,7 @@ use kartik\detail\DetailView;
 /* @var $model app\modules\payment\models\TblProductSale */
 
 $this->title = Yii::$app->label->title('view', 'GRN');
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -38,7 +39,8 @@ $this->title = Yii::$app->label->title('view', 'GRN');
                             ],
                             [
                                 'attribute' => 'vendor_master_code',
-                                'value' => Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name'),
+                                'label' => $batchNoWiseInventory == 1 ? 'Plant' : 'Vendor',
+                                'value' => $batchNoWiseInventory == 1 ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : Yii::$app->general->getforeignkey($model->vendorCode, 'vendor_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],

@@ -790,6 +790,56 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionStockDispatchToMccFromStore() {
+        $this->report = 'StockDispatchToMccFromStore';
+        return $this->actionIndex();
+    }
+
+    public function actionStockReceivedToMcc() {
+        $this->report = 'StockReceivedToMcc';
+        return $this->actionIndex();
+    }
+
+    public function actionStockTransferToDcs() {
+        $this->report = 'StockTransferToDcs';
+        return $this->actionIndex();
+    }
+
+    public function actionStockAtMcc() {
+        $this->report = 'StockAtMcc';
+        return $this->actionIndex();
+    }
+
+    public function actionStockAtDcs() {
+        $this->report = 'StockAtDcs';
+        return $this->actionIndex();
+    }
+
+    public function actionSaleReportFarmer() {
+        $this->report = 'SaleReportFarmer';
+        return $this->actionIndex();
+    }
+
+    public function actionSaleReportVendor() {
+        $this->report = 'SaleReportVendor';
+        return $this->actionIndex();
+    }
+
+    public function actionSummaryReportMcc() {
+        $this->report = 'SummaryReportMcc';
+        return $this->actionIndex();
+    }
+
+    public function actionSummaryReportDcs() {
+        $this->report = 'SummaryReportDcs';
+        return $this->actionIndex();
+    }
+
+    public function actionRmrdMilkCollectionForSap() {
+        $this->report = 'RmrdMilkCollectionForSap';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -1188,6 +1238,11 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionFileGenerateStatus() {
         $this->report = 'FileGenerateStatus';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberCollectionReportForSap() {
+        $this->report = 'MemberCollectionReportForSap';
         return $this->actionIndex();
     }
 
@@ -2370,6 +2425,72 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_society_wise_rate_different',
                 'scenario' => 'SocietyWiseRateDifferenceReport',
                 'title' => '915 - Society Wise Rate Difference Report',
+            ],
+            'StockDispatchToMccFromStore' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_dispatch_to_cc_from',
+                'scenario' => 'StockDispatchToMccFromStore',
+                'title' => 'Stock Dispatch To MCC',
+            ],
+            'StockReceivedToMcc' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_received_to_cc_from',
+                'scenario' => 'StockReceivedToMcc',
+                'title' => 'Stock Received To MCC',
+            ],
+            'StockTransferToDcs' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
+                'sp_name' => 'mis_stock_transfer_from_to_destination',
+                'scenario' => 'StockTransferToDcs',
+                'title' => 'Stock Transfer To DCS',
+            ],
+            'StockAtMcc' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,p_date:string',
+                'sp_name' => 'mis_stock_to_cc',
+                'scenario' => 'StockAtMcc',
+                'title' => 'Stock At MCC',
+            ],
+            'StockAtDcs' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,p_date:string',
+                'sp_name' => 'mis_stock_to_vlcc',
+                'scenario' => 'StockAtDcs',
+                'title' => 'Stock At DCS',
+            ],
+            'SaleReportFarmer' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_farmer_product_sale_report',
+                'scenario' => 'SaleReportFarmer',
+                'title' => 'Farmer Sale Report',
+            ],
+            'SaleReportVendor' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_vendor_product_sale_report',
+                'scenario' => 'SaleReportVendor',
+                'title' => 'Vendor Sale Report',
+            ],
+            'SummaryReportMcc' => [
+                'param' => 'union_code,plant_code,mcc_code,p_date:string',
+                'sp_name' => 'mis_summary_report_at_cc',
+                'scenario' => 'SummaryReportMcc',
+                'title' => 'Summary Report - MCC',
+            ],
+            'SummaryReportDcs' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'sp_name' => 'mis_vlcc_stock_summary_report',
+                'scenario' => 'SummaryReportDcs',
+                'title' => 'Summary Report - DCS',
+            ],
+            'MemberCollectionReportForSap' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'portal_export_milk_collection',
+                'scenario' => 'MemberCollectionReportForSap',
+                'title' => '112 - Member Collection Report For SAP',
+            ],
+            'RmrdMilkCollectionForSap' => [
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'portal_export_bmc_collection',
+                'scenario' => 'RmrdMilkCollectionForSap',
+                'title' => 'BMC Collection Report For SAP',
             ],
         ];
         return $label[$l];

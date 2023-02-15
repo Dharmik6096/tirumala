@@ -7,8 +7,9 @@ $this->title = Yii::$app->label->title('create', 'Society');
         <?=
         $this->render('_form', [
             'model' => $model, 'type' => 'create',
-            'bankDetails'=>$bankDetails,
-            'contactDetails'=>$contactDetails
+            'bankDetails' => $bankDetails,
+            'contactDetails' => $contactDetails,
+            'showIsBMC' => $showIsBMC
         ])
         ?>
     </div>

@@ -1,7 +1,12 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Inventory Transfer'));
 $this->params['menu'][] = Yii::$app->controls->add('Inventory');
-$this->params['menu'][] = Yii::$app->controls->import('inventory-transfer', $this);
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+if ($batchNoWiseInventory == 1) {
+    $this->params['menu'][] = Yii::$app->controls->import('inventory-transfer-batch', $this);
+} else {
+    $this->params['menu'][] = Yii::$app->controls->import('inventory-transfer', $this);
+}
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
