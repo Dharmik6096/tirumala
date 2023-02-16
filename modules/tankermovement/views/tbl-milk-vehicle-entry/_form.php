@@ -164,10 +164,11 @@ $form = ActiveForm::begin([
                 <div class="col-sm-1"> 
                     <?= $form->field($txn_model, 'mbrt')->textInput() ?>
                 </div>
-
                 <div class="col-sm-1"> 
                     <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
                     <?= $form->field($txn_model, 'acidity')->textInput() ?>
+                </div>
+                <div id="transactions-from">             
                 </div>
             </div>
         </div>
@@ -292,6 +293,7 @@ $script = "
             $('#loadercontent').show();
             $('#pageloader').show();
             $('#dispatch-detail').html('');
+            $('#transactions-from').html('');
             BindData(trip_code);
          //   GetVehicle(trip_code);
         }      
@@ -313,6 +315,16 @@ $script = "
                     $('#pageloader').hide();
                 }
             });
+          var plant_code = $('#tblmilkvehicleentry-plant_code').val();
+          var union_code = $('#tblmilkvehicleentry-union_code').val();  
+          $.ajax({
+                type: 'get',
+                url: '" . Url::to(['transaction-form']) . "',
+                data: {'plant_code' : plant_code,'union_code':union_code},             
+                success: function(data) {
+                  $('#transactions-from').html(data);                                                                 
+                }
+            });           
     }
     
     function GetVehicle(trip_code){
@@ -392,6 +404,10 @@ $script = "
                         $.each(data.modelData, function(index, value) {
                             $('#tblmilkvehicleentrytransaction-'+index).val(value);
                         });
+                        $.each(data.configData, function(index, value) {
+                            $('#tblconfigtxnresult-'+index+'-config_code').val(index);
+                            $('#tblconfigtxnresult-'+index+'-config_result').val(value);
+                        });
                             $('#tblmilkvehicleentrytransaction-challan_no').trigger('change');
                             $('#tblmilkvehicleentrytransaction-challan_no').trigger('select2:select');
                             $('#tblmilkvehicleentrytransaction-milk_type_code').trigger('change');
@@ -416,4 +432,37 @@ $script = "
 
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>
+
+<?php
+$script = "$(document).ready(function(){
+    $(document).on('click','.view-config',function(e){
+    var id= $(this).attr('data-val');
+  ViewConfig(id);
+    });
+    function ViewConfig(code){
+        if(code != ''){         
+        $.ajax({
+                type: 'get',
+                url: '" . Url::to(['/tankermovement/tbl-milk-vehicle-entry/view-config']) . "',
+                data: {'id' : code},
+                beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+                },
+                success: function(data) {
+                  $('#config_detail_view').html(data);
+                   $('#ConfigModal').modal('toggle');              
+                   $('#loadercontent').hide();
+                   $('#pageloader').hide();                                                                  
+                },
+                error: function(data) {  
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                }
+            });
+        }
+    }
+});";
+$this->registerJs($script, View::POS_END, 'receipt-config-popup');
 ?>
