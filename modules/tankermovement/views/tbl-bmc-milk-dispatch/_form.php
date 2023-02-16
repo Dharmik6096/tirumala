@@ -313,3 +313,35 @@ $script .= "
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
+<?php
+$script = "$(document).ready(function(){
+    $(document).on('click','.view-config',function(e){
+    var id= $(this).attr('data-val');
+  ViewConfig(id);
+    });
+    function ViewConfig(code){
+        if(code != ''){         
+        $.ajax({
+                type: 'get',
+                url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/view-config']) . "',
+                data: {'id' : code},
+                beforeSend:function(data) {
+                $('#loadercontent').show();
+                $('#pageloader').show();
+                },
+                success: function(data) {
+                  $('#config_detail_view').html(data);
+                   $('#ConfigModal').modal('toggle');              
+                   $('#loadercontent').hide();
+                   $('#pageloader').hide();                                                                  
+                },
+                error: function(data) {  
+                    $('#loadercontent').hide();
+                    $('#pageloader').hide();
+                }
+            });
+        }
+    }
+});";
+$this->registerJs($script, View::POS_END, 'bmc-config-popup');
+?>

@@ -167,9 +167,9 @@ $form = ActiveForm::begin([
                 <div class="col-sm-1"> 
                     <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
                     <?= $form->field($txn_model, 'acidity')->textInput() ?>
-                </div>
-                <div id="transactions-from">             
-                </div>
+                </div>                
+            </div>
+            <div id="transactions-from">             
             </div>
         </div>
         <div class="col-sm-12 shortcut-main mt15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -202,7 +202,10 @@ $form = ActiveForm::begin([
                                                                     $("#entry_type").val($("#tblmilkvehicleentrytransaction-entry_type" ).val());
                                                                     $("#milk-vehicle-form .master_fields select").attr("disabled", true);
                                                                     $("#tblmilkvehicleentrytransaction-entry_type" ).prop("disabled", true);
-                                                                    $("#milk-vehicle-form .reset_field input").val("");
+                                                                    $("#milk-vehicle-form .reset_field input").val("");                                                                    
+                                                                    $("#transactions-from input[type=radio]").prop("checked",true);
+                                                                    $("#transactions-from input[type=text]").val("");
+                                                                    $("#transactions-from select").val("");
                                                                     $("#milk-vehicle-form .reset_field select").val("");
                                                                     $("#milk-vehicle-form .reset_field textarea").val("");
                                                                     $("#tblmilkvehicleentrytransaction-challan_no").change();
