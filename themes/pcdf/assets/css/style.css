@@ -4858,3 +4858,54 @@ tr.highlightRow {
 #report-form .shift {
     height: 57px
 }
+
+//milk collection summary
+.div_dash_blocks p {
+    text-align: right;
+    width: 100%;
+    display: block;
+    margin: 5px 0px 5px 0px;
+    white-space: nowrap;
+}
+
+.dash_block_headers {
+    color: #fff !important;
+    font-weight: 600;
+    font-size: 13px;
+    background-color: #7A231C;
+}
+.dashboard_widget_tables th{
+    border: 1px solid #fff;
+    color: #333;
+    padding: 4px;
+    font-size: 14px;
+}
+.width_r{
+    width: 30%;
+    text-align: center;
+}
+.width_l{
+    width: 30%;
+    text-align: center;
+}
+
+.dashboard_widget_tables tr td{
+    border: 1px solid #fff;
+    color: #333;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 7px;
+    font-weight: 600;
+}
+
+.dash_block_border {
+    height: -webkit-fill-available;
+}
+
+.t_design  {
+    background-color: #FCE4E2;
+}
+
+.t_design_2  {
+    background-color: #f5f5f5;
+}

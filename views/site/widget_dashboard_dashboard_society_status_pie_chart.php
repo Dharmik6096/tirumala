@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 ?>
 
-<div class="panel panel-default panel-main">
+<div class="panel-default">
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-6">
@@ -28,20 +28,7 @@ use yii\helpers\Html;
         </div>
     </div>
 </div>
-<!--<div id="pieChartModals" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        Modal content
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?= Yii::t('app', 'Society Status Chart'); ?></h4>
-            </div>
-            <div class="modal-body" id='piecontainers'>
-            </div>
-        </div>
 
-    </div>
-</div>-->
 <?php
 $online_dcs = array_sum(array_map(function($item) {
             return $item['onlineDcs'];

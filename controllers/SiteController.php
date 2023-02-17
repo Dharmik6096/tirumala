@@ -64,7 +64,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary'];
 
     public function init() {
         parent::init();
@@ -219,10 +219,11 @@ class SiteController extends Controller {
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
         $dashboard_society_status_pie_chart = [];
+        $milk_collection_summary = [];
 
 // $dpu_data = $this->DPUDataCollection($model);
 
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart,
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
         ]);
     }
 
@@ -772,49 +773,51 @@ class SiteController extends Controller {
         }
         $input = $this->SpInput($sp_name, $post);
         $spname = $input['name'];
-        $in_array = explode(',', str_replace(' ', '', $input['input']));
         $param_str = '';
-        foreach ($in_array as $in) {
-            $data = explode('=', $in);
-            $variable = explode('~', $data[0]);
-            $val_type = explode('|', $data[1]);
-            $param = $variable[0];
+        if ($input['input'] != '') {
+            $in_array = explode(',', str_replace(' ', '', $input['input']));
+            foreach ($in_array as $in) {
+                $data = explode('=', $in);
+                $variable = explode('~', $data[0]);
+                $val_type = explode('|', $data[1]);
+                $param = $variable[0];
 
-            $param1 = isset($variable[1]) ? $variable[1] : '';
-            $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
-            $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
-            $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
+                $param1 = isset($variable[1]) ? $variable[1] : '';
+                $value = !empty($post[$param]) ? $post[$param] : $val_type[0];
+                $value = (isset($val_type[1]) && $val_type[1] == 'date') ? date('Y-m-d', strtotime($value)) : $value;
+                $value = (isset($val_type[1]) && $val_type[1] == 'list') ? str_replace('-', ',', $value) : $value;
 
-            if (!empty($val_type[1])) {
-                $checkshift = explode(':', $val_type[1]);
-                if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
-                    if (!empty($post[$checkshift[1]])) {
-                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift($post[$checkshift[1]]);
-                    } else {
-                        $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(1);
+                if (!empty($val_type[1])) {
+                    $checkshift = explode(':', $val_type[1]);
+                    if (isset($checkshift[0]) && $checkshift[0] == 'dateshift') {
+                        if (!empty($post[$checkshift[1]])) {
+                            $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift($post[$checkshift[1]]);
+                        } else {
+                            $value = date('Y-m-d', strtotime($value)) . ' ' . Yii::$app->general->getshift(1);
+                        }
                     }
                 }
-            }
-            if (in_array($param, ['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code'])) {
-                if ($value != 0) {
-                    $value = ',' . $value . ',';
+                if (in_array($param, ['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'dcs_code'])) {
+                    if ($value != 0) {
+                        $value = ',' . $value . ',';
+                    }
                 }
-            }
-            if (isset($val_type[1]) && $val_type[1] == 'date' && isset($input['appendTime']) && $input['appendTime']) {
-                $cur_time = date_create(date('H:i:s'));
-                $morning_time = date_create('16:00:00');
-                $diff = date_diff($morning_time, $cur_time);
-                $time = '06:00:00';
-                if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
-                    $time = '18:00:00';
+                if (isset($val_type[1]) && $val_type[1] == 'date' && isset($input['appendTime']) && $input['appendTime']) {
+                    $cur_time = date_create(date('H:i:s'));
+                    $morning_time = date_create('16:00:00');
+                    $diff = date_diff($morning_time, $cur_time);
+                    $time = '06:00:00';
+                    if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+                        $time = '18:00:00';
+                    }
+                    $value = $value . ' ' . $time;
                 }
-                $value = $value . ' ' . $time;
-            }
 
-            if ($param1 == 'shift') {
-                $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
+                if ($param1 == 'shift') {
+                    $value .= (!empty($param1) && isset($post[$param1])) ? ' ' . \Yii::$app->general->getshift($post[$param1]) : ' 00:00:00';
+                }
+                $param_str .= "'" . $value . "',";
             }
-            $param_str .= "'" . $value . "',";
         }
         $param_str = rtrim($param_str, ",");
         $query = \Yii::$app->db->createCommand("{CALL $spname($param_str)}");
@@ -982,6 +985,10 @@ class SiteController extends Controller {
             'dashboard_society_status_pie_chart' => [
                 'name' => 'sp_portal_dashboard_farmer_status',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'milk_collection_summary' => [
+                'name' => 'sp_milk_collection_summary_status',
+                'input' => '',
             ],
         ];
         return $array[$sp];
@@ -2865,6 +2872,21 @@ class SiteController extends Controller {
     public function actionTerms() {
         $this->layout = false;
         return $this->render('terms');
+    }
+
+    public function actionLoadDashboardMilkCollectionSummary() {
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $res = [];
+        $array_result = $results[0];
+        if (count($results) > 1) {
+            $array_result = $results;
+        }
+        foreach ($array_result as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];
     }
 
 }

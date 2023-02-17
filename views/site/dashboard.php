@@ -157,7 +157,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                   ?>: </span> -->
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -265,7 +265,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                   ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
@@ -454,7 +454,7 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_farmer_rmrd_blocks',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
-                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical'].indexOf(value) == -1) 
+                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
                     }
@@ -836,7 +836,42 @@ $('.dpu_data_icon').click(function(){
                         }
                     });
                 }
-
+                //milk collection summary code
+                else if(['milk_collection_summary'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'milk_collection_summary';
+                   
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-milk-collection-summary']) . "',
+                        data: blockDataString+'&sp='+id+'&widget_type='+widget_type,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                console.log(obj1.res);
+                                $('#today_milk_collection_llpd').text(obj1.res.today_llpd_milk_collection);
+                                $('#cumulative_milk_collection_llpd').text(obj1.res.cumulative_llpd_milk_collection);
+                                $('#today_fat_quality').text(obj1.res.today_fat_quality);
+                                $('#cumulative_fat_quality').text(obj1.res.cumulative_fat_quality);
+                                $('#today_snf_quality').text(obj1.res.today_snf_quality);
+                                $('#cumulative_snf_quality').text(obj1.res.cumulative_snf_quality);
+                                $('#today_tons_feed_supply').text(obj1.res.today_tons_feed_supply);
+                                $('#cumulative_tons_feed_supply').text(obj1.res.cumulative_tons_feed_supply);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                //milk collection summary code complete
                 else if(['milk_analysis_vertical'].indexOf(value) == 0 || ['milk_analysis_grid'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
                     var union= '" . $unionCode . "';
