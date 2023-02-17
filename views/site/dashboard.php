@@ -344,7 +344,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
                 if (in_array($value, $all_widgets)) {
-                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
+                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart]);
                 }
             }
         }
