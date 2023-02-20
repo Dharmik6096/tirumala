@@ -43,6 +43,15 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 bmc_dd">
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbulknotification-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
     </div>
+    <div class="col-sm-2 payment_cycle_dd">
+        <?php
+        $where = json_encode(['data_lock_member' => 1, 'billing_lock_member' => 0]);
+        echo Html::hiddenInput('customer_type', 'DCS', ['id' => 'customer_type']);
+        echo Html::hiddenInput('applicable_for', 'BMC', ['id' => 'applicable_for']);
+        echo Html::hiddenInput('data_lock_bmc', $where, ['id' => 'data_lock_bmc']);
+        ?>
+        <?= Yii::$app->dropdown->paymentCycle($model, $form, 'tblbulknotification-union_code,tblbulknotification-bmc_code,customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code'), FALSE, FALSE); ?>
+    </div>
     <div class="col-sm-3">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', false, date('Y-m-d'), false, true); ?>
     </div>
@@ -167,6 +176,7 @@ $script = "
     $('.plant_dd').hide();
     $('.mcc_dd').hide();
     $('.bmc_dd').hide();
+    $('.payment_cycle_dd').hide();
     $(document).on('change', '#tblbulknotification-notification_type', function() {  
           hideShowFields();
     });
@@ -180,6 +190,7 @@ $script = "
             $('.plant_dd').hide();
             $('.mcc_dd').hide();
             $('.bmc_dd').hide();
+            $('.payment_cycle_dd').hide();
             $('#tblbulknotification-plant_code').val('');
             $('#tblbulknotification-plant_code').trigger('change');
             $('#tblbulknotification-plant_code').trigger('select2:select');
@@ -193,6 +204,7 @@ $script = "
             $('.plant_dd').show();
             $('.mcc_dd').show();
             $('.bmc_dd').show();
+            $('.payment_cycle_dd').show();
             $('.app_type').hide();
             $('.login_type').hide();
             $('#tblbulknotification-login_type').val('vsp');

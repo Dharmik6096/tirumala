@@ -93,6 +93,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->bmc_code = $dcs_data['bmc_code'];
                         $model->dcs_code = $dcs_data['dcs_code'];
                         $model->notification_type = $this->model->notification_type;
+                        $model->payment_cycle_code = $this->model->payment_cycle_code;
                         $model->login_type = $this->model->login_type;
                         if ($model->notification_type == 4) {
                             $model->filename = ((int) $dcs_data['dcs_code_ex']) . '.pdf';
@@ -116,7 +117,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
                         $i++;
                     }
-                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Scheme Master', 'create'], $auto_key_config);
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
                 } else {
                     $saveModel[] = $this->model;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
