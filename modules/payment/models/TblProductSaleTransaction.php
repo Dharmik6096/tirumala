@@ -252,7 +252,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
                 $existfromStock = $fstockModel->getAvailableStock($sale_type);
                 $considerQty = 0;
-                $i = 1;
+                $i = 2;
                 foreach ($existfromStock as $stockData) {
                     if ($qty > 0) {
                         $considerQty = $stockData->stock;
