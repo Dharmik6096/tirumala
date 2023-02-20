@@ -718,7 +718,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'VlccTransactionDataReport' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
-                'path' => '',
+                'path' => 'milkcollection/VLCCTransactionDataFTP',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
             ],
