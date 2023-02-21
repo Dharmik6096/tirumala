@@ -21,7 +21,7 @@ use yii\helpers\Html;
             <div class="col-sm-6">
                 <div class="collection">
                     <div class="tbl-cell">
-                        <div id="pieChartModals"></div>  
+                        <div id="dashboard_society_status_pie_chart"></div>  
                     </div>
                 </div>
             </div> 
@@ -41,50 +41,50 @@ $offline_dcs = array_sum(array_map(function($item) {
 $script = " 
 var online_dcs = " . $online_dcs . ";
 var offline_dcs = " . $offline_dcs . ";
-var pie_chart = $('#pieChartModals');
-if (pie_chart.length) {
-    Highcharts.chart('pieChartModals', {
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            type: 'pie'
-        },
-        title: {
-            text: '" . Yii::t('app', 'Society Status Chart') . "'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+function drawPieChart(online_dcs,offline_dcs) {
+    var pie_chart = $('#dashboard_society_status_pie_chart');
+    if (pie_chart.length) {
+        Highcharts.chart('dashboard_society_status_pie_chart', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: '" . Yii::t('app', 'Society Status Chart') . "'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        },
                     },
-                },
-                showInLegend: true
-            }
-        },
-        series: [{
-            name: 'Society Status Chart',
-            colorByPoint: true,
-            data: [{
-                name: '" . Yii::t('app', 'Online DCS') . "',
-                y: online_dcs
-            }, {
-                name: '" . Yii::t('app', 'Offline DCS') . "',
-                y: offline_dcs
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Society Status Chart',
+                colorByPoint: true,
+                data: [{
+                    name: '" . Yii::t('app', 'Online DCS') . "',
+                    y: online_dcs
+                }, {
+                    name: '" . Yii::t('app', 'Offline DCS') . "',
+                    y: offline_dcs
+                }]
             }]
-        }]
-    });
+        });        
+    }
 }
-
-
 ";
 $this->registerJs($script, View::POS_READY, 'pie_chart_status');
 ?>

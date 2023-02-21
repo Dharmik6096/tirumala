@@ -157,7 +157,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                   ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                         ?>: </span> -->
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -265,7 +265,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                   ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                         ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
@@ -451,6 +451,7 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_blocks',
                     'piechart_member_app',
                     'calender',
+                    'dashboard_society_status_pie_chart',
                     'dashboard_farmer_rmrd_blocks',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
@@ -836,6 +837,29 @@ $('.dpu_data_icon').click(function(){
                         }
                     });
                 }
+                //pie chart 
+                 else if(['dashboard_society_status_pie_chart'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_society_status_pie_chart';
+                    var union= '" . $unionCode . "';
+                    var mcc= '" . $mccCode . "';
+                       $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-pie-chart']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                           // console.log(obj1);
+                            if (obj1.status == 'success')
+                            {
+                                drawPieChart(+obj1.res.onlineDcs,+obj1.res.offlineDcs);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted..Please try again');
+                        }
+                    });
+                }
                 //milk collection summary code
                 else if(['milk_collection_summary'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
@@ -920,7 +944,7 @@ $('.dpu_data_icon').click(function(){
 
     function setChartWidgets(set_widget_id){
         drawChart(set_widget_id,set_widget_id+'_container','{$chart_url}','column');   
-        // console.log(set_widget_id);
+       // console.log(set_widget_id);
         // console.log(set_widget_id+'_container');
     }
 //new code
