@@ -52,10 +52,10 @@ function drawPieChart(online_dcs,offline_dcs) {
                 type: 'pie'
             },
             title: {
-                text: '" . Yii::t('app', 'Society Status Chart') . "'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                text: '" . Yii::t('app', 'Society Status Chart') . "' ,
+                style: {
+                        color: '#7A231C',
+                }
             },
             plotOptions: {
                 pie: {
@@ -63,7 +63,6 @@ function drawPieChart(online_dcs,offline_dcs) {
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                         },
@@ -76,13 +75,15 @@ function drawPieChart(online_dcs,offline_dcs) {
                 colorByPoint: true,
                 data: [{
                     name: '" . Yii::t('app', 'Online DCS') . "',
-                    y: online_dcs
+                    color: '#99dd4d',
+                    y: online_dcs                    
                 }, {
                     name: '" . Yii::t('app', 'Offline DCS') . "',
+                    color: '#b71111',
                     y: offline_dcs
                 }]
             }]
-        });        
+        });       
     }
 }
 ";
