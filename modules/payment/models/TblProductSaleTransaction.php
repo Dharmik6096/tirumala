@@ -317,7 +317,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                     $fstockModel->stock = 0 - $qty;
                     $fstockModel->x_col1 = Yii::$app->general->getUuid();
 
-                    if (empty($existfromStock)) {
+                    if (!empty($existfromStock)) {
                         $saleTxnModel = new TblProductSaleTransaction();
                         $saleTxnModel->attributes = $model->attributes;
                         $saleTxnModel->quantity = $qty;
