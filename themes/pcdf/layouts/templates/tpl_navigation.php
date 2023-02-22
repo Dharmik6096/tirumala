@@ -188,6 +188,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
                     ]
                 ],
+                ['label' => Yii::t('app', 'Indent'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master')],
             ],
         ],
         [

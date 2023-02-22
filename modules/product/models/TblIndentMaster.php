@@ -1,0 +1,192 @@
+<?php
+
+namespace app\modules\product\models;
+
+use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\product\models\TblProduct;
+use webvimark\modules\UserManagement\models\User;
+
+/**
+ * This is the model class for table "tbl_indent_master".
+ *
+ * @property string $indent_code
+ * @property string $customer_type
+ * @property string $customer_code
+ * @property string $member_code
+ * @property string $dcs_code
+ * @property string $bmc_code
+ * @property string $mcc_plant_code
+ * @property string $plant_code
+ * @property string $union_code
+ * @property string $indent_date
+ * @property string $product_code
+ * @property string $qty
+ * @property string $status
+ * @property string $status_date
+ * @property string $status_by
+ * @property string $status_remarks
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ * @property integer $originating_type
+ * @property string $x_col1
+ * @property string $x_col2
+ * @property string $x_col3
+ * @property string $x_col4
+ * @property string $x_col5
+ */
+class TblIndentMaster extends \app\models\ChildModel {
+
+    public $member;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName() {
+        return 'tbl_indent_master';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['indent_code'], 'required', 'except' => ['importCsv']],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks'], 'safe'],
+            [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required'],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'except' => ['importCsv']],
+            [['member'], 'required', 'on' => ['importCsv']],
+            [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['qty'], 'number'],
+            [['indent_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['indent_date'], 'convertDate', 'on' => ['importCsv']],
+            [['indent_date'], 'statusSet', 'skipOnError' => true],
+            [['indent_date'], 'importFieldSet', 'skipOnError' => true],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+                    return empty($this->getErrors());
+                }],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels() {
+        return [
+            'indent_code' => Yii::t('app', 'Indent Code'),
+            'customer_type' => Yii::t('app', 'Customer Type'),
+            'customer_code' => Yii::t('app', 'Customer Code'),
+            'member_code' => Yii::t('app', 'Member'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'union_code' => Yii::t('app', 'Union'),
+            'indent_date' => Yii::t('app', 'Indent Date'),
+            'product_code' => Yii::t('app', 'Product'),
+            'qty' => Yii::t('app', 'Qty'),
+            'status' => Yii::t('app', 'Status'),
+            'status_date' => Yii::t('app', 'Status Date'),
+            'status_by' => Yii::t('app', 'Status By'),
+            'status_remarks' => Yii::t('app', 'Status Remarks'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'x_col1' => Yii::t('app', 'X Col1'),
+            'x_col2' => Yii::t('app', 'X Col2'),
+            'x_col3' => Yii::t('app', 'X Col3'),
+            'x_col4' => Yii::t('app', 'X Col4'),
+            'x_col5' => Yii::t('app', 'X Col5'),
+        ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'member_code']);
+    }
+
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function getStatusBy() {
+        return $this->hasOne(User::className(), ['id' => 'status_by']);
+    }
+
+    public function convertDateDot() {
+        try {
+            $this->indent_date = Yii::$app->controls->view_date($this->indent_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->indent_date = '-';
+        }
+    }
+
+    public function convertDate() {
+        if (empty($this->getErrors())) {
+            $this->indent_date = !empty($this->indent_date) ? Yii::$app->controls->view_date($this->indent_date, 'php:Y-m-d') . ' 00:00:00.000000' : NULL;
+        }
+    }
+
+    public function statusSet($attribute, $params) {
+        $datetime = date('Y-m-d H:i:s');
+        $this->status = empty($this->status) ? 'pending' : $this->status;
+        $this->status_date = empty($this->status_date) ? $datetime : $this->status_date;
+        $this->status_by = empty($this->status_by) ? \Yii::$app->user->identity->user_code : $this->status_by;
+    }
+
+    public function importFieldSet($attribute, $params) {
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+        } else {
+            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+            $member = $this->dcs_code . $this->member;
+            $this->member_code = $member;
+            $this->customer_code = $member;
+            $this->customer_type = 'Member';
+            if (empty($this->memberCode)) {
+                $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is invalid'));
+            }
+        }
+    }
+
+}
