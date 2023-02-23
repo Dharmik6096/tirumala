@@ -15,16 +15,13 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 ?>
 
-<div class="panel-default">
+<div class="col-sm-6">
+    <div class="cal-header dashboardWidgetHeader"><?= Yii::t('app', 'Society Status Chart'); ?></div>
     <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="collection">
-                    <div class="tbl-cell">
-                        <div id="dashboard_society_status_pie_chart"></div>  
-                    </div>
-                </div>
-            </div> 
+        <div class="collection">
+            <div class="tbl-cell">
+                <div id="dashboard_society_status_pie_chart"></div>  
+            </div>
         </div>
     </div>
 </div>
@@ -52,10 +49,10 @@ function drawPieChart(online_dcs,offline_dcs) {
                 type: 'pie'
             },
             title: {
-                text: '" . Yii::t('app', 'Society Status Chart') . "' ,
-                style: {
-                        color: '#7A231C',
-                }
+                text: '' ,
+//                style: {
+//                        color: '#7A231C',
+//                }
             },
             plotOptions: {
                 pie: {
