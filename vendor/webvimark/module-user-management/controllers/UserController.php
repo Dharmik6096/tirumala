@@ -175,6 +175,7 @@ class UserController extends AdminDefaultController {
     public function actionOrganizationMap($id) {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
+        $model->user_id = $id;
         $model->scenario = 'organizationMapping';
         if (Yii::$app->session->get('organizations_type') == 'UNION') {
             $model->scenario = 'organizationMappingUnion';

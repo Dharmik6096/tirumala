@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\organisation\models\TblDcsBmc;
+use webvimark\modules\UserManagement\models\User;
 
 /**
  * Default controller for the `applicability` module
@@ -113,6 +114,7 @@ class DefaultController extends Controller {
         $model_name = str_replace('_', '\\', Yii::$app->request->post('mname'));
         $field_name = Yii::$app->request->post('field');
         $field_code = Yii::$app->request->post('fcode');
+        $login_type = Yii::$app->request->post('login_type');
         $model = new $model_name();
         $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
         $isCheck = Yii::$app->request->post('checkdate');
@@ -148,6 +150,10 @@ class DefaultController extends Controller {
             case in_array($filter, ['DCS']):
                 $bmcModel = new TblDcs();
                 $filter_data['applicable_code'] = $bmcModel->getUnionDcs($union_code, $modelQuery, true, $mccCodes, $bmcCodes, 'ref_code', $routeCodes);
+                break;
+            case in_array($filter, ['USER']):
+                $userModel = new User();
+                $filter_data['applicable_code'] = $userModel->getAppUserList($login_type);
                 break;
 //            case in_array($filter, ['VENDOR']):
 //                $vendorModel = new TblCustomerMaster();

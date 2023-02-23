@@ -44,6 +44,10 @@ class GeneralModel {
                 case 4 : return $this->saveDelete4($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
                 case 5 : return $this->saveDelete5($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
             }
+        } else if ($name == 'saveTransactionMultiAutoIncForeignKey') {
+            switch (count($arguments)) {
+                case 3 : return $this->save3MultiAutoIncForeignKey($arguments[0], $arguments[1], $arguments[2]);
+            }
         }
     }
 
@@ -543,6 +547,46 @@ class GeneralModel {
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
             return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
+    public function save3MultiAutoIncForeignKey($model, $message, $auto_key_config) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($model as $i => $m) {
+                if (!empty($auto_key_config[$i])) {
+                    $setModelKey = $auto_key_config[$i]['self_key'];
+                    $parentModelKey = $auto_key_config[$i]['parent_key'];
+                    $parentModelIndex = $auto_key_config[$i]['parent_index'];
+                    $m->{$setModelKey} = $model[$parentModelIndex]->{$parentModelKey};
+                }
+                $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            } else {
+                $child = new ChildModel();
+                foreach ($model as $m) {
+                    $child->decryptModel($m);
+                }
+                $transaction->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Your transaction is not saved successfully']);
+                return 'customRender';
+            }
         } catch (UserException $e) {
             $transaction->rollback();
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',

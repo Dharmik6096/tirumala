@@ -148,7 +148,7 @@ class SearchFilter {
                 'filter' => ['from_date', 'to_date'],
             ],
             'TblBulkNotificationSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
             'TblBillHeadSearch' => [
                 'filter' => ['f_union_code'],

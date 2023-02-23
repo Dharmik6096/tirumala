@@ -23,6 +23,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblDepartment;
+use app\modules\globalmaster\models\TblDesignation;
 
 /**
  * This is the model class for table "user".
@@ -304,36 +305,43 @@ class User extends UserIdentity {
      */
     public function rules() {
         return [
-            [['username', 'name'], 'required'],
-            [['role'], 'required', 'on' => ['newUser']],
-            [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
+                [['username', 'name'], 'required'],
+                [['role'], 'required', 'on' => ['newUser']],
+                [['username'], 'validateUniqueUsername', 'on' => ['newUser']],
 //			['username', 'unique'],
             ['user_code', 'unique'],
-            ['username', 'trim'],
-            [['status', 'email_confirmed', 'is_active'], 'integer'],
-            ['email', 'email'],
-            ['email', 'validateEmailConfirmedUnique'],
-            ['bind_to_ip', 'validateBindToIp'],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department'], 'safe'],
-            ['bind_to_ip', 'trim'],
-            [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
-            [['mobile_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            ['password', 'required', 'on' => ['newUser', 'changePassword']],
-            ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
+                ['username', 'trim'],
+                [['status', 'email_confirmed', 'is_active'], 'integer'],
+                ['email', 'email', 'except' => ['DeactiveUser']],
+                ['email', 'validateEmailConfirmedUnique', 'except' => ['DeactiveUser']],
+                ['bind_to_ip', 'validateBindToIp', 'except' => ['DeactiveUser']],
+                [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department', 'login_type', 'wef_date', 'designation_code', 'primary_parent', 'secondary_parent'], 'safe'],
+                ['bind_to_ip', 'trim'],
+                [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
+                [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
+                ['password', 'required', 'on' => ['newUser', 'changePassword']],
+                ['password', 'string', 'max' => 255, 'on' => ['newUser', 'changePassword']],
 //            ['password', 'trim', 'on' => ['newUser', 'changePassword']],
             ['password', 'match', 'pattern' => '/^\S*$/', 'message' => Yii::t('app', 'Space not allowed in Password.')],
-            ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
-            ['repeat_password', 'compare', 'compareAttribute' => 'password'],
-            [['allow_app_login'], 'default', 'value' => 0],
-            [['department', 'mobile_no'], 'required', 'when' => function($model) {
-            return $model->allow_app_login == 1;
-        }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }"],
-            [['mobile_no'], 'unique'],
-            [['name'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                ['repeat_password', 'required', 'on' => ['newUser', 'changePassword']],
+                ['repeat_password', 'compare', 'compareAttribute' => 'password'],
+                [['allow_app_login'], 'default', 'value' => 0],
+                [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
+                    return $model->allow_app_login == 1;
+                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }", 'except' => ['DeactiveUser']],
+                [['mobile_no'], 'unique', 'except' => ['DeactiveUser']],
+                [['name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['DeactiveUser']],
+                [['wef_date'], 'required', 'on' => ['DeactiveUser']],
+                [['username'], 'validateUniqueParent', 'on' => ['newUser', 'userUpdate']],
+                [['primary_parent'], 'required', 'when' => function ($model) {
+                    return !empty($model->secondary_parent);
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#user-secondary_parent').val() != ''; 
+                        }"],
         ];
     }
 
@@ -407,6 +415,7 @@ class User extends UserIdentity {
             'email_confirmed' => UserManagementModule::t('back', 'E-mail confirmed'),
             'email' => UserManagementModule::t('back', 'E-mail'),
             'portal_type' => UserManagementModule::t('back', 'Portal Type'),
+            'designation_code' => UserManagementModule::t('back', 'Designation'),
         ];
     }
 
@@ -680,6 +689,42 @@ class User extends UserIdentity {
 
     public function getDepartmentCode() {
         return $this->hasOne(TblDepartment::className(), ['department_id' => 'department']);
+    }
+
+    public function getPickRecords($limit = 10) {
+        $date = date('Y-m-d');
+        return $query = $this->find()
+                ->where(['is_active' => 1])
+                ->andWhere(['<=', 'wef_date', $date])
+                ->limit($limit)
+                ->all();
+    }
+
+    public function getAppUserList($login_type) {
+        $data = $this->find()
+                ->where(['allow_app_login' => 1])
+                ->andFilterWhere(['login_type' => $login_type])
+                ->all();
+        $array = ArrayHelper::map($data, 'user_code', 'name');
+        return $array;
+    }
+
+    public function validateUniqueParent() {
+        if (!empty($this->primary_parent) && !empty($this->secondary_parent) && ($this->primary_parent == $this->secondary_parent)) {
+            $this->addError('secondary_parent', UserManagementModule::t('front', 'Parent Must Not Same.'));
+        }
+    }
+
+    public function getDesignationCode() {
+        return $this->hasOne(TblDesignation::className(), ['designation_code' => 'designation_code']);
+    }
+
+    public function getPrimaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'primary_parent']);
+    }
+
+    public function getSecondaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
     }
 
 }

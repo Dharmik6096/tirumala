@@ -94,6 +94,7 @@ class Path extends Component {
         '\\app\modules\import\models\\' => ['BackGroundDataImport'],
         '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
         '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
+        '\\webvimark\modules\UserManagement\models\\' => ['User'],
     ];
 
     public function get($model) {
