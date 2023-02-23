@@ -300,7 +300,7 @@ class TblDcs extends ChildModel {
                 [['ts_code_m', 'ts_code_e'], 'number'],
                 [['bmc_code'], 'unique', 'targetAttribute' => ['bmc_code', 'is_bmc'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                     return $model->is_bmc;
-                }, 'on' => ['importCsv']],
+                }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['cutoff'], 'default', 'value' => 0],
                 [['cutoff_val'], 'default', 'value' => 0.1],
                 [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
