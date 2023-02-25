@@ -49,13 +49,13 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->shift_lock_code = $model->shift_lock_code;
         $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
-        
+
         $bmcsearchModel = new TblBmcCollectionSearch();
         $bmcsearchModel->mcc_plant_code = $model->mcc_plant_code;
         $bmcsearchModel->date_time_of_collection = $model->date_time_of_collection;
         $bmcsearchModel->shift_code = $model->shift_code;
         $bmcdataProvider = $bmcsearchModel->bmcwisesearch(Yii::$app->request->queryParams);
-        
+
         return $this->render('view', [
                     'model' => $model,
                     'searchModel' => $searchModel,
@@ -470,7 +470,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
-        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA') {
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA' || Yii::$app->session->get('eiplCode') == 'ANIK') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
         if (Yii::$app->session->get('eiplCode') == 'DODLA') {
