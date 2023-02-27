@@ -12,6 +12,8 @@ use app\modules\dcsoperation\models\TblMember;
 use app\modules\product\models\TblProduct;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * This is the model class for table "tbl_indent_master".
@@ -199,19 +201,34 @@ class TblIndentMaster extends \app\models\ChildModel {
     }
 
     public function setChildTableOther(&$model, $transaction_data, &$childModel) {
-        $model->indent_code = Yii::$app->general->getCodeAutoIncrement($model);
-        $model->customer_type = 'Member'; // Yii::$app->general->getCodeAutoIncrement($model);
-        $model->customer_code = $model->member_code;
-        $dcsCodeData = $model->dcsCode;
-        if (!empty($dcsCodeData) && !empty($dcsCodeData->union_code)) {
-            $model->bmc_code = $dcsCodeData->bmc_code;
-            $model->mcc_plant_code = $dcsCodeData->mcc_plant_code;
-            $model->plant_code = $dcsCodeData->plant_code;
-            $model->union_code = $dcsCodeData->union_code;
-        }
-        if (!empty($model)) {
-            $modelStages = new TblApprovalStagesDetail();
-            $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $childModel);
+        $model->status = !empty($model->status) ? $model->status : '0';
+        if (empty($model->indent_code)) {
+            $model->indent_code = Yii::$app->general->getCodeAutoIncrement($model);
+            $model->customer_type = 'Member'; // Yii::$app->general->getCodeAutoIncrement($model);
+            $model->customer_code = $model->member_code;
+            $dcsCodeData = $model->dcsCode;
+            if (!empty($dcsCodeData) && !empty($dcsCodeData->union_code)) {
+                $model->bmc_code = $dcsCodeData->bmc_code;
+                $model->mcc_plant_code = $dcsCodeData->mcc_plant_code;
+                $model->plant_code = $dcsCodeData->plant_code;
+                $model->union_code = $dcsCodeData->union_code;
+            }
+            if (!empty($model)) {
+                $modelStages = new TblApprovalStagesDetail();
+                $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $childModel);
+            }
+        } else {
+            $stage_model = new TblProcessApproval();
+            $stage_model->process_code = $model->indent_code;
+            $stage_model->process_name = 'indent_master';
+            $stage_modelData = $stage_model->getData();
+            foreach ($stage_modelData as $stage_modelD) {
+                $historyModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($stage_modelD, $historyModel, 'UPDATE');
+                $childModel[] = $historyModel;
+                $stage_modelD->status = '4';
+                $childModel[] = $stage_modelD;
+            }
         }
     }
 

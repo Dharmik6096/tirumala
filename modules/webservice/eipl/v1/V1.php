@@ -702,6 +702,10 @@ class V1 extends \yii\base\Module {
                 'replace_array_key' => ['date' => 'indent_date'],
                 'save_child_other' => true,
             ],
+            'indentUpdate' => [
+                'main_table' => 'TblIndentMaster',
+                'save_child_other' => true,
+            ],
         ];
         return $label;
     }
