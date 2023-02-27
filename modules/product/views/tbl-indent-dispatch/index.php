@@ -1,8 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Indent Master'));
-$this->params['menu'][] = Yii::$app->controls->add('Indent Master');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Indent Approval', 'indent-approval', '', 'btn btn-danger btn-block', '<i class="fa fa-check"></i>');
-$this->params['menu'][] = Yii::$app->controls->import('indent-master', $this);
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Indent Dispatch'));
+$this->params['menu'][] = Yii::$app->controls->add('Indent Dispatch');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">

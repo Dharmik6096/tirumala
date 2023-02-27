@@ -14,7 +14,7 @@ $disable = $readonly ? 'disabled' : '';
 
 <?php
 $form = ActiveForm::begin([
-            'options' => ['id' => 'indent-master-from'],
+            'options' => ['id' => 'approval-master-from'],
             'validateOnBlur' => FALSE,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
@@ -25,26 +25,22 @@ $form = ActiveForm::begin([
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
     <div class="col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Indent Master</h4>
+            <h4 class="theme-box-heading">Approval Stages Master</h4>
         </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
-        <div class="col-sm-2 create_fields">
-            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblindentmaster-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+        <div class="col-sm-2 create_fields no_padding_input">
+            <?= Yii::$app->dropdown->depend_dropdown('approval_process', $model, $form, 'tblapprovalstages-union_code', '', $model->getAttributeLabel('process_name')); ?>
         </div>
-        <div class="col-sm-2  create_fields">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblindentmaster-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
-        </div>  
-        <div class="col-sm-2  create_fields">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblindentmaster-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
-        </div>  
         <div class="col-sm-2 create_fields">
-            <?= Yii::$app->controls->date($model, $form, 'indent_date', '', date('Y-m-d'), false, $readonly, true); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('approval_mode', $model, $form, '', $model->getAttributeLabel('approval_mode'), FALSE, 'approval_mode') ?> 
         </div>
-
+        <div class="col-sm-4 create_fields">
+            <?= $form->field($model, 'remarks')->textInput() ?>
+        </div>
         <div class="col-sm-1 Button disabled mb25 ml15 padding_top_20">
-            <button type="button" class="add-collection btn btn-default apply-shortcut ml15 "><?= Yii::t('app', 'Add Indent') ?></button>
+            <button type="button" class="add-collection btn btn-default apply-shortcut ml15 "><?= Yii::t('app', 'Add Approval Stages') ?></button>
         </div>
     </div>
 
@@ -52,21 +48,24 @@ $form = ActiveForm::begin([
     <div class="col-sm-1"></div>
     <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Indent Master Details</h4>
+            <h4 class="theme-box-heading">Approval Stages Details</h4>
+        </div>
+        <?= Html::activeHiddenInput($model, 'approval_stages_code'); ?>
+        <div class="col-sm-2 reset_field">
+            <?= $form->field($txModel, 'level')->textInput() ?>
         </div>
         <div class="col-sm-2 reset_field">
-            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblindentmaster-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('approval_mode', $txModel, $form, '', $txModel->getAttributeLabel('approval_mode'), FALSE, 'approval_mode') ?> 
         </div>
-        <div class="col-sm-2 reset_field no_padding_input">
-            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblindentmaster-dcs_code', '', $model->getAttributeLabel('member_code')); ?>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->dropdown->dropdownStatic('approval_type', $txModel, $form, '', $txModel->getAttributeLabel('approval_type'), FALSE, 'approval_type') ?> 
         </div>
-        <div class="col-sm-2 reset_field no_padding_input">
-            <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblindentmaster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+        <div class="col-sm-2 reset_field login_type_dd">
+            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $txModel, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
         </div>
-        <div class="col-sm-1 reset_field number-validate">
-            <?= $form->field($model, 'qty')->textInput() ?>
+        <div class="col-sm-2 reset_field user_dd">
+            <?= Yii::$app->dropdown->dropdown('user', $txModel, $form, 'col-sm-3 form-group', $txModel->getAttributeLabel('user_code'), false, 'user_code'); ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
@@ -95,21 +94,34 @@ $form = ActiveForm::begin([
                                                                      
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
+                                                                     $("#tblapprovalstages-approval_stages_code").val(data.pk_code);
                                                                     reloadGrid();
-                                                                    $("#indent-master-from .reset_field input").val("");
-                                                                    $("#indent-master-from .reset_field select").val("");
-                                                                    $("#indent-master-from .reset_field textarea").val("");
-                                                                    $("#tblindentmaster-dcs_code").trigger("change");
-                                                                    $("#tblindentmaster-dcs_code").trigger("select2:select");
-                                                                    $("#tblindentmaster-member_code").trigger("change");
-                                                                    $("#blindentmaster-member_code").trigger("select2:select");
-                                                                    $("#tblindentmaster-product_code").trigger("change");
-                                                                    $("#tblindentmaster-product_code").trigger("select2:select");
+                                                                    $("#approval-master-from .reset_field input").val("");
+                                                                    $("#approval-master-from .reset_field select").val("");
+                                                                    $("#approval-master-from .reset_field textarea").val("");
+                                                                    $("#tblapprovalstagesdetail-approval_mode").trigger("change");
+                                                                    $("#tblapprovalstagesdetail-approval_mode").trigger("select2:select");
+                                                                    $("#tblapprovalstagesdetail-approval_mode").trigger("change");
+                                                                    
+                                                                    $("#tblapprovalstagesdetail-approval_type").trigger("change");
+                                                                    $("#tblapprovalstagesdetail-approval_type").trigger("select2:select");
+                                                                    $("#tblapprovalstagesdetail-approval_type").trigger("change");
+                                                                    
+                                                                    $("#tblapprovalstagesdetail-login_type").trigger("change");
+                                                                    $("#tblapprovalstagesdetail-login_type").trigger("select2:select");
+                                                                    $("#tblapprovalstagesdetail-login_type").trigger("change");
+                                                                    
+                                                                    $("#tblapprovalstagesdetail-user_code").trigger("change");
+                                                                    $("#tblapprovalstagesdetail-user_code").trigger("select2:select");
+                                                                    $("#tblapprovalstagesdetail-user_code").trigger("change");
+                                                                   
                                                                     $(".panel-body").scrollTop(0);
+                                                                   
                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>", function(result){
                                                                    setTimeout(function(){
                                                                    $("#tblbmccollection-dcs").focus();},100);
                                                                     });
+                                                                    
                                                                 }else{
                                                                 
                                                                     $("#loadercontent").hide();

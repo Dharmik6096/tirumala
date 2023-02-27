@@ -1417,6 +1417,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash')],
             ],
+            'approval_mode' => [
+                'name' => 'approval_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
+            ],
+            'approval_type' => [
+                'name' => 'approval_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'User'), '2' => Yii::t('app', 'Login Type')],
+            ],
+            'indent_approval_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Closed'), '5' => Yii::t('app', 'Dispatch')],
+            ],
         ];
         return $records[$l];
     }
@@ -1528,6 +1543,7 @@ class DropDown extends Component {
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
             'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
             'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
+            'approval_process' => ['name' => 'process_name', 'fields' => 'process_name,process_desc,', 'prompt' => Yii::t('app', 'Select Process'), 'model' => 'TblApprovalStagesProcess', 'depend' => 'union_code'],
         ];
         return $label[$l];
     }

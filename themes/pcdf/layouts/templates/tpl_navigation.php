@@ -189,6 +189,8 @@ echo GhostMenu::widget([
                     ]
                 ],
                 ['label' => Yii::t('app', 'Indent'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master')],
+                ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
+                ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
             ],
         ],
         [

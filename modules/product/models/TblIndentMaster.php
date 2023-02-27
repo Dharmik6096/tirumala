@@ -11,6 +11,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\product\models\TblProduct;
 use webvimark\modules\UserManagement\models\User;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * This is the model class for table "tbl_indent_master".
@@ -46,7 +47,7 @@ use webvimark\modules\UserManagement\models\User;
  */
 class TblIndentMaster extends \app\models\ChildModel {
 
-    public $member;
+    public $member, $route_code;
 
     /**
      * @inheritdoc
@@ -61,7 +62,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function rules() {
         return [
             [['indent_code'], 'required', 'except' => ['importCsv']],
-            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks'], 'safe'],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code'], 'safe'],
             [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required'],
             [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'except' => ['importCsv']],
             [['member'], 'required', 'on' => ['importCsv']],
@@ -72,7 +73,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['indent_date'], 'convertDate', 'on' => ['importCsv']],
             [['indent_date'], 'statusSet', 'skipOnError' => true],
-            [['indent_date'], 'importFieldSet', 'skipOnError' => true],
+            [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
             [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }],
@@ -113,6 +114,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'route_code' => Yii::t('app', 'Route'),
         ];
     }
 
@@ -164,7 +166,7 @@ class TblIndentMaster extends \app\models\ChildModel {
 
     public function statusSet($attribute, $params) {
         $datetime = date('Y-m-d H:i:s');
-        $this->status = empty($this->status) ? 'pending' : $this->status;
+        $this->status = empty($this->status) ? '0' : $this->status;
         $this->status_date = empty($this->status_date) ? $datetime : $this->status_date;
         $this->status_by = empty($this->status_by) ? \Yii::$app->user->identity->user_code : $this->status_by;
     }
@@ -186,6 +188,13 @@ class TblIndentMaster extends \app\models\ChildModel {
             if (empty($this->memberCode)) {
                 $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is invalid'));
             }
+        }
+    }
+
+    public function setChildTable(&$model, &$saveModel, &$errors) {
+        if (!empty($model)) {
+            $modelStages = new TblApprovalStagesDetail();
+            $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $saveModel);
         }
     }
 

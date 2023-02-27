@@ -47,7 +47,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }, 'filter' => true],
     ['attribute' => 'qty'],
-    ['attribute' => 'status'],
+    ['attribute' => 'status', 'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('indent_approval_status', $model, 'status');
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('indent_approval_status', $searchModel, 'status'),],
     ['label' => Yii::t('app', 'Status Date'), 'attribute' => 'status_date',
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->status_date);

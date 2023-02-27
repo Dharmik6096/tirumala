@@ -11,6 +11,10 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\product\models\TblIndentMasterHistory;
 
 /**
  * TblIndentMasterController implements the CRUD actions for TblIndentMaster model.
@@ -64,11 +68,11 @@ class TblIndentMasterController extends \app\controllers\ChildController {
             $this->model->indent_date = Yii::$app->formatter->asDate($this->model->indent_date, DATE_FORMAT) . ' 00:00:00.000000';
             $this->model->customer_code = $this->model->member_code;
             $this->model->customer_type = 'Member';
-            $this->model->status = 'pending';
-            $this->model->status_by = $this->model->created_by;
-            $this->model->status_date = $this->model->created_at;
+            $this->model->status = 0;
             if ($this->model->validate()) {
                 $modelSave[] = $this->model;
+                $modelStages = new TblApprovalStagesDetail();
+                $modelStages->setApprovalData($this->model->union_code, 'indent_master', $this->model->indent_code, $modelSave);
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -103,34 +107,52 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
-    /**
-     * Updates an existing TblIndentMaster model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
+    public function actionIndentApproval() {
+        $searchModel = new TblIndentMasterSearch();
+        $searchModel->scenario = 'indentApprove';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 2 : 3) : 0;
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+                $msg = $status == 2 ? 'Approved' : 'Rejected';
+                $where = [];
+                foreach ($codes as $code) {
+                    $where['process_approval_code'] = $code;
+                    $existData = TblProcessApproval::find()->where($where)->one();
+                    if (!empty($existData)) {
+                        $historyModel = new TblProcessApprovalHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->status = $status;
+                        $saveModel[] = $existData;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->indent_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+                        $existIndentData = TblIndentMaster::find()->where(['indent_code' => $existData->process_code])->one();
+                        if (!empty($existIndentData)) {
+                            $existApprovalLevel = TblProcessApproval::find()->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])->count();
+                            $historyModel = new TblIndentMasterHistory();
+                            Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
+                            $saveModel[] = $historyModel;
+                            $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
+                            $existIndentData->status_by = \Yii::$app->user->identity->user_code;
+                            $existIndentData->status_date = date('Y-m-d H:i:s');
+                            $saveModel[] = $existIndentData;
+                        }
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
+                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+                }
+            }
         }
-    }
+        $dataProvider = $searchModel->indentapprovesearch(Yii::$app->request->queryParams);
 
-    /**
-     * Deletes an existing TblIndentMaster model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        return $this->render('indent_approval', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**

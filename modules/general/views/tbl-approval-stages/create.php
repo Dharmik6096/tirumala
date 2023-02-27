@@ -8,14 +8,15 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 
-$this->title = Yii::$app->label->title('create', 'Indent Master');
+$this->title = Yii::$app->label->title('create', 'Approval Stages Master');
 ?>
+
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body">
         <div id="maincontent">
             <?=
-            $this->render('_form', ['model' => $model, 'type' => 'create',])
+            $this->render('_form', ['model' => $model, 'txModel' => $txModel, 'type' => 'create',])
             ?>
         </div>
 
@@ -31,29 +32,47 @@ $this->title = Yii::$app->label->title('create', 'Indent Master');
 
 <?php
 $script = "
+    $('.user_dd').hide();
+    $('.login_type_dd').hide();
     gridChange();
-    $(document).on('change', '#tblindentmaster-plant_code', function() {  
+    $(document).on('change', '#tblapprovalstages-union_code', function() {  
         gridChange();
     });
-    $(document).on('change', '#tblindentmaster-mcc_plant_code', function() {  
+    $(document).on('change', '#tblapprovalstages-process_name', function() {  
+        gridChange();
+    });
+    $(document).on('change', '#tblapprovalstages-approval_mode', function() {  
        gridChange();
     });
-    $(document).on('change', '#tblindentmaster-bmc_code', function() { 
-         gridChange();
+    
+    $(document).on('change', '#tblapprovalstagesdetail-approval_type', function() {  
+       hideShowFields();
     });
-    $(document).on('change', '#tblindentmaster-indent_date', function() {  
-        gridChange();
-    });
+    
+    function hideShowFields(){
+        var type = $('#tblapprovalstagesdetail-approval_type').val();
+        if(type == '1'){
+            $('.user_dd').show();
+            $('.login_type_dd').hide();
+            $('#tblapprovalstagesdetail-login_type').val('');
+            $('#tblapprovalstagesdetail-login_type').trigger('change');
+            $('#tblapprovalstagesdetail-login_type').trigger('select2:select');
+        }else if(type == '2'){
+            $('.user_dd').hide();
+            $('.login_type_dd').show();
+            $('#tblapprovalstagesdetail-user_code').val('');
+            $('#tblapprovalstagesdetail-user_code').trigger('change');
+            $('#tblapprovalstagesdetail-user_code').trigger('select2:select');
+        }
+    }
     
     function gridChange(){
        $('.add-collection').prop('disabled',true);
-       $('#indent-master-from .reset_field input').val('');
+       $('#approval-master-from .reset_field input').val('');
        $('.QltyParamDiv').hide();
-        var plant = $('#tblindentmaster-plant_code').val();
-        var bmc = $('#tblindentmaster-mcc_plant_code').val();
-        var mcc = $('#tblindentmaster-bmc_code').val();
-        var date = $('#tblindentmaster-indent_date').val();
-        if(setData(plant) && setData(mcc) && setData(bmc) && setData(date)){
+        var process_name = $('#tblapprovalstages-process_name').val();
+        var approval_mode = $('#tblapprovalstages-approval_mode').val();
+        if(setData(process_name) && setData(approval_mode)){
             $('.add-collection').removeAttr('disabled');
         } 
         
@@ -71,7 +90,7 @@ $script = "
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
-            var url = '" . Url::to(['/product/tbl-indent-master/list-grid']) . "'+ '?' + $('#indent-master-from').serialize();
+            var url = '" . Url::to(['/general/tbl-approval-stages/list-grid']) . "'+ '?' + $('#approval-master-from').serialize();
                 $.ajax({
                     type: 'get',
                     url: url,
