@@ -202,7 +202,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
     }
 
     public function indentdispatchsearch($params) {
-        $query = TblIndentMaster::find();
+        $query = TblIndentMaster::find()->select(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)']);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -228,7 +228,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code']);
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
         return $dataProvider;
     }

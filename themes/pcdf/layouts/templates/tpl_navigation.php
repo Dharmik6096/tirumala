@@ -188,9 +188,15 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
                     ]
                 ],
-                ['label' => Yii::t('app', 'Indent'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master')],
-                ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
-                ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Indent <b class="caret"></b></a>',
+                    'items' => [
+                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master')],
+                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
+                        ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
+                    ]
+                ],
             ],
         ],
         [

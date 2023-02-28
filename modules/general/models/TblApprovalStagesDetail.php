@@ -4,6 +4,7 @@ namespace app\modules\general\models;
 
 use Yii;
 use webvimark\modules\UserManagement\models\User;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_approval_stages_detail".
@@ -125,6 +126,20 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
             $modelSave[] = $stage_model;
             $i++;
         }
+    }
+
+    public function getLevelList($union, $process) {
+        $maxdata = $this->find()->select(['level' => "ISNULL(MAX(CAST(tbl_approval_stages_detail.level AS INT)),0)+1"])
+                ->join('INNER JOIN', 'tbl_approval_stages', 'tbl_approval_stages.approval_stages_code = tbl_approval_stages_detail.approval_stages_code')
+                ->where(['tbl_approval_stages.process_name' => $process, 'tbl_approval_stages.union_code' => $union])
+                ->asArray()
+                ->one();
+
+        $levels = [];
+        for ($i = 1; $i <= $maxdata['level']; $i++) {
+            $levels[$i] = $i;
+        }
+        return $levels;
     }
 
 }

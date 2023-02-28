@@ -23,7 +23,8 @@ $this->title = Yii::t('app', 'Indent Approval');
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
                 'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
                 'checkboxOptions' => function($model) {
-                    return ['class' => 'checkbox', 'value' => $model['process_approval_code']];
+                    $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
+                    return ['class' => 'checkbox', 'disabled' => $disabled, 'value' => $model['process_approval_code']];
                 }],
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],

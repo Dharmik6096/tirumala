@@ -94,7 +94,11 @@ $this->title = Yii::$app->label->title('view', 'Indent Dispatch');
                         'columns' => [
                             [
                                 'attribute' => 'reference_no',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'lr_no',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],

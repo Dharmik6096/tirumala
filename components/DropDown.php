@@ -524,6 +524,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-bmc-dcs-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
+    public function approval_level($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-approval-stages/level-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1430,7 +1435,7 @@ class DropDown extends Component {
             'indent_approval_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Closed'), '5' => Yii::t('app', 'Dispatch')],
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Cancelled'), '5' => Yii::t('app', 'Dispatch')],
             ],
         ];
         return $records[$l];

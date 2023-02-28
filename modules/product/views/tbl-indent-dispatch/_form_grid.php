@@ -35,9 +35,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->dispatch_date);
         }],
-    ['attribute' => 'vehicle_no', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
-        }],
+//    ['attribute' => 'vehicle_no', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
+//        }],
+    ['attribute' => 'vehicle_no'],
     ['attribute' => 'product_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }],
@@ -46,7 +47,8 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->challan_date);
         }, 'filter' => false],
-    ['attribute' => 'dispatch_qty']
+    ['attribute' => 'dispatch_qty'],
+    ['attribute' => 'lr_no', 'filter' => false]
 ];
 
 $grid_option = [

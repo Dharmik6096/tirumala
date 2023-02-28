@@ -84,7 +84,8 @@ class TblIndentDispatchSearch extends TblIndentDispatch {
                 ->andFilterWhere(['like', 'tbl_route_mapping.route_name', $this->route_code])
                 ->andFilterWhere(['like', 'tbl_product.product_name', $this->product_code])
                 ->andFilterWhere(['like', 'tbl_indent_dispatch.dispatch_qty', $this->dispatch_qty])
-                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_no]);
+//                ->andFilterWhere(['like', 'tbl_vehicle_master.parsing_no', $this->vehicle_no]);
+                ->andFilterWhere(['like', 'tbl_indent_dispatch.vehicle_no', $this->vehicle_no]);
 
         return $dataProvider;
     }

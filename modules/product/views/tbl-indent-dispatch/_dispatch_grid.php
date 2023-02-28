@@ -18,6 +18,9 @@ $this->title = Yii::t('app', 'Indent Dispatch');
     <div class="">
         <?php
         echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']);
+        echo Html::hiddenInput('vehicle', 'vehicle', ['class' => 'set_vehicle']);
+        echo Html::hiddenInput('ref_no', 'ref_no', ['class' => 'set_ref_no']);
+        echo Html::hiddenInput('lrno', 'lrno', ['class' => 'set_lrno']);
         echo Html::activeHiddenInput($searchModel, 'union_code', ['value' => $searchModel->union_code]);
         echo Html::activeHiddenInput($searchModel, 'plant_code', ['value' => $searchModel->plant_code]);
         echo Html::activeHiddenInput($searchModel, 'mcc_plant_code', ['value' => $searchModel->mcc_plant_code]);
@@ -42,6 +45,9 @@ $this->title = Yii::t('app', 'Indent Dispatch');
             ['attribute' => 'product_code', 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
                 }, 'filter' => FALSE],
+            ['attribute' => 'available_stock', 'value' => function($model) {
+                    return $model->getExistingStock($model);
+                }, 'filter' => FALSE],
             ['attribute' => 'qty', 'filter' => FALSE],
         ];
 
@@ -56,10 +62,12 @@ $this->title = Yii::t('app', 'Indent Dispatch');
         Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['indent-dispatch']);
         ?>
         <?= $form->field($dispatchModel, 'challan_date', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true, 'readonly' => 'readonly', 'value' => date('d-m-Y')])->label('Date'); ?>                      
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->vehicle($dispatchModel, $form, 'vehicle_no', $dispatchModel->getAttributeLabel('vehicle_no'), false); ?>
-        </div>
+        <!--<div class="col-sm-2">-->
+            <!--<? Yii::$app->dropdown->vehicle($dispatchModel, $form, 'vehicle_no', $dispatchModel->getAttributeLabel('vehicle_no'), false); ?>-->
+        <!--</div>-->
+        <?= $form->field($dispatchModel, 'vehicle_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
         <?= $form->field($dispatchModel, 'reference_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
+        <?= $form->field($dispatchModel, 'lr_no', ['options' => ['class' => 'form-group col-sm-2']])->textInput(['maxlength' => true]) ?>            
 
         <div class="panel-footer">
             <?php
@@ -80,13 +88,26 @@ $script = '
     $(".kv-panel-before").hide();
     $(".submit").click(function() {
       var id= $(this).attr("value");
+      var vehicle_no = $("#tblindentdispatch-vehicle_no").val();
+      var ref_no = $("#tblindentdispatch-reference_no").val();
+      var lr_no = $("#tblindentdispatch-lr_no").val();
       $(".set_operation").val(id);
+      $(".set_vehicle").val(vehicle_no);
+      $(".set_ref_no").val(ref_no);
+      $(".set_lrno").val(lr_no);
         var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
             if(len == 0){
                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Record.</span></div></div>");
                 return false;
-            } else {
-            $("#indent-dispatch").submit();
+            }else if(vehicle_no ==""){
+                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select vehicle.</span></div></div>");
+                return false;
+            }else if(ref_no ==""){
+                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please Add Reference No.</span></div></div>");
+                return false;
+            }
+            else {
+                $("#indent-dispatch").submit();
             }
          });
       ';

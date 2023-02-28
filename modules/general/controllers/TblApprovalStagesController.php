@@ -19,6 +19,8 @@ use yii\widgets\ActiveForm;
  */
 class TblApprovalStagesController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['level-list'];
+
     /**
      * Lists all TblApprovalStages models.
      * @return mixed
@@ -191,6 +193,22 @@ class TblApprovalStagesController extends \app\controllers\ChildController {
         $searchModel->setAttributes(Yii::$app->request->get('TblApprovalStages'));
         $dataProvider = $searchModel->createsearch([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+    }
+
+    public function actionLevelList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $approval = new TblApprovalStagesDetail();
+                $data = $approval->getLevelList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

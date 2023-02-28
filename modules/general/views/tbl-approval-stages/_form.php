@@ -51,8 +51,8 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Approval Stages Details</h4>
         </div>
         <?= Html::activeHiddenInput($model, 'approval_stages_code'); ?>
-        <div class="col-sm-2 reset_field">
-            <?= $form->field($txModel, 'level')->textInput() ?>
+        <div class="col-sm-2"> 
+            <?= Yii::$app->dropdown->approval_level($txModel, $form, 'tblapprovalstages-union_code,tblapprovalstages-process_name', 'level', 'Level', FALSE); ?>
         </div>
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->dropdownStatic('approval_mode', $txModel, $form, '', $txModel->getAttributeLabel('approval_mode'), FALSE, 'approval_mode') ?> 
