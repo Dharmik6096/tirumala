@@ -72,7 +72,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['DayWiseQtyDetail', 'DayWiseQtySummary']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
                 [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
-                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment']],
+                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment', 'MilkCollectionNegativeGroth']],
                 [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
                 [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
@@ -99,7 +99,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummarySocietyWise']],
                 [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummaryMccWise']],
                 [['union_code', 'plant_code', 'p_date'], 'required', 'on' => ['MemberWiseOutstanding', 'DcsWiseOutstanding', 'VendorWiseOutstanding', 'MccWiseOutstanding']],
-                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk']],
+                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk', 'MilkCollectionProc', 'MilkCollectionProcDetail']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['NewMemberPouringMilk', 'NewCustomerPouringMilk']],
                 [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'report_type'], 'required', 'on' => ['CenterLossGainReport']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['BmcCollectionHistory']],
@@ -122,7 +122,9 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
                 [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportMcc']],
                 [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportDcs']],
-                [['union_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']]
+                [['union_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']],
+                [['union_code', 'plant_code', 'mcc_code', 'p_date'], 'required', 'on' => ['MilkCollectionAbsent']],
+                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['LeftPourer']],
         ];
     }
 

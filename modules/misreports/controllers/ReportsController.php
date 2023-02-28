@@ -1246,6 +1246,31 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionProc() {
+        $this->report = 'MilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionProcDetail() {
+        $this->report = 'MilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionAbsent() {
+        $this->report = 'MilkCollectionAbsent';
+        return $this->actionIndex();
+    }
+
+    public function actionLeftPourer() {
+        $this->report = 'LeftPourer';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionNegativeGroth() {
+        $this->report = 'MilkCollectionNegativeGroth';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2491,6 +2516,36 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
                 'title' => 'BMC Collection Report For SAP',
+            ],
+            'MilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per',
+                'scenario' => 'MilkCollectionProc',
+                'title' => '113 - VLCs comparison summary',
+            ],
+            'MilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per_detail',
+                'scenario' => 'MilkCollectionProcDetail',
+                'title' => '114 - VLCs comparison details',
+            ],
+            'MilkCollectionAbsent' => [
+                'param' => 'union_code,plant_code,mcc_code,p_date:string',
+                'sp_name' => 'mis_milk_collection_absent_last_few_days',
+                'scenario' => 'MilkCollectionAbsent',
+                'title' => '115 - Absent Pouring VLCs',
+            ],
+            'LeftPourer' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_left_pourers',
+                'scenario' => 'LeftPourer',
+                'title' => '116 - VLC Left Pourers',
+            ],
+            'MilkCollectionNegativeGroth' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_negative_growth',
+                'scenario' => 'MilkCollectionNegativeGroth',
+                'title' => '117 - Negative Growth VLCs',
             ],
         ];
         return $label[$l];
