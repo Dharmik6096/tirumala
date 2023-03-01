@@ -116,11 +116,7 @@ class TblProductStock extends \app\models\ChildModel {
         if (!empty($batch)) {
             $query->andWhere(['sap_batch_no' => $batch]);
         }
-        $isMcc = FALSE;
-        if ($checkMccStock && strtoupper($type) == 'BMC') {
-            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
-        }
-        if (strtoupper($type) == 'MCC' || $isMcc) {
+        if (strtoupper($type) == 'MCC' || $checkMccStock) {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])
