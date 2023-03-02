@@ -64,23 +64,24 @@ class TblIndentMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['indent_code'], 'required', 'except' => ['importCsv']],
-            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code'], 'safe'],
-            [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required'],
-            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'except' => ['importCsv']],
-            [['member'], 'required', 'on' => ['importCsv']],
-            [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['qty'], 'number'],
-            [['indent_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['indent_date'], 'convertDate', 'on' => ['importCsv']],
-            [['indent_date'], 'statusSet', 'skipOnError' => true],
-            [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+                [['indent_code'], 'required', 'except' => ['importCsv']],
+                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code'], 'safe'],
+                [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required'],
+                [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'except' => ['importCsv']],
+                [['member'], 'required', 'on' => ['importCsv']],
+                [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['qty'], 'number'],
+                [['indent_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['indent_date'], 'convertDate', 'on' => ['importCsv']],
+                [['indent_date'], 'statusSet', 'skipOnError' => true],
+                [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['indent_code'], 'validateCancel', 'skipOnError' => true],
+                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
                 }],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
         ];
     }
 
@@ -255,6 +256,24 @@ class TblIndentMaster extends \app\models\ChildModel {
 
     public function checkStatus() {
         return (trim(($this->status) == 5)) ? false : true;
+    }
+
+    public function validateCancel($attribute, $params) {
+        if (!empty($this->indent_code) && $this->status == '4') {
+            $stage_model = new TblProcessApproval();
+            $stage_model->process_code = $this->indent_code;
+            $stage_model->process_name = 'indent_master';
+            $stage_modelData = $stage_model->getData();
+            $indentUnderApprove = false;
+            foreach ($stage_modelData as $s) {
+                if (!empty($s->status)) {
+                    $indentUnderApprove = true;
+                }
+            }
+            if ($indentUnderApprove) {
+                $this->addError($attribute, Yii::t('app/validation', 'Indent Already under Approval'));
+            }
+        }
     }
 
 }
