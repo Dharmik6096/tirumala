@@ -38,6 +38,7 @@ $grid_option = [
             $url = Url::to(['tbl-approval-stages/update', 'id' => $model->approval_stages_code]);
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
         },
+        'delete' => ['option' => 'process_name,approval_stages_code,tbl-approval-stages/delete'],
     ]
 ];
 

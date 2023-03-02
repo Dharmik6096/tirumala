@@ -111,7 +111,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
                         ->all();
     }
 
-    public function setApprovalData($union_code, $process, $processCode, &$modelSave) {
+    public function setApprovalData($union_code, $process, $processCode, &$modelSave, &$approval_stages) {
         $approval_stages = $this->approvalStages($union_code, $process);
         $i = 1;
         foreach ($approval_stages as $stage) {

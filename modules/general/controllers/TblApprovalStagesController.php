@@ -13,6 +13,8 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\widgets\ActiveForm;
+use app\modules\general\models\TblApprovalStagesHistory;
+use app\modules\general\models\TblApprovalStagesDetailHistory;
 
 /**
  * TblApprovalStagesController implements the CRUD actions for TblApprovalStages model.
@@ -167,10 +169,33 @@ class TblApprovalStagesController extends \app\controllers\ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $deleteModel = [];
+        $saveModel = [];
 
-        return $this->redirect(['index']);
+        $historyModel = new TblApprovalStagesHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $deleteModel[] = $this->model;
+        $saveModel[] = $historyModel;
+
+        $details = TblApprovalStagesDetail::find()->where(['approval_stages_code' => $this->model->approval_stages_code])->all();
+        foreach ($details as $key => $id) {
+            $detailHistory = new TblApprovalStagesDetailHistory();
+            Yii::$app->operation->history($id, $detailHistory, DELETE);
+            $deleteModel[] = $details[$key];
+            $saveModel[] = $detailHistory;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Approval Stages', 'edit']);
+
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

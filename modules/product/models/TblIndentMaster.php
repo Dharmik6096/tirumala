@@ -180,10 +180,13 @@ class TblIndentMaster extends \app\models\ChildModel {
         if (empty($this->dcs_code)) {
             $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
         } else {
-            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
-            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
-            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
-            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+            $dcsCodeData = $this->dcsCode;
+            if (!empty($dcsCodeData)) {
+                $model->bmc_code = $dcsCodeData->bmc_code;
+                $model->mcc_plant_code = $dcsCodeData->mcc_plant_code;
+                $model->plant_code = $dcsCodeData->plant_code;
+                $model->union_code = $dcsCodeData->union_code;
+            }
             $member = $this->dcs_code . $this->member;
             $this->member_code = $member;
             $this->customer_code = $member;
@@ -197,7 +200,8 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function setChildTable(&$model, &$saveModel, &$errors) {
         if (!empty($model)) {
             $modelStages = new TblApprovalStagesDetail();
-            $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $saveModel);
+            $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $saveModel, $approval_stages);
+            $model->status = empty($approval_stages) ? 2 : 0;
         }
     }
 
@@ -216,7 +220,8 @@ class TblIndentMaster extends \app\models\ChildModel {
             }
             if (!empty($model)) {
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $childModel);
+                $modelStages->setApprovalData($model, 'indent_master', $model->indent_code, $childModel, $approval_stages);
+                $model->status = empty($approval_stages) ? '2' : '0';
             }
         } else {
             $stage_model = new TblProcessApproval();
@@ -246,6 +251,10 @@ class TblIndentMaster extends \app\models\ChildModel {
             }
             return $availableStockQty;
         }
+    }
+
+    public function checkStatus() {
+        return (trim(($this->status) == 5)) ? false : true;
     }
 
 }

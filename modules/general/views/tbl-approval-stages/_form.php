@@ -51,8 +51,9 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Approval Stages Details</h4>
         </div>
         <?= Html::activeHiddenInput($model, 'approval_stages_code'); ?>
+        <?= Html::hiddenInput('change_event', '0', ['id' => 'change_event']); ?>
         <div class="col-sm-2"> 
-            <?= Yii::$app->dropdown->approval_level($txModel, $form, 'tblapprovalstages-union_code,tblapprovalstages-process_name', 'level', 'Level', FALSE); ?>
+            <?= Yii::$app->dropdown->approval_level($txModel, $form, 'tblapprovalstages-union_code,tblapprovalstages-process_name,change_event', 'level', 'Level', FALSE); ?>
         </div>
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->dropdownStatic('approval_mode', $txModel, $form, '', $txModel->getAttributeLabel('approval_mode'), FALSE, 'approval_mode') ?> 
@@ -114,6 +115,9 @@ $form = ActiveForm::begin([
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("change");
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("select2:select");
                                                                     $("#tblapprovalstagesdetail-user_code").trigger("change");
+                                                                  
+                                                                    $("#change_event").val("1");
+                                                                    $("#change_event").trigger("change");
                                                                    
                                                                     $(".panel-body").scrollTop(0);
                                                                    

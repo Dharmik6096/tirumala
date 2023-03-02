@@ -70,9 +70,10 @@ class TblIndentMasterController extends \app\controllers\ChildController {
             $this->model->customer_type = 'Member';
             $this->model->status = 0;
             if ($this->model->validate()) {
-                $modelSave[] = $this->model;
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setApprovalData($this->model->union_code, 'indent_master', $this->model->indent_code, $modelSave);
+                $modelStages->setApprovalData($this->model->union_code, 'indent_master', $this->model->indent_code, $modelSave, $approval_stages);
+                $this->model->status = empty($approval_stages) ? 2 : 0;
+                $modelSave[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
                 if ($transaction == 'customRedirect') {
                     $msg = Yii::$app->getSession()->getFlash('success')['message'];
@@ -168,6 +169,35 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $deleteModel = [];
+        $saveModel = [];
+
+        $historyModel = new TblIndentMasterHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $deleteModel[] = $this->model;
+        $saveModel[] = $historyModel;
+
+        $details = TblProcessApproval::find()->where(['process_code' => $this->model->indent_code, 'process_name' => 'indent_master'])->all();
+        foreach ($details as $key => $id) {
+            $detailHistory = new TblProcessApprovalHistory();
+            Yii::$app->operation->history($id, $detailHistory, DELETE);
+            $deleteModel[] = $details[$key];
+            $saveModel[] = $detailHistory;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Indent Master', 'edit']);
+
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

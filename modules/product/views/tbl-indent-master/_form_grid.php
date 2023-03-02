@@ -22,9 +22,15 @@ $attribute = [
     ['attribute' => 'mcc_plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => FALSE, 'filter' => false],
+    ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'BMC') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+        }, 'filter' => FALSE],
     ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
+    ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'filter' => false],
     ['attribute' => 'dcs_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'filter' => false],
@@ -67,6 +73,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view' => true,
+//        'delete' => ['option' => 'indent_code,indent_code,tbl-indent-master/delete,checkStatus()'],
     ]
 ];
 
