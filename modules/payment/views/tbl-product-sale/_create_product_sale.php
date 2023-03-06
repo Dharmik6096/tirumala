@@ -119,7 +119,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 <div class="col-sm-1 reset_field">
                     <?= $form->field($detailModel, 'available_stock')->textInput(['readonly' => TRUE]) ?>
                 </div>
-                <div class="col-sm-1 reset_field">
+                <div class="col-sm-1 reset_field qty-validate">
                     <?= $form->field($detailModel, 'quantity')->textInput() ?>
                 </div>
                 <div class="col-sm-1 reset_field">

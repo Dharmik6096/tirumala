@@ -31,7 +31,7 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblDcsBmcSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],
             ],
             'TblRouteMappingSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code'],
@@ -400,6 +400,17 @@ class SearchFilter {
                 'filter' => ['f_union_code'],
             ],
             'TblProductSaleLockingSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblIndentMasterSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'action' => ['index-other', 'index']
+            ],
+            'TblIndentDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'action' => ['index-other', 'index']
+            ],
+            'TblIndentProductSearch' => [
                 'filter' => ['f_union_code'],
             ],
         ];
