@@ -228,7 +228,7 @@ class TblDcsController extends ChildController {
                                 }
                             }
                             if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                                $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                                $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
                                 if (!file_exists($path) || !is_dir($path)) {
                                     FileHelper::createDirectory($path);
                                 }
@@ -396,7 +396,7 @@ class TblDcsController extends ChildController {
                         }
                     }
                     if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                        $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                        $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
                         if (!file_exists($path) || !is_dir($path)) {
                             FileHelper::createDirectory($path);
                         }

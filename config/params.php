@@ -2,7 +2,8 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'eiplDirPath' => 'C:/ftp/eipl/',
+//    'eiplDirPath' => 'C:/ftp/eipl/',
+    'eiplDirPath' => 'ftp/eipl/',
     'unionBankDirPath' => 'C:/unionbank/',
     'biplDirPath' => '/LOCALBIPL/',
     'rateFilesPath' => 'web/ratechart',
