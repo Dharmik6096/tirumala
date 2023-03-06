@@ -1440,7 +1440,7 @@ class DropDown extends Component {
             'indent_approval_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Cancelled'), '5' => Yii::t('app', 'Dispatch')],
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Cancelled'), '5' => Yii::t('app', 'Dispatch'), '6' => 'Accepted'],
             ],
             'indent_type' => [
                 'name' => 'type',
