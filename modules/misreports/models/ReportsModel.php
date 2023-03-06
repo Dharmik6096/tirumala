@@ -122,7 +122,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
                 [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportMcc']],
                 [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportDcs']],
-                [['union_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']]
+                [['union_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']]
         ];
     }
 

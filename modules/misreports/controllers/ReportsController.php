@@ -2481,16 +2481,16 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Summary Report - DCS',
             ],
             'MemberCollectionReportForSap' => [
-                'param' => 'union_code,mcc_code:union_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,route_code:all_routes,dcs_code:route_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'portal_export_milk_collection',
                 'scenario' => 'MemberCollectionReportForSap',
                 'title' => '112 - Member Collection Report For SAP',
             ],
             'RmrdMilkCollectionForSap' => [
-                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string,to_date:string',
+                'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
-                'title' => 'BMC Collection Report For SAP',
+                'title' => '218 - BMC Collection Report For SAP',
             ],
         ];
         return $label[$l];
