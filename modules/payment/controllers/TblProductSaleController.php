@@ -826,8 +826,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $checkMccStock = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
                     }
                     if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
-                        $isBmc = Yii::$app->general->getforeignkey($this->model->mainDcsCode, 'is_bmc');
-                        $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
+                        $isBmc = Yii::$app->general->getforeignkey($model->mainDcsCode, 'is_bmc');
+                        $isBmcMcc = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc');
                         $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
                     }
                     $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $checkMccStock);
