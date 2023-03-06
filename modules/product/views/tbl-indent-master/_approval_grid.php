@@ -29,11 +29,14 @@ $this->title = Yii::t('app', 'Indent Approval');
             ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code'), 'filter' => FALSE],
             ['attribute' => 'dcs_ref_code', 'label' => Yii::t('app', 'DCS') . ' Ref Code', 'filter' => FALSE],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'DCS Name'), 'filter' => FALSE],
-            ['attribute' => 'member_code', 'label' => 'Member Code', 'filter' => FALSE],
-            ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE],
-            ['attribute' => 'member_name', 'filter' => FALSE],
+            ['attribute' => 'member_code', 'label' => 'Member Code', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
+            ['attribute' => 'ref_code', 'label' => 'Ref Code.', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
+            ['attribute' => 'member_name', 'filter' => FALSE, 'visible' => ($visible ? FALSE : TRUE)],
             ['attribute' => 'product_name', 'filter' => FALSE],
             ['attribute' => 'qty', 'filter' => FALSE],
+            ['attribute' => 'store_location_name', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
+            ['attribute' => 'rate', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
+            ['attribute' => 'amount', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
         ];
 
         $grid_option = [

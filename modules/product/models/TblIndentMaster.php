@@ -15,6 +15,8 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\general\models\TblProcessApprovalHistory;
 use app\modules\product\models\TblProductStock;
+use app\modules\assetmanagement\models\TblStoreLocation;
+use app\modules\product\models\TblProductSaleRateApplicability;
 
 /**
  * This is the model class for table "tbl_indent_master".
@@ -64,24 +66,37 @@ class TblIndentMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['indent_code'], 'required', 'except' => ['importCsv']],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code'], 'safe'],
-                [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required'],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'except' => ['importCsv']],
-                [['member'], 'required', 'on' => ['importCsv']],
-                [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['qty'], 'number'],
-                [['indent_date'], 'convertDateDot', 'on' => ['importCsv']],
-                [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-                [['indent_date'], 'convertDate', 'on' => ['importCsv']],
-                [['indent_date'], 'statusSet', 'skipOnError' => true],
-                [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
-                [['indent_code'], 'validateCancel', 'skipOnError' => true],
-                [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+            [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code'], 'safe'],
+            [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
+            [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
+            [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
+            [['warehouse_code'], 'required', 'when' => function ($model) {
+                    return $model->indent_type == 2;
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblindentmaster-indent_type').val() != ''; 
+                        }"],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code', 'member_code'], 'required', 'on' => ['create']],
+            [['union_code', 'mcc_plant_code', 'plant_code', 'bmc_code'], 'required', 'on' => ['createOther']],
+            [['member'], 'required', 'on' => ['importCsv']],
+            [['status_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'status_by'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['qty'], 'number'],
+            [['indent_date'], 'convertDateDot', 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'convertDate', 'on' => ['importCsv', 'importCsvOther']],
+            [['indent_date'], 'statusSet', 'skipOnError' => true],
+            [['indent_date'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['indent_date'], 'importFieldSetOther', 'skipOnError' => true, 'on' => ['importCsvOther']],
+            [['indent_code'], 'validateCancel', 'skipOnError' => true],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'member_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
                     return empty($this->getErrors());
-                }],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
+                }, 'on' => ['create', 'importCsv']],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'indent_type', 'warehouse_code', 'dcs_code', 'indent_date'], 'message' => Yii::t('app/validation', 'Record is Already Exist.'), 'skipOnEmpty' => TRUE, 'when' => function($model) {
+                    return empty($this->getErrors());
+                }, 'on' => ['createOther', 'importCsvOther']],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv', 'importCsvOther']],
+            [['warehouse_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['warehouse_code' => 'store_location_code'], 'on' => ['importCsvOther']],
         ];
     }
 
@@ -119,6 +134,7 @@ class TblIndentMaster extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'route_code' => Yii::t('app', 'Route'),
+            'warehouse_code' => Yii::t('app', 'Warehouse'),
         ];
     }
 
@@ -154,6 +170,10 @@ class TblIndentMaster extends \app\models\ChildModel {
         return $this->hasOne(User::className(), ['id' => 'status_by']);
     }
 
+    public function getWarehouseCode() {
+        return $this->hasOne(TblStoreLocation::className(), ['store_location_code' => 'warehouse_code']);
+    }
+
     public function convertDateDot() {
         try {
             $this->indent_date = Yii::$app->controls->view_date($this->indent_date, 'php:d.m.Y');
@@ -183,10 +203,10 @@ class TblIndentMaster extends \app\models\ChildModel {
         } else {
             $dcsCodeData = $this->dcsCode;
             if (!empty($dcsCodeData)) {
-                $model->bmc_code = $dcsCodeData->bmc_code;
-                $model->mcc_plant_code = $dcsCodeData->mcc_plant_code;
-                $model->plant_code = $dcsCodeData->plant_code;
-                $model->union_code = $dcsCodeData->union_code;
+                $this->bmc_code = $dcsCodeData->bmc_code;
+                $this->mcc_plant_code = $dcsCodeData->mcc_plant_code;
+                $this->plant_code = $dcsCodeData->plant_code;
+                $this->union_code = $dcsCodeData->union_code;
             }
             $member = $this->dcs_code . $this->member;
             $this->member_code = $member;
@@ -194,6 +214,45 @@ class TblIndentMaster extends \app\models\ChildModel {
             $this->customer_type = 'Member';
             if (empty($this->memberCode)) {
                 $this->addError('member_code', Yii::t('app/validation', $this->getAttributeLabel('member_code') . ' is invalid'));
+            }
+        }
+    }
+
+    public function importFieldSetOther($attribute, $params) {
+        $dcs = new TblDcs();
+        $this->dcs_code = $dcs->getValidDcs($this->dcs_code);
+        if (empty($this->dcs_code)) {
+            $this->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' is invalid'));
+        } else {
+            $dcsCodeData = $this->dcsCode;
+            if (!empty($dcsCodeData)) {
+                $this->bmc_code = $dcsCodeData->bmc_code;
+                $this->mcc_plant_code = $dcsCodeData->mcc_plant_code;
+                $this->plant_code = $dcsCodeData->plant_code;
+                $this->union_code = $dcsCodeData->union_code;
+            }
+            $this->customer_code = $this->dcs_code;
+            $this->customer_type = 'DCS';
+            $this->indent_type = !empty($this->warehouse_code) ? 'warehouse' : 'mcc';
+
+            $product = new TblIndentProduct();
+            $indentProduct = $product->getIndentProductList($this->union_code, $this->indent_type, $this->product_code);
+            if (empty($indentProduct)) {
+                $this->addError('rate', Yii::t('app/validation', ' Product Is not Applicable For Indent'));
+            }
+            $applicable_code = $this->customer_code;
+            $applicable_type = $this->customer_type;
+            $memberRate = 0;
+            $appQuery = TblProductSaleRateApplicability::find()->innerJoinWith(['productRateCode', 'productCode'])
+                    ->select(['product_sale_rate_applicability_code', 'tbl_product.unit_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date as dt'])->groupBy(['product_sale_rate_applicability_code', 'tbl_product_sale_rate.sale_rate', 'tbl_product_sale_rate_applicability.wef_date', 'tbl_product.unit_code'])
+                    ->having(['<=', '[tbl_product_sale_rate_applicability].[wef_date]', $this->indent_date])
+                    ->where(['tbl_product_sale_rate.product_code' => $this->product_code, 'tbl_product_sale_rate_applicability.applicable_for' => $applicable_type, 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $memberRate, 'tbl_product_sale_rate_applicability.applicable_code' => $applicable_code]);
+            $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
+            if (empty($app)) {
+                $this->addError('rate', Yii::t('app/validation', ' Product Sale Rate not Applicable'));
+            } else {
+                $this->rate = $app['sale_rate'];
+                $this->amount = $this->qty * $this->rate;
             }
         }
     }
@@ -206,7 +265,7 @@ class TblIndentMaster extends \app\models\ChildModel {
         }
     }
 
-    public function setChildTableOther(&$model, $transaction_data, &$childModel) {
+    public function setChildTableOther(&$model, $transaction_data, &$childModel) {//this function is for HO APP Indent Save
         $model->status = !empty($model->status) ? $model->status : '0';
         if (empty($model->indent_code)) {
             $model->indent_code = Yii::$app->general->getCodeAutoIncrement($model);

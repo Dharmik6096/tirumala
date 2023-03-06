@@ -151,6 +151,7 @@ class importData extends \yii\base\Module {
             'plant_dispatch' => ['table_name' => 'tbl_plant_dispatch', 'fields' => 'dispatch_date,plant_code,mcc_plant_code,document_no,document_date,product_code,sap_batch_no,rate,qty,lr_no', 'save_child' => true, 'scenario' => 'importCsv', 'increment' => 1],
             'inventory-transfer-batch' => ['table_name' => 'tbl_inventory_transfer', 'fields' => 'inventory_transfer_no,inventory_transfer_date,transaction_date,from_type,from_code,to_type,to_code,remarks,product_code,sap_batch_no,qty', 'save_child' => true, 'scenario' => 'importCsv'],
             'indent-master' => ['table_name' => 'tbl_indent_master', 'fields' => 'dcs_code,member,indent_date,product_code,qty', 'scenario' => 'importCsv', 'increment' => 1, 'default_fields' => 'originating_type:1', 'save_child' => true],
+            'indent-master-other' => ['table_name' => 'tbl_indent_master', 'fields' => 'dcs_code,warehouse_code,indent_date,product_code,qty', 'scenario' => 'importCsvOther', 'increment' => 1, 'default_fields' => 'originating_type:1', 'save_child' => true],
         ];
         return $label[$l];
     }

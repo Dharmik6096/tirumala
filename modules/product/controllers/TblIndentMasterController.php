@@ -35,6 +35,16 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionIndexOther() {
+        $searchModel = new TblIndentMasterSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index_other', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Displays a single TblIndentMaster model.
      * @param string $id
@@ -69,6 +79,7 @@ class TblIndentMasterController extends \app\controllers\ChildController {
             $this->model->customer_code = $this->model->member_code;
             $this->model->customer_type = 'Member';
             $this->model->status = 0;
+            $this->model->scenario = 'create';
             if ($this->model->validate()) {
                 $modelStages = new TblApprovalStagesDetail();
                 $modelStages->setApprovalData($this->model->union_code, 'indent_master', $this->model->indent_code, $modelSave, $approval_stages);
@@ -101,11 +112,69 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionCreateOther() {
+        $this->model = new TblIndentMaster();
+        $searchModel = new TblIndentMasterSearch();
+        $searchModel->attributes = Yii::$app->request->get('TblIndentMaster');
+        $dataProvider = $searchModel->createsearch([]);
+
+        $dataProvider->sort = false;
+        $this->viewFile = 'create_other';
+        $modelSave = [];
+        $message = 'Indent Master';
+        $type = 'create';
+        if (Yii::$app->request->post()) {
+            $this->model->load(Yii::$app->request->post());
+            $this->model->indent_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->indent_date = Yii::$app->formatter->asDate($this->model->indent_date, DATE_FORMAT) . ' 00:00:00.000000';
+            $this->model->customer_code = $this->model->dcs_code;
+            $this->model->customer_type = 'DCS';
+            $this->model->status = 0;
+            $this->model->scenario = 'createOther';
+            if ($this->model->validate()) {
+                $modelStages = new TblApprovalStagesDetail();
+                $modelStages->setApprovalData($this->model->union_code, 'indent_master', $this->model->indent_code, $modelSave, $approval_stages);
+                $this->model->status = empty($approval_stages) ? 2 : 0;
+                $modelSave[] = $this->model;
+                $transaction = $this->generalModel->saveTransaction($modelSave, [$message, $type]);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
+            }
+        } else {
+            return $this->render('create_other', [
+                        'model' => $this->model,
+                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            ]);
+        }
+        return $this->render('create_other', [
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
     public function actionListGrid() {
         $searchModel = new TblIndentMasterSearch();
         $searchModel->attributes = Yii::$app->request->get('TblIndentMaster');
         $dataProvider = $searchModel->createsearch([]);
         return $this->renderAjax('_list_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+    }
+
+    public function actionListGridOther() {
+        $searchModel = new TblIndentMasterSearch();
+        $searchModel->attributes = Yii::$app->request->get('TblIndentMaster');
+        $dataProvider = $searchModel->createsearch([]);
+        return $this->renderAjax('_list_grid_other', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
     public function actionIndentApproval() {
@@ -153,6 +222,55 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         return $this->render('indent_approval', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionIndentApprovalOther() {
+        $searchModel = new TblIndentMasterSearch();
+        $searchModel->scenario = 'indentApprove';
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $saveModel = [];
+                $status = !empty($_REQUEST['operation']) ? ($_REQUEST['operation'] == 'approve' ? 2 : 3) : 0;
+                $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
+                $msg = $status == 2 ? 'Approved' : 'Rejected';
+                $where = [];
+                foreach ($codes as $code) {
+                    $where['process_approval_code'] = $code;
+                    $existData = TblProcessApproval::find()->where($where)->one();
+                    if (!empty($existData)) {
+                        $historyModel = new TblProcessApprovalHistory();
+                        Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
+                        $saveModel[] = $historyModel;
+                        $existData->status = $status;
+                        $saveModel[] = $existData;
+
+                        $existIndentData = TblIndentMaster::find()->where(['indent_code' => $existData->process_code])->one();
+                        if (!empty($existIndentData)) {
+                            $existApprovalLevel = TblProcessApproval::find()->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])->count();
+                            $historyModel = new TblIndentMasterHistory();
+                            Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
+                            $saveModel[] = $historyModel;
+                            $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
+                            $existIndentData->status_by = \Yii::$app->user->identity->user_code;
+                            $existIndentData->status_date = date('Y-m-d H:i:s');
+                            $saveModel[] = $existIndentData;
+                        }
+                    }
+                }
+
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
+                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['index']);
+                }
+            }
+        }
+        $dataProvider = $searchModel->indentapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
+
+        return $this->render('indent_approval', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'visibledata' => True,
         ]);
     }
 

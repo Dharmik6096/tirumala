@@ -192,8 +192,11 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Indent <b class="caret"></b></a>',
                     'items' => [
-                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master')],
-                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch')],
+                        ['label' => Yii::t('app', 'Indent Product'), 'url' => ['/product/tbl-indent-product/index'], 'active' => ($cntrl == 'tbl-indent-product')],
+                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
+                        ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index-other'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
+                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
+                        ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
                         ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                     ]
                 ],

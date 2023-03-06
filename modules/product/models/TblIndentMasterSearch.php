@@ -23,6 +23,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
             [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code'], 'safe'],
             [['qty'], 'number'],
             [['originating_type'], 'integer'],
+            [['indent_type', 'warehouse_code'], 'safe'],
             [['from_date', 'to_date'], 'safe'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['indentApprove']],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'route_code'], 'required', 'on' => 'searchdispatch'],
@@ -111,11 +112,14 @@ class TblIndentMasterSearch extends TblIndentMaster {
         if (!empty($this->indent_date)) {
             $query->andFilterWhere(['CAST(indent_date as date)' => date('Y-m-d', strtotime($this->indent_date))]);
         }
+        $query->andFilterWhere(['tbl_indent_master.indent_type' => $this->indent_type,
+            'tbl_indent_master.warehouse_code' => $this->warehouse_code]);
+
 
         return $dataProvider;
     }
 
-    public function indentapprovesearch($params) {
+    public function indentapprovesearch($params, $sp = 'portal_sp_pending_indent_approval') {
         $this->load($params);
         $output = [];
         if (!empty($params)) {
@@ -142,7 +146,6 @@ class TblIndentMasterSearch extends TblIndentMaster {
             $sp_params['bmc_code'] = $this->bmc_code;
             $sp_params['dcs_code'] = $this->dcs_code;
             $sp_params['user_code'] = Yii::$app->session->get('UserCode');
-            $sp = 'portal_sp_pending_indent_approval';
             $output = \Yii::$app->general->getSpData($sp, $sp_params);
         }
         $dataProvider = new ArrayDataProvider();
@@ -229,6 +232,38 @@ class TblIndentMasterSearch extends TblIndentMaster {
             return $dataProvider;
         }
         $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code']);
+        // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
+        return $dataProvider;
+    }
+
+    public function indentdispatchothersearch($params) {
+        $query = TblIndentMaster::find()->select(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code', 'qty' => 'ISNULL(SUM(ISNULL(qty, 0)),0)']);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+
+        $query->joinWith(['dcsCode']);
+
+        $this->load($params);
+        $query->andWhere([
+            'tbl_indent_master.union_code' => $this->union_code,
+            'tbl_indent_master.plant_code' => $this->plant_code,
+            'tbl_indent_master.mcc_plant_code' => $this->mcc_plant_code,
+            'tbl_indent_master.bmc_code' => $this->bmc_code,
+        ]);
+        $query->andWhere(['tbl_indent_master.status' => ['2']]);
+
+        $query->andFilterWhere(['tbl_dcs.route_code' => $this->route_code,
+            'tbl_indent_master.dcs_code' => $this->dcs_code]);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->groupBy(['tbl_indent_master.union_code', 'tbl_indent_master.plant_code', 'tbl_indent_master.mcc_plant_code', 'tbl_indent_master.bmc_code', 'tbl_indent_master.dcs_code', 'tbl_indent_master.product_code', 'tbl_indent_master.warehouse_code']);
         // $query->andWhere('tbl_product_requisition.status="2" OR tbl_product_requisition.status="6" OR tbl_product_requisition.status="7"');
         return $dataProvider;
     }

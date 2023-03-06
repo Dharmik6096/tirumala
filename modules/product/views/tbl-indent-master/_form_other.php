@@ -27,6 +27,13 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Indent Master</h4>
         </div>
+        <div class="col-sm-1 create_fields">
+            <?= Yii::$app->dropdown->dropdownStatic('indent_type', $model, $form, 'form-group', $model->getAttributeLabel('indent_type'), false, 'indent_type', false); ?>
+        </div>
+        <div class="col-sm-2 create_fields warehouse_div">
+            <?= Html::hiddenInput('indent_type', '4', ['id' => 'indent_type']); ?>
+            <?= Yii::$app->dropdown->depend_dropdown('slc_type', $model, $form, 'indent_type', '', $model->getAttributeLabel('warehouse_code'), 'warehouse_code', false); ?>
+        </div>
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
@@ -42,7 +49,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 create_fields">
             <?= Yii::$app->controls->date($model, $form, 'indent_date', '', date('Y-m-d'), false, $readonly, true); ?>
         </div>
-
         <div class="col-sm-1 Button disabled mb25 ml15 padding_top_20">
             <button type="button" class="add-collection btn btn-default apply-shortcut ml15 "><?= Yii::t('app', 'Add Indent') ?></button>
         </div>
@@ -57,14 +63,17 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblindentmaster-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
         </div>
-        <div class="col-sm-2 reset_field no_padding_input">
-            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblindentmaster-dcs_code', '', $model->getAttributeLabel('member_code')); ?>
-        </div>
-        <div class="col-sm-2 reset_field no_padding_input">
-            <?php Yii::$app->dropdown->depend_dropdown('product', $model, $form, 'tblindentmaster-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product'); ?>
+        <div class="col-sm-2 reset_field">
+            <?= Yii::$app->dropdown->indent_product($model, $form, 'tblindentmaster-union_code,tblindentmaster-indent_type', 'product_code', Yii::t('app', 'Product')); ?>
         </div>
         <div class="col-sm-1 reset_field qty-validate">
             <?= $form->field($model, 'qty')->textInput() ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'rate')->textInput(['readOnly' => TRUE]) ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'amount')->textInput(['readOnly' => TRUE]) ?>
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -74,7 +83,7 @@ $form = ActiveForm::begin([
                     'label' => Yii::t('app', 'Add'),
                     'ajaxOptions' => [
                         'type' => 'POST',
-                        'url' => Url::to(['create']),
+                        'url' => Url::to(['create-other']),
                         'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
