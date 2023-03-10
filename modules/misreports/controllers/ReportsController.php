@@ -2282,7 +2282,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_new_member_pouring_milk',
                 'scenario' => 'NewMemberPouringMilk',
-                'title' => '110 - New Member Pouring Milk',
+                'title' => '313 - New Member Pouring Milk',
             ],
             'NewCustomerPouringMilk' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,from_date:string:from_shift,to_date:string:to_shift',
@@ -2484,7 +2484,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'param' => 'union_code,mcc_code:union_code,bmc_code,route_code:all_routes,dcs_code:route_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'portal_export_milk_collection',
                 'scenario' => 'MemberCollectionReportForSap',
-                'title' => '112 - Member Collection Report For SAP',
+                'title' => '111 - Member Collection Report For SAP',
             ],
             'RmrdMilkCollectionForSap' => [
                 'param' => 'union_code,mcc_code:union_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
