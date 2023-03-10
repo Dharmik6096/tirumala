@@ -75,6 +75,7 @@ class Applicability extends \yii\base\Module {
     public $isApproval = false;
     public $login_type = '';
     public $is_bulk_notification = false;
+    public $with_wef_date = true;
 
     /**
      * @inheritdoc
@@ -527,7 +528,7 @@ class Applicability extends \yii\base\Module {
             $query = $this->model->find()->select('dcs_code');
 //        if ($top_section)
 //            $query->andWhere(['<=', 'wef_date', date('Y-m-d')]);
-        if (!empty($date)) {
+        if (!empty($date) && $this->model->hasAttribute('wef_date')) {
             $query->andWhere(['wef_date' => $date]);
         }
         if ($returnQuery) {
