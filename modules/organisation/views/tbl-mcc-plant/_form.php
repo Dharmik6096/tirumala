@@ -38,7 +38,8 @@ $form = ActiveForm::begin([
         </div>
         <?= Html::activeHiddenInput($model, 'is_plant') ?>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmccplant-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
+            <!--Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>-->
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_mcc_plant');

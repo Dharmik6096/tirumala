@@ -804,7 +804,7 @@ class Applicability extends \yii\base\Module {
 
     public function loadUnionBmc($union_code) {
         $bmcModel = new TblDcsBmc();
-        $bmcList = $bmcModel->getBmcs($union_code, [], TRUE);
+        $bmcList = $bmcModel->getBmcs($union_code, [], TRUE, $RLS = 'TRUE');
         return $bmcList;
     }
 

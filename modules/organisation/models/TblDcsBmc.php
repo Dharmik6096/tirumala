@@ -450,9 +450,15 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasMany(TblBmcGroupMapping::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBmcs($unionCode, $notIn = [], $concatCode = false) {
+    public function getBmcs($unionCode, $notIn = [], $concatCode = false, $RLS = 'TRUE') {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
-        if (Yii::$app->session->get('BMC') !== '') {
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
+        if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
         }
         if (!empty($notIn)) {

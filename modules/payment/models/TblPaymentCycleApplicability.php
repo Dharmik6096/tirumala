@@ -53,12 +53,12 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['applicable_code', 'applicable_type'], 'required'],
-                [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
-                [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
-//                [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
+            [['applicable_code', 'applicable_type'], 'required'],
+            [['payment_cycle_code', 'data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'created_at', 'updated_at', 'union_code'], 'safe'],
+            [['applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['data_lock_bmc', 'data_lock_member', 'billing_lock_bmc', 'billing_lock_member', 'sync_lock_bmc', 'sync_lock_member'], 'default', 'value' => 0],
+            [['applicable_code'], 'validatePaymentCycle', 'skipOnEmpty' => false, 'except' => ['lockUnlock']], //Comment as Set Validation from DB Side: Hardik //-> 21/02/2023 uncoment for add range conflict check due to issue in credit check in product sale : Seema
         ];
     }
 
@@ -145,33 +145,45 @@ class TblPaymentCycleApplicability extends \app\models\ChildModel {
     }
 
     public function validateData($returnCodes = false) {
-        $query = $this->find()
-                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'applicable_type' => $this->applicable_type])
-                ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date) OR (\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))');
-        if (!empty($this->payment_cycle_applicabilty_code)) {
-            $query->andWhere(['!=', 'payment_cycle_applicabilty_code', $this->payment_cycle_applicabilty_code]);
-        }
+        $controls = [];
+        $controls['applicable_code'] = is_array($this->applicable_code) ? ',' . implode(',', $this->applicable_code) : $this->applicable_code;
+        $controls['applicable_for'] = $this->applicable_for;
+        $controls['applicable_type'] = is_array($this->applicable_type) ? ',' . implode(',', $this->applicable_type) : $this->applicable_type;
+        $controls['from_date'] = $this->from_date;
+        $controls['to_date'] = $this->to_date;
 
-        $data = $query->all();
+        $sp_name = 'portal_sp_conflict_payment_cycle_applicability';
+        $data = \Yii::$app->general->getSpData($sp_name, $controls);
+
+//        $query = $this->find()
+//                ->where(['applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for, 'applicable_type' => $this->applicable_type])
+//                ->andWhere('((\'' . $this->from_date . '\'  between from_date and to_date) OR (\'' . $this->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $this->from_date . '\' and  \'' . $this->to_date . '\') OR (to_date between \'' . $this->from_date . '\' and \'' . $this->to_date . '\'))');
+//        if (!empty($this->payment_cycle_applicabilty_code)) {
+//            $query->andWhere(['!=', 'payment_cycle_applicabilty_code', $this->payment_cycle_applicabilty_code]);
+//        }
+//
+//        $data = $query->all();
         $applicable_code = [];
         $message = [];
-        for ($i = 0; $i < count($data); $i++) {
-            $mesageVal = $data[$i]->getName($data[$i]->applicable_for) . ' - ' . Yii::$app->general->getforeignkey($data[$i]->customerType, 'customer_desc') . '(' . Yii::$app->controls->view_date($data[$i]->from_date) . ' to ' . Yii::$app->controls->view_date($data[$i]->to_date) . ')';
-            $message[$mesageVal] = $mesageVal;
-            $applicable_code[] = $data[$i]->applicable_code;
-        }
-        if (count($message) > 0) {
-            $messagestring = 'Following are the current applicabilities.<br/>' . implode('<br/>', $message);
-            $this->addError('applicable_code', $messagestring);
+        if (!empty($data)) {
+            for ($i = 0; $i < count($data); $i++) {
+                $mesageVal = $data[$i]['name'] . ' - ' . $data[$i]['applicable_type'] . '(' . Yii::$app->controls->view_date($data[$i]['from_date']) . ' to ' . Yii::$app->controls->view_date($data[$i]['to_date']) . ')';
+                $message[$mesageVal] = $mesageVal;
+                $applicable_code[] = $data[$i]['applicable_code'];
+            }
+            if (count($message) > 0) {
+                $messagestring = 'Following are the current applicabilities.<br/>' . implode('<br/>', $message);
+                $this->addError('applicable_code', $messagestring);
+                if ($returnCodes) {
+                    return $applicable_code;
+                }
+                return false;
+            }
             if ($returnCodes) {
                 return $applicable_code;
             }
-            return false;
+            return true;
         }
-        if ($returnCodes) {
-            return $applicable_code;
-        }
-        return true;
     }
 
     public function checkDelete() {

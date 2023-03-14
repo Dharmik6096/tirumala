@@ -19,6 +19,7 @@ $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
+        ['attribute' => 'route_code', 'filter' => false],
         ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }, 'filter' => FALSE],

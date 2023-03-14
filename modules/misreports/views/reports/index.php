@@ -91,7 +91,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
                                             ?>
-                                            <div class="col-sm-3">
+                                    <div class="col-sm-3 reportDate">
                                                 <?php
                                                 echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
                                                 ?>
