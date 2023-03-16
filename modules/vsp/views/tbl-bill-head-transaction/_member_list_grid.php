@@ -1,0 +1,35 @@
+<?php
+
+use yii\helpers\Html;
+use kartik\grid\GridView;
+
+$attribute = [
+        ['attribute' => 'customer_type', 'filter' => false],
+        ['attribute' => 'customer_code', 'filter' => false, 'label' => Yii::t('app', 'Code')],
+        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+        }, 'filter' => false],
+        ['attribute' => 'bill_head_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
+        }, 'filter' => false,],
+        [
+        'attribute' => 'transaction_date',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->transaction_date);
+        }, 'filter' => false],
+        ['attribute' => 'no_installment', 'filter' => false],
+        ['attribute' => 'amount', 'filter' => false],
+        ['attribute' => 'installment_amount', 'filter' => false],
+];
+$grid_option = [
+    'id' => 'bill-head-detail-list-grid',
+    'attributes' => $attribute,
+    'active_column' => FALSE,
+];
+Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+?>

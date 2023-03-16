@@ -242,6 +242,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Formula Master'), 'url' => ['/vsp/tbl-general-formula/index'], 'active' => ($cntrl == 'tbl-general-formula')],
                     ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
                     ['label' => Yii::t('app', 'Bill Head Transaction'), 'url' => ['/vsp/tbl-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-bill-head-detail')],
+                    ['label' => Yii::t('app', 'Bill Head Transaction - New'), 'url' => ['/vsp/tbl-bill-head-transaction/index'], 'active' => ($cntrl == 'tbl-bill-head-transaction')],
                     ['label' => Yii::t('app', 'Head Load'), 'url' => ['/vsp/tbl-head-load/index'], 'active' => ($cntrl == 'tbl-head-load')],
                     ['label' => Yii::t('app', 'Rejection Resp. Mapping'), 'url' => ['/collection/tbl-milk-reject/responsibility-mapping'], 'active' => ($cntrl == 'tbl-milk-reject')],
                     ['label' => Yii::t('app', 'Transit Loss'), 'url' => ['/vsp/tbl-bmc-transit-loss/index'], 'active' => ($cntrl == 'tbl-bmc-transit-loss')],

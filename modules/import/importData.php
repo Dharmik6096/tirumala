@@ -155,6 +155,8 @@ class importData extends \yii\base\Module {
             'product_sale_member_batch' => ['table_name' => 'tbl_product_sale', 'import_main_class' => 'BackGroundDataImportStrategy', 'fields' => 'dcs_code,member_code,invoice_date,payment_mode,product_code,sap_batch_no,quantity,discount,no_of_installment,remarks', 'default_fields' => 'is_active:1,originating_type:1', 'scenario' => 'productSaleMemberImport', 'save_child' => true, 'setPk' => true, 'validate_length' => false],
             'plant_dispatch' => ['table_name' => 'tbl_plant_dispatch', 'fields' => 'dispatch_date,plant_code,mcc_plant_code,document_no,document_date,product_code,sap_batch_no,rate,qty,lr_no', 'save_child' => true, 'scenario' => 'importCsv', 'increment' => 1],
             'inventory-transfer-batch' => ['table_name' => 'tbl_inventory_transfer', 'fields' => 'inventory_transfer_no,inventory_transfer_date,transaction_date,from_type,from_code,to_type,to_code,remarks,product_code,sap_batch_no,qty', 'save_child' => true, 'scenario' => 'importCsv'],
+            'bill-head-transaction' => ['import_class' => 'tbl_bill_head_transaction', 'table_name' => 'tbl_bill_head_transaction', 'fields' => 'bmc_code,customer_type,customer_code,transaction_date,bill_head_code,amount,no_installment', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
+            'member-bill-head-transaction' => ['import_class' => 'tbl_bill_head_transaction', 'table_name' => 'tbl_bill_head_transaction', 'fields' => 'bmc_code,dcs_code,member_code,transaction_date,bill_head_code,amount,no_installment', 'default_fields' => 'originating_type:1', 'scenario' => 'importDetailCsv'],
         ];
         return $label[$l];
     }
