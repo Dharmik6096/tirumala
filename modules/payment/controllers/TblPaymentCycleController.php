@@ -403,6 +403,7 @@ class TblPaymentCycleController extends ChildController {
         Yii::$app->operation->history($modelData, $historyModel, UPDATE);
         $title = $modelData->{$updateField} == 1 ? $unlockMessage : $lockMessage;
         $modelData->{$updateField} = $modelData->{$updateField} == 1 ? 0 : 1;
+        $modelData->scenario = 'lockUnlock';
         $transaction = $this->generalModel->saveTransaction([$modelData, $historyModel], [$title, 'edit']);
         return $this->redirect(['payment-cycle-applicability', 'id' => $payment_cycle_code]);
     }
@@ -527,6 +528,7 @@ class TblPaymentCycleController extends ChildController {
                     Yii::$app->operation->history($existData, $historyModel, 'UPDATE');
                     $saveModel[] = $historyModel;
                     $existData->{$updateField} = $setData;
+                    $existData->scenario = 'lockUnlock';
                     $saveModel[] = $existData;
                 }
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Data Status', 'edit']);
