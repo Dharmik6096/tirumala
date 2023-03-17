@@ -17,7 +17,7 @@ class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
      */
     public function rules() {
         return [
-                [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'request_date'], 'safe'],
         ];
     }
 

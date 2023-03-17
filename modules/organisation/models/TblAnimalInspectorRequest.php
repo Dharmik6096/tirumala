@@ -51,7 +51,7 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date'], 'safe'],
         ];
     }
 

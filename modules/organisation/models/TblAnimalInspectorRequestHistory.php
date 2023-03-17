@@ -49,7 +49,7 @@ class TblAnimalInspectorRequestHistory extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['animal_inspector_code', 'originating_type'], 'integer'],
-                [['expected_visit_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['expected_visit_date', 'created_at', 'updated_at', 'history_created_at', 'request_date'], 'safe'],
                 [['animal_inspector_request_code'], 'string', 'max' => 40],
                 [['union_code'], 'string', 'max' => 3],
                 [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
