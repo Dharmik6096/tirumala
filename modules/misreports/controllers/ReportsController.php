@@ -1271,6 +1271,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionBmcMilkCollectionProc() {
+        $this->report = 'BmcMilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkCollectionProcDetail() {
+        $this->report = 'BmcMilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2530,7 +2540,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => '113 - VLCs comparison details',
             ],
             'MilkCollectionAbsent' => [
-                'param' => 'union_code,plant_code,mcc_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_milk_collection_absent_last_few_days',
                 'scenario' => 'MilkCollectionAbsent',
                 'title' => '114 - Absent Pouring VLCs',
@@ -2546,6 +2556,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_milk_collection_negative_growth',
                 'scenario' => 'MilkCollectionNegativeGroth',
                 'title' => '116 - Negative Growth VLCs',
+            ],
+            'BmcMilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per',
+                'scenario' => 'BmcMilkCollectionProc',
+                'title' => '117 - MCC comparison summary',
+            ],
+            'BmcMilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per_detail',
+                'scenario' => 'BmcMilkCollectionProcDetail',
+                'title' => '118 - MCC comparison details',
             ],
         ];
         return $label[$l];

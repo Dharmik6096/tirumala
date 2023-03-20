@@ -472,6 +472,8 @@ echo GhostMenu::widget([
                                     ['label' => '114 -' . Yii::t('app', 'Absent Pouring VLCs'), 'url' => ['/misreports/reports/milk-collection-absent']],
                                     ['label' => '115 -' . Yii::t('app', 'VLC Left Pourers'), 'url' => ['/misreports/reports/left-pourer']],
                                     ['label' => '116 -' . Yii::t('app', 'Negative Growth VLCs'), 'url' => ['/misreports/reports/milk-collection-negative-groth']],
+                                    ['label' => '117 -' . Yii::t('app', 'MCC comparison summary'), 'url' => ['/misreports/reports/bmc-milk-collection-proc']],
+                                    ['label' => '118 -' . Yii::t('app', 'MCC comparison details'), 'url' => ['/misreports/reports/bmc-milk-collection-proc-detail']],
                             ]
                         ],
                             [
