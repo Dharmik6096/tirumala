@@ -612,13 +612,16 @@ class GeneralFunctions extends Component {
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, 0777, true) == false) {
-                die('Failed to create folders...' . $path);
-                return false;
+            if (!is_dir($path)) {
+                if (mkdir($path, 0777, true) == false) {
+                    die('Failed to create folders...' . $path);
+                    return false;
+                }
             }
         }
 
-        if (strstr($path, 'EKOMILK')) {
+        
+        if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
             $command = 'chmod 777 -R ' . $path;
             exec($command);
         }
