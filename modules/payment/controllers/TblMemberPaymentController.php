@@ -502,6 +502,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
                 if (!empty($shortage_head[$key])) {
                     $shortage_head_code = $shortage_head[$key];
+                    $shortage_amt[$key] = empty($shortage_amt[$key]) ? 0 : $shortage_amt[$key];
                     $shortage = $shortage_amt[$key];
                     $shortage_model = TblMemberPaymentHead::find()
                                     ->where(['payment_cycle_code' => $data->payment_cycle_code, 'member_code' => $data->member_code, 'bill_head_code' => $shortage_head[$key], 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code])->one();
@@ -512,7 +513,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $shortage_model->amount = $shortage_amt[$key];
                             $save_model[] = $shortage_model;
                         }
-                    } else {
+                    } else if ($shortage > 0) {
                         $shortage_model = new TblMemberPaymentHead();
                         $shortage_model->member_code = $data->member_code;
                         $shortage_model->bmc_code = $data->bmc_code;

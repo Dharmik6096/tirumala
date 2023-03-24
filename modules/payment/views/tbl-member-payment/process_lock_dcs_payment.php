@@ -74,7 +74,7 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                         'label' => Yii::t('app', 'Shortage Amount'),
                         'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
-                        }, 'visible' => $milk_short_recovery_member == '1'],
+                        }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
                         ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
                         ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
                         ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
