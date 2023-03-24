@@ -65,7 +65,12 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
+        $query->join('LEFT JOIN', 'tbl_dcs', 'tbl_dcs.dcs_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_master', 'tbl_customer_master.customer_code = tbl_bmc_collection.customer_code');
+        $query->join('LEFT JOIN', 'tbl_customer_type', 'tbl_customer_type.customer_type = tbl_bmc_collection.customer_type AND tbl_customer_type.union_code = tbl_bmc_collection.union_code');
+        $query->join('LEFT JOIN', 'tbl_bmc', 'tbl_bmc.bmc_code = tbl_bmc_collection.bmc_code');
+        $query->join('LEFT JOIN', 'tbl_bmc_silos_info', 'tbl_bmc_silos_info.bmc_silos_info_code = tbl_bmc_collection.bmc_silos_info_code');
+//        $query->joinWith(['dcsCode', 'mainCustomerCode', 'customerType', 'mainBmcCode', 'silosCode']);
 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_collection', 'tbl_bmc_collection', 'tbl_bmc_collection');
 
@@ -144,7 +149,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
             'date_time_of_collection' => $this->date_time_of_collection,
             'shift_code' => $this->shift_code,
         ]);
-        
+
         return $dataProvider;
     }
 
