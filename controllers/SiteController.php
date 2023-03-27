@@ -1865,6 +1865,12 @@ class SiteController extends Controller {
                                     }
                                 } else {
                                     if ($transaction_data->table_name == 'tbl_bmc_collection') {
+                                        if ($model->hasAttribute('vehicle_no')) {
+                                            $model->vehicle_no = str_replace('\n', '', $model->vehicle_no);
+                                            $model->vehicle_no = trim(preg_replace('/\n/', '', $model->vehicle_no));
+                                            $model->vehicle_no = trim(preg_replace('/\s/', '', $model->vehicle_no));
+                                            $model->vehicle_no = trim(preg_replace('/\s+/', '', $model->vehicle_no));
+                                        }
                                         $range = Yii::$app->general->getUnionConfiguration($model->union_code, 'buf_min_fat_range_bmc', 'PORTAL');
                                         $mapping = new TblBmcMilkType();
                                         $mapped = $mapping->find()->where(['bmc_code' => $model->bmc_code, 'is_active' => 1])->all();
