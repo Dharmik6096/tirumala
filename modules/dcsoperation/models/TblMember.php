@@ -197,7 +197,9 @@ class TblMember extends ChildModel {
                     return $this->is_active;
                 }, 'skipOnEmpty' => true, 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
                 [['is_verified', 'is_contact_verified', 'is_dcs_member'], 'default', 'value' => 0],
-                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'check_is_dcs_member' => 'is_dcs_member'], 'message' => Yii::t('app/validation', 'DCS Member has already been taken.')]
+                [['dcs_code'], 'unique', 'targetAttribute' => ['dcs_code', 'check_is_dcs_member' => 'is_dcs_member'], 'message' => Yii::t('app/validation', 'DCS Member has already been taken.'), 'when' => function() {
+                    return $this->is_dcs_member;
+                },]
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMember', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
