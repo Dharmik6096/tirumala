@@ -56,6 +56,7 @@ use app\modules\vsp\models\TblBillHeadInstallment;
 use app\modules\vsp\models\TblBillHeadInstallmentHistory;
 use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
+use app\modules\payment\models\TblPaymentStopHistory;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -320,19 +321,32 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     $old_stop_all = TblPaymentStop::find()
                             ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER', 'bmc_code' => $summaryData->bmc_code])
                             ->all();
-                    foreach ($old_stop_all as $old_stop) {
-                        $delete_model[] = $old_stop;
-                    }
-                    if (in_array($dcs, $stop_payment_dcs)) {
-                        $stop_pay = new TblPaymentStop();
-                        $stop_pay->attributes = $summaryData->attributes;
-                        $stop_pay->customer_type = 'DCS';
-                        $stop_pay->customer_code = $dcs;
-                        $stop_pay->payment_type = 'MEMBER';
-                        $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'data_issue';
-                        $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
-                        $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
-                        $save_model[] = $stop_pay;
+                    if (!empty($old_stop_all)) {
+                        foreach ($old_stop_all as $old_stop) {
+                            $historyModel = new TblPaymentStopHistory();
+                            if (in_array($dcs, $stop_payment_dcs)) {
+                                Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
+                                $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                                $save_model[] = $old_stop;
+                            } else {
+                                Yii::$app->operation->history($old_stop, $historyModel, DELETE);
+                                $historyModel->lock_datetime = date('Y-m-d H:i:s');
+                                $delete_model[] = $old_stop;
+                            }
+                            $save_model[] = $historyModel;
+                        }
+                    } else {
+                        if (in_array($dcs, $stop_payment_dcs)) {
+                            $stop_pay = new TblPaymentStop();
+                            $stop_pay->attributes = $summaryData->attributes;
+                            $stop_pay->customer_type = 'DCS';
+                            $stop_pay->customer_code = $dcs;
+                            $stop_pay->payment_type = 'MEMBER';
+                            $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                            $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
+                            $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
+                            $save_model[] = $stop_pay;
+                        }
                     }
                 }
             }
