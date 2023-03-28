@@ -319,7 +319,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $save_model[] = $summaryData;
                 if ($processFlag == 'Lock') {
                     $old_stop_all = TblPaymentStop::find()
-                            ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER', 'bmc_code' => $summaryData->bmc_code])
+                            ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER_PAYMENT', 'bmc_code' => $summaryData->bmc_code])
                             ->all();
                     if (!empty($old_stop_all)) {
                         foreach ($old_stop_all as $old_stop) {
@@ -341,7 +341,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                             $stop_pay->attributes = $summaryData->attributes;
                             $stop_pay->customer_type = 'DCS';
                             $stop_pay->customer_code = $dcs;
-                            $stop_pay->payment_type = 'MEMBER';
+                            $stop_pay->payment_type = 'MEMBER_PAYMENT';
                             $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
                             $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
                             $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
@@ -743,8 +743,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $searchModel->attributes = $model->attributes;
         $searchModel->payment_status = 'Lock';
         $dataProvider = $searchModel->search([]);
-        $dataProvider->query->andWhere("(1=CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.bmc_code=tbl_member_payment_alias.bmc_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and payment_status != 'Lock' ) > 0 THEN 0 ELSE 1 END)");
-
+        //  $dataProvider->query->andWhere("(1=CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.bmc_code=tbl_member_payment_alias.bmc_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and payment_status != 'Lock' ) > 0 THEN 0 ELSE 1 END)");
 //        return $this->render('process_lock_dcs_payment', [
 //                    'model' => $model,
 //                    'searchModel' => $searchModel,

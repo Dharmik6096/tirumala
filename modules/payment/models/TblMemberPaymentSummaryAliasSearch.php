@@ -59,7 +59,7 @@ class TblMemberPaymentSummaryAliasSearch extends TblMemberPaymentSummaryAlias {
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'payment_status' => ($stop_payment_only) ? 'Process' : $this->payment_status,
+            'payment_status' => ($stop_payment_only) ? ['Process', 'Generated'] : $this->payment_status,
         ]);
 
         $query->andWhere(['tbl_member_payment_summary_alias.union_code' => $this->union_code])
