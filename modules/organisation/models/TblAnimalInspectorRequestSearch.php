@@ -17,7 +17,7 @@ class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
      */
     public function rules() {
         return [
-                [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'request_date'], 'safe'],
+                [['animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'user_type', 'member_code', 'member_name', 'mobile_no', 'address', 'ai_request_for', 'expected_visit_date', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'request_date', 'status'], 'safe'],
         ];
     }
 
@@ -79,7 +79,9 @@ class TblAnimalInspectorRequestSearch extends TblAnimalInspectorRequest {
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.created_by', $this->created_by])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.updated_by', $this->updated_by])
                 ->andFilterWhere(['like', 'tbl_animal_inspector_request.originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'tbl_animal_inspector_request.originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'tbl_animal_inspector_request.originating_org_type', $this->originating_org_type])
+                ->andFilterWhere(['like', 'tbl_animal_inspector_request.status', $this->status]);
+
 
         return $dataProvider;
     }

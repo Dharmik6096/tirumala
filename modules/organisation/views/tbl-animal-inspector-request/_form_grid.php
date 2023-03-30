@@ -58,6 +58,11 @@ $attribute = [
         },
     ],
         ['attribute' => 'remarks', 'visible' => true, 'filter' => true],
+        ['attribute' => 'status',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('animal_req_status', $searchModel, 'status'),
+        'value' => function ($model) {
+            return isset($model->status) ? Yii::$app->dropdown->getRecords('animal_req_status')['data'][$model->status] : '';
+        },],
 ];
 
 $grid_option = [
