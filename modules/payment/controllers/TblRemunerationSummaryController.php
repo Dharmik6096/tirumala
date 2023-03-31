@@ -121,7 +121,6 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data['mcc_plant_code'] = $model->mcc_plant_code;
             $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
             $data['calculate_other_head'] = $model->calculate_other_head;
-            $data['calculate_other_head'] = $model->calculate_other_head;
             $data['process_stop_payment'] = $model->stop_payment_only;
             Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
         }
