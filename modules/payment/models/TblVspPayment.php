@@ -156,7 +156,7 @@ class TblVspPayment extends \app\models\ChildModel {
         return $this->find()->where(['union_code' => $this->union_code,
                     'payment_cycle_code' => $this->payment_cycle_code,
                     'bmc_code' => $this->bmc_code,
-                    'customer_type' => $this->customer_type, 'status' => 'processed'])->orderBy('net_payable');
+                    'customer_type' => $this->customer_type, 'status' => ['generated', 'processed']])->orderBy('net_payable');
     }
 
     public function getRemunerationRecords() {
@@ -164,7 +164,7 @@ class TblVspPayment extends \app\models\ChildModel {
                     'from_datetime' => $this->from_datetime,
                     'to_datetime' => $this->to_datetime,
                     'bmc_code' => $this->bmc_code,
-                    'billing_type' => 'remuneration', 'status' => 'processed']);
+                    'billing_type' => 'remuneration', 'status' => ['generated', 'processed']]);
     }
 
     public function CheckPendingDisburse($attribute, $params) {
