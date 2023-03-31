@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use kartik\grid\GridView;
 
 $this->title = $title;
 ?>
@@ -29,6 +30,7 @@ if ($model->multiple_bmc) {
 $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
         (($model->billing_type == 'remuneration') ? Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) :
         Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date')) . ' to ' . Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date')));
+$allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['allow_stop_payment_vendor']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['allow_stop_payment_vendor'] : 0;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
@@ -47,8 +49,21 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
                     'validateOnSubmit' => true,
         ]);
         ?>
+        <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
         <?php
         $attribute = [
+                ['class' => 'kartik\grid\CheckboxColumn',
+                'rowSelectedClass' => GridView::TYPE_DANGER,
+                'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
+                'checkboxOptions' => function($model) {
+                    return ['value' => $model['customer_code']];
+                }, 'visible' => $allow_stop_payment_vendor == '1'],
+                ['attribute' => 'stop_reason',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Yii::$app->dropdown->dropdownfilterStatic('stop_payment_type', $model, '[' . $model->customer_code . ']stop_payment_type', '');
+                }, 'visible' => $allow_stop_payment_vendor == '1'
+            ],
                 ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
                 ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                     return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
@@ -136,7 +151,8 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
 
         <?php
         if (!empty($dataProvider->getModels())) {
-            echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);
+            echo Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjust']);
+            echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']);
         }
         ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
@@ -146,10 +162,10 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
 <div id='bill_head_view'></div>
 <div id='add_recovery_data'></div>
 <?php
-$script = "$('#adjust').click(function() {
+$script = "$('#adjust-lock-dcs-data').click(function() {
+            $('.process_lock_flag').val('locked');
             $('#loadercontent').show();
             $('#pageloader').show();
-            var postVspProcessData = $('#payment-adjust').serializeArray();
             var data_ok=1;
             $('.net-amount').each(function() {
                 var netamount =  parseFloat($(this).val());
@@ -165,8 +181,19 @@ $script = "$('#adjust').click(function() {
                 }
             });
             if(data_ok==1){
-                
-                $.ajax({
+                  postVspProcessData();               
+            }
+});
+$('#adjust').click(function() {
+            $('.process_lock_flag').val('processed');
+            $('#loadercontent').show();
+            $('#pageloader').show();            
+            postVspProcessData();               
+            
+});
+function postVspProcessData(){
+            var postVspProcessData = $('#payment-adjust').serializeArray();
+            $.ajax({
                     type: 'post',
                     url: '" . Url::to(['payment-adjust']) . "',
                     data: postVspProcessData,
@@ -187,13 +214,9 @@ $script = "$('#adjust').click(function() {
                             //alert('Your data has not been submitted..Please try again');
                     }
                 });
-
-
                 return false; 
-
                 $('#payment-adjust').submit();
-            }
-});
+}
 ";
 $script .= " $('.cal-amount').on('blur',function(){     
         var id = $(this).attr('id');

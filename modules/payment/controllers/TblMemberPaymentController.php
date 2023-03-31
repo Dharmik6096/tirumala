@@ -98,6 +98,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $generatedData = $model->getStatusLockedCount(['Generated', 'Process']);
                 $stopModel = new TblPaymentStop();
                 $stopModel->bmc_code = $model->bmc_code;
+                $stopModel->customer_type = 'DCS';
+                $stopModel->payment_type = 'MEMBER_PAYMENT';
                 $stopMsg = $stopModel->getStatusStop();
 
                 $msg = '';
@@ -153,6 +155,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $appModel->applicable_type = 'DCS';
                 $stopModel = new TblPaymentStop();
                 $stopModel->bmc_code = $model->bmc_code;
+                $stopModel->customer_type = 'DCS';
+                $stopModel->payment_type = 'MEMBER_PAYMENT';
                 $stopMsg = $stopModel->getStatusStop();
                 $generatedData = $model->getStatusLockedCount(['Generated', 'Process']);
 

@@ -83,7 +83,10 @@ class TblPaymentStop extends \app\models\ChildModel {
     }
 
     public function getStatusStop() {
-        $data = $this->find()->where(['bmc_code' => $this->bmc_code])->one();
+        $data = $this->find()->where(['bmc_code' => $this->bmc_code])
+                ->andWhere(['payment_type' => $this->payment_type])
+                ->andWhere(['customer_type' => $this->customer_type])
+                ->one();
         if (!empty($data)) {
             return 'First Process Stop Payment of ' . Yii::$app->controls->view_date($data->from_datetime) . ' to ' . Yii::$app->controls->view_date($data->to_datetime) . ' .';
         }

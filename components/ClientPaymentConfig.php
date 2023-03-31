@@ -176,11 +176,11 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_member_payment_itc',
                 ],
                 'vsp_payment' => [
-                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment',
                     'sp_name' => 'sp_vsp_payment_itc',
                 ],
                 'remuneration_payment' => [
-                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment',
                     'sp_name' => 'sp_remuneration_payment_itc',
                 ],
             ],

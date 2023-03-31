@@ -39,7 +39,7 @@ use app\modules\organisation\models\TblUnions;
 class TblVspPayment extends \app\models\ChildModel {
 
     public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
-    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc;
+    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc, $stop_payment_type;
 
     /**
      * @inheritdoc

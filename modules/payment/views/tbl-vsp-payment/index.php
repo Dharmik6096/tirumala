@@ -3,6 +3,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Vendor Payment'));
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Vendor Payment'), ['/payment/tbl-vsp-payment/create'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Vendor Payment'), ['/payment/tbl-vsp-payment/payment-disburse'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Remunaration Payment'), ['/payment/tbl-remuneration-summary/create'], true);
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Stop Vendor Payment'), ['/payment/tbl-remuneration-summary/create-stop-payment'], true);
 $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Remunaration Payment'), ['/payment/tbl-remuneration-summary/payment-disburse'], true);
 ?>
 

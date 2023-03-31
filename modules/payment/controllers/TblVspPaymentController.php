@@ -35,6 +35,9 @@ use app\modules\payment\models\TblSaleInstallments;
 use app\modules\payment\models\TblProductSaleInstallmentHistory;
 use app\modules\vsp\models\TblBillHeadInstallment;
 use app\modules\vsp\models\TblBillHeadInstallmentHistory;
+use app\modules\payment\models\TblPaymentStop;
+use app\modules\payment\models\TblPaymentStopHistory;
+use app\modules\payment\models\TblRemunerationSummary;
 
 /**
  * TblVspPaymentController implements the CRUD actions for TblVspPayment model.
@@ -106,6 +109,10 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $model->load(Yii::$app->request->get());
 
         if (Yii::$app->request->post()) {
+            $bmc_array = [];
+            $stop_payment_customer = !empty($postData['selection']) ? $postData['selection'] : [];
+            $stop_payment_reason = !empty($postData['TblVspPayment']) ? $postData['TblVspPayment'] : [];
+            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
 //        if (Yii::$app->request->post('TblVspPayment')) {
 //            $postData = Yii::$app->request->post();
             $adjust_id = Yii::$app->request->post('TblVspPayment')['vsp_payment_code'];
@@ -113,22 +120,24 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $adjust_remark = Yii::$app->request->post('TblVspPayment')['adjust_remark'];
             $hold_amt = Yii::$app->request->post('TblVspPayment')['hold_amount'];
             $save_model = [];
+            $delete_model = [];
             $cnt = 0;
             foreach ($adjust_id as $key => $value) {
+                $data = TblVspPayment::findOne($adjust_id[$key]);
+                $oldData = $data->oldAttributes;
+                $historyModel = new TblVspPaymentHistory();
+                Yii::$app->operation->history($data, $historyModel, UPDATE);
                 if (($adjust_amt[$key] != 0 && $adjust_amt[$key] != '') || ($hold_amt[$key] != 0 && $hold_amt[$key] != '')) {
-                    $data = TblVspPayment::findOne($adjust_id[$key]);
                     $updateData = false;
-                    $oldData = $data->oldAttributes;
-                    $historyModel = new TblVspPaymentHistory();
-                    Yii::$app->operation->history($data, $historyModel, UPDATE);
                     $data->adjust_amount = $adjust_amt[$key];
                     $data->adjust_remark = $adjust_remark[$key];
                     $data->hold_amount = $hold_amt[$key];
                     $data->final_pay = (float) $data->net_payable + (float) $adjust_amt[$key] - (float) $hold_amt[$key];
-                    if ($model->billing_type == 'remuneration') {
+                    if ($data->billing_type == 'remuneration') {
                         $data->scenario = 'remuneration';
                     }
-                    if (!empty($oldData) && ($oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
+                    $data->status = in_array($data->customer_code, $stop_payment_customer) ? 'processed' : $processFlag;
+                    if (!empty($oldData) && ($oldData['status'] != $data->status || $oldData['hold_amount'] != $data->hold_amount || $oldData['adjust_amount'] != $data->adjust_amount || $oldData['adjust_remark'] != $data->adjust_remark)) {
                         $updateData = true;
                     }
                     if ($updateData) {
@@ -136,9 +145,69 @@ class TblVspPaymentController extends \app\controllers\ChildController {
                         $save_model[] = $data;
                         $cnt++;
                     }
+                } else {
+                    $data->status = in_array($data->customer_code, $stop_payment_customer) ? 'processed' : $processFlag;
+                    if (!empty($oldData) && ($oldData['status'] != $data->status)) {
+                        $save_model[] = $historyModel;
+                        $save_model[] = $data;
+                    }
+                }
+                if ($processFlag == 'locked') {
+                    $old_stop_all = TblPaymentStop::find()
+                            ->where([
+                                'from_datetime' => $data->from_datetime, 'to_datetime' => $data->to_datetime,
+                                'customer_code' => $data->customer_code, 'customer_type' => $data->customer_type,
+                                'payment_type' => 'VENDOR_PAYMENT', 'bmc_code' => $data->bmc_code])
+                            ->andFilterWhere(['payment_cycle_code' => $data->payment_cycle_code])
+                            ->all();
+                    if (!empty($old_stop_all)) {
+                        foreach ($old_stop_all as $old_stop) {
+                            $historyModel = new TblPaymentStopHistory();
+                            if (in_array($data->customer_code, $stop_payment_customer)) {
+                                Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
+                                $old_stop->stop_reason = !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
+                                $save_model[] = $old_stop;
+                            } else {
+                                Yii::$app->operation->history($old_stop, $historyModel, DELETE);
+                                $historyModel->lock_datetime = date('Y-m-d H:i:s');
+                                $delete_model[] = $old_stop;
+                            }
+                            $save_model[] = $historyModel;
+                        }
+                    } else {
+                        if (in_array($data->customer_code, $stop_payment_customer)) {
+                            $stop_pay = new TblPaymentStop();
+                            $stop_pay->attributes = $data->attributes;
+                            $stop_pay->payment_type = 'VENDOR_PAYMENT';
+                            $stop_pay->stop_reason = !empty($stop_payment_reason[$data->customer_code]['stop_payment_type']) ? $stop_payment_reason[$data->customer_code]['stop_payment_type'] : 'dispute';
+                            $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
+                            $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
+                            $save_model[] = $stop_pay;
+                        }
+                    }
+                }
+                $model->from_datetime = $data->from_datetime;
+                $model->to_datetime = $data->to_datetime;
+                $bmc_array[$data->bmc_code] = $data->bmc_code;
+                $model->union_code = $data->union_code;
+                $model->billing_type = $data->billing_type;
+                $model->customer_type = $data->customer_type;
+            }
+            if ($model->billing_type == 'remuneration') {
+                $PaymentApp = TblRemunerationSummary::find()
+                        ->where(['from_datetime' => $model->from_datetime,
+                            'to_datetime' => $model->to_datetime,
+                            'bmc_code' => $bmc_array,
+                            'union_code' => $model->union_code])
+                        ->all();
+                foreach ($PaymentApp as $dataApp) {
+                    if ($dataApp->status != $processFlag) {
+                        $dataApp->status = $processFlag;
+                        $save_model[] = $dataApp;
+                    }
                 }
             }
-            $transaction = $this->generalModel->saveTransaction($save_model, ['Payment of ' . $cnt . ' ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . '  adjusted succesfully', 'info']);
+            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, ['Payment of ' . Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' ' . $processFlag . ' succesfully', 'info']);
 
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             $msg = '';

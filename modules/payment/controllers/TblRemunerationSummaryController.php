@@ -13,6 +13,7 @@ use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
 use PHPExcel;
 use yii\data\ArrayDataProvider;
+use app\modules\payment\models\TblPaymentStop;
 
 class TblRemunerationSummaryController extends \app\controllers\ChildController {
 
@@ -59,6 +60,51 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         ]);
     }
 
+    public function actionCreateStopPayment() {
+        $model = new TblRemunerationSummary();
+        if ($model->load(Yii::$app->request->post())) {
+            if (!empty($model->payment_cycle_code)) {
+                $payment_cycle_code = explode('#', $model->payment_cycle_code);
+                $model->from_datetime = $payment_cycle_code[0];
+                $model->to_datetime = $payment_cycle_code[1];
+            }
+            $model->stop_payment_only = 1;
+            $model->scenario = 'processpaymentstop';
+            $multiple_bmc = FALSE;
+            $bmc_array = [];
+            $bmc_array[] = $model->bmc_code;
+            $mcc_data = $model->mccPlantCode;
+            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+                $model->bmc_code = $model->p_bmc_code;
+                $multiple_bmc = TRUE;
+                $bmc_array = $model->p_bmc_code;
+            }
+            if ($model->validate()) {
+                $stopModel = new TblPaymentStop();
+                $stopModel->bmc_code = $model->bmc_code;
+                $stopModel->customer_type = 'DCS';
+                $stopModel->payment_type = 'VENDOR_PAYMENT';
+                $stopMsg = $stopModel->getStatusStop();
+                if (!empty($stopMsg)) {
+                    $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
+                    $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
+                    $this->getRemunerationSpData($model);
+                    $model->bmc_code = $bmc_array;
+                    return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
+                } else {
+                    Yii::$app->getSession()->setFlash('success', [
+                        'type' => 'success',
+                        'message' => $stopMsg,
+                    ]);
+                }
+            }
+            $model->scenario = 'default';
+        }
+        return $this->render('create_stop_payment', [
+                    'model' => $model,
+        ]);
+    }
+
     private function getRemunerationSpData($model) {
         $bmc_array = [];
         $bmc_array[] = $model->bmc_code;
@@ -75,6 +121,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data['mcc_plant_code'] = $model->mcc_plant_code;
             $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
             $data['calculate_other_head'] = $model->calculate_other_head;
+            $data['calculate_other_head'] = $model->calculate_other_head;
+            $data['process_stop_payment'] = $model->stop_payment_only;
             Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
         }
         /* $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
@@ -109,7 +157,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             'bmc_code' => $model->bmc_code,
             'union_code' => $model->union_code,
             'billing_type' => 'remuneration',
-            'status' => ['processed', 'rejected']]);
+            'status' => ['locked', 'rejected']]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -140,7 +188,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                                 'bmc_code' => $model->bmc_code,
                                 'union_code' => $model->union_code,
                                 'billing_type' => 'remuneration',
-                                'status' => ['processed', 'rejected']])
+                                'status' => ['locked', 'rejected']])
                             ->all();
 
                     $pay_cnt = count($query);
@@ -186,17 +234,29 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     'bmc_code' => $model->bmc_code,
                     'union_code' => $model->union_code,
                     'billing_type' => 'remuneration',
-                    'status' => ['processed', 'rejected']])
+                    'status' => ['locked', 'rejected']])
                 ->all();
-        $PaymentApp = TblRemunerationSummary::find()
+
+        $pendingCount = $newModel->find()
                 ->where(['from_datetime' => $model->from_datetime,
                     'to_datetime' => $model->to_datetime,
                     'bmc_code' => $model->bmc_code,
-                    'union_code' => $model->union_code])
-                ->all();
-        foreach ($PaymentApp as $dataApp) {
-            $dataApp->status = 'sent';
-            $save_model[] = $dataApp;
+                    'union_code' => $model->union_code,
+                    'billing_type' => 'remuneration'])
+                ->andWhere(['IN', 'status', ['generated', 'processed']])
+                ->count();
+        if ($pendingCount == 0) {
+            $PaymentApp = TblRemunerationSummary::find()
+                    ->where(['from_datetime' => $model->from_datetime,
+                        'to_datetime' => $model->to_datetime,
+                        'bmc_code' => $model->bmc_code,
+                        'union_code' => $model->union_code,
+                        'status' => ['locked']])
+                    ->all();
+            foreach ($PaymentApp as $dataApp) {
+                $dataApp->status = 'sent';
+                $save_model[] = $dataApp;
+            }
         }
         foreach ($query as $data) {
             $outstanding = TblVspOutstanding::find()->where([
@@ -244,7 +304,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     'tbl_vsp_payment.bmc_code' => $model->bmc_code,
                     'tbl_vsp_payment.union_code' => $model->union_code,
                     'tbl_vsp_payment.billing_type' => 'remuneration',
-                    'tbl_vsp_payment.status' => ['processed', 'rejected']])
+                    'tbl_vsp_payment.status' => ['locked', 'rejected']])
                 ->joinWith(['dcsCode'])
                 ->all();
 
