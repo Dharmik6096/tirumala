@@ -19,7 +19,7 @@ use yii\web\Response;
 
 class TblRemunerationSummaryController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['remuneration-payment-cycle'];
+    public $freeAccessActions = ['remuneration-payment-cycle', 'process-remuneration'];
 
     public function actionCreate() {
         $model = new TblRemunerationSummary();
