@@ -110,6 +110,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
         if (Yii::$app->request->post()) {
             $bmc_array = [];
+            $postData = Yii::$app->request->post();
             $stop_payment_customer = !empty($postData['selection']) ? $postData['selection'] : [];
             $stop_payment_reason = !empty($postData['TblVspPayment']) ? $postData['TblVspPayment'] : [];
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';

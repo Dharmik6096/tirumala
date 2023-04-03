@@ -14,6 +14,8 @@ use app\modules\payment\models\TblVspOutstandingHistory;
 use PHPExcel;
 use yii\data\ArrayDataProvider;
 use app\modules\payment\models\TblPaymentStop;
+use yii\widgets\ActiveForm;
+use yii\web\Response;
 
 class TblRemunerationSummaryController extends \app\controllers\ChildController {
 
@@ -22,6 +24,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
     public function actionCreate() {
         $model = new TblRemunerationSummary();
         if ($model->load(Yii::$app->request->post())) {
+            $result = 'success';
             $model->scenario = 'processpayment';
             $multiple_bmc = FALSE;
             $bmc_array = [];
@@ -33,30 +36,38 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                 $bmc_array = $model->p_bmc_code;
             }
             if ($model->validate()) {
-                $validate = TRUE;
-                if ($_POST['warning'] == 0) {
-                    $validate = $model->ValidateDate('from_datetime', NULL, TRUE);
-                    if (!$validate) {
-                        $message = \Yii::t('app', "Payment has been already processed.Are you sure you want to continue?");
-                        Yii::$app->getSession()->setFlash('success', [
-                            'type' => 'confirm',
-                            'hidden_field' => 'warning',
-                            'message' => $message,
-                        ]);
-                    }
+                $validate = $model->ValidateDate('from_datetime', NULL, TRUE);
+                $queryParam = [];
+                $queryParam[] = 'process-remuneration';
+                $queryParamRegenerate = [];
+                $queryParam['TblRemunerationSummary'] = ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime,
+                    'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code,
+                    'union_code' => $model->union_code, 'calculate_milk_recovey' => $model->calculate_milk_recovey,
+                    'calculate_other_head' => $model->calculate_other_head,
+                    'stop_payment_only' => 0];
+                $queryParamRegenerate = $queryParam;
+                $queryParamRegenerate['reGenerate'] = 0;
+                $msg = '';
+                if (!$validate) {
+                    $result = 'displayConfirmPopup';
+                    $msg = \Yii::t('app', "Payment has been already generated for selected Period.Do You want to Regenerate?");
+                    $queryParamRegenerate['reGenerate'] = 1;
                 }
-                if ($validate) {
-                    $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
-                    $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
-                    $this->getRemunerationSpData($model);
-                    $model->bmc_code = $bmc_array;
-                    return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
-                }
+                $url = Url::to($queryParam);
+                $url_regenerate = Url::to($queryParamRegenerate);
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                return ['status' => $result, 'url' => $url, 'url_regenerate' => $url_regenerate, 'msg' => $msg];
+            } else {
+                $form_validation = ActiveForm::validate($model);
+                $model->bmc_code = is_array($model->bmc_code) ? NULL : $model->bmc_code;
+                $model->scenario = 'default';
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return $form_validation;
             }
             $model->scenario = 'default';
         }
         return $this->render('create', [
-                    'model' => $model,
+                    'model' => $model, 'post_url' => Url::to(['create'])
         ]);
     }
 
@@ -92,9 +103,10 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     $model->bmc_code = $bmc_array;
                     return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
                 } else {
+                    $msg = Yii::t('app', 'Stop Payment data is not available');
                     Yii::$app->getSession()->setFlash('success', [
                         'type' => 'success',
-                        'message' => $stopMsg,
+                        'message' => $msg,
                     ]);
                 }
             }
@@ -103,6 +115,24 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         return $this->render('create_stop_payment', [
                     'model' => $model,
         ]);
+    }
+
+    public function actionProcessRemuneration($reGenerate = 0) {
+        if (Yii::$app->request->get()) {
+            $model = new TblRemunerationSummary();
+            $model->load(Yii::$app->request->get());
+            $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
+            $model->to_datetime = date('Y-m-d', strtotime($model->to_datetime)) . ' ' . \Yii::$app->general->getshift(2);
+            if ($reGenerate == 1) {
+                $this->getRemunerationSpData($model);
+            }
+            $multiple_bmc = FALSE;
+            $mcc_data = $model->mccPlantCode;
+            if (!empty($mcc_data) && $mcc_data->vendor_payment_with_multiple_bmc == 1) {
+                $multiple_bmc = TRUE;
+            }
+            return $this->redirect(['tbl-vsp-payment/payment-adjust', 'TblVspPayment' => ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'mcc_plant_code' => $model->mcc_plant_code, 'union_code' => $model->union_code, 'billing_type' => 'remuneration', 'customer_type' => 'DCS', 'multiple_bmc' => $multiple_bmc]]);
+        }
     }
 
     private function getRemunerationSpData($model) {

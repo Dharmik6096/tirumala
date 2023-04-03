@@ -108,7 +108,7 @@ class TblRemunerationSummary extends \app\models\ChildModel {
 
         $query = TblRemunerationSummary::find()
                 ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
-        if ($process_alert) {
+        if ($process_alert === TRUE) {
             $query->andWhere(['in', 'status', ['generated', 'processed']]);
         } else {
             $query->andWhere(['not in', 'status', ['generated', 'processed']]);
@@ -122,11 +122,12 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                         "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                         "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
             ]])->count();
-        if ($process_alert) {
+        if ($process_alert === TRUE) {
             return $count > 0 ? FALSE : TRUE;
         } else {
             if ($count > 0) {
                 $this->addError($attribute, "Payment already done/locked.");
+                return FALSE;
             } else {
                 $pending_disburse = $this->find()
                                 ->where(['status' => ['generated', 'processed'], 'bmc_code' => $this->bmc_code])
@@ -163,6 +164,7 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                         ->count();
                 if ($unlock_cnt > 0) {
                     $this->addError($attribute, "Please Lock Data of all payment cycle included.");
+                    return FALSE;
                 }
             }
         }
