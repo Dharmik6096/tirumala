@@ -142,6 +142,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
         if (is_array($model->bmc_code)) {
             $bmc_array = $model->bmc_code;
         }
+        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         foreach ($bmc_array as $bmc_code) {
             $data = [];
             $data['from_datetime'] = $model->from_datetime;
@@ -153,6 +154,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             $data['calculate_milk_recovey'] = $model->calculate_milk_recovey;
             $data['calculate_other_head'] = $model->calculate_other_head;
             $data['process_stop_payment'] = $model->stop_payment_only;
+            $data['user_code'] = $user;
             Yii::$app->ClientPaymentConfig->processPayment('remuneration_payment', $data);
         }
         /* $result = \Yii::$app->db->createCommand("{CALL sp_remuneration_payment (:union_code,:plant_code,:mcc_plant_code,:bmc_code,:from_date,:to_date,:calculate_milk_recovey,:calculate_other_head)}")
@@ -316,11 +318,13 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             if (is_array($model->bmc_code)) {
                 $bmc_array = $model->bmc_code;
             }
+            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
             foreach ($bmc_array as $bmc_code) {
                 $param = [];
                 $param['from_datetime'] = $model->from_datetime;
                 $param['customer_type'] = 'DCS';
                 $param['bmc_code'] = $bmc_code;
+                $param['user_code'] = $user;
                 Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
             }
         }

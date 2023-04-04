@@ -710,7 +710,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 
     private function getMemberDcsSpData($model, $reGenerate = 0, $stop_payment_only = 0) {
         // use for generate or regenerate data for Member Payment
-
+        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $data = [];
         $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
         $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
@@ -718,6 +718,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $data['bmc_code'] = $model->bmc_code;
         $data['payment_cycle_code'] = $model->payment_cycle_code;
         $data['process_stop_payment'] = $stop_payment_only;
+        $data['user_code'] = $user;
+        
         return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
 
         /*
@@ -1109,6 +1111,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $param['from_datetime'] = $model->from_datetime;
                         $param['customer_type'] = 'MEMBER';
                         $param['bmc_code'] = $model->bmc_code;
+                        $param['user_code'] = $user;
                         Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success',

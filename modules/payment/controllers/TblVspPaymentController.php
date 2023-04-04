@@ -504,6 +504,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
 
     private function getVspSpData($model) {
         $paymentCycle = $model->paymentCycleCode;
+        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $data = [];
         $data['union_code'] = $model->union_code;
         $data['bmc_code'] = $model->bmc_code;
@@ -514,6 +515,8 @@ class TblVspPaymentController extends \app\controllers\ChildController {
         $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($paymentCycle->to_date));
         $data['to_shift'] = $paymentCycle->to_shift;
         $data['process_stop_payment'] = $model->stop_payment_only;
+        $data['user_code'] = $user;
+
         /* delete recovery data */
         Yii::$app->db->createCommand("delete from tbl_vsp_payment_recovery
 where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and customer_type = :customer_type")
