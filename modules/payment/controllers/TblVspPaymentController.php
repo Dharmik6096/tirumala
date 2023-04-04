@@ -178,7 +178,7 @@ class TblVspPaymentController extends \app\controllers\ChildController {
             $model->scenario = 'default';
         }
         return $this->render('create', [
-                    'model' => $model, 'post_url' => Url::to(['create-stop-payment'])
+                    'model' => $model, 'post_url' => Url::to(['create-stop-payment']), 'title' => 'Vendor Stop Payment Process : Step 1'
         ]);
     }
 

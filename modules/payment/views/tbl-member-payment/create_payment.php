@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
-$this->title = Yii::t('app', 'Member Payment Process : Step 1');
+$this->title = isset($title) ? $title : Yii::t('app', 'Member Payment Process : Step 1');
 $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
 ?>
 <div class="panel panel-default panel-main">

@@ -190,7 +190,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             }
         }
         return $this->render('create_payment', [
-                    'model' => $model, 'post_url' => Url::to(['create-stop-payment'])
+                    'model' => $model, 'post_url' => Url::to(['create-stop-payment']), 'title' => Yii::t('app', 'Member Stop Payment Process : Step 1')
         ]);
     }
 
@@ -719,7 +719,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $data['payment_cycle_code'] = $model->payment_cycle_code;
         $data['process_stop_payment'] = $stop_payment_only;
         $data['user_code'] = $user;
-        
+
         return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
 
         /*
