@@ -40,6 +40,7 @@ class TblVspPayment extends \app\models\ChildModel {
 
     public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
     public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc, $stop_payment_type;
+    public $stop_payment_only = 0;
 
     /**
      * @inheritdoc
@@ -170,7 +171,7 @@ class TblVspPayment extends \app\models\ChildModel {
     public function CheckPendingDisburse($attribute, $params) {
         $data = $this->find()
                 ->select(['from_datetime', 'to_datetime'])
-                ->where(['status' => 'processed', 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
+                ->where(['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
                     'customer_type' => $this->customer_type,
                 ])
                 ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
@@ -189,9 +190,14 @@ class TblVspPayment extends \app\models\ChildModel {
                         ->where(['t.union_code' => $this->union_code,
                             't.payment_cycle_code' => $this->payment_cycle_code,
                             't.bmc_code' => $this->bmc_code,
-                            't.customer_type' => $this->customer_type, 't.status' => 'processed'])
+                            't.customer_type' => $this->customer_type, 't.status' => ['processed', 'generated']])
                         ->andWhere(['>', 't.net_payable', 0])
                         ->andWhere(['!=', 't.vsp_payment_code', $this->vsp_payment_code])->all();
+    }
+
+    public function getStatusCount($status) {
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                        ->andWhere(['status' => $status])->count();
     }
 
 }

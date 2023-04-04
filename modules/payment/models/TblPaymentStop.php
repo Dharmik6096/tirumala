@@ -30,6 +30,8 @@ use Yii;
  */
 class TblPaymentStop extends \app\models\ChildModel {
 
+    public $is_remuneration = 0;
+
     /**
      * @inheritdoc
      */
@@ -83,10 +85,15 @@ class TblPaymentStop extends \app\models\ChildModel {
     }
 
     public function getStatusStop() {
-        $data = $this->find()->where(['bmc_code' => $this->bmc_code])
+        $query = $this->find()->where(['bmc_code' => $this->bmc_code])
                 ->andWhere(['payment_type' => $this->payment_type])
-                ->andWhere(['customer_type' => $this->customer_type])
-                ->one();
+                ->andWhere(['customer_type' => $this->customer_type]);
+        if ($this->is_remuneration == 1) {
+            $query->andWhere(['IS', 'payment_cycle_code', NULL]);
+        } else {
+            $query->andWhere(['IS NOT', 'payment_cycle_code', NULL]);
+        }
+        $data = $query->one();
         if (!empty($data)) {
             return 'First Process Stop Payment of ' . Yii::$app->controls->view_date($data->from_datetime) . ' to ' . Yii::$app->controls->view_date($data->to_datetime) . ' .';
         }

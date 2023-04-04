@@ -95,6 +95,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                 $stopModel->bmc_code = $model->bmc_code;
                 $stopModel->customer_type = 'DCS';
                 $stopModel->payment_type = 'VENDOR_PAYMENT';
+                $stopModel->is_remuneration = 1;
                 $stopMsg = $stopModel->getStatusStop();
                 if (!empty($stopMsg)) {
                     $model->from_datetime = date('Y-m-d', strtotime($model->from_datetime)) . ' ' . \Yii::$app->general->getshift(1);
