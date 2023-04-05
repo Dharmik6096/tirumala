@@ -353,7 +353,13 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
 
     public function actionUpdateCollection() {
         $searchModel = new TblMilkCollectionSearch();
-        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
+        $postData = Yii::$app->request->post();
+        $collCodes = [];
+        if (!empty($postData) && !empty($postData['collectionCodes'])) {
+            $collCodes = $postData['collectionCodes'];
+            $collCodes = array_values((array) json_decode($collCodes));
+        }
+        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams, $collCodes);
         $searchModel->scenario = 'updateMilkCollection';
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
