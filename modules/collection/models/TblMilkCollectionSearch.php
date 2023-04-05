@@ -208,7 +208,11 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         // add conditions that should always apply here
 
         if (!empty($collCodes)) {
-            $query->andWhere(['tbl_milk_collection.milk_collection_code' => $collCodes]);
+            $org_string = "'" . implode(',', $collCodes) . "'";
+            $command = Yii::$app->db->createCommand("SELECT distinct code from [SplitToTable](" . $org_string . ",',')");
+            $org_codes = $command->sql;
+            $query->andWhere('tbl_milk_collection.milk_collection_code in (' . $org_codes . ')');
+//            $query->andWhere(['tbl_milk_collection.milk_collection_code' => $collCodes]);
         }
 
         $query->andWhere([
