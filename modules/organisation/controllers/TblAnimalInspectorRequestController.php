@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TblAnimalInspectorRequestController implements the CRUD actions for TblAnimalInspectorRequest model.
  */
-class TblAnimalInspectorRequestController extends \app\Controllers\ChildController {
+class TblAnimalInspectorRequestController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblAnimalInspectorRequest models.
