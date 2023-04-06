@@ -70,8 +70,11 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['can_no'], 'required', 'on' => ['bmc_collection_can', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
             [['route_code'], 'required', 'on' => ['bmc_collection_route', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
             [['antibiotic'], 'required', 'when' => function ($model) {
-		return \Yii::$app->session->get('eiplCode') == 'PRABHAT';
-            }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection']]
+                    return \Yii::$app->session->get('eiplCode') == 'PRABHAT';
+                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection']],
+            [['antibiotic'], 'required', 'when' => function ($model) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'antibiotic');
+                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection']]
         ];
     }
 
