@@ -121,7 +121,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $existfromStock->stock = $f_stock - $qty;
                         $fstockModel = $existfromStock;
                     } else {
-                        $fstockModel->product_stock_code = $fstockModel->getCode();
+                        $fstockModel->product_stock_code = $fstockModel->getCode($j);
                         $fstockModel->stock = $f_stock - $qty;
                         $fstockModel->x_col1 = Yii::$app->general->getUuid();
                     }
@@ -324,7 +324,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                             $existfromStock->stock = $f_stock - $qty;
                             $fstockModel = $existfromStock;
                         } else {
-                            $fstockModel->product_stock_code = $fstockModel->getCode();
+                            $fstockModel->product_stock_code = $fstockModel->getCode($j);
                             $fstockModel->stock = $f_stock - $qty;
                             $fstockModel->x_col1 = Yii::$app->general->getUuid();
                         }
@@ -460,7 +460,10 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                     $i++;
                     $j++;
                 }
-
+//                echo '<pre>';
+//                print_r($saveModel);
+//                echo '</pre>';
+//                die;
                 $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
