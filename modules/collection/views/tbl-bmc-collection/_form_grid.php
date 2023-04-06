@@ -30,7 +30,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'route_code', 'label' => (Yii::t('app', 'Route Name')), 'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
+            return (Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == 'N/A' || Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name') == '') ? Yii::$app->general->getforeignkey($model->routeCode, 'route_name') : Yii::$app->general->getmultiforeignkey($model->dcsCode, ['routeMapping'], 'route_name');
         }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'bmc_silos_info_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->silosCode, 'silo_no');
