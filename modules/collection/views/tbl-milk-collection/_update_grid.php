@@ -7,12 +7,15 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\ArrayHelper;
 ?>
 <div class=""></div>
 <?php
 $form = ActiveForm::begin([
             'id' => 'update-milk-collection',
         ]);
+$collCodes = ArrayHelper::map($detailModel, 'milk_collection_code', 'milk_collection_code');
+echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'collectionCodes']);
 ?>
 
 <div class=" no-effect table_form" >
