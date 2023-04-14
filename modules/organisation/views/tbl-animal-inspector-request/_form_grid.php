@@ -61,7 +61,7 @@ $attribute = [
         ['attribute' => 'status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('animal_req_status', $searchModel, 'status'),
         'value' => function ($model) {
-            return isset($model->status) ? Yii::$app->dropdown->getRecords('animal_req_status')['data'][$model->status] : '';
+            return (isset($model->status) && $model->status != '') ? Yii::$app->dropdown->getRecords('animal_req_status')['data'][$model->status] : '';
         },],
 ];
 
@@ -69,6 +69,9 @@ $grid_option = [
     'id' => 'animal-inspector-request-grid',
     'attributes' => $attribute,
     'active_column' => false,
+    'actions' => [
+        'update' => true,
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

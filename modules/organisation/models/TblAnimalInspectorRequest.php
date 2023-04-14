@@ -51,7 +51,9 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'address', 'member_name', 'mobile_no', 'remarks', 'user_type', 'member_code', 'ai_request_for', 'created_by', 'updated_by', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'union_code', 'animal_inspector_request_code', 'expected_visit_date', 'created_at', 'updated_at', 'animal_inspector_code', 'originating_type', 'animal_inspector_request_code', 'request_date', 'status', 'close_remarks'], 'safe'],
+                [['close_remarks'], 'required'],
+                [['status'], 'required'],
         ];
     }
 
@@ -82,7 +84,8 @@ class TblAnimalInspectorRequest extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'status' => yii::t('app', 'Status')
+            'status' => yii::t('app', 'Status'),
+            'close_remarks' => yii::t('app', 'Close Remarks')
         ];
     }
 

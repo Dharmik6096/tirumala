@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblAnimalInspectorRequestSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\organisation\models\TblAnimalInspectorRequestHistory;
 
 /**
  * TblAnimalInspectorRequestController implements the CRUD actions for TblAnimalInspectorRequest model.
@@ -62,16 +63,20 @@ class TblAnimalInspectorRequestController extends \app\controllers\ChildControll
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->animal_inspector_request_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+    public function actionUpdate($id) {
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblAnimalInspectorRequestHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Animal Inspector Request', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
