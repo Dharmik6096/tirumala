@@ -85,6 +85,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                     chdir($crnt_dir);
                     $i = 1;
                     $auto_key_config = [];
+                    $from_date = "";
+                    $to_date = "";
+                    if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
+                        $paymentCycle = \app\modules\payment\models\TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
+
+                        $from_date = $paymentCycle->from_date;
+                        $to_date = $paymentCycle->to_date;
+                    }
                     foreach ($dcsCodes as $k => $dcs_data) {
                         $model = new TblBulkNotification();
                         $model->union_code = $dcs_data['union_code'];
@@ -94,6 +102,8 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->dcs_code = $dcs_data['dcs_code'];
                         $model->notification_type = $this->model->notification_type;
                         $model->payment_cycle_code = $this->model->payment_cycle_code;
+                        $model->from_date = $from_date;
+                        $model->to_date = $to_date;
                         $model->login_type = $this->model->login_type;
                         if ($model->notification_type == 4) {
                             $model->filename = ((int) $dcs_data['dcs_code_ex']) . '.pdf';

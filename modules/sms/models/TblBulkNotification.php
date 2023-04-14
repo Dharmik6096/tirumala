@@ -50,13 +50,13 @@ class TblBulkNotification extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code'], 'safe'],
-            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
-            [['content_id', 'status'], 'integer'],
-            [['login_type', 'message', 'wef_date', 'receiver_type', 'notification_type'], 'required'],
-            [['status'], 'default', 'value' => 0],
-            [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code', 'from_date', 'to_date'], 'safe'],
+                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
+                [['content_id', 'status'], 'integer'],
+                [['login_type', 'message', 'wef_date', 'receiver_type', 'notification_type'], 'required'],
+                [['status'], 'default', 'value' => 0],
+                [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
                     return $model->notification_type == '4';
                 }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblbulknotification-notification_type').val() == '4'; 

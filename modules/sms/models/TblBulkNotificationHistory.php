@@ -36,33 +36,30 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblBulkNotificationHistory extends \yii\db\ActiveRecord
-{
+class TblBulkNotificationHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bulk_notification_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bulk_notification_id', 'content_id', 'status', 'originating_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'receiver_type', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'safe'],
-            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'history_created_at'], 'safe'],
+                [['bulk_notification_id', 'content_id', 'status', 'originating_type', 'from_date', 'to_date'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'receiver_type', 'originating_org_code', 'originating_org_type', 'operation_type', 'history_created_by'], 'safe'],
+                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'history_created_at'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'bulk_notification_id' => Yii::t('app', 'Bulk Notification ID'),
@@ -94,4 +91,5 @@ class TblBulkNotificationHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }
