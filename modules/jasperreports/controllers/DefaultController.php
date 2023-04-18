@@ -301,6 +301,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorMilkBillJgf() {
+        $this->report = 'VendorMilkBillJgf';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -720,6 +725,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
                 'path' => 'vsp/VendorMilkBillSNMilk',
                 'scenario' => 'VendorMilkBillSnmilk',
+                'title' => '616 - Milk Bill',
+            ],
+            'VendorMilkBillJgf' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VSPPaymentJGF',
+                'scenario' => 'VendorMilkBillJgf',
                 'title' => '616 - Milk Bill',
             ],
         ];
