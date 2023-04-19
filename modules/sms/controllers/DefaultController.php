@@ -27,8 +27,9 @@ class DefaultController extends Controller {
                 if (!empty($row->content_id) && !empty($row->receiver_detail)) {
                     try {
                         $send = '';
+                        $status = 2;
                         if ($row->receiver_type == 'SMS') {
-                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message, $row->template_id);
+                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message, $row->template_id, $status);
                         } else if ($row->receiver_type == 'APP_NOTIFICATION') {
                             $server_key = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
                             $url = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
@@ -61,7 +62,7 @@ class DefaultController extends Controller {
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->response_status = $send;
-                        $row->send_status = 2;
+                        $row->send_status = $status;
                         $row->save(FALSE);
                     } catch (\yii\db\Exception $e) {
                         $row->send_status = 3;
