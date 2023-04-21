@@ -105,7 +105,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 create_fields reset_field">
             <?= $form->field($txModel, 'available_stock')->textInput(['readonly' => TRUE])->label(Yii::t('app', 'Available Stock')) ?>
         </div>
-        <div class="col-sm-2 create_fields reset_field">
+        <div class="col-sm-2 create_fields reset_field qty-validate">
             <?= $form->field($txModel, 'qty')->textInput()->label(Yii::t('app', 'Quantity')) ?>
         </div>
 
