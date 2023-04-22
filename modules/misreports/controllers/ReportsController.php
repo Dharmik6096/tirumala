@@ -1246,6 +1246,16 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMccRecipationSummary() {
+        $this->report = 'MccRecipationSummary';
+        return $this->actionIndex();
+    }
+
+    public function actionMccRecipationDetail() {
+        $this->report = 'MccRecipationDetail';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2491,6 +2501,18 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
                 'title' => '218 - BMC Collection Report For SAP',
+            ],
+            'MccRecipationSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,payment_cycle_code',
+                'sp_name' => 'mis_mcc_recipation_summary_jgf',
+                'scenario' => 'MccRecipationSummary',
+                'title' => 'MCC Recipation Summary',
+            ],
+            'MccRecipationDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,payment_cycle_code',
+                'sp_name' => 'mis_mcc_recipation_detail_jgf',
+                'scenario' => 'MccRecipationDetail',
+                'title' => 'MCC Recipation Detail',
             ],
         ];
         return $label[$l];

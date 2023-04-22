@@ -614,6 +614,10 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
                             ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
                             ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report']],
+                        //   ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-summary']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                        //  ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-detail']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                        ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary']],
+                            ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail']],
                     ]
                 ],
                     [
