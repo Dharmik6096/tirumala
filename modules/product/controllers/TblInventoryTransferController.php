@@ -101,7 +101,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $f_stock = 0;
                 $qty = $txModel->qty;
-
+                $stock_ai = 1;
                 if (!empty($existfromStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
@@ -110,9 +110,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existfromStock->stock = $f_stock - $qty;
                     $fstockModel = $existfromStock;
                 } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode();
+                    $fstockModel->product_stock_code = $fstockModel->getCode($stock_ai);
                     $fstockModel->stock = $f_stock - $qty;
                     $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    $stock_ai++;
                 }
                 $modelSave[] = $fstockModel;
 
@@ -181,7 +182,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existtoStock->stock = $t_stock + $qty;
                     $stockModel = $existtoStock;
                 } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($i);
+                    $stockModel->product_stock_code = $stockModel->getCode($stock_ai);
                     $stockModel->stock = $t_stock + $qty;
                     $stockModel->x_col1 = Yii::$app->general->getUuid();
                 }

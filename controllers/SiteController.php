@@ -1853,12 +1853,14 @@ class SiteController extends Controller {
                             if ($model->hasAttribute('originating_type')) {
                                 $model->originating_type = 23;
                             }
+                            if (!in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'])) {
 
-                            if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
-                                $model->setTransactionData($model, $json, $childModel);
-                            }
-                            if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
-                                $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
+                                if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
+                                    $model->setTransactionData($model, $json, $childModel);
+                                }
+                                if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
+                                    $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
+                                }
                             }
                             if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
                                 $model->scenario = 'androidsync_coll';
@@ -1937,10 +1939,10 @@ class SiteController extends Controller {
 
                             $masterSave = [];
                             $masterSave[] = $model;
-                            if (in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
-                                if (!empty($model->union_code) && $model->union_code == '003' && !empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
-                                    $masterSave = [];
-                                }
+                            if (in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'])) {
+                                // if (!empty($model->union_code) && $model->union_code == '003' && !empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
+                                $masterSave = [];
+                                // }
                             }
 //                            else if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction'])) {
 //                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
@@ -2905,8 +2907,8 @@ class SiteController extends Controller {
             $keys = array_keys($results[0]);
             foreach ($keys as $key) {
                 if (in_array($key, ['onlineDcs', 'offlineDcs'])) {
-                    $series[$key] = $results[0][$key];//array_column($results, $key);
-                }               
+                    $series[$key] = $results[0][$key]; //array_column($results, $key);
+                }
             }
         }
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
