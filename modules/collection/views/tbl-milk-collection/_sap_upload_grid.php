@@ -25,17 +25,17 @@ $form = ActiveForm::begin([
     echo Html::hiddenInput('operation', 'upload', ['id' => 'set_operation']);
 
     $attribute = [
-        ['class' => 'kartik\grid\CheckboxColumn',
+            ['class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
                 return ['class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id']];
             }],
-        ['attribute' => 'bmc_name', 'filter' => FALSE],
-        ['attribute' => 'dcs_code', 'filter' => FALSE],
-        ['attribute' => 'dcs_ref_code', 'filter' => FALSE],
-        ['attribute' => 'dcs_name', 'filter' => FALSE],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['attribute' => 'bmc_name', 'filter' => FALSE],
+            ['attribute' => 'dcs_code', 'filter' => FALSE],
+            ['attribute' => 'dcs_ref_code', 'filter' => FALSE],
+            ['attribute' => 'dcs_name', 'filter' => FALSE],
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -44,12 +44,12 @@ $form = ActiveForm::begin([
             'value' => function($model) {
                 return Yii::$app->controls->view_date($model['date_time_of_collection']);
             }, 'filter' => false],
-        ['label' => 'Shift', 'attribute' => 'shift_code', 'filter' => FALSE],
-        ['attribute' => 'coll_qty', 'filter' => FALSE],
-        ['attribute' => 'coll_count', 'filter' => FALSE],
-        ['attribute' => 'summary_qty', 'filter' => FALSE],
-        ['attribute' => 'summary_count', 'filter' => FALSE],
-        ['attribute' => 'qty_difference', 'filter' => FALSE],
+            ['label' => 'Shift', 'attribute' => 'shift_code', 'filter' => FALSE],
+            ['attribute' => 'coll_qty', 'filter' => FALSE],
+            ['attribute' => 'coll_count', 'filter' => FALSE],
+            ['attribute' => 'summary_qty', 'filter' => FALSE],
+            ['attribute' => 'summary_count', 'filter' => FALSE],
+            ['attribute' => 'qty_difference', 'filter' => FALSE],
     ];
 
     $grid_option = [
@@ -80,6 +80,9 @@ $form = ActiveForm::begin([
     }
     if (!empty($dataProvider->getModels())) {
         echo Html::button(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'download', 'value' => 'download', 'name' => 'download']);
+        if ($eiplCode == 'DODLA') {
+            echo Html::button(Yii::t('app', 'BULK DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'bulk_download', 'value' => 'bulk_download', 'name' => 'bulk_download']);
+        }
     }
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
@@ -222,6 +225,18 @@ $('#download').click(function() {
             }
 });
 
+$('#bulk_download').click(function() {
+         var id= $(this).attr('value');
+         $('#set_operation').val(id);
+            var len = $('input[class=\"checkbox-collection kv-row-checkbox\"]:checked').length;
+            if(len == 0){
+                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one Collection.</span></div></div>');
+                return false;
+            } else {
+                $('#upload-sap-milk-collection').submit();
+               
+            }
+});
 
 ";
 if (!empty($downloadSapFiles)) {

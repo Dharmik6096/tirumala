@@ -1136,7 +1136,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     if ($status == 'upload') {
                         $ftp_model = new TblFtpTxnLog();
                         $ftp_model->exportData($data_array, $title = '', $output);
-                    } elseif ($status == 'download') {
+                    } elseif ($status == 'download' || $status == 'bulk_download') {
                         if ($eiplCode == 'DODLA') {
                             $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];
                             if (empty($checkArray[$key]['dcs_code'])) {
@@ -1184,6 +1184,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 if ($eiplCode == 'DODLA') {
+                    $all_data = [];
+                    $postData = Yii::$app->request->post();
                     foreach ($checkArray as $checkKey => $checkAr) {
                         $dateArr = explode('~~', $checkKey);
                         $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
@@ -1200,18 +1202,30 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         }
                         $output = \Yii::$app->general->getSpData($sp, $controls);
                         if (!empty($output)) {
-                            $downLoadArray = [];
-                            $downLoadArray[] = $output;
-                            foreach ($downLoadArray as $bmc => $download) {
-                                if ($eiplCode == 'DODLA') {
-                                    $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
-                                } else {
-                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                            if ($postData['operation'] == 'bulk_download') {
+                                foreach ($output as $bulk_output) {
+                                    $all_data[] = $bulk_output;
                                 }
-                                $this->downloadData($title, $download, $fileArray);
+                            } else {
+                                $downLoadArray = [];
+                                $downLoadArray[] = $output;
+
+                                foreach ($downLoadArray as $bmc => $download) {
+                                    if ($eiplCode == 'DODLA') {
+                                        $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                    } else {
+                                        $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                    }
+                                    $this->downloadData($title, $download, $fileArray);
+                                }
+                                $this->fileDownloadArr = $fileArray;
                             }
-                            $this->fileDownloadArr = $fileArray;
                         }
+                    }
+                    if (!empty($all_data)) {
+                        $title = 'ALL_VMCC_DATA';
+                        $this->downloadData($title, $all_data, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
                     }
                 }
                 if ($status == 'upload') {
