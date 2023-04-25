@@ -304,7 +304,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
             }
-            $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $checkMccStock);
+            $existfromStock = $fstockModel->getExistStockDelete($sale_type, $batch, $checkMccStock);
 
             $f_stock = 0;
             $qty = $details[$key]->quantity;

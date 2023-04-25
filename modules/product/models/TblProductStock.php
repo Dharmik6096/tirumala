@@ -51,11 +51,11 @@ class TblProductStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['product_stock_code'], 'required', 'on' => ['androidsync']],
-            [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['stock', 'sap_batch_no'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
+                [['product_stock_code'], 'required', 'on' => ['androidsync']],
+                [['product_stock_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['stock', 'sap_batch_no'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
         ];
     }
 
@@ -242,6 +242,20 @@ class TblProductStock extends \app\models\ChildModel {
             $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
         }
         return $query->orderBy(['created_at' => SORT_ASC])->all();
+    }
+
+    public function getExistStockDelete($type, $batch = '', $checkMccStock = false) {
+        $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code]);
+        $query->andWhere(["ISNULL(sap_batch_no,'')" => empty($batch) ? '' : $batch]);
+        if (strtoupper($type) == 'MCC' || $checkMccStock) {
+            $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $this->bmc_code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code]);
+        }
+        return $query->orderBy(['created_at' => SORT_DESC])->one();
     }
 
 }
