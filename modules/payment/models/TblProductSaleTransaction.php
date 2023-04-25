@@ -311,9 +311,17 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                         }
 
                         if ($qty > 0) {
-                            $fstockModel->product_stock_code = $fstockModel->getCode();
-                            $fstockModel->stock = 0 - $qty;
-                            $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                            $exist_null_stock = $fstockModel->getExistStockDelete($sale_type);
+                            if (!empty($exist_null_stock)) {
+                                $fstockModel = $exist_null_stock;
+                                $historyModel = new TblProductStockHistory();
+                                Yii::$app->operation->history($fstockModel, $historyModel, 'UPDATE');
+                                $childModel[] = $historyModel;
+                            } else {
+                                $fstockModel->product_stock_code = $fstockModel->getCode();
+                                $fstockModel->stock = 0;
+                                $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                            }
 
                             if (!empty($existfromStock)) {
                                 $saleTxnModel = new TblProductSaleTransaction();
@@ -330,8 +338,9 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                             unset($fstockTxnModel->created_at);
                             unset($fstockTxnModel->created_by);
                             $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i_stock);
-                            $fstockTxnModel->old_value = 0;
+                            $fstockTxnModel->old_value = $fstockModel->stock;
                             $fstockTxnModel->new_value = $qty;
+                            $fstockModel->stock = $fstockModel->stock - $qty;
                             $fstockTxnModel->final_value = $fstockModel->stock;
                             $fstockTxnModel->transaction_type = $txn_type;
                             $fstockTxnModel->transaction_date = date('Y-m-d');
