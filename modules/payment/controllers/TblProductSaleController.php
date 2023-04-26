@@ -278,6 +278,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel[] = $historyModel;
 
         $details = TblProductSaleTransaction::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        $i = 1;
         foreach ($details as $key => $id) {
             $detailHistory = new TblProductSaleTransactionHistory();
             Yii::$app->operation->history($id, $detailHistory, DELETE);
@@ -305,7 +306,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
             }
             $existfromStock = $fstockModel->getExistStockDelete($sale_type, $batch, $checkMccStock);
-            
+
             $f_stock = 0;
             $qty = $details[$key]->quantity;
             if (!empty($existfromStock)) {
@@ -317,11 +318,15 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $fstockModel = $existfromStock;
                 $saveModel[] = $fstockModel;
 
-                $i = 1;
                 $fstockTxnModel = new TblProductStockTransaction();
                 $fstockTxnModel->attributes = $fstockModel->attributes;
                 unset($fstockTxnModel->created_at);
                 unset($fstockTxnModel->created_by);
+                unset($fstockTxnModel->updated_at);
+                unset($fstockTxnModel->updated_by);
+                unset($fstockTxnModel->originating_org_code);
+                unset($fstockTxnModel->originating_org_type);
+                unset($fstockTxnModel->originating_type);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;
@@ -440,6 +445,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
         } else {
+            die;
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
 
