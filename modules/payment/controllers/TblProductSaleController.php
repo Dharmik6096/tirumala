@@ -291,7 +291,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $fstockModel->product_code = $details[$key]->product_code;
             $fstockModel->union_code = $this->model->union_code;
             $txn_type = strtoupper($this->model->customer_type) == 'MEMBER' ? 'DELETE PRODUCT SALE TO MEMBER' : 'DELETE PRODUCT SALE';
-            $batch = $this->model->sap_batch_no;
+            $batch = $details[$key]->sap_batch_no;
             $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
             $checkMccStock = FALSE;
@@ -305,7 +305,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
             }
             $existfromStock = $fstockModel->getExistStockDelete($sale_type, $batch, $checkMccStock);
-
+            
             $f_stock = 0;
             $qty = $details[$key]->quantity;
             if (!empty($existfromStock)) {
