@@ -445,7 +445,6 @@ class TblProductSaleController extends \app\controllers\ChildController {
         if ($transaction == 'customRedirect') {
             $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
         } else {
-            die;
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
 
