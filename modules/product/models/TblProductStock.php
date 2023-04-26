@@ -227,13 +227,13 @@ class TblProductStock extends \app\models\ChildModel {
         return $data;
     }
 
-    public function getAvailableStock($type, $batch = '') {
+    public function getAvailableStock($type, $batch = '', $checkMccStock = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'mcc_plant_code' => $this->mcc_plant_code, 'product_code' => $this->product_code])
                 ->andWhere(['>', 'stock', 0]);
         if (!empty($batch)) {
             $query->andWhere(['sap_batch_no' => $batch]);
         }
-        if (strtoupper($type) == 'MCC') {
+        if (strtoupper($type) == 'MCC' || $checkMccStock) {
             $query->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
         } elseif (strtoupper($type) == 'BMC') {
             $query->andWhere(['bmc_code' => $this->bmc_code])

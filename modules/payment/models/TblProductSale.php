@@ -959,12 +959,12 @@ class TblProductSale extends \app\models\ChildModel {
                 $isBmcMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
             }
-            $existtoStock = $stockModel->getExistStock($sale_type, NULL, $checkMccStock);
-            $available_stock = !empty($existtoStock) ? $existtoStock->stock : 0;
+            $existtoStock = $stockModel->getAvailableStock($sale_type, NULL, $checkMccStock);
+            $available_stock = !empty($existtoStock) ? $existtoStock[0]->stock : 0;
             if ($available_stock < $this->quantity) {
                 $this->addError('quantity', Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be less than Available Stock ' . $available_stock));
             } else {
-                $this->sap_batch_no = $existtoStock->sap_batch_no;
+                $this->sap_batch_no = $existtoStock[0]->sap_batch_no;
             }
         }
         $data = $this;
