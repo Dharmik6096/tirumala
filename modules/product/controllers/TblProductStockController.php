@@ -34,6 +34,24 @@ class TblProductStockController extends \app\controllers\ChildController {
         }
         echo Json::encode(['output' => '', 'selected' => '']);
     }
+    
+    public function actionProductBatchListLastSixMonth() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1] && !empty($parents[2]))) {
+                $check_is_mcc = !empty($parents[3]) ? TRUE : FALSE;
+                $product = new TblProductStock();
+                $data = $product->getProductBatchListLastSixMonth($parents[0], $parents[1], $parents[2], $check_is_mcc);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                echo Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        echo Json::encode(['output' => '', 'selected' => '']);
+    }
 
     protected function findModel($id) {
         if (($model = TblProductStock::findOne($id)) !== null) {

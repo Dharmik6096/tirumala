@@ -186,6 +186,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                             ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking'), 'visible' => $batchNoWise],
                             ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Product Stock Adjustment Issue'), 'url' => ['/product/tbl-product-stock-adjustment/create'], 'active' => ($cntrl == 'tbl-product-stock')],
+                            ['label' => Yii::t('app', 'Product Stock Adjustment Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-create'], 'active' => ($cntrl == 'tbl-product-stock')],
                     ]
                 ],
             ],

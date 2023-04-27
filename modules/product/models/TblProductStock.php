@@ -38,6 +38,7 @@ use yii\helpers\ArrayHelper;
 class TblProductStock extends \app\models\ChildModel {
 
     public $is_sentbox = TRUE;
+    public $qty, $type;
 
     /**
      * @inheritdoc
@@ -56,6 +57,7 @@ class TblProductStock extends \app\models\ChildModel {
                 [['stock', 'sap_batch_no'], 'safe'],
                 [['created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'safe'],
+                [['qty', 'type'], 'safe']
         ];
     }
 
@@ -220,6 +222,37 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['dcs_code' => $code]);
         }
+        $data = $query->orderBy(['created_at' => SORT_ASC])->all();
+        if (!empty($data)) {
+            $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
+        }
+        return $data;
+    }
+    
+    public function getProductBatchListLastSixMonth($type, $code, $product, $check_is_mcc = false) {
+        $query = $this->find()->where([
+                    'product_code' => $product])
+                ->andWhere(['>', 'tbl_product_stock.stock', 0])
+                ->andWhere(['!=', "ISNULL(tbl_product_stock.sap_batch_no, '')", '']);
+        $isMcc = FALSE;
+        if ($check_is_mcc && strtoupper($type) == 'BMC') {
+            $this->bmc_code = $code;
+            $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
+        $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        if (strtoupper($type) == 'MCC' || $isMcc) {
+            $query->andWhere(['mcc_plant_code' => $code])
+                    ->andWhere(['AND', ['is', 'bmc_code', NULL], ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'BMC') {
+            $query->andWhere(['bmc_code' => $code])
+                    ->andWhere(['AND', ['is', 'dcs_code', NULL]]);
+        } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
+            $query->andWhere(['dcs_code' => $code]);
+        }
+        $six_month_ago_date = date("Y-m-d", strtotime( date( 'Y-m-01' )." -6 months")).' 00:00:00';
+        $current_date = date("Y-m-d").' 00:00:00';
+        $query->andWhere(['>=','created_at',$six_month_ago_date]);
+        $query->andWhere(['<=','created_at',$current_date]);
         $data = $query->orderBy(['created_at' => SORT_ASC])->all();
         if (!empty($data)) {
             $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
