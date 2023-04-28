@@ -95,7 +95,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 create_fields reset_field">
             <?= $form->field($txModel, 'remarks')->textInput()->label(Yii::t('app', 'Remarks')) ?>
         </div>
-        <?php if ($type != 'issue') { ?>
+        <?php if ($type != 'issue' && $batchNoWiseInventory == 1) { ?>
             <div class="col-sm-2 create_fields reset_field">
                 <label class="d-flex">
                     <?= Html::checkbox('other', false, ['id' => 'other', 'class' => 'checkbox']) ?> Other
@@ -118,7 +118,11 @@ $form = ActiveForm::begin([
         <thead>
             <tr>
                 <th>Product</th>
-                <th>Sap Batch No</th>
+                <?php
+                if($batchNoWiseInventory == 1){ ?>
+                    <th>Sap Batch No</th>
+                <?php
+                } ?>
                 <th>Unit</th>
                 <th>Stock</th>
                 <th>Quantity</th>
@@ -176,6 +180,7 @@ $userType = Yii::$app->session->get('UserType');
 $script = "
 var userType = '$userType';
 var goodType = '$type';
+var batchNoWiseInventory = '$batchNoWiseInventory';
 $('#other').on('change', function(){
     if($('#other').prop('checked')){
         $('#old_sap_batch_no').css('display','none');
@@ -226,11 +231,13 @@ $(document).ready(function(){
     $('#add_product').on('click', function(){
         var err = '';
         var sap_batch_no = '';
-        $('.disable_fields').addClass('disabled_div');
-        if($('#other').prop('checked')){
-            sap_batch_no = $('#sap_batch_no').val();
-        } else {
-            sap_batch_no = $('#tblproductstockadjustmenttransaction-sap_batch_no option:selected').val();
+        if(batchNoWiseInventory == 1){
+            $('.disable_fields').addClass('disabled_div');
+            if($('#other').prop('checked')){
+                sap_batch_no = $('#sap_batch_no').val();
+            } else {
+                sap_batch_no = $('#tblproductstockadjustmenttransaction-sap_batch_no option:selected').val();
+            }
         }
         var product_code = $('#tblproductstockadjustmenttransaction-product_code option:selected').val();
         var unit = $('#tblproductstockadjustmenttransaction-unit option:selected').val();
@@ -240,7 +247,7 @@ $(document).ready(function(){
         if(product_code == ''){
             err += '\\nProduct Code can not be Blank.';
         }
-        if(sap_batch_no == ''){
+        if(sap_batch_no == '' && batchNoWiseInventory == 1){
             err += '\\nSap Batch No can not be Blank.';
         }
         if(unit == ''){
@@ -253,26 +260,39 @@ $(document).ready(function(){
             err += '\\Please enter quantity getter then 0.';
         }
         if(err == ''){
-            var change_sap_batch_no = sap_batch_no.replace('/','-'); 
-            var tr_class = product_code+'_'+change_sap_batch_no;
+            var tr_class;
+            if(batchNoWiseInventory == 1){
+                var change_sap_batch_no = sap_batch_no.replace('/','-'); 
+                tr_class = product_code+'_'+change_sap_batch_no;
+            } else {
+                tr_class = product_code;
+            }            
             if($('.'+tr_class).length > 0){
-                err += '\\nAlready exist sap batch no. Please select unother sap batch no.';
+                if(batchNoWiseInventory == 1){
+                    err += '\\nAlready exist sap batch no. Please select unother sap batch no.';
+                } else {
+                    err += '\\nAlready exist product. Please select unother product.';
+                }
                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle\'></i></div><div class=\'col-sm-10 padding-left-0\'>'+err+'</div></div>');
                 return false;
             } else {
                 var product_name = $('#tblproductstockadjustmenttransaction-product_code option:selected').text();
                 var sap_batch_name = '';
-                if($('#other').prop('checked')){
-                    sap_batch_name = $('#sap_batch_no').val();
-                } else {
-                    sap_batch_name = $('#tblproductstockadjustmenttransaction-sap_batch_no option:selected').text();
+                if(batchNoWiseInventory == 1){
+                    if($('#other').prop('checked')){
+                        sap_batch_name = $('#sap_batch_no').val();
+                    } else {
+                        sap_batch_name = $('#tblproductstockadjustmenttransaction-sap_batch_no option:selected').text();
+                    }
                 }
                 var unit_name = $('#tblproductstockadjustmenttransaction-unit option:selected').val();
                 var reason = $('#tblproductstockadjustmenttransaction-reason option:selected').val();
                 var remarks = $('#tblproductstockadjustmenttransaction-remarks').val();
                 var append_data = '<tr class='+tr_class+'>';
                 append_data += '<td>'+product_name+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][product_code]\' value='+product_code+'></td>';
-                append_data += '<td>'+sap_batch_name+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][sap_batch_no]\' value='+sap_batch_no+'></td>';
+                if(batchNoWiseInventory == 1){
+                    append_data += '<td>'+sap_batch_name+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][sap_batch_no]\' value='+sap_batch_no+'></td>';
+                }
                 append_data += '<td>'+unit_name+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][unit]\' value='+unit+'></td>';
                 append_data += '<td>'+stock+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][stock]\' value=\''+stock+'\'></td>';
                 append_data += '<td>'+product_qty+'<input type=\'hidden\' name=\'TblProductStockAdjustmentTransaction['+tr_class+'][qty]\' value=\''+product_qty+'\'></td>';

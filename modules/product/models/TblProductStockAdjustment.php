@@ -3,6 +3,13 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\product\models\TblProduct;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblPlant;
+use app\modules\product\models\TblProductStockAdjustmentTransaction;
 
 /**
  * This is the model class for table "tbl_product_stock_adjustment".
@@ -54,14 +61,10 @@ class TblProductStockAdjustment extends \app\models\ChildModel
     {
         return [
             [['transaction_date', 'created_at', 'updated_at','code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['reason', 'remarks', 'bmc_code', 'dcs_code', 'product_code', 'sap_batch_no'], 'safe'],
-            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['type', 'stock', 'qty', 'unit', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_code', 'sap_batch_no', 'adjustment_type', 'invoice_no', 'reason'], 'safe'],
-            [['stock', 'qty'], 'number'],          
-            [['remarks'], 'string'],            
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code'], 'required'],
-//            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_code', 'sap_batch_no'], 'string', 'max' => 50],
+            [['remarks','originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['type', 'code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'adjustment_type', 'invoice_no'], 'safe'],
+            [['remarks'], 'string'],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'type'], 'required'],
         ];
     }
 
@@ -72,20 +75,14 @@ class TblProductStockAdjustment extends \app\models\ChildModel
     {
         return [
             'product_stock_adjustment_code' => Yii::t('app', 'Product Stock Adjustment Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'product_code' => Yii::t('app', 'Product Code'),
-            'sap_batch_no' => Yii::t('app', 'Sap Batch No'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC Plant'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'adjustment_type' => Yii::t('app', 'Adjustment Type'),
             'invoice_no' => Yii::t('app', 'Invoice No'),
             'transaction_date' => Yii::t('app', 'Transaction Date'),
-            'unit' => Yii::t('app', 'Unit'),
-            'stock' => Yii::t('app', 'Stock'),
-            'qty' => Yii::t('app', 'Qty'),
-            'reason' => Yii::t('app', 'Reason'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -100,5 +97,33 @@ class TblProductStockAdjustment extends \app\models\ChildModel
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+    
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+    
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+    
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+    
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+    
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+    
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+    
+    public function getProductStockAsjustmentTransactionCode() {
+        return $this->hasMany(TblProductStockAdjustmentTransaction::className(), ['product_stock_adjustment_code' => 'product_stock_adjustment_code']);
     }
 }

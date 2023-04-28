@@ -20,7 +20,6 @@ class TblProductStockAdjustmentSearch extends TblProductStockAdjustment
         return [
             [['product_stock_adjustment_code', 'originating_type'], 'integer'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'product_code', 'sap_batch_no', 'adjustment_type', 'invoice_no', 'transaction_date', 'unit', 'reason', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['stock', 'qty'], 'number'],
         ];
     }
 
@@ -40,7 +39,7 @@ class TblProductStockAdjustmentSearch extends TblProductStockAdjustment
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $adjustment_type = '')
     {
         $query = TblProductStockAdjustment::find();
 
@@ -51,45 +50,50 @@ class TblProductStockAdjustmentSearch extends TblProductStockAdjustment
         ]);
 
         $this->load($params);
-
+        
+        if($adjustment_type){
+            $query->where(['tbl_product_stock_adjustment.adjustment_type' => $adjustment_type]);
+        }
+        
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'productStockAsjustmentTransactionCode']);
+        
+        Yii::$app->general->filterByOrg($query, $this);
+        
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        
+        if (!empty($this->transaction_date)) {
+            $transaction_date = !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : date('Y-m-d');
+            $query->andFilterWhere(['tbl_product_stock_adjustment.transaction_date' => $transaction_date]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
-            'product_stock_adjustment_code' => $this->product_stock_adjustment_code,
-            'transaction_date' => $this->transaction_date,
-            'stock' => $this->stock,
-            'qty' => $this->qty,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
+            'tbl_product_stock_adjustment.product_stock_adjustment_code' => $this->product_stock_adjustment_code,
+            'tbl_product_stock_adjustment.created_at' => $this->created_at,
+            'tbl_product_stock_adjustment.updated_at' => $this->updated_at,
+            'tbl_product_stock_adjustment.originating_type' => $this->originating_type,
         ]);
-
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'product_code', $this->product_code])
-            ->andFilterWhere(['like', 'sap_batch_no', $this->sap_batch_no])
-            ->andFilterWhere(['like', 'adjustment_type', $this->adjustment_type])
-            ->andFilterWhere(['like', 'invoice_no', $this->invoice_no])
-            ->andFilterWhere(['like', 'unit', $this->unit])
-            ->andFilterWhere(['like', 'reason', $this->reason])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+        
+        $query->andFilterWhere(['like', 'tbl_unions.union_name', $this->union_code])
+            ->andFilterWhere(['like', 'tbl_plant.name', $this->plant_code])
+            ->andFilterWhere(['like', 'tbl_mcc_plant.name', $this->mcc_plant_code])
+            ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code])
+            ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_code])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.adjustment_type', $this->adjustment_type])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.invoice_no', $this->invoice_no])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.remarks', $this->remarks])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.created_by', $this->created_by])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.updated_by', $this->updated_by])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.originating_org_code', $this->originating_org_code])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.originating_org_type', $this->originating_org_type])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.x_col1', $this->x_col1])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.x_col2', $this->x_col2])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.x_col3', $this->x_col3])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.x_col4', $this->x_col4])
+            ->andFilterWhere(['like', 'tbl_product_stock_adjustment.x_col5', $this->x_col5]);
 
         return $dataProvider;
     }

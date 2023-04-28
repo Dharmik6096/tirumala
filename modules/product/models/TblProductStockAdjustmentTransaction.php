@@ -3,6 +3,8 @@
 namespace app\modules\product\models;
 
 use Yii;
+use app\modules\product\models\TblProduct;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_product_stock_adjustment_transaction".
@@ -56,18 +58,14 @@ class TblProductStockAdjustmentTransaction extends \app\models\ChildModel
     {
         return [
             [['product_stock_adjustment_code', 'adjustment_type', 'reason', 'remarks','originating_type','transaction_date', 'created_at', 'updated_at'], 'safe'],
-//            [['product_stock_adjustment_code', 'reason'], 'required'],
-            [['old_value', 'new_value', 'final_value', 'stock', 'qty'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
-            [['old_value', 'new_value', 'final_value', 'stock', 'qty'], 'number'],
-            [['remarks'], 'string'],
-            [['originating_type'], 'integer'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'product_code', 'sap_batch_no'], 'string', 'max' => 50],
-            [['unit'], 'string', 'max' => 100],
-            [['unit', 'created_by', 'updated_by'], 'safe'],
+            [['union_code'], 'safe'],
+            [['unit', 'created_by', 'updated_by', 'stock', 'qty'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['union_code', 'product_code', 'sap_batch_no', 'unit', 'stock', 'qty'], 'required'],
+            [['stock', 'qty'], 'number'],
+            [['remarks'], 'string'],
+            [['originating_type'], 'integer'],          
         ];
     }
 
@@ -78,17 +76,11 @@ class TblProductStockAdjustmentTransaction extends \app\models\ChildModel
     {
         return [
             'product_stock_adjustment_transaction_code' => Yii::t('app', 'Product Stock Adjustment Transaction Code'),
-            'product_stock_adjustment_code' => Yii::t('app', 'Product Stock Adjustment Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'product_code' => Yii::t('app', 'Product Code'),
+            'product_stock_adjustment_code' => Yii::t('app', 'Product Stock Adjustment'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'product_code' => Yii::t('app', 'Product'),
             'sap_batch_no' => Yii::t('app', 'Sap Batch No'),
-            'old_value' => Yii::t('app', 'Old Value'),
-            'new_value' => Yii::t('app', 'New Value'),
-            'final_value' => Yii::t('app', 'Final Value'),
             'adjustment_type' => Yii::t('app', 'Adjustment Type'),
             'transaction_date' => Yii::t('app', 'Transaction Date'),
             'unit' => Yii::t('app', 'Unit'),
@@ -109,5 +101,17 @@ class TblProductStockAdjustmentTransaction extends \app\models\ChildModel
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+    
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+    
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+    
+    public function getProductStockAsjustmentCode() {
+        return $this->hasOne(TblProductStockAdjustment::className(), ['product_stock_adjustment_code' => 'product_stock_adjustment_code']);
     }
 }
