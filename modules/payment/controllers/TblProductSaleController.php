@@ -518,7 +518,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionLoadRate() {
-        $app = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
+        $result = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
         if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
             $date = !empty($_POST['invoice_date']) ? date('Y-m-d', strtotime($_POST['invoice_date'])) : date('Y-m-d');
 
@@ -528,10 +528,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     ->where(['tbl_product_sale_rate.product_code' => $_POST['product_code'], 'tbl_product_sale_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_sale_rate_applicability.applicable_code' => $_POST['customer_code']]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (!empty($app)) {
-                $app = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
+                $result = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
             }
         }
-        echo json_encode($app);
+        echo json_encode($result);
     }
 
     public function actionListGrid() {
