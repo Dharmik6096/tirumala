@@ -249,10 +249,10 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['dcs_code' => $code]);
         }
-        $six_month_ago_date = date("Y-m-d", strtotime( date( 'Y-m-01' )." -6 months")).' 00:00:00';
-        $current_date = date("Y-m-d").' 00:00:00';
-        $query->andWhere(['>=','created_at',$six_month_ago_date]);
-        $query->andWhere(['<=','created_at',$current_date]);
+        $six_month_ago_date = date("Y-m-d", strtotime( date( 'Y-m-01' )." -6 months"));
+        $current_date = date("Y-m-d");
+        $query->andWhere(['>=','cast(created_at as date)',$six_month_ago_date]);
+        $query->andWhere(['<=','cast(created_at as date)',$current_date]);
         $data = $query->orderBy(['created_at' => SORT_ASC])->all();
         if (!empty($data)) {
             $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
