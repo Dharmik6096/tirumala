@@ -638,6 +638,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vendor Sale Report'), 'url' => ['/misreports/reports/sale-report-vendor']],
                             ['label' => Yii::t('app', 'Summary Report - MCC'), 'url' => ['/misreports/reports/summary-report-mcc']],
                             ['label' => Yii::t('app', 'Summary Report - DCS'), 'url' => ['/misreports/reports/summary-report-dcs']],
+                            ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale'], 'visible' => User::canRoute(['/misreports/reports/stock-dispatch-to-sale']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],

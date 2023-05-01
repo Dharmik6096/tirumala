@@ -840,6 +840,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionStockDispatchToSale() {
+        $this->report = 'StockDispatchToSale';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -2513,6 +2518,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_mcc_recipation_detail_jgf',
                 'scenario' => 'MccRecipationDetail',
                 'title' => 'MCC Recipation Detail',
+            ],
+            'StockDispatchToSale' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_mcc_wise_grn_stock_summary',
+                'scenario' => 'StockDispatchToSale',
+                'title' => 'Stock Dispatch To Sale Report',
             ],
         ];
         return $label[$l];
