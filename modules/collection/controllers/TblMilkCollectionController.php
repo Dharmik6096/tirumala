@@ -1306,5 +1306,23 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
     }
+    
+    public function actionRealTimeCollection() {
+        if(Yii::$app->request->isAjax){
+            $cur_time = date_create(date('H:i:s'));
+            $morning_time = date_create('16:00:00');
+            $diff = date_diff($morning_time, $cur_time);
+            $time = '06:00:00';
+            if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+                $time = '18:00:00';
+            }
+            $sp_param = [];
+            $sp_param[] = date('Y-m-d').' '.$time;
+            $mcc_weight_data = \Yii::$app->general->getSpData('sp_mis_realtime_mcc_collection_weight', $sp_param);
+            $mcc_quality_data = \Yii::$app->general->getSpData('sp_mis_realtime_mcc_collection_quality', $sp_param);
+            return $this->renderAjax('_real_time_collection_details', ['mcc_weight_data' => $mcc_weight_data, 'mcc_quality_data' => $mcc_quality_data]);
+        }
+        return $this->render('real_time_collection');
+    }
 
 }

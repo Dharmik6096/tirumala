@@ -4909,3 +4909,44 @@ tr.highlightRow {
 .t_design_2  {
     background-color: #f5f5f5;
 }
+
+.weight-data, .quality-data{
+    border: 1px solid #ddd;
+    color: #000;
+    text-align: center;
+}
+
+.weight-data {
+    background-color: #70ad47;
+}
+
+.quality-data {
+    background-color: #0070C0;    
+}
+.weight-data .heading, .quality-data .heading  {
+    font-size: 20px;
+    font-weight: 500;
+    padding: 5px;
+}
+
+.weight-data .table tr th, .quality-data .table tr th {
+    font-size: 15px !important;
+    padding: 10px !important;
+    color: #000 !important;
+    border-color: #000;
+}
+
+.weight-data .table tr, .quality-data .table tr {
+   border-color: #000;
+}
+
+.weight-data .table tr td, .quality-data .table tr td {
+   border-color: #000;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.weight-data .table tr.highlight td, .quality-data .table tr.highlight td {
+    font-size: 15px !important;
+    padding: 10px !important;
+}
