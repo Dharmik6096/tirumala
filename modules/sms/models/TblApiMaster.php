@@ -79,7 +79,7 @@ class TblApiMaster extends \yii\db\ActiveRecord {
     public function getAPI() {
         return $this->find()
                         ->where(['receiver_type' => $this->receiver_type, 'is_active' => 1])
-                        ->andFilterWhere(['operator_type' => $this->operator_type])
+                        ->andFilterWhere(['operator_type' => $this->operator_type, 'union_code' => $this->union_code])
                         ->one();
     }
 

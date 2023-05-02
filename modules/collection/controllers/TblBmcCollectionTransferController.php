@@ -87,6 +87,7 @@ class TblBmcCollectionTransferController extends \app\controllers\ChildControlle
                         $existData->dcs_code = $dcsVendorModel->dcs_code;
                         $existData->bmc_code = $dcsVendorModel->bmc_code;
                         $existData->route_code = $dcsVendorModel->route_code;
+                        $existData->customer_code = $dcsVendorModel->dcs_code;
                         $existData->scenario = 'DataTransfer';
                         $saveModel[] = $existData;
                     } else {
