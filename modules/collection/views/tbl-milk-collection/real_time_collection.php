@@ -20,8 +20,8 @@ use yii\web\View;
 <?php
 $script = "
     $(document).ready(function() {
-    getCollectionLiveData();
-//        setInterval(function () { getCollectionLiveData() }, 15000);
+        getCollectionLiveData()
+        setInterval(function () { getCollectionLiveData() }, 15000);
     });
     
     function getCollectionLiveData() {
