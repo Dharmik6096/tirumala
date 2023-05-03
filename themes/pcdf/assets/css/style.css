@@ -4931,9 +4931,11 @@ tr.highlightRow {
 
 .weight-data .table tr th, .quality-data .table tr th {
     font-size: 15px !important;
-    padding: 10px !important;
     color: #000 !important;
     border-color: #000;
+    font-weight: 700;
+    padding: 10px 0px !important;
+    text-align: center;
 }
 
 .weight-data .table tr, .quality-data .table tr {
@@ -4941,7 +4943,7 @@ tr.highlightRow {
 }
 
 .weight-data .table tr td, .quality-data .table tr td {
-   border-color: #000;
+    border-color: #000;
     font-weight: 500;
     text-transform: capitalize;
 }
@@ -4949,4 +4951,5 @@ tr.highlightRow {
 .weight-data .table tr.highlight td, .quality-data .table tr.highlight td {
     font-size: 15px !important;
     padding: 10px !important;
+    font-weight: 600;
 }

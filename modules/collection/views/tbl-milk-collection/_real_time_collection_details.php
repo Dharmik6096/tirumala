@@ -11,9 +11,9 @@
                         <th>VLC Code</th>
                         <th>Route Code</th>
                         <th>Sample No</th>
-                        <th>Dock Number</th>
+                        <th>Dock No</th>
                         <th>Qty</th>
-                        <th>Milk Quality Type</th>
+                        <th>Quality Type</th>
                         <th>Milk Type</th>
                     </tr>
                 </thead>
@@ -58,7 +58,7 @@
                     <tr>
                         <!--<th>Route Code</th>-->
                         <th>Sample No</th>
-                        <th>Dock Number</th>
+                        <th>Dock No</th>
                         <th>FAT</th>
                         <th>SNF</th>
                         <th>CLR</th>
