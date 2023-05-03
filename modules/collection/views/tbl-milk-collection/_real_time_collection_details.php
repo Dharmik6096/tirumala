@@ -29,13 +29,13 @@
                             $i++;
                             ?>
                             <tr class="<?= $class; ?>">
-                                <td><?= $weight->dcs_code; ?></td>                                
-                                <td><?= $weight->route_code; ?></td>                                
-                                <td><?= $weight->sample_no; ?></td>                                
-                                <td><?= $weight->doc_no; ?></td>                                
-                                <td><?= $weight->qty; ?></td>                                
-                                <td><?= $weight->milk_quality_type; ?></td>                                
-                                <td><?= $weight->milk_type; ?></td>                                
+                                <td><?= $weight['dcs_code']; ?></td>                                
+                                <td><?= $weight['route_code']; ?></td>                                
+                                <td><?= $weight['sample_no']; ?></td>                                
+                                <td><?= $weight['doc_no']; ?></td>                                
+                                <td><?= $weight['qty']; ?></td>                                
+                                <td><?= $weight['milk_quality_type']; ?></td>                                
+                                <td><?= $weight['milk_type']; ?></td>                              
                             </tr>
                         <?php }
                     } else {
@@ -78,13 +78,13 @@
                             $i++;
                             ?>
                             <tr class="<?= $class; ?>">
-                                <!--<td><?php // $quality->route_code; ?></td>-->
-                                <td><?= $quality->sample_no; ?></td>
-                                <td><?= $quality->doc_no; ?></td>
-                                <td><?= $quality->fat; ?></td>
-                                <td><?= $quality->snf; ?></td>
-                                <td><?= $quality->clr; ?></td>
-                                <td><?= $quality->protein; ?></td>                                
+                                <!--<td><?php // $quality['route_code']; ?></td>-->
+                                <td><?= $quality['sample_no']; ?></td>
+                                <td><?= $quality['doc_no']; ?></td>
+                                <td><?= $quality['fat']; ?></td>
+                                <td><?= $quality['snf']; ?></td>
+                                <td><?= $quality['clr']; ?></td>
+                                <td><?= $quality['protein']; ?></td>                                 
                             </tr>
                         <?php }
                     } else {
