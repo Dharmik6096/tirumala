@@ -140,6 +140,7 @@ echo GhostMenu::widget([
                     // ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
                     ]
                 ],
+                ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
             ],
         ],
             [
@@ -640,6 +641,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vendor Sale Report'), 'url' => ['/misreports/reports/sale-report-vendor']],
                             ['label' => Yii::t('app', 'Summary Report - MCC'), 'url' => ['/misreports/reports/summary-report-mcc']],
                             ['label' => Yii::t('app', 'Summary Report - DCS'), 'url' => ['/misreports/reports/summary-report-dcs']],
+                            ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale'], 'visible' => User::canRoute(['/misreports/reports/stock-dispatch-to-sale']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
