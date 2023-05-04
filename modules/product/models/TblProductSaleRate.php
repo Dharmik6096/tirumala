@@ -41,10 +41,16 @@ class TblProductSaleRate extends \app\models\ChildModel {
         return [
                 [['product_code', 'sale_rate', 'wef_date', 'union_code'], 'required', 'except' => ['androidsync']],
 //                [['product_code'], 'integer'],
-            [['sale_rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
+                [['sale_rate'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"')],
                 [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission'], 'safe'],
                 [['created_by', 'updated_by'], 'string'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
+                [['x_col1'], 'required', 'message' => Yii::t('app/validation', 'Rate for gyan cannot be blank.'), 'when' => function ($model) {
+                        return (Yii::$app->session->get('eiplCode') == 'GYAN') ? true : false;
+                    }, 'whenClient' => "function (attribute, value) {
+                        return $('#tblproductsalerate-x_col1').val() == ''; 
+                   }"
+                ],
                 ['wef_date', 'unique', 'message' => Yii::t('app/validation', 'Rate is already taken on this WEF Date.'), 'when' => function($model) {
                     $data = $this->find()->where(['union_code' => $model->union_code, 'product_code' => $model->product_code, 'wef_date' => date('Y-m-d', strtotime($this->wef_date)), 'is_member_rate' => $model->is_member_rate])->andWhere(['<>', 'product_sale_rate_code', $model->product_sale_rate_code])->count();
                     return ($data == 1) ? true : false;
