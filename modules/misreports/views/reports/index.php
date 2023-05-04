@@ -134,9 +134,10 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                         if (in_array($value, array('bmc_code'))) {
                                             $multiple = in_array($value, $multiArray) ? true : false;
                                             if (isset($value_array[1]) && $value_array[1] == 'channel_code') {
+                                                $channelmultiple = isset($value_array[2]) ? FALSE : true;
                                                 ?>
                                                 <div class="col-sm-3">
-                                                    <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), TRUE); ?>
+                                                    <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), $channelmultiple); ?>
                                                 </div>
                                                 <?php
                                             } else {
