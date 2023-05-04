@@ -101,7 +101,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $f_stock = 0;
                 $qty = $txModel->qty;
-
+                $stock_ai = 1;
                 if (!empty($existfromStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
@@ -110,9 +110,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existfromStock->stock = $f_stock - $qty;
                     $fstockModel = $existfromStock;
                 } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode();
+                    $fstockModel->product_stock_code = $fstockModel->getCode($stock_ai);
                     $fstockModel->stock = $f_stock - $qty;
                     $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    $stock_ai++;
                 }
                 $modelSave[] = $fstockModel;
 
@@ -170,7 +171,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
                 $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
                 $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $txModel->available_stock > $min_stock) {
+                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
                     $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                     return Json::encode($err);
                 } else if (!empty($existtoStock)) {
@@ -181,7 +182,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existtoStock->stock = $t_stock + $qty;
                     $stockModel = $existtoStock;
                 } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($i);
+                    $stockModel->product_stock_code = $stockModel->getCode($stock_ai);
                     $stockModel->stock = $t_stock + $qty;
                     $stockModel->x_col1 = Yii::$app->general->getUuid();
                 }

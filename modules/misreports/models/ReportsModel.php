@@ -110,7 +110,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
                 [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
                 [['union_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'SapReportCdpl'],
-                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'TankerReport'],
+                [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['TankerReport', 'AntibioticReport']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => 'PaymentDifference'],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_file'], 'required', 'on' => 'SapUploadSummary'],
                 [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['AutoManualMilkCollection']],

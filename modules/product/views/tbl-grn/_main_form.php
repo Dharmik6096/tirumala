@@ -82,10 +82,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'rate')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field number-validate">
+        <div class="col-sm-1 reset_field qty-validate">
             <?= $form->field($txModel, 'received_qty')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field number-validate">
+        <div class="col-sm-1 reset_field qty-validate">
             <?= $form->field($txModel, 'rejected_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field">

@@ -187,6 +187,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                             ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking'), 'visible' => $batchNoWise],
                             ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Good Issue'), 'url' => ['/product/tbl-product-stock-adjustment/index'], 'active' => ($cntrl == 'tbl-product-stock')],
+                            ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
                     ]
                 ],
             ],
@@ -614,6 +616,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
                             ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
+                            ['label' => Yii::t('app', 'Antibiotic Report'), 'url' => ['/misreports/reports/antibiotic-report']],
                             ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report']],
                         //   ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-summary']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
                         //  ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-detail']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],

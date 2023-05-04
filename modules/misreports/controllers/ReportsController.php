@@ -1250,6 +1250,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberCollectionReportForSap';
         return $this->actionIndex();
     }
+    
+    public function actionAntibioticReport() {
+        $this->report = 'AntibioticReport';
+        return $this->actionIndex();
+    }
 
     public function actionMccRecipationSummary() {
         $this->report = 'MccRecipationSummary';
@@ -2506,6 +2511,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
                 'title' => '218 - BMC Collection Report For SAP',
+            ],
+            'AntibioticReport' => [
+                'param' => 'union_code,mcc_code:union_code,channel_code,bmc_code:channel_code:false,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_bmc_collection_antibiotic',
+                'scenario' => 'AntibioticReport',
+                'title' => 'Antibiotic Report',
             ],
             'MccRecipationSummary' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,payment_cycle_code',

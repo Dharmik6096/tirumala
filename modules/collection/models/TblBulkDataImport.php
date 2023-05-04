@@ -53,7 +53,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['bmc_code', 'shift_code', 'sample_no', 'milk_type_code', 'date_time_of_collection', 'fat', 'snf', 'qty'], 'required'],
             [['member_code', 'dcs_code'], 'required', 'on' => ['milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow']],
             [['customer_code', 'milk_quality_type_code', 'route_arrival_time'], 'required', 'on' => ['bmc_collection', 'bmc_collection_mapped', 'bmc_collection_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
-            [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code'], 'safe'],
+            [['member_code', 'dcs_code', 'customer_type', 'customer_code', 'bmc_code', 'shift_code', 'vehicle_code', 'union_code', 'response_msg', 'uuid', 'own_bmc_code', 'can_no', 'route_code', 'antibiotic'], 'safe'],
             [['bmc_silos_info_code', 'sample_no', 'milk_type_code', 'milk_quality_type_code', 'collection_type', 'status'], 'safe'],
             [['date_time_of_collection', 'route_arrival_time', 'entry_datetime', 'pick_datetime', 'response_datetime'], 'safe'],
             [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no'], 'number'],
@@ -68,7 +68,13 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             [['own_bmc_code'], 'required', 'on' => ['bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_bmc_route_can']],
             [['milk_quality_type_code'], 'required', 'on' => ['milk_collection_qlty', 'milk_collection_qlty_allow',]],
             [['can_no'], 'required', 'on' => ['bmc_collection_can', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
-            [['route_code'], 'required', 'on' => ['bmc_collection_route', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']]
+            [['route_code'], 'required', 'on' => ['bmc_collection_route', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can']],
+            [['antibiotic'], 'required', 'when' => function ($model) {
+                    return \Yii::$app->session->get('eiplCode') == 'PRABHAT';
+                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection']],
+            [['antibiotic'], function ($attribute, $params) {
+                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'antibiotic');
+                }, 'on' => ['bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_mapped', 'bmc_collection']],
         ];
     }
 

@@ -40,6 +40,8 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\collection\models\TblBmcCollection;
 use app\modules\collection\models\TblMilkCollection;
+use app\modules\product\models\TblProductReceipt;
+use app\modules\product\models\TblProductReceiptTransaction;
 
 /**
  * TblProductSaleController implements the CRUD actions for TblProductSale model.
@@ -276,11 +278,156 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel[] = $historyModel;
 
         $details = TblProductSaleTransaction::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        $i = 1;
         foreach ($details as $key => $id) {
             $detailHistory = new TblProductSaleTransactionHistory();
             Yii::$app->operation->history($id, $detailHistory, DELETE);
             $deleteModel[] = $details[$key];
             $saveModel[] = $detailHistory;
+
+            $fstockModel = new TblProductStock();
+            $sale_type = strtoupper($this->model->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
+            $sale_code = strtoupper($this->model->customer_type) == 'MEMBER' ? $this->model->dcs_code : $this->model->bmc_code;
+            $fstockModel->setCodes($sale_type, $sale_code);
+            $fstockModel->product_code = $details[$key]->product_code;
+            $fstockModel->union_code = $this->model->union_code;
+            $txn_type = strtoupper($this->model->customer_type) == 'MEMBER' ? 'DELETE PRODUCT SALE TO MEMBER' : 'DELETE PRODUCT SALE';
+            $batch = $details[$key]->sap_batch_no;
+            $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+            $batchNoWiseInventory == '1' ? TRUE : FALSE;
+            $checkMccStock = FALSE;
+
+            if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+                $checkMccStock = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+            }
+            if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+                $isBmc = Yii::$app->general->getforeignkey($this->model->mainDcsCode, 'is_bmc');
+                $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
+                $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
+            }
+            $existfromStock = $fstockModel->getExistStockDelete($sale_type, $batch, $checkMccStock);
+
+            $f_stock = 0;
+            $qty = $details[$key]->quantity;
+            if (!empty($existfromStock)) {
+                $historyModel = new TblProductStockHistory();
+                Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $f_stock = $existfromStock->stock;
+                $existfromStock->stock = $f_stock + $qty;
+                $fstockModel = $existfromStock;
+                $saveModel[] = $fstockModel;
+
+                $fstockTxnModel = new TblProductStockTransaction();
+                $fstockTxnModel->attributes = $fstockModel->attributes;
+                unset($fstockTxnModel->created_at);
+                unset($fstockTxnModel->created_by);
+                unset($fstockTxnModel->updated_at);
+                unset($fstockTxnModel->updated_by);
+                unset($fstockTxnModel->originating_org_code);
+                unset($fstockTxnModel->originating_org_type);
+                unset($fstockTxnModel->originating_type);
+                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
+                $fstockTxnModel->old_value = $f_stock;
+                $fstockTxnModel->new_value = $qty;
+                $fstockTxnModel->final_value = $fstockModel->stock;
+                $fstockTxnModel->transaction_type = $txn_type;
+                $fstockTxnModel->transaction_date = date('Y-m-d');
+                $fstockTxnModel->reference_code = $details[$key]->product_sale_transaction_code;
+                $saveModel[] = $fstockTxnModel;
+                $i++;
+
+                $receipt = new TblProductReceipt();
+                $receipt->product_receipt_code = Yii::$app->general->getUuid();
+                $receipt->grn_no = '1234';
+                $receipt->grn_date = date('Y-m-d');
+                $receipt->vendor_type = $checkMccStock == TRUE ? 'MCC' : $sale_type;
+                $receipt->vendor_code = $checkMccStock == TRUE ? $fstockModel->mcc_plant_code : $sale_code;
+                $receipt->union_code = $fstockModel->union_code;
+                $receipt->plant_code = $fstockModel->plant_code;
+                $receipt->mcc_plant_code = $fstockModel->mcc_plant_code;
+                $receipt->bmc_code = $fstockModel->bmc_code;
+                $receipt->dcs_code = $fstockModel->dcs_code;
+                $saveModel[] = $receipt;
+
+                $receiptTxn = new TblProductReceiptTransaction();
+                $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
+                $receiptTxn->product_code = $fstockModel->product_code;
+                $receiptTxn->received_quantity = $qty;
+                $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
+                $receiptTxn->rejected_quantity = 0;
+                $receiptTxn->rate = 0;
+                $receiptTxn->amount = 0;
+                $receiptTxn->remark = $txn_type;
+                $saveModel[] = $receiptTxn;
+
+                if (FALSE && $sale_type == 'BMC') { //Sunita : 01/03/2023 Remove FALSE if need to add DCS stock on sale
+                    //set to stock
+                    $stockModel = new TblProductStock();
+                    $stockModel->setCodes('DCS', $this->model->customer_code);
+
+                    $stockModel->product_code = $details[$key]->product_code;
+                    $stockModel->union_code = $this->model->union_code;
+                    $stockModel->sap_batch_no = $batch;
+                    $existtoStock = $stockModel->getExistStock('DCS', $batch);
+
+                    $t_stock = 0;
+                    if (!empty($existtoStock)) {
+                        $historyModel = new TblProductStockHistory();
+                        Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                        $saveModel[] = $historyModel;
+                        $t_stock = $existtoStock->stock;
+                        $existtoStock->stock = $t_stock - $qty;
+                        $stockModel = $existtoStock;
+                    } else {
+                        $stockModel->product_stock_code = $stockModel->getCode($i);
+                        $stockModel->stock = $t_stock + $qty;
+                        $stockModel->x_col1 = Yii::$app->general->getUuid();
+                    }
+                    $saveModel[] = $stockModel;
+
+                    $stockTxnModel = new TblProductStockTransaction();
+                    $stockTxnModel->attributes = $stockModel->attributes;
+                    unset($stockTxnModel->created_at);
+                    unset($stockTxnModel->created_by);
+                    $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
+                    $stockTxnModel->old_value = $t_stock;
+                    $stockTxnModel->new_value = $qty;
+                    $stockTxnModel->final_value = $stockModel->stock;
+                    $stockTxnModel->transaction_type = $txn_type;
+                    $stockTxnModel->transaction_date = date('Y-m-d');
+                    $stockTxnModel->reference_code = $details[$key]->product_sale_transaction_code;
+                    $saveModel[] = $stockTxnModel;
+
+                    $receiptTo = new TblProductReceipt();
+                    $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
+                    $receiptTo->grn_no = '1234';
+                    $receiptTo->grn_date = date('Y-m-d');
+                    $receiptTo->vendor_type = 'DCS';
+                    $receiptTo->vendor_code = $this->model->customer_code;
+                    $receiptTo->union_code = $stockModel->union_code;
+                    $receiptTo->plant_code = $stockModel->plant_code;
+                    $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
+                    $receiptTo->bmc_code = $stockModel->bmc_code;
+                    $receiptTo->dcs_code = $stockModel->dcs_code;
+                    $saveModel[] = $receiptTo;
+
+                    $receiptTxnTo = new TblProductReceiptTransaction();
+                    $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                    $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
+                    $receiptTxnTo->product_code = $stockModel->product_code;
+                    $receiptTxnTo->received_quantity = '-' . $qty;
+                    $receiptTxnTo->requested_quantity = $receiptTxnTo->received_quantity;
+                    $receiptTxnTo->dispatched_quantity = $receiptTxnTo->received_quantity;
+                    $receiptTxnTo->rejected_quantity = 0;
+                    $receiptTxnTo->rate = 0;
+                    $receiptTxnTo->amount = 0;
+                    $receiptTxnTo->remark = $txn_type;
+                    $saveModel[] = $receiptTxnTo;
+                }
+            }
         }
         $InstallmentModel = TblSaleInstallments::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
         foreach ($InstallmentModel as $key => $id) {
@@ -371,7 +518,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionLoadRate() {
-        $app = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
+        $result = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
         if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
             $date = !empty($_POST['invoice_date']) ? date('Y-m-d', strtotime($_POST['invoice_date'])) : date('Y-m-d');
 
@@ -381,10 +528,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     ->where(['tbl_product_sale_rate.product_code' => $_POST['product_code'], 'tbl_product_sale_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_sale_rate_applicability.applicable_code' => $_POST['customer_code']]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (!empty($app)) {
-                $app = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
+                $result = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
             }
         }
-        echo json_encode($app);
+        echo json_encode($result);
     }
 
     public function actionListGrid() {
@@ -676,8 +823,19 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
                     $batch = $model->sap_batch_no;
-                    $userType = Yii::$app->session->get('UserType') == '5' ? TRUE : FALSE;
-                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $userType);
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    $batchNoWiseInventory == '1' ? TRUE : FALSE;
+                    $checkMccStock = FALSE;
+
+                    if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+                        $checkMccStock = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+                    }
+                    if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+                        $isBmc = Yii::$app->general->getforeignkey($model->mainDcsCode, 'is_bmc');
+                        $isBmcMcc = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc');
+                        $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
+                    }
+                    $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $checkMccStock);
 
                     $f_stock = 0;
                     $qty = $detailModel->quantity;
@@ -704,7 +862,97 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $fstockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
                         $child[] = $fstockTxnModel;
 
+                        $receipt = new TblProductReceipt();
+                        $receipt->product_receipt_code = Yii::$app->general->getUuid();
+                        $receipt->grn_no = '1234';
+                        $receipt->grn_date = date('Y-m-d');
+                        $receipt->vendor_type = $checkMccStock == TRUE ? 'MCC' : $sale_type;
+                        $receipt->vendor_code = $checkMccStock == TRUE ? $fstockModel->mcc_plant_code : $sale_code;
+                        $receipt->union_code = $fstockModel->union_code;
+                        $receipt->plant_code = $fstockModel->plant_code;
+                        $receipt->mcc_plant_code = $fstockModel->mcc_plant_code;
+                        $receipt->bmc_code = $fstockModel->bmc_code;
+                        $receipt->dcs_code = $fstockModel->dcs_code;
+                        $child[] = $receipt;
+
+                        $receiptTxn = new TblProductReceiptTransaction();
+                        $receiptTxn->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxn, $receipt->product_receipt_code);
+                        $receiptTxn->product_receipt_code = $receipt->product_receipt_code;
+                        $receiptTxn->product_code = $fstockModel->product_code;
+                        $receiptTxn->received_quantity = '-' . $qty;
+                        $receiptTxn->requested_quantity = $receiptTxn->received_quantity;
+                        $receiptTxn->dispatched_quantity = $receiptTxn->received_quantity;
+                        $receiptTxn->rejected_quantity = 0;
+                        $receiptTxn->rate = 0;
+                        $receiptTxn->amount = 0;
+                        $receiptTxn->remark = $txn_type;
+                        $child[] = $receiptTxn;
                         $i++;
+
+                        if (FALSE && $sale_type == 'BMC') { //Sunita : 01/03/2023 Remove FALSE if need to add DCS stock on sale
+                            //set to stock
+                            $stockModel = new TblProductStock();
+                            $stockModel->setCodes('DCS', $model->customer_code);
+
+                            $stockModel->product_code = $detailModel->product_code;
+                            $stockModel->union_code = $detailModel->union_code;
+                            $stockModel->sap_batch_no = $batch;
+                            $existtoStock = $stockModel->getExistStock('DCS', $batch);
+
+                            $t_stock = 0;
+                            if (!empty($existtoStock)) {
+                                $historyModel = new TblProductStockHistory();
+                                Yii::$app->operation->history($existtoStock, $historyModel, UPDATE);
+                                $child[] = $historyModel;
+                                $t_stock = $existtoStock->stock;
+                                $existtoStock->stock = $t_stock + $qty;
+                                $stockModel = $existtoStock;
+                            } else {
+                                $stockModel->product_stock_code = $stockModel->getCode($i);
+                                $stockModel->stock = $t_stock + $qty;
+                                $stockModel->x_col1 = Yii::$app->general->getUuid();
+                            }
+                            $child[] = $stockModel;
+
+                            $stockTxnModel = new TblProductStockTransaction();
+                            $stockTxnModel->attributes = $stockModel->attributes;
+                            unset($stockTxnModel->created_at);
+                            unset($stockTxnModel->created_by);
+                            $stockTxnModel->product_stock_transaction_code = $stockTxnModel->getCode($i);
+                            $stockTxnModel->old_value = $t_stock;
+                            $stockTxnModel->new_value = $qty;
+                            $stockTxnModel->final_value = $stockModel->stock;
+                            $stockTxnModel->transaction_type = $txn_type;
+                            $stockTxnModel->transaction_date = date('Y-m-d');
+                            $stockTxnModel->reference_code = $detailModel->product_sale_transaction_code;
+                            $child[] = $stockTxnModel;
+
+                            $receiptTo = new TblProductReceipt();
+                            $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
+                            $receiptTo->grn_no = '1234';
+                            $receiptTo->grn_date = date('Y-m-d');
+                            $receiptTo->vendor_type = 'DCS';
+                            $receiptTo->vendor_code = $model->customer_code;
+                            $receiptTo->union_code = $stockModel->union_code;
+                            $receiptTo->plant_code = $stockModel->plant_code;
+                            $receiptTo->mcc_plant_code = $stockModel->mcc_plant_code;
+                            $receiptTo->bmc_code = $stockModel->bmc_code;
+                            $receiptTo->dcs_code = $stockModel->dcs_code;
+                            $child[] = $receiptTo;
+
+                            $receiptTxnTo = new TblProductReceiptTransaction();
+                            $receiptTxnTo->product_receipt_transaction_code = Yii::$app->general->getTransactionCode($receiptTxnTo, $receiptTo->product_receipt_code, $i);
+                            $receiptTxnTo->product_receipt_code = $receiptTo->product_receipt_code;
+                            $receiptTxnTo->product_code = $stockModel->product_code;
+                            $receiptTxnTo->received_quantity = $qty;
+                            $receiptTxnTo->requested_quantity = $qty;
+                            $receiptTxnTo->dispatched_quantity = $qty;
+                            $receiptTxnTo->rejected_quantity = 0;
+                            $receiptTxnTo->rate = 0;
+                            $receiptTxnTo->amount = 0;
+                            $receiptTxnTo->remark = $txn_type;
+                            $child[] = $receiptTxnTo;
+                        }
                     }
 
                     $transaction = $this->generalModel->saveTransaction($master, $child, ['Product Sale', 'create']);
@@ -742,7 +990,17 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $stockModel->union_code = $union_code;
         $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         $batchNoWiseInventory == '1' ? TRUE : FALSE;
-        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $batchNoWiseInventory);
+        $checkMccStock = FALSE;
+        if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+            $checkMccStock = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
+        }
+        if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+            $isBmc = Yii::$app->general->getforeignkey($stockModel->dcsCode, 'is_bmc');
+            $isBmcMcc = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc');
+            $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
+        }
+
+        $existtoStock = $stockModel->getExistStock($sale_type, $sap_batch_no, $checkMccStock);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {

@@ -316,7 +316,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->union_code]['validate_available_stock'] : 0;
                 $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
                 $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
-                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $txModel->available_stock > $min_stock) {
+                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
                     $this->addError('qty', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                 } else if (!empty($existtoStock)) {
                     $historyModel = new TblProductStockHistory();

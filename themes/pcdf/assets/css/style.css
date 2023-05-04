@@ -4910,6 +4910,9 @@ tr.highlightRow {
     background-color: #f5f5f5;
 }
 
+.d-flex {
+    display: flex;
+}
 .weight-data, .quality-data{
     border: 1px solid #ddd;
     color: #000;
