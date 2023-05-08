@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
     <?php
     if($eiplCode == 'GYAN') { ?>
         <div class="col-sm-2">
-            <?= $form->field($model, 'x_col1')->textInput()->label('Rate for gyan') ?>
+            <?= $form->field($model, 'rate_wharehouse')->textInput()->label('Rate for gyan') ?>
         </div>
     <?php
     } ?>

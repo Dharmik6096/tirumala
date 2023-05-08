@@ -157,7 +157,7 @@ class TblProductRateController extends \app\controllers\ChildController {
             'is_member_rate' => $model->is_member_rate,
             'sale_rate' => $model->sale_rate,
             'commission' => $model->commission,
-            'x_col1' => $model->x_col1
+            'rate_wharehouse' => $model->rate_wharehouse
         ];
         $appModel->header_title = ' [Product: ' . Yii::$app->general->getforeignkey($model->productCode, 'product_name') . ', Sale Rate: ' . $model->sale_rate . '] ';
         $appModel->fields = [

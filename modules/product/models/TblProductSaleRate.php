@@ -45,10 +45,10 @@ class TblProductSaleRate extends \app\models\ChildModel {
                 [['wef_date', 'created_at', 'updated_at', 'product_sale_rate_code', 'union_code', 'is_member_rate', 'commission'], 'safe'],
                 [['created_by', 'updated_by'], 'string'],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
-                [['x_col1'], 'required', 'message' => Yii::t('app/validation', 'Rate for gyan cannot be blank.'), 'when' => function ($model) {
+                [['rate_wharehouse'], 'required', 'message' => Yii::t('app/validation', 'Rate for gyan cannot be blank.'), 'when' => function ($model) {
                         return (Yii::$app->session->get('eiplCode') == 'GYAN') ? true : false;
                     }, 'whenClient' => "function (attribute, value) {
-                        return $('#tblproductsalerate-x_col1').val() == ''; 
+                        return $('#tblproductsalerate-rate_wharehouse').val() == ''; 
                    }"
                 ],
                 ['wef_date', 'unique', 'message' => Yii::t('app/validation', 'Rate is already taken on this WEF Date.'), 'when' => function($model) {
@@ -68,7 +68,7 @@ class TblProductSaleRate extends \app\models\ChildModel {
                }"],
                 [['is_member_rate', 'commission'], 'default', 'value' => 0],
                 [['commission'], 'validateCommission', 'skipOnEmpty' => false],
-                [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'originating_type', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'rate_wharehouse'], 'safe'],
                 [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => ['importCsv']],
                 [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
