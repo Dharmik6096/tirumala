@@ -822,7 +822,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->product_code = $detailModel->product_code;
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                    $batch = $model->sap_batch_no;
+                    $batch = $detailModel->sap_batch_no;
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $batchNoWiseInventory == '1' ? TRUE : FALSE;
                     $checkMccStock = FALSE;
