@@ -38,9 +38,9 @@ class TblApiMaster extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['api_name', 'api_category', 'api_method', 'url', 'token', 'created_by', 'updated_by', 'union_code', 'operator_type', 'receiver_type'], 'string'],
-            [['port', 'usage_type', 'is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+                [['api_name', 'api_category', 'api_method', 'url', 'token', 'created_by', 'updated_by', 'union_code', 'operator_type', 'receiver_type'], 'string'],
+                [['port', 'usage_type', 'is_active'], 'integer'],
+                [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -79,7 +79,8 @@ class TblApiMaster extends \yii\db\ActiveRecord {
     public function getAPI() {
         return $this->find()
                         ->where(['receiver_type' => $this->receiver_type, 'is_active' => 1])
-                        ->andFilterWhere(['operator_type' => $this->operator_type, 'union_code' => $this->union_code])
+                        ->andFilterWhere(['operator_type' => $this->operator_type])
+                        ->andFilterWhere(['union_code' => $this->union_code])
                         ->one();
     }
 
