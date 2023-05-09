@@ -395,6 +395,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
         $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
         if (!empty($modelData)) {
+            $SendSms = FALSE;
             $historyModel = new TblMccShiftLockHistory();
             Yii::$app->operation->history($modelData, $historyModel, UPDATE);
             $modelData->qty = $qty;
@@ -576,6 +577,17 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->product_sale_lock = 1;
             $this->model->vm_data_lock = 1;
             $saveModel[] = $this->model;
+            if ($SendSms && Yii::$app->session->get('eiplCode') == 'UMANG') {
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('shift_lock_sms', 'SMS', $this->model->union_code);
+                $apiMasterModel = new TblApiMaster;
+                $apiMasterModel->receiver_type = 'SMS';
+                $apiMasterModel->union_code = $this->model->union_code;
+                $masterData = $apiMasterModel->getAPI();
+                if (!empty($masterData) && !empty($templateData)) {
+                    $this->setAlertNotification($mcc, $date, $shift, $templateData, $saveModel, $masterData);
+                }
+            }
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
                 $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
