@@ -346,9 +346,10 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-        if ($this->to_type == 'bmc') {
+        $type = trim($this->to_type);
+        if ($type == 'bmc') {
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->to_dest);
-        } else if ($this->to_type == 'mcc') {
+        } else if ($type == 'mcc') {
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', $this->to_dest, '');
         }
         foreach ($sentboxArray as $sent) {
