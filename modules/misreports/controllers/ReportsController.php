@@ -1250,7 +1250,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MemberCollectionReportForSap';
         return $this->actionIndex();
     }
-    
+
     public function actionAntibioticReport() {
         $this->report = 'AntibioticReport';
         return $this->actionIndex();
@@ -1263,6 +1263,32 @@ class ReportsController extends \app\controllers\ChildController {
 
     public function actionMccRecipationDetail() {
         $this->report = 'MccRecipationDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionStockRegisterToSap() {
+        $this->report = 'StockRegisterToSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'StockRegisterToProduct';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'StockRegisterToSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionStockRegisterMccToSap() {
+        $this->report = 'StockRegisterMccToSap';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'StockRegisterMccToProduct';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'StockRegisterMccToSummary';
+            }
+        }
         return $this->actionIndex();
     }
 
@@ -2535,6 +2561,48 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_mcc_wise_grn_stock_summary',
                 'scenario' => 'StockDispatchToSale',
                 'title' => 'Stock Dispatch To Sale Report',
+            ],
+            'StockRegisterToSap' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_dcs_wise_sap_batch_wise',
+                'scenario' => 'StockRegisterToSap',
+                'title' => 'DCS Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterToProduct' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_dcs_wise_product_wise',
+                'scenario' => 'StockRegisterToSap',
+                'title' => 'DCS Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterToSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_dcs_wise_summary',
+                'scenario' => 'StockRegisterToSap',
+                'title' => 'DCS Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterMccToSap' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_mcc_wise_sap_batch_wise',
+                'scenario' => 'StockRegisterMccToSap',
+                'title' => 'MCC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterMccToProduct' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_mcc_wise_product_wise',
+                'scenario' => 'StockRegisterMccToSap',
+                'title' => 'MCC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'StockRegisterMccToSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,product_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_stock_register_mcc_wise_summary',
+                'scenario' => 'StockRegisterMccToSap',
+                'title' => 'MCC Wise Stock',
+                'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
             ],
         ];
         return $label[$l];
