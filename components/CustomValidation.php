@@ -89,6 +89,11 @@ class CustomValidation extends Component {
                         [['bank_account_no'], 'CheckDuplicate'],
                     ],
                 ],
+                'TblProductSaleRate' => [
+                    'default' => [
+                        ['rate_wharehouse', 'required'],
+                    ],
+                ],
             ],
             'EIPLCOMMON' => [
                 'TblPlant' => [
