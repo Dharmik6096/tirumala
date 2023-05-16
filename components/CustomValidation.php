@@ -82,6 +82,7 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['member']],
+                        [['rate_wharehouse'], 'required', 'on' => ['product_sale_rate_gyan']],
                     ],
                 ],
                 'TblBankDetails' => [
@@ -91,7 +92,7 @@ class CustomValidation extends Component {
                 ],
                 'TblProductSaleRate' => [
                     'default' => [
-                        ['rate_wharehouse', 'required'],
+                        [['rate_wharehouse'], 'required'],
                     ],
                 ],
             ],

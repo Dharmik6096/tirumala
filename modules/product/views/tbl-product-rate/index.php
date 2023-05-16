@@ -3,7 +3,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Product Sale Rate'
 $this->params['menu'][] = Yii::$app->controls->add('Product Sale Rate');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Bulk Delete Applicability', 'delete-bulk-applicability', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 if (Yii::$app->session->get('eiplCode') == 'GYAN') {
-    $this->params['menu'][] = Yii::$app->controls->import('product_sale_rate_gyan', $this);
+    $this->params['menu'][] = Yii::$app->controls->import('product_sale_rate_bulk_gyan', $this);
 } else {
     $this->params['menu'][] = Yii::$app->controls->import('product_sale_rate_bulk', $this);
 }
