@@ -36,7 +36,7 @@ class BiplChangeAcknowledgement extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['svc', 'usr', 'pswd', 'census_code', 'cp_code', 'date', 'time', 'file_name'], 'required'],
+                [['svc', 'census_code', 'cp_code', 'date', 'time', 'file_name'], 'required'],
                 [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'file_name'], 'string'],
                 [['date', 'time'], 'safe'],
                 ['cp_code', 'string', 'length' => 8, 'skipOnEmpty' => true],

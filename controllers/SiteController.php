@@ -64,7 +64,7 @@ use app\modules\organisation\models\TblBmcMilkType;
 
 class SiteController extends Controller {
 
-    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy'];
+    public $freeAccessActions = ['rail-login', 'rail-logout', 'set-organization', 'screen2', 'get-states', 'get-organization', 'get-data', 'milk-collection', 'load-dcs-data', 'send-collection-sms', 'load-daily-data', 'load-month-data', 'check-sftp', 'route-dcs-list', 'payment-file-status', 'update-payment-status', 'send-notification', 'tx-farmer', 'decrypt-data', 'collection-farmer-creamy', 'set-cross-tab', 'bmc-cross-tab-details', 'creamy-data-process', 'load-table', 'parse-inbox-data', 'get-collection-ftp', 'generate-sentbox', 'master-transfer', 'load-dashboard-farmer-rmrd-data', 'load-dashboard-block-data', 'set-hit-count-tab', 'load-year-data', 'set-collection-count-summary', 'load-dashboard-today-vs-yesterday-collection', 'help-manual', 'terms', 'privacy-policy', 'load-dashboard-milk-collection-summary'];
 
     public function init() {
         parent::init();
@@ -218,10 +218,13 @@ class SiteController extends Controller {
         $dashboard_farmer_rmrd_blocks = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_rmrd_avg = []; //$this->getWidgetDetails('sp_Portal_dashboard_blocks', $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $end_date, $end_date);
         $dashboard_farmer_status = [];
+        $dashboard_society_status_pie_chart = [];
+        $milk_collection_summary = [];
 
 // $dpu_data = $this->DPUDataCollection($model);
 
-        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets]);
+        return $this->render('dashboard', ['model' => $model, 'results' => $results, 'date' => $end_date, 'results2' => $results2, 'results3' => $results3, 'results4' => $results4, 'results5' => $results5, 'results6' => $results6, 'results7' => $results7, 'results8' => $results8, 'milk_collection' => $milk_collection, 'monthly_milk_collection' => $monthly_milk_collection, 'dashboard_blocks' => $dashboard_blocks, 'member_mobile_detail' => $member_mobile_detail, 'dashboard_farmer_rmrd_blocks' => $dashboard_farmer_rmrd_blocks, 'dashboard_farmer_rmrd_avg' => $dashboard_farmer_rmrd_avg, 'dashboard_farmer_status' => $dashboard_farmer_status, 'farmerWidgets' => $farmerWidgets, 'rmrdWidgets' => $rmrdWidgets, 'userRmrdWidgets' => $userRmrdWidgets, 'userFarmerWidgets' => $userFarmerWidgets, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart, 'milk_collection_summary' => $milk_collection_summary,
+        ]);
     }
 
     private function getReconciliationSpResult($sp_name, $union_str, $plant_str, $mcc_str, $bmc_str, $dcs_code, $sdate, $edate) {
@@ -976,6 +979,14 @@ class SiteController extends Controller {
             'top_rmrd_collection' => [
                 'name' => 'sp_portal_dashboard_top_dcs_collection',
                 'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date,widget_type=' . $widget_type . ',customer_type=DCS',
+            ],
+            'dashboard_society_status_pie_chart' => [
+                'name' => 'sp_portal_dashboard_farmer_status',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
+            ],
+            'milk_collection_summary' => [
+                'name' => 'sp_milk_collection_summary_status',
+                'input' => 'union_code=' . $union_str . '|list,plant_code=' . $plant_code . '|list,mcc_code=' . $mcc_code . '|list,bmc_code=' . $bmc_code . '|list,dcs_code=' . $dcs_code . '|list,date=' . date('Y-m-d') . '|date,date=' . date('Y-m-d') . '|date',
             ],
         ];
         return $array[$sp];
@@ -1799,165 +1810,175 @@ class SiteController extends Controller {
             $modelData = $model->getData();
             $i = 1;
             if (!empty($modelData)) {
+                $version_ignore_tables = ['tbl_product_sale', 'tbl_product_sale_transaction'];
+                $ignore_tables = ['tbl_product_stock', 'tbl_product_stock_transaction', 'tbl_product_receipt', 'tbl_product_receipt_transaction'];
+                $version_no = 0;
                 $update_ids = array_column($modelData, 'uuid');
                 $model->updateAll(['data_post_status' => 1, 'error_timestamp' => date('Y-m-d H:i:s')], ['uuid' => $update_ids]);
-//                $model->updateAll(['data_post_status' => 1], ['uuid' => $update_ids]);
                 foreach ($modelData as $transaction_data) {
                     try {
+                        $process_record = TRUE;
                         $delete = [];
                         $childModel = [];
                         $delete [] = $transaction_data;
                         $syncLogModel = new TblSyncLog();
                         $syncLogModel->setAttributes($transaction_data->attributes);
                         $childModel[] = $syncLogModel;
-                        $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
-                        $model_name = Yii::$app->path->define($model_name);
-                        $model = new $model_name();
-                        $json = $transaction_data->json_text;
-                        $json = (array) json_decode($json);
-                        $json = Yii::$app->general->camelCaseToUnderscore($json);
-                        $model->setAttributes($json);
-
-                        /* update record if already available */
-                        if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
-                            $unique_value = $model->$unique_key;
-                            $model_data = $model->find()->where([$unique_key => $unique_value])->one();
-                            if (!empty($model_data)) {
-                                $model = $model_data;
-                                $history = $model_name . 'History';
-                                $historyModel = new $history();
-                                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
-                                $childModel[] = $historyModel;
-                                $model->setAttributes($json);
+                        if (in_array($transaction_data->table_name, $ignore_tables)) {
+                            $process_record = FALSE;
+                        } else if (in_array($transaction_data->table_name, $version_ignore_tables)) {
+                            $version_no = (int) str_replace('d_', '', $transaction_data->version_no);
+                            if ($version_no <= 100) {
+                                $process_record = FALSE;
                             }
                         }
-                        /* update record if already available */
-                        $model->scenario = 'androidsync';
-                        $model = Yii::$app->general->SetDataType($model);
-                        if ($model->validate()) {
+                        if ($process_record) {
+                            $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data->table_name)));
+                            $model_name = Yii::$app->path->define($model_name);
+                            $model = new $model_name();
+                            $json = $transaction_data->json_text;
+                            $json = (array) json_decode($json);
+                            $json = Yii::$app->general->camelCaseToUnderscore($json);
+                            $model->setAttributes($json);
 
-                            if (isset($model->is_sentbox)) {
-                                $model->is_sentbox = false;
-                            }
-                            if ($model->hasAttribute('originating_type')) {
-                                $model->originating_type = 23;
-                            }
-
-                            if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
-                                $model->setTransactionData($model, $json, $childModel);
-                            }
-                            if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
-                                $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
-                            }
-                            if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
-                                $model->scenario = 'androidsync_coll';
-                                if (!$model->validate()) {
-                                    $setData = $model;
-                                    if ($transaction_data->table_name == 'tbl_bmc_collection') {
-                                        $model = new TblBmcCollectionNotExist();
-                                        $model->attributes = $setData->attributes;
-                                        $model->data_inserted_from = 'androidsync';
-                                    } elseif ($transaction_data->table_name == 'tbl_milk_collection') {
-                                        $model = new TblMilkCollectionNotExists();
-                                        $model->attributes = $setData->attributes;
-                                        $model->send_status = 0;
-                                        $model->data_inserted_from = 'androidsync';
-                                    }
-                                } else {
-                                    if ($transaction_data->table_name == 'tbl_bmc_collection') {
-                                        if ($model->hasAttribute('vehicle_no')) {
-                                            $model->vehicle_no = str_replace('\n', '', $model->vehicle_no);
-                                            $model->vehicle_no = trim(preg_replace('/\n/', '', $model->vehicle_no));
-                                            $model->vehicle_no = trim(preg_replace('/\s/', '', $model->vehicle_no));
-                                            $model->vehicle_no = trim(preg_replace('/\s+/', '', $model->vehicle_no));
-                                        }
-                                        $range = Yii::$app->general->getUnionConfiguration($model->union_code, 'buf_min_fat_range_bmc', 'PORTAL');
-                                        $mapping = new TblBmcMilkType();
-                                        $mapped = $mapping->find()->where(['bmc_code' => $model->bmc_code, 'is_active' => 1])->all();
-                                        if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
-                                            $type = [];
-                                            foreach ($mapped as $map) {
-                                                $type[] = $map->milk_type_code;
-                                            }
-                                            if (in_array(1, $type) && in_array(2, $type)) {
-                                                if ($range < $model->fat) {
-                                                    $model->milk_type_code = 2;
-                                                } elseif ($range >= $model->fat) {
-                                                    $model->milk_type_code = 1;
-                                                }
-                                            }
-                                            if (in_array(1, $type) && in_array(3, $type)) {
-                                                if ($range < $model->fat) {
-                                                    $model->milk_type_code = 3;
-                                                } elseif ($range >= $model->fat) {
-                                                    $model->milk_type_code = 1;
-                                                }
-                                            }
-                                            if (in_array(2, $type) && in_array(3, $type)) {
-                                                if ($range < $model->fat) {
-                                                    $model->milk_type_code = 3;
-                                                } elseif ($range >= $model->fat) {
-                                                    $model->milk_type_code = 2;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    $model->scenario = 'androidsync';
-                                }
-                            }
-
-                            if ($transaction_data->table_name == 'tbl_dcs_closing') {
-
-                                $model_data = $model->find()->where(['dcs_code' => $model->dcs_code, 'to_date' => $model->to_date, 'to_shift_code' => $model->to_shift_code, 'milk_type_code' => $model->milk_type_code])->one();
+                            /* update record if already available */
+                            if ($model->hasAttribute($unique_key) && !empty($model->$unique_key)) {
+                                $unique_value = $model->$unique_key;
+                                $model_data = $model->find()->where([$unique_key => $unique_value])->one();
                                 if (!empty($model_data)) {
                                     $model = $model_data;
                                     $history = $model_name . 'History';
                                     $historyModel = new $history();
                                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
                                     $childModel[] = $historyModel;
-                                    unset($json['dcs_closing_code']);
                                     $model->setAttributes($json);
-                                    $model->dcs_closing_code = $model_data->dcs_closing_code;
-                                } else {
-                                    $model->dcs_closing_code = (string) Yii::$app->general->getCodeAutoIncrement($model, $i);
                                 }
                             }
-                            $generalModel = new GeneralModel();
+                            /* update record if already available */
+                            $model->scenario = 'androidsync';
+                            $model = Yii::$app->general->SetDataType($model);
+                            if ($model->validate()) {
 
-                            $masterSave = [];
-                            $masterSave[] = $model;
-                            if (in_array($transaction_data->table_name, ['tbl_product_stock', 'tbl_product_stock_transaction'])) {
-                                if (!empty($model->union_code) && $model->union_code == '003' && !empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code == '994') {
-                                    $masterSave = [];
+                                if (isset($model->is_sentbox)) {
+                                    $model->is_sentbox = false;
                                 }
-                            }
-//                            else if (in_array($transaction_data->table_name, ['tbl_product_sale_transaction'])) {
-//                                if (!empty($model->product_code) && !empty($model->productCode) && $model->productCode->dpu_product_code = '994') {
-//                                    $masterSave = [];
-//                                }
-//                            }
-//                            $transaction = $generalModel->saveDeleteTransaction([$model], $childModel, $delete, ['transactional data', 'create'], true);
-                            $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
-                            if ($transaction != 'customRedirect') {
-                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
-//                                $transaction_data->error_log = (string) $transaction;
+                                if ($model->hasAttribute('originating_type')) {
+                                    $model->originating_type = 23;
+                                }
+
+                                if (isset($model->saveChildRecords) && $model->saveChildRecords == true) {
+                                    $model->setTransactionData($model, $json, $childModel);
+                                }
+                                if (isset($model->saveDeleteChildRecords) && $model->saveDeleteChildRecords == true) {
+                                    $model->setTransactionSaveDeleteData($model, $json, $childModel, $delete);
+                                }
+
+                                if ($transaction_data->table_name == 'tbl_bmc_collection' || $transaction_data->table_name == 'tbl_milk_collection') {
+                                    $model->scenario = 'androidsync_coll';
+                                    if (!$model->validate()) {
+                                        $setData = $model;
+                                        if ($transaction_data->table_name == 'tbl_bmc_collection') {
+                                            $model = new TblBmcCollectionNotExist();
+                                            $model->attributes = $setData->attributes;
+                                            $model->data_inserted_from = 'androidsync';
+                                        } elseif ($transaction_data->table_name == 'tbl_milk_collection') {
+                                            $model = new TblMilkCollectionNotExists();
+                                            $model->attributes = $setData->attributes;
+                                            $model->send_status = 0;
+                                            $model->data_inserted_from = 'androidsync';
+                                        }
+                                    } else {
+                                        if ($transaction_data->table_name == 'tbl_bmc_collection') {
+                                            if ($model->hasAttribute('vehicle_no')) {
+                                                $model->vehicle_no = str_replace('\n', '', $model->vehicle_no);
+                                                $model->vehicle_no = trim(preg_replace('/\n/', '', $model->vehicle_no));
+                                                $model->vehicle_no = trim(preg_replace('/\s/', '', $model->vehicle_no));
+                                                $model->vehicle_no = trim(preg_replace('/\s+/', '', $model->vehicle_no));
+                                            }
+                                            $range = Yii::$app->general->getUnionConfiguration($model->union_code, 'buf_min_fat_range_bmc', 'PORTAL');
+                                            $mapping = new TblBmcMilkType();
+                                            $mapped = $mapping->find()->where(['bmc_code' => $model->bmc_code, 'is_active' => 1])->all();
+                                            if (!empty($range) && !empty($mapped) && count($mapped) == 2) {
+                                                $type = [];
+                                                foreach ($mapped as $map) {
+                                                    $type[] = $map->milk_type_code;
+                                                }
+                                                if (in_array(1, $type) && in_array(2, $type)) {
+                                                    if ($range < $model->fat) {
+                                                        $model->milk_type_code = 2;
+                                                    } elseif ($range >= $model->fat) {
+                                                        $model->milk_type_code = 1;
+                                                    }
+                                                }
+                                                if (in_array(1, $type) && in_array(3, $type)) {
+                                                    if ($range < $model->fat) {
+                                                        $model->milk_type_code = 3;
+                                                    } elseif ($range >= $model->fat) {
+                                                        $model->milk_type_code = 1;
+                                                    }
+                                                }
+                                                if (in_array(2, $type) && in_array(3, $type)) {
+                                                    if ($range < $model->fat) {
+                                                        $model->milk_type_code = 3;
+                                                    } elseif ($range >= $model->fat) {
+                                                        $model->milk_type_code = 2;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        $model->scenario = 'androidsync';
+                                    }
+                                }
+
+                                if ($transaction_data->table_name == 'tbl_dcs_closing') {
+
+                                    $model_data = $model->find()->where(['dcs_code' => $model->dcs_code, 'to_date' => $model->to_date, 'to_shift_code' => $model->to_shift_code, 'milk_type_code' => $model->milk_type_code])->one();
+                                    if (!empty($model_data)) {
+                                        $model = $model_data;
+                                        $history = $model_name . 'History';
+                                        $historyModel = new $history();
+                                        Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                                        $childModel[] = $historyModel;
+                                        unset($json['dcs_closing_code']);
+                                        $model->setAttributes($json);
+                                        $model->dcs_closing_code = $model_data->dcs_closing_code;
+                                    } else {
+                                        $model->dcs_closing_code = (string) Yii::$app->general->getCodeAutoIncrement($model, $i);
+                                    }
+                                }
+                                $generalModel = new GeneralModel();
+                                $masterSave = [];
+                                $masterSave[] = $model;
+                                $transaction = $generalModel->saveDeleteTransaction($masterSave, $childModel, $delete, ['transactional data', 'create'], true);
+                                if ($transaction != 'customRedirect') {
+                                    $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+                                    $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                    $transaction_data->data_post_status = 3;
+                                    if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
+                                        $inbox_constraint = new TblInboxConstraint();
+                                        $inbox_constraint->attributes = $transaction_data->attributes;
+                                        $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
+                                        $inbox_constraint->data_post_status = 3;
+                                        $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
+                                    } else {
+                                        $transaction_data->save();
+                                    }
+                                }
+                            } else {
+                                $transaction_data->error_log = Json::encode($model->getErrors());
                                 $transaction_data->error_timestamp = date('Y-m-d H:i:s');
                                 $transaction_data->data_post_status = 3;
-                                if (strstr($transaction_data->error_log, 'Cannot insert duplicate key')) {
-                                    $inbox_constraint = new TblInboxConstraint();
-                                    $inbox_constraint->attributes = $transaction_data->attributes;
-                                    $inbox_constraint->processed_timestamp = date('Y-m-d H:i:s');
-                                    $inbox_constraint->data_post_status = 3;
-                                    $transaction = $generalModel->saveDeleteTransaction([$inbox_constraint], [], [$transaction_data], ['inbox constraint data', 'create']);
-                                } else {
-                                    $transaction_data->save();
-                                }
+                                $transaction_data->save();
                             }
                         } else {
-                            $transaction_data->error_log = Json::encode($model->getErrors());
-                            $transaction_data->error_timestamp = date('Y-m-d H:i:s');
-                            $transaction_data->data_post_status = 3;
-                            $transaction_data->save();
+                            $generalModel = new GeneralModel();
+                            $transaction = $generalModel->saveDeleteTransaction($childModel, [], $delete, ['transactional data', 'create'], true);
+                            if ($transaction != 'customRedirect') {
+                                $transaction_data->error_log = !empty($transaction) ? (string) $transaction : 'error_occured';
+                                $transaction_data->error_timestamp = date('Y-m-d H:i:s');
+                                $transaction_data->data_post_status = 3;
+                                $transaction_data->save();
+                            }
                         }
                     } catch (\Throwable $ex) {
                         $transaction_data->error_log = 'Throwable Exception';
@@ -2865,6 +2886,41 @@ class SiteController extends Controller {
     public function actionTerms() {
         $this->layout = false;
         return $this->render('terms');
+    }
+
+    public function actionLoadDashboardMilkCollectionSummary() {
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $res = [];
+        $array_result = $results[0];
+        if (count($results) > 1) {
+            $array_result = $results;
+        }
+        foreach ($array_result as $key => $value) {
+            $res[$key] = $value;
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $res];
+    }
+
+    public function actionLoadPieChart() {
+        $sp = Yii::$app->request->post('sp');
+        $results = $this->getSpResult($sp);
+        $series = [];
+        $series['onlineDcs'] = 0;
+        $series['offlineDcs'] = 0;
+        $labels = [];
+
+        if (!empty($results)) {
+            $keys = array_keys($results[0]);
+            foreach ($keys as $key) {
+                if (in_array($key, ['onlineDcs', 'offlineDcs'])) {
+                    $series[$key] = $results[0][$key]; //array_column($results, $key);
+                }
+            }
+        }
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['status' => 'success', 'res' => $series, 'lbl' => $labels];
     }
 
 }

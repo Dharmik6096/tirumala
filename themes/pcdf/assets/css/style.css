@@ -4858,3 +4858,101 @@ tr.highlightRow {
 #report-form .shift, #report-form .reportDate, #report-form .col-sm-3 {
     height: 57px
 }
+
+/*milk collection summary*/
+.div_dash_blocks p {
+    text-align: right;
+    width: 100%;
+    display: block;
+    margin: 5px 0px 5px 0px;
+    white-space: nowrap;
+}
+
+.dash_block_headers {
+    color: #fff !important;
+    font-weight: 600;
+    font-size: 13px;
+    background-color: #7A231C;
+}
+.dashboard_widget_tables th{
+    border: 1px solid #fff;
+    color: #333;
+    padding: 4px;
+    font-size: 14px;
+}
+.width_r{
+    width: 30%;
+    text-align: center;
+}
+.width_l{
+    width: 30%;
+    text-align: center;
+}
+
+.dashboard_widget_tables tr td{
+    border: 1px solid #fff;
+    color: #333;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 7px;
+    font-weight: 600;
+}
+
+.dash_block_border {
+    height: -webkit-fill-available;
+}
+
+.t_design  {
+    background-color: #FCE4E2;
+}
+
+.t_design_2  {
+    background-color: #f5f5f5;
+}
+
+.d-flex {
+    display: flex;
+}
+.weight-data, .quality-data{
+    border: 1px solid #ddd;
+    color: #000;
+    text-align: center;
+}
+
+.weight-data {
+    background-color: #70ad47;
+}
+
+.quality-data {
+    background-color: #0070C0;    
+}
+.weight-data .heading, .quality-data .heading  {
+    font-size: 20px;
+    font-weight: 500;
+    padding: 5px;
+}
+
+.weight-data .table tr th, .quality-data .table tr th {
+    font-size: 15px !important;
+    color: #000 !important;
+    border-color: #000;
+    font-weight: 700;
+    padding: 10px 0px !important;
+    text-align: center;
+}
+
+.weight-data .table tr, .quality-data .table tr {
+   border-color: #000;
+}
+
+.weight-data .table tr td, .quality-data .table tr td {
+    border-color: #000;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.weight-data .table tr.highlight td, .quality-data .table tr.highlight td {
+    font-size: 15px !important;
+    padding: 10px !important;
+    font-weight: 600;
+}

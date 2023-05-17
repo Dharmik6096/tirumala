@@ -132,6 +132,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
                     $txn_model->sap_batch_no = $model->sap_batch_no;
                     $txn_model->qty = $model->qty;
                     $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
+                    $txn_model->grn_missing_qty = $txn_model->qty;
                     if (!$txn_model->validate()) {
                         $errors[] = $txn_model->getErrors();
                     }
@@ -150,6 +151,7 @@ class TblPlantDispatch extends \app\models\ChildModel {
                 $txn_model->sap_batch_no = $model->sap_batch_no;
                 $txn_model->qty = $model->qty;
                 $txn_model->amount = ($txn_model->qty) * $txn_model->rate;
+                $txn_model->grn_missing_qty = $txn_model->qty;
                 if (!$txn_model->validate()) {
                     $errors[] = $txn_model->getErrors();
                 }

@@ -278,6 +278,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $saveModel[] = $historyModel;
 
         $details = TblProductSaleTransaction::find()->where(['product_sale_code' => $this->model->product_sale_code])->all();
+        $i = 1;
         foreach ($details as $key => $id) {
             $detailHistory = new TblProductSaleTransactionHistory();
             Yii::$app->operation->history($id, $detailHistory, DELETE);
@@ -291,7 +292,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $fstockModel->product_code = $details[$key]->product_code;
             $fstockModel->union_code = $this->model->union_code;
             $txn_type = strtoupper($this->model->customer_type) == 'MEMBER' ? 'DELETE PRODUCT SALE TO MEMBER' : 'DELETE PRODUCT SALE';
-            $batch = $this->model->sap_batch_no;
+            $batch = $details[$key]->sap_batch_no;
             $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
             $checkMccStock = FALSE;
@@ -304,7 +305,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
             }
-            $existfromStock = $fstockModel->getExistStock($sale_type, $batch, $checkMccStock);
+            $existfromStock = $fstockModel->getExistStockDelete($sale_type, $batch, $checkMccStock);
 
             $f_stock = 0;
             $qty = $details[$key]->quantity;
@@ -317,11 +318,15 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $fstockModel = $existfromStock;
                 $saveModel[] = $fstockModel;
 
-                $i = 1;
                 $fstockTxnModel = new TblProductStockTransaction();
                 $fstockTxnModel->attributes = $fstockModel->attributes;
                 unset($fstockTxnModel->created_at);
                 unset($fstockTxnModel->created_by);
+                unset($fstockTxnModel->updated_at);
+                unset($fstockTxnModel->updated_by);
+                unset($fstockTxnModel->originating_org_code);
+                unset($fstockTxnModel->originating_org_type);
+                unset($fstockTxnModel->originating_type);
                 $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
                 $fstockTxnModel->old_value = $f_stock;
                 $fstockTxnModel->new_value = $qty;
@@ -513,7 +518,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionLoadRate() {
-        $app = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
+        $result = ['rate' => '', 'sale_rate' => '', 'product_sale_rate_applicability_code' => '', 'unit_code' => ''];
         if (!empty($_POST['product_code']) && !empty($_POST['customer_type']) && !empty($_POST['customer_code'])) {
             $date = !empty($_POST['invoice_date']) ? date('Y-m-d', strtotime($_POST['invoice_date'])) : date('Y-m-d');
 
@@ -523,10 +528,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     ->where(['tbl_product_sale_rate.product_code' => $_POST['product_code'], 'tbl_product_sale_rate_applicability.applicable_for' => $_POST['customer_type'], 'tbl_product_sale_rate_applicability.is_member_rate' => (int) $_POST['is_member_rate'], 'tbl_product_sale_rate_applicability.applicable_code' => $_POST['customer_code']]);
             $app = $appQuery->orderBy(['tbl_product_sale_rate_applicability.wef_date' => SORT_DESC])->createCommand()->queryOne();
             if (!empty($app)) {
-                $app = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
+                $result = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
             }
         }
-        echo json_encode($app);
+        echo json_encode($result);
     }
 
     public function actionListGrid() {
@@ -817,7 +822,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->product_code = $detailModel->product_code;
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                    $batch = $model->sap_batch_no;
+                    $batch = $detailModel->sap_batch_no;
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $batchNoWiseInventory == '1' ? TRUE : FALSE;
                     $checkMccStock = FALSE;

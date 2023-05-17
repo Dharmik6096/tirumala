@@ -16,7 +16,7 @@ use app\modules\dcsoperation\models\TblMember;
 
 class BiplModel {
 
-    private $data, $model, $username = "BIPL", $password = "@BiPl!2017",$path='C:\BIPLFTP\ErrorLogs';
+    private $data, $model, $username = "", $password = "",$path= '/BIPLFTP/ErrorLogs';
 
     function __construct() {
         set_error_handler(array($this, 'handleError'));
@@ -34,10 +34,10 @@ class BiplModel {
                     return $this->responseData(0,'cp_code');
                 case empty($this->data['svc']):
                     return $this->responseData(0,'nosvc');
-                case empty($this->data['usr']):
+              /*  case empty($this->data['usr']):
                     return $this->responseData(0,'usr');
                  case empty($this->data['pswd']):
-                     return $this->responseData(0,'pswd');
+                     return $this->responseData(0,'pswd');*/
                 default:break;
             }
         if ($this->data['usr'] == $this->username && $this->data['pswd'] == $this->password) {
@@ -233,14 +233,14 @@ class BiplModel {
     {
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
-                if(mkdir($path, '0755', true)==false)
+                if(mkdir($path, '0777', true)==false)
                 {
                    die('Failed to create folders...'.$path);
                    return false;
                 }
             }
         } else { //no file exists with this name
-           if(mkdir($path, '0755',true)==false)
+           if(mkdir($path, '0777',true)==false)
                 {
                     die('Failed to create folders...'.$path);
                     return false;
