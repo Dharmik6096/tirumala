@@ -145,7 +145,7 @@ $form = ActiveForm::begin([
         ]);
         AjaxSubmitButton::end();
         ?>
-        <?= Yii::$app->controls->custombutton(Yii::t('app', ucfirst('reset')), 'asset-transaction'); ?>
+        <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
 </div>
