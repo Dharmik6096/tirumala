@@ -49,7 +49,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = (string) $revoke_widget;
                     $model->login_type = $this->model->login_type;
-//                    $model->department = $this->model->department;
+                    $model->department = $this->model->department;
                     $record = $model->getExistMappedWidgets();
                     $historyModel = new TblEiplAppWidgetMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
@@ -65,7 +65,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                     $model = new TblEiplAppWidgetMapping();
                     $model->widget_id = $Assign_widget;
                     $model->login_type = $this->model->login_type;
-//                    $model->department = $this->model->department;
+                    $model->department = $this->model->department;
                     $master[] = $model;
                     $auto_inc++;
                 }

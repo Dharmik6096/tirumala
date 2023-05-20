@@ -29,7 +29,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
             $postArray = [];
             $postArray = Yii::$app->request->post('child_routes');
             $loginType = Yii::$app->request->post('login_type');
-//            $department = Yii::$app->request->post('department');
+            $department = Yii::$app->request->post('department');
             $master = [];
             $auto_inc = 1;
             $newAssignments = [];
@@ -48,7 +48,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
                     $model = new TblEiplAppMenuActionsMapping();
                     $model->action_code = (string) $revoke_widget;
                     $model->login_type = $loginType;
-//                    $model->department = $department;
+                    $model->department = $department;
                     $record = $model->getExistMappedmenus();
 //                    $historyModel = new TblEiplAppWidgetMappingHistory();
 //                    Yii::$app->operation->history($record, $historyModel, 'DELETE');
@@ -64,7 +64,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
                     $model = new TblEiplAppMenuActionsMapping();
                     $model->action_code = $Assign_widget;
                     $model->login_type = $loginType;
-//                    $model->department = $department;
+                    $model->department = $department;
                     $master[] = $model;
                     $auto_inc++;
                 }

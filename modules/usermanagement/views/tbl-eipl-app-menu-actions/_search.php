@@ -16,7 +16,10 @@ use yii\web\View;
     ]);
     ?>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false, TRUE); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('login_type_ho_flutter', $model, $form, 'form-group', $model->getAttributeLabel('login_type'), false, 'login_type', false); ?>
+    </div>
+    <div class="col-sm-2 department_div">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>
     <?php ActiveForm::end(); ?>
 
@@ -27,10 +30,22 @@ $script = "
     $('#tbleiplappmenuactionsmapping-login_type').change(function() {
         submitForm();
     });
+    $('#tbleiplappmenuactionsmapping-department').change(function() {
+        submitForm();
+    });
 
     function submitForm(){
         var login = $('#tbleiplappmenuactionsmapping-login_type').val();
-      if(login !='') {
+        var department = $('#tbleiplappmenuactionsmapping-department').val();
+        if(login =='farmer') {
+            $('#tbleiplappmenuactionsmapping-department').val('');
+            $('.department_div').hide();
+            $('form#app-menu-mapping-search').submit();
+             setTimeout(function() {
+                 $('.showHideData').show();
+             },1000);
+        } else if(login !='') {
+             $('.department_div').show();
              $('form#app-menu-mapping-search').submit();
              setTimeout(function() {
              $('.showHideData').show();
@@ -42,14 +57,16 @@ $script = "
     function updateGrid() {
     $('.department_div').hide();
         var login = $('#tbleiplappmenuactionsmapping-login_type').val();
-        if(login !='') {
+        var department = $('#tbleiplappmenuactionsmapping-department').val();
+        if(login =='farmer') {
             $('.showHideData').show();
-        }   
-        else {
+        } else if(login !='') {
+            $('.showHideData').show();
+            $('.department_div').show();
+        } else {
             $('.showHideData').hide();
         }
     }
   
      ";
 $this->registerJs($script, View::POS_END, 'app-menu-mapping-search');
-
