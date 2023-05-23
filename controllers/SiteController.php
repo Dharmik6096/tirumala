@@ -1827,9 +1827,11 @@ class SiteController extends Controller {
                         if (in_array($transaction_data->table_name, $ignore_tables)) {
                             $process_record = FALSE;
                         } else if (in_array($transaction_data->table_name, $version_ignore_tables)) {
-                            $version_no = (int) str_replace('d_', '', $transaction_data->version_no);
-                            if ($version_no <= 100) {
-                                $process_record = FALSE;
+                            if (!in_array($transaction_data->dest_org_id, ['001'])) {
+                                $version_no = (int) str_replace('d_', '', $transaction_data->version_no);
+                                if ($version_no <= 100) {
+                                    $process_record = FALSE;
+                                }
                             }
                         }
                         if ($process_record) {
