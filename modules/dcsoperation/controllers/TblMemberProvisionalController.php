@@ -211,6 +211,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $tblMember = new TblMember;
                         $tblMember->scenario = 'ApprovalMember';
                         $tblMember->attributes = $this->model->attributes;
+                        $tblMember->member_code = $tblMember->getCode();
                         $historyModel = new TblMemberProvisionalHistory();
                         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
                         $historyModel->provisional_member_code = $this->model->provisional_member_code;
