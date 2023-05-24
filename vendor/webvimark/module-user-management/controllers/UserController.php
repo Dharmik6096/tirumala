@@ -272,6 +272,7 @@ class UserController extends AdminDefaultController {
                     break;
             }
             $user->user_type_id = $_POST['user_type'];
+            $user->scenario = 'orgMapping';
             $user->save(false);
             Yii::$app->display->message(true, 'user', 'edit');
             return $this->redirect(['index']);

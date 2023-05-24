@@ -330,7 +330,7 @@ class User extends UserIdentity {
                 [['allow_app_login'], 'default', 'value' => 0],
                 [['department', 'mobile_no', 'login_type'], 'required', 'when' => function($model) {
                     return $model->allow_app_login == 1;
-                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }", 'except' => ['DeactiveUser']],
+                }, 'whenClient' => "function (attribute, value) {  if($('#user-allow_app_login').is(':checked')){return true;} }", 'except' => ['DeactiveUser', 'orgMapping']],
                 [['mobile_no'], 'unique', 'except' => ['DeactiveUser']],
                 [['name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
