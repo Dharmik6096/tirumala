@@ -607,12 +607,20 @@ class GeneralFunctions extends Component {
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
                 if (mkdir($path, 0777, true) == false) {
+                    echo '<pre>';
+                    print_r($path);
+                    echo '</pre>';
+                    die;
                     die('Failed to create folders...' . $path);
                     return false;
                 }
             }
         } else { //no file exists with this name
             if (!is_dir($path)) {
+                echo '<pre>';
+                print_r($path);
+                echo '</pre>';
+                die;
                 if (mkdir($path, 0777, true) == false) {
                     die('Failed to create folders...' . $path);
                     return false;
@@ -620,7 +628,7 @@ class GeneralFunctions extends Component {
             }
         }
 
-        
+
         if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
             $command = 'chmod 777 -R ' . $path;
             exec($command);
@@ -2285,6 +2293,17 @@ class GeneralFunctions extends Component {
             $model->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
+    }
+
+    public function getMaxCode($model, $field, $auto_inc = 1) {
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
+                ->from($tableName)
+                ->one();
+        $number = (int) $val[$field] + $auto_inc;
+
+        return $number;
     }
 
 }
