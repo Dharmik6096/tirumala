@@ -113,6 +113,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         $validate = 1;
         $this->setModel();
+        if ($this->model->provisional_from == 'mobile_app') {
+            $this->model->ex_member_code = Yii::$app->general->getMaxCode($this->model, 'ex_member_code');
+        }
         $searchModel = new TblProvisionalMilkCollectionSearch();
         $tblMember = new TblMember();
         $params = Yii::$app->request->queryParams;
