@@ -32,15 +32,15 @@ $attribute = [
         }, 'filter' => false],
         ['attribute' => 'user_type', 'visible' => true, 'filter' => true],
         ['attribute' => 'member_code', 'visible' => true, 'filter' => true],
-        ['attribute' => 'member_name', 'value' => function($model) {
-            if (!empty($model->member_code)) {
-                return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
-            } else {
-                return $model->member_name;
-            }
-        }, 'vAlign' => 'middle', 'visible' => true, 'filter' => true],
-//        ['attribute' => 'member_name', 'visible' => true, 'filter' => true],
-    ['attribute' => 'mobile_no', 'visible' => true, 'filter' => true],
+//        ['attribute' => 'member_name', 'value' => function($model) {
+//            if (!empty($model->member_code)) {
+//                return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
+//            } else {
+//                return $model->member_name;
+//            }
+//        }, 'vAlign' => 'middle', 'visible' => true, 'filter' => true],
+    ['attribute' => 'member_name', 'visible' => true, 'filter' => true],
+        ['attribute' => 'mobile_no', 'visible' => true, 'filter' => true],
         ['attribute' => 'address', 'visible' => true, 'filter' => true],
         ['attribute' => 'ai_request_for', 'visible' => true, 'filter' => true],
         ['attribute' => 'animal_inspector_code', 'value' => function($model) {
