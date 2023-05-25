@@ -2295,11 +2295,12 @@ class GeneralFunctions extends Component {
         }
     }
 
-    public function getMaxCode($model, $field, $auto_inc = 1) {
+    public function getMaxCode($model, $field, $dcs_code, $auto_inc = 1) {
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
                 ->from($tableName)
+                ->where(['dcs_code' => $dcs_code])
                 ->one();
         $number = (int) $val[$field] + $auto_inc;
 
