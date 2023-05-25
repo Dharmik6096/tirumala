@@ -53,7 +53,7 @@ class TblIndentProductController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->indent_product_code = Yii::$app->general->getCodeAutoIncrement($this->model);
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Indnet Product', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Indent Product', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -75,7 +75,7 @@ class TblIndentProductController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
 
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Indnet Product', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Indent Product', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
