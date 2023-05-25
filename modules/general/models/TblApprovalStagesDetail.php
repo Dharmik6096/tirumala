@@ -117,7 +117,7 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
         foreach ($approval_stages as $stage) {
             $stage_model = new TblProcessApproval();
             $stage_model->setAttributes($stage);
-            $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
+//            $stage_model->process_approval_code = Yii::$app->general->getCodeAutoIncrement($stage_model, $i);
             $stage_model->process_code = $processCode;
             $stage_model->process_name = $process;
             $stage_model->status = 0;
