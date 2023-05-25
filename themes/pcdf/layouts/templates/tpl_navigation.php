@@ -457,6 +457,7 @@ echo GhostMenu::widget([
                                     ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
                                     ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                                     ['label' => '112 -' . Yii::t('app', 'Member Collection Report For SAP'), 'url' => ['/misreports/reports/member-collection-report-for-sap']],
+                                    ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
                             ]
                         ],
                             [
@@ -483,6 +484,8 @@ echo GhostMenu::widget([
                                     ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
                                     ['label' => '217 -' . Yii::t('app', 'Society Composite Vs Actual Report'), 'url' => ['/misreports/reports/society-composite-vs-actual'], 'visible' => User::canRoute(['/misreports/reports/society-composite-vs-actual']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
                                     ['label' => '218 -' . Yii::t('app', 'BMC Collection Report For SAP'), 'url' => ['/misreports/reports/rmrd-milk-collection-for-sap']],
+                                    ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
+                                    ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
