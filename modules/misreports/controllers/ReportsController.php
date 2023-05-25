@@ -845,6 +845,37 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberMilkBill() {
+        $this->report = 'MemberMilkBill';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberMilkBillDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'MemberMilkBillSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionAgentWiseReconciliation() {
+        $this->report = 'AgentWiseReconciliation';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AgentWiseReconciliationDateWise';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AgentWiseReconciliationSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionRouteWiseReconciliation() {
+        $this->report = 'RouteWiseReconciliation';
+        return $this->actionIndex();
+    }
+
     public function actionViewHistory() {
         $data = [];
         if (!empty($_POST)) {
@@ -2680,6 +2711,57 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'StockRegisterMccToSap',
                 'title' => 'MCC Wise Stock',
                 'report_type' => [Yii::t('app', 'SAP Batch Wise'), Yii::t('app', 'Product Wise'), Yii::t('app', 'Summary')],
+            ],
+            'MemberMilkBill' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_shift_wise',
+                'scenario' => 'MemberMilkBill',
+                'title' => '113 - Farmer Wise Milk Bill',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberMilkBillDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_wise_milk_bill_date_wise',
+                'scenario' => 'MemberMilkBill',
+                'title' => '113 - Farmer Wise Milk Bill',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MemberMilkBillSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_farmer_wise_milk_bill_summary',
+                'scenario' => 'MemberMilkBill',
+                'title' => '113 - Farmer Wise Milk Bill',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'AgentWiseReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_details_date_shift_wise_reconcilation',
+                'scenario' => 'AgentWiseReconciliation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'AgentWiseReconciliationDateWise' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_details_date_wise_reconcilation',
+                'scenario' => 'AgentWiseReconciliation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'AgentWiseReconciliationSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_agent_wise_reconcilation',
+                'scenario' => 'AgentWiseReconciliation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'RouteWiseReconciliation' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,route_code:all_routes,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_route_wise_reconcilation',
+                'scenario' => 'RouteWiseReconciliation',
+                'title' => '220 - Route Wise Reconciliation',
             ],
         ];
         return $label[$l];
