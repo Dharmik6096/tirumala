@@ -4956,3 +4956,7 @@ tr.highlightRow {
     padding: 10px !important;
     font-weight: 600;
 }
+
+.no_pointer {
+    pointer-events: none;
+}
