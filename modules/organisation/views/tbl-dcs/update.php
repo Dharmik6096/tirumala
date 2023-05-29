@@ -2,8 +2,8 @@
 $this->title = Yii::$app->label->title('edit', 'Society');
 
 use yii\web\View;
-$this->title.= ' > ' . $model->dcs_code_ex . ' > ' . $model->ref_code;
 
+$this->title .= ' > ' . $model->dcs_code_ex . ' > ' . $model->ref_code;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -11,6 +11,7 @@ $this->title.= ' > ' . $model->dcs_code_ex . ' > ' . $model->ref_code;
         <?=
         $this->render('_form', [
             'model' => $model, 'type' => 'edit'//,'milkType'=>$milkType',village_list'=>$village_list,
+            , 'showIsBMC' => $showIsBMC,
         ])
         ?>
     </div>
@@ -22,5 +23,5 @@ $script = "
                 $(this).attr('disabled', 'disabled');
             })
         });";
-Yii::$app->view->registerJs($script, View::POS_READY,'disable-dep');
+Yii::$app->view->registerJs($script, View::POS_READY, 'disable-dep');
 ?>

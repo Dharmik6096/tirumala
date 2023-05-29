@@ -60,50 +60,50 @@ class TblMccPlant extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-            [['plant_code', 'name', 'union_code', 'has_min_qty_limit'], 'required'],
-            [['state_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
-            [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code', 'gst_no', 'min_qty_limit', 'has_min_qty_limit', 'sap_vendor_code', 'recovery_validate'], 'safe'],
-            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['capacity'], 'integer'],
-            [['min_qty_limit'], 'integer', 'min' => 1],
-            [['min_qty_limit'], 'required', 'when' => function ($model) {
+                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+                [['plant_code', 'name', 'union_code', 'has_min_qty_limit'], 'required'],
+                [['state_code', 'valid_from', 'milk_type_code'], 'required', 'except' => 'importCsv'],
+                [['created_at', 'updated_at', 'is_active', 'capacity', 'valid_from', 'is_plant', 'milk_type_code', 'gst_no', 'min_qty_limit', 'has_min_qty_limit', 'sap_vendor_code', 'recovery_validate'], 'safe'],
+                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['capacity'], 'integer'],
+                [['min_qty_limit'], 'integer', 'min' => 1],
+                [['min_qty_limit'], 'required', 'when' => function ($model) {
                     return $model->has_min_qty_limit == 1;
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#tblmccplant-has_min_qty_limit').val() == '1'; 
           }"],
-            [['has_min_qty_limit'], function ($attribute, $params) {
+                [['has_min_qty_limit'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'skipOnEmpty' => false, 'on' => ['importCsv']],
-            [['village_code'], 'string', 'max' => 6],
-            [['contact_person'], 'string', 'max' => 100],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['description'], 'string', 'max' => 250],
-            [['email'], 'string', 'max' => 50],
-            [['email'], 'email'],
-            [['name'], function ($attribute, $params) {
+                [['village_code'], 'string', 'max' => 6],
+                [['contact_person'], 'string', 'max' => 100],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['description'], 'string', 'max' => 250],
+                [['email'], 'string', 'max' => 50],
+                [['email'], 'email'],
+                [['name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['mobile_no'], function ($attribute, $params) {
+                [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['mobile_no'], 'string', 'max' => 10],
-            [['name',], 'string', 'max' => 255],
-            [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
+                [['mobile_no'], 'string', 'max' => 10],
+                [['name',], 'string', 'max' => 255],
+                [['local_name', 'local_contact_person_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
 //            [['mcc_plant_code'], 'integer', 'min' => 1],
 //            [['mcc_plant_code'], 'string', 'max' => 6],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_weight_manual', 'is_quality_manual', 'mcc_plant_code_ex', 'ref_code', 'vendor_code'], 'safe'],
-            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
-            ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-            [['gst_no'], 'string', 'min' => 15, 'max' => 15],
-            [['gst_no'], function ($attribute, $params) {
+                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+                ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
+                [['gst_no'], 'string', 'min' => 15, 'max' => 15],
+                [['gst_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['recovery_validate'], 'default', 'value' => 0],
-            [['sap_vendor_code'], 'setVendorCode'],
+                [['recovery_validate'], 'default', 'value' => 0],
+                [['sap_vendor_code'], 'setVendorCode'],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblMccPlant', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -289,6 +289,9 @@ class TblMccPlant extends \app\models\ChildModel {
         if (Yii::$app->session->get('MCC') !== '') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
         }
+        if (Yii::$app->session->get('Plant') !== '') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'mcc_plant_code', $notIn]);
         }
@@ -418,6 +421,9 @@ class TblMccPlant extends \app\models\ChildModel {
             $query->andWhere(['union_code' => $unionCode]);
         if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
         }
         return $query->all();
     }

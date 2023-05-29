@@ -88,12 +88,20 @@ class SqliteCreate extends Component {
                         while ($row = $results->fetchArray()) {
                             $tables_fields[] = $row['name'];
                         }
+                        if (in_array($tableName, ['tbl_product_stock'])) {
+                            $tables_fields = ['product_stock_code', 'product_code', 'stock', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at'];
+                        }
                         $tables_fields = implode(',', $tables_fields);
                         $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
                         if ($field['table_name'] == 'tbl_dcs_milk_dispatch_txn') {
                             $fields = str_replace('tbl_dcs_milk_dispatch_txn.amount', 'tbl_dcs_milk_dispatch_txn.total_amount', $fields);
                         }
                         $fields = $field['table_name'] . '.' . $fields;
+                        if (in_array($tableName, ['tbl_product_stock'])) {
+                            $fields = str_replace('tbl_product_stock.product_stock_code', "concat('MCC-', tbl_product_stock.mcc_plant_code, REPLACE(product_code, CONCAT('PORTAL-', tbl_product_stock.union_code), '')) as product_stock_code", $fields);
+                            $fields = str_replace('tbl_product_stock.stock', "sum(tbl_product_stock.stock) as stock", $fields);
+                            $fields = str_replace('tbl_product_stock.created_at', "getdate() as created_at", $fields);
+                        }
                         $sql = '';
                         if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
@@ -109,6 +117,9 @@ class SqliteCreate extends Component {
                                         $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code is null ";
                                     } else if (strtolower($org_type) == 'vlc') {
                                         $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code   in ($whereDcsStock) ";
+                                    }
+                                    if (in_array($tableName, ['tbl_product_stock'])) {
+                                        $sql .= " group by tbl_product_stock.product_code, tbl_product_stock.union_code,tbl_product_stock.plant_code,tbl_product_stock.mcc_plant_code, tbl_product_stock.bmc_code,tbl_product_stock.dcs_code";
                                     }
                                 }
                             } else {

@@ -19,9 +19,13 @@ $attribute = [
         ['attribute' => 'bmc_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => FALSE],
+        ['attribute' => 'route_code', 'filter' => false, 'label' => Yii::t('app', 'Route Code')],
         ['attribute' => 'route_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }, 'filter' => FALSE],
+        ['attribute' => 'route_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
+        }, 'filter' => FALSE, 'label' => 'Ref - Route Code'],
         ['attribute' => 'customer_type', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
         }, 'filter' => Yii::$app->dropdown->dropdownfilter('customer_type', $searchModel, 'customer_type', Yii::t('app', 'Select'))],

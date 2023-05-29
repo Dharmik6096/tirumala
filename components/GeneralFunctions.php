@@ -612,13 +612,16 @@ class GeneralFunctions extends Component {
                 }
             }
         } else { //no file exists with this name
-            if (mkdir($path, 0777, true) == false) {
-                die('Failed to create folders...' . $path);
-                return false;
+            if (!is_dir($path)) {
+                if (mkdir($path, 0777, true) == false) {
+                    die('Failed to create folders...' . $path);
+                    return false;
+                }
             }
         }
 
-        if (strstr($path, 'EKOMILK')) {
+        
+        if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
             $command = 'chmod 777 -R ' . $path;
             exec($command);
         }
@@ -2242,16 +2245,16 @@ class GeneralFunctions extends Component {
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere(['or',
-            ['pd.union_code' => $unions],
-            ['ms.union_code' => $unions],
-            ['md.union_code' => $unions],
-            ['cs.union_code' => $unions],
-            ['cd.union_code' => $unions]
+                ['pd.union_code' => $unions],
+                ['ms.union_code' => $unions],
+                ['md.union_code' => $unions],
+                ['cs.union_code' => $unions],
+                ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere(['or',
-            [$main_table . '.' . $from_dest => $form_to],
-            [$main_table . '.' . $to_dest => $form_to],
+                [$main_table . '.' . $from_dest => $form_to],
+                [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
@@ -2262,6 +2265,24 @@ class GeneralFunctions extends Component {
             $model->$attribute = $records[0]->mcc_plant_code;
         } else {
             $model->addError('mcc_plant_code', Yii::t('app/validation', Yii::t('app', 'MCC') . ' Is Invalid.'));
+            return false;
+        }
+    }
+
+    public function dateRangeConflict($model, $attribute, $params, $from_dates, $to_dates) {
+        $fromDate = date('Y-m-d', strtotime($model->$from_dates));
+        $toDate = date('Y-m-d', strtotime($model->$to_dates));
+
+        if ($fromDate > $toDate) {
+            $this->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
+            return false;
+        }
+
+        $dateData = $model->find()
+                ->Where('((\'' . $model->from_date . '\' between from_date  and to_date) OR (\'' . $model->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $model->from_date . '\' and  \'' . $model->to_date . '\') OR (to_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\'))')
+                ->one();
+        if (!empty($dateData)) {
+            $model->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
     }

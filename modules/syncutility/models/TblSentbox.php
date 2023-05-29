@@ -150,7 +150,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
                 $destination = 'DCS';
                 break;
         }
-        $this->entry($model, $operation, $sentModel);
+        $this->entry($model, $operation, $sentModel);  
         $sentModel->dest_org_id = !empty($sentModel->dest_org_id) ? $sentModel->dest_org_id : '0';
         $sentModel->dest_org_type = !empty($sentModel->dest_org_type) ? $sentModel->dest_org_type : $destination;
         if ($sentModel->table_name == 'tbl_route_mapping') {
@@ -204,7 +204,7 @@ class TblSentbox extends \yii\db\ActiveRecord {
         //   $this->column_sequence = implode(',', $model->getTableSchema()->getColumnNames());
         $sentModel->sync_status = 'U';
         $sentModel->sync_timestamp = $microtime;
-        $sentModel->posting_timestamp = $microtime;
+        $sentModel->posting_timestamp = !empty($sentModel->posting_timestamp) ? $sentModel->posting_timestamp : $microtime;
         //        $sentModel->transmitted = 0;
         //        $sentModel->is_origin = 1;
         $sentModel->originating_org_id = Yii::$app->session->get('organizations_code');
