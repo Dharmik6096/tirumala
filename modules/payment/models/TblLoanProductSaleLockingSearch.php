@@ -27,6 +27,7 @@ class TblLoanProductSaleLockingSearch extends TblLoanProductSaleLocking {
             [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 10, '>', 'Day Difference can not be greater than 10.');
                 }, 'skipOnEmpty' => false, 'on' => ['saleLockData']],
+            [['plant_code', 'mcc_plant_code'], 'required', 'on' => ['saleLockData']],
         ];
     }
 
