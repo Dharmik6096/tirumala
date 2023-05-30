@@ -82,6 +82,7 @@ $form = ActiveForm::begin([
         echo Html::button(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'download', 'value' => 'download', 'name' => 'download']);
         if ($eiplCode == 'DODLA') {
             echo Html::button(Yii::t('app', 'BULK DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'bulk_download', 'value' => 'bulk_download', 'name' => 'bulk_download']);
+            echo Html::button(Yii::t('app', 'BULK DOWNLOAD(SHIFT)'), ['class' => 'btn btn-primary', 'id' => 'bulk_download_shift_wise', 'value' => 'bulk_download_shift_wise', 'name' => 'bulk_download_shift_wise']);
         }
     }
     ?>
@@ -212,7 +213,7 @@ $count = count($fileDownloadArr);
 $timeOutForLoader = ($count * 1000) + 2000;
 $scriptDownload = "
 
-$('#download').click(function() {
+$('#download,#bulk_download,#bulk_download_shift_wise').click(function() {
          var id= $(this).attr('value');
          $('#set_operation').val(id);
             var len = $('input[class=\"checkbox-collection kv-row-checkbox\"]:checked').length;
@@ -224,20 +225,6 @@ $('#download').click(function() {
                
             }
 });
-
-$('#bulk_download').click(function() {
-         var id= $(this).attr('value');
-         $('#set_operation').val(id);
-            var len = $('input[class=\"checkbox-collection kv-row-checkbox\"]:checked').length;
-            if(len == 0){
-                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select at least one Collection.</span></div></div>');
-                return false;
-            } else {
-                $('#upload-sap-milk-collection').submit();
-               
-            }
-});
-
 ";
 if (!empty($downloadSapFiles)) {
     $scriptDownload .= "
