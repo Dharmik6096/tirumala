@@ -212,6 +212,13 @@ class TblProductStock extends \app\models\ChildModel {
             $this->bmc_code = $code;
             $isMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
         }
+        if ((strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC')) {
+            $this->setCodes(strtoupper($type), $code);
+            $isBmc = Yii::$app->general->getforeignkey($this->dcsCode, 'is_bmc');
+            $isBmcMcc = Yii::$app->general->getforeignkey($this->bmcCode, 'is_mcc');
+            $isMcc = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
+            $code = ($isMcc) ? $this->mcc_plant_code : $code;
+        }
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (strtoupper($type) == 'MCC' || $isMcc) {
             $query->andWhere(['mcc_plant_code' => $code])
@@ -228,7 +235,7 @@ class TblProductStock extends \app\models\ChildModel {
         }
         return $data;
     }
-    
+
     public function getProductBatchListLastSixMonth($type, $code, $product, $check_is_mcc = false) {
         $query = $this->find()->where([
                     'product_code' => $product])
@@ -249,10 +256,10 @@ class TblProductStock extends \app\models\ChildModel {
         } elseif (strtoupper($type) == 'DCS' || strtoupper($type) == 'VLC') {
             $query->andWhere(['dcs_code' => $code]);
         }
-        $six_month_ago_date = date("Y-m-d", strtotime( date( 'Y-m-01' )." -6 months"));
+        $six_month_ago_date = date("Y-m-d", strtotime(date('Y-m-01') . " -6 months"));
         $current_date = date("Y-m-d");
-        $query->andWhere(['>=','cast(created_at as date)',$six_month_ago_date]);
-        $query->andWhere(['<=','cast(created_at as date)',$current_date]);
+        $query->andWhere(['>=', 'cast(created_at as date)', $six_month_ago_date]);
+        $query->andWhere(['<=', 'cast(created_at as date)', $current_date]);
         $data = $query->orderBy(['created_at' => SORT_ASC])->all();
         if (!empty($data)) {
             $data = ArrayHelper::map($data, 'sap_batch_no', 'sap_batch_no');
