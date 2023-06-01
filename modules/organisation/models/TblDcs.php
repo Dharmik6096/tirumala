@@ -1339,7 +1339,7 @@ class TblDcs extends ChildModel {
     }
 
     public function getAllRlsDCS($unionCode = [], $plantCode = [], $mccCode = [], $bmcCode = [], $dcsCode = []) {
-        $query = $this->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'dcs_code_ex'])->where(['is_active' => 1]);
+        $query = $this->find()->select(['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'dcs_code_ex', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($unionCode))
             $query->andWhere(['union_code' => $unionCode]);
 
