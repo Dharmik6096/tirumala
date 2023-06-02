@@ -54,11 +54,11 @@ class TblIndentMasterHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['indent_code'], 'safe'],
-            [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks'], 'safe'],
-            [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
-            [['status_date', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'status_by', 'history_created_by'], 'safe'],
-            [['operation_type', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['indent_code'], 'safe'],
+                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'approve_qty', 'rejected_qty', 'approve_remarks'], 'safe'],
+                [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
+                [['status_date', 'created_at', 'updated_at', 'history_created_at', 'created_by', 'updated_by', 'status_by', 'history_created_by'], 'safe'],
+                [['operation_type', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 

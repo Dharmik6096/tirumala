@@ -16,7 +16,7 @@ $visible = !empty($visibledata) ? True : false;
                     <?php echo $this->render('_search', ['model' => $searchModel, 'dataProvider' => $dataProvider]); ?>
                     <div class="clearfix"></div>
                     <?php
-                    echo $this->render('_approval_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'visible' => $visible
+                    echo $this->render('_approval_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'visible' => $visible, 'indentMaster' => $indentMaster
                     ]);
                     ?>
                 </div>

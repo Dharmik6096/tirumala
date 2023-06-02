@@ -2299,4 +2299,14 @@ class GeneralFunctions extends Component {
         return $number;
     }
 
+    public function getApprovalLevel($process_approval_code) {
+        $level = (new \yii\db\Query)
+                ->select("*")
+                ->from('tbl_process_approval')
+                ->where(['process_approval_code' => $process_approval_code, 'level' => 1, 'status' => 0])
+                ->one();
+
+        return $level;
+    }
+
 }
