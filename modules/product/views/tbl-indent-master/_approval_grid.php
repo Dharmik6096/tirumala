@@ -18,7 +18,6 @@ $this->title = Yii::t('app', 'Indent Approval');
     <div class="">
         <?php echo Html::hiddenInput('operation', 'operation', ['class' => 'set_operation']); ?>
         <?php
-        $editabe = true;
         $attribute = [
                 ['class' => 'kartik\grid\CheckboxColumn',
                 'rowSelectedClass' => GridView::TYPE_SUCCESS,
@@ -38,15 +37,13 @@ $this->title = Yii::t('app', 'Indent Approval');
                 ['attribute' => 'approve_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-                    $level = Yii::$app->general->getApprovalLevel($model['process_approval_code']);
-                    if (!empty($level)) {
-                        $editabe = true;
+                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+                    if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                         echo Html::activeHiddenInput($indentMaster, '[' . $model['process_approval_code'] . ']qty', ['value' => $model['qty']]);
                         echo Html::activeHiddenInput($indentMaster, '[' . $model['process_approval_code'] . ']rate', ['value' => $model['rate']]);
                         return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_qty')->textInput(['value' => $model['qty'], 'class' => 'form-control number-validate approve_qty', 'disabled' => $disabled])->label(FALSE);
                     } else {
-                        $editabe = false;
                         return $model['approve_qty'];
                     }
                 },
@@ -66,26 +63,23 @@ $this->title = Yii::t('app', 'Indent Approval');
                 ['attribute' => 'amount', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE),
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-                    $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
-                    return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']amount')->textInput(['value' => $model['amount'], 'class' => 'form-control number-validate', 'disabled' => $disabled, 'readonly' => TRUE])->label(FALSE);
+                    return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']amount')->textInput(['value' => $model['amount'], 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
                 },
             ],
 //                ['attribute' => 'amount', 'filter' => FALSE, 'visible' => ($visible ? TRUE : FALSE)],
             ['attribute' => 'approve_remarks', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-                    $level = Yii::$app->general->getApprovalLevel($model['process_approval_code']);
-
-                    if (!empty($level)) {
-                        $editabe = true;
+                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+                    if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                         return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_remarks')->textInput(['value' => $model['approve_remarks'], 'class' => 'form-control', 'disabled' => $disabled])->label(FALSE);
                     } else {
-                        $editabe = false;
                         return $model['approve_remarks'];
                     }
                 },
             ],
+                ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [

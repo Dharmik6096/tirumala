@@ -20,7 +20,7 @@ class TblIndentMasterSearch extends TblIndentMaster {
      */
     public function rules() {
         return [
-                [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks'], 'safe'],
+                [['indent_code', 'customer_type', 'customer_code', 'member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'indent_date', 'product_code', 'status', 'status_date', 'status_by', 'status_remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty'], 'safe'],
                 [['qty'], 'number'],
                 [['originating_type'], 'integer'],
                 [['indent_type', 'warehouse_code'], 'safe'],

@@ -259,9 +259,9 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                             $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
                             $existIndentData->status_by = \Yii::$app->user->identity->user_code;
                             $existIndentData->status_date = date('Y-m-d H:i:s');
-                            
-                            $level = Yii::$app->general->getApprovalLevel($code);
-                            if (!empty($level)) {
+
+                            $level = Yii::$app->general->getApprovalLevel($existIndentData->indent_code);
+                            if (empty($level)) {
                                 $existIndentData->approve_qty = $postData['approve_qty'];
                                 $existIndentData->rejected_qty = $postData['rejected_qty'];
                                 $existIndentData->amount = $postData['amount'];
@@ -274,7 +274,6 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                 $modelError = '';
                 foreach ($saveModel as $m) {
                     if (!$m->validate()) {
-                        // var_dump($m);
                         foreach ($m->getErrors() as $key => $value) {
                             $modelError .= $value[0];
                         }

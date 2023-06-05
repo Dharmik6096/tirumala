@@ -67,7 +67,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks'], 'safe'],
+                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks','received_qty'], 'safe'],
                 [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
                 [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
                 [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
