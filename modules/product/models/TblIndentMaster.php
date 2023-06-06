@@ -67,7 +67,7 @@ class TblIndentMaster extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['indent_code'], 'required', 'except' => ['importCsv', 'importCsvOther']],
-                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks','received_qty'], 'safe'],
+                [['union_code', 'mcc_plant_code', 'plant_code', 'dcs_code', 'bmc_code', 'customer_type', 'customer_code', 'member_code', 'product_code', 'status', 'indent_date', 'qty', 'status_remarks', 'route_code', 'approve_qty', 'rejected_qty', 'approve_remarks', 'received_qty', 'dispatch_qty', 'is_close'], 'safe'],
                 [['indent_type', 'warehouse_code', 'rate', 'amount'], 'safe'],
                 [['dcs_code', 'product_code', 'indent_date', 'qty'], 'required', 'on' => ['create', 'createOther', 'importCsv', 'importCsvOther']],
                 [['indent_type', 'rate', 'amount'], 'required', 'on' => ['createOther']],
@@ -97,7 +97,8 @@ class TblIndentMaster extends \app\models\ChildModel {
                 }, 'on' => ['createOther', 'importCsvOther']],
                 [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv', 'importCsvOther']],
                 [['warehouse_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['warehouse_code' => 'store_location_code'], 'on' => ['importCsvOther']],
-                [['approve_qty'], 'approveQty', 'on' => ['approve']]
+                [['approve_qty'], 'approveQty', 'on' => ['approve']],
+                [['is_close'], 'default', 'value' => 0],
         ];
     }
 
