@@ -70,6 +70,7 @@ $this->title = Yii::t('app', 'Indent Dispatch');
                     return '<span id="tblindentdispatch-' . $index . '-remaining">' . $remaining_qty . '</span>';
                 },
             ],
+                ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [

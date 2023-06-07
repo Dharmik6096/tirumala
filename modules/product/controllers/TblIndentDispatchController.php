@@ -295,7 +295,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $product = $data[1];
 //                        $disp_qty = $data[2];
                         $approve_qty = $data[2];
-                        $disp_qty = $indentPostData[$code_key]['dispatch_qty'];
+                        $disp_qty = $indentPostData[$code_key]['dispatch_qty'] == "" ? 0 : $indentPostData[$code_key]['dispatch_qty'];
 
                         $warehouse = isset($data[3]) ? $data[3] : '';
                         $dispatch = new TblIndentDispatch();
@@ -465,7 +465,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                                 $indent->status_by = \Yii::$app->user->identity->user_code;
                                 $indent->status_date = date('Y-m-d H:i:s');
 
-                                if ($indentPostData[$code_key]['is_close'] == 1 || $indent->dispatch_qty == $approve_disp_qty) {
+                                if ($indentPostData[$code_key]['is_close'] == 1 || $indent->dispatch_qty == $approve_qty) {
                                     $indent->status = 5;
                                     $indent->is_close = 1;
                                 }
@@ -475,10 +475,7 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
                         $i++;
                         $j++;
                     }
-//                echo '<pre>';
-//                print_r($saveModel);
-//                echo '</pre>';
-//                die;
+
                     $transaction = $this->generalModel->saveTransaction($saveModel, [$msg, 'create']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index']);

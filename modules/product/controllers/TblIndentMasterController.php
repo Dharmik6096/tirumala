@@ -229,6 +229,7 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         $searchModel = new TblIndentMasterSearch();
         $searchModel->scenario = 'indentApprove';
         $backUrl[] = '/product/tbl-indent-master/indent-approval-other';
+        $indentMaster = new TblIndentMaster();
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -259,8 +260,8 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                             $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
                             $existIndentData->status_by = \Yii::$app->user->identity->user_code;
                             $existIndentData->status_date = date('Y-m-d H:i:s');
-
-                            $level = Yii::$app->general->getApprovalLevel($existIndentData->indent_code);
+//                            $level = Yii::$app->general->getApprovalLevel($existIndentData->indent_code);
+                            $level = $indentMaster->getApprovalLevel($existIndentData->indent_code);
                             if (empty($level)) {
                                 $existIndentData->approve_qty = $postData['approve_qty'];
                                 $existIndentData->rejected_qty = $postData['rejected_qty'];
@@ -291,7 +292,6 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                 }
             }
         }
-        $indentMaster = new TblIndentMaster();
         $dataProvider = $searchModel->indentapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
 
         return $this->render('indent_approval', [

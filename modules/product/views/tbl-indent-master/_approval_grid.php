@@ -37,7 +37,8 @@ $this->title = Yii::t('app', 'Indent Approval');
                 ['attribute' => 'approve_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+//                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+                    $level = $indentMaster->getApprovalLevel($model['indent_code']);
                     if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                         echo Html::activeHiddenInput($indentMaster, '[' . $model['process_approval_code'] . ']qty', ['value' => $model['qty']]);
@@ -70,7 +71,8 @@ $this->title = Yii::t('app', 'Indent Approval');
             ['attribute' => 'approve_remarks', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+//                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
+                    $level = $indentMaster->getApprovalLevel($model['indent_code']);
                     if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
                         return $form->field($indentMaster, '[' . $model['process_approval_code'] . ']approve_remarks')->textInput(['value' => $model['approve_remarks'], 'class' => 'form-control', 'disabled' => $disabled])->label(FALSE);
@@ -79,7 +81,7 @@ $this->title = Yii::t('app', 'Indent Approval');
                     }
                 },
             ],
-                ['attribute' => 'received_qty', 'filter' => FALSE],
+//                ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [

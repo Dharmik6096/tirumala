@@ -349,4 +349,15 @@ class TblIndentMaster extends \app\models\ChildModel {
         }
     }
 
+    public function getApprovalLevel($process_code) {
+        $level = (new \yii\db\Query)
+                ->select("*")
+                ->from('tbl_process_approval')
+                ->where(['process_code' => $process_code, 'level' => 1])
+                ->andWhere(['!=', 'status', 0])
+                ->one();
+
+        return $level;
+    }
+
 }
