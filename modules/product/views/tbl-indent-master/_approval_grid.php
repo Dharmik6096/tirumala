@@ -37,7 +37,6 @@ $this->title = Yii::t('app', 'Indent Approval');
                 ['attribute' => 'approve_qty', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-//                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
                     $level = $indentMaster->getApprovalLevel($model['indent_code']);
                     if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
@@ -71,7 +70,6 @@ $this->title = Yii::t('app', 'Indent Approval');
             ['attribute' => 'approve_remarks', 'filter' => FALSE,
                 'format' => 'raw',
                 'value' => function ($model) use ($form, $indentMaster) {
-//                    $level = Yii::$app->general->getApprovalLevel($model['indent_code']);
                     $level = $indentMaster->getApprovalLevel($model['indent_code']);
                     if (empty($level)) {
                         $disabled = $model['allow_edit'] == '1' ? FALSE : TRUE;
@@ -81,7 +79,6 @@ $this->title = Yii::t('app', 'Indent Approval');
                     }
                 },
             ],
-//                ['attribute' => 'received_qty', 'filter' => FALSE],
         ];
 
         $grid_option = [

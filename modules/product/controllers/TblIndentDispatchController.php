@@ -484,8 +484,6 @@ class TblIndentDispatchController extends \app\controllers\ChildController {
             }
         }
 
-//        $dataProvider = $searchModel->indentdispatchothersearch(Yii::$app->request->queryParams);
-
         return $this->render('create_other', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,

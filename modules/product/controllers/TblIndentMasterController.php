@@ -260,7 +260,6 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                             $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
                             $existIndentData->status_by = \Yii::$app->user->identity->user_code;
                             $existIndentData->status_date = date('Y-m-d H:i:s');
-//                            $level = Yii::$app->general->getApprovalLevel($existIndentData->indent_code);
                             $level = $indentMaster->getApprovalLevel($existIndentData->indent_code);
                             if (empty($level)) {
                                 $existIndentData->approve_qty = $postData['approve_qty'];
