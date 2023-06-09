@@ -52,6 +52,8 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                     $result = 'displayConfirmPopup';
                     $msg = \Yii::t('app', "Payment has been already generated for selected Period.Do You want to Regenerate?");
                     $queryParamRegenerate['reGenerate'] = 1;
+                } else {
+                    $queryParam['reGenerate'] = 1;
                 }
                 $url = Url::to($queryParam);
                 $url_regenerate = Url::to($queryParamRegenerate);
