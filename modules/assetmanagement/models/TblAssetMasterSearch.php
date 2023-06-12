@@ -53,7 +53,7 @@ class TblAssetMasterSearch extends TblAssetMaster {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['assetGroupCode','assetType']);
+        $query->joinWith(['assetGroupCode', 'assetType']);
         // grid filtering conditions
         $query->andFilterWhere(['like', 'asset_code', $this->asset_code])
                 ->andFilterWhere(['like', 'tbl_asset_group.asset_group_name', $this->asset_group_code])

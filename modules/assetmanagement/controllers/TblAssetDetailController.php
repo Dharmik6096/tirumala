@@ -19,6 +19,7 @@ use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
 use yii\widgets\ActiveForm;
 use app\models\ChildModel;
+use yii\base\UserException;
 
 /**
  * TblAssetDetailController implements the CRUD actions for TblAssetDetail model.
@@ -77,6 +78,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->setModel($this->model);
             $master[] = $this->model;
+            $assetTrans->current_status = $this->model->current_status;
             $assetTrans->asset_detail_code = $this->model->asset_detail_code;
             $assetTrans->from_type = 'VEN';
             $assetTrans->from_dest = $this->model->manufacturer_code;
@@ -444,12 +446,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if (!$trModel->validate()) {
                 foreach ($trModel->getErrors() as $e) {
                     $errMsg = !empty($e[0]) ? $e[0] : '';
-                    $msg .=!empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
+                    $msg .= !empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
                 }
             }
             if ($diffQty < $_POST['qty'] || !empty($msg)) {
                 $e = $diffQty < $_POST['qty'] ? Yii::t('app', 'Quantity can not be greater than ') . $diffQty : '';
-                $msg .=!empty($msg) ? '<br/>' . $e : $e;
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
                 $data['msg'] = $msg;
             } else {
                 $isSerialNo = Yii::$app->general->getforeignkey($trModel->assetCode, 'is_serial_number');

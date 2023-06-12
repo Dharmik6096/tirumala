@@ -12,7 +12,6 @@ $class = $type == 'create' ? '' : 'no_pointer';
 
 <?php
 $form = ActiveForm::begin([
-
             'options' => [],
             'validateOnBlur' => FALSE,
             
@@ -24,30 +23,36 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
-    </div>
-    <div class="col-sm-2 number-validate">  
-        <?= $form->field($model, 'asset_code')->textInput(['readonly' => $readonly]) ?>
+<?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('asset_group_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('asset_group_code')); ?>
+<?= Yii::$app->dropdown->dropdown('asset_group_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('asset_group_code')); ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'asset_name')->textInput() ?>
+<?= $form->field($model, 'asset_name')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'local_name')->textInput() ?>
+<?= $form->field($model, 'local_name')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('cmpl_product_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('cmpl_product_code')); ?>
+<?= $form->field($model, 'ref_code')->textInput() ?>
+    </div>
+    <!--    <div class="col-sm-2">
+    <? // Yii::$app->dropdown->dropdown('cmpl_product_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('cmpl_product_code')); ?>
+        </div>-->
+</div>
+<div class="row">
+    <div class="col-sm-2 mt15">
+<?= $form->field($model, 'is_serial_number', ['checkboxTemplate' => "<div class='checkbox " . $class . "'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_serial_number', ['checkboxTemplate' => "<div class='checkbox " . $class . "'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+<?= $form->field($model, 'is_spare', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
     </div>
-
-    <div class="col-sm-2 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+</div>
+<div class="row">
+    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+<?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>

@@ -39,6 +39,7 @@ class TblAssetMasterHistory extends \yii\db\ActiveRecord {
             [['asset_code', 'asset_group_code', 'asset_name', 'created_by', 'updated_by', 'operation_type', 'history_created_by', 'local_name'], 'safe'],
             [['is_serial_number', 'is_active', 'cmpl_product_code'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+            [['ref_code', 'is_spare'], 'safe'],
         ];
     }
 
@@ -61,6 +62,8 @@ class TblAssetMasterHistory extends \yii\db\ActiveRecord {
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
             'local_name' => Yii::t('app', 'Local Name'),
+            'ref_code' => Yii::t('app', 'Refference Code'),
+            'is_spare' => Yii::t('app', 'Is Spare'),
         ];
     }
 
