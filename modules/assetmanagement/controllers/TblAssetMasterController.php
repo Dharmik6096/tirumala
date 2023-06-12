@@ -54,7 +54,7 @@ class TblAssetMasterController extends \app\controllers\ChildController {
         $this->model = new TblAssetMaster();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            // $this->model->asset_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->asset_code = (String) Yii::$app->general->getCodeAutoIncrement($this->model);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Asset Master', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -138,10 +138,10 @@ class TblAssetMasterController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             $ref_code = '';
             $slocType = '';
-            if(!empty($parents[1])) {
+            if (!empty($parents[1])) {
                 $ref_code = $parents[1];
                 $slocType = 3;
-            } else if(!empty($parents[0])) {
+            } else if (!empty($parents[0])) {
                 $ref_code = $parents[0];
                 $slocType = 2;
             }
@@ -157,18 +157,17 @@ class TblAssetMasterController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-    
-    
+
     public function actionWithSrNoAssetList() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             $ref_code = '';
             $slocType = '';
-            if(!empty($parents[1])) {
+            if (!empty($parents[1])) {
                 $ref_code = $parents[1];
                 $slocType = 3;
-            } else if(!empty($parents[0])) {
+            } else if (!empty($parents[0])) {
                 $ref_code = $parents[0];
                 $slocType = 2;
             }
@@ -183,6 +182,24 @@ class TblAssetMasterController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionGetAssetIsSerial() {
+        $data = [];
+        $data['status'] = 'error';
+
+        if (!empty($_POST)) {
+
+            $model = new TblAssetMaster();
+            $model->asset_code = $_POST['spare_code'];
+
+            $asset_serial = $model->getAssetData();
+            if (!empty($asset_serial)) {
+                $data['status'] = 'success';
+                $data['is_serial_number'] = $asset_serial->is_serial_number;
+            }
+        }
+        return Json::encode($data);
     }
 
 }
