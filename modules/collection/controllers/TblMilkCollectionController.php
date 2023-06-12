@@ -353,7 +353,13 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
 
     public function actionUpdateCollection() {
         $searchModel = new TblMilkCollectionSearch();
-        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams);
+        $postData = Yii::$app->request->post();
+        $collCodes = [];
+        if (!empty($postData) && !empty($postData['collectionCodes'])) {
+            $collCodes = $postData['collectionCodes'];
+            $collCodes = array_values((array) json_decode($collCodes));
+        }
+        $dataProvider = $searchModel->updatesarch(Yii::$app->request->queryParams, $collCodes);
         $searchModel->scenario = 'updateMilkCollection';
         $detailModel = $dataProvider->getModels();
         $message = 'Milk Collection';
@@ -1130,7 +1136,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     if ($status == 'upload') {
                         $ftp_model = new TblFtpTxnLog();
                         $ftp_model->exportData($data_array, $title = '', $output);
-                    } elseif ($status == 'download') {
+                    } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
                         if ($eiplCode == 'DODLA') {
                             $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];
                             if (empty($checkArray[$key]['dcs_code'])) {
@@ -1178,6 +1184,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     }
                 }
                 if ($eiplCode == 'DODLA') {
+                    $all_data = [];
+                    $all_data_m = [];
+                    $all_data_e = [];
+                    $postData = Yii::$app->request->post();
                     foreach ($checkArray as $checkKey => $checkAr) {
                         $dateArr = explode('~~', $checkKey);
                         $date = $dateArr[0] . ' ' . Yii::$app->general->getshift($dateArr[1]);
@@ -1194,18 +1204,48 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                         }
                         $output = \Yii::$app->general->getSpData($sp, $controls);
                         if (!empty($output)) {
-                            $downLoadArray = [];
-                            $downLoadArray[] = $output;
-                            foreach ($downLoadArray as $bmc => $download) {
-                                if ($eiplCode == 'DODLA') {
-                                    $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
-                                } else {
-                                    $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                            if ($postData['operation'] == 'bulk_download') {
+                                foreach ($output as $bulk_output) {
+                                    $all_data[] = $bulk_output;
                                 }
-                                $this->downloadData($title, $download, $fileArray);
+                            } else if ($postData['operation'] == 'bulk_download_shift_wise') {
+                                foreach ($output as $bulk_output) {
+                                    if (in_array(strtoupper($bulk_output['Shift_Id']), ['1', 'M'])) {
+                                        $all_data_m[] = $bulk_output;
+                                    } else {
+                                        $all_data_e[] = $bulk_output;
+                                    }
+                                }
+                            } else {
+                                $downLoadArray = [];
+                                $downLoadArray[] = $output;
+
+                                foreach ($downLoadArray as $bmc => $download) {
+                                    if ($eiplCode == 'DODLA') {
+                                        $title = $download[0]['Plant_Code'] . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                    } else {
+                                        $title = $download[0]['Plant_Code'] . '_' . $bmc . '_VMCC_' . str_replace('-', '_', Yii::$app->controls->view_date($dateArr[0])) . '_' . $dateArr[1];
+                                    }
+                                    $this->downloadData($title, $download, $fileArray);
+                                }
+                                $this->fileDownloadArr = $fileArray;
                             }
-                            $this->fileDownloadArr = $fileArray;
                         }
+                    }
+                    if (!empty($all_data)) {
+                        $title = 'ALL_VMCC_DATA';
+                        $this->downloadData($title, $all_data, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
+                    }
+                    if (!empty($all_data_m)) {
+                        $title = 'ALL_VMCC_DATA_M';
+                        $this->downloadData($title, $all_data_m, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
+                    }
+                    if (!empty($all_data_e)) {
+                        $title = 'ALL_VMCC_DATA_E';
+                        $this->downloadData($title, $all_data_e, $fileArray);
+                        $this->fileDownloadArr = $fileArray;
                     }
                 }
                 if ($status == 'upload') {
@@ -1285,6 +1325,24 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
+    }
+
+    public function actionRealTimeCollection() {
+        if (Yii::$app->request->isAjax) {
+            $cur_time = date_create(date('H:i:s'));
+            $morning_time = date_create('16:00:00');
+            $diff = date_diff($morning_time, $cur_time);
+            $time = '06:00:00';
+            if (($diff->h > 0 || $diff->i > 0) && $diff->invert == 0) {
+                $time = '18:00:00';
+            }
+            $sp_param = [];
+            $sp_param[] = date('Y-m-d') . ' ' . $time;
+            $mcc_weight_data = \Yii::$app->general->getSpData('sp_mis_realtime_mcc_collection_weight', $sp_param);
+            $mcc_quality_data = \Yii::$app->general->getSpData('sp_mis_realtime_mcc_collection_quality', $sp_param);
+            return $this->renderAjax('_real_time_collection_details', ['mcc_weight_data' => $mcc_weight_data, 'mcc_quality_data' => $mcc_quality_data]);
+        }
+        return $this->render('real_time_collection');
     }
 
 }

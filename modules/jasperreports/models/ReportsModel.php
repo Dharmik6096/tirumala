@@ -76,7 +76,7 @@ class ReportsModel extends Model {
                 }, 'skipOnEmpty' => false],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_from_date', 'p_to_date'], 'required', 'on' => 'BMCPayment'],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_customer_type', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkPayment']],
-                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorMilkBill', 'VendorMilkBillVardaan', 'VendorMilkBillSnmilk', 'VendorMilkBillJgf']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_dcs_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkPayment']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberMilkBill']],
                 [['union_code'], 'required', 'on' => ['StaffSalary']],
@@ -84,7 +84,7 @@ class ReportsModel extends Model {
                 [['union_code', 'p_plant_code', 'p_from_date', 'p_to_date'], 'required', 'on' => ['InchargeRemuneration']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['MemberBillAbstract']],
                 [['union_code', 'p_plant_code', 'p_mcc_code', 'p_bmc_code', 'p_payment_cycle_code'], 'required', 'on' => ['VendorBillMmd']],
-                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive']],
+                [['union_code', 'p_plant_code', 'p_mcc_code', 'p_from_date', 'from_shift', 'p_to_date', 'to_shift'], 'required', 'on' => ['FarmerIncentive', 'VlccTransactionDataReport']],
                 [['p_from_date', 'p_to_date', 'p_bmc_code'], 'required', 'on' => ['MccDayBookDispatchHub']],
         ];
     }

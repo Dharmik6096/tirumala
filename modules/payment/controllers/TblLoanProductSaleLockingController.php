@@ -89,6 +89,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
                             Yii::$app->operation->history($existSale, $historyModel, UPDATE);
                             $saveModel[] = $historyModel;
                         }
+                        $existSale->scenario = 'locksale';
                         $existSale->data_lock = 1;
                         $existSale->lock_date = $model->locking_date;
                         $existSale->reference_code = $model->locking_code;

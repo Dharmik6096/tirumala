@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($txModel, 'rate')->textInput() ?>
         </div>
-        <div class="col-sm-1 reset_field number-validate">
+        <div class="col-sm-1 reset_field qty-validate">
             <?= $form->field($txModel, 'qty')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field">
@@ -145,7 +145,7 @@ $form = ActiveForm::begin([
         ]);
         AjaxSubmitButton::end();
         ?>
-        <?= Yii::$app->controls->custombutton(Yii::t('app', ucfirst('reset')), 'asset-transaction'); ?>
+        <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
 </div>

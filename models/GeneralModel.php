@@ -565,7 +565,9 @@ class GeneralModel {
         try {
             $master = [];
             foreach ($model as $m) {
-                $m_name = basename(get_class($m));
+                $m_name = $m::className();
+                $m_name = explode("\\", $m_name);
+                $m_name = $m_name[count($m_name) - 1];
                 if (!empty($auto_key_config[$m_name])) {
                     foreach ($auto_key_config[$m_name] as $key_config) {
                         $m->{$key_config['self_key']} = $model[$key_config['parent_index']]->{$key_config['parent_key']};
