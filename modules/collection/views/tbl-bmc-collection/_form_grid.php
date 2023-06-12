@@ -121,6 +121,7 @@ $attribute = [
         }, 'filter' => false],
         ['attribute' => 'can_no', 'visible' => false, 'filter' => true],
         ['attribute' => 'no_of_can', 'visible' => false, 'filter' => true],
+        ['attribute' => 'antibiotic', 'visible' => false, 'filter' => true],
 ];
 
 $grid_option = [

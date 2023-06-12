@@ -102,7 +102,7 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                     $model->import_union_code = !empty($this->details['import_union_code']) ? $this->details['import_union_code'] : '';
                     $model->import_key_pattern = !empty($this->details['import_key_pattern']) ? $this->details['import_key_pattern'] : '';
                     $error = ActiveForm::validate($model);
-                   
+
                     $findField = isset($this->details['update_key']) ? $this->details['update_key'] : '';
                     $excludeField = isset($this->details['exclude_update']) ? $this->details['exclude_update'] : '';
                     if (!empty($findField)) {
@@ -173,8 +173,8 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
                         $model->setChildTable($model, $modelList, $errors);
                     }
                     if (empty($model->getErrors()) && $model->validate() && empty($errors)) {
-                        $modelList[] = $model;
-
+                        // $modelList[] = $model;
+                        $master[] = $model->save();
                         foreach ($modelList as $modelRow) {
                             $master[] = $modelRow->save();
                         }

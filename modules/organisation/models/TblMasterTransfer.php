@@ -36,7 +36,7 @@ use app\modules\organisation\models\TblCustomerMaster;
  */
 class TblMasterTransfer extends \app\models\ChildModel {
 
-    public $ex_member_code;
+    public $ex_member_code, $from_shift, $to_shift;
 
     /**
      * @inheritdoc
@@ -50,19 +50,24 @@ class TblMasterTransfer extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['status', 'update_transaction'], 'default', 'value' => 0],
-            [['master_type', 'transfer_type', 'union_code', 'plant_code', 'wef_date'], 'required'],
-            [['old_member_code', 'customer_type', 'customer_code'], 'safe'],
-            [['old_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'DCS'],
-            [['customer_type', 'customer_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'CUSTOMER'],
-            [['old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'old_member_code'], 'required', 'on' => 'FARMER'],
-            [['master_type', 'transfer_type', 'new_member_code', 'old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'plant_code', 'old_route_code', 'new_route_code', 'union_code', 'created_by', 'updated_by'], 'string'],
-            [['wef_date', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at', 'update_transaction', 'plant_code'], 'safe'],
-            [['status'], 'integer'],
+                [['status', 'update_transaction'], 'default', 'value' => 0],
+                [['master_type', 'transfer_type', 'union_code', 'plant_code', 'wef_date'], 'required'],
+                [['old_member_code', 'customer_type', 'customer_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
+                [['old_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'DCS'],
+                [['customer_type', 'customer_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'new_route_code'], 'required', 'on' => 'CUSTOMER'],
+                [['old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'old_member_code'], 'required', 'on' => 'FARMER'],
+                [['master_type', 'transfer_type', 'new_member_code', 'old_dcs_code', 'new_dcs_code', 'old_bmc_code', 'new_bmc_code', 'old_mcc_plant_code', 'new_mcc_plant_code', 'plant_code', 'old_route_code', 'new_route_code', 'union_code', 'created_by', 'updated_by'], 'string'],
+                [['wef_date', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at', 'update_transaction', 'plant_code'], 'safe'],
+                [['status'], 'integer'],
             // [['ex_member_code'], 'integer', 'min' => 1, 'max' => 1498],
             //  [['ex_member_code'], 'string', 'max' => 4],
-            [['master_type'], 'checkMember', 'on' => 'FARMER'],
-            [['master_type'], 'checkRequest', 'on' => ['FARMER', 'DCS', 'CUSTOMER']],
+            [['from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'required', 'when' => function ($model) {
+                    return $model->update_transaction == '1';
+                }, 'whenClient' => "function (attribute, value) {
+                        return $('#tblmastertransfer-update_transaction').is(':checked');
+                }", 'on' => ['DCS']],
+                [['master_type'], 'checkMember', 'on' => 'FARMER'],
+                [['master_type'], 'checkRequest', 'on' => ['FARMER', 'DCS', 'CUSTOMER']],
         ];
     }
 
@@ -97,6 +102,10 @@ class TblMasterTransfer extends \app\models\ChildModel {
             'ex_member_code' => Yii::t('app', 'Ex. Member Code'),
             'customer_type' => Yii::t('app', 'Type'),
             'customer_code' => Yii::t('app', 'Name'),
+            'from_datetime' => Yii::t('app', 'From Date'),
+            'to_datetime' => Yii::t('app', 'To Date'),
+            'from_shift' => Yii::t('app', 'From Shift'),
+            'to_shift' => Yii::t('app', 'To Shift'),
         ];
     }
 
@@ -132,6 +141,22 @@ class TblMasterTransfer extends \app\models\ChildModel {
         $record = $data->one();
         if (!empty($record)) {
             $this->addError('master_type', Yii::t('app', 'Transfer Request already open.'));
+        } else {
+            if (empty($this->getErrors())) {
+                if ($this->master_type == 'DCS' && $this->update_transaction == '1') {
+                    $this->from_datetime = Yii::$app->formatter->asDate($this->from_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->from_shift);
+                    $this->to_datetime = Yii::$app->formatter->asDate($this->to_datetime, DATE_FORMAT) . ' ' . \Yii::$app->general->getshift($this->to_shift);
+                    $shift_detail = \Yii::$app->general->getSpData('sp_mcc_unlock_shift_count', [$this->from_datetime, $this->to_datetime, $this->old_mcc_plant_code]);
+                    if (!empty($shift_detail) && $shift_detail[0]['unlock_count'] == 0) {
+                        
+                    } else {
+                        $this->addError('old_mcc_plant_code', Yii::t('app', 'Lock data for all shift of current MCC.'));
+                    }
+                } else {
+                    $this->from_datetime = $this->to_datetime = NULL;
+                    $this->update_transaction = 0;
+                }
+            }
         }
     }
 

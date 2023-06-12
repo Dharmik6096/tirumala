@@ -1535,6 +1535,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['data_missing' => Yii::t('app', 'Data Missing'), 'dispute' => Yii::t('app', 'Dispute'), 'recovery_issue' => Yii::t('app', 'Recovery Issue')],
             ],
+            'product_stock_issue_reason' => [
+                'name' => 'reason',
+                'prompt' => Yii::t('app', 'Select Reason'),
+                'data' => ['consumed' => Yii::t('app', 'Consumed'), 'screaped' => Yii::t('app', 'Screaped'), 'lost' => Yii::t('app', 'Lost')],
+            ]
         ];
         return $records[$l];
     }
@@ -1871,6 +1876,11 @@ class DropDown extends Component {
     public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function productBatchLstSixMonth($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list-last-six-month', Yii::t('app', 'Select Batch'), $multiple);
     }
 
     public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {

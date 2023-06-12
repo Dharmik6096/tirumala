@@ -9,6 +9,7 @@ use app\modules\globalmaster\models\TblAnimalType;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
+$antibiotic = \Yii::$app->session->get('eiplCode') == 'PRABHAT' ? TRUE : FALSE;
 ?>
 <div class=""></div>
 <?php
@@ -135,6 +136,12 @@ $form = ActiveForm::begin([
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
             },
+        ],
+        ['attribute' => 'antibiotic',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) use ($form) {
+                        return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+                }, 'visible' => $antibiotic
         ],
     ];
 

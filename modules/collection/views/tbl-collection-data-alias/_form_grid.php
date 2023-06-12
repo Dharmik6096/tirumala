@@ -65,7 +65,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'old_route_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldRouteCode, 'route_name');
             }, 'filter' => FALSE],
-        ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable)],
+            ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable)],
             ['attribute' => 'old_milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkTypeCode, 'animal_type_name');
             }, 'filter' => false, 'visible' => $showField],
@@ -88,6 +88,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'snf', 'filter' => false],
             ['attribute' => 'rtpl', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+            ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
+            ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'error_desc', 'filter' => false],
     ];
 

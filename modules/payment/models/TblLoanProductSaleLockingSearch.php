@@ -20,13 +20,14 @@ class TblLoanProductSaleLockingSearch extends TblLoanProductSaleLocking {
      */
     public function rules() {
         return [
-            [['locking_code', 'from_date', 'to_date', 'locking_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type'], 'safe'],
-            [['total_count', 'originating_type'], 'integer'],
-            [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-            [['from_date', 'to_date', 'locking_date', 'union_code'], 'required', 'on' => ['saleLockData']],
-            [['to_date'], function ($attribute, $params) {
+                [['locking_code', 'from_date', 'to_date', 'locking_date', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'type'], 'safe'],
+                [['total_count', 'originating_type'], 'integer'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['from_date', 'to_date', 'locking_date', 'union_code'], 'required', 'on' => ['saleLockData']],
+                [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 10, '>', 'Day Difference can not be greater than 10.');
                 }, 'skipOnEmpty' => false, 'on' => ['saleLockData']],
+                [['union_code'], 'required', 'on' => ['saleLockData']],
         ];
     }
 

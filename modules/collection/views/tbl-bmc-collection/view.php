@@ -300,7 +300,11 @@ $client_code = \Yii::$app->session->get('eiplCode');
                     'columns' => [
                             [
                             'attribute' => 'no_of_can',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'antibiotic',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

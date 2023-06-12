@@ -142,6 +142,7 @@ echo GhostMenu::widget([
                             ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
                     ]
                 ],
+                    ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
             ],
         ],
             [
@@ -188,6 +189,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
                             ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking'), 'visible' => $batchNoWise],
                             ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Good Issue'), 'url' => ['/product/tbl-product-stock-adjustment/index'], 'active' => ($cntrl == 'tbl-product-stock')],
+                            ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
                     ]
                 ],
                     [
@@ -476,7 +479,7 @@ echo GhostMenu::widget([
                                     ['label' => '107 -' . Yii::t('app', 'Society Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-society-date-shift-wise']],
                                     ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                     ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
-//                                    ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
+                                // ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
                                 ['label' => '110 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                                     ['label' => '111 -' . Yii::t('app', 'Member Collection Report For SAP'), 'url' => ['/misreports/reports/member-collection-report-for-sap']],
                                     ['label' => '113 -' . Yii::t('app', 'VLCs comparison summary'), 'url' => ['/misreports/reports/milk-collection-proc']],
@@ -484,6 +487,9 @@ echo GhostMenu::widget([
                                     ['label' => '115 -' . Yii::t('app', 'Absent Pouring VLCs'), 'url' => ['/misreports/reports/milk-collection-absent']],
                                     ['label' => '116 -' . Yii::t('app', 'VLC Left Pourers'), 'url' => ['/misreports/reports/left-pourer']],
                                     ['label' => '117 -' . Yii::t('app', 'Negative Growth VLCs'), 'url' => ['/misreports/reports/milk-collection-negative-groth']],
+                                    ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
+                                    ['label' => '112 -' . Yii::t('app', 'Member Collection Report For SAP'), 'url' => ['/misreports/reports/member-collection-report-for-sap']],
+                                    ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
                             ]
                         ],
                             [
@@ -510,6 +516,8 @@ echo GhostMenu::widget([
                                     ['label' => '216 -' . Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
                                     ['label' => '217 -' . Yii::t('app', 'Society Composite Vs Actual Report'), 'url' => ['/misreports/reports/society-composite-vs-actual'], 'visible' => User::canRoute(['/misreports/reports/society-composite-vs-actual']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
                                     ['label' => '218 -' . Yii::t('app', 'BMC Collection Report For SAP'), 'url' => ['/misreports/reports/rmrd-milk-collection-for-sap']],
+                                    ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
+                                    ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -582,8 +590,9 @@ echo GhostMenu::widget([
                             ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
                             ['label' => '614-' . Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/jasperreports/default/incharge-remuneration']],
                             ['label' => '615-' . Yii::t('app', 'Member Bill Abstract'), 'url' => ['/jasperreports/default/member-bill-abstract']],
-                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK') ? FALSE : TRUE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK' || $eiplCode == 'JGF') ? FALSE : TRUE) : FALSE],
                             ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-snmilk'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-snmilk']) ? (($eiplCode == 'SNMILK') ? TRUE : FALSE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-jgf'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-jgf']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
                             ['label' => '617-' . Yii::t('app', 'CC Milk Payment'), 'url' => ['/misreports/reports/cc-milk-payment']],
                             ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
                             ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
@@ -642,6 +651,13 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
                             ['label' => Yii::t('app', 'Tanker Report'), 'url' => ['/misreports/reports/tanker-report']],
                             ['label' => Yii::t('app', 'Auto Manual Report'), 'url' => ['/misreports/reports/auto-manual-milk-collection']],
+                            ['label' => Yii::t('app', 'Antibiotic Report'), 'url' => ['/misreports/reports/antibiotic-report']],
+                            ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report']],
+                            ['label' => Yii::t('app', 'VLCC Transaction Data Report MIS'), 'url' => ['/misreports/reports/vlcc-transaction-data-report']],
+                        //   ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-summary']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                        //  ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-detail']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                        ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary']],
+                            ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail']],
                     ]
                 ],
                     [
@@ -662,6 +678,9 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Vendor Sale Report'), 'url' => ['/misreports/reports/sale-report-vendor']],
                             ['label' => Yii::t('app', 'Summary Report - MCC'), 'url' => ['/misreports/reports/summary-report-mcc']],
                             ['label' => Yii::t('app', 'Summary Report - DCS'), 'url' => ['/misreports/reports/summary-report-dcs']],
+                            ['label' => Yii::t('app', 'Stock Dispatch To Sale Report'), 'url' => ['/misreports/reports/stock-dispatch-to-sale'], 'visible' => User::canRoute(['/misreports/reports/stock-dispatch-to-sale']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'DCS Wise Stock'), 'url' => ['/misreports/reports/stock-register-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
+                            ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-mcc-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
                     [
