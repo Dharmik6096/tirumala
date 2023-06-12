@@ -534,6 +534,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-indent-product/product-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
+    public function bom_code($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/bom-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -781,7 +786,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1463,6 +1468,11 @@ class DropDown extends Component {
                 'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'field_supervisor' => Yii::t('app', 'Field Supervisor'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'Area Manager/Zonal Manager'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
                 'remove_key' => ['all']
             ],
+            'asset_detail_status' => [
+                'name' => 'current_status',
+                'prompt' => Yii::t('app', 'Select Asset Detail Status'),
+                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped')],
+            ],
         ];
         return $records[$l];
     }
@@ -1576,6 +1586,9 @@ class DropDown extends Component {
             'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
             'approval_process' => ['name' => 'process_name', 'fields' => 'process_name,process_desc,', 'prompt' => Yii::t('app', 'Select Process'), 'model' => 'TblApprovalStagesProcess', 'depend' => 'union_code'],
             'indent-product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['is_indent']],
+            'spare_code' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster', 'whereCondition' => ['is_spare' => 1]],
+            'spare_code_detail_bom' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster'],
+            'asset_bom_code' => ['name' => 'spare_code', 'fields' => 'spare_code,spare_code,', 'prompt' => Yii::t('app', 'Select Spare'), 'model' => 'TblAssetBom', 'depend' => 'asset_code'],
         ];
         return $label[$l];
     }
@@ -1662,7 +1675,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

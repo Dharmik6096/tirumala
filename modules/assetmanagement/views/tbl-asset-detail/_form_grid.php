@@ -63,6 +63,9 @@ $attribute = [
     ['attribute' => 'make', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->assetDetail, 'make');
         }],
+    ['attribute' => 'current_status', 'value' => function($model) {
+            return !empty($model->current_status) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model->current_status] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('asset_detail_status', $searchModel, 'current_status')],
     ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
         // ['attribute' => 'maintanance_duration_in_days'],
 //    ['attribute' => 'is_active', 'visible' => false],
@@ -80,6 +83,11 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-asset-detail/update', 'id' => $model->asset_detail_code]);
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+        },
+        'asset-detail-bom' => function ($url, $model) {
+            $class = $model->assetCode['is_spare'] == 0 ? '' : 'disabled';
+            $options = ['data-code' => $model->asset_detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Detail Bom', 'class' => $class,];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/assetmanagement/tbl-asset-detail-bom/create', 'id' => $model->asset_detail_code], $options);
         },
     ]
 ];
