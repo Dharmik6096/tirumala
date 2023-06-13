@@ -303,6 +303,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_bmc_route_can') {
                 $flag = 'bmc-collection-bulk-bmc-route-can';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_antibiotic') {
+                $flag = 'bmc-collection-bulk-antibiotic';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];

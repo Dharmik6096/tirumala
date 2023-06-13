@@ -7,6 +7,8 @@
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\web\View;
 ?>
 
 <div class="grid-search clearfix">
@@ -17,9 +19,9 @@ use yii\helpers\Html;
 
 <?php
 $attribute = [
-    ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
-    ['attribute' => 'reference_code', 'value' => 'reference_code',],
-    [
+        ['attribute' => 'purchase_rate_code', 'value' => 'purchase_rate_code',],
+        ['attribute' => 'reference_code', 'value' => 'reference_code',],
+        [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'width' => '200px',
@@ -30,33 +32,33 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-    ['attribute' => 'shift_id',
+        ['attribute' => 'shift_id',
         'filter' => false,
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftId, 'shift');
         },],
-    ['attribute' => 'shift_applicability',
+        ['attribute' => 'shift_applicability',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->shiftApplicability, 'shift');
         },],
-    ['attribute' => 'rate_gen_method_code',
+        ['attribute' => 'rate_gen_method_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->rateMethod, 'method');
         },],
-    ['attribute' => 'union_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'filter' => false],
-    ['attribute' => 'for_member', 'value' => function($model) {
+        ['attribute' => 'for_member', 'value' => function($model) {
             return $model->for_member == 1 ? 'YES' : 'NO';
         }, 'filter' => false],
     'ts_rate',
     'description',
-    ['attribute' => 'rate_type',
+        ['attribute' => 'rate_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('rate_price_type', $searchModel, 'rate_type'),
         'value' => function ($model) {
             return !empty($model->rate_type) ? Yii::$app->dropdown->getRecords('rate_price_type')['data'][$model->rate_type] : '';
         }, 'visible' => false],
-    ['attribute' => 'rate_value', 'visible' => false],
+        ['attribute' => 'rate_value', 'visible' => false],
 ];
 
 $grid_option = [
@@ -97,9 +99,65 @@ $grid_option = [
         'export_rate_chart' => function ($url, $model) {
             $options = ['title' => Yii::t('app', 'Export Rate Chart'),];
             return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/export-rate-chart', 'id' => $model->purchase_rate_code], $options);
-        }
+        },
+        'deactivate' => function ($url, $model) {
+            $active = ($model->is_active == 0) ? FALSE : TRUE;
+            $icon_class = $active ? 'fa-close' : 'fa-check';
+            $title = $active ? 'Deactivate' : 'Activate';
+            $name = $active ? 'Deactivate' : 'Activate';
+            $name .= '-' . $model->purchase_rate_code;
+            $class = 'deact-rate';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class, 'data-val' => $model->purchase_rate_code, 'data-name' => $name];
+            return GhostHtml::a_alert('<i class="fa ' . $icon_class . '""></i>', $url, $options);
+        },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<?php
+$script = "
+$(document).ready(function(){
+    $(document).on('click','.deact-rate',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    bootbox.confirm({
+        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to  \"'+name+'\"?</span></div></div>',
+        buttons: {
+            'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+              },
+            'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+             }
+        },
+        callback: function(result) {
+            if (result) {
+              $('#loader').show();
+                 $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['active-deactivate']) . "',
+                        data:{'id':id},
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                                $.pjax.reload({container: '#purchase-rate-grid'});
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                            else if (obj1.status == 'error'){
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                        },
+            });
+            }
+        }
+    });
+    });
+});
+
+
+";
+$this->registerJs($script, View::POS_END, 'dcs-rate-avtivate-deactivate');

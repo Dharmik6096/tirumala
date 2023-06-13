@@ -153,6 +153,20 @@ class SqliteCreate extends Component {
                                         if ($org_type == 'BMC') {
                                             $sql .= ' inner join tbl_dcs d on d.dcs_code = tbl_member.dcs_code and d.is_bmc = 1 ';
                                         }
+                                    } else if ($tableName == 'tbl_dcs') {
+                                        $currDate = date('Y-m-d');
+                                        if ($field['key_field'] == 'dcs_code') {
+                                            $whereKey = 'tbl_dcs.' . $field['key_field'];
+                                        }
+                                        $sql .= ' left join tbl_dcs_deactive dd on dd.dcs_code = tbl_dcs.dcs_code and (\'' . $currDate . '\' between CAST(dd.from_date as date) and CAST(ISNULL(dd.to_date, getdate()) as date)) ';
+                                        $sql = str_replace('tbl_dcs.is_active', ' CASE WHEN dd.from_date is null THEN tbl_dcs.is_active ELSE 0 END as is_active ', $sql);
+                                    } else if ($tableName == 'tbl_customer_master') {
+                                        $currDate = date('Y-m-d');
+                                        if ($field['key_field'] == 'bmc_code') {
+                                            $whereKey = 'tbl_customer_master.' . $field['key_field'];
+                                        }
+                                        $sql .= ' left join tbl_customer_deactive cd on cd.customer_code = tbl_customer_master.customer_code and (\'' . $currDate . '\' between CAST(cd.from_date as date) and CAST(ISNULL(cd.to_date, getdate()) as date)) ';
+                                        $sql = str_replace('tbl_customer_master.is_active', ' CASE WHEN cd.from_date is null THEN tbl_customer_master.is_active ELSE 0 END as is_active ', $sql);
                                     }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
                                     if ($tableName == 'tbl_member') {

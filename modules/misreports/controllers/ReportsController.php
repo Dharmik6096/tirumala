@@ -937,6 +937,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVlccTransactionDataReport() {
+        $this->report = 'VlccTransactionDataReport';
+        return $this->actionIndex();
+    }
+    
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -2762,6 +2767,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_route_wise_reconcilation',
                 'scenario' => 'RouteWiseReconciliation',
                 'title' => '220 - Route Wise Reconciliation',
+            ],
+            'VlccTransactionDataReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_vlcc_transaction_ftp_data',
+                'scenario' => 'VlccTransactionDataReport',
+                'title' => 'VLCC Transaction Data Report',
             ],
         ];
         return $label[$l];
