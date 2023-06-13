@@ -49,7 +49,7 @@ class MasterDataController extends \app\modules\androiddpu\v3\controllers\Master
             $content = $data['content'];
             $ids = $content['uuid'];
             $record = $this->generalModel->deleteMapping(['TblSentbox', 'TblSentboxClone'], 'uuid', $ids);
-            if ($record == true) {
+            if (!in_array(FALSE, $record)) {
                 $res_data['message'] = 'Sentbox Updated Successfully.';
             }
         }
