@@ -228,6 +228,8 @@ class TblIndentMasterController extends \app\controllers\ChildController {
     public function actionIndentApprovalOther() {
         $searchModel = new TblIndentMasterSearch();
         $searchModel->scenario = 'indentApprove';
+        $backUrl[] = '/product/tbl-indent-master/indent-approval-other';
+        $indentMaster = new TblIndentMaster();
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -235,7 +237,10 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                 $codes = empty($_REQUEST['selection']) ? [] : $_REQUEST['selection'];
                 $msg = $status == 2 ? 'Approved' : 'Rejected';
                 $where = [];
+
+                $approvalFlag = true;
                 foreach ($codes as $code) {
+                    $postData = Yii::$app->request->post()['TblIndentMaster'][$code];
                     $where['process_approval_code'] = $code;
                     $existData = TblProcessApproval::find()->where($where)->one();
                     if (!empty($existData)) {
@@ -247,6 +252,7 @@ class TblIndentMasterController extends \app\controllers\ChildController {
 
                         $existIndentData = TblIndentMaster::find()->where(['indent_code' => $existData->process_code])->one();
                         if (!empty($existIndentData)) {
+                            $existIndentData->scenario = 'approve';
                             $existApprovalLevel = TblProcessApproval::find()->where(['process_code' => $existIndentData->indent_code, 'process_name' => 'indent_master', 'status' => 0])->count();
                             $historyModel = new TblIndentMasterHistory();
                             Yii::$app->operation->history($existIndentData, $historyModel, 'UPDATE');
@@ -254,14 +260,34 @@ class TblIndentMasterController extends \app\controllers\ChildController {
                             $existIndentData->status = $status == 3 ? 3 : ($existApprovalLevel == 1 ? 2 : 1);
                             $existIndentData->status_by = \Yii::$app->user->identity->user_code;
                             $existIndentData->status_date = date('Y-m-d H:i:s');
+                            $level = $indentMaster->getApprovalLevel($existIndentData->indent_code);
+                            if (empty($level)) {
+                                $existIndentData->approve_qty = $postData['approve_qty'];
+                                $existIndentData->rejected_qty = $postData['rejected_qty'];
+                                $existIndentData->amount = $postData['amount'];
+                                $existIndentData->approve_remarks = $postData['approve_remarks'];
+                            }
                             $saveModel[] = $existIndentData;
                         }
                     }
                 }
-
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
-                if ($transaction == 'customRedirect') {
+                $modelError = '';
+                foreach ($saveModel as $m) {
+                    if (!$m->validate()) {
+                        foreach ($m->getErrors() as $key => $value) {
+                            $modelError .= $value[0];
+                        }
+                    }
+                }
+                if ($modelError == '') {
+                    $approvalFlag = false;
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Indent ' . $msg, 'create']);
+                    if ($transaction == 'customRedirect') {
 //                    return $this->redirect(['index']);
+                    }
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error', 'message' => $modelError]);
+                    return $this->redirect($backUrl);
                 }
             }
         }
@@ -270,6 +296,7 @@ class TblIndentMasterController extends \app\controllers\ChildController {
         return $this->render('indent_approval', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'indentMaster' => $indentMaster,
                     'visibledata' => True,
         ]);
     }

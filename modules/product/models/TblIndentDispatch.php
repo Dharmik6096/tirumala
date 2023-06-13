@@ -14,6 +14,7 @@ use app\modules\organisation\models\TblRouteMapping;
 use app\modules\transporter\models\TblVehicleMaster;
 use app\modules\product\models\TblIndentDispatchTransaction;
 use app\modules\product\models\TblProduct;
+use app\modules\product\models\TblIndentMaster;
 
 /**
  * This is the model class for table "tbl_indent_dispatch".
@@ -46,7 +47,7 @@ use app\modules\product\models\TblProduct;
  */
 class TblIndentDispatch extends \app\models\ChildModel {
 
-    public $vehicle, $ref_no, $lrno;
+    public $vehicle, $ref_no, $lrno, $remaining_qty;
 
     /**
      * @inheritdoc
@@ -60,11 +61,11 @@ class TblIndentDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['indent_dispatch_code'], 'required'],
-            [['challan_date', 'dispatch_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'reference_no', 'route_code', 'vehicle_no', 'indent_code', 'product_code', 'status', 'rate', 'amount', 'discount_amount', 'dispatch_qty', 'lr_no'], 'safe'],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['vehicle', 'ref_no', 'lrno'], 'safe'],
+                [['indent_dispatch_code'], 'required'],
+                [['challan_date', 'dispatch_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'reference_no', 'route_code', 'vehicle_no', 'indent_code', 'product_code', 'status', 'rate', 'amount', 'discount_amount', 'dispatch_qty', 'lr_no', 'remaining_qty'], 'safe'],
+                [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['vehicle', 'ref_no', 'lrno'], 'safe'],
         ];
     }
 
@@ -144,6 +145,10 @@ class TblIndentDispatch extends \app\models\ChildModel {
 
     public function getProductCode() {
         return $this->hasOne(TblProduct::className(), ['product_code' => 'product_code']);
+    }
+
+    public function getIndentCode() {
+        return $this->hasOne(TblIndentMaster::className(), ['indent_code' => 'indent_code']);
     }
 
 }

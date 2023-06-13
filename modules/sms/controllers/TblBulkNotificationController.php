@@ -106,7 +106,7 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
                         $model->to_date = $to_date;
                         $model->login_type = $this->model->login_type;
                         if ($model->notification_type == 4) {
-                            $model->filename = ((int) $dcs_data['dcs_code_ex']) . '.pdf';
+                            $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';
                             $model->file_path = $file_path . $model->filename;
                         }
                         $model->campaign_name = $this->model->campaign_name;
