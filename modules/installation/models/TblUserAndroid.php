@@ -72,7 +72,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
                 [['union_code'], 'string', 'max' => 3],
                 [['plant_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 15],
-                [['email'], 'email'],
+                // [['email'], 'email'],
                 [['org_code'], 'setData', 'on' => 'importCsv'],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);

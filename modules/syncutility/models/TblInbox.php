@@ -88,19 +88,36 @@ class TblInbox extends \yii\db\ActiveRecord {
           ->limit(50)
           ->all(); */
         $datetime = date('Y-m-d H:i:s', strtotime('-1 hour'));
-        $query = $this->find()
+		$query = $this->find()
                 ->joinWith(['syncPriority'])
                 ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
                 ->andWhere(['or', ['tbl_inbox.data_post_status' => NULL], ['tbl_inbox.data_post_status' => ''], ['tbl_inbox.data_post_status' => 0]])
-                ->andWhere(['NOT IN','tbl_inbox.table_name', ['tbl_app_startup', 'tbl_config_txn_result', 'tbl_milk_collectionasd', 'tbl_milk_collection_summaryasd']])
-                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
-                ->limit(300);
+                ->andWhere(['IN','tbl_inbox.table_name', ['tbl_quality_collection','tbl_weight_collection','tbl_milk_collection']])
+                // ->andWhere(['NOT IN','tbl_inbox.table_name', ['tbl_app_startup', 'tbl_dcs_milk_dispatch', 'tbl_config_txn_result', 'tbl_milk_collectionasd', 'tbl_milk_collection_summaryasd']])
+                ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.source_org_id' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                ->limit(500);
 
         $pendingDataQuery = $this->find()
                 ->joinWith(['syncPriority'])
                 ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL], ['<', 'tbl_inbox.error_timestamp', $datetime]])
+                ->orWhere(['and', ['tbl_inbox.data_post_status' => 1], ['<', 'tbl_inbox.error_timestamp', $datetime]])
+				// ->orWhere(['tbl_inbox.data_post_status' data_post_status 1])
                 ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
-                ->limit(20);
+                ->limit(50);
+
+        // $query = $this->find()
+                // ->joinWith(['syncPriority'])
+                // ->where(['or', ['tbl_inbox.error_log' => NULL], ['tbl_inbox.error_log' => '']])
+                // ->andWhere(['or', ['tbl_inbox.data_post_status' => NULL], ['tbl_inbox.data_post_status' => ''], ['tbl_inbox.data_post_status' => 0]])
+                // ->andWhere(['NOT IN','tbl_inbox.table_name', ['tbl_app_startup', 'tbl_config_txn_result', 'tbl_milk_collectionasd', 'tbl_milk_collection_summaryasd']])
+                // ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                // ->limit(300);
+
+        // $pendingDataQuery = $this->find()
+                // ->joinWith(['syncPriority'])
+                // ->where(['and', ['IS NOT', 'tbl_inbox.error_log', NULL], ['<', 'tbl_inbox.error_timestamp', $datetime]])
+                // ->orderBy(['ISNULL(tbl_sync_priority.sequence_no,99)' => SORT_ASC, 'tbl_inbox.posting_timestamp' => SORT_ASC])
+                // ->limit(20);
 
         return $unionQuery = (new ActiveQuery(TblInbox::className()))->from([
                     'pending_data' => $query->union($pendingDataQuery, TRUE)

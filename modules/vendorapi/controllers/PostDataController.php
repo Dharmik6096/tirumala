@@ -66,6 +66,7 @@ class PostDataController extends \yii\web\Controller {
             $sp_param[] = $start_date;
             $sp_param[] = $end_date;
             $output = \Yii::$app->general->getSpData($sp_name, $sp_param);
+				// echo "asdasd";die;
             $data_post_key = $value['key'];
             if (!empty($output)) {
                 $modelName = $value['model_name'];
@@ -79,10 +80,13 @@ class PostDataController extends \yii\web\Controller {
                     foreach ($output as $members) {
                         $update_ids[] = $members['vlcc_code'] . $members['farmer_code'];
                     }
+					$model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
                 } else {
                     $update_ids = array_column($output, $sapKey);
                 }
-                $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
+				// commented by Hardik as it takes too long to execute - 14 Frb, 2023
+                // $model->updateAll(['data_post_status' => 1, 'picked_datetime' => date('Y-m-d H:i:s')], [$modelKey => $update_ids]);
+				// echo "asdasd";die;
                 $body[$json_array_key] = $output;
                 $body = json_encode($body);
                 //var_dump($body);die;

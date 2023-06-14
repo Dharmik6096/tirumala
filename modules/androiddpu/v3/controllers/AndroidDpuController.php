@@ -515,6 +515,9 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                             $max_snf = $rate_range->max_snf;
                             $min_clr = $rate_range->min_clr;
                             $max_clr = $rate_range->max_clr;
+                        }		
+                        if (in_array($org_code, ['3100006685', '3100006680', '3100002978', '3100006698', '3100008388', '3100006861', '3100010303', '3100010190'])) {
+                            $max_snf = 12.0;
                         }
                         $animalType[] = [
                             'milk_type_code' => $milktype->milk_type_code,
@@ -573,6 +576,9 @@ class AndroidDpuController extends \app\modules\androiddpu\v2\controllers\Androi
                         $res_data['config'][$d['config_key']] = $d['config_result_key'];
                     }
 
+                    if($org_code == '3100') {
+                        $res_data['config']['dcs_editable_collection'] = '1';
+                    }
                     $res_data['welcomeMessage'] = 'Welcome to ' . $model_data->unionCode->union_name . '.';
                     $dcs_code = ',' . implode(',', $dcs_code) . ',';
                     $bmc_code = ',' . implode(',', $bmc_code) . ',';

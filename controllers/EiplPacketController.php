@@ -73,6 +73,7 @@ class EiplPacketController extends Controller {
     }
 
     public function actionReadFile() {
+		echo "asdasd";die;
         $CollectionData = Yii::$app->basePath . Yii::$app->params['collection_dir_path'] . 'archive/';
         if (Yii::$app->general->checkDirectory($CollectionData)) {
             $model = new EiplPacketFileLog();
@@ -192,17 +193,21 @@ class EiplPacketController extends Controller {
                             $file->total_record = $success_cnt + $error_cnt;
                             $file->processed_record = $success_cnt;
                             $file->status = 2; //error
+                    $file->response_msg = 'EIPL 1';
                         } else {
                             $file->file_status = 3; //currupted
                             $file->status = 3; //error
+                    $file->response_msg = 'EIPL 2';
                         }
                     } else {
                         $file->file_status = 3; //currupted
                         $file->status = 3; //error
+                    $file->response_msg = 'EIPL 3';
                     }
                 } else {
                     $file->status = 3; //error
                     $file->file_status = 2; //not found
+                    $file->response_msg = 'EIPL 4';
                 }
                 $file->save(FALSE);
             }
