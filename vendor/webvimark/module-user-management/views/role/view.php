@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var yii\widgets\ActiveForm $form
  * @var array $childRoles
@@ -10,70 +9,119 @@
  * @var array $currentPermissions
  * @var yii\rbac\Role $role
  */
+
 use webvimark\modules\UserManagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\Role;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = UserManagementModule::t('back', 'Permissions for role:') . ' ' . $role->description;
+$this->title = UserManagementModule::t('back', 'Permissions for role:') . ' '. $role->description;
 $this->params['breadcrumbs'][] = ['label' => UserManagementModule::t('back', 'Roles'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['menu'][]=Yii::$app->controls->update($role->description);
 ?>
 
-<?php if (Yii::$app->session->hasFlash('success')): ?>
-    <div class="alert alert-success text-center">
-        <?= Yii::$app->session->getFlash('success') ?>
-    </div>
+<h2 class="lte-hide-title"><?= $this->title ?></h2>
+
+<?php if ( Yii::$app->session->hasFlash('success') ): ?>
+	<div class="alert alert-success text-center">
+		<?= Yii::$app->session->getFlash('success') ?>
+	</div>
 <?php endif; ?>
 
-<div class="panel panel-default panel-main">
-    <div class="panel-heading">
-        <?= Yii::$app->controls->cancel($role); ?>
-        <?= $this->title ?>
-    </div>
-    <div class="panel-body">
+<p>
+	<?= GhostHtml::a(UserManagementModule::t('back', 'Edit'), ['update', 'id' => $role->name], ['class' => 'btn btn-sm btn-primary']) ?>
+	<?= GhostHtml::a(UserManagementModule::t('back', 'Create'), ['create'], ['class' => 'btn btn-sm btn-success']) ?>
+</p>
 
-        <?= Html::beginForm(['set-child-permissions', 'id' => $role->name]) ?>
-        <div class="row">
-            <?php foreach ($permissionsByGroup as $groupName => $permissions): ?>
-                <div class="col-sm-6">
-                    <h5 class="panel-subtitle"><?= $groupName ?></h5>
+<div class="row">
+	<div class="col-sm-4">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<strong>
+					<span class="glyphicon glyphicon-th"></span> <?= UserManagementModule::t('back', 'Child roles') ?>
+				</strong>
+			</div>
+			<div class="panel-body">
+				<?= Html::beginForm(['set-child-roles', 'id'=>$role->name]) ?>
 
-                    <?php foreach ($permissions as $permission): ?>
-                        <div class="checkbox">
-                            <label>
-                                <?php $isChecked = in_array($permission->name, ArrayHelper::map($currentPermissions, 'name', 'name')) ? 'checked' : '' ?>
-                                <input type="checkbox" <?= $isChecked ?> name="child_permissions[]" id="<?= $permission->name ?>" value="<?= $permission->name ?>">
-                                <span for="<?= $permission->name ?>"><?= $permission->description ?></span>
-                            </label>
+				<?php foreach ($allRoles as $aRole): ?>
+					<label>
+						<?php $isChecked = in_array($aRole['name'], ArrayHelper::map($childRoles, 'name', 'name')) ? 'checked' : '' ?>
+						<input type="checkbox" <?= $isChecked ?> name="child_roles[]" value="<?= $aRole['name'] ?>">
+						<?= $aRole['description'] ?>
+					</label>
 
-                            <?=
-                            GhostHtml::a(
-                                    '<i class="fa fa-pencil-square-o"></i>', ['/user-management/permission/view', 'id' => $permission->name], ['target' => '_blank', 'title' => 'Edit']
-                            )
-                            ?>
-                        </div>
-                    <?php endforeach ?>
+					<?= GhostHtml::a(
+						'<span class="glyphicon glyphicon-edit"></span>',
+						['/user-management/role/view', 'id'=>$aRole['name']],
+						['target'=>'_blank']
+					) ?>
+					<br/>
+				<?php endforeach ?>
 
-                </div>
-            <?php endforeach ?>
 
-            <div class="clearfix"></div>
-            <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="true">
-                <div class="form-group">
-                    <?=
-                    Html::submitButton(
-                            UserManagementModule::t('back', 'save'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+s']
-                    )
-                    ?>
-                    <?php echo Html::a('cancel', ['create'], ['class' => 'btn btn-danger apply-shortcut', 'shortcut_key' => 'ctrl+alt+c']); ?>
-                </div>
-            </div>
-        </div>
-        <?= Html::endForm() ?>
-    </div>
+				<hr/>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-ok"></span> ' . UserManagementModule::t('back', 'Save'),
+					['class'=>'btn btn-primary btn-sm']
+				) ?>
+
+				<?= Html::endForm() ?>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<strong>
+					<span class="glyphicon glyphicon-th"></span> <?= UserManagementModule::t('back', 'Permissions') ?>
+				</strong>
+			</div>
+			<div class="panel-body">
+				<?= Html::beginForm(['set-child-permissions', 'id'=>$role->name]) ?>
+
+				<div class="row">
+					<?php foreach ($permissionsByGroup as $groupName => $permissions): ?>
+						<div class="col-sm-6">
+							<fieldset>
+								<legend><?= $groupName ?></legend>
+
+								<?php foreach ($permissions as $permission): ?>
+									<label>
+										<?php $isChecked = in_array($permission->name, ArrayHelper::map($currentPermissions, 'name', 'name')) ? 'checked' : '' ?>
+										<input type="checkbox" <?= $isChecked ?> name="child_permissions[]" value="<?= $permission->name ?>">
+										<?= $permission->description ?>
+									</label>
+
+									<?= GhostHtml::a(
+										'<span class="glyphicon glyphicon-edit"></span>',
+										['/user-management/permission/view', 'id'=>$permission->name],
+										['target'=>'_blank']
+									) ?>
+									<br/>
+								<?php endforeach ?>
+
+							</fieldset>
+							<br/>
+						</div>
+
+
+					<?php endforeach ?>
+				</div>
+
+				<hr/>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-ok"></span> ' . UserManagementModule::t('back', 'Save'),
+					['class'=>'btn btn-primary btn-sm']
+				) ?>
+
+				<?= Html::endForm() ?>
+
+			</div>
+		</div>
+	</div>
 </div>
 
 <?php

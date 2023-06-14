@@ -1,14 +1,19 @@
 <?php
+
 /**
  * @author    Jim Wigginton <terrafrost@php.net>
  * @copyright 2014 Jim Wigginton
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\File\X509;
-use phpseclib\Crypt\RSA;
+namespace phpseclib3\Tests\Unit\File\X509;
 
-class Unit_File_X509_CSRTest extends PhpseclibTestCase
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\File\X509;
+use phpseclib3\Tests\PhpseclibTestCase;
+
+class CSRTest extends PhpseclibTestCase
 {
     public function testLoadCSR()
     {
@@ -27,7 +32,7 @@ v5RwaQHmQEzHofTzF7I+
 
         $spkac = $x509->loadCSR($test);
 
-        $this->assertInternalType('array', $spkac);
+        $this->assertIsArray($spkac);
     }
 
     public function testCSRWithAttributes()
@@ -67,7 +72,7 @@ draiRBZruwMPwPIP
 
         $csr = $x509->loadCSR($test);
 
-        $this->assertInternalType('array', $csr);
+        $this->assertIsArray($csr);
     }
 
     public function testCSRDER()
@@ -92,16 +97,15 @@ draiRBZruwMPwPIP
 
         $csr = $x509->loadCSR($csr);
 
-        $this->assertInternalType('array', $csr);
+        $this->assertIsArray($csr);
     }
 
     // on PHP 7.1, with older versions of phpseclib, this would produce a "A non-numeric value encountered" warning
     public function testNewCSR()
     {
-        $rsa = new RSA();
         $x509 = new X509();
 
-        $rsa->loadKey('-----BEGIN RSA PRIVATE KEY-----
+        $rsa = PublicKeyLoader::load('-----BEGIN RSA PRIVATE KEY-----
 MIICXAIBAAKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0FPqri0cb2JZfXJ/DgYSF6vUp
 wmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/3j+skZ6UtW+5u09lHNsj6tQ5
 1s1SPrCBkedbNf0Tp0GbMJDyR4e9T04ZZwIDAQABAoGAFijko56+qGyN8M0RVyaRAXz++xTqHBLh
@@ -113,9 +117,68 @@ L0NDt4SkosjgGwJAFklyR1uZ/wPJjj611cdBcztlPdqoxssQGnh85BzCj/u3WqBpE2vjvyyvyI5k
 X6zk7S0ljKtt2jny2+00VsBerQJBAJGC1Mg5Oydo5NwD6BiROrPxGo2bpTbu/fhrT8ebHkTz2epl
 U9VQQSQzY1oZMVX8i1m5WUTLPz2yLJIBQVdXqhMCQBGoiuSoSjafUhV7i1cEGpb88h5NBYZzWXGZ
 37sJ5QsW+sJyoNde3xH8vdXhzU7eT82D6X/scw9RZz+/6rCJ4p0=
------END RSA PRIVATE KEY-----');
+-----END RSA PRIVATE KEY-----')
+            ->withPadding(RSA::SIGNATURE_PKCS1)
+            ->withHash('sha1');
         $x509->setPrivateKey($rsa);
-        $x509->setDN(array('cn' => 'website.com'));
-        $x509->saveCSR($x509->signCSR('sha256WithRSAEncryption'), X509::FORMAT_DER);
+        $x509->setDN(['cn' => 'website.com']);
+        $x509->saveCSR($x509->signCSR(), X509::FORMAT_DER);
+        self::assertSame(
+            'MIIBUTCBvQIBADAWMRQwEgYDVQQDDAt3ZWJzaXRlLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAqhirpDtQ3u84WY+vh9KrY05FccEwqbynuHgmdBT6q4tHG9iWX1yfw4GEher1KcJiRvMFUGSo3hnIwzi+VJbLrrBZ3As1gUO0SjVEnrJkETEhpFW9f94/rJGelLVvubtPZRzbI+rUOdbNUj6wgZHnWzX9E6dBmzCQ8keHvU9OGWcCAwEAATALBgkqhkiG9w0BAQUDgYEAMsFgm5Y7/DY+a4NFK/2VHEyEf5C9+Oe+qaZQie0djZ5wPadabV4lOEYX4RcGMtrnfgYuUt8pMIubq4JQtpnw2rpaEZPQIr0ed/GvuiQD2oyaBd7tmPDoiJzN/+DjdniF/wq3POUz/UzZ+g1IgSYaGXtmtn7XgafiE+K+PQFRvrQ=',
+            base64_encode($x509->saveCSR($x509->signCSR(), X509::FORMAT_DER))
+        );
+    }
+
+    /**
+     * @group github1675
+     */
+    public function testPKCS1CSR()
+    {
+        $x509 = new X509();
+        $x509->loadCSR('-----BEGIN CERTIFICATE REQUEST-----
+MIICijCCAXICAQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUx
+ITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAJ/PFzGDOThrFNMmEFGoheGD5uOzAEBfTMLusRul
+NA6x/qYKxtsvGa6QOyNMprGuJDIXmvgF9rfXQWyvsbJyCKXFQcJFEEas5yY1XlAI
+t4dz/5ZT2oAAPvA+cAfvYzQxyyxSW4/sdLXCiHw+ixQAsLHBJ7clI7Dc6h3qYsPO
+g+BbR+5IXK9RuietJ0R4D0j+rXlYW4xA1RwvawK2pgZsTgGRrJe7Ve0gMP8BBDRI
+6wafiTS7XpjEHOvZnRVHXNNOwkvo8WmYtR68fQ84CQSp9vIQPDdmqMyGWh1PsPN/
+VxrEVu2Ag6K/JoJPJetZelbOoUjZXOVxH0vHkIGvc2Ym0IUCAwEAAaAAMA0GCSqG
+SIb3DQEBCwUAA4IBAQA2lcOk3iLmh3lvSyV8l+Sf98VSaAHJ+UkrRTdWNveKjIva
+jhPgFQkXv6zhD0Jm/EfF22whVHA4EG3bC2Gl2B4qx5uV9Dv76usTdiJHBuDCxcXj
+17ixfv7rUGTBUv28W1RiyDeJQe3ybUYy0s3erJewum6wiLDxcWyWu18lw3C7Vkjy
+fUQvcGEA9FSQ8Y0nfF9vzzcCjLtOI6xJluYL9XCk8WVEBEawA2zmHWTzzuHFHHEM
+7qncJric4bulCQ0CmNiv+IUnyoLHzaef79+q+7ohi6mYYDP9dmdlj/Yd7Ndae3wt
+2qzmm8yz+tnp3rOpfrHvQLBK5C7g/qaM2jBguSsj
+-----END CERTIFICATE REQUEST-----');
+        $this->assertTrue(boolval($x509->getPublicKey()->getPadding() & RSA::SIGNATURE_PKCS1));
+        $this->assertFalse(boolval($x509->getPublicKey()->getPadding() & RSA::SIGNATURE_PSS));
+    }
+
+    /**
+     * @group github1675
+     */
+    public function testPSSCSR()
+    {
+        $x509 = new X509();
+        $x509->loadCSR('-----BEGIN CERTIFICATE REQUEST-----
+MIICuTCCAXACAQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUx
+ITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDCCASAwCwYJKoZIhvcN
+AQEKA4IBDwAwggEKAoIBAQDM8Dapuz5bjff8xxmOBGxg4dZZd2/Vp6pKGvEewSHC
+HSda+SYoC44+KX4nqQanZLxTqtyOwZPmomDBOztXJk84JhcvyrXL4Vp61xrZserr
+Hivhvc8VwgaFVjFUIMZbnB2EPQiI2zN7Dc1a5Ytmz9dI/Q6LOuA698YPqWZLgeih
+CVoGBZei2F8ANeIp3I2/x0ipEWRUNliBrR2BFc5+GPaR8Y+uaFrER/D774hcFTuC
+FSmHPOhN0S+XCWPYwgU2luUoDrvW+bqC/BJRfE1BGaO5NgdQ9HKdV3zCJE1/p08b
+pX/nUhga1lEw0kr3Kb2N0AYNDXUnWiFjBNQpTmSIYzUnAgMBAAGgADA+BgkqhkiG
+9w0BAQowMaANMAsGCWCGSAFlAwQCAaEaMBgGCSqGSIb3DQEBCDALBglghkgBZQME
+AgGiBAICAN4DggEBAA2eQuuzaPVx/uUJQyyLgBbsRGRwWyAdZAQoHx9nTeDYaIiX
+Uw6Tn0OIUhg1W+H1eCLSZEaBc0PXLcpRsbf4rK+a8tpVfR1F6mI3KfRfSQALpBsq
+S64eNMpi1FpaBu4FxgA31FaXcQVDEgYNB5BK0qr+6NFDtwnOXG03kGaAMOUGT02n
+yGSdZsGMatjn2ld+Ndj3uAYlujyKlqGcAOb53bu+PswH5KXTJJquOJH84UoKraog
++3qWznvQLPSZVSEp03EViSh82fuRxa+6B/W5ur43FERi/5sakzI1kMcvYDO/pord
+12M26xz/hpPfs5yFls/NPzW3o7PSkvFJhSrGmgg=
+-----END CERTIFICATE REQUEST-----');
+        $this->assertFalse(boolval($x509->getPublicKey()->getPadding() & RSA::SIGNATURE_PKCS1));
+        $this->assertTrue(boolval($x509->getPublicKey()->getPadding() & RSA::SIGNATURE_PSS));
     }
 }

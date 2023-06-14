@@ -6,16 +6,18 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Crypt\Base;
-use phpseclib\Net\SFTP;
+namespace phpseclib3\Tests\Functional\Net;
 
-class Functional_Net_SFTPLargeFileTest extends Functional_Net_SFTPTestCase
+use phpseclib3\Net\SFTP;
+
+class SFTPLargeFileTest extends SFTPTestCase
 {
     public static function setUpBeforeClass()
     {
         if (!extension_loaded('mcrypt') && !extension_loaded('openssl')) {
             self::markTestSkipped('This test depends on mcrypt or openssl for performance.');
         }
+        self::ensureConstant('CRYPT_HASH_MODE', 3);
         parent::setUpBeforeClass();
     }
 
@@ -36,7 +38,7 @@ class Functional_Net_SFTPLargeFileTest extends Functional_Net_SFTPTestCase
 
         $this->assertSame(
             128 * 1024 * 1024,
-            $this->sftp->size($filename),
+            $this->sftp->filesize($filename),
             'Failed asserting that uploaded local file has the expected length.'
         );
     }

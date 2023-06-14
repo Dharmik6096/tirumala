@@ -1,14 +1,13 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\web;
 
 use Yii;
-use yii\base\ErrorException;
 use yii\base\Exception;
 use yii\base\InlineAction;
 use yii\helpers\Url;
@@ -130,42 +129,61 @@ class Controller extends \yii\base\Controller
             $name = $param->getName();
             if (array_key_exists($name, $params)) {
                 $isValid = true;
-                if ($param->isArray()) {
+                if (PHP_VERSION_ID >= 80000) {
+                    $isArray = ($type = $param->getType()) instanceof \ReflectionNamedType && $type->getName() === 'array';
+                } else {
+                    $isArray = $param->isArray();
+                }
+                if ($isArray) {
                     $params[$name] = (array)$params[$name];
                 } elseif (is_array($params[$name])) {
                     $isValid = false;
                 } elseif (
-                    PHP_VERSION_ID >= 70000 &&
-                    ($type = $param->getType()) !== null &&
-                    $type->isBuiltin() &&
-                    ($params[$name] !== null || !$type->allowsNull())
+                    PHP_VERSION_ID >= 70000
+                    && ($type = $param->getType()) !== null
+                    && $type->isBuiltin()
+                    && ($params[$name] !== null || !$type->allowsNull())
                 ) {
                     $typeName = PHP_VERSION_ID >= 70100 ? $type->getName() : (string)$type;
-                    switch ($typeName) {
-                        case 'int':
-                            $params[$name] = filter_var($params[$name], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-                            break;
-                        case 'float':
-                            $params[$name] = filter_var($params[$name], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
-                            break;
-                        case 'bool':
-                            $params[$name] = filter_var($params[$name], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-                            break;
-                    }
-                    if ($params[$name] === null) {
-                        $isValid = false;
+
+                    if ($params[$name] === '' && $type->allowsNull()) {
+                        if ($typeName !== 'string') { // for old string behavior compatibility
+                            $params[$name] = null;
+                        }
+                    } else {
+                        switch ($typeName) {
+                            case 'int':
+                                $params[$name] = filter_var($params[$name], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+                                break;
+                            case 'float':
+                                $params[$name] = filter_var($params[$name], FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+                                break;
+                            case 'bool':
+                                $params[$name] = filter_var($params[$name], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                                break;
+                        }
+                        if ($params[$name] === null) {
+                            $isValid = false;
+                        }
                     }
                 }
                 if (!$isValid) {
-                    throw new BadRequestHttpException(Yii::t('yii', 'Invalid data received for parameter "{param}".', [
-                        'param' => $name,
-                    ]));
+                    throw new BadRequestHttpException(
+                        Yii::t('yii', 'Invalid data received for parameter "{param}".', ['param' => $name])
+                    );
                 }
                 $args[] = $actionParams[$name] = $params[$name];
                 unset($params[$name]);
-            } elseif (PHP_VERSION_ID >= 70100 && ($type = $param->getType()) !== null && !$type->isBuiltin()) {
+            } elseif (
+                PHP_VERSION_ID >= 70100
+                && ($type = $param->getType()) !== null
+                && $type instanceof \ReflectionNamedType
+                && !$type->isBuiltin()
+            ) {
                 try {
                     $this->bindInjectedParams($type, $name, $args, $requestedParams);
+                } catch (HttpException $e) {
+                    throw $e;
                 } catch (Exception $e) {
                     throw new ServerErrorHttpException($e->getMessage(), 0, $e);
                 }
@@ -177,16 +195,16 @@ class Controller extends \yii\base\Controller
         }
 
         if (!empty($missing)) {
-            throw new BadRequestHttpException(Yii::t('yii', 'Missing required parameters: {params}', [
-                'params' => implode(', ', $missing),
-            ]));
+            throw new BadRequestHttpException(
+                Yii::t('yii', 'Missing required parameters: {params}', ['params' => implode(', ', $missing)])
+            );
         }
 
         $this->actionParams = $actionParams;
 
         // We use a different array here, specifically one that doesn't contain service instances but descriptions instead.
-        if (\Yii::$app->requestedParams === null) {
-            \Yii::$app->requestedParams = array_merge($actionParams, $requestedParams);
+        if (Yii::$app->requestedParams === null) {
+            Yii::$app->requestedParams = array_merge($actionParams, $requestedParams);
         }
 
         return $args;
@@ -221,7 +239,7 @@ class Controller extends \yii\base\Controller
      *
      * @param string|array $url the URL to be redirected to. This can be in one of the following formats:
      *
-     * - a string representing a URL (e.g. "http://example.com")
+     * - a string representing a URL (e.g. "https://example.com")
      * - a string representing a URL alias (e.g. "@example.com")
      * - an array in the format of `[$route, ...name-value pairs...]` (e.g. `['site/index', 'ref' => 1]`)
      *   [[Url::to()]] will be used to convert the array into a URL.
@@ -269,7 +287,7 @@ class Controller extends \yii\base\Controller
      *
      * For this function to work you have to [[User::setReturnUrl()|set the return URL]] in appropriate places before.
      *
-     * @param string|array $defaultUrl the default return URL in case it was not set previously.
+     * @param string|array|null $defaultUrl the default return URL in case it was not set previously.
      * If this is null and the return URL was not set previously, [[Application::homeUrl]] will be redirected to.
      * Please refer to [[User::setReturnUrl()]] on accepted format of the URL.
      * @return Response the current response object

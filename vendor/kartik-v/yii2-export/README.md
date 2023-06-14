@@ -1,5 +1,17 @@
-yii2-export
-===========
+<h1 align="center">
+    <a href="http://demos.krajee.com" title="Krajee Demos" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/krajee-logo-b.png" alt="Krajee Logo"/>
+    </a>
+    <br>
+    yii2-export
+    <hr>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
+       title="Donate via Paypal" target="_blank"><img height="60" src="https://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" alt="Donate"/></a>
+    &nbsp; &nbsp; &nbsp;
+    <a href="https://www.buymeacoffee.com/kartikv" title="Buy me a coffee" ><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="60" alt="kartikv" /></a>
+</h1>
+
+<div align="center">
 
 [![Stable Version](https://poser.pugx.org/kartik-v/yii2-export/v/stable)](https://packagist.org/packages/kartik-v/yii2-export)
 [![Unstable Version](https://poser.pugx.org/kartik-v/yii2-export/v/unstable)](https://packagist.org/packages/kartik-v/yii2-export)
@@ -8,7 +20,9 @@ yii2-export
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-export/d/monthly)](https://packagist.org/packages/kartik-v/yii2-export)
 [![Daily Downloads](https://poser.pugx.org/kartik-v/yii2-export/d/daily)](https://packagist.org/packages/kartik-v/yii2-export)
 
-A library to export server/db data in various formats (e.g. excel, html, pdf, csv etc.) using the [PHPExcel library](https://phpexcel.codeplex.com/). The widget allows you to configure the dataProvider, columns just like a yii\grid\GridView. However, it just displays the export actions in form of a ButtonDropdown menu, for embedding into any of your GridView or other components.
+</div>
+
+A library to export server/db data in various formats (e.g. excel, html, pdf, csv etc.) using the [PhpSpreadsheet](https://github.com/PHPOffice/phpspreadsheet) library. The widget allows you to configure the dataProvider, columns just like a yii\grid\GridView. However, it just displays the export actions in form of a ButtonDropdown menu, for embedding into any of your GridView or other components.
 
 In addition, with release v1.2.0, the extension also displays a handy grid columns selector for controlling the columns for export. The features available with the column selector are:
 
@@ -26,14 +40,14 @@ In addition, with release v1.2.0, the extension also displays a handy grid colum
 
 The extension offers configurable user interfaces for advanced cases using view templates.
 
-- `exportFormView` allows you to setup your own custom view file for rendering the export form.
 - `exportColumnsView` allows you to setup your own custom view file for rendering the column selector dropdown.
+- `afterSaveView` allows you to setup your own after save view file if you are configuring to save exported file on server.
 
 ## Demo
 You can see detailed [documentation](http://demos.krajee.com/export) and [demonstration](http://demos.krajee.com/export-demo) on usage of the extension.
 
-## Latest Release
->NOTE: The latest version of the extension is v1.2.7. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-export/blob/master/CHANGE.md) for details.
+## Release Changes
+> NOTE: Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-export/blob/master/CHANGE.md) for details on changes to various releases.
 
 ## Installation
 
@@ -41,7 +55,23 @@ The preferred way to install this extension is through [composer](http://getcomp
 
 > Note: Read this [web tip /wiki](http://webtips.krajee.com/setting-composer-minimum-stability-application/) on setting the `minimum-stability` settings for your application's composer.json.
 
-Either run
+### Pre-requisites
+
+Install the necessary pre-requisite (Krajee Dropdown Extension) based on your bootstrap version:
+
+- For Bootstrap v5.x install the extension `kartik-v/yii2-bootstrap5-dropdown`
+- For Bootstrap v4.x install the extension `kartik-v/yii2-bootstrap4-dropdown`
+- For Bootstrap v3.x install the extension `kartik-v/yii2-dropdown-x`
+
+For example if you are using the Bootstrap v5.x add the following to the `require` section of your `composer.json` file:
+
+```
+"kartik-v/yii2-bootstrap5-dropdown": "@dev"
+```
+
+### Install
+
+Either run:
 
 ```
 $ php composer.phar require kartik-v/yii2-export "@dev"
@@ -54,6 +84,21 @@ or add
 ```
 
 to the `require` section of your `composer.json` file.
+
+> Note: you must run `composer update` to have the latest stable dependencies like `kartik-v/yii2-krajee-base`
+
+## Pre-requisites
+
+The `yii2-export` extension is dependent on `yii2-grid` extension module. In order to start using `yii2-export`, you need to ensure setup of the `gridview` module in your application modules configuration file. For example:
+
+```php
+'modules' => [
+    'gridview' => [
+        'class' => 'kartik\grid\Module',
+        // other module settings
+    ]
+]
+```
 
 ## Usage
 
@@ -74,7 +119,8 @@ $gridColumns = [
 // Renders a export dropdown menu
 echo ExportMenu::widget([
     'dataProvider' => $dataProvider,
-    'columns' => $gridColumns
+    'columns' => $gridColumns,
+    'clearBuffers' => true, //optional
 ]);
 
 // You can choose to render your own GridView separately
@@ -85,6 +131,36 @@ echo \kartik\grid\GridView::widget([
 ]);
 ```
 
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/kartik-v/yii2-export/graphs/contributors"><img src="https://opencollective.com/yii2-export/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/yii2-export/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/yii2-export"><img src="https://opencollective.com/yii2-export/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/yii2-export/contribute)]
+
+<a href="https://opencollective.com/yii2-export/organization/0/website"><img src="https://opencollective.com/yii2-export/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/1/website"><img src="https://opencollective.com/yii2-export/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/2/website"><img src="https://opencollective.com/yii2-export/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/3/website"><img src="https://opencollective.com/yii2-export/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/4/website"><img src="https://opencollective.com/yii2-export/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/5/website"><img src="https://opencollective.com/yii2-export/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/6/website"><img src="https://opencollective.com/yii2-export/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/7/website"><img src="https://opencollective.com/yii2-export/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/8/website"><img src="https://opencollective.com/yii2-export/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/yii2-export/organization/9/website"><img src="https://opencollective.com/yii2-export/organization/9/avatar.svg"></a>
+
 ## License
 
-**yii2-export** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**yii2-export** is released under the BSD-3-Clause License. See the bundled `LICENSE.md` for details.

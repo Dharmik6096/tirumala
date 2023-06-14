@@ -9,8 +9,7 @@ use yii\rbac\DbManager;
 
 class Role extends AbstractItem
 {
-        public $portal_type;
-        const ITEM_TYPE = self::TYPE_ROLE;
+	const ITEM_TYPE = self::TYPE_ROLE;
 
 	/**
 	 * @param int     $userId
@@ -135,16 +134,4 @@ class Role extends AbstractItem
 
 		return true;
 	}
-        
-        public function checkNotVendor()
-        {
-            $authManager = Yii::$app->authManager instanceof DbManager ? Yii::$app->authManager : new DbManager();
-            $currentRoutesAndPermissions = AuthHelper::separateRoutesAndPermissions($authManager->getPermissionsByRole($this->name));
-            $currentPermissions = $currentRoutesAndPermissions->permissions;
-            if(in_array('Vendor Permission', ArrayHelper::getColumn($currentPermissions, 'name')) || ($this->entry_type == 1 && Yii::$app->session->get('organizations_type') == 'UNION'))
-            {
-               return false;
-            }
-            return true;
-        }
 }

@@ -46,31 +46,18 @@ class AuthController extends BaseController
 		}
 
 		$model = new LoginForm();
-                $identityModel = new \app\models\IdentityMaster();
-                $identity=$identityModel->getIdentity();
-                if(empty($identity)){
-                    return $this->render('error');
-                }
-//                if($identity->organization_type!='NATIONAL')
-//                    $model->scenario = 'non_national';
-		if ( Yii::$app->request->isAjax)
+
+		if ( Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post()) )
 		{
-                        $model->username = $identity->organization_code.'#'.$model->username;
-                        if( $model->load(Yii::$app->request->post())){
-                            Yii::$app->response->format = Response::FORMAT_JSON;
-                            return ActiveForm::validate($model);
-                        }
+			Yii::$app->response->format = Response::FORMAT_JSON;
+			return ActiveForm::validate($model);
 		}
 
-		if ( $model->load(Yii::$app->request->post()) )
+		if ( $model->load(Yii::$app->request->post()) AND $model->login() )
 		{
-                    $model->username = $identity->organization_code.'#'.$model->username;
-                    if($model->login())
-                        return $this->redirect(['/site/dashboard']);
-                    else
-                        $model->username = $_POST['LoginForm']['username'];
+			return $this->goBack();
 		}
-                Yii::$app->session->set('Login-sess', 'User');
+
 		return $this->renderIsAjax('login', compact('model'));
 	}
 
@@ -370,7 +357,7 @@ class AuthController extends BaseController
 		{
 			throw new NotFoundHttpException(UserManagementModule::t('front', 'Token not found. It may be expired'));
 		}
-
+		
 		$user->email_confirmed = 1;
 		$user->removeConfirmationToken();
 		$user->save(false);

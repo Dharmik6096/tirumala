@@ -33,12 +33,11 @@ abstract class AbstractItemSearch extends AbstractItem
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 			'pagination' => [
-                                'pageSize' => 10,
-				//'pageSize' => \Yii::$app->request->cookies->getValue('_grid_page_size', 20),
+				'pageSize' => \Yii::$app->request->cookies->getValue('_grid_page_size', 20),
 			],
 			'sort'=>[
 				'defaultOrder'=>[
-					/*Yii::$app->getModule('user-management')->auth_item_table.*/'created_at'=>SORT_DESC,
+					'created_at'=>SORT_DESC,
 				],
 			],
 		]);

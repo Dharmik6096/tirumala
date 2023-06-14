@@ -1,16 +1,20 @@
 <?php
+
+declare(strict_types=1);
+
 namespace GuzzleHttp\Tests\Psr7;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\UploadedFile;
 use GuzzleHttp\Psr7\Uri;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers GuzzleHttp\Psr7\ServerRequest
  */
-class ServerRequestTest extends \PHPUnit_Framework_TestCase
+class ServerRequestTest extends TestCase
 {
-    public function dataNormalizeFiles()
+    public function dataNormalizeFiles(): iterable
     {
         return [
             'Single file' => [
@@ -159,6 +163,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                         'tmp_name' => [
                             0 => '/tmp/php/hp9hskjhf',
                             1 => '/tmp/php/php1h4j1o',
+                            2 => '/tmp/php/w0ensl4ar',
                         ],
                         'error' => [
                             0 => '0',
@@ -167,6 +172,11 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                         'size' => [
                             0 => '123',
                             1 => '7349',
+                        ],
+                    ],
+                    'minimum_data' => [
+                        'tmp_name' => [
+                            0 => '/tmp/php/hp9hskjhf',
                         ],
                     ],
                     'nested' => [
@@ -223,6 +233,18 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                             'Image.png',
                             'image/png'
                         ),
+                        2 => new UploadedFile(
+                            '/tmp/php/w0ensl4ar',
+                            null,
+                            UPLOAD_ERR_OK
+                        ),
+                    ],
+                    'minimum_data' => [
+                        0 => new UploadedFile(
+                            '/tmp/php/hp9hskjhf',
+                            0,
+                            UPLOAD_ERR_OK
+                        ),
                     ],
                     'nested' => [
                         'other' => new UploadedFile(
@@ -257,21 +279,21 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataNormalizeFiles
      */
-    public function testNormalizeFiles($files, $expected)
+    public function testNormalizeFiles($files, $expected): void
     {
         $result = ServerRequest::normalizeFiles($files);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    public function testNormalizeFilesRaisesException()
+    public function testNormalizeFilesRaisesException(): void
     {
-        $this->setExpectedException('InvalidArgumentException', 'Invalid value in files specification');
-
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid value in files specification');
         ServerRequest::normalizeFiles(['test' => 'something']);
     }
 
-    public function dataGetUriFromGlobals()
+    public function dataGetUriFromGlobals(): iterable
     {
         $server = [
             'REQUEST_URI' => '/blog/article.php?id=10&user=foo',
@@ -324,6 +346,14 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
                 'https://www.example.org:8324/blog/article.php?id=10&user=foo',
                 array_merge($server, ['HTTP_HOST' => 'www.example.org:8324']),
             ],
+            'IPv6 local loopback address' => [
+                'https://[::1]:8000/blog/article.php?id=10&user=foo',
+                array_merge($server, ['HTTP_HOST' => '[::1]:8000']),
+            ],
+            'Invalid host' => [
+                'https://localhost/blog/article.php?id=10&user=foo',
+                array_merge($server, ['HTTP_HOST' => 'a:b']),
+            ],
             'Different port with SERVER_PORT' => [
                 'https://www.example.org:8324/blog/article.php?id=10&user=foo',
                 array_merge($server, ['SERVER_PORT' => '8324']),
@@ -342,14 +372,14 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataGetUriFromGlobals
      */
-    public function testGetUriFromGlobals($expected, $serverParams)
+    public function testGetUriFromGlobals($expected, $serverParams): void
     {
         $_SERVER = $serverParams;
 
-        $this->assertEquals(new Uri($expected), ServerRequest::getUriFromGlobals());
+        self::assertEquals(new Uri($expected), ServerRequest::getUriFromGlobals());
     }
 
-    public function testFromGlobals()
+    public function testFromGlobals(): void
     {
         $_SERVER = [
             'REQUEST_URI' => '/blog/article.php?id=10&user=foo',
@@ -360,7 +390,11 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
             'REQUEST_METHOD' => 'POST',
             'QUERY_STRING' => 'id=10&user=foo',
             'DOCUMENT_ROOT' => '/path/to/your/server/root/',
+            'CONTENT_TYPE' => 'text/plain',
             'HTTP_HOST' => 'www.example.org',
+            'HTTP_ACCEPT' => 'text/html',
+            'HTTP_REFERRER' => 'https://example.com',
+            'HTTP_USER_AGENT' => 'My User Agent',
             'HTTPS' => 'on',
             'REMOTE_ADDR' => '193.60.168.69',
             'REMOTE_PORT' => '5390',
@@ -395,15 +429,21 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $server = ServerRequest::fromGlobals();
 
-        $this->assertSame('POST', $server->getMethod());
-        $this->assertEquals(['Host' => ['www.example.org']], $server->getHeaders());
-        $this->assertSame('', (string) $server->getBody());
-        $this->assertSame('1.1', $server->getProtocolVersion());
-        $this->assertEquals($_COOKIE, $server->getCookieParams());
-        $this->assertEquals($_POST, $server->getParsedBody());
-        $this->assertEquals($_GET, $server->getQueryParams());
+        self::assertSame('POST', $server->getMethod());
+        self::assertEquals([
+            'Host' => ['www.example.org'],
+            'Content-Type' => ['text/plain'],
+            'Accept' => ['text/html'],
+            'Referrer' => ['https://example.com'],
+            'User-Agent' => ['My User Agent'],
+        ], $server->getHeaders());
+        self::assertSame('', (string) $server->getBody());
+        self::assertSame('1.1', $server->getProtocolVersion());
+        self::assertSame($_COOKIE, $server->getCookieParams());
+        self::assertSame($_POST, $server->getParsedBody());
+        self::assertSame($_GET, $server->getQueryParams());
 
-        $this->assertEquals(
+        self::assertEquals(
             new Uri('https://www.example.org/blog/article.php?id=10&user=foo'),
             $server->getUri()
         );
@@ -418,10 +458,10 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
             ),
         ];
 
-        $this->assertEquals($expectedFiles, $server->getUploadedFiles());
+        self::assertEquals($expectedFiles, $server->getUploadedFiles());
     }
 
-    public function testUploadedFiles()
+    public function testUploadedFiles(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -431,20 +471,20 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $request2 = $request1->withUploadedFiles($files);
 
-        $this->assertNotSame($request2, $request1);
-        $this->assertSame([], $request1->getUploadedFiles());
-        $this->assertSame($files, $request2->getUploadedFiles());
+        self::assertNotSame($request2, $request1);
+        self::assertSame([], $request1->getUploadedFiles());
+        self::assertSame($files, $request2->getUploadedFiles());
     }
 
-    public function testServerParams()
+    public function testServerParams(): void
     {
         $params = ['name' => 'value'];
 
         $request = new ServerRequest('GET', '/', [], null, '1.1', $params);
-        $this->assertSame($params, $request->getServerParams());
+        self::assertSame($params, $request->getServerParams());
     }
 
-    public function testCookieParams()
+    public function testCookieParams(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -452,12 +492,12 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $request2 = $request1->withCookieParams($params);
 
-        $this->assertNotSame($request2, $request1);
-        $this->assertEmpty($request1->getCookieParams());
-        $this->assertSame($params, $request2->getCookieParams());
+        self::assertNotSame($request2, $request1);
+        self::assertEmpty($request1->getCookieParams());
+        self::assertSame($params, $request2->getCookieParams());
     }
 
-    public function testQueryParams()
+    public function testQueryParams(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -465,12 +505,12 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $request2 = $request1->withQueryParams($params);
 
-        $this->assertNotSame($request2, $request1);
-        $this->assertEmpty($request1->getQueryParams());
-        $this->assertSame($params, $request2->getQueryParams());
+        self::assertNotSame($request2, $request1);
+        self::assertEmpty($request1->getQueryParams());
+        self::assertSame($params, $request2->getQueryParams());
     }
 
-    public function testParsedBody()
+    public function testParsedBody(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -478,12 +518,12 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $request2 = $request1->withParsedBody($params);
 
-        $this->assertNotSame($request2, $request1);
-        $this->assertEmpty($request1->getParsedBody());
-        $this->assertSame($params, $request2->getParsedBody());
+        self::assertNotSame($request2, $request1);
+        self::assertEmpty($request1->getParsedBody());
+        self::assertSame($params, $request2->getParsedBody());
     }
 
-    public function testAttributes()
+    public function testAttributes(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -492,35 +532,35 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $request4 = $request3->withoutAttribute('other');
         $request5 = $request3->withoutAttribute('unknown');
 
-        $this->assertNotSame($request2, $request1);
-        $this->assertNotSame($request3, $request2);
-        $this->assertNotSame($request4, $request3);
-        $this->assertSame($request5, $request3);
+        self::assertNotSame($request2, $request1);
+        self::assertNotSame($request3, $request2);
+        self::assertNotSame($request4, $request3);
+        self::assertSame($request5, $request3);
 
-        $this->assertSame([], $request1->getAttributes());
-        $this->assertNull($request1->getAttribute('name'));
-        $this->assertSame(
+        self::assertSame([], $request1->getAttributes());
+        self::assertNull($request1->getAttribute('name'));
+        self::assertSame(
             'something',
             $request1->getAttribute('name', 'something'),
             'Should return the default value'
         );
 
-        $this->assertSame('value', $request2->getAttribute('name'));
-        $this->assertSame(['name' => 'value'], $request2->getAttributes());
-        $this->assertEquals(['name' => 'value', 'other' => 'otherValue'], $request3->getAttributes());
-        $this->assertSame(['name' => 'value'], $request4->getAttributes());
+        self::assertSame('value', $request2->getAttribute('name'));
+        self::assertSame(['name' => 'value'], $request2->getAttributes());
+        self::assertSame(['name' => 'value', 'other' => 'otherValue'], $request3->getAttributes());
+        self::assertSame(['name' => 'value'], $request4->getAttributes());
     }
 
-    public function testNullAttribute()
+    public function testNullAttribute(): void
     {
         $request = (new ServerRequest('GET', '/'))->withAttribute('name', null);
 
-        $this->assertSame(['name' => null], $request->getAttributes());
-        $this->assertNull($request->getAttribute('name', 'different-default'));
+        self::assertSame(['name' => null], $request->getAttributes());
+        self::assertNull($request->getAttribute('name', 'different-default'));
 
         $requestWithoutAttribute = $request->withoutAttribute('name');
 
-        $this->assertSame([], $requestWithoutAttribute->getAttributes());
-        $this->assertSame('different-default', $requestWithoutAttribute->getAttribute('name', 'different-default'));
+        self::assertSame([], $requestWithoutAttribute->getAttributes());
+        self::assertSame('different-default', $requestWithoutAttribute->getAttribute('name', 'different-default'));
     }
 }

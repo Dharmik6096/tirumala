@@ -12,7 +12,6 @@ use Yii;
  *
  * @property integer $id
  * @property string $username
- * @property integer $user_code
  * @property string $auth_key
  * @property string $password_hash
  * @property string $confirmation_token
@@ -184,10 +183,4 @@ abstract class UserIdentity extends ActiveRecord implements IdentityInterface
 	{
 		$this->confirmation_token = null;
 	}
-        
-        public function checkNotSelf()
-        {
-            //return false;
-            return $this->id!=Yii::$app->session->get('UserCode');
-        }
 }

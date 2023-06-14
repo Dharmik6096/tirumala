@@ -26,41 +26,7 @@ class GhostAccessControl extends ActionFilter
 	 */
 	public $denyCallback;
 
-        private function isRecordSecurity($action){
-          /*  if($action->id=='delete' || $action->id=='update'){
-                                    $controllerName= $action->controller->id;
-                    $controllerName=str_replace('-',' ',$controllerName);
-                    $modelName=  ucwords($controllerName);
-                    $modelName=str_replace(' ','',$modelName);
-                    if($modelName=='Permission' || $modelName=='Role' || $modelName=='AuthItemGroup' || $modelName=='User')
-                        return true;
-                 /*   if($modelName=='User')
-                        $path ='\\webvimark\modules\UserManagement\models\\';*/
-              /*      else
-                        $path='\\app\models\\';
-                    $modelName=$path.$modelName;
-                    $model=new $modelName();
-                    $data=$model->findone(Yii::$app->getRequest()->getQueryParam('id'));
-                    if($data){
-
-                        $map=new \app\models\TblUserOrganizationMapping();
-                        $mapData=$map->find()->where(['userId'=>$data->created_by])->all();
-                        $organisation=  explode(',',Yii::$app->session->get('Organizations'));
-                        foreach ($mapData as $m){
-                            if(in_array($m->organizationCode,$organisation))
-                                return true;
-                        }
-                        return FALSE;
-
-                    }
-                    return false;
-            }*/
-            return true;
-        }
-
-
-
-        /**
+	/**
 	 * Check if user has access to current route
 	 *
 	 * @param Action $action the action to be executed.
@@ -78,10 +44,7 @@ class GhostAccessControl extends ActionFilter
 
 		if ( Route::isFreeAccess($route, $action) )
 		{
-			//return true;
-                    if($this->isRecordSecurity($action))
-                            return true;
-                        $this->denyAccess();
+			return true;
 		}
 
 		if ( Yii::$app->user->isGuest )
@@ -99,9 +62,7 @@ class GhostAccessControl extends ActionFilter
 		// Superadmin owns everyone
 		if ( Yii::$app->user->isSuperadmin )
 		{
-			if($this->isRecordSecurity($action))
-                            return true;
-                        $this->denyAccess();
+			return true;
 		}
 
 		if ( Yii::$app->user->identity AND Yii::$app->user->identity->status != User::STATUS_ACTIVE)
@@ -112,19 +73,16 @@ class GhostAccessControl extends ActionFilter
 
 		if ( User::canRoute($route) )
 		{
-                    if($this->isRecordSecurity($action))
-                        return true;
-                    $this->denyAccess();
+			return true;
 		}
 
 		if ( isset($this->denyCallback) )
 		{
-
 			call_user_func($this->denyCallback, null, $action);
 		}
 		else
 		{
-                    $this->denyAccess();
+			$this->denyAccess();
 		}
 
 		return false;

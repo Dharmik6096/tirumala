@@ -1,8 +1,47 @@
 Change Log: `yii2-tabs-x`
 =========================
 
-## Version 1.2.3
+## Version 1.2.9
 
+**Date:** 15-Oct-2022
+
+- (enh #83, #84): Adds `role="presentation"` to list items.
+
+## Version 1.2.8
+
+**Date:** 20-Sep-2021
+
+- (enh #74): Enhancements to support Bootstrap 5.x.
+- Bump up version.
+
+## Version 1.2.7
+
+**Date:** 26-Sep-2018
+
+- Enhancements in parsing Bootstrap CSS classes (ref: kartik-v/yii2-krajee-base#100).
+
+## Version 1.2.6
+
+**Date:** 10-Sep-2018
+
+- (bug #63): Correct and remove unnecessary bootstrap tabs plugin registration.
+
+## Version 1.2.5
+
+**Date:** 06-Sep-2018
+
+- Updates to support Bootstrap 4.x.
+- Reorganize all source code in `src` directory.
+- (kartik-v/yii2-krajee-base#94): Refactor code and consolidate / optimize properties within traits.
+
+## Version 1.2.4
+
+**Date:** 04-May-2017
+
+- (bug #47): Add missing `hashVarLoadPosition` property.
+
+## Version 1.2.3
+    
 **Date:** 09-Sep-2016
 
 - (enh #33): Add branch alias for dev-master latest release.

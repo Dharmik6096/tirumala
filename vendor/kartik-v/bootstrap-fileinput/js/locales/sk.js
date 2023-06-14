@@ -8,10 +8,21 @@
  *
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function ($) {
+(function (factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], factory);
+    } else if (typeof module === 'object' && typeof module.exports === 'object') {
+        factory(require('jquery'));
+    } else {
+        factory(window.jQuery);
+    }
+}(function ($) {
     "use strict";
 
     $.fn.fileinputLocales['sk'] = {
+        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
+        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: 'súbor',
         filePlural: 'súbory',
         browseLabel: 'Vybrať &hellip;',
@@ -19,16 +30,22 @@
         removeTitle: 'Vyčistiť vybraté súbory',
         cancelLabel: 'Storno',
         cancelTitle: 'Prerušiť  nahrávanie',
+        pauseLabel: 'Pozastaviť',
+        pauseTitle: 'Pozastaviť prebiehajúce nahrávanie',
         uploadLabel: 'Nahrať',
         uploadTitle: 'Nahrať vybraté súbory',
         msgNo: 'Nie',
         msgNoFilesSelected: '',
+        msgPaused: 'Pozastavené',
         msgCancelled: 'Zrušené',
+        msgPlaceholder: 'Vybrať {files} ...',
         msgZoomModalHeading: 'Detailný náhľad',
-        msgSizeTooSmall: 'File "{name}" (<b>{size} KB</b>) is too small and must be larger than <b>{minSize} KB</b>.',
-        msgSizeTooLarge: 'Súbor "{name}" (<b>{size} KB</b>): prekročenie - maximálna povolená veľkosť <b>{maxSize} KB</b>.',
+        msgFileRequired: 'Musíte vybrať súbor, ktorý chcete nahrať.',
+        msgSizeTooSmall: 'Súbor "{name}" (<b>{size}</b>) je príliš malý, musí mať veľkosť najmenej <b>{minSize}</b>.',
+        msgSizeTooLarge: 'Súbor "{name}" (<b>{size}</b>) je príliš veľký, maximálna povolená veľkosť <b>{maxSize}</b>.',
         msgFilesTooLess: 'Musíte vybrať najmenej <b>{n}</b> {files} pre nahranie.',
-        msgFilesTooMany: 'Počet vybratých súborov pre nahranie <b>({n})</b>: prekročenie - maximálny povolený limit <b>{m}</b>.',
+        msgFilesTooMany: 'Počet vybratých súborov <b>({n})</b> prekročil maximálny povolený limit <b>{m}</b>.',
+        msgTotalFilesTooMany: 'Môžete nahrať maximálne <b>{m}</b> súborov (zistených <b>{n}</b> súborov).',
         msgFileNotFound: 'Súbor "{name}" nebol nájdený!',
         msgFileSecured: 'Zabezpečenie súboru znemožnilo čítať súbor "{name}".',
         msgFileNotReadable: 'Súbor "{name}" nie je čitateľný.',
@@ -38,7 +55,7 @@
         msgInvalidFileType: 'Neplatný typ súboru "{name}". Iba "{types}" súborov sú podporované.',
         msgInvalidFileExtension: 'Neplatná extenzia súboru "{name}". Iba "{extensions}" súborov sú podporované.',
         msgFileTypes: {
-            'image': 'image',
+            'image': 'obrázok',
             'html': 'HTML',
             'text': 'text',
             'video': 'video',
@@ -47,49 +64,63 @@
             'pdf': 'PDF',
             'object': 'object'
         },
-        msgUploadAborted: 'Súbor nahrávania bol prerušený',
-        msgUploadThreshold: 'Processing...',
-        msgUploadBegin: 'Initializing...',
-        msgUploadEnd: 'Done',
-        msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadAborted: 'Nahrávanie súboru bolo prerušené',
+        msgUploadThreshold: 'Spracovávam &hellip;',
+        msgUploadBegin: 'Inicializujem &hellip;',
+        msgUploadEnd: 'Hotovo',
+        msgUploadResume: 'Obnovuje sa nahrávanie &hellip;',
+        msgUploadEmpty: 'Na nahrávanie nie sú k dispozícii žiadne platné údaje.',
+        msgUploadError: 'Chyba pri nahrávaní',
+        msgDeleteError: 'Chyba pri odstraňovaní',
+        msgProgressError: 'Chyba',
         msgValidationError: 'Chyba overenia',
         msgLoading: 'Nahrávanie súboru {index} z {files} &hellip;',
         msgProgress: 'Nahrávanie súboru {index} z {files} - {name} - {percent}% dokončené.',
         msgSelected: '{n} {files} vybraté',
+        msgProcessing: 'Spracovávam ...',
         msgFoldersNotAllowed: 'Tiahni a pusť iba súbory! Vynechané {n} pustené prečinok(y).',
-        msgImageWidthSmall: 'Šírka image súboru "{name}", musí byť minimálne {size} px.',
-        msgImageHeightSmall: 'Výška image súboru "{name}", musí byť minimálne {size} px.',
-        msgImageWidthLarge: 'Šírka image súboru "{name}" nemôže presiahnuť {size} px.',
-        msgImageHeightLarge: 'Výška súboru obrazu "{name}" nesmie presiahnuť {size} px.',
-        msgImageResizeError: 'Nemožno získať rozmery obrázku zmeniť veľkosť.',
+        msgImageWidthSmall: 'Šírka obrázku "{name}", musí byť minimálne <b>{size} px</b> (detected <b>{dimension} px</b>).',
+        msgImageHeightSmall: 'Výška obrázku "{name}", musí byť minimálne <b>{size} px</b> (detected <b>{dimension} px</b>).',
+        msgImageWidthLarge: 'Šírka obrázku "{name}" nemôže presiahnuť <b>{size} px</b> (detected <b>{dimension} px</b>).',
+        msgImageHeightLarge: 'Výška obrázku "{name}" nesmie presiahnuť <b>{size} px</b> (detected <b>{dimension} px</b>).',
+        msgImageResizeError: 'Nepodarilo sa získať veľkosť obrázka pre zmenu veľkosti.',
         msgImageResizeException: 'Chyba pri zmene veľkosti obrázka.<pre>{errors}</pre>',
-        msgAjaxError: 'Something went wrong with the {operation} operation. Please try again later!',
-        msgAjaxProgressError: '{operation} failed',
+        msgAjaxError: 'Pri operácii {operation} sa vyskytla chyba. Skúste to prosím neskôr!',
+        msgAjaxProgressError: '{operation} - neúspešné',
+        msgDuplicateFile: 'Súbor "{name}" rovnakej veľkosti "{size}" už bol vybratý skôr. Preskočenie duplicitného výberu.',
+        msgResumableUploadRetriesExceeded:  'Nahrávanie bolo prerušené po <b>{max}</b> opakovaniach súboru <b>{file}</b>! Detaily chyby: <pre>{error}</pre>',
+        msgPendingTime: '{time} zostáva',
+        msgCalculatingTime: 'výpočet zostávajúceho času',
         ajaxOperations: {
-            deleteThumb: 'file delete',
-            uploadThumb: 'file upload',
-            uploadBatch: 'batch file upload',
-            uploadExtra: 'form data upload'
+            deleteThumb: 'odstrániť súbor',
+            uploadThumb: 'nahrať súbor',
+            uploadBatch: 'nahrať várku súborov',
+            uploadExtra: 'odosielanie údajov z formulára'
         },
         dropZoneTitle: 'Tiahni a pusť súbory tu &hellip;',
-        dropZoneClickTitle: '<br>(or click to select {files})',
+        dropZoneClickTitle: '<br>(alebo kliknite sem a vyberte {files})',
         fileActionSettings: {
-            removeTitle: 'odstrániť súbor',
-            uploadTitle: 'nahrať súbor',
+            removeTitle: 'Odstrániť súbor',
+            uploadTitle: 'Nahrať súbor',
+            uploadRetryTitle: 'Znova nahrať',
+            downloadTitle: 'Stiahnuť súbor',
+            rotateTitle: 'Rotate 90 deg. clockwise',
             zoomTitle: 'Zobraziť podrobnosti',
-            dragTitle: 'Move / Rearrange',
+            dragTitle: 'Posunúť / Preskládať',
             indicatorNewTitle: 'Ešte nenahral',
-            indicatorSuccessTitle: 'nahral',
-            indicatorErrorTitle: 'nahrať Chyba',
-            indicatorLoadingTitle: 'nahrávanie ...'
+            indicatorSuccessTitle: 'Nahraný',
+            indicatorErrorTitle: 'Chyba pri nahrávaní',
+            indicatorPausedTitle: 'Nahrávanie bolo pozastavené',
+            indicatorLoadingTitle:  'Nahrávanie &hellip;'
         },
         previewZoomButtonTitles: {
-            prev: 'View previous file',
-            next: 'View next file',
-            toggleheader: 'Toggle header',
-            fullscreen: 'Toggle full screen',
-            borderless: 'Toggle borderless mode',
-            close: 'Close detailed preview'
+            prev: 'Zobraziť predchádzajúci súbor',
+            next: 'Zobraziť následujúci súbor',
+            rotate: 'Rotate 90 deg. clockwise',
+            toggleheader: 'Prepnúť záhlavie',
+            fullscreen: 'Prepnúť zobrazenie na celú obrazovku',
+            borderless: 'Prepnúť na bezrámikové zobrazenie',
+            close: 'Zatvoriť detailný náhľad'
         }
     };
-})(window.jQuery);
+}));

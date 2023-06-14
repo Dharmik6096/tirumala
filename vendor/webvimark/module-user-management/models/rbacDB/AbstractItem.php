@@ -39,7 +39,6 @@ abstract class AbstractItem extends ActiveRecord
 	 * Reassigned in child classes to type role, permission or route
 	 */
 	const ITEM_TYPE = 0;
-        public $organizations_type;
 
 
 	/**
@@ -60,9 +59,8 @@ abstract class AbstractItem extends ActiveRecord
 
 		$item->type = static::ITEM_TYPE;
 		$item->name = $name;
-		//$item->description = ( $description === null AND static::ITEM_TYPE != static::TYPE_ROUTE ) ? Inflector::titleize($name) : $description;
-                $item->description = ($description === null) ? Inflector::titleize($name) : $description;
-                $item->rule_name = $ruleName;
+		$item->description = ( $description === null AND static::ITEM_TYPE != static::TYPE_ROUTE ) ? Inflector::titleize($name) : $description;
+		$item->rule_name = $ruleName;
 		$item->group_code = $groupCode;
 		$item->data = $data;
 
@@ -172,7 +170,7 @@ abstract class AbstractItem extends ActiveRecord
 	public function rules()
 	{
 		return [
-			[['name', 'rule_name', 'group_code'], 'trim'],
+			[['name', 'rule_name', 'description', 'group_code'], 'trim'],
 
 			['description', 'required', 'on'=>'webInput'],
 			['description', 'string', 'max' => 255],
@@ -183,8 +181,7 @@ abstract class AbstractItem extends ActiveRecord
 
 			[['rule_name', 'description', 'group_code', 'data'], 'default', 'value'=>null],
 
-			[['type', 'entry_type'], 'integer'],
-			['organizations_type', 'safe'],
+			['type', 'integer'],
 			['type', 'in', 'range'=>[static::TYPE_ROLE, static::TYPE_PERMISSION, static::TYPE_ROUTE]],
 		];
 	}
@@ -229,7 +226,6 @@ abstract class AbstractItem extends ActiveRecord
 			'type'        => UserManagementModule::t('back', 'Type'),
 			'created_at'  => UserManagementModule::t('back', 'Created'),
 			'updated_at'  => UserManagementModule::t('back', 'Updated'),
-			'organizations_type'  => UserManagementModule::t('back', 'Organizations Type'),
 		];
 	}
 
@@ -249,7 +245,7 @@ abstract class AbstractItem extends ActiveRecord
 	public function beforeSave($insert)
 	{
 		$this->type = static::ITEM_TYPE;
-                (Yii::$app->session->get('organizations_type') == 'UNION') ? $this->entry_type = 2 : $this->entry_type = 1;
+
 		return parent::beforeSave($insert);
 	}
 
@@ -274,4 +270,4 @@ abstract class AbstractItem extends ActiveRecord
 		$event = new AbstractItemEvent(compact('parentName', 'childrenNames', 'throwException'));
 		$event->trigger(get_called_class(), self::EVENT_BEFORE_REMOVE_CHILDREN, $event);
 	}
-}
+} 

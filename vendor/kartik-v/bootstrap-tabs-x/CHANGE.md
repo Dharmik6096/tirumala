@@ -1,9 +1,22 @@
 Change Log: `bootstrap-tabs-x`
 ==============================
 
+## Version 1.3.5
+
+**Date:** 21-Sep-2021
+
+- (enh #36): Correct bootstrap tabs-x left and right styles.
+
+## Version 1.3.4
+
+**Date:** 20-Sep-2021
+
+- Simplify NPM module handling.
+- (enh #35): Enhancements to support Bootstrap v5.x framework.
+
 ## Version 1.3.3
 
-**Date:** 09-Sep-2017
+**Date:** 12-Jan-2021
 
 - (enh #28): Enhancements to support Bootstrap v4.x framework.
 - (enh #27): Enhance `flushCache` method to allow flushing cache of specific `tabIds`.

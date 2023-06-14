@@ -1,5 +1,15 @@
-yii2-tabs-x
-=================
+<h1 align="center">
+    <a href="http://demos.krajee.com" title="Krajee Demos" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/krajee-logo-b.png" alt="Krajee Logo"/>
+    </a>
+    <br>
+    yii2-tabs-x
+    <hr>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
+       title="Donate via Paypal" target="_blank"><img src="https://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" height="60" alt="Donate"/></a>
+    &nbsp; &nbsp; &nbsp;
+    <a href="https://www.buymeacoffee.com/kartikv" title="Buy me a coffee" ><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="60" alt="kartikv" /></a>
+</h1>
 
 [![Stable Version](https://poser.pugx.org/kartik-v/yii2-tabs-x/v/stable)](https://packagist.org/packages/kartik-v/yii2-tabs-x)
 [![Untable Version](https://poser.pugx.org/kartik-v/yii2-tabs-x/v/unstable)](https://packagist.org/packages/kartik-v/yii2-tabs-x)
@@ -8,7 +18,9 @@ yii2-tabs-x
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-tabs-x/d/monthly)](https://packagist.org/packages/kartik-v/yii2-tabs-x)
 [![Daily Downloads](https://poser.pugx.org/kartik-v/yii2-tabs-x/d/daily)](https://packagist.org/packages/kartik-v/yii2-tabs-x)
 
-An extended tabs widget for Yii Framework 2 based on the [bootstrap-tabs-x jQuery plugin](http://plugins.krajee.com/tabs-x) by Krajee. This plugin includes various CSS3 styling enhancements and various tweaks to the core [Bootstrap 3 Tabs plugin](http://getbootstrap.com/javascript/#tabs). It helps you align tabs in multiple ways, add borders, achieve rotated/sideways titles, load tab content via ajax, and more. 
+An extended tabs widget for Yii Framework 2 based on the [bootstrap-tabs-x jQuery plugin](http://plugins.krajee.com/tabs-x) by Krajee. This plugin includes various CSS3 styling enhancements and various tweaks to 
+the core [Bootstrap Tabs plugin](http://getbootstrap.com/javascript/#tabs). The extension supports Bootstrap 5.x or 4.x or 3.x library versions.
+It also helps you align tabs in multiple ways, add borders, achieve rotated/sideways titles, load tab content via ajax, and more. 
 
 ## Features  
 
@@ -101,4 +113,4 @@ echo TabsX::widget([
 
 ## License
 
-**yii2-tabs-x** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**yii2-tabs-x** is released under the BSD-3-Clause License. See the bundled `LICENSE.md` for details.

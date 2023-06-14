@@ -9,33 +9,37 @@ use yii\bootstrap\ActiveForm;
  * @var webvimark\modules\UserManagement\models\rbacDB\AuthItemGroup $model
  * @var yii\bootstrap\ActiveForm $form
  */
-$title = Yii::$app->label->title($type, 'permission group');
-$button = Yii::$app->label->button($type);
-$this->title = Yii::t('app', $title);
 ?>
+<div class="auth-item-group-form">
 
-<?php
-$form = ActiveForm::begin([
-            'id' => 'auth-item-group-form',
-            'validateOnBlur' => false,
-        ]);
-?>
+	<?php $form = ActiveForm::begin([
+		'id'=>'auth-item-group-form',
+		'layout'=>'horizontal',
+		'validateOnBlur' => false,
 
-<div class="row">
-    <div class="col-sm-3">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'code')->textInput(['maxlength' => 64]) ?>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
-            <?= Yii::$app->controls->save($button, $model); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>
+	]); ?>
+
+	<?= $form->field($model, 'name')->textInput(['maxlength' => 255, 'autofocus'=>$model->isNewRecord ? true:false]) ?>
+
+	<?= $form->field($model, 'code')->textInput(['maxlength' => 64]) ?>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-9">
+			<?php if ( $model->isNewRecord ): ?>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-plus-sign"></span> ' . UserManagementModule::t('back', 'Create'),
+					['class' => 'btn btn-success']
+				) ?>
+			<?php else: ?>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-ok"></span> ' . UserManagementModule::t('back', 'Save'),
+					['class' => 'btn btn-primary']
+				) ?>
+			<?php endif; ?>
+		</div>
+	</div>
+
+	<?php ActiveForm::end(); ?>
+
 </div>
 
-<?php ActiveForm::end(); ?>

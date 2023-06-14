@@ -1,5 +1,15 @@
-dependent-dropdown
-==================
+<h1 align="center">
+    <a href="http://plugins.krajee.com" title="Krajee Plugins" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/krajee-logo-b.png" alt="Krajee Logo"/>
+    </a>
+    <br>
+    dependent-dropdown
+    <hr>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
+       title="Donate via Paypal" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" alt="Donate"/>
+    </a>
+</h1>
 
 [![BOWER version](https://badge-me.herokuapp.com/api/bower/kartik-v/dependent-dropdown.png)](http://badges.enytc.com/for/bower/kartik-v/dependent-dropdown)
 [![Latest Stable Version](https://poser.pugx.org/kartik-v/dependent-dropdown/v/stable)](https://packagist.org/packages/kartik-v/dependent-dropdown)
@@ -9,7 +19,7 @@ dependent-dropdown
 
 A multi level dependent dropdown JQuery plugin that allows nested dependencies. The plugin allows you to convert normal select inputs, whose options are derived based on value selected in another input/or a group of inputs. It works both with normal select options and select with optgroups as well.
 
-> NOTE: The latest version of the plugin v1.4.4 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/dependent-dropdown/blob/master/CHANGE.md) for details.
+> NOTE: Refer the [CHANGE LOG](https://github.com/kartik-v/dependent-dropdown/blob/master/CHANGE.md) for details on updates to various releases.
 
 ## Features
 
@@ -24,9 +34,8 @@ A multi level dependent dropdown JQuery plugin that allows nested dependencies. 
 - Allows a loading indicator to be displayed in dependent select until the results are fetched from the server.
 - Configure your own loading progress text to be displayed for each dependent dropdown before the results are fetched from the server.
 - Display a placeholder label with an empty value. For `optgroups` automatically disable this option.
-- Triggers JQuery events for advanced development. Events currently available are `depdrop.init`, `depdrop.change`,
-  `depdrop.beforeChange`,`depdrop.afterChange`, and  `depdrop.error`.
-- Size of the entire plugin is less than 4KB (about 3KB for the minified JS and 1KB for the minified CSS).
+- Triggers JQuery events for advanced development. Events currently available are `depdrop:init`, `depdrop:change`,
+  `depdrop:beforeChange`,`depdrop:afterChange`, and  `depdrop:error`.
 - Ability to configure HTML attributes of each `option` element via ajax response (for example dynamically disabling some dropdown options or adding styles).
 
 ## Documentation and Demo
@@ -72,6 +81,11 @@ You can use the `bower` package manager to install. Run:
 
     bower install dependent-dropdown
 
+### Using NPM
+To install using the `npm` package manager run:
+
+    npm install dependent-dropdown
+
 ### Using Composer
 You can use the `composer` package manager to install. Either run:
 
@@ -99,10 +113,10 @@ plugin assets (css and js folders) into your project.
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="path/to/js/dependent-dropdown.min.js" type="text/javascript"></script>
 <!-- optionally if you need translation for your language then include locale file as mentioned below -->
-<script src="path/to/js/depdrop_locale_<lang>.js"></script>
+<script src="path/to/js/locales/<lang>.js"></script>
 ```
 
-If you noticed, you need to load the `jquery.min.js` in addition to the `dependent-dropdown.min.css` and `dependent-dropdown.min.js` for the plugin to work with default settings. The locale file `depdrop_locale_<lang>.js` can be optionally included for translating for your language if needed.
+If you noticed, you need to load the `jquery.min.js` in addition to the `dependent-dropdown.min.css` and `dependent-dropdown.min.js` for the plugin to work with default settings. The locale file `js/locales/<lang>.js` can be optionally included for translating for your language if needed.
 
 **Step 2:** Setup your select input markup to. Automatically set dependent dropdowns by adding the class `depdrop` and setting data attributes. 
 NOTE: All select inputs must have a defined `ID` attribute for the plugin to work.
@@ -112,11 +126,18 @@ NOTE: All select inputs must have a defined `ID` attribute for the plugin to wor
    <!-- your select options -->
 </select>
 
-<select id="child-1" class="depdrop" depends="['parent-1']" url="/path/to/child_1_list">
+<select id="child-1" class="depdrop" data-depends="['parent-1']" data-url="/path/to/child_1_list">
    <!-- your select options -->
 </select>
 
-<select id="child-2" class="depdrop" depends="['parent-1, 'child-1']" url="/path/to/child_2_list">
+<select id="child-2" class="depdrop" data-depends="['parent-1', 'child-1']" data-url="/path/to/child_2_list">
+   <!-- your select options -->
+</select>
+```
+Due to array data being used for the data-depends attribute, you may need to escape the data like so:
+
+```html
+<select id="child-1" class="depdrop" data-depends="[&quot;parent-1&quot;]" data-url="/path/to/child_1_list">
    <!-- your select options -->
 </select>
 ```
@@ -138,4 +159,4 @@ $("#child-2").depdrop({
 
 ## License
 
-**dependent-dropdown** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**dependent-dropdown** is released under the BSD-3-Clause License. See the bundled `LICENSE.md` for details.

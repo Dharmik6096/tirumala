@@ -32,8 +32,7 @@ class AuthItemGroupSearch extends AuthItemGroup
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 			'pagination' => [
-                                'pageSize' => 10,
-				//'pageSize' => Yii::$app->request->cookies->getValue('_grid_page_size', 20),
+				'pageSize' => Yii::$app->request->cookies->getValue('_grid_page_size', 20),
 			],
 			'sort'=>[
 				'defaultOrder'=>['created_at'=> SORT_DESC],

@@ -1,13 +1,18 @@
 <?php
+
 /**
  * @author    Andreas Fischer <bantu@phpbb.com>
  * @copyright 2013 Andreas Fischer
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-abstract class PhpseclibTestCase extends PHPUnit_Framework_TestCase
+namespace phpseclib3\Tests;
+
+use PHPUnit\Framework\TestCase;
+
+abstract class PhpseclibTestCase extends TestCase
 {
-    protected $tempFilesToUnlinkOnTearDown = array();
+    protected $tempFilesToUnlinkOnTearDown = [];
 
     public function tearDown()
     {
@@ -81,24 +86,68 @@ abstract class PhpseclibTestCase extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @param string $filename Filename relative to library directory.
-     *
-     * @return null
-     */
-    protected static function reRequireFile($filename)
+    protected static function getVar($obj, $var)
     {
-        if (extension_loaded('runkit')) {
-            $result = runkit_import(
-                sprintf('%s/../phpseclib/%s', __DIR__, $filename),
-                RUNKIT_IMPORT_FUNCTIONS |
-                RUNKIT_IMPORT_CLASS_METHODS |
-                RUNKIT_IMPORT_OVERRIDE
-            );
+        $reflection = new \ReflectionClass(get_class($obj));
+        $prop = $reflection->getProperty($var);
+        $prop->setAccessible(true);
+        return $prop->getValue($obj);
+    }
 
-            if (!$result) {
-                self::markTestSkipped("Failed to reimport file $filename");
-            }
-        }
+    public static function callFunc($obj, $func, $params = [])
+    {
+        $reflection = new \ReflectionClass(get_class($obj));
+        $method = $reflection->getMethod($func);
+        $method->setAccessible(true);
+        return $method->invokeArgs($obj, $params);
+    }
+
+    // assertIsArray was not introduced until PHPUnit 8
+    public static function assertIsArray($actual, $message = '')
+    {
+        parent::assertInternalType('array', $actual, $message);
+    }
+
+    // assertIsString was not introduced until PHPUnit 8
+    public static function assertIsString($actual, $message = '')
+    {
+        parent::assertInternalType('string', $actual, $message);
+    }
+
+    // assertIsResource was not introduced until PHPUnit 8
+    public static function assertIsResource($actual, $message = '')
+    {
+        parent::assertInternalType('resource', $actual, $message);
+    }
+
+    // assertIsObject was not introduced until PHPUnit 8
+    public static function assertIsObject($actual, $message = '')
+    {
+        parent::assertInternalType('object', $actual, $message);
+    }
+
+    // assertContains is deprecated for strings in PHPUnit 8
+    public static function assertStringContainsString($needle, $haystack, $message = '')
+    {
+        parent::assertContains($needle, $haystack, $message);
+    }
+
+    // assertNotContains is deprecated for strings in PHPUnit 8
+    public static function assertStringNotContainsString($needle, $haystack, $message = '')
+    {
+        parent::assertNotContains($needle, $haystack, $message);
+    }
+
+    /**
+     * assertRegExp() was deprecated in favor of assertMatchesRegularExpression().
+     *
+     * @param string $pattern
+     * @param string $string
+     * @param string $message
+     * @return void
+     */
+    public static function assertMatchesRegularExpression($pattern, $string, $message = '')
+    {
+        parent::assertRegExp($pattern, $string, $message);
     }
 }

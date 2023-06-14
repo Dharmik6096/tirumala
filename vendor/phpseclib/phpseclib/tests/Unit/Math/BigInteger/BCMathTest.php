@@ -1,20 +1,32 @@
 <?php
+
 /**
  * @author    Andreas Fischer <bantu@phpbb.com>
  * @copyright 2013 Andreas Fischer
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-class Unit_Math_BigInteger_BCMathTest extends Unit_Math_BigInteger_TestCase
+namespace phpseclib3\Tests\Unit\Math\BigInteger;
+
+use phpseclib3\Math\BigInteger\Engines\BCMath;
+
+class BCMathTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        if (!extension_loaded('bcmath')) {
+        if (!BCMath::isValidEngine()) {
             self::markTestSkipped('BCMath extension is not available.');
         }
+        BCMath::setModExpEngine('DefaultEngine');
+    }
 
-        parent::setUpBeforeClass();
+    public function getInstance($x = 0, $base = 10)
+    {
+        return new BCMath($x, $base);
+    }
 
-        self::ensureConstant('MATH_BIGINTEGER_MODE', \phpseclib\Math\BigInteger::MODE_BCMATH);
+    public static function getStaticClass()
+    {
+        return 'phpseclib3\Math\BigInteger\Engines\BCMath';
     }
 }

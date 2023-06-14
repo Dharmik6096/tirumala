@@ -1,23 +1,17 @@
 <?php
+
 /**
  * @author    Andreas Fischer <bantu@phpbb.com>
  * @copyright 2012 Andreas Fischer
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
+namespace phpseclib3\Tests\Unit\Math\BigInteger;
+
+use phpseclib3\Tests\PhpseclibTestCase;
+
+abstract class TestCase extends PhpseclibTestCase
 {
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        self::reRequireFile('Math/BigInteger.php');
-    }
-
-    public function getInstance($x = 0, $base = 10)
-    {
-        return new \phpseclib\Math\BigInteger($x, $base);
-    }
-
     public function testConstructorBase2()
     {
         // 2**65 = 36893488147419103232
@@ -31,10 +25,15 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
 
     public function testConstructorBase16()
     {
-        $this->assertSame('50',                        (string) $this->getInstance('0x32', 16));
-        $this->assertSame('12345678910',            (string) $this->getInstance('0x2DFDC1C3E', 16));
-        $this->assertSame('18446744073709551615',    (string) $this->getInstance('0xFFFFFFFFFFFFFFFF', 16));
-        $this->assertSame('18446744073709551616',    (string) $this->getInstance('0x10000000000000000', 16));
+        $this->assertSame('50', (string) $this->getInstance('0x32', 16));
+        $this->assertSame('12345678910', (string) $this->getInstance('0x2DFDC1C3E', 16));
+        $this->assertSame('18446744073709551615', (string) $this->getInstance('0xFFFFFFFFFFFFFFFF', 16));
+        $this->assertSame('18446744073709551616', (string) $this->getInstance('0x10000000000000000', 16));
+    }
+
+    public function testConstructorBase256()
+    {
+        $this->assertSame('-128', (string) $this->getInstance("\x80", -256));
     }
 
     public function testToBytes()
@@ -55,6 +54,8 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
     public function testToBits()
     {
         $this->assertSame('1000001', $this->getInstance('65')->toBits());
+        $this->assertSame('10', $this->getInstance('-2')->toBits());
+        $this->assertSame('11111110', $this->getInstance('-2')->toBits(true));
     }
 
     public function testAdd()
@@ -103,6 +104,22 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
 
         $this->assertSame('95627922070', (string) $q);
         $this->assertSame('10688759725', (string) $r);
+
+        $x = $this->getInstance('3369993333393829974333376885877453834204643052817571560137951281152');
+        $y = $this->getInstance('4294967296');
+
+        list($q, $r) = $x->divide($y);
+
+        $this->assertSame('784637716923335095479473677900958302012794430558004314112', (string) $q);
+        $this->assertSame('0', (string) $r);
+
+        $x = $this->getInstance('3369993333393829974333376885877453834204643052817571560137951281153');
+        $y = $this->getInstance('4294967296');
+
+        list($q, $r) = $x->divide($y);
+
+        $this->assertSame('784637716923335095479473677900958302012794430558004314112', (string) $q);
+        $this->assertSame('1', (string) $r);
     }
 
     public function testModPow()
@@ -182,6 +199,9 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         // c < d
         $this->assertLessThan(0, $c->compare($d));
         $this->assertGreaterThan(0, $d->compare($c));
+
+        $this->assertSame(-1, $this->getInstance(-999)->compare($this->getInstance(370)));
+        $this->assertSame(1, $this->getInstance(999)->compare($this->getInstance(-700)));
     }
 
     public function testBitwiseAND()
@@ -200,6 +220,17 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         $z = $this->getInstance('FFFFFFFFFFFFFFFFFFFFFFF', 16);
 
         $this->assertSame($z->toHex(), $x->bitwise_OR($y)->toHex());
+
+        $x = -0xFFFF;
+        $y = 2;
+        $z = $x ^ $y;
+
+        $x = $this->getInstance($x);
+        $y = $this->getInstance($y);
+        $z = $this->getInstance($z);
+
+        $this->assertSame($z->toString(), $x->bitwise_OR($y)->toString());
+        $this->assertSame($z->toString(), $y->bitwise_OR($x)->toString());
     }
 
     public function testBitwiseXOR()
@@ -209,6 +240,18 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         $z = $this->getInstance('BC98BC98BC98BC98BC98BC98', 16);
 
         $this->assertSame($z->toHex(), $x->bitwise_XOR($y)->toHex());
+
+        // @group github1245
+
+        $a = $this->getInstance(1);
+        $b = $this->getInstance(-2);
+        $c = $a->bitwise_xor($b);
+        $this->assertSame("$c", '-1');
+
+        $a = $this->getInstance('-6725760161961546982');
+        $b = $this->getInstance(51);
+        $c = $a->bitwise_xor($b);
+        $this->assertSame("$c", '-6725760161961546967');
     }
 
     public function testBitwiseNOT()
@@ -273,27 +316,12 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         $min = $this->getInstance(0);
         $max = $this->getInstance('18446744073709551616');
 
-        $rand1 = $min->random($min, $max);
+        $class = static::getStaticClass();
+        $rand1 = $class::randomRange($min, $max);
         // technically $rand1 can equal $min but with the $min and $max we've
         // chosen it's just not that likely
         $this->assertTrue($rand1->compare($min) > 0);
         $this->assertTrue($rand1->compare($max) < 0);
-    }
-
-    public function testRandomOneArgument()
-    {
-        $min = $this->getInstance(0);
-        $max = $this->getInstance('18446744073709551616');
-
-        $rand1 = $min->random($max);
-        $this->assertTrue($rand1->compare($min) > 0);
-        $this->assertTrue($rand1->compare($max) < 0);
-
-        $rand2 = $max->random($min);
-        $this->assertTrue($rand2->compare($min) > 0);
-        $this->assertTrue($rand2->compare($max) < 0);
-
-        $this->assertFalse($rand1->equals($rand2));
     }
 
     /**
@@ -301,14 +329,6 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
      */
     public function testDiffieHellmanKeyAgreement()
     {
-        if (getenv('TRAVIS') && PHP_VERSION === '5.3.3'
-            && MATH_BIGINTEGER_MODE === \phpseclib\Math\BigInteger::MODE_INTERNAL
-        ) {
-            $this->markTestIncomplete(
-                'This test hangs on PHP 5.3.3 using internal mode.'
-            );
-        }
-
         // "Oakley Group 14" 2048-bit modular exponentiation group as used in
         // SSH2 diffie-hellman-group14-sha1
         $prime = $this->getInstance(
@@ -329,10 +349,11 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
 
         /*
         Code for generation of $alicePrivate and $bobPrivate.
+        $class = static::getStaticClass();
         $one = $this->getInstance(1);
         $max = $one->bitwise_leftShift(512)->subtract($one);
-        $alicePrivate = $one->random($one, $max);
-        $bobPrivate = $one->random($one, $max);
+        $alicePrivate = $static::randomRange($one, $max);
+        $bobPrivate = $static::randomRange($one, $max);
         var_dump($alicePrivate->toHex(), $bobPrivate->toHex());
         */
 
@@ -361,15 +382,26 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         );
     }
 
-    /**
-     * @requires PHP 5.6
-     */
     public function testDebugInfo()
     {
         $num = $this->getInstance(50);
         $str = print_r($num, true);
-        $this->assertContains('[value] => 0x32', $str);
-        return $str;
+        $this->assertStringContainsString('[value] => 0x32', $str);
+    }
+
+    public function testPrecision()
+    {
+        $a = $this->getInstance(51);
+        $this->assertSame($a->getPrecision(), -1);
+        $b = $a;
+        $c = clone $a;
+        $b->setPrecision(1);
+        $this->assertSame($a->getPrecision(), 1);
+        $this->assertSame("$a", '1');
+        $this->assertSame($b->getPrecision(), 1);
+        $this->assertSame("$b", '1');
+        $this->assertSame($c->getPrecision(), -1);
+        $this->assertSame("$c", '51');
     }
 
     /**
@@ -380,6 +412,110 @@ abstract class Unit_Math_BigInteger_TestCase extends PhpseclibTestCase
         $e = $this->getInstance(str_repeat('1', 1794), 2);
         $x = $this->getInstance(1);
         $n = $this->getInstance(2);
-        $x->powMod($e, $n);
+        self::assertSame('1', $x->powMod($e, $n)->toString());
+    }
+
+    public function testRoot()
+    {
+        $bigInteger = $this->getInstance('64000000'); // (20^2)^3
+        $bigInteger = $bigInteger->root();
+        $this->assertSame('8000', (string) $bigInteger);
+        $bigInteger = $bigInteger->root(3);
+        $this->assertSame('20', (string) $bigInteger);
+    }
+
+    public function testPow()
+    {
+        $bigInteger = $this->getInstance('20');
+        $two = $this->getInstance('2');
+        $three = $this->getInstance('3');
+        $bigInteger = $bigInteger->pow($two);
+        $this->assertSame('400', (string) $bigInteger);
+        $bigInteger = $bigInteger->pow($three);
+        $this->assertSame('64000000', (string) $bigInteger); // (20^2)^3
+    }
+
+    public function testMax()
+    {
+        $class = static::getStaticClass();
+        $min = $this->getInstance('20');
+        $max = $this->getInstance('20000');
+        $this->assertSame((string) $max, (string) $class::max($min, $max));
+        $this->assertSame((string) $max, (string) $class::max($max, $min));
+    }
+
+    public function testMin()
+    {
+        $class = static::getStaticClass();
+        $min = $this->getInstance('20');
+        $max = $this->getInstance('20000');
+        $this->assertSame((string) $min, (string) $class::min($min, $max));
+        $this->assertSame((string) $min, (string) $class::min($max, $min));
+    }
+
+    public function testRandomPrime()
+    {
+        $class = static::getStaticClass();
+        $prime = $class::randomPrime(128);
+        $this->assertSame(128, $prime->getLength());
+    }
+
+    /**
+     * @group github1260
+     */
+    public function testZeros()
+    {
+        $a = $this->getInstance();
+        $b = $this->getInstance('00', 16);
+        $this->assertTrue($a->equals($b));
+    }
+
+    /**
+     * @group github1264
+     */
+    public function test48ToHex()
+    {
+        $temp = $this->getInstance(48);
+        $this->assertSame($temp->toHex(true), '30');
+    }
+
+    public function testZeroBase10()
+    {
+        $temp = $this->getInstance('00');
+        $this->assertSame($temp->toString(), '0');
+
+        $temp = $this->getInstance('-0');
+        $this->assertSame($temp->toString(), '0');
+    }
+
+    public function testNegativePrecision()
+    {
+        $vals = [
+            '-9223372036854775808', // eg. 8000 0000 0000 0000
+            '-1'
+        ];
+        foreach ($vals as $val) {
+            $x = $this->getInstance($val);
+            $x->setPrecision(64); // ie. 8 bytes
+            $this->assertSame($val, "$x");
+            $r = $x->toBytes(true);
+            $this->assertSame(8, strlen($r));
+            $x2 = $this->getInstance($r, -256);
+            $this->assertSame(0, $x->compare($x2));
+        }
+    }
+
+    public function testHexWithNewLines()
+    {
+        $x = $this->getInstance('0xE932AC92252F585B3A80A4DD76A897C8B7652952FE788F6EC8DD640587A1EE5647670A8AD
+4C2BE0F9FA6E49C605ADF77B5174230AF7BD50E5D6D6D6D28CCF0A886A514CC72E51D209CC7
+72A52EF419F6A953F3135929588EBE9B351FCA61CED78F346FE00DBB6306E5C2A4C6DFC3779
+AF85AB417371CF34D8387B9B30AE46D7A5FF5A655B8D8455F1B94AE736989D60A6F2FD5CADB
+FFBD504C5A756A2E6BB5CECC13BCA7503F6DF8B52ACE5C410997E98809DB4DC30D943DE4E81
+2A47553DCE54844A78E36401D13F77DC650619FED88D8B3926E3D8E319C80C744779AC5D6AB
+E252896950917476ECE5E8FC27D5F053D6018D91B502C4787558A002B9283DA7', 16);
+
+        $y = $this->getInstance('0xE932AC92252F585B3A80A4DD76A897C8B7652952FE788F6EC8DD640587A1EE5647670A8AD', 16);
+        $this->assertSame("$x", "$y");
     }
 }

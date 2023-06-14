@@ -31,7 +31,7 @@ class CSVReader {
      * Start insert from line number. Set 1 if CSV file has header.
      * @var integer
      */
-    public $startFromLine = 0;
+    public $startFromLine = 1;
 
     /**
      * @throws Exception
@@ -75,8 +75,7 @@ class CSVReader {
         //Remove unused lines from all lines
         for ($i = 0; $i < $this->startFromLine; $i++) {
             unset($lines[$i]);
-        }      
-        
+        }
         return $lines;
     }
 

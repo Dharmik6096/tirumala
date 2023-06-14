@@ -8,7 +8,7 @@
  * @author    Nils Gajsek <info@linslin.org>
  * @copyright 2013-2017 Nils Gajsek <info@linslin.org>
  * @license   http://opensource.org/licenses/MIT MIT Public
- * @version   1.1.4
+ * @version   1.3.0
  * @link      http://www.linslin.org
  *
  */
@@ -16,12 +16,11 @@
 namespace linslin\yii2\curl;
 
 use Yii;
-use yii\base\Exception;
-use yii\helpers\Json;
-use yii\web\HttpException;
+
 
 /**
- * cURL class
+ * Class Curl
+ * @package linslin\yii2\curl
  */
 class Curl
 {
@@ -118,6 +117,7 @@ class Curl
     ];
 
 
+
     // ############################################### class methods // ##############################################
 
     /**
@@ -126,7 +126,8 @@ class Curl
      * @param string  $url
      * @param boolean $raw if response body contains JSON and should be decoded
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function get($url, $raw = true)
     {
@@ -135,12 +136,14 @@ class Curl
     }
 
 
+
     /**
      * Start performing HEAD-HTTP-Request
      *
      * @param string $url
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function head($url)
     {
@@ -155,7 +158,8 @@ class Curl
      * @param string  $url
      * @param boolean $raw if response body contains JSON and should be decoded
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function post($url, $raw = true)
     {
@@ -170,7 +174,8 @@ class Curl
      * @param string  $url
      * @param boolean $raw if response body contains JSON and should be decoded
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function put($url, $raw = true)
     {
@@ -182,10 +187,11 @@ class Curl
     /**
      * Start performing PATCH-HTTP-Request
      *
-     * @param string  $url
-     * @param boolean $raw if response body contains JSON and should be decoded
+     * @param string $url
+     * @param bool $raw if response body contains JSON and should be decoded
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function patch($url, $raw = true)
     {
@@ -193,7 +199,7 @@ class Curl
         $this->setHeaders([
             'X-HTTP-Method-Override' => 'PATCH'
         ]);
-        return $this->_httpRequest('POST',$raw);
+        return $this->_httpRequest('PATCH',$raw);
     }
 
 
@@ -203,12 +209,28 @@ class Curl
      * @param string  $url
      * @param boolean $raw if response body contains JSON and should be decoded
      *
-     * @return mixed response
+     * @return mixed
+     * @throws \Exception
      */
     public function delete($url, $raw = true)
     {
         $this->_baseUrl = $url;
         return $this->_httpRequest('DELETE', $raw);
+    }
+
+    /**
+     * Start performing OPTIONS-HTTP-Request
+     *
+     * @param string $url
+     * @param bool $raw if response body contains JSON and should be decoded
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function options($url, $raw = true)
+    {
+        $this->_baseUrl = $url;
+        return $this->_httpRequest('OPTIONS', $raw);
     }
 
 
@@ -281,7 +303,6 @@ class Curl
      */
     public function setRawPostData($data)
     {
-
         $this->setOption(
             CURLOPT_POSTFIELDS,
             $data
@@ -594,7 +615,7 @@ class Curl
      * @param string  $method
      * @param boolean $raw if response body contains JSON and should be decoded -> helper.
      *
-     * @throws Exception if request failed
+     * @throws \Exception if request failed
      *
      * @return mixed
      */
@@ -610,9 +631,9 @@ class Curl
         }
 
         //setup error reporting and profiling
-        if (YII_DEBUG) {
-            Yii::trace('Start sending cURL-Request: '.$this->getUrl().'\n', __METHOD__);
-            Yii::beginProfile($method.' '.$this->_baseUrl.'#'.md5(serialize($this->getOption(CURLOPT_POSTFIELDS))), __METHOD__);
+        if (defined('YII_DEBUG') && YII_DEBUG) {
+            Yii::debug('Start sending cURL-Request: '.$this->getUrl().'\n', __METHOD__);
+            Yii::beginProfile($method.' '.$this->_baseUrl.'#'.md5(serialize($this->_getDebugData())), __METHOD__);
         }
 
         /**
@@ -656,15 +677,16 @@ class Curl
         $this->_extractAdditionalCurlParameter();
 
         //end yii debug profile
-        if (YII_DEBUG) {
-            Yii::endProfile($method.' '.$this->getUrl().'#'.md5(serialize($this->getOption(CURLOPT_POSTFIELDS))), __METHOD__);
+        if (defined('YII_DEBUG') && YII_DEBUG) {
+            Yii::debug('End cURL-Request: '.$this->response, __METHOD__);
+            Yii::endProfile($method.' '.$this->getUrl().'#'.md5(serialize($this->_getDebugData())), __METHOD__);
         }
 
         //check responseCode and return data/status
         if ($this->getOption(CURLOPT_CUSTOMREQUEST) === 'HEAD') {
             return true;
         } else {
-            $this->response = $raw ? $this->response : Json::decode($this->response);
+            $this->response = $raw ? $this->response : json_decode($this->response, true);
             return $this->response;
         }
     }
@@ -703,7 +725,7 @@ class Curl
          */
         $this->responseLength = curl_getinfo($this->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 
-        if((int)$this->responseLength == -1) {
+        if((int)$this->responseLength === -1) {
             $this->responseLength = strlen($this->response);
         }
     }
@@ -743,5 +765,33 @@ class Curl
         }
 
         return $headers;
+    }
+
+
+    /**
+     * Collects debug data for serialize
+     * @return array|bool|mixed
+     */
+    private function _getDebugData () {
+
+        $data = [];
+
+        if (is_array($this->getOption(CURLOPT_POSTFIELDS))) {
+            foreach ($this->getOption(CURLOPT_POSTFIELDS) as $key => $debugItem) {
+                if (is_array($debugItem)) {
+                    $data[$key] = $debugItem;
+                } else if ($debugItem instanceof \CURLFile) {
+                    $data[$key] = [
+                        'name' => $debugItem->name,
+                        'mime' => $debugItem->mime,
+                        'postname' => $debugItem->postname,
+                    ];
+                } // more to come?
+            }
+        } else {
+            $data = $this->getOption(CURLOPT_POSTFIELDS);
+        }
+
+        return $data;
     }
 }

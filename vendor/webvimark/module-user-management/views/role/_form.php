@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var yii\widgets\ActiveForm $form
  * @var webvimark\modules\UserManagement\models\rbacDB\Role $model
@@ -7,52 +6,34 @@
 use webvimark\modules\UserManagement\models\rbacDB\AuthItemGroup;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap\ActiveForm;
-use yii\web\View;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-
-$title = Yii::$app->label->title($type, 'Role');
-$button = Yii::$app->label->button($type);
-$this->title = Yii::t('app', $title);
 ?>
 
-<?php
-$form = ActiveForm::begin([
-            'id' => 'role-form',
-            'validateOnBlur' => false,
-        ])
-?>
+<?php $form = ActiveForm::begin([
+	'id'             => 'role-form',
+	'layout'         => 'horizontal',
+	'validateOnBlur' => false,
+]) ?>
 
-<div class="row">
-    <div class="col-sm-3">
-        <?= Yii::$app->dropdown->dropdownStatic('organizations_type', $model, $form, '', $model->getAttributeLabel('organizations_type'), false, 'organizations_type', false); ?>  
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'description')->textInput(['maxlength' => 255, 'autofocus' => $model->isNewRecord ? true : false]) ?>
-    </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => 64]) ?>
-    </div>
-    <!--    <div class="col-sm-3">
-    <?php
-//                        $form->field($model, 'portal_type')
-//                        ->dropDownList(['portal' => 'Portal', 'desktop' => 'Desktop'], ['class' => 'form-control ' . ((isset($_REQUEST['flag'])) ? 'disabled' : '')])
-    ?>
-        </div>-->
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <div class="form-group">
-            <?= Yii::$app->controls->save($button, $model); ?>
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>
-</div>
+	<?= $form->field($model, 'description')->textInput(['maxlength' => 255, 'autofocus'=>$model->isNewRecord ? true:false]) ?>
+
+	<?= $form->field($model, 'name')->textInput(['maxlength' => 64]) ?>
+
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-9">
+			<?php if ( $model->isNewRecord ): ?>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-plus-sign"></span> ' . UserManagementModule::t('back', 'Create'),
+					['class' => 'btn btn-success']
+				) ?>
+			<?php else: ?>
+				<?= Html::submitButton(
+					'<span class="glyphicon glyphicon-ok"></span> ' . UserManagementModule::t('back', 'Save'),
+					['class' => 'btn btn-primary']
+				) ?>
+			<?php endif; ?>
+		</div>
+	</div>
 <?php ActiveForm::end() ?>
-<?php
-//    $js = <<<JS
-//
-//        $('#role-portal_type').on('blur',function() {
-//    });
-//
-//JS;
-//$this->registerJs($js);

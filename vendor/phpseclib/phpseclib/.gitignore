@@ -1,2 +1,6 @@
-/vendor
+/.idea/
+/build/php-cs-fixer.cache
+/composer.lock
 /composer.phar
+/vendor/
+.gitignore

@@ -1,17 +1,24 @@
-yii2-date-range
-=================
+<h1 align="center">
+    <a href="http://demos.krajee.com" title="Krajee Demos" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/krajee-logo-b.png" alt="Krajee Logo"/>
+    </a>
+    <br>
+    yii2-date-range
+    <hr>
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
+       title="Donate via Paypal" target="_blank">
+        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" alt="Donate"/>
+    </a>
+</h1>
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/kartik-v/yii2-date-range.svg)](https://packagist.org/packages/kartik-v/yii2-date-range)
+[![Stable Version](https://poser.pugx.org/kartik-v/yii2-date-range/v/stable)](https://packagist.org/packages/kartik-v/yii2-date-range)
+[![Untable Version](https://poser.pugx.org/kartik-v/yii2-date-range/v/unstable)](https://packagist.org/packages/kartik-v/yii2-date-range)
 [![License](https://poser.pugx.org/kartik-v/yii2-date-range/license)](https://packagist.org/packages/kartik-v/yii2-date-range)
 [![Total Downloads](https://poser.pugx.org/kartik-v/yii2-date-range/downloads)](https://packagist.org/packages/kartik-v/yii2-date-range)
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-date-range/d/monthly)](https://packagist.org/packages/kartik-v/yii2-date-range)
 [![Daily Downloads](https://poser.pugx.org/kartik-v/yii2-date-range/d/daily)](https://packagist.org/packages/kartik-v/yii2-date-range)
 
-An advanced date range picker input for Yii Framework 2 based on [dangrossman/bootstrap-daterangepicker plugin](https://github.com/dangrossman/bootstrap-daterangepicker).
-The date range picker widget is styled for Bootstrap 3.x and creates a dropdown menu from which a user can select a range of dates. If the plugin is invoked with no options,
-it will present two calendars to choose a start and end date from. Optionally, you can provide a list of date ranges the user can select from instead of
-choosing dates from the calendars. If attached to a text input, the selected dates will be inserted into the text box. Otherwise, you can provide a custom callback
-function to receive the selection.
+An advanced date range picker input for Yii Framework 2 based on [dangrossman/bootstrap-daterangepicker plugin](https://github.com/dangrossman/bootstrap-daterangepicker). The date range picker widget is styled for Bootstrap 3.x and 4.x versions and creates a dropdown menu from which a user can select a range of dates. If the plugin is invoked with no options, it will present two calendars to choose a start and end date from. Optionally, you can provide a list of date ranges the user can select from instead of choosing dates from the calendars. If attached to a text input, the selected dates will be inserted into the text box. Otherwise, you can provide a custom callback function to receive the selection.
 
 Additional enhancements added for this widget (by Krajee):
 
@@ -26,8 +33,8 @@ Additional enhancements added for this widget (by Krajee):
 ### Demo
 You can see detailed [documentation](http://demos.krajee.com/date-range) on usage of the extension.
 
-### Latest Release
-The latest version of the extension is release v1.6.8. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-date-range/blob/master/CHANGE.md) for details of various releases.
+### Release Changes
+Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-date-range/blob/master/CHANGE.md) for details of various releases.
 
 ## Installation
 
@@ -142,4 +149,4 @@ class UserSearch extends User
 
 ## License
 
-**yii2-date-range** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**yii2-date-range** is released under the BSD-3-Clause License. See the bundled `LICENSE.md` for details.

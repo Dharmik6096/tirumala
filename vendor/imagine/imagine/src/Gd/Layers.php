@@ -11,6 +11,8 @@
 
 namespace Imagine\Gd;
 
+use Imagine\Driver\InfoProvider;
+use Imagine\Exception\InvalidArgumentException;
 use Imagine\Exception\NotSupportedException;
 use Imagine\Exception\RuntimeException;
 use Imagine\Factory\ClassFactoryInterface;
@@ -18,7 +20,7 @@ use Imagine\Image\AbstractLayers;
 use Imagine\Image\Metadata\MetadataBag;
 use Imagine\Image\Palette\PaletteInterface;
 
-class Layers extends AbstractLayers
+class Layers extends AbstractLayers implements InfoProvider
 {
     /**
      * @var \Imagine\Gd\Image
@@ -63,6 +65,17 @@ class Layers extends AbstractLayers
     /**
      * {@inheritdoc}
      *
+     * @see \Imagine\Driver\InfoProvider::getDriverInfo()
+     * @since 1.3.0
+     */
+    public static function getDriverInfo($required = true)
+    {
+        return DriverInfo::get($required);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @see \Imagine\Image\LayersInterface::merge()
      */
     public function merge()
@@ -93,7 +106,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Iterator::current()
+     *
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->getClassFactory()->createImage(ClassFactoryInterface::HANDLE_GD, $this->resource, $this->palette, new MetadataBag());
@@ -103,7 +119,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Iterator::key()
+     *
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->offset;
@@ -113,7 +132,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Iterator::next()
+     *
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         ++$this->offset;
@@ -123,7 +145,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Iterator::rewind()
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->offset = 0;
@@ -133,7 +158,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Iterator::valid()
+     *
+     * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->offset < 1;
@@ -143,7 +171,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \Countable::count()
+     *
+     * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return 1;
@@ -153,31 +184,40 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \ArrayAccess::offsetExists()
+     *
+     * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
-        return 0 === $offset;
+        return $offset === 0;
     }
 
     /**
      * {@inheritdoc}
      *
      * @see \ArrayAccess::offsetGet()
+     *
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
-        if (0 === $offset) {
+        if ($offset === 0) {
             return $this->getClassFactory()->createImage(ClassFactoryInterface::HANDLE_GD, $this->resource, $this->palette, new MetadataBag());
         }
 
-        throw new RuntimeException('GD only supports one layer at offset 0');
+        throw new InvalidArgumentException('GD only supports one layer at offset 0');
     }
 
     /**
      * {@inheritdoc}
      *
      * @see \ArrayAccess::offsetSet()
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new NotSupportedException('GD does not support layer set');
@@ -187,7 +227,10 @@ class Layers extends AbstractLayers
      * {@inheritdoc}
      *
      * @see \ArrayAccess::offsetUnset()
+     *
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new NotSupportedException('GD does not support layer unset');

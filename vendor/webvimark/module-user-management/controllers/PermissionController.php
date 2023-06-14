@@ -2,6 +2,7 @@
 
 namespace webvimark\modules\UserManagement\controllers;
 
+
 use webvimark\modules\UserManagement\components\AuthHelper;
 use webvimark\modules\UserManagement\models\rbacDB\AbstractItem;
 use webvimark\modules\UserManagement\models\rbacDB\Permission;
@@ -10,326 +11,158 @@ use webvimark\modules\UserManagement\models\rbacDB\search\PermissionSearch;
 use webvimark\components\AdminDefaultController;
 use webvimark\modules\UserManagement\UserManagementModule;
 use Yii;
-use yii\helpers\Html;
 
-class PermissionController extends AdminDefaultController {
+class PermissionController extends AdminDefaultController
+{
+	/**
+	 * @var Permission
+	 */
+	public $modelClass = 'webvimark\modules\UserManagement\models\rbacDB\Permission';
 
-    /**
-     * @var Permission
-     */
-    public $modelClass = 'webvimark\modules\UserManagement\models\rbacDB\Permission';
+	/**
+	 * @var PermissionSearch
+	 */
+	public $modelSearchClass = 'webvimark\modules\UserManagement\models\rbacDB\search\PermissionSearch';
 
-    /**
-     * @var PermissionSearch
-     */
-    public $modelSearchClass = 'webvimark\modules\UserManagement\models\rbacDB\search\PermissionSearch';
+	/**
+	 * @param string $id
+	 *
+	 * @return string
+	 */
+	public function actionView($id)
+	{
+		$item = $this->findModel($id);
 
-    /**
-     * @param string $id
-     *
-     * @return string
-     */
-    public function actionView($id) {
-        $item = $this->findModel($id);
-        ($item->UNION == '1') ? $item->organizations_type = 'UNION' : $item->organizations_type = 'FEDERATION';
+		$routes = Route::find()->asArray()->all();
 
-        $routes = Route::find()->where([$item->organizations_type => '1', 'type' => '3', 'is_free' => ['0', NULL]])->asArray()->all();
-        $permissions = Permission::find()
-                ->andWhere(['not in', Yii::$app->getModule('user-management')->auth_item_table . '.name', [Yii::$app->getModule('user-management')->commonPermissionName, $id]])
-                ->joinWith('group')
-                ->all();
+		$permissions = Permission::find()
+			->andWhere(['not in', Yii::$app->getModule('user-management')->auth_item_table . '.name', [Yii::$app->getModule('user-management')->commonPermissionName, $id]])
+			->joinWith('group')
+			->all();
 
-        $permissionsByGroup = [];
-        foreach ($permissions as $permission) {
-            $permissionsByGroup[@$permission->group->name][] = $permission;
-        }
+		$permissionsByGroup = [];
+		foreach ($permissions as $permission)
+		{
+			$permissionsByGroup[@$permission->group->name][] = $permission;
+		}
 
-        $childRoutes = AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_ROUTE, $item->organizations_type);
-        $childPermissions = AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_PERMISSION, $item->organizations_type);
+		$childRoutes = AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_ROUTE);
+		$childPermissions = AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_PERMISSION);
 
-        return $this->renderIsAjax('view', compact('item', 'childPermissions', 'routes', 'permissionsByGroup', 'childRoutes'));
-    }
+		return $this->renderIsAjax('view', compact('item', 'childPermissions', 'routes', 'permissionsByGroup', 'childRoutes'));
+	}
 
-    /**
-     * Add or remove child permissions (including routes) and return back to view
-     *
-     * @param string $id
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionSetChildPermissions($id) {
-        $item = $this->findModel($id);
+	/**
+	 * Add or remove child permissions (including routes) and return back to view
+	 *
+	 * @param string $id
+	 *
+	 * @return string|\yii\web\Response
+	 */
+	public function actionSetChildPermissions($id)
+	{
+		$item = $this->findModel($id);
 
-        $newChildPermissions = Yii::$app->request->post('child_permissions', []);
+		$newChildPermissions = Yii::$app->request->post('child_permissions', []);
 
-        $oldChildPermissions = array_keys(AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_PERMISSION));
+		$oldChildPermissions = array_keys(AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_PERMISSION));
 
-        $toRemove = array_diff($oldChildPermissions, $newChildPermissions);
-        $toAdd = array_diff($newChildPermissions, $oldChildPermissions);
+		$toRemove = array_diff($oldChildPermissions, $newChildPermissions);
+		$toAdd = array_diff($newChildPermissions, $oldChildPermissions);
 
-        Permission::addChildren($item->name, $toAdd);
-        Permission::removeChildren($item->name, $toRemove);
+		Permission::addChildren($item->name, $toAdd);
+		Permission::removeChildren($item->name, $toRemove);
 
-        Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Saved'));
+		Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Saved'));
 
-        return $this->redirect(['view', 'id' => $id]);
-    }
+		return $this->redirect(['view', 'id'=>$id]);
+	}
 
-    /**
-     * Add or remove routes for this permission
-     *
-     * @param string $id
-     *
-     * @return \yii\web\Response
-     */
-    public function actionSetChildRoutes($id) {
-        $item = $this->findModel($id);
-        ($item->UNION == '1') ? $item->organizations_type = 'UNION' : $item->organizations_type = 'FEDERATION';
-        $newRoutes = Yii::$app->request->post('child_routes', []);
+	/**
+	 * Add or remove routes for this permission
+	 *
+	 * @param string $id
+	 *
+	 * @return \yii\web\Response
+	 */
+	public function actionSetChildRoutes($id)
+	{
+		$item = $this->findModel($id);
 
-        $oldRoutes = array_keys(AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_ROUTE, $item->organizations_type));
+		$newRoutes = Yii::$app->request->post('child_routes', []);
 
-        $toAdd = array_diff($newRoutes, $oldRoutes);
-        $toRemove = array_diff($oldRoutes, $newRoutes);
+		$oldRoutes = array_keys(AuthHelper::getChildrenByType($item->name, AbstractItem::TYPE_ROUTE));
 
-        Permission::addChildren($id, $toAdd);
-        Permission::removeChildren($id, $toRemove);
+		$toAdd = array_diff($newRoutes, $oldRoutes);
+		$toRemove = array_diff($oldRoutes, $newRoutes);
 
-        if (( $toAdd OR $toRemove ) AND ( $id == Yii::$app->getModule('user-management')->commonPermissionName )) {
-            Yii::$app->cache->delete('__commonRoutes');
-        }
+		Permission::addChildren($id, $toAdd);
+		Permission::removeChildren($id, $toRemove);
 
-        AuthHelper::invalidatePermissions();
+		if ( ( $toAdd OR $toRemove ) AND ( $id == Yii::$app->getModule('user-management')->commonPermissionName ) )
+		{
+			Yii::$app->cache->delete('__commonRoutes');
+		}
 
-        Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Saved'));
+		AuthHelper::invalidatePermissions();
 
-        return $this->redirect(['view', 'id' => $id]);
-    }
+		Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Saved'));
 
-    /**
-     * Add new routes and remove unused (for example if module or controller was deleted)
-     *
-     * @param string $id
-     * @param null   $deleteUnused
-     *
-     * @return \yii\web\Response
-     */
-    public function actionRefreshRoutes($id, $deleteUnused = null) {
-        Route::refreshRoutes($deleteUnused !== null);
+		return $this->redirect(['view', 'id'=>$id]);
+	}
 
-        return $this->redirect(['view', 'id' => $id]);
-    }
+	/**
+	 * Add new routes and remove unused (for example if module or controller was deleted)
+	 *
+	 * @param string $id
+	 * @param null   $deleteUnused
+	 *
+	 * @return \yii\web\Response
+	 */
+	public function actionRefreshRoutes($id, $deleteUnused = null)
+	{
+		Route::refreshRoutes($deleteUnused !== null);
 
-    /**
-     * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate() {
-        $model = new Permission();
-        $model->scenario = 'webInput';
+		return $this->redirect(['view', 'id'=>$id]);
+	}
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->NATIONAL = '0';
-            if ($model->organizations_type == '1') {
-                $model->FEDERATION = '0';
-                $model->UNION = '1';
-            } else {
-                $model->FEDERATION = '1';
-                $model->UNION = '0';
-            }
-            $model->save();
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'success',
-                'message' => Html::encode("Record successfully created."),
-                'title' => Html::encode('Success'),
-            ]);
-            return $this->redirect(['index']);
-            //return $this->redirect(['view', 'id'=>$model->name]);
-        }
 
-        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
-        if ($searchModel) {
-            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        } else {
-            $modelClass = $this->modelClass;
-            $dataProvider = new ActiveDataProvider([
-                'query' => $modelClass::find(),
-            ]);
-        }
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 * @return mixed
+	 */
+	public function actionCreate()
+	{
+		$model = new Permission();
+		$model->scenario = 'webInput';
 
-        return $this->renderIsAjax('create', compact('model', 'dataProvider', 'searchModel'));
-    }
+		if ( $model->load(Yii::$app->request->post()) && $model->save() )
+		{
+			return $this->redirect(['view', 'id'=>$model->name]);
+		}
 
-    /**
-     * Updates an existing model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param integer $id
-     *
-     * @return mixed
-     */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
-        $model->scenario = 'webInput';
-        ($model->UNION == 1) ? $model->organizations_type = 1 : $model->organizations_type = 0;
+		return $this->renderIsAjax('create', compact('model'));
+	}
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->NATIONAL = '0';
-            if ($model->organizations_type == '1') {
-                $model->FEDERATION = '0';
-                $model->UNION = '1';
-            } else {
-                $model->FEDERATION = '1';
-                $model->UNION = '0';
-            }
-            $model->save();
+	/**
+	 * Updates an existing model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 *
+	 * @param integer $id
+	 *
+	 * @return mixed
+	 */
+	public function actionUpdate($id)
+	{
+		$model = $this->findModel($id);
+		$model->scenario = 'webInput';
 
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'success',
-                'message' => Html::encode('Record successfully updated.'),
-                'title' => Html::encode('Success'),
-            ]);
-            return $this->redirect(['index']);
-            //return $this->redirect(['view', 'id'=>$model->name]);
-        }
-        $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
-        if ($searchModel) {
-            $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        } else {
-            $modelClass = $this->modelClass;
-            $dataProvider = new ActiveDataProvider([
-                'query' => $modelClass::find(),
-            ]);
-        }
-        return $this->renderIsAjax('update', compact('model', 'dataProvider', 'searchModel'));
-    }
+		if ( $model->load(Yii::$app->request->post()) AND $model->save())
+		{
+			return $this->redirect(['view', 'id'=>$model->name]);
+		}
 
-    public function actionSetPermission($id) {
-        $item = $this->findModel($id);
-        if ($item->NATIONAL == '1') {
-            $origin = 'NATIONAL';
-        } else if ($item->FEDERATION == '1') {
-            $origin = 'FEDERATION';
-        } else {
-            $origin = 'UNION';
-        }
-
-        $main_menu = $this->getChildren(4, null, [], '', $origin);
-        $childRoutes = $this->getChildrenByType($item->name, AbstractItem::TYPE_ROUTE, $origin);
-        return $this->renderIsAjax('set_permission', compact('item', 'main_menu', 'childRoutes'));
-    }
-
-    protected function getChildren($type, $name, $sub_menu = [], $data = '', $origin) {
-        if ($type == 7) {
-            $query = Route::find()->select(['name', 'description', 'type', 'data'])->where([$origin => '1', 'type' => 3, 'is_free' => 0])->andWhere(['not like', 'name', '*']);
-            if (!empty($data)) {
-                $data = explode(',', $data);
-                $query = $query->andWhere(['name' => $data]);
-            } else {
-                $query = $query->andWhere(['like', 'name', $name]);
-            }
-            $query = $query->all();
-        } else if ($type == 4) {
-            $query = Route::find()->select(['name', 'description', 'type', 'data'])->where([$origin => '1', 'type' => $type, 'parent_action' => $name])->all();
-        } else {
-            $query = Route::find()->select(['name', 'description', 'type', 'data'])->where([$origin => '1', 'parent_action' => $name])->all();
-        }
-        $type++;
-        if (!empty($query)) {
-            foreach ($query as $result) {
-                $name = $result->name;
-                $sub_menu[$result->name] = ['name' => $result->name, 'description' => $result->description, 'children' => $type > 7 ? NULL : $this->getChildren($type, $result->name, $type > 4 ? [] : $sub_menu, $result->data, $origin)];
-            }
-        } else if ($type <= 7) {
-            $sub_menu[$name] = $this->getChildren($type, $name, $type > 4 ? [] : $sub_menu, '', $origin);
-        }
-        return $sub_menu;
-    }
-
-    public static function getChildrenByType($itemName, $childType, $origin) {
-        $dbManager = Yii::$app->authManager instanceof DbManager ? Yii::$app->authManager : new DbManager();
-        $children = $dbManager->getChildren($itemName);
-        $result = [];
-        foreach ($children as $id => $item) {
-            $data = Route::find()->where([$origin => '1', 'name' => $item->name])->one();
-            if ($item->type >= $childType && !empty($data)) {
-                $result[$id] = $item;
-            }
-        }
-        return $result;
-    }
-
-    public function actionSetFreeAction() {
-        if (Yii::$app->request->post()) {
-            $newRoutes = Yii::$app->request->post('child_routes', []);
-            $oldRoutes = Route::find()->select(['name'])->where([Yii::$app->session->get('organizations_type') => '1', 'type' => 3, 'is_free' => 1])->all();
-            $oldRoutes = \yii\helpers\ArrayHelper::map($oldRoutes, 'name', 'name');
-            $toAdd = array_diff($newRoutes, $oldRoutes);
-            $toRemove = array_diff($oldRoutes, $newRoutes);
-            Yii::$app->db->createCommand()
-                    ->update('auth_item', ['is_free' => 1], ['name' => $toAdd])
-                    ->execute();
-            Yii::$app->db->createCommand()
-                    ->update('auth_item', ['is_free' => 0], ['name' => $toRemove])
-                    ->execute();
-            Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Saved'));
-        }
-        $routes = Route::find()->where([Yii::$app->session->get('organizations_type') => '1', 'type' => 3])->asArray()->all();
-        $childRoutes = Route::find()->select(['name', 'description', 'type'])->where([Yii::$app->session->get('organizations_type') => '1', 'type' => 3, 'is_free' => 1])->all();
-
-        return $this->renderIsAjax('view', compact('routes', 'childRoutes'));
-    }
-
-    public function actionSetOriginateAction() {
-        if (Yii::$app->request->post()) {
-            foreach (Yii::$app->request->post('Route') as $action) {
-                $model = Route::find()->where(['name' => $action['name']])->one();
-                if ($model->NATIONAL != $action['NATIONAL'] || $model->FEDERATION != $action['FEDERATION'] || $model->UNION != $action['UNION'] || $model->description != $action['description'] || $model->is_free != $action['is_free']) {
-                    $model->NATIONAL = $action['NATIONAL'];
-                    $model->FEDERATION = $action['FEDERATION'];
-                    $model->UNION = $action['UNION'];
-                    $model->description = $action['description'];
-                    $model->is_free = $action['is_free'];
-                    $model->save(FALSE);
-                }
-            }
-            Yii::$app->getSession()->setFlash('success', Yii::t('app', "Originate Location successfully updated."));
-        }
-        $main_menu = $this->getChildrenOriginate(4, null);
-        return $this->renderIsAjax('set_originate', compact('main_menu'));
-    }
-
-    protected function getChildrenOriginate($type, $name, $sub_menu = [], $data = '') {
-        if ($type == 7) {
-//            die('7');
-            $query = Route::find()->select(['name', 'description', 'type', 'data', 'NATIONAL', 'FEDERATION', 'UNION', 'is_free'])->where(['type' => 3, 'is_free' => 0])->andWhere(['not like', 'name', '*']);
-            if (!empty($data)) {
-                $data = explode(',', $data);
-                $query = $query->andWhere(['name' => $data]);
-            } else {
-                $query = $query->andWhere(['like', 'name', $name]);
-            }
-            $query = $query->all();
-        } else if ($type == 4) {
-//            die('4');
-            $query = Route::find()->select(['name', 'description', 'type', 'data', 'NATIONAL', 'FEDERATION', 'UNION', 'is_free'])->where(['type' => $type, 'parent_action' => $name])->all();
-        } else {
-            $query = Route::find()->select(['name', 'description', 'type', 'data', 'NATIONAL', 'FEDERATION', 'UNION', 'is_free'])->where(['parent_action' => $name])->all();
-        }
-        $type++;
-        if (!empty($query)) {
-//            die('query');
-            foreach ($query as $result) {
-                $name = $result->name;
-                $sub_menu[$result->name] = ['result' => $result, 'children' => $type > 7 ? NULL : $this->getChildrenOriginate($type, $result->name, $type > 4 ? [] : $sub_menu, $result->data)];
-            }
-        } else if ($type <= 7) {
-//            die('<=7');
-            $sub_menu[$name] = $this->getChildrenOriginate($type, $name, $type > 4 ? [] : $sub_menu);
-        }
-//        die('done');
-        return $sub_menu;
-    }
-
-}
+		return $this->renderIsAjax('update', compact('model'));
+	}
+} 

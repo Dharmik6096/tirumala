@@ -16,21 +16,21 @@ use Symfony\Component\Process\Process;
 
 require \dirname(__DIR__).'/vendor/autoload.php';
 
-list('e' => $php) = getopt('e:') + ['e' => 'php'];
+['e' => $php] = getopt('e:') + ['e' => 'php'];
 
 try {
     $process = new Process("exec $php -r \"echo 'ready'; trigger_error('error', E_USER_ERROR);\"");
     $process->start();
     $process->setTimeout(0.5);
-    while (false === strpos($process->getOutput(), 'ready')) {
+    while (!str_contains($process->getOutput(), 'ready')) {
         usleep(1000);
     }
-    $process->signal(SIGSTOP);
+    $process->signal(\SIGSTOP);
     $process->wait();
 
     return $process->getExitCode();
 } catch (ProcessTimedOutException $t) {
-    echo $t->getMessage().PHP_EOL;
+    echo $t->getMessage().\PHP_EOL;
 
     return 1;
 }

@@ -6,10 +6,13 @@
  * @license   http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
-use phpseclib\Net\SSH2;
-use phpseclib\System\SSH\Agent;
+namespace phpseclib3\Tests\Functional\Net;
 
-class Functional_Net_SSH2AgentTest extends PhpseclibFunctionalTestCase
+use phpseclib3\Net\SSH2;
+use phpseclib3\System\SSH\Agent;
+use phpseclib3\Tests\PhpseclibFunctionalTestCase;
+
+class SSH2AgentTest extends PhpseclibFunctionalTestCase
 {
     public static function setUpBeforeClass()
     {
@@ -24,14 +27,14 @@ class Functional_Net_SSH2AgentTest extends PhpseclibFunctionalTestCase
     public function testAgentLogin()
     {
         $ssh = new SSH2($this->getEnv('SSH_HOSTNAME'));
-        $agent = new Agent;
+        $agent = new Agent();
 
         $this->assertTrue(
             $ssh->login($this->getEnv('SSH_USERNAME'), $agent),
             'SSH2 login using Agent failed.'
         );
 
-        return array('ssh' => $ssh, 'ssh-agent' => $agent);
+        return ['ssh' => $ssh, 'ssh-agent' => $agent];
     }
 
     /**
