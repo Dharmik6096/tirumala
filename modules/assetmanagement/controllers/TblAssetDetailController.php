@@ -164,6 +164,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
     private function setModel() {
         $this->model->purchase_date = ($this->model->purchase_date == '') ? null : Yii::$app->formatter->asDate($this->model->purchase_date, DATE_FORMAT);
         $this->model->put_to_use_date = ($this->model->put_to_use_date == '') ? null : Yii::$app->formatter->asDate($this->model->put_to_use_date, DATE_FORMAT);
+        $this->model->verification_date = ($this->model->verification_date == '') ? null : Yii::$app->formatter->asDate($this->model->verification_date, DATE_FORMAT);
     }
 
     public function actionGetAssetIsSerial() {
