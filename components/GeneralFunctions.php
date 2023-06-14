@@ -49,6 +49,7 @@ use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
+use Exception;
 
 class GeneralFunctions extends Component
 {
@@ -61,23 +62,23 @@ class GeneralFunctions extends Component
         foreach ($org as $val) {
             switch ($val->organizationType) {
                 case '2':
-                    $union = \app\models\TblUnions::find()->where(['union_code' => $val->organizationCode])->one();
+                    $union = TblUnions::find()->where(['union_code' => $val->organizationCode])->one();
                     if ($union)
                         $values[$val->organizationCode . '_' . $union->stateCode->default_language_code . '_' . $union->stateCode->defaultLanguageCode->font_name . '_' . $union->union_name] = $union->union_name;
                     break;
                 case '3':
-                    $dcs = \app\models\TblDcs::find()->where(['dcs_code' => $val->organizationCode])->one();
+                    $dcs = TblDcs::find()->where(['dcs_code' => $val->organizationCode])->one();
                     //                            print_r($dcs->stateCode);exit;
                     if ($dcs)
                         $values[$val->organizationCode . '_' . $dcs->stateCode->default_language_code . '_' . $dcs->stateCode->defaultLanguageCode->font_name . '_' . $dcs->dcs_name] = $dcs->dcs_name;
                     break;
                 case '1':
-                    $fed = \app\models\TblFederations::find()->where(['federation_code' => $val->organizationCode])->select('federation_name')->one();
+                    $fed = TblFederations::find()->where(['federation_code' => $val->organizationCode])->select('federation_name')->one();
                     if ($fed)
                         $values[$val->organizationCode . '_' . $fed->stateCode->default_language_code . '_' . $fed->stateCode->defaultLanguageCode->font_name . '_' . $fed->federation_name] = $fed->federation_name;
                     break;
                 default:
-                    $national = \app\models\TblNational::find()->where(['national_code' => $val->organizationCode])->select('national_name')->one();
+                    $national = TblNational::find()->where(['national_code' => $val->organizationCode])->select('national_name')->one();
                     if ($national)
                         $values[$val->organizationCode . '_' . $national->national_name] = $national->national_name;
                     break;
