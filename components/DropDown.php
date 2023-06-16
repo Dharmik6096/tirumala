@@ -786,7 +786,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1408,7 +1408,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'field_supervisor' => Yii::t('app', 'Field Supervisor'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'Area Manager/Zonal Manager'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'field_supervisor' => Yii::t('app', 'Field Supervisor'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'Area Manager/Zonal Manager'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer')],
                 'remove_key' => ['all']
             ],
             'receiver_type' => [
@@ -1472,6 +1472,16 @@ class DropDown extends Component {
                 'name' => 'current_status',
                 'prompt' => Yii::t('app', 'Select Asset Detail Status'),
                 'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped')],
+            ],
+            'complain_for' => [
+                'name' => 'complain_for',
+                'prompt' => Yii::t('app', 'Select Complain For'),
+                'data' => ['general_complain' => Yii::t('app', 'General Complain Type'), 'asset_complain' => Yii::t('app', 'Asset Complain Type')],
+            ],
+            'location_type' => [
+                'name' => 'location_type',
+                'prompt' => Yii::t('app', 'Select Location Type'),
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS')],
             ],
         ];
         return $records[$l];
@@ -1589,6 +1599,8 @@ class DropDown extends Component {
             'spare_code' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster', 'whereCondition' => ['is_spare' => 1]],
             'spare_code_detail_bom' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster'],
             'asset_bom_code' => ['name' => 'spare_code', 'fields' => 'spare_code,spare_code,', 'prompt' => Yii::t('app', 'Select Spare'), 'model' => 'TblAssetBom', 'depend' => 'asset_code'],
+            'complain_escalation_name' => ['name' => 'complain_escalation_code', 'fields' => 'complain_escalation_code,escalation_name', 'prompt' => 'Select Complain  Escalation Name', 'model' => 'TblComplainEscalation'],
+            'complain_type' => ['name' => 'complain_type_code', 'fields' => 'complain_type_code,complain_type', 'prompt' => 'Select Complain Type', 'model' => 'TblComplainType'],
         ];
         return $label[$l];
     }
@@ -1675,7 +1687,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
