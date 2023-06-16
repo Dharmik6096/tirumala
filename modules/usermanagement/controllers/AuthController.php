@@ -3,7 +3,7 @@
 namespace app\modules\usermanagement\controllers;
 
 use Yii;
-use webvimark\modules\UserManagement\models\forms\LoginForm;
+use app\modules\usermanagement\models\forms\LoginForm;
 use app\modules\organisation\models\TblUnions;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
