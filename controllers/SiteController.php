@@ -70,7 +70,8 @@ class SiteController extends Controller {
         parent::init();
 //        $language = (!empty(Yii::$app->session->get('Unions')) && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
         $language = (!empty(Yii::$app->session->get('eiplCode'))) ? Yii::$app->session->get('eiplCode') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
-        \Yii::$app->language = $language;
+        // \Yii::$app->language = $language;
+        \Yii::$app->language = 'en';
         $path = Yii::$app->basePath . '/messages/' . $language;
         if (!file_exists($path)) {
             \Yii::$app->language = Yii::$app->session->get('LanguageCode');
@@ -133,7 +134,7 @@ class SiteController extends Controller {
 
     public function actionDashboard() {
 
-        $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/dashboardLayout.php";
         $model = new Dashboard();
         if (!empty(Yii::$app->request->post('Dashboard')['union_code'])) {
             $union_str = Yii::$app->request->post('Dashboard')['union_code'];
@@ -344,7 +345,7 @@ class SiteController extends Controller {
             }
         }
         Yii::$app->session->set('Login-sess', 'Rail');
-        $this->layout = "@app/themes/pcdf/layouts/installationLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/installationLayout.php";
         return $this->render('login', compact('model'));
     }
 
