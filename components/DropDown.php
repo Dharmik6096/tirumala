@@ -150,7 +150,7 @@ class DropDown extends Component {
         }
     }
 
-    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start, $end) {
+    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start = '', $end = '') {
         $yearStart = date('Y') - $start;
         $yearEnd = date('Y') + $end;
         $years = [];
@@ -1771,7 +1771,7 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
     }
 
-    public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name, $sp_param) {
+    public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name = '', $sp_param = []) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
         $value = ArrayHelper::map($records, 'id', function($records) {
                     return !empty($records['name']) ? $records['name'] : '';
@@ -1783,7 +1783,7 @@ class DropDown extends Component {
 //        return $form->field($model, $flag)->dropDownList($value, ['prompt' => 'Select ' . $label])->label($label);
     }
 
-    public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session) {
+    public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session = '') {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }

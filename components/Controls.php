@@ -44,7 +44,7 @@ class Controls extends Component {
         return GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil"></i> Edit'), Url::to([$action, 'id' => $id]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
     }
 
-    public function update_combo($id, $action = 'update', $params) {
+    public function update_combo($id, $action = 'update', $params = '') {
         //var_dump($params);exit;
         echo GhostHtml::a(Yii::t('app', 'Edit'), Url::to([$action . '?' . $params]), ['class' => 'apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
     }
@@ -84,6 +84,10 @@ class Controls extends Component {
 
     public function active($model, $form, $class = 'form-group col-sm-3') {
         echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
+    }
+
+    public function checkTemplateBootstrap5($model, $form, $label = 'is_active', $value = false) {
+        echo $form->field($model, $label, ['checkTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(['value' => $value]);
     }
 
     public function import($flag, $view, $text = '', $fields = [], $appendId = '') {

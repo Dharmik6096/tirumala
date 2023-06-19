@@ -17,7 +17,7 @@ return [
     'dpu_docs_path' => 'web/uploads/dpu-docs/',
     'complaint_dir_path' => 'web/uploads/complaint-docs/',
     'collection_dir_path' => '/web/collection-data/',
-    'logo_path' => '/themes/pcdf/assets/images/union_logo/',
+    'logo_path' => '/themes/emilk/assets/images/union_logo/',
     'temp_logo_path' => '/web/import/image/',
     'crystal_report_path' => '\modules\crystalreports\reports',
     'notification_url' => 'https://fcm.googleapis.com/fcm/send',
@@ -42,4 +42,5 @@ return [
     'attachment_server' => 'localhost',
     'data_exchange_un' => 'umang-admin',
     'data_exchange_pw' => 'P@1234',
+    'bsVersion' => '5.x',
 ];

@@ -18,17 +18,17 @@ class LoginAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'themes/pcdf/assets/css/font-awesome.css',
-//        'themes/pcdf/assets/css/pageloader.css',
-        'themes/pcdf/assets/css/style.css',
+        'themes/emilk/assets/css/font-awesome.css',
+//        'themes/emilk/assets/css/pageloader.css',
+        'themes/emilk/assets/css/style.css',
     ];
     public $js = [
-        'themes/pcdf/assets/js/liveloaderLogin.js',
-        'themes/pcdf/assets/js/style.js',
+        // 'themes/emilk/assets/js/liveloaderLogin.js',
+        'themes/emilk/assets/js/style.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
+        'yii\bootstrap5\BootstrapAsset',
+        'yii\bootstrap5\BootstrapPluginAsset',
     ];
 }

@@ -6,7 +6,7 @@
  */
 use webvimark\modules\UserManagement\components\GhostHtml;
 use webvimark\modules\UserManagement\UserManagementModule;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
@@ -118,7 +118,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <h3>Welcome to Admin Portal</h3>
                                         <div class="tbl">
                                             <div class="tbl-cell">
-                                                <img src="../themes/pcdf/assets/images/pcdf_smiley.png" alt="" class="img-responsive"/>
+                                                <img src="../themes/emilk/assets/images/pcdf_smiley.png" alt="" class="img-responsive"/>
                                             </div>
                                             <div class="tbl-cell">
                                                 <h4>Pradeshik Cooperative Dairy Federation, Uttar Pradesh</h4>

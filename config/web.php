@@ -136,10 +136,10 @@ $config = [
             'class' => 'yii\web\View',
             'theme' => [
                 'class' => 'yii\base\Theme',
-                'basePath' => '@app/themes/pcdf',
-                'baseUrl' => '@web/themes/pcdf',
-                'pathMap' => ['@app/views' => '@app/themes/pcdf',
-                    '@vendor/kartik-v/yii2-dynagrid/views' => '@app/themes/pcdf/dynaGrid/views'
+                'basePath' => '@app/themes/emilk',
+                'baseUrl' => '@web/themes/emilk',
+                'pathMap' => ['@app/views' => '@app/themes/emilk',
+                    '@vendor/kartik-v/yii2-dynagrid/views' => '@app/themes/emilk/dynaGrid/views'
                 //'@app/modules' => '@app/themes/tradiecom/modules',
                 //'@vendor/webvimark/module-user-management/views' => '@app/themes/tradiecom/modules/UserManagement/views',
                 ],
