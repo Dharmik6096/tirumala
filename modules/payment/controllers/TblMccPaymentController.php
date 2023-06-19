@@ -115,7 +115,7 @@ class TblMccPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionPaymentAdjust() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblMccPayment();
         $model->load(Yii::$app->request->get());
 
@@ -198,7 +198,7 @@ class TblMccPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionPaymentDisburse() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblMccPayment();
         $model->load(Yii::$app->request->get());
         $model->bmc_code = $model->bmc_code;

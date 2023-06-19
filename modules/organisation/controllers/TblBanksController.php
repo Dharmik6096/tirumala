@@ -229,7 +229,7 @@ class TblBanksController extends \app\controllers\ChildController {
     }
 
     public function actionMapDistricts($id) {
-        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/nddb/layouts/dashboardLayout.php";
         $model = new TblBanksDistrictsMapping();
         $this->model = $this->findModel($id);
         $values = $model->getDistrict($id);

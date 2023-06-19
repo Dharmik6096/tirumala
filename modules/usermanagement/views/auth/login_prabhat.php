@@ -5,7 +5,7 @@
  */
 use webvimark\modules\UserManagement\components\GhostHtml;
 use webvimark\modules\UserManagement\UserManagementModule;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
@@ -25,7 +25,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="javascript:void(0)" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> <span>Login</span></a></li>
+                <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa fa-sign-in"></i> <span>Login</span></a></li>
             </ul>
         </div>
     </div>
@@ -34,8 +34,9 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
                 <h4 class="modal-title"><?= UserManagementModule::t('front', 'Thirumala Application') ?></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <?php
@@ -74,7 +75,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <?php //}  ?>
                     <div class="col-sm-12">
-                        <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? $form->field($model, 'rememberMe', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['value' => true]) : '' ?>
+                        <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? \Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rememberMe', true) : '' ?> : '' ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
@@ -115,7 +116,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="login-content auto_width_img text-center">
-                                        <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/images/'; ?>
+                                        <?php $image_path = Yii::$app->request->baseUrl . '/themes/emilk/assets/images/'; ?>
                                         <?= Html::img($image_path . 'title.png', ['class' => 'img-responsive auto_margin']); ?>
                                         <!--<h3>Welcome to EIPL Milk Procurement Portal</h3>-->
                                         <hr>
@@ -136,7 +137,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                             <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
                                             <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
                                             <p class="text-justify">Everest now employs a workforce of 350 techno commercial personnel and its Engineering field staff are made available for 24x7 service. Everest Care Its Customers and render exemplary services at all times -secret of Everest’s success. Everest has generated revenue over 1000 million INR and it has very ambitious but realistic plan to achieve the coveted 5000 million INR by 2015.</p>-->
-                                            <a href="javascript:void(0)" class="btn btn-danger" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
+                                            <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
                                         </div>
                                     </div>
                                 </div>

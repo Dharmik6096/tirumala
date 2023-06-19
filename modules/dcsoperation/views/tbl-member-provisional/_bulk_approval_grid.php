@@ -5,7 +5,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Member Approval'));

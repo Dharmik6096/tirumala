@@ -49,7 +49,7 @@ if (empty($latLongArray)) {
 }
 $infoArray = json_encode($infoArray);
 $latLongArray = json_encode($latLongArray);
-$asset_path = Yii::$app->general->base64url_decode(Url::to(['/themes/pcdf/assets/']));
+$asset_path = Yii::$app->general->base64url_decode(Url::to(['/themes/emilk/assets/']));
 $mapIcon = $this->theme->getUrl('/assets/images/map_marker.png');
 $farmerMapIcon = $this->theme->getUrl('/assets/images/map_marker_f.png');
 $completeMapIcon = $this->theme->getUrl('/assets/images/map_marker_complete.png');
@@ -61,10 +61,10 @@ $googleMapKey = Yii::$app->params['google_map_api_key'];
     src="https://maps.googleapis.com/maps/api/js?key=<?= $googleMapKey ?>&libraries=&v=weekly"
     defer
 ></script>
-<!--<link rel="stylesheet" href="<?= '/themes/pcdf/assets/css/' ?>leaflet.css" />
-<link rel="stylesheet" href="<?= '/themes/pcdf/assets/css/' ?>Control.FullScreen.css" />
-<script src="<?= '/themes/pcdf/assets/js/' ?>leaflet.js"></script>
-<script src="<?= '/themes/pcdf/assets/js/' ?>Control.FullScreen.js"></script>-->
+<!--<link rel="stylesheet" href="<?= '/themes/emilk/assets/css/' ?>leaflet.css" />
+<link rel="stylesheet" href="<?= '/themes/emilk/assets/css/' ?>Control.FullScreen.css" />
+<script src="<?= '/themes/emilk/assets/js/' ?>leaflet.js"></script>
+<script src="<?= '/themes/emilk/assets/js/' ?>Control.FullScreen.js"></script>-->
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">

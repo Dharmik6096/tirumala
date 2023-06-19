@@ -173,7 +173,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
     }
 
     public function actionPaymentDisburse() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
 
@@ -205,7 +205,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
     }
 
     public function actionConfirmPayment() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         if (Yii::$app->request->post()) {
             $model = new TblVspPayment();
             $model->load(Yii::$app->request->post());

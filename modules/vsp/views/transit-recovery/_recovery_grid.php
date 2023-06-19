@@ -1,7 +1,7 @@
 <?php
 
 use app\modules\collection\models\TblCollectionPenaltyType;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;

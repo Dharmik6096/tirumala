@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 ?>

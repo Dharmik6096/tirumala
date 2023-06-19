@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 ?>
 
 <div class="modal modal-default fade" id="mis_report_search_filter" role="dialog">

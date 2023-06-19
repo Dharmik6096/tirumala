@@ -21,7 +21,7 @@ class DefaultController extends ChildController {
 
     public function actionIndex($l, $flag = '', $type = '') {
         // Url::remember();
-        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/nddb/layouts/dashboardLayout.php";
         $model = $this->languageModel($l);
 
         $searchModel = null;
@@ -109,7 +109,7 @@ class DefaultController extends ChildController {
 
     public function actionMultiple($l) {
 
-        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/nddb/layouts/dashboardLayout.php";
         $model = $this->languageModel($l);
         $modelLangauge = $this->getLanguages();
 

@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::$app->label->title('edit', 'Bill Head Criteria Applicability');
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 ?>
 
 <div class="panel panel-default panel-main">

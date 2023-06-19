@@ -26,7 +26,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
     /**
      * @inheritdoc
      */
-    //  public $layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+    //  public $layout = "@app/themes/emilk/layouts/paymentLayout.php";
 
     public function actionIndex() {
         $searchModel = new TblTransporterPaymentSearch();
@@ -88,7 +88,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionPaymentAdjust() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblTransporterPayment();
         $model->load(Yii::$app->request->get());
         $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_code' => $model->transporter_code, 'transporter_type' => 1])
@@ -133,7 +133,7 @@ class TblTransporterPaymentController extends \app\controllers\ChildController {
     }
 
     public function actionPaymentAdjustPrimary() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/paymentLayout.php";
         $model = new TblTransporterPayment();
         $model->load(Yii::$app->request->get());
         $detailModel = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'bmc_code' => $model->bmc_code, 'transporter_type' => 0])

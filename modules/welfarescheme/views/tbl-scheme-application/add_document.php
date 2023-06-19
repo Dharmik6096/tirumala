@@ -1,7 +1,7 @@
 <?php
 $this->title = 'Upload Scheme Documents';
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use demogorgorn\ajax\AjaxSubmitButton;

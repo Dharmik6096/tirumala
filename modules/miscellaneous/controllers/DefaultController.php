@@ -15,7 +15,7 @@ class DefaultController extends Controller
      */
    public function actionIndex($l)
     {
-        $this->layout = "@app/themes/nddb/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/nddb/layouts/dashboardLayout.php";
        // $model=  $this->languageModel($l);
         $searchModel=null;
        // $dataProvider=$model['left_column'];

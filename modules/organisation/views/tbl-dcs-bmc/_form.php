@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\jui\DatePicker;
 use yii\web\View;
 use yii\helpers\Url;

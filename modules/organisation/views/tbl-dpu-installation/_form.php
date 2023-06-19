@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use kartik\widgets\FileInput;
 use yii\helpers\Url;
 use zainiafzan\widget\Dropzone;

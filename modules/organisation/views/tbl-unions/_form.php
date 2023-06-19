@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 use zainiafzan\widget\Dropzone;
@@ -67,7 +67,7 @@ $form = ActiveForm::begin([
     if (!empty($model->logo)) {
         $image = $model->logo;
     } else {
-        $image = Yii::$app->request->baseUrl . '/themes/pcdf/assets/images/' . 'no_image.jpg';
+        $image = Yii::$app->request->baseUrl . '/themes/emilk/assets/images/' . 'no_image.jpg';
     }
     ?>
     <div class="col-sm-4 form-group hide_drop_box">

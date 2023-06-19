@@ -19,7 +19,7 @@ class DefaultController extends \app\controllers\ChildController {
     private $data = [], $type = 'html', $output = '', $report = '';
 
     public function actionIndex() {
-        $this->layout = "@app/themes/pcdf/layouts/dashboardLayout.php";
+        $this->layout = "@app/web/themes/emilk/layouts/dashboardLayout.php";
         $model = new ReportsModel();
         if ($this->report != '') {
             $this->data = $this->getLabels($this->report);

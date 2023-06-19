@@ -50,7 +50,7 @@ $folder = Yii::getAlias('@webroot') . '/web/uploads/attachments/';
     <div class="panel-body">
         <div class="blog-container blog-detail-container">
             <div class="blog-img">
-                <img class="img-responsive" src="../../themes/pcdf/assets/images/no-image-available.jpg" alt=""/>
+                <img class="img-responsive" src="../../themes/emilk/assets/images/no-image-available.jpg" alt=""/>
             </div>
             <div class="blog-content clearfix">
                 <div class="blog-desc">

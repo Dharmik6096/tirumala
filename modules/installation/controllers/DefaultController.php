@@ -47,7 +47,7 @@ class DefaultController extends Controller
             return $this->goHome();
         }
         
-        $this->layout = "@app/themes/nddb/layouts/installationLayout.php";
+        $this->layout = "@app/web/themes/nddb/layouts/installationLayout.php";
         
         Yii::$app->db->createCommand()->truncateTable('auth_assignment')->execute();
         Yii::$app->db->createCommand()->truncateTable('tbl_addressbook')->execute();

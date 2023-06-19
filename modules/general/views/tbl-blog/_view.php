@@ -8,7 +8,7 @@ $url=  Url::to(['view','id'=>$model->id])
         <div class="row">
             <div class="col-sm-4">
                 <div class="blog-img">
-                    <img class="img-responsive" src="../themes/pcdf/assets/images/no-image-available.jpg" alt=""/>
+                    <img class="img-responsive" src="../themes/emilk/assets/images/no-image-available.jpg" alt=""/>
                 </div>
             </div>
             <div class="col-sm-8">
