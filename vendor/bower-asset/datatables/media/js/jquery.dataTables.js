@@ -2142,7 +2142,7 @@
 				columns[i].nTh.style.width = columns[i].sWidth;
 			}
 		}
-//                return false;//for resolve issue of remove search filter in sticky header case: Hardik - 10-05-2021		
+	
 		var scroll = settings.oScroll;
 		if ( scroll.sY !== '' || scroll.sX !== '')
 		{
@@ -5045,7 +5045,6 @@
 	 *  @returns {node} Node to add to the DOM
 	 *  @memberof DataTable#oApi
 	 */
-        var removeLast = true;
 	function _fnFeatureHtmlTable ( settings )
 	{
 		var table = $(settings.nTable);
@@ -5267,35 +5266,7 @@
 		 */
 	
 		// Remove the old minimised thead and tfoot elements in the inner table
-		table.children('tfoot').remove();
-//                $('.dataTables_scrollBody')
-//console.log($('.dataTables_scrollBody thead').length);
-                var totalThead = $('.dataTables_scrollBody thead').length;
-                var removedHead = 1;
-                $('.dataTables_scrollBody thead').each(function(){
-                    if(removeLast) {
-                        if(totalThead - 1 > removedHead) {
-                            $(this).remove();
-                        }
-                        if(totalThead == removedHead) {
-                            $(this).remove();
-                            removeLast = false;
-                        }
-                    } else {
-                        if(totalThead - 1 >= removedHead) {
-                            $(this).remove();
-                        } else {
-                            $(this).find('tr[role="row"]').remove();
-//                            $(this).addClass('removeFirstTr');
-//                            if($('.removeFirstTr tr').length == 2) {
-//                                $('.removeFirstTr tr:first-child').remove();
-//                            }
-//                            $(this).removeClass('removeFirstTr');
-//                            $(this).addClass(totalThead+'_'+removedHead);
-                        }
-                    }
-                    removedHead++;
-                });
+		table.children('thead, tfoot').remove();
 	
 		if ( footer ) {
 			footerCopy = footer.clone().prependTo( table );

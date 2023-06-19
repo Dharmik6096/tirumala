@@ -184,7 +184,6 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         ),
         'M' => 
         array (
-            'MyCLabs\\Enum\\' => 13,
             'Mpdf\\PsrLogAwareTrait\\' => 22,
             'Mpdf\\' => 5,
             'Matrix\\' => 7,
@@ -676,10 +675,6 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
-        ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
         'Mpdf\\PsrLogAwareTrait\\' => 
         array (
@@ -1447,7 +1442,6 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'TCPDF' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf.php',
         'TCPDF2DBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_2d.php',
         'TCPDFBarcode' => __DIR__ . '/..' . '/tecnickcom/tcpdf/tcpdf_barcodes_1d.php',

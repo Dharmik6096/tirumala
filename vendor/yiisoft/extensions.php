@@ -57,15 +57,6 @@ return array (
       '@kartik/base' => $vendorDir . '/kartik-v/yii2-krajee-base/src',
     ),
   ),
-  'kartik-v/yii2-bootstrap5-dropdown' => 
-  array (
-    'name' => 'kartik-v/yii2-bootstrap5-dropdown',
-    'version' => 'dev-master',
-    'alias' => 
-    array (
-      '@kartik/bs5dropdown' => $vendorDir . '/kartik-v/yii2-bootstrap5-dropdown/src',
-    ),
-  ),
   'kartik-v/yii2-widget-activeform' => 
   array (
     'name' => 'kartik-v/yii2-widget-activeform',
@@ -291,15 +282,6 @@ return array (
       '@kartik/file' => $vendorDir . '/kartik-v/yii2-widget-fileinput/src',
     ),
   ),
-  'kartik-v/yii2-widget-depdrop' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-depdrop',
-    'version' => 'dev-master',
-    'alias' => 
-    array (
-      '@kartik/depdrop' => $vendorDir . '/kartik-v/yii2-widget-depdrop/src',
-    ),
-  ),
   'kartik-v/yii2-widget-datetimepicker' => 
   array (
     'name' => 'kartik-v/yii2-widget-datetimepicker',
@@ -408,16 +390,6 @@ return array (
       '@softark/duallistbox' => $vendorDir . '/softark/yii2-dual-listbox',
     ),
   ),
-  'yiisoft/yii2-bootstrap5' => 
-  array (
-    'name' => 'yiisoft/yii2-bootstrap5',
-    'version' => '2.0.4.0',
-    'alias' => 
-    array (
-      '@yii/bootstrap5' => $vendorDir . '/yiisoft/yii2-bootstrap5/src',
-    ),
-    'bootstrap' => 'yii\\bootstrap5\\i18n\\TranslationBootstrap',
-  ),
   'wbraganca/yii2-dynamicform' => 
   array (
     'name' => 'wbraganca/yii2-dynamicform',
@@ -498,6 +470,34 @@ return array (
     'alias' => 
     array (
       '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer/src',
+    ),
+  ),
+  'yiisoft/yii2-bootstrap5' => 
+  array (
+    'name' => 'yiisoft/yii2-bootstrap5',
+    'version' => '2.0.4.0',
+    'alias' => 
+    array (
+      '@yii/bootstrap5' => $vendorDir . '/yiisoft/yii2-bootstrap5/src',
+    ),
+    'bootstrap' => 'yii\\bootstrap5\\i18n\\TranslationBootstrap',
+  ),
+  'kartik-v/yii2-bootstrap5-dropdown' => 
+  array (
+    'name' => 'kartik-v/yii2-bootstrap5-dropdown',
+    'version' => 'dev-master',
+    'alias' => 
+    array (
+      '@kartik/bs5dropdown' => $vendorDir . '/kartik-v/yii2-bootstrap5-dropdown/src',
+    ),
+  ),
+  'kartik-v/yii2-widget-depdrop' => 
+  array (
+    'name' => 'kartik-v/yii2-widget-depdrop',
+    'version' => 'dev-master',
+    'alias' => 
+    array (
+      '@kartik/depdrop' => $vendorDir . '/kartik-v/yii2-widget-depdrop/src',
     ),
   ),
 );
