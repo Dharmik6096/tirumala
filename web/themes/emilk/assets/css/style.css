@@ -2486,7 +2486,7 @@ div.crystalstyle{
 }
 
 .bg_image{
-    background-image: url('../../../../themes/pcdf/assets/images/login_bg.png');
+    background-image: url('../../../../themes/emilk/assets/images/login_bg.png');
     background-repeat: no-repeat;
     background-position: center;
     background-repeat: no-repeat;
@@ -4977,4 +4977,15 @@ tr.highlightRow {
 
 .no_pointer {
     pointer-events: none;
+}
+
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+}
+.nav-link:hover, .nav-link:focus {
+    color: #fff !important;
 }

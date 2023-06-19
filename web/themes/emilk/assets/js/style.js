@@ -158,12 +158,12 @@
                     useMapTypeControl: false,
                     icons: {
                         blue: {
-                            normal: '../themes/pcdf/assets/images/Map-Marker-Ball-Pink-icon.png',
-                            selected: '../themes/pcdf/assets/images/Map-Marker-Ball-Pink-icon.png'
+                            normal: '../themes/emilk/assets/images/Map-Marker-Ball-Pink-icon.png',
+                            selected: '../themes/emilk/assets/images/Map-Marker-Ball-Pink-icon.png'
                         },
                         green: {
-                            normal: '../themes/pcdf/assets/images/Map-Marker-Ball-Green-icon.png',
-                            selected: '../themes/pcdf/assets/images/Map-Marker-Ball-Green-icon.png'
+                            normal: '../themes/emilk/assets/images/Map-Marker-Ball-Green-icon.png',
+                            selected: '../themes/emilk/assets/images/Map-Marker-Ball-Green-icon.png'
                         }
                     },
                     maps: {
