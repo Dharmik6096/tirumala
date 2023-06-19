@@ -352,6 +352,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $out_model->remarks = $model->remarks;
                             $out_model->qty = $out_model->remain_qty = 1;
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model->sap_code;
+                            $out_model->current_status = $trn_model->current_status;
                             $saveModel[] = $out_model;
                         } else {
                             $trn_model->status = 2;
@@ -390,6 +391,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                         $out_model->put_to_use_date = $model->transaction_date;
                         $out_model->qty = ($out_qty >= $act_qty) ? $act_qty : $out_qty;
                         $out_model->remain_qty = $out_model->qty;
+                        $out_model->current_status = $trn_model[$cnt]->current_status;
                         if ($model->in_ward == '0') {
                             $out_model->status = ($model->to_type == 3) ? 2 : '-1';
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
