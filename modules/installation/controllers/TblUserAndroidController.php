@@ -227,11 +227,24 @@ class TblUserAndroidController extends \app\controllers\ChildController {
     }
 
     public function setDownldAck($ackModel, &$saveModel, $usrData) {
-        $usrAckModel = new TblUserDownloadAck();
-        $usrAckModel->attributes = $ackModel->attributes;
-        $usrAckModel->user_code = $usrData->user_code;
-        $usrAckModel->download_pending = 1;
-        $saveModel[] = $usrAckModel;
+        $dest_org_type = $usrData->getOrgType($usrData, 'type');
+        $dest_org_id = $usrData->getOrgType($usrData, 'code');
+        $androidInstallationDetail =  new TblAndroidInstallationDetails();
+        $activeDevice = $androidInstallationDetail->getActiveDeviceData($dest_org_id, $dest_org_type);
+        if(!empty($activeDevice)){
+            foreach($activeDevice as $value) {
+                $usrAckModel = new TblUserDownloadAck();
+        //        $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->union_code = $ackModel->union_code;
+                $usrAckModel->plant_code = $ackModel->plant_code;
+                $usrAckModel->mcc_plant_code = $ackModel->mcc_plant_code;
+                $usrAckModel->bmc_code = $ackModel->bmc_code;
+                $usrAckModel->dcs_code = $ackModel->dcs_code;
+                $usrAckModel->user_code = $usrData->user_code;
+                $usrAckModel->download_pending = 1;
+                $saveModel[] = $usrAckModel;
+            }
+        }
     }
 
 }
