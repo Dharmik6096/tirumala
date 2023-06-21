@@ -3,6 +3,11 @@
 namespace app\modules\complaint\models;
 
 use Yii;
+use app\modules\complaint\models\TblComplainType;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_complain".
@@ -60,6 +65,11 @@ class TblComplain extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['user_code', 'mobile_no', 'location_details', 'complain_type_code', 'remarks', 'resolved_remarks', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'bmc_code', 'dcs_code', 'complain_for', 'serial_number', 'new_serial_no', 'asset_code', 'contact_person', 'lat_long', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['plant_code'], 'required', 'on' => ['portal_create_complaint']],
+                [['physical_damage'], 'default', 'value' => 0],
+                [['mobile_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
         ];
     }
 
@@ -76,11 +86,11 @@ class TblComplain extends \app\models\ChildModel {
             'dcs_code' => Yii::t('app', 'Dcs Code'),
             'location_type' => Yii::t('app', 'Location Type'),
             'complain_for' => Yii::t('app', 'Complain For'),
-            'complain_type_code' => Yii::t('app', 'Complain Type Code'),
+            'complain_type_code' => Yii::t('app', 'Complain Type'),
             'complain_datetime' => Yii::t('app', 'Complain Datetime'),
             'complain_assignment_datetime' => Yii::t('app', 'Complain Assignment Datetime'),
-            'asset_code' => Yii::t('app', 'Asset Code'),
-            'complain_problem_code' => Yii::t('app', 'Complain Problem Code'),
+            'asset_code' => Yii::t('app', 'Asset'),
+            'complain_problem_code' => Yii::t('app', 'Complain Problem'),
             'serial_number' => Yii::t('app', 'Serial Number'),
             'new_serial_no' => Yii::t('app', 'New Serial No'),
             'contact_person' => Yii::t('app', 'Contact Person'),
@@ -106,6 +116,34 @@ class TblComplain extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
+    }
+
+    public function getComplainFors() {
+        return $this->hasOne(TblComplainType::className(), ['complain_type_code' => 'complain_type_code']);
+    }
+
+    public function getComplainFor($complain_type) {
+        $query = TblComplain::find()->select(['tbl_complain.complain_for'])
+                ->innerJoin('tbl_complain_type', 'tbl_complain_type.complain_type_code = tbl_complain.complain_type_code')
+                ->where(['tbl_complain.complain_code' => $complain_type]);
+
+        return $query->all();
     }
 
 }

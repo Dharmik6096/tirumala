@@ -10,6 +10,7 @@ use yii\helpers\Url;
 ?>
 
 <?php
+
 $attribute = [
     'complaint_code',
         ['attribute' => 'union_code', 'value' => function ($model) {
@@ -26,15 +27,15 @@ $attribute = [
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'contact_person'],
         ['attribute' => 'mobile_no'],
-//        ['attribute' => 'date',
-//        'filterType' => GridView::FILTER_DATE,
-//        'filterWidgetOptions' => [
-//            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-//                'autoclose' => true]
-//        ],
-//        'value' => function($model) {
-//            return Yii::$app->controls->view_date($model->date);
-//        }],
+        ['attribute' => 'complain_datetime',
+        'filterType' => GridView::FILTER_DATE,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['format' => 'dd-mm-yyyy',
+                'autoclose' => true]
+        ],
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->complain_datetime);
+        }],
 //        ['attribute' => 'complaint_type', 'value' => 'complaintProduct.cmpl_product_name', 'filter' => false, 'visible' => false],
 //        ['attribute' => 'affects_data', 'filter' => array('1' => 'Yes', '0' => 'No'), 'visible' => false,
 //        'value' => function($model) {

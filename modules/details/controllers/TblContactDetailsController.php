@@ -18,6 +18,8 @@ use yii\helpers\Json;
  */
 class TblContactDetailsController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['get-contact-details'];
+
     /**
      * Lists all TblContactDetails models.
      * @return mixed
@@ -213,6 +215,26 @@ class TblContactDetailsController extends \app\controllers\ChildController {
 
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return ['data' => $data, 'modelData' => $modelData];
+    }
+
+    public function actionGetContactDetails() {
+        $data = [];
+        $data['contact_person'] = '';
+        $data['mobile_no'] = '';
+        if (!empty($_POST)) {
+            $model = new TblContactDetails();
+            $model->setAttributes($_POST);
+            $modelData = $model->getContactDetails();
+            if (!empty($modelData)) {
+                $name = $modelData->firstname;
+                $name .= !empty($modelData->lastname) ? $modelData->lastname : '';
+                $name .= !empty($modelData->surname) ? $modelData->surname : '';
+                $data['contact_person'] = $name;
+                $data['mobile_no'] = $modelData->mobile_no;
+            }
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($data);
     }
 
 }

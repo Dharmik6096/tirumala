@@ -37,28 +37,28 @@ class TblAssetMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['asset_group_code'], function ($attribute, $params) {
+                [['asset_group_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'asset_group_code');
                 }, 'on' => 'importCsv'],
-            [['cmpl_product_code'], function ($attribute, $params) {
+                [['cmpl_product_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'cmpl_product_code');
                 }, 'on' => 'importCsv'],
-            [['asset_group_code', 'asset_name'], 'required'],
-            [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
-            [['asset_group_code', 'asset_name', 'created_by', 'updated_by', 'local_name'], 'string'],
-            [['is_serial_number', 'is_spare'], 'integer'],
-            [['is_active'], 'default', 'value' => 1],
-            [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare'], 'safe'],
-            [['local_name'], function ($attribute, $params) {
+                [['asset_group_code', 'asset_name'], 'required'],
+                [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
+                [['asset_group_code', 'asset_name', 'created_by', 'updated_by', 'local_name'], 'string'],
+                [['is_serial_number', 'is_spare'], 'integer'],
+                [['is_active'], 'default', 'value' => 1],
+                [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare'], 'safe'],
+                [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-            [['asset_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetGroup::className(), 'targetAttribute' => ['asset_group_code' => 'asset_group_code']],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['cmpl_product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblComplainProduct::className(), 'targetAttribute' => ['cmpl_product_code' => 'cmpl_product_code']],
-            [['asset_name'], 'unique'],
-            [['asset_group_code'], 'assignAutoData', 'skipOnError' => true],
-            [['ref_code'], 'number'],
-            ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Refference Code has already been taken.')],
+                [['asset_group_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblAssetGroup::className(), 'targetAttribute' => ['asset_group_code' => 'asset_group_code']],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['cmpl_product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblComplainProduct::className(), 'targetAttribute' => ['cmpl_product_code' => 'cmpl_product_code']],
+                [['asset_name'], 'unique'],
+                [['asset_group_code'], 'assignAutoData', 'skipOnError' => true],
+                [['ref_code'], 'number'],
+                ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Refference Code has already been taken.')],
         ];
     }
 
@@ -140,6 +140,24 @@ class TblAssetMaster extends \app\models\ChildModel {
 
     public function assignAutoData($attribute, $params) {
         $this->union_code = $this->assetGroupCode->union_code;
+    }
+
+    public static function getSrNo($asset_code = NULL) {
+
+        if (!empty($asset_code)) {
+            $asset = Self::findOne($asset_code);
+            if (!empty($asset) && $asset->is_serial_number == 1) {
+                $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.serial_number'])
+                        ->where(['tbl_asset_transaction.status' => [2], 'tbl_asset_transaction.asset_code' => $asset_code])
+                        ->one();
+
+                if (!empty($details)) {
+                    $sno = $details->serial_number;
+                    return $sno;
+                }
+            }
+        }
+        return '';
     }
 
 }

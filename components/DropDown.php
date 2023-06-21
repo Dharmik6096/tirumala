@@ -539,6 +539,14 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/bom-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
+    public function complain_problem($model, $form, $depends, $name = 'complain_problem', $islable = false, $multiple = false, $readonly = false) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/problem-list', Yii::t('app', 'Select Problem'), $multiple, '', $readonly);
+    }
+
+    public function asset_list($model, $form, $depends, $name = 'asset_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-master/asset-lists', Yii::t('app', 'Select Asset'), $multiple, '', $readOnly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1481,7 +1489,7 @@ class DropDown extends Component {
             'location_type' => [
                 'name' => 'location_type',
                 'prompt' => Yii::t('app', 'Select Location Type'),
-                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS')],
+                'data' => ['1' => Yii::t('app', 'Plant'), '2' => Yii::t('app', 'BMC'), '3' => Yii::t('app', 'DCS')],
             ],
         ];
         return $records[$l];

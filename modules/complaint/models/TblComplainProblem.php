@@ -46,15 +46,4 @@ class TblComplainProblem extends \app\models\ChildModel {
         ];
     }
 
-//    public function geComplainProblemList($product_code = '') {
-//        $value = $this->getComplainProblem($product_code);
-//        $value = ArrayHelper::map($value, 'Id', 'cmpl_problem_name');
-//        return $value;
-//    }
-//
-//    public function getComplainProblem($product_code = '') {
-//        $query = $this->find()->select(['Id', 'cmpl_problem_name'])->where(['is_active' => 1, 'cmpl_product_code' => $product_code]);
-//        return $query->all();
-//    }
-
 }
