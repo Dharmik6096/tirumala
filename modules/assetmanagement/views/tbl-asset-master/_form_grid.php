@@ -22,9 +22,6 @@ $attribute = [
     ['attribute' => 'is_spare', 'value' => function($model) {
             return ($model->is_spare == 0) ? 'No' : 'Yes';
         }, 'filter' => FALSE],
-    ['attribute' => 'cmpl_product_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->assetType, 'cmpl_product_name');
-        }],
     ['attribute' => 'local_name', 'filter' => FALSE],
     ['attribute' => 'ref_code', 'filter' => FALSE],
 ];
