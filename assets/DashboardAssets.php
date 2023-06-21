@@ -23,14 +23,14 @@ class DashboardAssets extends AssetBundle {
         //'css/site.css',
 //        'themes/nddb/assets/css/bootstrap.css',
         'themes/emilk/assets/css/font-awesome.css',
-        // 'themes/emilk/assets/css/pageloader.css',
+        'themes/emilk/assets/css/pageloader.css',
         'themes/emilk/assets/css/fullcalendar.min.css',
         'themes/emilk/assets/css/style.css',
         'themes/emilk/assets/css/font.css',
     ];
     public $js = [
-        'themes/emilk/assets/js/bootstrap.js',
-        // 'themes/emilk/assets/js/liveloader.js',
+        // 'themes/emilk/assets/js/bootstrap.js',
+        'themes/emilk/assets/js/liveloader.js',
         'themes/emilk/assets/js/shortcut_bind.js',
         'themes/emilk/assets/js/jquery.shortcuts.js',
         'themes/emilk/assets/js/gstatic.js',
@@ -47,14 +47,15 @@ class DashboardAssets extends AssetBundle {
         'themes/emilk/assets/js/jquery.CongelarFilaColumna.js',
         'themes/emilk/assets/js/html2excel.js',
         'themes/emilk/assets/js/datatables.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap5\BootstrapAsset',
+        'yii\bootstrap5\BootstrapPluginAsset',
     ];
 
 }

@@ -30,21 +30,16 @@ if (Yii::$app->session->hasFlash('success')) {
     }
 }
 ?>
-<div class="navbar navbar-fixed-top menu-wrap">
+<div class="navbar fixed-top menu-wrap">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="javascript:void(0)"><img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive"/></a>
-        </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa fa-sign-in"></i> <span>Login</span></a></li>
-            </ul>
-        </div>
+        <a class="navbar-brand" href="javascript:void(0)">
+            <img
+                src="<?= $this->theme->getUrl('/assets/images/nav_logo.png') ?>" alt="AMCS Logo"
+                class="logo img-responsive" /> 
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
 </div>
 

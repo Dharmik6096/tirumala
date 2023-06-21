@@ -2118,6 +2118,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 .navbar-brand img {
     max-height: 45px;
     max-width: 77px;
+    margin-top: 6px;
 }
 
 .navbar-brand {
@@ -3615,7 +3616,7 @@ input[type="checkbox"]:after{
     background: #eee;
     height: 30px;
     margin-bottom: 0px;
-    margin-top: -16px;
+    /*margin-top: -16px;*/
     position: fixed;
     z-index: 99;
 }
@@ -3742,7 +3743,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 .dashboard_search_filter {
     width: calc(100% - 24px);
     margin: auto !important;
-    margin-top: -16px !important;
+    /*margin-top: -16px !important;*/
     background: #fff;
     -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);

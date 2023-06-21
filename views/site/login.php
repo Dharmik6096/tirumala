@@ -16,7 +16,7 @@ $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
 ?>
 
-<div class="navbar navbar-fixed-top menu-wrap">
+<div class="navbar fixed-top menu-wrap">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">

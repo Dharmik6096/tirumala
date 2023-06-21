@@ -25,7 +25,7 @@ class AppAsset extends AssetBundle
         'themes/emilk/assets/css/style.css',
         'themes/emilk/assets/css/print.css',
         'themes/emilk/assets/css/font.css',
-        'vendor/bower-asset/jquery-ui/themes/smoothness/jquery-ui.min.css',
+        // 'vendor/bower-asset/jquery-ui/themes/smoothness/jquery-ui.min.css',
     ];
     public $js = [
 //        'themes/nddb/assets/js/bootstrap.js',
@@ -40,10 +40,10 @@ class AppAsset extends AssetBundle
         'themes/emilk/assets/js/style.js',
         'themes/emilk/assets/js/jquery.CongelarFilaColumna.js',
         'themes/emilk/assets/js/html2excel.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
-        'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
+        // 'vendor/bower-asset/jquery-ui/ui/minified/core.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/widget.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/mouse.min.js',
+        // 'vendor/bower-asset/jquery-ui/ui/minified/sortable.min.js'
         
     ];
     public $depends = [

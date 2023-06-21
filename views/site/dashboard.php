@@ -26,7 +26,7 @@ if (!empty($results4)) {
 }
 $villages = array_column(array_values($results3), 'dcs_name');
 $unions = array_column(array_values($results3), 'union_name');
-$combined = array_map(function($a, $b) {
+$combined = array_map(function ($a, $b) {
     return $a . '<br/>' . $b;
 }, $villages, $unions);
 
@@ -40,7 +40,7 @@ $cal_data = json_encode($cal_data);
 
 $dcs = array_column(array_values($results8), 'VillageName');
 $unions = array_column(array_values($results8), 'union_name');
-$graph_chart_dcs = array_map(function($a, $b) {
+$graph_chart_dcs = array_map(function ($a, $b) {
     return $a;
 }, $dcs, $unions);
 $DPUCount = array_column(array_values($results8), 'DPUCount');
@@ -52,7 +52,7 @@ $CFCount = json_encode($CFCount);
 $milk_collection = !empty($milk_collection) ? $milk_collection : [];
 $dcs = array_column(array_values($milk_collection), 'dcs_name');
 $unions = array_column(array_values($milk_collection), 'union_name');
-$bar_chart_dcs = array_map(function($a, $b) {
+$bar_chart_dcs = array_map(function ($a, $b) {
     return $a;
 }, $dcs, $unions);
 $dcs_mcollection = array_column(array_values($milk_collection), 'm_quantity');
@@ -64,7 +64,7 @@ $dcs_ecollection = json_encode($dcs_ecollection);
 $bmc_collection = !empty($results6) ? $results6 : [];
 $bmc_dcs = array_column(array_values($bmc_collection), 'dcs_name');
 $bmc_unions = array_column(array_values($bmc_collection), 'union_name');
-$bar_chart_bmc = array_map(function($a, $b) {
+$bar_chart_bmc = array_map(function ($a, $b) {
     return $a;
 }, $bmc_dcs, $bmc_unions);
 $bmc_mcollection = array_column(array_values($bmc_collection), 'm_quantity');
@@ -72,15 +72,15 @@ $bmc_mcollection = json_encode($bmc_mcollection);
 $bmc_ecollection = array_column(array_values($bmc_collection), 'e_quantity');
 $bmc_ecollection = json_encode($bmc_ecollection);
 
-$active_member = array_sum(array_map(function($item) {
-            return $item['active_member'];
-        }, $member_mobile_detail));
-$mobile_app_active = array_sum(array_map(function($item) {
-            return $item['mobile_app_active'];
-        }, $member_mobile_detail));
-$mobile_app_block = array_sum(array_map(function($item) {
-            return $item['mobile_app_block'];
-        }, $member_mobile_detail));
+$active_member = array_sum(array_map(function ($item) {
+    return $item['active_member'];
+}, $member_mobile_detail));
+$mobile_app_active = array_sum(array_map(function ($item) {
+    return $item['mobile_app_active'];
+}, $member_mobile_detail));
+$mobile_app_block = array_sum(array_map(function ($item) {
+    return $item['mobile_app_block'];
+}, $member_mobile_detail));
 
 // $refreshWidgets = [
 // 'fed_union',
@@ -152,8 +152,8 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                 <div class="col-sm-12 padding_left_right_0">
                     <?php
                     $form = ActiveForm::begin([
-                                'action' => ['index'],
-                                'method' => 'post',
+                        'action' => ['index'],
+                        'method' => 'post',
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
@@ -195,63 +195,65 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     <div class="collapse" id="modal_widget_selection">
                         <?php
                         echo $form->field($model, 'rmrd_widgets[]')->checkboxList(
-                                $allRmrdWidgets, [
-                            'id' => 'rmrd_widgets_list',
-                            'class' => 'row sortable',
-                            'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
-                                //                var_dump(count($map_model));exit;
-                                $checked = in_array($label, $rmrd_selected_widgets);
-                                $dispLabel = '';
-                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'rmrd');
-                                if (empty($dispLabel)) {
-                                    return '';
-                                } else {
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'rmrd_' . $label,
-                                                'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                }
-                            },
-                                ]
+                            $allRmrdWidgets,
+                            [
+                                'id' => 'rmrd_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allRmrdWidgets, $rmrd_selected_widgets, $model, $dashboard_widget) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $rmrd_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'rmrd');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                        // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                        return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                            'value' => $label,
+                                            'id' => 'rmrd_' . $label,
+                                            'label' => '<label for="rmrd_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'rmrd') . '</label>',
+                                            'labelOptions' => [
+                                                'class' => 'widgets-text' //. $disabled,
+                                            ],
+                                            'class' => 'widgets-checkbox',
+                                        ]) . "</div></div>";
+                                    }
+                                },
+                            ]
                         )->label(false);
                         ?>
 
                         <?php
                         echo $form->field($model, 'farmer_widgets[]')->checkboxList(
-                                $allFarmerWidgets, [
-                            'id' => 'farmer_widgets_list',
-                            'class' => 'row sortable',
-                            'item' =>
-                            function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
-                                //                var_dump(count($map_model));exit;
-                                $checked = in_array($label, $farmer_selected_widgets);
-                                $dispLabel = '';
-                                $dispLabel = $dashboard_widget->getWidgetLabel($label, 'farmer');
-                                if (empty($dispLabel)) {
-                                    return '';
-                                } else {
-                                    // $check = $model->getDistrictUsed($allowWidgets, $label);
-                                    // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
-                                    return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
-                                                'value' => $label,
-                                                'id' => 'farmer_' . $label,
-                                                'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
-                                                'labelOptions' => [
-                                                    'class' => 'widgets-text' //. $disabled,
-                                                ],
-                                                'class' => 'widgets-checkbox',
-                                            ]) . "</div></div>";
-                                }
-                            },
-                                ]
+                            $allFarmerWidgets,
+                            [
+                                'id' => 'farmer_widgets_list',
+                                'class' => 'row sortable',
+                                'item' =>
+                                function ($index, $label, $name, $checked, $value) use ($allFarmerWidgets, $farmer_selected_widgets, $model, $dashboard_widget) {
+                                    //                var_dump(count($map_model));exit;
+                                    $checked = in_array($label, $farmer_selected_widgets);
+                                    $dispLabel = '';
+                                    $dispLabel = $dashboard_widget->getWidgetLabel($label, 'farmer');
+                                    if (empty($dispLabel)) {
+                                        return '';
+                                    } else {
+                                        // $check = $model->getDistrictUsed($allowWidgets, $label);
+                                        // $disabled = ($checked == 1 && $check == 1) ? ' disabled' : '';
+                                        return "<div class='col-sm-6 dcs-checklist checklist'><div class='checkbox widgets_checkbox'>" . Html::checkbox($name, $checked, [
+                                            'value' => $label,
+                                            'id' => 'farmer_' . $label,
+                                            'label' => '<label for="farmer_' . $label . '">' . $dashboard_widget->getWidgetLabel($label, 'farmer') . '</label>',
+                                            'labelOptions' => [
+                                                'class' => 'widgets-text' //. $disabled,
+                                            ],
+                                            'class' => 'widgets-checkbox',
+                                        ]) . "</div></div>";
+                                    }
+                                },
+                            ]
                         )->label(false);
                         ?>
                     </div>
@@ -259,8 +261,8 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     <div class="collapse" id="dpu_widget_filter">
                         <?php
                         $form = ActiveForm::begin([
-                                    'action' => ['index'],
-                                    'id' => 'dpu_search_filter'
+                            'action' => ['index'],
+                            'id' => 'dpu_search_filter'
                         ]);
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
@@ -408,7 +410,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
 <?php
 $script = "  
     var clientCodeForData = '" . $client_code . "';
-$( '.sortable' ).sortable();
+// $( '.sortable' ).sortable();
 $('.widget_table_setting_btn').click(function(){
     $('#dpu_widget_filter').removeClass('in');
 });
@@ -418,7 +420,7 @@ $('.dpu_data_icon').click(function(){
 });
 
 
-    $(window).load(function(){
+    $(window).on('load', function () {
         if('" . $widget_type . "' == '' || '" . $widget_type . "' == 'farmer'){
             $('#hidden_widget_type').val('farmer');
             $('#radio-farmer').prop('checked', true);

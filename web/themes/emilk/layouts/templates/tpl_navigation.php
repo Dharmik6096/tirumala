@@ -32,9 +32,9 @@ echo GhostMenu::widget([
 //    'linkTemplate' => '<a href="{url}">{label}</a>',
     'linkTemplate' => '<a href="{url}" class="dropdown-item">{label}</a>',
 //    'options' => ['class' => 'nav navbar-nav navbar-right', 'id' => 'menu-content'],
-    'options' => ['class' => 'navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll float-end', 'id' => 'menu-content'],
+    'options' => ['class' => 'navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll float-end', 'id' => 'menu-content'],
 //    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
-    'submenuTemplate' => "\n<ul class='navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll'>\n{items}\n</ul>\n",
+    'submenuTemplate' => "\n<ul class='navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll'>\n{items}\n</ul>\n",
     'items' => [
             [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
