@@ -3,7 +3,7 @@
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 

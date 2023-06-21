@@ -11,7 +11,7 @@ use kartik\sortable\Sortable;
 use kartik\form\ActiveForm;
 use kartik\select2\Select2;
 use kartik\dynagrid\Module;
-use yii\bootstrap\Modal;
+use yii\bootstrap5\Modal;
 
 /**
  * @var yii\web\View                          $this

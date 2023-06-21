@@ -3,9 +3,9 @@
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use zainiafzan\widget\Dropzone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
+use kato\DropZone;
 
 $data = \app\modules\import\importData::getLabels($type);
 $param = (!empty(Yii::$app->request->get('local_fields'))) ? Yii::$app->request->get('local_fields') : 'local_name';
@@ -61,7 +61,7 @@ $appendId = !empty($appendId) ? $appendId : '';
                     <div class="clearfix"></div>
                 <?php } ?>
                 <?=
-                Dropzone::widget([
+                DropZone::widget([
                     'id' => 'mainDrop' . $appendId,
                     'options' => [
                         'acceptedMimeTypes' => ".csv,.xls,.xlsx",

@@ -32,7 +32,7 @@ class AppAsset extends AssetBundle
         'themes/emilk/assets/js/liveloader.js',
         'themes/emilk/assets/js/snfcalc.js',
         'themes/emilk/assets/js/shortcut_bind.js',
-        'themes/emilk/assets/js/jquery.shortcuts.js',
+        // 'themes/emilk/assets/js/jquery.shortcuts.js',
         'themes/emilk/assets/js/bootbox.min.js',
         'themes/emilk/assets/js/vmenuModule.js',
         'themes/emilk/assets/js/script.js',
