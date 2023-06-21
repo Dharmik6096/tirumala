@@ -128,8 +128,7 @@ class StatusColumn extends DataColumn
 					$data .= "data-url='{$toggleUrl}'";
 				}
 
-				//return "<span style='{$style}' {$data} class='{$class}'> {$value} </span>";
-                                return $value;
+				return "<span style='{$style}' {$data} class='{$class}'> {$value} </span>";
 			}
 			else
 			{

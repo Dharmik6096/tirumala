@@ -4,9 +4,8 @@ namespace webvimark\components;
 use webvimark\modules\UserManagement\components\GhostAccessControl;
 use Yii;
 use yii\web\Controller;
-use app\controllers;
 
-class BaseController extends controllers\ChildController
+class BaseController extends Controller
 {
 	/**
 	 * @return array

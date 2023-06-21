@@ -36,7 +36,6 @@
         "phpseclib/phpseclib": "^3.0",
         "nickcv/yii2-encrypter": "^1.1",
         "jaspersoft/rest-client": "dev-master",
-        "2amigos/yii2-multi-select-widget": "*",
         "softark/yii2-dual-listbox": "dev-master",
         "linslin/yii2-curl": "*",
         "kartik-v/yii2-tabs-x": "^1.2",
