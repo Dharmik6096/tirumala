@@ -7,7 +7,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = 'BMC Detail View';
 $this->params['menu'][] = Yii::$app->controls->update($model->bmc_code);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-circle"></i> Contact Details'), ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

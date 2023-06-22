@@ -18,7 +18,7 @@ class LoginAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'themes/emilk/assets/css/font-awesome.css',
+        'themes/emilk/assets/css/fontawesome-all.min.css',
 //        'themes/emilk/assets/css/pageloader.css',
         'themes/emilk/assets/css/style.css',
     ];

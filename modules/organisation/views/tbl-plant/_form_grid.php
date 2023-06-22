@@ -82,7 +82,7 @@ $grid_option = [
         'delete' => ['option' => 'name,plant_code,tbl-plant/delete'],
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->name, 'data-val' => $model->plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-plant/contact-details', 'id' => $model->plant_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-plant/contact-details', 'id' => $model->plant_code], $options);
         },
     ]
 ];

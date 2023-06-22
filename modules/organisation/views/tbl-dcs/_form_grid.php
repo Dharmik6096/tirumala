@@ -289,7 +289,7 @@ $grid_option = [
         'contact-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
         },
         'dpu-inst' => function ($url, $model) {
             $inst_id = $model->getInstallationId();

@@ -116,7 +116,7 @@ class Grid extends Widget {
                 'buttons' => [
                     'view' => function ($url, $model)use ($grid_option) {
                         if (isset($grid_option->actions['view']) && $grid_option->actions['view'] !== FALSE) {
-                            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+                            return GhostHtml::a('<i class="fas fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
                         }
                     },
                     'update' => function ($url, $model)use ($grid_option) {
@@ -124,7 +124,7 @@ class Grid extends Widget {
                             if (is_callable($grid_option->actions['update'])) {
                                 return $grid_option->actions['update']($url, $model);
                             }
-                            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+                            return GhostHtml::a('<i class="fas fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
                         }
                     },
                     'delete' => function ($url, $model) use ($option, $grid_option) {
@@ -153,7 +153,7 @@ class Grid extends Widget {
                             }
 
                             $options = ['class' => 'delete-record ' . $class, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'data-name' => $option[0], 'data-val' => $model->{$option[1]}];
-                            return Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', $options);
+                            return Html::a('<i class="fas fa-trash"></i>', 'javascript:void(0)', $options);
                         }
                     },
                     'view-history' => function ($url, $model)use ($grid_option, $table_name ) {
@@ -163,7 +163,7 @@ class Grid extends Widget {
                             $id = $model->$primary;
                         }
                         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View History'), 'class' => 'view_history', 'data-table_name' => $table_name, 'data-id' => $id];
-                        return GhostHtml::a_alert('<i class="fa fa-history"></i>', ['/misreports/reports/view-history'], $options);
+                        return GhostHtml::a_alert('<i class="fas fa-history"></i>', ['/misreports/reports/view-history'], $options);
                     },
                 ]
             ];
@@ -255,7 +255,7 @@ class Grid extends Widget {
                     'footer' => false],
                 'toolbar' => [
                         ['content' =>
-                        Html::a('<i class="glyphicon glyphicon-repeat"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
+                        Html::a('<i class="fas fa-redo-alt"></i>', $refresh_action, ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => 'Refresh Grid'])
                     ],
                         ['content' => '{dynagrid}'],
                     //  '{export}',
@@ -372,9 +372,9 @@ class Grid extends Widget {
                         if (!$checkdata) {
                             $KYCURL = Url::to(['/verification/verification/kyc-detail']);
                             $options = ['data-name' => $details['model'], 'data-val' => $model->{$details['field']}, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Detail', 'class' => 'kyc-modal'];
-                            return GhostHtml::a_alert('<i class="fa fa-id-badge"></i>', $KYCURL, $options);
+                            return GhostHtml::a_alert('<i class="fas fa-id-badge"></i>', $KYCURL, $options);
                         } else {
-                            return GhostHtml::a('<i class="fa fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                            return GhostHtml::a('<i class="fas fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
                                         'data-placement' => 'top',
                             ]);
                         }

@@ -63,7 +63,7 @@ AppAsset::register($this);
                 </div>
             </div>
             <?php if ($menuItem) { ?>
-                <div class="btn-group btn btn-default actionButtons" data-toggle="collapse" data-target="#menu_buttons"><i class="glyphicon glyphicon-plus"></i></div>
+                <div class="btn-group btn btn-default actionButtons" data-toggle="collapse" data-target="#menu_buttons"><i class="fas fa-plus"></i></div>
                 <?php
             }
         }

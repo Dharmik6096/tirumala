@@ -133,7 +133,7 @@ $grid_option = [
         },
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], $options);
         },
         'union-config' => function ($url, $model) {
             $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Union Configurations')];

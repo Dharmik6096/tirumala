@@ -138,7 +138,7 @@ $is_submit = FALSE;
                         <!--<td>-->
                         <?php
                         if ($row_id == '' && !$disabled) {
-//                                    echo Html::a(Yii::t('app', '<span class="glyphicon glyphicon-plus icon-size"></span>'), 'javascript:void(0)', ['class' => 'apply-shortcut show-sample', 'shortcut_key' => 'ctrl+alt+c', 'title' => 'Add Scheme Product']);
+//                                    echo Html::a(Yii::t('app', '<span class="fas fa-plus icon-size"></span>'), 'javascript:void(0)', ['class' => 'apply-shortcut show-sample', 'shortcut_key' => 'ctrl+alt+c', 'title' => 'Add Scheme Product']);
                         }
                         ?>
                         <!--</td>-->

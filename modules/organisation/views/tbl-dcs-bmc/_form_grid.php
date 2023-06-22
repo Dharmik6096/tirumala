@@ -121,7 +121,7 @@ $grid_option = [
         },
         'contact-details' => function ($url, $model) {
             $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], $options);
         },
         'mapping' => function ($url, $model) {
             $options = ['data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'BMC Mapping'];

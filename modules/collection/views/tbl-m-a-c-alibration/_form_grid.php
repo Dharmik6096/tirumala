@@ -51,7 +51,7 @@ $grid_option = [
 //        'dispatch' => function ($url, $model) {
 //                $class = ($model->status==6)?'':'disabled';
 //                $options = ['data-name' => $model->date,'class'=>$class, 'data-val' => $model->product_requisition_code,'title'=>'Dispatch Requisition'];
-//                return GhostHtml::a('<span class="glyphicon glyphicon-plus"></span>', ['/inventory/tbl-product-material-dispatch/create','id'=>$model->product_requisition_code], $options);
+//                return GhostHtml::a('<span class="fas fa-plus"></span>', ['/inventory/tbl-product-material-dispatch/create','id'=>$model->product_requisition_code], $options);
 //        },
     ]
 ];

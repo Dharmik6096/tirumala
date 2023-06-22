@@ -30,7 +30,7 @@ $grid_option = [
         'add' => function ($url, $model) {
             $disable = ($model->is_active==0)?'disabled':'';
             $options = ['data-val' => $model->head_load_code, 'title'=>'Transaction','class'=>$disable];
-            return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['/dcsoperation/tbl-head-load-transaction/create', 'id' => $model->head_load_code], $options);
+            return Html::a('<span class="fas fa-plus"></span>', ['/dcsoperation/tbl-head-load-transaction/create', 'id' => $model->head_load_code], $options);
         },
         'mapping' => function ($url, $model) {
             $disable = ($model->is_active==0)?'disabled':'';

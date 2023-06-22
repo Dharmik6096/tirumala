@@ -50,7 +50,7 @@ $grid_option = [
         'transaction' => function ($url, $model) {
             $class = ($model->status == 'Draft') ? '' : 'disabled';
             $options = ['data-name' => $model->req_date, 'class' => $class, 'data-val' => $model->product_requisition_code, 'title' => Yii::t('app', 'Add Requisition Transaction')];
-            return GhostHtml::a('<i class="glyphicon glyphicon-plus"></i>', ['/product/tbl-product-requisition-transaction/create', 'id' => $model->product_requisition_code], $options);
+            return GhostHtml::a('<i class="fas fa-plus"></i>', ['/product/tbl-product-requisition-transaction/create', 'id' => $model->product_requisition_code], $options);
         },
         'reqaccept' => function ($url, $model) {
             // $class = $model->disableApprove()? 'disabled' : '';

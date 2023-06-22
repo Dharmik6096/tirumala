@@ -20,7 +20,7 @@ class AppAsset extends AssetBundle
     public $css = [
         //'css/site.css',
 //        'themes/nddb/assets/css/bootstrap.css',
-        'themes/emilk/assets/css/font-awesome.css',
+        'themes/emilk/assets/css/fontawesome-all.min.css',
         'themes/emilk/assets/css/pageloader.css',
         'themes/emilk/assets/css/style.css',
         'themes/emilk/assets/css/print.css',

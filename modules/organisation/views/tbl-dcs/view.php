@@ -9,7 +9,7 @@ $this->title = Yii::$app->label->title('view', 'Society');
 $this->params['menu'][] = Yii::$app->controls->update($model->dcs_code);
 
 $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-circle"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

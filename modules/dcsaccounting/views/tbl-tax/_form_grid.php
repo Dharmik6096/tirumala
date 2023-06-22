@@ -35,7 +35,7 @@ $grid_option = [
         'tax_details' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-name' => $model->tax_name, 'data-val' => $model->tax_code, 'class' => $disable, 'title' => Yii::t('app', "Tax Detail")];
-            return GhostHtml::a('<span><i class="glyphicon glyphicon-plus"></i></span>', ['/dcsaccounting/tbl-tax-detail/index', 'id' => $model->tax_code], $options);
+            return GhostHtml::a('<span><i class="fas fa-plus"></i></span>', ['/dcsaccounting/tbl-tax-detail/index', 'id' => $model->tax_code], $options);
         }
     ]
 ];

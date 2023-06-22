@@ -7,7 +7,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Vendor Matser');
 $this->params['menu'][] = Yii::$app->controls->update($model->vendor_master_code);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/product/tbl-vendor-master/contact-details', 'id' => $model->vendor_master_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-circle"></i> Contact Details'), ['/product/tbl-vendor-master/contact-details', 'id' => $model->vendor_master_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
