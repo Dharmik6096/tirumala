@@ -3948,6 +3948,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     background-color: #7a231c;
 }
 
+.table-responsive > .table-bordered > thead > tr > th{
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background-color: #7a231c;
+}
+
 .panel > .table-responsive > .table-bordered > thead tr.filters.skip-export > td {
     position: sticky;
     top: 19px;
