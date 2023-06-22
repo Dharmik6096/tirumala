@@ -62,7 +62,7 @@ class TblAssetMasterHistory extends \yii\db\ActiveRecord {
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
             'local_name' => Yii::t('app', 'Local Name'),
-            'ref_code' => Yii::t('app', 'Refference Code'),
+            'ref_code' => Yii::t('app', 'Reference Code'),
             'is_spare' => Yii::t('app', 'Is Spare'),
         ];
     }

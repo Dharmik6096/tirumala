@@ -58,7 +58,7 @@ class TblAssetMaster extends \app\models\ChildModel {
             [['asset_name'], 'unique'],
             [['asset_group_code'], 'assignAutoData', 'skipOnError' => true],
             [['ref_code'], 'number'],
-            ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Refference Code has already been taken.')],
+            ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Reference Code has already been taken.')],
         ];
     }
 
@@ -79,7 +79,7 @@ class TblAssetMaster extends \app\models\ChildModel {
             'local_name' => Yii::t('app', 'Local Name'),
             'union_code' => Yii::t('app', 'Union'),
             'cmpl_product_code' => Yii::t('app', 'Asset Type'),
-            'ref_code' => Yii::t('app', 'Refference Code'),
+            'ref_code' => Yii::t('app', 'Reference Code'),
             'is_spare' => Yii::t('app', 'Is Spare'),
         ];
     }
