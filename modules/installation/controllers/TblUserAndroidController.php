@@ -11,6 +11,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\modules\installation\models\TblUserDownloadAck;
+use app\modules\installation\models\TblAndroidInstallationDetails;
 
 /**
  * TblUserAndroidController implements the CRUD actions for TblUserAndroid model.
