@@ -2682,7 +2682,7 @@ div.crystalstyle{
 .panel .panel-body .btn, 
 .modal .modal-body .btn,
 .modal .modal-footer .btn{
-    display: inline-block;
+    display: block;
     font-weight: 400;
     text-align: center;
     white-space: nowrap;
