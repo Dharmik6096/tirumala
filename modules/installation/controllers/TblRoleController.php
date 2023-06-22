@@ -214,9 +214,8 @@ class TblRoleController extends \app\controllers\ChildController {
             foreach($activeDevice as $value) {
                 $usrAckModel = new TblUserDownloadAck();
 //                $usrAckModel->attributes = $ackModel->attributes;
-                $hashKeys = $androidInstallationDetail->getActiveDeviceHashKey($value->device_id);
                 $usrAckModel->device_id = $value->device_id;
-                $usrAckModel->device_id = $hashKeys['hash_key'];                
+                $usrAckModel->hash_key = $value->hash_key;               
                 $usrAckModel->union_code = $ackModel->union_code;
                 $usrAckModel->plant_code = $ackModel->plant_code;
                 $usrAckModel->mcc_plant_code = $ackModel->mcc_plant_code;
