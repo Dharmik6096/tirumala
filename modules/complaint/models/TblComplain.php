@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
+use app\modules\assetmanagement\models\TblAssetMaster;
 
 /**
  * This is the model class for table "tbl_complain".
@@ -138,12 +139,20 @@ class TblComplain extends \app\models\ChildModel {
         return $this->hasOne(TblComplainType::className(), ['complain_type_code' => 'complain_type_code']);
     }
 
+    public function getAsset() {
+        return $this->hasOne(TblAssetMaster::className(), ['asset_code' => 'asset_code']);
+    }
+
     public function getComplainFor($complain_type) {
         $query = TblComplain::find()->select(['tbl_complain.complain_for'])
                 ->innerJoin('tbl_complain_type', 'tbl_complain_type.complain_type_code = tbl_complain.complain_type_code')
                 ->where(['tbl_complain.complain_code' => $complain_type]);
 
         return $query->all();
+    }
+
+    public function getComplainStatus($id) {
+        return $this->find()->select('complain_status')->where(['complain_status' => 'CREATED', 'complain_code' => $id])->one();
     }
 
 }

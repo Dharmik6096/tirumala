@@ -14,6 +14,8 @@ use app\modules\complaint\models\TblComplainActivity;
 use yii\web\Response;
 use app\modules\complaint\models\TblComplainType;
 use app\modules\assetmanagement\models\TblAssetMaster;
+use app\modules\complaint\models\TblComplainHistory;
+use app\modules\complaint\models\TblComplainActivityHistory;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -81,15 +83,18 @@ class TblComplainController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionUpdate($id) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->complain_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblComplainHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Complain', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
@@ -98,10 +103,23 @@ class TblComplainController extends \app\controllers\ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
+    public function actionDelete() {
+        $saveModel = [];
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $historyModel = new TblComplainHistory();
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $saveModel[] = $this->model;
+        $saveModel[] = $historyModel;
 
-        return $this->redirect(['index']);
+        $model = TblComplainActivity::find()->where(['complain_code' => Yii::$app->request->post('id')])->one();
+        $activityHistoryModel = new TblComplainActivityHistory();
+        Yii::$app->operation->history($model, $activityHistoryModel, DELETE);
+        $saveModel[] = $model;
+        $saveModel[] = $activityHistoryModel;
+
+        $record = $this->generalModel->deleteTransaction($saveModel);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**
@@ -120,7 +138,7 @@ class TblComplainController extends \app\controllers\ChildController {
     }
 
     private function setModel() {
-        $this->model->complain_datetime = ($this->model->complain_datetime == '') ? null : Yii::$app->formatter->asDate($this->model->complain_datetime, DATE_FORMAT);
+//        $this->model->complain_datetime = ($this->model->complain_datetime == '') ? null : Yii::$app->formatter->asDate($this->model->complain_datetime, DATE_FORMAT);
         $this->model->resolved_datetime = ($this->model->resolved_datetime == '') ? null : Yii::$app->formatter->asDate($this->model->resolved_datetime, DATE_FORMAT);
     }
 
