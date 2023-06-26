@@ -27,7 +27,7 @@ $form = ActiveForm::begin([
     </div>
     <!--<div class="clearfix"></div>-->
     <div class="col-sm-6 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

@@ -53,7 +53,7 @@ file_exists($path.$model->attachment) ? $size = filesize($path.$model->attachmen
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
     <div class="col-sm-2 mt35">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">

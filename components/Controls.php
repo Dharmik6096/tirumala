@@ -82,12 +82,12 @@ class Controls extends Component {
         echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-default']);
     }
 
-    public function active($model, $form, $class = 'form-group col-sm-3') {
-        echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
-    }
+//    public function active($model, $form, $class = 'form-group col-sm-3') {
+//        echo $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
+//    }
 
     public function checkTemplateBootstrap5($model, $form, $label = 'is_active', $value = false) {
-        echo $form->field($model, $label, ['checkTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(['value' => $value]);
+        echo $form->field($model, $label, ['checkTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(['checked' => $value]);
     }
 
     public function import($flag, $view, $text = '', $fields = [], $appendId = '') {

@@ -69,7 +69,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                         <?=
                             Html::submitButton(
                                 UserManagementModule::t('front', 'Login'),
-                                ['class' => 'btn btn-primary btn-block']
+                                ['class' => 'btn-login-second btn btn-primary btn-block']
                             )
                             ?>
                     </div>
@@ -123,7 +123,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                                 we do. Our endeavor is to be the personification of the concept of
                                                 "Precision Behind Purity"</p>
                                             <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
+                                                data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
                                         </div>
                                     </div>
                                 </div>

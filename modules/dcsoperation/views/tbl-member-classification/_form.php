@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'member_classification_type')->dropDownList($type_list, ['prompt' => 'Select Type'])->label(); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <!-- <div class="clearfix"></div> -->
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

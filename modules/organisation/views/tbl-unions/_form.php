@@ -183,7 +183,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="clearfix"></div>
 </div>

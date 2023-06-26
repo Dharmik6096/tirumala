@@ -71,7 +71,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'average')->textInput() ?>
     </div>
     <div class="col-sm-3 mt25">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="col-sm-12">
             <p class="form-subtitle">Driver Details</p>

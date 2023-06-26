@@ -144,7 +144,7 @@ $form = ActiveForm::begin([
     <?php } ?>
 
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
 
     <div class="clearfix"></div>

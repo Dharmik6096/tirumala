@@ -40,7 +40,7 @@ $this->title = Yii::t('app', $title);
 
                     <?= $form->field($model, 'range_end', ['options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
                 
-                    <?= Yii::$app->controls->active($model, $form); ?>
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
             </div>
 
         </div>

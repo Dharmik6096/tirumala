@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'tax_group_name')->textInput() ?>
     </div>  
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 use kartik\dynagrid\DynaGrid;
 use yii\base\Widget;
 use kartik\export\ExportMenu;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\UserManagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\User;
 use yii\helpers\Url;
 use app\modules\verification\models\TblVerification;

@@ -38,7 +38,7 @@ $this->title = Yii::t('app', $title);
     </div>
     <div class="row">
         <?= $form->field($model, 'miscellaneous_code', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($miscellaneous, ['prompt' => 'Select Miscellaneous']); ?>
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="row">
         <?= $form->field($model, 'description', [ 'options' => ['class' => 'form-group col-sm-6',]])->textarea(['rows' => 3]) ?>

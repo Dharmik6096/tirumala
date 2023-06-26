@@ -89,7 +89,7 @@ $form = ActiveForm::begin([
         <?php //$form->field($model,'district', [ 'options' => ['class' => 'form-group col-sm-3 '.$disable,]])->listBox($districts['value'],['multiple'=>'multiple','size'=>'10','options'=>$districts['selected']]); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

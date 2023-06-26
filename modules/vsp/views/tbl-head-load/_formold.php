@@ -30,7 +30,7 @@ $this->title = Yii::t('app', $title);
 
                 <?= $form->field($model, 'criteria_description', ['options' => ['class' => 'form-group col-sm-8']])->textArea() ?>        
            
-                <?= Yii::$app->controls->active($model, $form); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
             </div>
 
         </div>

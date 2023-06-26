@@ -324,7 +324,7 @@ $form = ActiveForm::begin([
 
         <?php // if ($type == 'create') {    ?>
         <!--        <div class="col-sm-3">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
                 </div>-->
         <?php // }   ?>
         <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
@@ -361,7 +361,7 @@ $form = ActiveForm::begin([
 
     <?php // if ($type == 'create') {  ?>
     <!--        <div class="col-sm-3">
-    <?= Yii::$app->controls->active($model, $form); ?>
+    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
             </div>-->
     <?php // }    ?>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>

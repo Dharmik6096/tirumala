@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
         <?php // Yii::$app->dropdown->dropdown('unit_code', $model, $form, '', 'Unit', false, 'unit_code'); ?>
     </div>  
     <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

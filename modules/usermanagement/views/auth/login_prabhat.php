@@ -70,12 +70,12 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <?php //}  ?>
                     <div class="col-sm-12">
-                        <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? \Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rememberMe', true) : '' ?> : '' ?>
+                        <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? \Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rememberMe', true) : '' ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
                         Html::submitButton(
-                                UserManagementModule::t('front', 'Login'), ['class' => 'btn btn-primary btn-block']
+                                UserManagementModule::t('front', 'Login'), ['class' => 'btn-login-second btn btn-primary btn-block']
                         )
                         ?>
                     </div>
@@ -132,7 +132,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                             <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
                                             <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
                                             <p class="text-justify">Everest now employs a workforce of 350 techno commercial personnel and its Engineering field staff are made available for 24x7 service. Everest Care Its Customers and render exemplary services at all times -secret of Everest’s success. Everest has generated revenue over 1000 million INR and it has very ambitious but realistic plan to achieve the coveted 5000 million INR by 2015.</p>-->
-                                            <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
+                                            <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
                                         </div>
                                     </div>
                                 </div>

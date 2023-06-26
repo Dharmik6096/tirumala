@@ -73,7 +73,7 @@ $form = ActiveForm::begin([
 
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">
-      <?= Yii::$app->controls->active($model, $form); ?>
+      <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
       </div>
       <?php } */ ?>
 

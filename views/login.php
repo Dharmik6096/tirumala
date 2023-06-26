@@ -28,7 +28,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="javascript:void(0)" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> <span>Login</span></a></li>
+                <li><a href="javascript:void(0)" data-toggle="modal" data-target="#loginModal"><i class="fas fa-sign-in-alt"></i> <span>Login</span></a></li>
             </ul>
         </div>
     </div>
@@ -148,7 +148,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <hr>
                                         <h3>About Us</h3>
                                         <p class="text-justify">PCDF was formed in 1962 with the aim to develop organized dairying in the State on Cooperative lines PCDF's is a cohesive body that successfully does away with the exploitative forces of years to years-the Middlemen.Therefore a direct link is established between the producer and the ultimate consumer . This Apex Milk Cooperative draws its inherent strength from the farmers committed participation , and injects corporate skills and dynamic professionalism into what is fundamentally a traditional institution.</p>
-                                        <a href="javascript:void(0)" class="btn btn-danger" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
+                                        <a href="javascript:void(0)" class="btn btn-danger" data-toggle="modal" data-target="#loginModal"><i class="fas fa-sign-in-alt"></i> Login</a>
                                     </div>
                                 </div>
                             </div>

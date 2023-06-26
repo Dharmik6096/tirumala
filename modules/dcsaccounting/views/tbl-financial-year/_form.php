@@ -69,7 +69,7 @@ $minDate = ($model->isNewRecord)?'':date('d-m-Y', strtotime($model->starting_dat
                
                
                 <div class="clearfix"></div>
-                <?= Yii::$app->controls->active($model, $form); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
             </div>
 
         </div>

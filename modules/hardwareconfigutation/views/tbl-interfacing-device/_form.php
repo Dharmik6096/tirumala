@@ -69,7 +69,7 @@ $this->title = Yii::t('app', $title);
         <div class="clearfix"></div>    
         <?= $form->field($model, 'stop_bit', [ 'options' => ['class' => 'form-group col-sm-3']])->textInput() ?>
 
-        <?= Yii::$app->controls->active($model, $form); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
         </div>
 </div>

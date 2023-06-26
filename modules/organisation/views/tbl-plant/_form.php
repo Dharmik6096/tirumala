@@ -55,16 +55,16 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'local_name')->textInput() ?>
         </div>
         <!--    <div class="col-sm-2"> 
-                <?= $form->field($model, 'contact_person')->textInput() ?>
+        <?= $form->field($model, 'contact_person')->textInput() ?>
             </div>
             <div class="col-sm-2"> 
-                <?= $form->field($model, 'local_contact_person_name')->textInput() ?>
+        <?= $form->field($model, 'local_contact_person_name')->textInput() ?>
             </div>
             <div class="col-sm-2">  
-                <?= $form->field($model, 'email')->textInput() ?>
+        <?= $form->field($model, 'email')->textInput() ?>
             </div>
             <div class="col-sm-2"> 
-                <?= $form->field($model, 'mobile_no')->textInput() ?>
+        <?= $form->field($model, 'mobile_no')->textInput() ?>
             </div>-->
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
@@ -109,7 +109,7 @@ $form = ActiveForm::begin([
 
 
         <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->active($model, $form); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
         <div class="clearfix"></div>
     </div>

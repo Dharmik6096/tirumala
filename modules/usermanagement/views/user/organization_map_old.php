@@ -39,7 +39,7 @@ $this->title = Yii::t('app', $title);
                         ]             
                        )->label("Organizations");     ?>
                     
-                    <?= Yii::$app->controls->active($model, $form); ?>
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
                 </div>        
             </div>
         </div>

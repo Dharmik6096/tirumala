@@ -53,6 +53,14 @@ class TblUnionsSearch extends TblUnions
         if(Yii::$app->session->get('Unions')!==''){
             $query->andFilterWhere([ 'tbl_unions.union_code'=>explode(',',Yii::$app->session->get('Unions'))]);
         }
+        
+//        $unions = Yii::$app->session->get('Unions');
+//        if ($unions !== null) {
+//            $unionCodes = explode(',', $unions);
+//            if (!empty($unionCodes)) {
+//                $query->andFilterWhere(['tbl_unions.union_code' => $unionCodes]);
+//            }
+//        }
 
         $query->joinWith(['stateCode']);
 
