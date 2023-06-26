@@ -6,7 +6,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use webvimark\helpers\LittleBigHelper;
 use app\modules\usermanagement\components\AuthHelper;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\rbacDB\Role;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblFederations;

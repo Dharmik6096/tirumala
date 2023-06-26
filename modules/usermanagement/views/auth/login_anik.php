@@ -1,15 +1,12 @@
 <?php
-/**
- * @var $this yii\web\View
- * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
- */
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
+
+use app\modules\usermanagement\components\GhostHtml;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use yii\web\View;
+
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
 ?>
@@ -30,7 +27,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         <div class="modal-content">
             <div class="modal-header">
                 <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-                <h4 class="modal-title"><?= UserManagementModule::t('front', 'Thirumala Application') ?></h4>
+                <h4 class="modal-title"><?= Yii::t('app', 'Thirumala Application') ?></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -58,11 +55,11 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                 ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
                         ?>
                     </div>
-                    <?php //if($identity['organization_type']!='NATIONAL'){  ?>
+                    <?php //if($identity['organization_type']!='NATIONAL'){   ?>
                     <div id="org" class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-6">
-                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
+                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']);  ?>
                             </div>
                         </div>
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
@@ -75,7 +72,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-12">
                         <?=
                         Html::submitButton(
-                                UserManagementModule::t('front', 'Login'), ['class' => 'btn btn-primary btn-block']
+                                Yii::t('app', 'Login'), ['class' => 'btn btn-primary btn-block']
                         )
                         ?>
                     </div>
@@ -84,14 +81,14 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-6">
                         <?php
                         /* GhostHtml::a(
-                          UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
+                          Yii::t('app', "Registration"), ['/user-management/auth/registration']
                           ) */
                         ?>
                     </div>
                     <div class="col-sm-6 text-right">
                         <?php
                         /* GhostHtml::a(
-                          UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
+                          Yii::t('app', "Forgot password ?"), ['/user-management/auth/password-recovery']
                           ) */
                         ?>
                     </div>
@@ -115,11 +112,11 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <?= Html::img($image_path . 'title.png', ['class' => 'img-responsive auto_margin']); ?>
                                         <!--<h3>Welcome to EIPL Milk Procurement Portal</h3>-->
                                         <hr>
-                                        <?php $title = UserManagementModule::t('front', 'Thirumala Application'); ?>
+                                        <?php $title = Yii::t('app', 'Thirumala Application'); ?>
                                         <div class="col-sm-6 content_show" data-title="<?= $title ?>" id="thirumala">
                                             <?= Html::img($image_path . 'thirumala_logo.png', ['class' => 'img-responsive about_one']); ?>
                                         </div>
-                                        <?php $title = UserManagementModule::t('front', 'Anik Application'); ?>
+                                        <?php $title = Yii::t('app', 'Anik Application'); ?>
                                         <div class="col-sm-6 content_show" data-title="<?= $title ?>" id="anik">
                                             <?= Html::img($image_path . 'anik_logo.png', ['class' => 'img-responsive about_two']); ?>
                                         </div>

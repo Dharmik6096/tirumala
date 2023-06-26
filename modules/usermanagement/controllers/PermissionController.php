@@ -5,9 +5,9 @@ namespace app\modules\usermanagement\controllers;
 use Yii;
 use yii\helpers\Html;
 use app\modules\usermanagement\components\AuthHelper;
-use webvimark\modules\UserManagement\models\rbacDB\AbstractItem;
-use webvimark\modules\UserManagement\models\rbacDB\Permission;
-use webvimark\modules\UserManagement\models\rbacDB\Route;
+use app\modules\usermanagement\models\rbacDB\AbstractItem;
+use app\modules\usermanagement\models\rbacDB\Permission;
+use app\modules\usermanagement\models\rbacDB\Route;
 
 class PermissionController extends \webvimark\modules\UserManagement\controllers\PermissionController {
 
