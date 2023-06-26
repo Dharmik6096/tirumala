@@ -2118,7 +2118,7 @@ div.kv-expanded-row div.grid-view div.kv-grid-container{
 .navbar-brand img {
     max-height: 45px;
     max-width: 77px;
-    margin-top: 6px;
+    margin-top: 10px;
 }
 
 .navbar-brand {
@@ -2682,7 +2682,7 @@ div.crystalstyle{
 .panel .panel-body .btn, 
 .modal .modal-body .btn,
 .modal .modal-footer .btn{
-    display: inline-block;
+    display: block;
     font-weight: 400;
     text-align: center;
     white-space: nowrap;
@@ -3942,6 +3942,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .panel > .table-responsive > .table-bordered > thead > tr > th{
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background-color: #7a231c;
+}
+
+.table-responsive > .table-bordered > thead > tr > th{
     position: sticky;
     top: 0;
     z-index: 9;

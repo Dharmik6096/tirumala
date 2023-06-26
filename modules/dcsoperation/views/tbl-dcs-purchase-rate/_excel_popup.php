@@ -1,6 +1,6 @@
 <?php
 
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\widgets\ActiveForm;
 ?>
 <div class="modal modal-default fade" id="excelImport" role="dialog">

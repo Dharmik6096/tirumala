@@ -142,7 +142,7 @@ $grid_option = [
         'contact-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
         },
         'upload-photos' => function ($url, $model) {
             $id = $model->customer_code;

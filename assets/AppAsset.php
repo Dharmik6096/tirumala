@@ -20,7 +20,7 @@ class AppAsset extends AssetBundle
     public $css = [
         //'css/site.css',
 //        'themes/nddb/assets/css/bootstrap.css',
-        'themes/emilk/assets/css/font-awesome.css',
+        'themes/emilk/assets/css/fontawesome-all.min.css',
         'themes/emilk/assets/css/pageloader.css',
         'themes/emilk/assets/css/style.css',
         'themes/emilk/assets/css/print.css',
@@ -32,7 +32,7 @@ class AppAsset extends AssetBundle
         'themes/emilk/assets/js/liveloader.js',
         'themes/emilk/assets/js/snfcalc.js',
         'themes/emilk/assets/js/shortcut_bind.js',
-        'themes/emilk/assets/js/jquery.shortcuts.js',
+        // 'themes/emilk/assets/js/jquery.shortcuts.js',
         'themes/emilk/assets/js/bootbox.min.js',
         'themes/emilk/assets/js/vmenuModule.js',
         'themes/emilk/assets/js/script.js',

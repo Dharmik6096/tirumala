@@ -53,7 +53,7 @@ $grid_option = [
         'delete' => ['option' => 'sub_center_name,sub_center_code,tbl-sub-center/delete'],
         'bmc_mapping' => function ($url, $model) {
                 $options = ['data-name' => $model->sub_center_name, 'data-val' => $model->sub_center_code,'title'=>'Add Bmc'];
-                return GhostHtml::a('<span class="glyphicon glyphicon-plus"></span>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code,'dcsname'=>$model->dcsCode->dcs_name,'subcenter'=> $model->sub_center_code,'subname'=>$model->sub_center_name,'type'=>'Sub Center'], $options);
+                return GhostHtml::a('<span class="fas fa-plus"></span>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code,'dcsname'=>$model->dcsCode->dcs_name,'subcenter'=> $model->sub_center_code,'subname'=>$model->sub_center_name,'type'=>'Sub Center'], $options);
         },
         'miscellaneous' => function ($url, $model) {
             $options = ['data-name' => $model->sub_center_name, 'data-val' => $model->sub_center_code,'title'=>'Add Miscellaneous'];

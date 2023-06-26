@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\web\JsExpression;
 
 /* @var $this yii\web\View */

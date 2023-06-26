@@ -106,7 +106,7 @@ class TblCollectionApproval extends \app\models\ChildModel {
 //        }
 //        foreach ($sentboxArray as $sent) {
         if (!empty($this->originating_org_code) && !empty($this->originating_org_type)) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
 
 //            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             $sentbox = $this->sentboxModel($this->originating_org_code, $this->originating_org_type);

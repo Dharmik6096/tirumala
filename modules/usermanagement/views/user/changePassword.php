@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = UserManagementModule::t('back', 'Changing passw
                             <?php if ($model->isNewRecord): ?>
                                 <?=
                                 Html::submitButton(
-                                        '<!--<span class="glyphicon glyphicon-plus-sign"></span> -->' . UserManagementModule::t('back', 'Create'), ['class' => 'btn btn-default']
+                                        '<!--<span class="fas fa-plus"></span> -->' . UserManagementModule::t('back', 'Create'), ['class' => 'btn btn-default']
                                 )
                                 ?>
                             <?php else: ?>

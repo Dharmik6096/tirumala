@@ -3,7 +3,7 @@
 use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Html;
 
 $url = ($model->isNewRecord) ? '' : Url::to(['../../organisation/tbl-unions/view', 'id' => $model->union_code]);

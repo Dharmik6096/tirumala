@@ -10,6 +10,7 @@ use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
 use yii\helpers\ArrayHelper;
 use app\modules\syncutility\models\TblSentbox;
+use yii\base\UserException;
 
 /**
  * This is the model class for table "tbl_plant".
@@ -202,7 +203,7 @@ class TblPlant extends \app\models\ChildModel {
         $sentboxArray = [];
         $sentboxArray = Yii::$app->general->getSentBoxCodes($this->plant_code, '', '');
         foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

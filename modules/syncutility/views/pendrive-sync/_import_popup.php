@@ -1,6 +1,6 @@
 <?php
 
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 ?>

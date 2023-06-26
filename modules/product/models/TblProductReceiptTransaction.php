@@ -129,7 +129,7 @@ class TblProductReceiptTransaction extends \app\models\ChildModel {
         }
         foreach ($sentboxArray as $sent) {
             sleep(10);
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+            $flag = (((isset($this->operation) && $this->operation == true)) ? $this->operation : ($insert)) ? 'INSERT' : 'UPDATE';
             $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
             if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
                 if (!($sentbox->setSentbox($this, $flag))) {

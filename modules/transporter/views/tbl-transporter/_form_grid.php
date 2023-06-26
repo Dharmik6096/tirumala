@@ -93,7 +93,7 @@ $grid_option = [
         'contact-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/transporter/tbl-transporter/contact-details', 'id' => $model->transporter_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/transporter/tbl-transporter/contact-details', 'id' => $model->transporter_code], $options);
         },
         'active' => function ($url, $model) {
             $title = ($model->is_active == 1) ? Yii::t('app', 'Deactivate') : Yii::t('app', 'Activate');

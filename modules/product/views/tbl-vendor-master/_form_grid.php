@@ -31,7 +31,7 @@ $grid_option = [
         'contact-details' => function ($url, $model) {
             $class = '';
             $options = ['data-name' => $model->vendor_master_code, 'data-val' => $model->vendor_master_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/product/tbl-vendor-master/contact-details', 'id' => $model->vendor_master_code], $options);
+            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/product/tbl-vendor-master/contact-details', 'id' => $model->vendor_master_code], $options);
         },
         'delete' => ['option' => 'vendor_name,vendor_master_code,tbl-vendor-master/delete,checkDelete()'],
     ]
