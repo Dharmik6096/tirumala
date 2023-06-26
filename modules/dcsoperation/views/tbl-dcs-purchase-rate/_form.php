@@ -7,7 +7,7 @@ use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $title = Yii::$app->label->title($type, 'Purchase Rate') . ' (' . Yii::t('app', 'BMC') . ')';
 $button = Yii::$app->label->button($type);

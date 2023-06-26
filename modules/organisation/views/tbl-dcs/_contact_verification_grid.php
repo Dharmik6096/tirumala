@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Contact Verification');
 ?>

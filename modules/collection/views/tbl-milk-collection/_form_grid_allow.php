@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 
 $milkType = new TblAnimalType();

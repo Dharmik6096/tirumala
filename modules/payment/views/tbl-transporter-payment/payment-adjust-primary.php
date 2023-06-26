@@ -4,7 +4,7 @@ use yii\bootstrap5\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = 'Transporter Payment Process : Step 2';
 if ($transporter_type == 0) {

@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 2');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));

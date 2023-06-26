@@ -7,7 +7,7 @@ use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $readonly = $type == 'issue' ? FALSE : TRUE;
 $title = $type == 'issue' ? 'Good Issue' : 'Good Receipt';

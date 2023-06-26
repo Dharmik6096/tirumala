@@ -7,7 +7,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use yii\widgets\Pjax;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 <?php Pjax::begin(['id' => 'manual-grid']); ?> 
 <?php

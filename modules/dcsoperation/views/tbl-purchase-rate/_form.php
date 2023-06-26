@@ -7,7 +7,7 @@ use yii\web\View;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\helpers\Url;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $button = Yii::$app->label->button($type);
 $model->union_code = !empty($selected) ? $selected : $model->union_code;

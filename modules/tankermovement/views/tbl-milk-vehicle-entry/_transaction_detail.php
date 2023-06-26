@@ -1,7 +1,7 @@
 <?php
 
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 ?>
 <div class="clearfix"></div>

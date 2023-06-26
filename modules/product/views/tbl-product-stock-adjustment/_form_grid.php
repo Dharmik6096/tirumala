@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 ?>

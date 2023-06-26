@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 use yii\web\View;
 use kartik\dynagrid\DynaGrid;
 use yii\helpers\ArrayHelper;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\User;
 use yii\helpers\Url;
 

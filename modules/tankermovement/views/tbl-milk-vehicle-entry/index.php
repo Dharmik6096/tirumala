@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Receipt'));
 

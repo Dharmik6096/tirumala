@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\web\View;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Pendrive Sync'));

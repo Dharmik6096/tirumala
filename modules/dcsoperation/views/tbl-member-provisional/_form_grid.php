@@ -2,7 +2,7 @@
 
 use app\components\GeneralFunctions;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;

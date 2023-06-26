@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $client_code = \Yii::$app->session->get('eiplCode');
 ?>

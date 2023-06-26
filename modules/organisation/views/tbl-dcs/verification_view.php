@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Society');
 $code = ($type == 'DCS' ? $model->dcs_code : ($type == 'MEMBER' ? $model->member_code : ($type == 'CUSTOMER' ? $model->customer_code : '')));

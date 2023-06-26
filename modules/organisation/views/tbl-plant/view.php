@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblPlant */

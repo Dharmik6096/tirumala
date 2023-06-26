@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 //$action = Url::to(['create-transaction']);
 $action = !empty($action) ? 'inward-asset-transaction' : 'outward-asset-transaction';

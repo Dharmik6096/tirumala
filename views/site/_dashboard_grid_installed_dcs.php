@@ -1,7 +1,7 @@
 <?php
 
 use app\modules\dcsoperation\models\TblMember;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\web\View;
 use yii\helpers\Url;
 

@@ -6,7 +6,7 @@
  */
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 <div class="grid-search">
 <?php echo $this->render('_search', ['model' => $searchModel]); ?>

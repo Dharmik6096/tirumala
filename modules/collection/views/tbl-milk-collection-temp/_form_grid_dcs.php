@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Approve'));
 ?>

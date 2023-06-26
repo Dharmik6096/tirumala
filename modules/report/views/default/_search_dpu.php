@@ -3,7 +3,7 @@
 use yii\widgets\ActiveForm;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $request = Yii::$app->request->queryParams;
 $min_date = empty($request['min_date']) ? date('d-m-Y') : $request['min_date'];

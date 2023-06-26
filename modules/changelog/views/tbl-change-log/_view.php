@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 $desc = explode('--', $model->description);
 if(empty($desc[1]))

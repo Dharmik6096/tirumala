@@ -4,7 +4,7 @@ use kartik\grid\GridView;
 use yii\bootstrap5\ActiveForm;
 use kartik\helpers\Html;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 <div class="panel-body">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>

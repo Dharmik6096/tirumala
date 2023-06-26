@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use kartik\grid\GridView;
 ?>
 

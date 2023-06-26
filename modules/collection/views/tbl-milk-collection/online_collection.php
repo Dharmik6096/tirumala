@@ -4,7 +4,7 @@ use yii\web\View;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Online Collections'));
 $infoArray = [];

@@ -14,7 +14,7 @@ use app\controllers\ChildController;
 use ReflectionClass;
 use yii\web\Response;
 use yii\helpers\Json;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use app\modules\payment\models\TblPaymentCycleApplicabilityHistory;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;

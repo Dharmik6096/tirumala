@@ -1,7 +1,7 @@
 <?php
 
 use app\modules\organisation\models\TblUnions;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\web\View;
 use yii\helpers\Url;
 use Symfony\Component\Console\Input\Input;

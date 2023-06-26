@@ -25,7 +25,7 @@ use PHPExcel;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblDcsBmc;

@@ -4,7 +4,7 @@ use yii\bootstrap5\ActiveForm;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Member Payment Process : Step 3');
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($aliasModel->paymentCycleCode, 'from_date'));

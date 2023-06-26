@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use app\components\GeneralFunctions;
 use yii\helpers\Url;
 use yii\web\View;

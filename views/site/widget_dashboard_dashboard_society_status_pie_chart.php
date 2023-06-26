@@ -8,7 +8,7 @@ $this->title = 'Dashboard';
 
 use app\models\TblDashboardWidgets;
 use Symfony\Component\Console\Input\Input;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\web\View;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;

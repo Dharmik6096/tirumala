@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\web\View;
 use kartik\grid\GridView;
 

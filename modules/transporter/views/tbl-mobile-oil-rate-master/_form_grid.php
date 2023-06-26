@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'vehicle_code','value'=>function($model){ return $model->vehicle->parsing_no.'/'.$model->vehicle->vehicleType->vehicle_type_name; },'filter'=>false],

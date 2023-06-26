@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'union');
 $this->params['menu'][] = Yii::$app->controls->update($model->union_code);

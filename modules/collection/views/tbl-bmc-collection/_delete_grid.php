@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $milkType = new TblAnimalType();
 $milk_type = $milkType->getAnimalMilkTypeArray();

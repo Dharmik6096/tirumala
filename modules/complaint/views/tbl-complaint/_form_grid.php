@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\Url;
 
 $complaint_type = array('None' => 'None','Network' => 'Network', 'Modem' => 'Modem', 'Eco' => 'Eko', 'Wing scale' => 'Wing scale');

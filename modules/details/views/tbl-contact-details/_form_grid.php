@@ -8,7 +8,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 Url::remember();
 if ($searchModel->module_name == 'society') {

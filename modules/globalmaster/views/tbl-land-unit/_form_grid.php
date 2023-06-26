@@ -6,7 +6,7 @@
  */
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $attribute = [
     ['attribute' => 'land_unit_code', 'value' => 'land_unit_code'],

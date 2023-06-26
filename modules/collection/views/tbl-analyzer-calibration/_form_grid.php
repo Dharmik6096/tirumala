@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\helpers\ArrayHelper;
 use kartik\widgets\Select2;
 use app\modules\globalmaster\models\TblAnimalType;

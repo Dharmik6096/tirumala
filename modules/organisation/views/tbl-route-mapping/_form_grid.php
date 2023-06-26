@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $request = Yii::$app->request->queryParams;
 $cunit = !empty($request['TblRouteMappingSearch']['unit']) ? $request['TblRouteMappingSearch']['unit'] : '';
