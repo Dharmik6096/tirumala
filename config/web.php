@@ -29,7 +29,6 @@ $config = [
             'httpOnly' => true,
             'secure' => true
         ],
-        // 'cache' => ['class' => 'yii\caching\FileCache'],
         'cache' => [
             'class' => 'yii\redis\Cache',
             'redis' => [
@@ -38,6 +37,7 @@ $config = [
                 'database' => 1,
             ]
         ],
+        'cache' => ['class' => 'yii\caching\FileCache'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
@@ -76,14 +76,14 @@ $config = [
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
                 'webservice/emilkprolite/v1' => 'webservice/emilkprolite/v1/request-master',
-                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',
+                    ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',
                 ],
-                //              ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
+            //              ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
-            /* 'urlManager' => [
-              'rules' => [
-              // ...
-              ['class' => 'common\helpers\UrlRule', 'connectionID' => 'db', /* ... */        ],
+        /* 'urlManager' => [
+          'rules' => [
+          // ...
+          ['class' => 'common\helpers\UrlRule', 'connectionID' => 'db', /* ... */        ],
         /*  ],
           ], */
         'request' => [
@@ -95,11 +95,11 @@ $config = [
 //            'enableAutoLogin' => true,
 //        ],
         'user' => [
-            'class' => 'webvimark\modules\UserManagement\components\UserConfig',
+            'class' => 'app\modules\usermanagement\components\UserConfig',
             //'enableAutoLogin' => true,
             // Comment this if you don't want to record user logins
             'on afterLogin' => function ($event) {
-                \webvimark\modules\UserManagement\models\UserVisitLog::newVisitor($event->identity->id);
+                \app\modules\usermanagement\models\UserVisitLog::newVisitor($event->identity->id);
             }
         ],
         'eiplapp' => [
@@ -147,7 +147,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                [
+                    [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -201,7 +201,6 @@ $config = [
     'modules' => [
         'user-management' => [
             'class' => 'app\modules\usermanagement\usermanagement',
-            //            'class' => 'webvimark\modules\UserManagement\UserManagementModule',
             // 'enableRegistration' => true,
             // Here you can set your handler to change layout for any controller or action
             // Tip: you can use this event in any module

@@ -62,7 +62,7 @@ class ChildController extends Controller {
     public function behaviors() {
         return [
             'ghost-access' => [
-                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+                'class' => 'app\modules\usermanagement\components\GhostAccessControl',
             ],
             'access' => [
                 'class' => 'yii\filters\AccessControl',

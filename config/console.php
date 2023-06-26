@@ -24,7 +24,7 @@ $config = [
     ],
     'modules'=>[
     'user-management' => [
-        'class' => 'webvimark\modules\UserManagement\UserManagementModule',
+        'class' => 'app\modules\usermanagement\usermanagementmodule',
         //'identityClass' => 'app\models\User',
     ],
 ],

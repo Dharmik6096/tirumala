@@ -19,7 +19,7 @@ class OrganizationConfirmWidget extends Widget{
 
 
     public function run(){
-//            $values = \webvimark\modules\UserManagement\models\User::getUserOrganizations(\Yii::$app->session->get('UserCode'));
+//            $values = \app\modules\usermanagement\models\User::getUserOrganizations(\Yii::$app->session->get('UserCode'));
             $values = GeneralFunctions::getUserOrganization(\Yii::$app->session->get('UserCode'));
             return $this->render('Organization',['array'=>$values]);
     }
