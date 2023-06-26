@@ -1,9 +1,5 @@
 <?php
-/**
- * @var $this yii\web\View
- * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
- */
-use webvimark\modules\UserManagement\UserManagementModule;
+
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\web\View;
@@ -29,34 +25,34 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
             <div class="modal-header">
                 <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
                 <h4 class="modal-title">
-                    <?= UserManagementModule::t('front', 'Thirumala Application') ?>
+                    <?= Yii::t('app', 'Thirumala Application') ?>
                 </h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <?php
                 $form = ActiveForm::begin([
-                    'id' => 'login-form',
-                    'options' => ['autocomplete' => 'off'],
-                    'validateOnBlur' => false,
-                    'fieldConfig' => [
-                        'template' => "{label}\n{input}\n{error}",
-                    ],
-                ])
-                    ?>
+                            'id' => 'login-form',
+                            'options' => ['autocomplete' => 'off'],
+                            'validateOnBlur' => false,
+                            'fieldConfig' => [
+                                'template' => "{label}\n{input}\n{error}",
+                            ],
+                        ])
+                ?>
                 <?php echo $form->errorSummary($model); ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <?=
-                            $form->field($model, 'username')
+                                $form->field($model, 'username')
                                 ->textInput(['placeholder' => $model->getAttributeLabel('username'), 'autocomplete' => 'off'])
-                            ?>
+                        ?>
                     </div>
                     <div class="col-sm-12">
                         <?=
-                            $form->field($model, 'password')
+                                $form->field($model, 'password')
                                 ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
-                            ?>
+                        ?>
                     </div>
                     <div id="org" class="col-sm-12">
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
@@ -67,11 +63,10 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <div class="col-sm-12">
                         <?=
-                            Html::submitButton(
-                                UserManagementModule::t('front', 'Login'),
-                                ['class' => 'btn-login-second btn btn-primary btn-block']
-                            )
-                            ?>
+                        Html::submitButton(
+                                Yii::t('app', 'Login'), ['class' => 'btn-login-second btn btn-primary btn-block']
+                        )
+                        ?>
                     </div>
                 </div>
                 <?php ActiveForm::end() ?>
@@ -93,11 +88,11 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                         <?= Html::img($image_path . 'title.png', ['class' => 'img-responsive auto_margin']); ?>
                                         <!--<h3>Welcome to EIPL Milk Procurement Portal</h3>-->
                                         <hr>
-                                        <?php $title = UserManagementModule::t('front', 'Thirumala Application'); ?>
+                                        <?php $title = Yii::t('app', 'Thirumala Application'); ?>
                                         <div class="col-sm-6 content_show" data-title="<?= $title ?>" id="thirumala">
                                             <?= Html::img($image_path . 'thirumala_logo.png', ['class' => 'img-responsive about_one']); ?>
                                         </div>
-                                        <?php $title = UserManagementModule::t('front', 'Anik Application'); ?>
+                                        <?php $title = Yii::t('app', 'Anik Application'); ?>
                                         <div class="col-sm-6 content_show" data-title="<?= $title ?>" id="anik">
                                             <?= Html::img($image_path . 'anik_logo.png', ['class' => 'img-responsive about_two']); ?>
                                         </div>

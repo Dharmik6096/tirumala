@@ -23,7 +23,7 @@ class SftpRecordsController extends Controller {
     public function behaviors() {
         return [
             'ghost-access' => [
-                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+                'class' => 'app\modules\usermanagement\components\GhostAccessControl',
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -112,9 +112,9 @@ class SftpRecordsController extends Controller {
         }
         $fileName = "payment_disburse." . $header['extension'];
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
-        $path=Yii::$app->basePath . '/sftp';
+        $path = Yii::$app->basePath . '/sftp';
         Yii::$app->general->checkDirectory($path);
-        $objWriter->save($path.$fileName);
+        $objWriter->save($path . $fileName);
     }
 
     /**

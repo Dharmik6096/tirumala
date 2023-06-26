@@ -5,16 +5,11 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 //use app\models\LoginForm;
-use webvimark\modules\UserManagement\models\forms\LoginForm;
+use app\modules\usermanagement\models\forms\LoginForm;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use webvimark\components\BaseController;
-use webvimark\modules\UserManagement\components\UserAuthEvent;
-use webvimark\modules\UserManagement\models\forms\ChangeOwnPasswordForm;
-use webvimark\modules\UserManagement\models\forms\ConfirmEmailForm;
-use webvimark\modules\UserManagement\models\forms\PasswordRecoveryForm;
-use webvimark\modules\UserManagement\models\User;
-use webvimark\modules\UserManagement\UserManagementModule;
+use app\modules\usermanagement\components\UserAuthEvent;
+use app\modules\usermanagement\models\User;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -85,7 +80,7 @@ class SiteController extends Controller {
 
         return [
             'ghost-access' => [
-                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+                'class' => 'app\modules\usermanagement\components\GhostAccessControl',
             ],
             'access' => [
                 'class' => AccessControl::className(),
@@ -337,7 +332,7 @@ class SiteController extends Controller {
                     return $this->redirect(['/site/dashboard']);
                 } else {
                     Yii::$app->user->logout();
-                    $model->addError('password', UserManagementModule::t('front', 'You are not authorize to login'));
+                    $model->addError('password', Yii::t('app', 'You are not authorize to login'));
                     $model->username = $_POST['LoginForm']['username'];
                 }
             } else {

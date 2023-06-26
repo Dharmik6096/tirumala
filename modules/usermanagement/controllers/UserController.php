@@ -10,8 +10,8 @@ use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use app\models\TblUserOrganizationMapping;
 use app\modules\usermanagement\models\User;
-use webvimark\modules\UserManagement\models\search\UserSearch;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\search\UserSearch;
+use app\modules\usermanagement\models\rbacDB\Role;
 use yii\helpers\Json;
 use yii\helpers\FileHelper;
 
@@ -28,7 +28,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
     /**
      * @var UserSearch
      */
-    public $modelSearchClass = 'webvimark\modules\UserManagement\models\search\UserSearch';
+    public $modelSearchClass = 'app\modules\usermanagement\models\search\UserSearch';
 
     public function actionUpdate($id) {
         $model = $this->findModel($id);

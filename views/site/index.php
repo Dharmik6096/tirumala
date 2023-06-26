@@ -1,10 +1,9 @@
 <?php
-
 /* @var $this yii\web\View */
 
 $this->title = 'My Yii Application';
 // $check = \app\models\IdentityMaster::find()->one();
-// webvimark\modules\UserManagement\models\User::setorganizationSessions($check);
+// app\modules\usermanagement\models\User::setorganizationSessions($check);
 //echo Yii::$app->session->get('States');
 //                echo Yii::$app->session->get('Districts');
 //                     exit;

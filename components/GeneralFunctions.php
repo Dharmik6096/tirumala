@@ -18,7 +18,7 @@ use app\modules\organisation\models\TblBanksDistrictsMapping;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblFederations;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use app\modules\organisation\models\TblDcs;
 use app\modules\general\models\TblSocietyVendor;
@@ -51,11 +51,9 @@ use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use Exception;
 
-class GeneralFunctions extends Component
-{
+class GeneralFunctions extends Component {
 
-    public static function getUserOrganization($user)
-    {
+    public static function getUserOrganization($user) {
         $org = \app\models\TblUserOrganizationMapping::find()->where(['user_id' => $user])->all();
 
         $values = '';
@@ -88,8 +86,7 @@ class GeneralFunctions extends Component
         return (!empty($values)) ? $values : [];
     }
 
-    public static function getRange($flag, $union = null)
-    {
+    public static function getRange($flag, $union = null) {
 
         $query = \app\models\SystemConfiguration::find()->where(['module_name' => $flag]);
 
@@ -115,8 +112,7 @@ class GeneralFunctions extends Component
      * @param type $languageId
      * @return type
      */
-    public static function getLocalName($model, $field, $field_value, $languageId = NULL)
-    {
+    public static function getLocalName($model, $field, $field_value, $languageId = NULL) {
 
         $languageId = Yii::$app->session->get('LanguageId');
         $model_name = Yii::$app->path->getModel($model);
@@ -126,8 +122,7 @@ class GeneralFunctions extends Component
         return isset($record) ? $record->local_name : '';
     }
 
-    public static function getLocalAddress($model, $field, $field_value, $languageId = NULL)
-    {
+    public static function getLocalAddress($model, $field, $field_value, $languageId = NULL) {
 
         $languageId = Yii::$app->session->get('LanguageId');
         $model_name = Yii::$app->path->getModel($model);
@@ -135,8 +130,7 @@ class GeneralFunctions extends Component
         return isset($record) ? $record->local_address : '';
     }
 
-    public static function getLocalShortName($model, $field, $field_value, $languageId = NULL)
-    {
+    public static function getLocalShortName($model, $field, $field_value, $languageId = NULL) {
 
         $languageId = Yii::$app->session->get('LanguageId');
         $model_name = Yii::$app->path->getModel($model);
@@ -144,8 +138,7 @@ class GeneralFunctions extends Component
         return isset($record) ? $record->local_name_short : '';
     }
 
-    public static function getLocalDescription($model, $field, $field_value, $languageId)
-    {
+    public static function getLocalDescription($model, $field, $field_value, $languageId) {
 
         $model_name = Yii::$app->path->getModel($model);
 
@@ -154,15 +147,13 @@ class GeneralFunctions extends Component
         return isset($record) ? $record->local_description : '';
     }
 
-    public static function getClassFromTable($table_name)
-    {
+    public static function getClassFromTable($table_name) {
         $modelName = str_replace('_', ' ', $table_name);
         $modelName = ucwords($modelName);
         return '\\app\models\\' . str_replace(' ', '', $modelName);
     }
 
-    public static function getStates($value)
-    {
+    public static function getStates($value) {
 
         //$model = IdentityMaster::find()->where(['organization_type'=>$value])->one();
 
@@ -189,16 +180,14 @@ class GeneralFunctions extends Component
         return $return_array;
     }
 
-    public static function organizationSessionCheck()
-    {
+    public static function organizationSessionCheck() {
         if (Yii::$app->session->get('organizations_type') == 'NATIONAL' || Yii::$app->session->get('LanguageId') == 0)
             return FALSE;
         else
             return true;
     }
 
-    public static function getRecordStatus($status)
-    {
+    public static function getRecordStatus($status) {
         return $status == 1 ? 'Active' : 'In Active';
     }
 
@@ -209,8 +198,7 @@ class GeneralFunctions extends Component
      * @param type $params
      * @return boolean
      */
-    public function validateBankDetail($bank, $attribute, $params)
-    {
+    public function validateBankDetail($bank, $attribute, $params) {
         if ((!empty($bank->bank_code))) {
             if (empty($bank->branch_code) || empty($bank->bank_account_no) || empty($bank->ifsc)) {
                 $bank->addError($attribute, Yii::t('app/validation', $bank->getAttributeLabel($attribute) . ' cannot be blank.'));
@@ -219,8 +207,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateName($model, $attribute, $params)
-    {
+    public function validateName($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z ]+$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should contain Alphabetic Character Only'));
@@ -228,8 +215,7 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function validateAlphaNumber($model, $attribute, $params)
-    {
+    public function validateAlphaNumber($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z0-9 ]+$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should not contain the special characters'));
@@ -237,8 +223,7 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function validateDiscriptiveField($model, $attribute)
-    {
+    public function validateDiscriptiveField($model, $attribute) {
         if (!empty($model->$attribute)) {
             if (!preg_match('/^[a-z0-9 .\-]+$/i', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '.'));
@@ -247,8 +232,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateIfsc($model, $attribute, $params)
-    {
+    public function validateIfsc($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             if (!preg_match('/[a-zA-Z]{4}[0][a-zA-Z0-9]{6}$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', ' You have entered invalid ifsc code. e.g. "SBIN0005748"(length=11).'));
@@ -257,48 +241,42 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validatePancard($model, $attribute, $params)
-    {
+    public function validatePancard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', ' You have entered invalid pancard number. e.g. "AAAPL1234C".'));
             }
     }
 
-    public function validateAadharcard($model, $attribute, $params)
-    {
+    public function validateAadharcard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
             }
     }
 
-    public function vaildateMobileNumbers($model, $attribute, $params)
-    {
+    public function vaildateMobileNumbers($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{10}$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must contain exactly 10 digits.'));
             }
     }
 
-    public function vaildatePhoneNumbers($model, $attribute, $params)
-    {
+    public function vaildatePhoneNumbers($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{10,16}$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must contain minimum 10 and maximum 16 digits.'));
             }
     }
 
-    public function vaildateServiceTax($model, $attribute, $params)
-    {
+    public function vaildateServiceTax($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^\d+(?:\.\d{2})?$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute)));
             }
     }
 
-    public function vaildateNumericField($model, $attribute, $params)
-    {
+    public function vaildateNumericField($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             if (!preg_match('/^[1-9][0-9]*$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . '. e.g "25"'));
@@ -306,8 +284,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function vaildateLocalField($model, $attribute, $params)
-    {
+    public function vaildateLocalField($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             if (strlen($model->$attribute) == mb_strlen($model->$attribute, 'UTF-8')) {
                 $model->addError($attribute, Yii::t('app/validation', 'Data Should be in UTF-8 Format'));
@@ -315,8 +292,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateTime($model, $attribute)
-    {
+    public function validateTime($model, $attribute) {
         if (!empty($model->$attribute)) {
             $value = explode(':', $model->$attribute);
             if ((!preg_match('/^[0-9]{2}[:][0-9]{2}$/', $model->$attribute)) || $value[0] > 24 || $value[1] > 60) {
@@ -356,8 +332,7 @@ class GeneralFunctions extends Component
 //        }
 //    }
 
-    public function validateBranch($model, $attribute, $params)
-    {
+    public function validateBranch($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             $data = Yii::$app->general->validateActiveRelation($model, 'TblBranch', 'branch_code', 'branch_code', 'Branch Code', $params, 'ifsc,bank_code');
             if ($data['msg'] != '') {
@@ -393,8 +368,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateIsBmc($model, $attribute, $params)
-    {
+    public function validateIsBmc($model, $attribute, $params) {
         if (!empty($model->is_bmc)) {
             if (!in_array($model->$attribute, ['0', '1', '2', '3'])) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be from "0" to "4".'));
@@ -403,8 +377,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateMilkType($model, $attribute, $params)
-    {
+    public function validateMilkType($model, $attribute, $params) {
         if (!empty($model->milk_type_code)) {
             $milkType = new TblAnimalType();
             $data = $milkType->getRecords();
@@ -415,16 +388,14 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getUserName($username)
-    {
+    public function getUserName($username) {
         $name = explode('#', $username);
         $username = isset($name[1]) ? $name[1] : $name[0];
 
         return $username;
     }
 
-    public function getUnionName($model)
-    {
+    public function getUnionName($model) {
         if (isset($model->dcsCode)) {
             return Yii::$app->general->getforeignkey($model->dcsCode->unionCode, 'union_name');
         } else {
@@ -432,8 +403,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function array_flatten($array, $isKey = '')
-    {
+    public function array_flatten($array, $isKey = '') {
         if (!is_array($array)) {
             return FALSE;
         }
@@ -451,8 +421,7 @@ class GeneralFunctions extends Component
         return $result;
     }
 
-    public function getLocalCode($tableName)
-    {
+    public function getLocalCode($tableName) {
 
         //        $identity = new IdentityMaster();
 //        $idenRecord = $identity->getIdentity();
@@ -461,10 +430,10 @@ class GeneralFunctions extends Component
         $len = strlen($orgCode);
 
         $val = (new \yii\db\Query)
-            ->select("MAX(CAST(trim(SUBSTRING(`local_code` FROM " . $len . " +2)) AS UNSIGNED)) as local_code")
-            ->from($tableName)
-            ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
-            ->one();
+                ->select("MAX(CAST(trim(SUBSTRING(`local_code` FROM " . $len . " +2)) AS UNSIGNED)) as local_code")
+                ->from($tableName)
+                ->where('(CAST(trim(SUBSTRING(local_code, 1,' . $len . ')) AS UNSIGNED))="' . trim($orgCode) . '"')
+                ->one();
 
 
 
@@ -474,28 +443,25 @@ class GeneralFunctions extends Component
         return $value;
     }
 
-    public function getCodeAutoIncrement($model, $auto_inc = 1)
-    {
+    public function getCodeAutoIncrement($model, $auto_inc = 1) {
 
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
-            ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
-            //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
-            ->from($tableName)
-            ->one();
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
+                //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
+                ->from($tableName)
+                ->one();
         $number = (int) $val[$primaryKey] + $auto_inc;
 
         return $number;
     }
 
-    public function getOrganizationName()
-    {
+    public function getOrganizationName() {
         return [0 => ['national_code' => 91, 'national_name' => 'PCDF']];
     }
 
-    public function uploadFile($file, $model, $name = "logo_path", $folder = 'attachments')
-    {
+    public function uploadFile($file, $model, $name = "logo_path", $folder = 'attachments') {
         $info = $this->getPath($folder, $file->baseName, '.' . $file->extension);
         if ($file->saveAs($info['path'])) {
             $model->$name = $info['name'];
@@ -503,8 +469,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    private function getPath($folder, $name, $ext)
-    {
+    private function getPath($folder, $name, $ext) {
         $path = Yii::getAlias('@webroot') . '/web/uploads/' . $folder . '/' . $name . $ext;
         $info = [];
         if (!file_exists($path)) {
@@ -517,8 +482,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getAttachmentLink($ext, $src)
-    {
+    public function getAttachmentLink($ext, $src) {
         ?><li><span><?php
         switch (1) {
             case (in_array($ext, array('.gif', '.jpg', '.jpeg', '.png', '.bmp'))):
@@ -539,19 +503,16 @@ class GeneralFunctions extends Component
         ?></span></li><?php
     }
 
-    public function checkAccess($route, $superadmin = 'true')
-    {
+    public function checkAccess($route, $superadmin = 'true') {
         return User::canRoute($route, $superAdminAllowed = $superadmin);
     }
 
-    public function getforeignkey($value, $field)
-    {
+    public function getforeignkey($value, $field) {
         return !empty($value) ? $value->$field : '';
         // return '';
     }
 
-    public function valiadteUnique($model, $field, $value, $msg = '')
-    {
+    public function valiadteUnique($model, $field, $value, $msg = '') {
 
         $primaryKey = $model->tableSchema->primaryKey[0];
         $values = $model->find()->where([$field => ucwords($value), 'is_active' => 1])->andWhere(['<>', $primaryKey, $model->$primaryKey])->count();
@@ -565,8 +526,7 @@ class GeneralFunctions extends Component
         return 1;
     }
 
-    public function validateActiveRelation($model, $modelName, $parentField, $childField, $parentLabel, $childLabel, $returnParams = '')
-    {
+    public function validateActiveRelation($model, $modelName, $parentField, $childField, $parentLabel, $childLabel, $returnParams = '') {
 
         $className = Yii::$app->path->getModel($modelName);
         $returnParams = ($returnParams) ? ',' . $returnParams : '';
@@ -592,8 +552,7 @@ class GeneralFunctions extends Component
             return ['msg' => $msg, 'model' => $check];
     }
 
-    public function getChildOrgs()
-    {
+    public function getChildOrgs() {
         switch (Yii::$app->session->get('UserType')) {
             case 2:
                 $orgs = ['UNION', 'DCS', 'PLANT', 'MCC', 'BMC'];
@@ -626,8 +585,7 @@ class GeneralFunctions extends Component
         return [$orgs, $i];
     }
 
-    public function getMappedData($filter = [], $model_val = '', $select_param = '', $filter_param = '')
-    {
+    public function getMappedData($filter = [], $model_val = '', $select_param = '', $filter_param = '') {
         $data = [];
         if (!empty($filter)) {
             $model_name = Yii::$app->path->define($model_val);
@@ -644,8 +602,7 @@ class GeneralFunctions extends Component
         return $data;
     }
 
-    public function checkDirectory($path, $permission = '0755')
-    {
+    public function checkDirectory($path, $permission = '0755') {
 
         if (file_exists($path)) {
             if (!is_dir($path)) { //if file is already present, but it's not a dir
@@ -671,8 +628,7 @@ class GeneralFunctions extends Component
         return true;
     }
 
-    public function createLogFile($path, $text, $file_name = '', $append = '')
-    {
+    public function createLogFile($path, $text, $file_name = '', $append = '') {
         if (!empty($append)) {
             $path = $path . '\\' . $append;
         }
@@ -692,8 +648,7 @@ class GeneralFunctions extends Component
         return;
     }
 
-    public function findCensus($model, $attribute)
-    {
+    public function findCensus($model, $attribute) {
         if (!empty($model->$attribute)) {
             $code = TblSocietyVendor::find()->where(['dcs_code' => $model->$attribute, 'vendor_code' => 'BIPL'])->one();
             if (empty($code)) {
@@ -703,8 +658,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function isVendor($dcs_code, $vendor)
-    {
+    public function isVendor($dcs_code, $vendor) {
         if (!empty($dcs_code) && !empty($vendor)) {
             $code = TblSocietyVendor::find()->where(['dcs_code' => $dcs_code, 'vendor_code' => $vendor])->one();
             return empty($code) ? false : true;
@@ -712,8 +666,7 @@ class GeneralFunctions extends Component
         return false;
     }
 
-    public function validateBiplMilkType($model, $attribute)
-    {
+    public function validateBiplMilkType($model, $attribute) {
         if (!empty($model->$attribute)) {
             if (!in_array(strtolower($model->$attribute), ['cow', 'buffalo', 'mix', 'mixed'])) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' can only have values from: Cow, Buffalo, Mix, Mixed'));
@@ -722,8 +675,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function filterByOrg($query, $model, $union_table = '', $plant_table = 'tbl_dcs', $bmc_table = 'tbl_dcs', $dcs_table = '')
-    {
+    public function filterByOrg($query, $model, $union_table = '', $plant_table = 'tbl_dcs', $bmc_table = 'tbl_dcs', $dcs_table = '') {
         $model_class = (new \ReflectionClass($model))->getShortName();
         $filter_model = new SearchFilter();
         $filter_data = $filter_model->getRecord($model_class);
@@ -779,8 +731,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateLocalCode($model, $attribute)
-    {
+    public function validateLocalCode($model, $attribute) {
         if (!empty($model->$attribute)) {
             $mcode = str_pad($model->$attribute, 4, '0', STR_PAD_LEFT);
             $code = TblMember::find()->where(['dcs_code' => $model->census_code, 'member_code' => $model->census_code . $mcode])->one();
@@ -791,8 +742,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getEntryType()
-    {
+    public function getEntryType() {
 
         switch (Yii::$app->session->get('organizations_type')) {
             case 'NATIONAL':
@@ -807,8 +757,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getEntryValue($entry_type)
-    {
+    public function getEntryValue($entry_type) {
 
         switch ($entry_type) {
             case '0':
@@ -829,26 +778,22 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getDefaultContactDetail($code, $module)
-    {
+    public function getDefaultContactDetail($code, $module) {
         $detail = TblContactDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
         return $detail;
     }
 
-    public function getDefaultBankDetail($code, $module)
-    {
+    public function getDefaultBankDetail($code, $module) {
         $detail = TblBankDetails::find()->where(['is_active' => 1, 'is_default' => 1, 'module_code' => $code, 'module_name' => $module])->one();
         return $detail;
     }
 
-    public function getNotifications()
-    {
+    public function getNotifications() {
         $notifications = TblNotifications::find()->where(['is_active' => 1])->orderBy(['id' => SORT_DESC])->all();
         return $notifications;
     }
 
-    public function getshift($shift)
-    {
+    public function getshift($shift) {
         $shift_time = '00:00:00';
         if ($shift == 1) {
             $shift_time = '06:00:00';
@@ -858,13 +803,11 @@ class GeneralFunctions extends Component
         return $shift_time;
     }
 
-    public function encryptData($string)
-    {
+    public function encryptData($string) {
         return \Yii::$app->encrypter->encrypt($string);
     }
 
-    public function decryptData($string)
-    {
+    public function decryptData($string) {
         if ($string == null)
             return $string;
         $decryptedData = \Yii::$app->encrypter->decrypt($string);
@@ -874,21 +817,18 @@ class GeneralFunctions extends Component
         return FALSE;
     }
 
-    public function base64url_encode($data)
-    {
+    public function base64url_encode($data) {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
-    public function base64url_decode($data)
-    {
+    public function base64url_decode($data) {
         if (in_array(explode('/', $data)[0], ['restservices', 'webservice', 'androiddpu', 'embededdpu', 'bkgprocess', 'dataexchange'])) {
             return $data;
         }
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
     }
 
-    public function filterByNumber($query, $model, $fields)
-    {
+    public function filterByNumber($query, $model, $fields) {
         $tablename = $model->tableSchema->fullName;
         foreach ($fields as $fd) {
             if (!empty($model->{$fd}) || $model->{$fd} == 0) {
@@ -901,8 +841,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function dropdownRange($model, $field, $range)
-    {
+    public function dropdownRange($model, $field, $range) {
         $model_name = Yii::$app->path->define($model);
         $model = new $model_name();
         $min = $model::find()->select('min(' . $field . ') as ' . $field)->one();
@@ -918,8 +857,7 @@ class GeneralFunctions extends Component
         return $array;
     }
 
-    public function filterByDropdownRange($query, $model, $fields)
-    {
+    public function filterByDropdownRange($query, $model, $fields) {
         if (is_array($fields)) {
             foreach ($fields as $fd) {
                 if (!empty($model->{$fd})) {
@@ -933,8 +871,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateAge($model, $attribute, $params)
-    {
+    public function validateAge($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             $from = new DateTime($model->$attribute);
             $to = new DateTime('today');
@@ -945,26 +882,23 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function CurrencyFormat()
-    {
+    public function CurrencyFormat() {
         return ['decimal', 2];
     }
 
-    public function ColoumnAlign()
-    {
+    public function ColoumnAlign() {
         return 'right';
     }
 
-    public function validateVehiclePayment($model)
-    {
+    public function validateVehiclePayment($model) {
         $wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
         $payment_model = new \app\modules\payment\models\TblVehiclePayment();
         $data = $payment_model->find()
-            ->where(['=', 'vehicle_code', $model->vehicle_code])
-            ->andWhere(['<=', 'from_date', $wef_date])
-            ->andWhere(['>=', 'to_date', $wef_date])
-            ->andWhere(['!=', 'status', 'processed'])
-            ->one();
+                ->where(['=', 'vehicle_code', $model->vehicle_code])
+                ->andWhere(['<=', 'from_date', $wef_date])
+                ->andWhere(['>=', 'to_date', $wef_date])
+                ->andWhere(['!=', 'status', 'processed'])
+                ->one();
         if (!empty($data)) {
             $model->addError('wef_date', "Payment for that vehicle has been sent or disbursed");
             return false;
@@ -973,8 +907,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function sendEmail($subject, $body, $to_mail)
-    {
+    public function sendEmail($subject, $body, $to_mail) {
         try {
             $headers[] = 'MIME-Version: 1.0';
             $headers[] = 'Content-type: text/html; charset=iso-8859-1';
@@ -987,8 +920,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getmultiforeignkey($value, $relations = [], $field = '')
-    {
+    public function getmultiforeignkey($value, $relations = [], $field = '') {
         $data = '';
         if (isset($value)) {
             foreach ($relations as $key => $rel) {
@@ -1004,8 +936,7 @@ class GeneralFunctions extends Component
         return $data == '' ? (!empty($value->$field) ? $value->$field : '') : '';
     }
 
-    public function getSpData($sp, $param, $execute = false, $db = 'db', $dbtype = 'sql')
-    {
+    public function getSpData($sp, $param, $execute = false, $db = 'db', $dbtype = 'sql') {
         $str = '';
         $count = count($param);
         for ($i = 1; $i <= $count; $i++) {
@@ -1029,8 +960,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = [], $numericVal = false)
-    {
+    public function validateGlobalData($model, $attribute, $flag, $limit = FALSE, $show_error = true, $where = [], $numericVal = false) {
         $dropDown = new DropDown();
         $labelData = $dropDown->getLabels($flag);
         $fields = explode(',', $labelData['fields']);
@@ -1043,25 +973,25 @@ class GeneralFunctions extends Component
         $len = strlen($model->$attribute);
         if (!preg_match('/^[0-9]*$/', $model->$attribute)) {
             $query = $datamodel->find()
-                ->select([$fields[0]])
-                ->where(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)])
-                ->andWhere($where);
+                    ->select([$fields[0]])
+                    ->where(['UPPER(SUBSTRING(' . $fields[1] . ', 1, ' . $len . '))' => strtoupper($model->$attribute)])
+                    ->andWhere($where);
             if ($limit) {
                 $query->limit(1);
             }
             $records = $query->all();
         } else
-            if ($numericVal) {
-                $records = $datamodel->find()
-                    ->select([$fields[0]])
-                    ->where([$fields[1] => strval($model->$attribute)])
-                    ->andWhere($where)->all();
-            } else {
-                $records = $datamodel->find()
-                    ->select([$fields[0]])
-                    ->where([$fields[0] => $model->$attribute])
-                    ->andWhere($where)->all();
-            }
+        if ($numericVal) {
+            $records = $datamodel->find()
+                            ->select([$fields[0]])
+                            ->where([$fields[1] => strval($model->$attribute)])
+                            ->andWhere($where)->all();
+        } else {
+            $records = $datamodel->find()
+                            ->select([$fields[0]])
+                            ->where([$fields[0] => $model->$attribute])
+                            ->andWhere($where)->all();
+        }
 
         if (!empty($records)) {
             if (count($records) == 1) {
@@ -1077,8 +1007,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function PrepareDsn($model)
-    {
+    public function PrepareDsn($model) {
         $dsn = '';
         switch ($model->db_type) {
             case 'mysql':
@@ -1095,16 +1024,14 @@ class GeneralFunctions extends Component
         return $dsn;
     }
 
-    public function SetDBConnection($db, $connection)
-    {
+    public function SetDBConnection($db, $connection) {
         \Yii::$app->{$db}->close();
         Yii::$app->{$db}->dsn = \Yii::$app->general->PrepareDsn($connection);
         Yii::$app->{$db}->username = $connection->db_username;
         Yii::$app->{$db}->password = $connection->db_password;
     }
 
-    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true)
-    {
+    public function getSentBoxCodes($plant_code = '', $mcc_code = '', $bmc_code = '', $union_code = '', $vlc_code = '', $appendVlc = true) {
         $sentboxArray = [];
         $mcc = [];
         $bmc = [];
@@ -1213,17 +1140,16 @@ class GeneralFunctions extends Component
         return $sentboxArray;
     }
 
-    public function &camelCaseToUnderscore(&$post_data)
-    {
+    public function &camelCaseToUnderscore(&$post_data) {
         if (is_array($post_data)) {
             $post_data = array_combine(array_map(function ($str) {
-                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
-            }, array_keys($post_data)), array_values($post_data));
+                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                    }, array_keys($post_data)), array_values($post_data));
             foreach ($post_data as $key => $val) {
                 if (is_array($post_data[$key])) {
                     $arr1 = array_combine(array_map(function ($str) {
-                        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
-                    }, array_keys($post_data[$key])), array_values($post_data[$key]));
+                                return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+                            }, array_keys($post_data[$key])), array_values($post_data[$key]));
                     $post_data[$key] = $arr1;
                     $this->camelCaseToUnderscore($post_data[$key]);
                 }
@@ -1233,8 +1159,7 @@ class GeneralFunctions extends Component
         return $post_data;
     }
 
-    public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366, $operator = '>', $message = '')
-    {
+    public function dateRangeValidate($model, $attribute, $params, $fromDateField, $toDateField, $count = 366, $operator = '>', $message = '') {
         if (!empty($model->$fromDateField) && !empty($model->$toDateField)) {
             $fDate = date('Y-m-d', strtotime($model->$fromDateField));
             $tDate = date('Y-m-d', strtotime($model->$toDateField));
@@ -1259,15 +1184,13 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getUuid()
-    {
+    public function getUuid() {
         $connection = Yii::$app->getDb();
         $command = $connection->createCommand('SELECT NEWID() as id')->queryOne();
         return strtolower($command['id']);
     }
 
-    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false, $templateid = '', $content_id = '1')
-    {
+    public function saveAlertNotification($mobile, $message = '', $sms_data = [], $save_data = false, $templateid = '', $content_id = '1') {
         //        $content_id = '1';
         $result = Yii::$app->alertnotification->sendSms($content_id, $mobile, $message, $templateid);
         if ($save_data) {
@@ -1288,8 +1211,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getDestRelation($type = '')
-    {
+    public function getDestRelation($type = '') {
         switch (strtolower($type)) {
             case '2':
                 $rel = 'plantCode';
@@ -1318,8 +1240,7 @@ class GeneralFunctions extends Component
         return $rel;
     }
 
-    public function vaildateCheckBoxValue($model, $attribute, $params)
-    {
+    public function vaildateCheckBoxValue($model, $attribute, $params) {
         if (!empty($model->$attribute)) {
             if (!in_array($model->$attribute, ['0', '1'])) {
                 $model->addError($attribute, Yii::t('app/validation', 'Please Check ' . ucfirst(ucwords(str_replace('_', ' ', $attribute))) . ' Value.'));
@@ -1328,13 +1249,11 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function SystemOS()
-    {
+    public function SystemOS() {
         return PHP_OS;
     }
 
-    public function ZipOperation($zipfolder, $operation, $ExtractPath = '', $password = '', $ext = 'csv', $type = '7z', $has_psd = TRUE)
-    {
+    public function ZipOperation($zipfolder, $operation, $ExtractPath = '', $password = '', $ext = 'csv', $type = '7z', $has_psd = TRUE) {
         $zipexe = Yii::$app->basePath . '/web/utility';
         if (empty($password) && $has_psd) {
             $model = new TblSecurity();
@@ -1381,8 +1300,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function SetSecurityEncryptionKey($org_type, $org_code)
-    {
+    public function SetSecurityEncryptionKey($org_type, $org_code) {
         $key = '';
         switch ($org_type) {
             case 'NATIONAL':
@@ -1401,8 +1319,7 @@ class GeneralFunctions extends Component
         return $key;
     }
 
-    public function SetDataType($model)
-    {
+    public function SetDataType($model) {
         $scema = $model->getTableSchema();
         foreach ($model->attributes as $key => $a) {
             if (!empty($a)) {
@@ -1416,8 +1333,7 @@ class GeneralFunctions extends Component
         return $model;
     }
 
-    public function validateGlobalStatic($model, $attribute, $flag)
-    {
+    public function validateGlobalStatic($model, $attribute, $flag) {
         $dropDown = new DropDown();
         $labelData = $dropDown->getRecords($flag);
         $data = $labelData['data'];
@@ -1447,8 +1363,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false)
-    {
+    public function getCustomer($model, $type, $exCode = false, $bmcCode = false, $refCode = false, $sapCode = false) {
         if ($exCode) {
             if (strtolower($type) == 'dcs') {
                 $name = $this->getforeignkey($model->dcsCode, 'dcs_code_ex');
@@ -1489,29 +1404,26 @@ class GeneralFunctions extends Component
         return $name;
     }
 
-    public function getUnionConfiguration($union, $field, $for)
-    {
+    public function getUnionConfiguration($union, $field, $for) {
         $model = new TblUnionConfigResult();
         $data = $model->find()->select('config_result_key')->where(['union_code' => $union, 'config_key' => $field, 'config_for' => $for])->one();
         return !empty($data) ? $data->config_result_key : '';
     }
 
-    public function getGroupMappingSetBoxConfig($key = 'bmc_code')
-    {
+    public function getGroupMappingSetBoxConfig($key = 'bmc_code') {
         return [
-            ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
-            ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
-            ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
-            ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
-            ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
-            ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
-            ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
+                ['table_name' => 'tbl_plant', 'where_clause' => 'plant_code=\'{plant_code}\''],
+                ['table_name' => 'tbl_mcc_plant', 'where_clause' => 'mcc_plant_code=\'{mcc_plant_code}\''],
+                ['table_name' => 'tbl_bmc', 'where_clause' => $key . '=\'{' . $key . '}\'', 'model_name' => 'TblDcsBmc'],
+                ['table_name' => 'tbl_route_mapping', 'where_clause' => '(to_dest=\'{bmc_code}\' and to_type=\'bmc\') or (to_dest=\'{mcc_plant_code}\' and to_type=\'mcc\')'],
+                ['table_name' => 'tbl_dcs', 'where_clause' => $key . '=\'{' . $key . '}\''],
+                ['table_name' => 'tbl_member', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_dpu_incentive_master', 'where_clause' => 'dcs_code in (SELECT dcs_code from tbl_dcs where ' . $key . '=\'{' . $key . '}\'' . ')'],
+                ['table_name' => 'tbl_customer_master', 'where_clause' => $key . '=\'{' . $key . '}\'']
         ];
     }
 
-    public function generateGroupMappingSetBox(&$master, $main_org_data, $group_org_data, $key = 'bmc_code', $dest_org_type = 'BMC')
-    {
+    public function generateGroupMappingSetBox(&$master, $main_org_data, $group_org_data, $key = 'bmc_code', $dest_org_type = 'BMC') {
         $sentbox_config = $this->getGroupMappingSetBoxConfig($key);
         $default_config = ['entry_datetime' => date('Y-m-d H:i:s'), 'status' => 0, 'operation_type' => 'INSERT', 'sentbox_key' => $key, 'dest_org_type' => $dest_org_type];
         foreach ($sentbox_config as $config) {
@@ -1530,15 +1442,13 @@ class GeneralFunctions extends Component
         return $master;
     }
 
-    public function getAllUnionWiseConfig($union, $for)
-    {
+    public function getAllUnionWiseConfig($union, $for) {
         $model = new TblUnionConfigResult();
         $data = $model->find()->where(['union_code' => $union, 'config_for' => $for])->all();
         return $data;
     }
 
-    public function validateOnUnionConfig($model, $attribute, $flag, $flagVal)
-    {
+    public function validateOnUnionConfig($model, $attribute, $flag, $flagVal) {
         $session = isset(Yii::$app->session->get('unionConfig')[$model->union_code][$flag]) ? Yii::$app->session->get('unionConfig')[$model->union_code][$flag] : '';
         if (empty($model->$attribute) && !empty($session) && $session == $flagVal) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' cannot be blank.'));
@@ -1546,8 +1456,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getSapStatus($label)
-    {
+    public function getSapStatus($label) {
         $data = [
             'X' => Yii::t('app', 'New'),
             'XA' => Yii::t('app', 'Sent'),
@@ -1561,13 +1470,11 @@ class GeneralFunctions extends Component
         return !empty($data[$label]) ? $data[$label] : '';
     }
 
-    public function getStaticDropdownVal($flag, $model, $field)
-    {
+    public function getStaticDropdownVal($flag, $model, $field) {
         return !empty(Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}]) ? Yii::$app->dropdown->getRecords($flag)['data'][$model->{$field}] : $model->{$field};
     }
 
-    public function validateCustomer($model)
-    {
+    public function validateCustomer($model) {
         if (empty($model->customer_type) || strtoupper($model->customer_type) == 'DCS') {
             $model->customer_type = 'DCS';
             $dcs = new TblDcs();
@@ -1581,8 +1488,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateCustomerCode($model)
-    {
+    public function validateCustomerCode($model) {
         if (strtolower($model->customer_type) != 'dcs') {
             $prefix = $this->getforeignkey($model->customerType, 'code_prefix');
             $length = $this->getforeignkey($model->customerType, 'code_length');
@@ -1591,9 +1497,9 @@ class GeneralFunctions extends Component
                 $customerModel = new TblCustomerMaster();
                 $customerModel->customer_type = $model->customer_type;
                 $customerModelData = $customerModel->find()
-                    ->where(['customer_type' => $model->customer_type, 'bmc_code' => $model->bmc_code])
-                    ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
-                    ->all();
+                        ->where(['customer_type' => $model->customer_type, 'bmc_code' => $model->bmc_code])
+                        ->andWhere(['CAST(REPLACE(customer_code_ex,\'' . $prefix . '\', \'\') as int)' => (int) $model->customer_code])
+                        ->all();
                 if (count($customerModelData) == 1) {
                     $Code = $customerModelData[0]->customer_code;
                     $model->ex_code = $customerModelData[0]->customer_code_ex;
@@ -1609,8 +1515,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateNameWithDash($model, $attribute)
-    {
+    public function validateNameWithDash($model, $attribute) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z-\\s]+$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Invalid ' . $model->getAttributeLabel($attribute) . '.'));
@@ -1618,8 +1523,7 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function validateDescription($model, $attribute)
-    {
+    public function validateDescription($model, $attribute) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z0-9,\\/@!#$%^&*()_+=\\.\\s-]*$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', 'Invalid ' . $model->getAttributeLabel($attribute) . '.'));
@@ -1627,8 +1531,7 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function validateNameGlobal($model, $attribute, $params)
-    {
+    public function validateNameGlobal($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z0-9-(), ]+$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' should contain Alphabetic Character Only'));
@@ -1636,61 +1539,54 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function decimalformat($value)
-    {
+    public function decimalformat($value) {
         return sprintf('%0.2f', $value);
     }
 
-    public function getPrimaryCode($model, $autoInc = 1)
-    {
+    public function getPrimaryCode($model, $autoInc = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $organizations_code = !empty(Yii::$app->session->get('organizations_code')) ? Yii::$app->session->get('organizations_code') : $model->originating_org_code;
         $orgCode = 'PORTAL-' . $organizations_code . '-';
         $len = strlen($orgCode);
         $val = $model->find()
-            ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
-            ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
-            ->one();
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,6))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
 
         return $value;
     }
 
-    public function getTransactionCode($model, $primaryCode, $autoInc = 1)
-    {
+    public function getTransactionCode($model, $primaryCode, $autoInc = 1) {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $orgCode = $primaryCode . 'T';
         $len = strlen($orgCode);
         $val = $model->find()
-            ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
-            ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
-            ->one();
+                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+                ->one();
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
         return $value;
     }
 
-    public function allowUpdateDelete($model)
-    {
+    public function allowUpdateDelete($model) {
         return $model->originating_org_type == 'PORTAL';
     }
 
-    public function getStaticValue($value, $flag)
-    {
+    public function getStaticValue($value, $flag) {
         return isset(Yii::$app->dropdown->getRecords($flag)['data'][$value]) ? Yii::$app->dropdown->getRecords($flag)['data'][$value] : '';
     }
 
-    public function getDateDifference($fromDate, $toDate)
-    {
+    public function getDateDifference($fromDate, $toDate) {
         $tenure_from = date_create($fromDate);
         $tenure_to = date_create($toDate);
         $diff = date_diff($tenure_to, $tenure_from);
         return $diff->format("%a");
     }
 
-    public function getUnionKeyPattern($union)
-    {
+    public function getUnionKeyPattern($union) {
         $PatternArray = [];
         if (count($union) == 1) {
             $model = new TblKeyPattern();
@@ -1712,13 +1608,11 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getKeyPattern($table_name)
-    {
+    public function getKeyPattern($table_name) {
         return !empty(Yii::$app->session->get('unionKeyPattern')[$table_name]) ? Yii::$app->session->get('unionKeyPattern')[$table_name] : NULL;
     }
 
-    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true)
-    {
+    public function setKeyPattern(&$model, $table_name, $ex_code_key, $auto_code_lenght = 3, $setkeyPattern = '', $conacte = true) {
         $keyPattern = !empty($setkeyPattern) ? $setkeyPattern : $this->getKeyPattern($table_name);
         if (!empty($keyPattern)) {
             $ref_code_length = (int) $keyPattern['ref_code_length'];
@@ -1726,9 +1620,9 @@ class GeneralFunctions extends Component
             $ex_code_reset_on = $keyPattern['ex_code_reset_on'];
             if ($keyPattern['ex_code_auto'] == 1) {
                 $data = $model->find()->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
-                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                    ->asArray()
-                    ->one();
+                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                        ->asArray()
+                        ->one();
                 $model->{$ex_code_key} = str_pad(($data['ex_code']), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
             } else {
                 if (!empty($model->{$ex_code_key})) {
@@ -1736,9 +1630,9 @@ class GeneralFunctions extends Component
                         $model->{$ex_code_key} = str_pad(($model->{$ex_code_key}), $keyPattern['ex_code_length'], '0', STR_PAD_LEFT);
                     }
                     $ex_cnt = $model->find()
-                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                        ->andWhere([$ex_code_key => $model->{$ex_code_key}])
-                        ->count();
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                            ->count();
                     if ($ex_cnt != '0') {
                         $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
                     }
@@ -1750,9 +1644,9 @@ class GeneralFunctions extends Component
                 }
             }
             $data = $model->find()->select(['ref_code' => 'ISNULL(MAX(CAST(RIGHT(ref_code,' . $ref_code_length . ')as bigint)),0)+1', 'auto_code' => 'ISNULL(MAX(auto_code),0)+1'])
-                ->where(['union_code' => $model->union_code])
-                ->asArray()
-                ->one();
+                    ->where(['union_code' => $model->union_code])
+                    ->asArray()
+                    ->one();
             $model->auto_code = $data['auto_code'];
             $pk_code = $model->union_code . str_pad(($data['auto_code']), $auto_code_lenght, '0', STR_PAD_LEFT);
             if ($keyPattern['ref_code_type'] == 0) {
@@ -1771,8 +1665,8 @@ class GeneralFunctions extends Component
                         $append_field = $pre_info[1];
                         $query = new Query();
                         $res = $query->select($append_field)
-                            ->from($table_name)
-                            ->where([$where_key => $model->{$where_val}])->one();
+                                        ->from($table_name)
+                                        ->where([$where_key => $model->{$where_val}])->one();
                         if (!empty($res)) {
                             $model->ref_code .= $res[$append_field];
                         } else {
@@ -1792,7 +1686,7 @@ class GeneralFunctions extends Component
                 $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' must be numeric.'));
             } else if ($keyPattern['ref_code_type'] == 2) {
                 $cnt = $model->find()->where(['union_code' => $model->union_code, 'convert(bigint,ref_code)' => (int) $model->ref_code])
-                    ->count();
+                        ->count();
                 if ($cnt > 0) {
                     $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
                 }
@@ -1808,8 +1702,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getFTPDirStructure($cp_code)
-    {
+    public function getFTPDirStructure($cp_code) {
         $data = [
             '/' . $cp_code . '/DIAG/ARCHIVES/ERRORS/',
             '/' . $cp_code . '/DIAG/ARCHIVES/SUCCESS/',
@@ -1825,8 +1718,7 @@ class GeneralFunctions extends Component
         return $data;
     }
 
-    public function generateFTPDir($model, $attribute, $params, $ftp_conn_code, $cp_code)
-    {
+    public function generateFTPDir($model, $attribute, $params, $ftp_conn_code, $cp_code) {
         $ftp_model = new TblFtpDetail();
         $ftp_model->ftp_connection_code = $ftp_conn_code;
         $ftpData = $ftp_model->getData();
@@ -1865,17 +1757,16 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateDeactivateDcs($model, $date, $dcs = '', $memberCheck = false, $member = '')
-    {
+    public function validateDeactivateDcs($model, $date, $dcs = '', $memberCheck = false, $member = '') {
         $dcsCode = !empty($dcs) ? $dcs : $model->dcs_code;
         $checkdate = date('Y-m-d', strtotime($date));
         if ($memberCheck) {
             $memberCode = !empty($member) ? $member : $model->member_code;
             $memberModel = new TblMemberDeactive();
             $records = $memberModel->find()
-                ->where('dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
-                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
-                ->count();
+                    ->where('dcs_code=\'' . $dcsCode . '\' and member_code=\'' . $memberCode . '\'')
+                    ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                    ->count();
             if ($records > 0) {
                 $model->addError('member_code', Yii::t('app/validation', Yii::t('app', 'Member') . ' Is Deactivated.'));
                 return false;
@@ -1884,17 +1775,16 @@ class GeneralFunctions extends Component
 
         $memberModel = new TblDcsDeactive();
         $records = $memberModel->find()
-            ->where('dcs_code=\'' . $dcsCode . '\'')
-            ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
-            ->count();
+                ->where('dcs_code=\'' . $dcsCode . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                ->count();
         if ($records > 0) {
             $model->addError('dcs_code', Yii::t('app/validation', Yii::t('app', 'DCS') . ' Is Deactivated.'));
             return false;
         }
     }
 
-    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key, $conacte = true)
-    {
+    public function vaildateKeyCodes($model, $table_name, $ex_code_key, $pk_key, $conacte = true) {
         if (!$model->isNewRecord) {
             $keyPattern = $this->getKeyPattern($table_name);
             if (!empty($keyPattern)) {
@@ -1912,10 +1802,10 @@ class GeneralFunctions extends Component
                         $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' length must be ' . $keyPattern['ex_code_length'] . '.'));
                     } else {
                         $ex_cnt = $model->find()
-                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                            ->andWhere([$ex_code_key => $model->{$ex_code_key}])
-                            ->andWhere(['!=', $pk_key, $model->{$pk_key}])
-                            ->count();
+                                ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                ->andWhere([$ex_code_key => $model->{$ex_code_key}])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
                         if ($ex_cnt > 0) {
                             $model->addError($ex_code_key, Yii::t('app/validation', $model->getAttributeLabel($ex_code_key) . ' has already been taken.'));
                         }
@@ -1929,9 +1819,9 @@ class GeneralFunctions extends Component
                         $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' length must be ' . $ref_code_fix_length . '.'));
                     } else {
                         $cnt = $model->find()
-                            ->where(['union_code' => $model->union_code, 'convert(bigint,ref_code)' => (int) $model->ref_code])
-                            ->andWhere(['!=', $pk_key, $model->{$pk_key}])
-                            ->count();
+                                ->where(['union_code' => $model->union_code, 'convert(bigint,ref_code)' => (int) $model->ref_code])
+                                ->andWhere(['!=', $pk_key, $model->{$pk_key}])
+                                ->count();
                         if ($cnt > 0) {
                             $model->addError('ref_code', Yii::t('app/validation', $model->getAttributeLabel('ref_code') . ' has already been taken.'));
                         }
@@ -1944,21 +1834,19 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getConfigMapping($config_key, $org_code, $org_type)
-    {
+    public function getConfigMapping($config_key, $org_code, $org_type) {
         $model = new TblConfigMapping();
         $data = $model->find()->select(['tbl_config_mapping.config_result'])
-            ->joinWith(['configCode'])
-            ->where([
-                'tbl_config_mapping.org_code' => $org_code,
-                'tbl_config_mapping.org_type' => $org_type,
-                'tbl_config.config_key' => $config_key
-            ])->one();
+                        ->joinWith(['configCode'])
+                        ->where([
+                            'tbl_config_mapping.org_code' => $org_code,
+                            'tbl_config_mapping.org_type' => $org_type,
+                            'tbl_config.config_key' => $config_key
+                        ])->one();
         return !empty($data) ? $data->config_result : '';
     }
 
-    public function validateRateRange($model, $fatAttr = '', $snfAttr = '')
-    {
+    public function validateRateRange($model, $fatAttr = '', $snfAttr = '') {
         $fat = !empty($fatAttr) ? $fatAttr : 'fat';
         $snf = !empty($snfAttr) ? $snfAttr : 'snf';
         $minFat = !empty(Yii::$app->general->getforeignkey($model->rateRange, 'min_fat')) ? Yii::$app->general->getforeignkey($model->rateRange, 'min_fat') : '0.01';
@@ -1974,18 +1862,17 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function paymentCycleLock($model, $dateParam, $codeParam, $for, $type, $flagArray = [], $showError = '')
-    {
+    public function paymentCycleLock($model, $dateParam, $codeParam, $for, $type, $flagArray = [], $showError = '') {
         if (!empty($model->$dateParam)) {
             $showError = !empty($showError) ? $showError : $dateParam;
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
 
             $payment_model = new TblPaymentCycleApplicability;
             $data = $payment_model->find()
-                ->where(['applicable_code' => $model->$codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
-                ->andWhere(['<=', 'CAST(from_date as date)', $date])
-                ->andWhere(['>=', 'CAST(to_date as date)', $date])
-                ->one();
+                    ->where(['applicable_code' => $model->$codeParam, 'applicable_for' => $for, 'applicable_type' => $type])
+                    ->andWhere(['<=', 'CAST(from_date as date)', $date])
+                    ->andWhere(['>=', 'CAST(to_date as date)', $date])
+                    ->one();
 
             if (empty($data)) {
                 $model->addError($showError, "Payment Cycle is Not Available");
@@ -2002,16 +1889,15 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock')
-    {
+    public function shiftLock($model, $dateParam, $codeParam, $showError = '', $lock_flag = 'data_lock') {
         if (!empty($model->$dateParam)) {
             $date = Yii::$app->formatter->asDate($model->$dateParam, 'php:Y-m-d');
             $showError = !empty($showError) ? $showError : $dateParam;
 
             $payment_model = new \app\modules\collection\models\TblMccShiftLock();
             $data = $payment_model->find()
-                ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
-                ->one();
+                    ->where(['mcc_plant_code' => $model->$codeParam, 'cast(date_time_of_collection as date)' => $date, 'shift_code' => $model->shift_code, $lock_flag => 1])
+                    ->one();
             if (!empty($data)) {
                 $model->addError($showError, "Shift Is Already Lock");
                 return false;
@@ -2019,8 +1905,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateBMC($model, $attribute)
-    {
+    public function validateBMC($model, $attribute) {
         $bmcModel = new TblDcsBmc();
         $records = $bmcModel->find()->select('bmc_code')->where(['or', ['bmc_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
         if (!empty($records) && count($records) == 1) {
@@ -2031,8 +1916,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    function validVehicleNumber($model, $attribute, $params)
-    {
+    function validVehicleNumber($model, $attribute, $params) {
         //        $pattern = "/^[A-Z]{2}[ -][0-9]{1,2}(?: [A-Z])?(?: [A-Z]*)? [0-9]{4}$/";--MP 09 AB 1234
 //        $pattern = "/^[A-Z]{2}-[0-9]{2}-{1}[A-Z]{1,3}-{1}[0-9]{4}$/"; //--MP-09-AB-1234
         $pattern = "/^[A-Z]{2}[0-9]{2}[A-Z]{0,3}[0-9]{4}$/"; //--GJ10AB1111,GJ101111,GJ10ABC1111,GJ10A1111
@@ -2043,8 +1927,7 @@ class GeneralFunctions extends Component
         return TRUE;
     }
 
-    function validOneDigitDecimal($model, $attribute, $params)
-    {
+    function validOneDigitDecimal($model, $attribute, $params) {
         $pattern = "/^[0-9]{2}[.][0-9]{1}$/";
         if (!preg_match($pattern, $model->$attribute)) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' is must be between 0.1 to 99.9'));
@@ -2054,8 +1937,7 @@ class GeneralFunctions extends Component
         return TRUE;
     }
 
-    public function validateBeneficiary($model, $attribute, $params)
-    {
+    public function validateBeneficiary($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[a-zA-Z]+(\s{1}+[a-zA-Z]+)*$/', $model->$attribute)) {
                 $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' Is Invalid'));
@@ -2063,15 +1945,13 @@ class GeneralFunctions extends Component
             }
     }
 
-    public function getClientCode($union)
-    {
+    public function getClientCode($union) {
         $model = new TblUnions();
         $data = $model->find()->where(['union_code' => $union])->one();
         return !empty($data) ? $data->eipl_code : '';
     }
 
-    function distanceCalculation($point1_lat, $point1_long, $point2_lat, $point2_long, $unit = 'km', $decimals = 2)
-    {
+    function distanceCalculation($point1_lat, $point1_long, $point2_lat, $point2_long, $unit = 'km', $decimals = 2) {
         // Calculate the distance in degrees
         $degrees = rad2deg(acos((sin(deg2rad($point1_lat)) * sin(deg2rad($point2_lat))) + (cos(deg2rad($point1_lat)) * cos(deg2rad($point2_lat)) * cos(deg2rad($point1_long - $point2_long)))));
 
@@ -2089,14 +1969,13 @@ class GeneralFunctions extends Component
         return round($distance, $decimals);
     }
 
-    public function validateDeactivateCustomer($model, $date, $code)
-    {
+    public function validateDeactivateCustomer($model, $date, $code) {
         $checkdate = date('Y-m-d', strtotime($date));
         $memberModel = new TblCustomerDeactive();
         $records = $memberModel->find()
-            ->where('customer_code=\'' . $code . '\' and customer_type=\'' . $model->customer_type . '\'')
-            ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
-            ->count();
+                ->where('customer_code=\'' . $code . '\' and customer_type=\'' . $model->customer_type . '\'')
+                ->andWhere('((\'' . $checkdate . '\' between cast(from_date as date)  and case when to_date is null then \'9999-12-31\' else cast(to_date as date) end))')
+                ->count();
 
         if ($records > 0) {
             $model->addError('customer_code', Yii::t('app/validation', Yii::t('app', 'Customer') . ' Is Deactivated.'));
@@ -2104,8 +1983,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function validateExCodes($model, $master_table, $ex_code_key, $cmpare_table, $cmpare_key, $find_model, $unionCode, $update)
-    {
+    public function validateExCodes($model, $master_table, $ex_code_key, $cmpare_table, $cmpare_key, $find_model, $unionCode, $update) {
         $flag = isset(Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique']) ? Yii::$app->session->get('unionConfig')[$unionCode]['check_ex_code_unique'] : '';
         $keyPattern = $this->getKeyPattern($cmpare_table);
         $MasterKeyPattern = $this->getKeyPattern($master_table);
@@ -2126,9 +2004,9 @@ class GeneralFunctions extends Component
                     $code = str_replace($prefix, '', $model->{$ex_code_key});
                     $code = intval($code);
                     $q = $model->find()
-                        ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
-                        ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
-                        ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code]);
+                            ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)' => $code]);
                     //                            ->count();
 
                     if (!empty($model->customer_code)) {
@@ -2136,17 +2014,17 @@ class GeneralFunctions extends Component
                     }
                     $main_ex_cnt = $q->count();
                     $ex_cnt = $findModel->find()
-                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                        ->andWhere(['CAST(' . $cmpare_key . ' as int)' => $code])
-                        ->count();
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->andWhere(['CAST(' . $cmpare_key . ' as int)' => $code])
+                            ->count();
                 }
                 if ($master_table == 'tbl_dcs') {
                     $code = intval($model->{$ex_code_key});
                     $ex_cnt = $findModel->find()
-                        ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                        ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
-                        ->andWhere(['CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)' => $code])
-                        ->count();
+                            ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                            ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =1')
+                            ->andWhere(['CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)' => $code])
+                            ->count();
                     //                    var_dump($findModel->createCommand()->getRawSql());
 //                    die;
                 }
@@ -2157,33 +2035,33 @@ class GeneralFunctions extends Component
 
                         if ($master_table == 'tbl_dcs') {
                             $MasterData = $model->find()
-                                ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
-                                ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
-                                ->asArray()
-                                ->one();
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $ex_code_key . ' as int)),0)+1'])
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                                    ->asArray()
+                                    ->one();
                         }
                         if ($cmpare_table == 'tbl_dcs') {
                             $findData = $findModel->find()
-                                ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
-                                ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                                ->asArray()
-                                ->one();
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(' . $cmpare_key . ' as int)),0)+1'])
+                                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                    ->asArray()
+                                    ->one();
                         }
                         if ($master_table == 'tbl_customer_master') {
                             $MasterData = $model->find()
-                                ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)), 0) + 1'])
-                                ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
-                                ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
-                                ->asArray()
-                                ->one();
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $ex_code_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
+                                    ->where([$Master_code_reset_on => $model->{$Master_code_reset_on}])
+                                    ->asArray()
+                                    ->one();
                         }
                         if ($cmpare_table == 'tbl_customer_master') {
                             $findData = $findModel->find()
-                                ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)), 0) + 1'])
-                                ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
-                                ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
-                                ->asArray()
-                                ->one();
+                                    ->select(['ex_code' => 'ISNULL(MAX(CAST(REPLACE(' . $cmpare_key . ', code_prefix, \'\') as int)), 0) + 1'])
+                                    ->join('LEFT JOIN', 'tbl_customer_type ct', 'tbl_customer_master.union_code = ct.union_code AND tbl_customer_master.customer_type=ct.customer_type AND ct.is_active =' . 1)
+                                    ->where([$ex_code_reset_on => $model->{$keyPattern['ex_code_reset_on']}])
+                                    ->asArray()
+                                    ->one();
                         }
                         $ex_code = 0;
                         $masterMax = !empty($MasterData) ? $MasterData['ex_code'] : 0;
@@ -2196,8 +2074,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getSpDropData($sp, $param, $execute = false)
-    {
+    public function getSpDropData($sp, $param, $execute = false) {
         $str = '';
         $count = count($param);
         for ($i = 1; $i <= $count; $i++) {
@@ -2214,11 +2091,10 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function generateRandomString()
-    {
+    public function generateRandomString() {
         $seed = str_split('abcdefghijklmnopqrstuvwxyz'
-            . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-            . '0123456789');
+                . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                . '0123456789');
         //                . '0123456789!@#$%^&*()');
         shuffle($seed); // probably optional since array_is randomized; this may be redundant
         $rand = '';
@@ -2229,8 +2105,7 @@ class GeneralFunctions extends Component
         return $rand;
     }
 
-    public function setAttachment(&$child, $files, $module_code, $module_name)
-    {
+    public function setAttachment(&$child, $files, $module_code, $module_name) {
         $filesArray = explode(',', $files);
         unset($filesArray[0]);
 
@@ -2261,8 +2136,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false)
-    {
+    public function getAttachment($module_name, $reference_code, $link = TRUE, $OnlyData = FALSE, $remarks = NULL, $downloadOnly = false) {
         $model = new TblAttachment();
         $model->module_name = $module_name;
         $model->module_code = $reference_code;
@@ -2275,14 +2149,14 @@ class GeneralFunctions extends Component
         if ($attachment) {
             if ($downloadOnly) {
                 return Html::a('<i class="fa fa-download"></i>', $attachment[0]->attachment, [
-                    'title' => 'Download',
-                    'download' => $reference_code . $attachment[0]->attachment_type,
+                            'title' => 'Download',
+                            'download' => $reference_code . $attachment[0]->attachment_type,
                 ]);
             } else if ($link) {
                 return Html::a(Html::img($attachment[0]->thumbnail, ['class' => 'thumbnail_image', 'alt' => '']), $attachment[0]->attachment, [
-                    //                            'title' => 'Download',
-                    'class' => 'image-popup-no-margins',
-                    'download' => $attachment[0]->attachment_type,
+                            //                            'title' => 'Download',
+                            'class' => 'image-popup-no-margins',
+                            'download' => $attachment[0]->attachment_type,
                 ]);
             } else {
                 return Html::img($attachment[0]->attachment, ['class' => 'img-responsive disp_image', 'alt' => '']);
@@ -2291,8 +2165,7 @@ class GeneralFunctions extends Component
         return "";
     }
 
-    public function getOriginatingType($model, $field)
-    {
+    public function getOriginatingType($model, $field) {
         $value = '';
         if (isset($model->{$field})) {
             if ($model->{$field} == 0) {
@@ -2310,8 +2183,7 @@ class GeneralFunctions extends Component
         return $value;
     }
 
-    public function validateEmail($model, $attribute, $params, $check_char = false)
-    {
+    public function validateEmail($model, $attribute, $params, $check_char = false) {
         if (!empty($model->$attribute)) {
             $model->$attribute = trim($model->$attribute, ",");
             $error = false;
@@ -2342,8 +2214,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function RemoveDirectory($dir)
-    {
+    public function RemoveDirectory($dir) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
@@ -2359,8 +2230,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function CreateDirectory($folder_path)
-    {
+    public function CreateDirectory($folder_path) {
         if (!is_dir($folder_path)) {
             $oldmask = umask(0);
             mkdir($folder_path, 0777, TRUE);
@@ -2374,29 +2244,27 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function DeliveryChallanOrgFilter($query, $main_table, $from_dest = 'Ownmccid', $to_dest = 'ToPlace')
-    {
+    public function DeliveryChallanOrgFilter($query, $main_table, $from_dest = 'Ownmccid', $to_dest = 'ToPlace') {
         $unions = !empty(Yii::$app->session->get('Unions')) ? explode(',', Yii::$app->session->get('Unions')) : NULL;
         $plants = !empty(Yii::$app->session->get('Plant')) ? explode(',', Yii::$app->session->get('Plant')) : NULL;
         $mccs = !empty(Yii::$app->session->get('MCC')) ? explode(',', Yii::$app->session->get('MCC')) : NULL;
         $query->andFilterWhere([
             'or',
-            ['pd.union_code' => $unions],
-            ['ms.union_code' => $unions],
-            ['md.union_code' => $unions],
-            ['cs.union_code' => $unions],
-            ['cd.union_code' => $unions]
+                ['pd.union_code' => $unions],
+                ['ms.union_code' => $unions],
+                ['md.union_code' => $unions],
+                ['cs.union_code' => $unions],
+                ['cd.union_code' => $unions]
         ]);
         $form_to = !empty($mccs) ? $mccs : $plants;
         $query->andFilterWhere([
             'or',
-            [$main_table . '.' . $from_dest => $form_to],
-            [$main_table . '.' . $to_dest => $form_to],
+                [$main_table . '.' . $from_dest => $form_to],
+                [$main_table . '.' . $to_dest => $form_to],
         ]);
     }
 
-    public function validateMCC($model, $attribute)
-    {
+    public function validateMCC($model, $attribute) {
         $mccModel = new TblMccPlant();
         $records = $mccModel->find()->select('mcc_plant_code')->where(['or', ['mcc_plant_code' => $model->$attribute], ['ref_code' => $model->$attribute]])->all();
         if (!empty($records) && count($records) == 1) {
@@ -2407,8 +2275,7 @@ class GeneralFunctions extends Component
         }
     }
 
-    public function dateRangeConflict($model, $attribute, $params, $from_dates, $to_dates)
-    {
+    public function dateRangeConflict($model, $attribute, $params, $from_dates, $to_dates) {
         $fromDate = date('Y-m-d', strtotime($model->$from_dates));
         $toDate = date('Y-m-d', strtotime($model->$to_dates));
 
@@ -2418,8 +2285,8 @@ class GeneralFunctions extends Component
         }
 
         $dateData = $model->find()
-            ->Where('((\'' . $model->from_date . '\' between from_date  and to_date) OR (\'' . $model->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $model->from_date . '\' and  \'' . $model->to_date . '\') OR (to_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\'))')
-            ->one();
+                ->Where('((\'' . $model->from_date . '\' between from_date  and to_date) OR (\'' . $model->to_date . '\' between from_date  and to_date) OR (from_date between \'' . $model->from_date . '\' and  \'' . $model->to_date . '\') OR (to_date between \'' . $model->from_date . '\' and \'' . $model->to_date . '\'))')
+                ->one();
         if (!empty($dateData)) {
             $model->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;

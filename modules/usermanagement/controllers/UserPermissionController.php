@@ -3,8 +3,8 @@
 namespace app\modules\usermanagement\controllers;
 
 use Yii;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\User;
 
 class UserPermissionController extends \webvimark\modules\UserManagement\controllers\UserPermissionController {
 

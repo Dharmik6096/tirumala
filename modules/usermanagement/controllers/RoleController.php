@@ -4,7 +4,7 @@ namespace app\modules\usermanagement\controllers;
 
 use Yii;
 use app\modules\usermanagement\components\AuthHelper;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\rbacDB\Role;
 use yii\helpers\Html;
 
 class RoleController extends \webvimark\modules\UserManagement\controllers\RoleController {

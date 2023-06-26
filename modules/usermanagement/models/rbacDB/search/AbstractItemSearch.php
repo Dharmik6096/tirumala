@@ -3,8 +3,8 @@
 namespace app\modules\usermanagement\models\rbacDB\search;
 
 use Yii;
-use webvimark\modules\UserManagement\models\rbacDB\Permission;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\rbacDB\Permission;
+use app\modules\usermanagement\models\rbacDB\Role;
 use yii\data\ActiveDataProvider;
 
 class AbstractItemSearch extends \webvimark\modules\UserManagement\models\rbacDB\search\AbstractItemSearch {

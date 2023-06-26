@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @var $this yii\web\View
- * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
- */
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
+use app\modules\usermanagement\components\GhostHtml;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
@@ -39,7 +34,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><?= UserManagementModule::t('front', 'PCDF Application') ?></h4>
+                <h4 class="modal-title"><?= Yii::t('app', 'EIPL Application') ?></h4>
             </div>
             <div class="modal-body">
                 <?php
@@ -69,8 +64,8 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     </div>
                     <?php //if($identity['organization_type']!='NATIONAL'){  ?>
 
-                    <?= $form->field($model,'type')->hiddenInput(['value'=>'PCDF'])->label(false); ?>
-                     <?= Html::hiddenInput('state', $state); ?>
+                    <?= $form->field($model, 'type')->hiddenInput(['value' => 'PCDF'])->label(false); ?>
+                    <?= Html::hiddenInput('state', $state); ?>
                     <?php //}  ?>
                     <div class="col-sm-12">
                         <?= (isset(Yii::$app->user->enableAutoLogin) && Yii::$app->user->enableAutoLogin) ? $form->field($model, 'rememberMe', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['value' => true]) : '' ?>
@@ -78,7 +73,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-12">
                         <?=
                         Html::submitButton(
-                                UserManagementModule::t('front', 'Login'), ['class' => 'btn btn-primary btn-block']
+                                Yii::t('app', 'Login'), ['class' => 'btn btn-primary btn-block']
                         )
                         ?>
                     </div>
@@ -87,14 +82,14 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                     <div class="col-sm-6">
                         <?=
                         GhostHtml::a(
-                                UserManagementModule::t('front', "Registration"), ['/user-management/auth/registration']
+                                Yii::t('app', "Registration"), ['/user-management/auth/registration']
                         )
                         ?>
                     </div>
                     <div class="col-sm-6 text-right">
                         <?=
                         GhostHtml::a(
-                                UserManagementModule::t('front', "Forgot password ?"), ['/user-management/auth/password-recovery']
+                                Yii::t('app', "Forgot password ?"), ['/user-management/auth/password-recovery']
                         )
                         ?>
                     </div>

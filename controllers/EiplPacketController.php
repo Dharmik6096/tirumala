@@ -19,7 +19,7 @@ class EiplPacketController extends Controller {
     public function behaviors() {
         return [
             'ghost-access' => [
-                'class' => 'webvimark\modules\UserManagement\components\GhostAccessControl',
+                'class' => 'app\modules\usermanagement\components\GhostAccessControl',
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -160,7 +160,7 @@ class EiplPacketController extends Controller {
                                                 }
                                                 if ($result) {
                                                     $packet->main_table = 1;
-                                                    $success_cnt +=1;
+                                                    $success_cnt += 1;
                                                     $packet->save(FALSE);
                                                 } else {
                                                     //var_dump($packet->line_text);

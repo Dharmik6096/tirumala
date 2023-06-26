@@ -1,6 +1,5 @@
 <?php
 
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
@@ -8,7 +7,7 @@ use yii\helpers\Html;
  * @var yii\web\View $this
  * @var webvimark\modules\UserManagement\models\forms\ChangeOwnPasswordForm $model
  */
-$this->title = UserManagementModule::t('back', 'Change own password');
+$this->title = Yii::t('app', 'Change own password');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -43,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <!-- <div class="clearfix"></div> -->
             <div class="col-sm-2 padding_top_20">
                 <div class="form-group">
-                    <?= Html::submitButton(UserManagementModule::t('back', 'Save'), ['class' => 'btn btn-primary']);?>
+                    <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']); ?>
                 </div>
             </div>
         </div>

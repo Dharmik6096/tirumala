@@ -3,7 +3,7 @@
 namespace app\modules\usermanagement\components;
 
 use Yii;
-use webvimark\modules\UserManagement\models\rbacDB\Route;
+use app\modules\usermanagement\models\rbacDB\Route;
 use yii\rbac\DbManager;
 
 class AuthHelper extends \webvimark\modules\UserManagement\components\AuthHelper {

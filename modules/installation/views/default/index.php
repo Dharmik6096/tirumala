@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @var $this yii\web\View
- * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
- */
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
@@ -19,7 +13,7 @@ $this->title = 'Create Identity';
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-identity-form">
-                <div class="panel-heading text-center"><h4><?= UserManagementModule::t('front', 'PCDF Application') ?></h4></div>
+                <div class="panel-heading text-center"><h4><?= Yii::t('app', 'EIPL Application') ?></h4></div>
                 <div class="panel-body">
 
                     <?php
@@ -43,7 +37,7 @@ $this->title = 'Create Identity';
                     </div>
 
                     <div class="clearfix"></div>
-                    
+
                     <div class="col-sm-6">
                         <label>Parent Type</label>
                         <?= $form->field($model, 'parent_type')->textInput(['placeholder' => 'Parent Type', 'autocomplete' => 'off', 'readonly' => true]) ?>
@@ -114,7 +108,7 @@ $this->title = 'Create Identity';
                     </div>
 
                     <div class="clearfix"></div>
-                    
+
                     <div class="col-sm-12">
                         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-login' : 'btn btn-login']) ?>
                     </div>
