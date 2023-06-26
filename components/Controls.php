@@ -41,7 +41,7 @@ class Controls extends Component {
 
     public function update($id, $action = 'update') {
         //var_dump($action);exit;
-        return GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil"></i> Edit'), Url::to([$action, 'id' => $id]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
+        return GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil-alt"></i> Edit'), Url::to([$action, 'id' => $id]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
     }
 
     public function update_combo($id, $action = 'update', $params = '') {
