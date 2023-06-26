@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Dispatch'));
 $this->params['menu'][] = Yii::$app->controls->add('Milk Dispatch');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Update Milk Dispatch', 'update-milk-dispatch', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update Milk Dispatch', 'update-milk-dispatch', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil-alt"></i>');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Delete Milk Dispatch', 'delete-milk-dispatch', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 $this->params['menu'][] = Yii::$app->controls->import('milk-dispatch', $this);
 ?>

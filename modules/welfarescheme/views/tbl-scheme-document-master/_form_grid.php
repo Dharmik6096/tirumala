@@ -33,7 +33,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = '';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-document-master/update', 'id' => $model->doc_id], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/welfarescheme/tbl-scheme-document-master/update', 'id' => $model->doc_id], $options);
         },
     ]
 ];

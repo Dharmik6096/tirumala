@@ -164,7 +164,7 @@ $script = "
             add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblPlantDispatchTxn['+product_code+'][qty]\" ></td>';
             add_row += '<td>' + amount + '<input type=\"hidden\" class=\"added_amount\" value=\"'+amount+'\" name=\"TblPlantDispatchTxn['+product_code+'][amount]\" ></td>';
             add_row += '<td>' + lr_no + '<input type=\"hidden\" class=\"added_lr_no\" value=\"'+lr_no+'\" name=\"TblPlantDispatchTxn['+product_code+'][lr_no]\" ></td>';
-            add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+product_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+product_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';
+            add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+product_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil-alt\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+product_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';
             add_row += '</tr>';
             $('tbody').append(add_row);
             $('#tblplantdispatchtxn-product_code').val('');

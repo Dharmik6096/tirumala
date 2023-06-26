@@ -62,7 +62,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->detail_code, 'data-name' => $model->detail_code, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/details/tbl-contact-details/update-contact'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/details/tbl-contact-details/update-contact'], $options);
         },
     ]
 ];

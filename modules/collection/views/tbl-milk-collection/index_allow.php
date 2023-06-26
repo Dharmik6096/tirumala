@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collections'));
 $this->params['menu'][] = Yii::$app->controls->custombutton('Add Milk Collection', 'create-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-plus"></i>');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Update Milk Collection', 'update-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update Milk Collection', 'update-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil-alt"></i>');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Delete Milk Collection', 'delete-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'qlty_wise_collection', 'PORTAL') == 1) {
     $this->params['menu'][] = Yii::$app->controls->import('milk-collection-qlty-allow-bulk', $this);

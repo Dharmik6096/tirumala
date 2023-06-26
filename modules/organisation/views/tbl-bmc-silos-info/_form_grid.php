@@ -30,7 +30,7 @@ if ($isaction) {
         'actions' => [
             'edit' => function ($url, $model) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->bmc_silos_info_code, 'data-name' => $model->bmc_silos_info_code, 'title' => Yii::t('app', 'Edit')];
-                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/organisation/tbl-bmc-silos-info/update-silos'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-bmc-silos-info/update-silos'], $options);
             },
         ]
     ];

@@ -1,7 +1,7 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'BMC Collection'));
 $this->params['menu'][] = Yii::$app->controls->add('BMC Collection');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Update BMC Collection', 'update-bmc-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update BMC Collection', 'update-bmc-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil-alt"></i>');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Delete BMC Collection', 'delete-bmc-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 
 $mappedBmc = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'pouring_bmc_collection', 'PORTAL');

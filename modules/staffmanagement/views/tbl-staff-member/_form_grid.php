@@ -49,7 +49,7 @@ $grid_option = [
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/staffmanagement/tbl-staff-member/update', 'id' => $model->staff_member_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/staffmanagement/tbl-staff-member/update', 'id' => $model->staff_member_code], $options);
         },
         'staff-member-design' => function ($url, $model) {
             $disable = '';

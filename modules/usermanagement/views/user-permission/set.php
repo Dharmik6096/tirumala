@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?=
                         GhostHtml::a(
-                                '<i class="fa fa-pencil-sqare-o"></i>', ['/user-management/role/view', 'id' => $aRole['name']], ['target' => '_blank', 'title' => 'Edit']
+                                '<i class="fa fa-pencil-alt-sqare-o"></i>', ['/user-management/role/view', 'id' => $aRole['name']], ['target' => '_blank', 'title' => 'Edit']
                         )
                         ?>
                     </div>

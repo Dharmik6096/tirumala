@@ -53,7 +53,7 @@ $this->params['menu'][]=Yii::$app->controls->update($role->description);
 
                                 <?=
                                 GhostHtml::a(
-                                        '<i class="fa fa-pencil-square-o"></i>', ['/user-management/permission/view', 'id' => $permission->name], ['target' => '_blank', 'title' => 'Edit']
+                                        '<i class="fa fa-pencil-alt-square-o"></i>', ['/user-management/permission/view', 'id' => $permission->name], ['target' => '_blank', 'title' => 'Edit']
                                 )
                                 ?>
                             </div>

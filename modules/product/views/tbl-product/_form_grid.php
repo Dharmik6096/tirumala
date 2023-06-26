@@ -97,7 +97,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = Yii::$app->general->allowUpdateDelete($model) ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/product/tbl-product/update', 'id' => $model->product_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/product/tbl-product/update', 'id' => $model->product_code], $options);
         },
 //        'update' => true,
         'delete' => ['option' => 'product_name,product_code,tbl-product/delete,checkAllowDelete()'],

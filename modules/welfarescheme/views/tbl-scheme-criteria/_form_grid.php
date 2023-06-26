@@ -33,7 +33,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $class = '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record' . $class, 'data-val' => $model->scheme_criteria_id, 'data-name' => $model->scheme_criteria_id, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-criteria/update-criteria'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/welfarescheme/tbl-scheme-criteria/update-criteria'], $options);
         },
     ]
 ];

@@ -68,7 +68,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = '';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-master/update', 'id' => $model->scheme_id], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/welfarescheme/tbl-scheme-master/update', 'id' => $model->scheme_id], $options);
         },
         'scheme-criteria' => function ($url, $model) {
             $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Scheme Criteria'];

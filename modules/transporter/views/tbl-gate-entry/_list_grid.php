@@ -42,7 +42,7 @@ $client_code = \Yii::$app->session->get('eiplCode');
         'actions' => [
             'edit' => function ($url, $model) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->gate_entry_code, 'data-name' => $model->gate_entry_code, 'title' => Yii::t('app', 'Edit')];
-                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/transporter/tbl-gate-entry/update'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/transporter/tbl-gate-entry/update'], $options);
             },
             'print-gate-pass' => function ($url, $model) {
                 $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Gate Pass'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Print Gate Pass')];

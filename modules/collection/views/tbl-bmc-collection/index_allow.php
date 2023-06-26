@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'BMC Collection'));
 $this->params['menu'][] = Yii::$app->controls->custombutton('Add BMC Collection', 'create-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-plus"></i>');
-$this->params['menu'][] = Yii::$app->controls->custombutton('Update BMC Collection', 'update-bmc-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Update BMC Collection', 'update-bmc-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-pencil-alt"></i>');
 $this->params['menu'][] = Yii::$app->controls->custombutton('Delete BMC Collection', 'delete-bmc-collection-allow', '', 'btn btn-danger btn-block', '<i class="fa fa-trash"></i>');
 if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'pouring_bmc_collection', 'PORTAL') == 1) {
     $this->params['menu'][] = Yii::$app->controls->import('bmc-mapped-collection-allow-bulk', $this);

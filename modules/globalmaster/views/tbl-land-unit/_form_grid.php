@@ -28,7 +28,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disabled = ($model->is_default == 1) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Edit' , 'class' => $disabled];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/globalmaster/tbl-land-unit/update', 'id' => $model->land_unit_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/globalmaster/tbl-land-unit/update', 'id' => $model->land_unit_code], $options);
         },
         'delete' => ['option' => 'land_unit_name,land_unit_code,tbl-land-unit/delete,checkDefault()'],
     ]

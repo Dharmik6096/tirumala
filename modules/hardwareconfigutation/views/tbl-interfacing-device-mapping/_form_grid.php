@@ -50,7 +50,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = Yii::$app->general->allowUpdateDelete($model) ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/hardwareconfigutation/tbl-interfacing-device-mapping/update', 'id' => $model->interfacing_device_mapping_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/hardwareconfigutation/tbl-interfacing-device-mapping/update', 'id' => $model->interfacing_device_mapping_code], $options);
         },
         'delete' => ['option' => 'interfacing_device_mapping_code,interfacing_device_mapping_code,tbl-interfacing-device-mapping/delete'],
     ]

@@ -138,7 +138,7 @@ $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model
                 'vendor-recovery' => function ($url, $model) use ($recovery_from_other_vendor) {
                     if ($recovery_from_other_vendor) {
                         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'add-recovery', 'data-original-title' => 'Add Recovery', 'data-val' => $model->vsp_payment_code];
-                        return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/payment/tbl-vsp-payment/add-recovery', 'id' => $model->vsp_payment_code], $options);
+                        return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/payment/tbl-vsp-payment/add-recovery', 'id' => $model->vsp_payment_code], $options);
                     }
                 },
             ]

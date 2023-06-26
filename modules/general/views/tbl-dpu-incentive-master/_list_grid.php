@@ -47,7 +47,7 @@ $grid_option = [
     'actions' => [
         'edit' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->incentive_deduction_id, 'data-name' => $model->incentive_deduction_id, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/organisation/tbl-dpu-incentive/update-detail'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dpu-incentive/update-detail'], $options);
         },
     ]
 ];

@@ -79,7 +79,7 @@ $grid_option = [
         },
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-asset-detail/update', 'id' => $model->asset_detail_code]);
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
         },
     ]
 ];

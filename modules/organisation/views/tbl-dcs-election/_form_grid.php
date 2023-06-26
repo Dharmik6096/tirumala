@@ -33,7 +33,7 @@ $grid_option = [
             $url = ['/organisation/tbl-dcs-election/update', 'dcs_code' => $model->dcs_code, 'id' => $model->election_id];
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
             ]
         ];

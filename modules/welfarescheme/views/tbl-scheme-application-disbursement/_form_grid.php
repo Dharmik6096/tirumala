@@ -62,7 +62,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = '';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/welfarescheme/tbl-scheme-application-disbursement/update', 'id' => $model->disburse_id], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/welfarescheme/tbl-scheme-application-disbursement/update', 'id' => $model->disburse_id], $options);
         },
     //  'delete' => ['option' => 'beneficiary_name,disburse_id,/welfarescheme/tbl-scheme-application-disbursement/delete'],
     ]

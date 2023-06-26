@@ -87,7 +87,7 @@ $grid_option = [
             $name = $model->member_name;
             $class = ($model->is_approved == 1) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'view' => true,
         'milk_collection' => function ($url, $model) {

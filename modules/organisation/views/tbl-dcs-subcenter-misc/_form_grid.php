@@ -27,7 +27,7 @@ $grid_option = [
     'actions' => [
         'edit' => function ($url, $model) {
             $options = ['title' => 'Edit'];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/organisation/tbl-dcs-subcenter-misc/update', 'id' => Yii::$app->request->get('id'), 'name' => Yii::$app->request->get('name'), 'type' => Yii::$app->request->get('type'), 'pk' => $model->dcs_miscellaneous_code], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dcs-subcenter-misc/update', 'id' => Yii::$app->request->get('id'), 'name' => Yii::$app->request->get('name'), 'type' => Yii::$app->request->get('type'), 'pk' => $model->dcs_miscellaneous_code], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'], $options);
         },
                 'delete' => ['option' => 'miscellaneous_code,dcs_miscellaneous_code,tbl-dcs-subcenter-misc/delete'],
             ]

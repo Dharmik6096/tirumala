@@ -260,7 +260,7 @@ $grid_option = [
             $name = $model->dcs_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         //'delete' => ['option' => 'dcs_name,dcs_code,tbl-dcs/delete'],
 //        'mapping' => function ($url, $model) {

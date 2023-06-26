@@ -55,7 +55,7 @@ $grid_option = [
             $url = str_replace('edit', 'update', $url);
             $url = ['/user-management/role/update', 'id' => $model->name];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
-            return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         //'update' => true,
         'delete' => ['option' => 'name,name,/user-management/role/delete,checkNotVendor()'],

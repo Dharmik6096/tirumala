@@ -114,7 +114,7 @@ $grid_option = [
             $class = $model->checkNotVendor() ? '' : 'link-disable';
 //                    $url=  str_replace('edit', 'update', $url);
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
-            return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return Html::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'delete' => ['option' => 'group_code,name,/user-management/permission/delete,checkNotVendor()'],
     ]

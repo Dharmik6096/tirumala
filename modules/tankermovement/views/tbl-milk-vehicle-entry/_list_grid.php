@@ -45,7 +45,7 @@ use yii\web\View;
         'actions' => [
             'edit' => function ($url, $model) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_vehicle_entry_transaction_code, 'data-name' => $model->milk_vehicle_entry_transaction_code, 'title' => Yii::t('app', 'Edit')];
-                return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/tankermovement/tbl-milk-vehicle-entry/update-transaction'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-milk-vehicle-entry/update-transaction'], $options);
             },
             'view-config' => function ($url, $model) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'data-original-title' => 'View Config Input', 'data-val' => $model->milk_vehicle_entry_transaction_code];

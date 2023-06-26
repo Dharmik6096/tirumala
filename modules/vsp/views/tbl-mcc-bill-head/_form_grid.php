@@ -56,7 +56,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = !empty($model->billHeadCode) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/vsp/tbl-mcc-bill-head/update', 'id' => $model->mcc_bill_head_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/vsp/tbl-mcc-bill-head/update', 'id' => $model->mcc_bill_head_code], $options);
         },
         'mapping' => function ($url, $model) {
             $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';

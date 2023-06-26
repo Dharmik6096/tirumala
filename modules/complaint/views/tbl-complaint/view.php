@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Complaints'), 'u
 $this->params['breadcrumbs'][] = $this->title;
 $status = $model->getComplaintStatus($model->complaint_code);
 if (!isset($status))
-    $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil"></i> Edit'), Url::to(['tbl-complaint-activity/create', 'id' => $model->complaint_code]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
+    $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil-alt"></i> Edit'), Url::to(['tbl-complaint-activity/create', 'id' => $model->complaint_code]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
 ?>
 <div class="panel panel-default panel-grid panel-main tbl-complaint-view">
     <div class="panel-heading">
