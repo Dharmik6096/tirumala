@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\organisation\models\TblFederations;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
@@ -53,18 +53,18 @@ class TblUserOrganizationMapping extends ChildModel {
      */
     public function rules() {
         return [
-            [['federation'], 'required', 'on' => 'organizationMapping'],
-            [['union'], 'required', 'on' => 'organizationMappingUnion'],
-            [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
-            [['is_active'], 'integer'],
+                [['federation'], 'required', 'on' => 'organizationMapping'],
+                [['union'], 'required', 'on' => 'organizationMappingUnion'],
+                [['federation', 'union', 'dcs', 'created_at', 'deleted_at', 'updated_at', 'organization', 'plant', 'mcc', 'bmc'], 'safe'],
+                [['is_active'], 'integer'],
 //            [['federation'], function ($attribute, $params) {
 //                    $this->validateChecked($attribute,$params);
 //                },'skipOnEmpty'=> false],
             [['organization_code', 'organization_type'], 'string', 'max' => 25],
-            [['created_by', 'updated_by', 'user_id'], 'string', 'max' => 14],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
-            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
+                [['created_by', 'updated_by', 'user_id'], 'string', 'max' => 14],
+                [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+                [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
+                [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
 

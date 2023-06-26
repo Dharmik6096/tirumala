@@ -3,8 +3,9 @@
 namespace app\models;
 
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\organisation\models\TblUnions;
+
 /**
  * This is the model class for table "identity_master".
  *
@@ -27,8 +28,8 @@ use app\modules\organisation\models\TblUnions;
  * @property string $updated_at
  * @property string $sync_url
  */
-class IdentityMaster extends ChildModel
-{
+class IdentityMaster extends ChildModel {
+
     public $identity;
     public $username;
     public $password;
@@ -36,43 +37,39 @@ class IdentityMaster extends ChildModel
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'identity_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['created_by', 'updated_by'], 'integer'],
-            [['username'], 'validateUniqueUsername'],
-            [['identity', 'username','password','sync_url','organization_code', 'organization_type'], 'required'],
-            [['created_at','is_delete','identity','parent_type','parent_code', 'updated_at','username','password','parent_url','own_url','own_mac_address','sync_timestamp','is_active','activation_key','flg_sentbox_entry','sync_status','sync_url'], 'safe'],
-            [['organization_code', 'organization_type'], 'string', 'max' => 255],
+                [['created_by', 'updated_by'], 'integer'],
+                [['username'], 'validateUniqueUsername'],
+                [['identity', 'username', 'password', 'sync_url', 'organization_code', 'organization_type'], 'required'],
+                [['created_at', 'is_delete', 'identity', 'parent_type', 'parent_code', 'updated_at', 'username', 'password', 'parent_url', 'own_url', 'own_mac_address', 'sync_timestamp', 'is_active', 'activation_key', 'flg_sentbox_entry', 'sync_status', 'sync_url'], 'safe'],
+                [['organization_code', 'organization_type'], 'string', 'max' => 255],
         ];
     }
 
-    public function validateUniqueUsername(){
+    public function validateUniqueUsername() {
 
-            if(!empty($this->username)){
-                $idenRecord = $this->getIdentity();
+        if (!empty($this->username)) {
+            $idenRecord = $this->getIdentity();
 
-                $check = User::find()->where(['username'=>$this->username])->count();
-                if($check!=0){
-                    $this->addError('username', Yii::t('app', 'This Username already taken'));
-                }
-
+            $check = User::find()->where(['username' => $this->username])->count();
+            if ($check != 0) {
+                $this->addError('username', Yii::t('app', 'This Username already taken'));
             }
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'identity' => Yii::t('app', 'Identity'),
@@ -96,18 +93,18 @@ class IdentityMaster extends ChildModel
      * @inheritdoc
      * @return IdentityMasterQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new IdentityMasterQuery(get_called_class());
     }
-    public function getIdentity(){
-        return self::find()->select(['organization_type','organization_code','parent_code','parent_type'])->where(['is_active'=>1])->one();
+
+    public function getIdentity() {
+        return self::find()->select(['organization_type', 'organization_code', 'parent_code', 'parent_type'])->where(['is_active' => 1])->one();
     }
 
-    public function getIdentityCode(){
+    public function getIdentityCode() {
 
         $type = $this->getIdentity();
-        switch ($type->organization_type){
+        switch ($type->organization_type) {
             case 'NATIONAL':
                 return 1;
                 break;
@@ -122,38 +119,38 @@ class IdentityMaster extends ChildModel
                 break;
         }
     }
-    
-    /*public function getCode() {
 
-        $national='00';
-        $federation = '00';
-        $union = '000';
-        switch ($this->organization_type){
-            case 'NATIONAL':
-                $national = '91';
-                $federation = '00';
-                $union = '000';
-                break;
-            case 'FEDERATION':
-                $federation = $this->organization_code;
-                 break;
-            case 'UNION':
-                $record = TblUnions::find()->select('federation_code')->where(['union_code'=>$this->organization_code,'is_active'=>1,'is_delete'=>0])->one();
-                $federation = $record->federation_code;
-                $union = $this->organization_code;
-                break;
-        }
+    /* public function getCode() {
 
-        $new_code = $national.$federation.$union;
-        $len = strlen($new_code);
-        $val = (new \yii\db\Query)
-                ->select("MAX(CAST(trim(SUBSTRING(`id` FROM ".$len." +1)) AS UNSIGNED)) as id")
-                ->from('identity_master')
-                ->where('(CAST(trim(SUBSTRING(id, 1,'.$len.')) AS UNSIGNED))="'.trim($new_code).'"')
-                ->one();
-        $code = (int)$val['id'] + 1 ;
-         
-        $value = $new_code . $code;
-        return $value;
-    }*/
+      $national='00';
+      $federation = '00';
+      $union = '000';
+      switch ($this->organization_type){
+      case 'NATIONAL':
+      $national = '91';
+      $federation = '00';
+      $union = '000';
+      break;
+      case 'FEDERATION':
+      $federation = $this->organization_code;
+      break;
+      case 'UNION':
+      $record = TblUnions::find()->select('federation_code')->where(['union_code'=>$this->organization_code,'is_active'=>1,'is_delete'=>0])->one();
+      $federation = $record->federation_code;
+      $union = $this->organization_code;
+      break;
+      }
+
+      $new_code = $national.$federation.$union;
+      $len = strlen($new_code);
+      $val = (new \yii\db\Query)
+      ->select("MAX(CAST(trim(SUBSTRING(`id` FROM ".$len." +1)) AS UNSIGNED)) as id")
+      ->from('identity_master')
+      ->where('(CAST(trim(SUBSTRING(id, 1,'.$len.')) AS UNSIGNED))="'.trim($new_code).'"')
+      ->one();
+      $code = (int)$val['id'] + 1 ;
+
+      $value = $new_code . $code;
+      return $value;
+      } */
 }

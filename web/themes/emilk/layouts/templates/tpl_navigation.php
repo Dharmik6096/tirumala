@@ -1,7 +1,7 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostMenu;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\components\GhostMenu;
+use app\modules\usermanagement\models\User;
 
 $cntrl = Yii::$app->controller->id;
 $action = Yii::$app->controller->action->id;
