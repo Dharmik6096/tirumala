@@ -59,6 +59,7 @@ $form = ActiveForm::begin([
                 </div>
             <?php } ?>
             <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
+        <div class="col-sm-12">
                 <div class="col-sm-4 number-validate">  
                     <?= $form->field($model, 'ref_code')->textInput() ?>
                 </div>
@@ -98,11 +99,14 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_e')->textInput() ?>
+        </div>       
         </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
-            <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+            </div>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
         </div>
     </div>
     <div class="col-md-6 padding_10_0 theme-box ">

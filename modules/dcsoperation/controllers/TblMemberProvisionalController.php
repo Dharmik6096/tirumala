@@ -304,6 +304,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $this->model->dob = empty($this->model->dob) ? NULL : $this->model->dob;
         $this->model->member_name = ucwords($this->model->member_name);
         $this->model->ex_member_code = str_pad($this->model->ex_member_code, 4, '0', STR_PAD_LEFT);
+        
+//        if (isset($this->model->ex_member_code)) {
+//            $this->model->ex_member_code = str_pad($this->model->ex_member_code, 4, '0', STR_PAD_LEFT);
+//        }
     }
 
     public function actionProvisionalMilkCollectionList() {

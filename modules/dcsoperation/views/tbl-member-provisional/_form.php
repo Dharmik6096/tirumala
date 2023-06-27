@@ -187,13 +187,14 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-4">
             <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
         </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+        </div>        
         </div>
-
     </div>
 
 
@@ -220,11 +221,13 @@ if ($model->isNewRecord) {
         <div class="col-sm-2">
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'annual_income')->textInput() ?>
+        </div>        
         </div>
         <!--    <div class="col-sm-4">
         <?php // $form->field($model, 'payment_mode')->textInput() ?>
@@ -235,8 +238,8 @@ if ($model->isNewRecord) {
 <div class="row">           
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
-            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+            <?= Html::submitButton($type == 'create' ? Yii::t('app', 'Save & Approve') : Yii::t('app', 'Update & Approve'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve']) ?>
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>

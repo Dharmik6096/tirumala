@@ -125,7 +125,11 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $this->model->scenario = 'updateFront';
         $x_col1 = explode('#', $this->model->x_col1);
         $prefix = Yii::$app->general->getforeignkey($this->model->customerTypePre, 'code_prefix');
-        $exCode = str_replace($prefix, '', $this->model->customer_code_ex);
+        $exCode = $this->model->customer_code_ex;
+        if ($prefix !== null && !is_array($prefix)) {
+            $exCode = str_replace($prefix, '', $exCode);
+        }
+
         if ($exCode != $this->model->customer_code_ex) {
             $this->model->prefix = $prefix;
             $this->model->customer_code_ex = $exCode;
