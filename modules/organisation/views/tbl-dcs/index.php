@@ -10,7 +10,7 @@ if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/update')) {
     } else {
         $this->params['menu'][] = Yii::$app->controls->import('dcs', $this);
     }
-    $this->params['menu'][] = GhostHtml::a('<i class="fa fa fa-close"></i>' . Yii::t('app', 'Society Deactivation'), ['/organisation/tbl-dcs-deactive/index'], ['class' => 'btn btn-danger btn-block']);
+    $this->params['menu'][] = GhostHtml::a('<i class="fa fa fa-times"></i>' . Yii::t('app', 'Society Deactivation'), ['/organisation/tbl-dcs-deactive/index'], ['class' => 'btn btn-danger btn-block']);
 }
 ?>
 <div class="tbl-dcs-index">
