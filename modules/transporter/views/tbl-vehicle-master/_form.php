@@ -90,8 +90,8 @@ $form = ActiveForm::begin([
        <!--<? Yii::$app->controls->active($model, $form); ?>-->
         <!--</div>-->
         <div class="col-sm-2 mt15">
-            <?= $form->field($model, 'billing_with_capacity', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-        </div>
+               <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'billing_with_capacity'); ?>
+         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($model, $form, 'flag_wef_date', '', FALSE, FALSE); ?>
         </div>

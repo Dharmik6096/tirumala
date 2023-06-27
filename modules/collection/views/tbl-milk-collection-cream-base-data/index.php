@@ -10,7 +10,7 @@ $this->params['menu'][] = Yii::$app->controls->custombutton('Delete Milk Collect
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
             <?= $this->title; ?>           
-            <?php // GhostHtml::a('<i class="fa fa-map-marker"></i>', $url, ['class' => 'headerIcon btn btn-danger apply-shortcut btn-block', 'shortcut_key' => 'ctrl+alt+c']); ?>           
+            <?php // GhostHtml::a('<i class="fa fa-map-marker-alt"></i>', $url, ['class' => 'headerIcon btn btn-danger apply-shortcut btn-block', 'shortcut_key' => 'ctrl+alt+c']); ?>           
         </div>
         <div class="panel-body">
             <?=
