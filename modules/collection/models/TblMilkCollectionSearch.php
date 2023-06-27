@@ -167,7 +167,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
 
         $ApprovalData = TblCollectionDataAlias::find()->select(['mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Not Verified'")])
                 ->where(['mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'dcs_code' => $this->dcs_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_milk_collection'])
-                ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
+                ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime((string)$this->date_time_of_collection))]);
 
         $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
 

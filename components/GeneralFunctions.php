@@ -832,9 +832,9 @@ class GeneralFunctions extends Component {
         $tablename = $model->tableSchema->fullName;
         foreach ($fields as $fd) {
             if (!empty($model->{$fd}) || $model->{$fd} == 0) {
-                if (preg_match('/^[0-9][0-9]*$/', $model->{$fd})) {
+                if (is_string($model->{$fd})&& preg_match('/^[0-9][0-9]*$/', $model->{$fd})) {
                     $query->andwhere([$fd => $model->{$fd}]);
-                } else {
+                } else { 
                     $query->andFilterWhere(['like', $fd, $model->{$fd}]);
                 }
             }
