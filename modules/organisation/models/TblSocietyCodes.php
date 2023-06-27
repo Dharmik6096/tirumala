@@ -40,17 +40,17 @@ class TblSocietyCodes extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['dcs_code', 'union_code'], 'required', 'except' => 'saveCreamyData'],
-                [['route_code'], 'required', 'on' => 'societycode'],
+            [['dcs_code', 'union_code'], 'required', 'except' => 'saveCreamyData'],
+            [['route_code'], 'required', 'on' => 'societycode'],
             //[['imei_no'],'required','on'=>'societycode'],
             /* [['imei_no'],'unique','skipOnEmpty'=>'true','on'=>'societycode','when' => function ($model, $attribute) {
               return $model->{$attribute} !== $model->getOldAttribute($attribute);
               },], */
-                [['imei_no'], function ($attribute, $params) {
+            [['imei_no'], function ($attribute, $params) {
                     $this->valiadteUniqueImei($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => 'saveCreamyData'],
-                [['dcs_code', 'bmc_code', 'union_code', 'pooling_point_code', 'imei_no', 'created_by', 'updated_by'], 'string'],
-                [['created_at', 'updated_at', 'vendor_code', 'imei_no', 'bipl_code', 'route_code'], 'safe']
+            [['dcs_code', 'bmc_code', 'union_code', 'pooling_point_code', 'imei_no', 'created_by', 'updated_by'], 'string'],
+            [['created_at', 'updated_at', 'vendor_code', 'imei_no', 'bipl_code', 'route_code'], 'safe']
 
                 //[['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code']],
                 //[['dcs_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcs::className(), 'targetAttribute' => ['dcs_code' => 'dcs_code']],
@@ -125,9 +125,10 @@ class TblSocietyCodes extends \app\models\ChildModel {
     }
 
     public function getBiplCode($code) {
-        $data = $this->find()->select(["convert(int,MAX(substring(bipl_code,7,2))) as bipl_code"])->where(['substring(bipl_code,1,6)' => trim($code)])->one();
+        $data = $this->find()->select(["convert(int,MAX(substring(bipl_code,7,2))) as bipl_code"])->where(['substring(bipl_code,1,6)' => $code !== null ? trim($code) : null])->one();
         $new_code = isset($data['bipl_code']) ? ($data['bipl_code'] + 1) : 1;
-        return trim($code) . str_pad($new_code, 2, '0', STR_PAD_LEFT);
+        $trimmedCode = $code !== null ? trim($code) : '';
+        return $trimmedCode . str_pad($new_code, 2, '0', STR_PAD_LEFT);
     }
 
     public function valiadteUniqueImei($model, $attribute, $params) {

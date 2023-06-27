@@ -103,6 +103,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('blood-group', $model, $form, '', 'Blood Group'); ?>
         </div>
@@ -111,6 +112,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
+        </div>        
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
@@ -121,6 +123,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-4">
             <?= Yii::$app->controls->date($model, $form, 'registration_date'); ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdownStatic('member_class', $model, $form, 'form-group', $model->getAttributeLabel('member_class'), false, 'member_class', false); ?>
         </div>
@@ -132,6 +135,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+        </div>        
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'sap_farmer_code')->textInput() ?>
@@ -142,7 +146,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             </div>
         <?php } ?>
         <div class="col-sm-4 mt10">
-            <?= $form->field($model, 'is_dcs_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_dcs_member'); ?>
         </div>
     </div>
     <!-- <div class="clearfix"></div>
@@ -221,11 +225,13 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <div class="col-sm-4">
                 <?= $form->field($model, 'no_of_cow_cross')->textInput() ?>
             </div>
+            <div class="col-sm-12">
             <div class="col-sm-4">
                 <?= $form->field($model, 'no_of_cow_ind')->textInput() ?>
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'total_animals')->textInput(['readonly' => 'disable']) ?>
+            </div>            
             </div>
         </div>
     </div>
@@ -252,6 +258,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-2">
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
@@ -260,6 +267,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'annual_income')->textInput() ?>
+        </div>       
         </div>
         <!--    <div class="col-sm-3">
                 <? = $form->field($model, 'payment_mode')->textInput() ?>

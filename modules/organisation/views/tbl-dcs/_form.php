@@ -32,8 +32,13 @@ $bmcDisable = $model->is_bmc == 1 ? 'disabled' : '';
 $model->destination_code = 0;
 //$model->route_code = 0;
 $summary_model = $type == 'create' ? [$model, $bankDetails, $contactDetails] : $model;
-$address = explode(",", $model->address);
-$model->street1 = $address[0];
+$address = [];
+if ($model->address !== null && $model->address !== '') {
+    $address = explode(",", $model->address);
+}
+if (!empty($address)) {
+    $model->street1 = $address[0];
+} 
 if (isset($address[1])) {
     $model->street2 = $address[1];
 }
@@ -109,7 +114,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
         </div>
-
+        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor']); ?>
         </div>
@@ -147,6 +152,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-2', Yii::t('app', 'Society Type')); ?>
         </div>
+        </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('organisation_type', $model, $form, 'form-group col-sm-2', 'Organisation Type'); ?>
         </div>
@@ -175,6 +181,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
@@ -198,15 +205,18 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2 number-validate">  
             <?= $form->field($model, 'ts_code_e')->textInput() ?>
+        </div>        
         </div>
         <div class='pull-left col-sm-4'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
-            <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+            <div class="col-sm-4">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+            </div>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
         </div>
         <?php if ($showIsBMC == 0) { ?>
             <div class="col-sm-2 mt15">
-                <?= $form->field($model, 'is_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc'); ?>
             </div>
         <?php } ?>
     </div>
@@ -297,20 +307,21 @@ $form = ActiveForm::begin([
         <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
+        <div class="col-sm-12">
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'allow_multi_family_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
         </div>
         <!--<div class="col-sm-3">-->
         <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
         <!--</div>-->
         <!--        <div class="col-sm-2 mt10">
-        <?= $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <? $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
                 </div>-->
         <!--        <div class="col-sm-2 mt10">
-        <?= $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <? $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
                 </div>-->
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'credit_sale_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'credit_sale_allow'); ?>
         </div>
         <?php
         if ($type == 'edit') {
@@ -319,7 +330,7 @@ $form = ActiveForm::begin([
         ?>
 
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'milk_type_auto', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'milk_type_auto'); ?>
         </div>
 
         <?php // if ($type == 'create') {    ?>
@@ -332,18 +343,19 @@ $form = ActiveForm::begin([
         <?php // if ($type == 'create') {     ?>
         <?php if ($type == 'create') { ?>
             <div class="col-sm-2 mt10">
-                <?= $form->field($model, 'auto_member_create', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'auto_member_create'); ?>
             </div>
         <?php } ?>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'is_chiller', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chiller'); ?>
+        </div>
         </div>
         <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
         </div>
         <div class="col-sm-2 mt10">
-            <?= $form->field($model, 'cutoff', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff'); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>

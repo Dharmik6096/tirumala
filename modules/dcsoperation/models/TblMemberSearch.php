@@ -125,8 +125,8 @@ class TblMemberSearch extends TblMember {
                 ->andFilterWhere(['like', 'tbl_member.local_nominee_name', $this->local_nominee_name])
                 ->andFilterWhere(['like', 'tbl_member.is_download', $this->is_download])
                 ->andFilterWhere(['like', 'tbl_member.local_address', $this->local_address])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', substr($this->reference_code, 0, 3)])
-                ->andFilterWhere(['like', 'RIGHT(tbl_member.member_code,4)', substr($this->reference_code, 3, 4)]);
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', ($this->reference_code !== null ? substr($this->reference_code, 0, 3) : null)])
+                ->andFilterWhere(['like', 'RIGHT(tbl_member.member_code,4)', ($this->reference_code !== null ? substr($this->reference_code, 3, 4) : null)]);
 
         return $dataProvider;
     }

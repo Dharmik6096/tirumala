@@ -331,7 +331,7 @@ if (!empty($filter_data)) {
     </div>
 
     <div class="grid-search search-filter searchBtn text-right">
-        <div class="btn-group btn btn-default modal_toggle"><i class="glyphicon glyphicon-search"></i></div>
+        <div class="btn-login btn-group btn btn-default modal_toggle float-end"><i class="fa fa-search"></i></div>
     </div>
     <?php
 }
