@@ -150,7 +150,7 @@ $grid_option = [
             $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
             $url = ['/organisation/tbl-customer-master/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
-            return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
+            return GhostHtml::a_alert('<i class="fa fa-cloud-upload-alt"></i>', $url, $options);
         },
     ]
 ];

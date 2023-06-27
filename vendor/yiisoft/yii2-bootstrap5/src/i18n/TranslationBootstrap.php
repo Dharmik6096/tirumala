@@ -1,29 +1,25 @@
 <?php
 /**
- * @link https://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license https://www.yiiframework.com/license/
+ * @package yii2-bootstrap5
+ * @author Simon Karlen <simi.albi@gmail.com>
  */
 
 namespace yii\bootstrap5\i18n;
 
-use yii\base\BootstrapInterface;
-use yii\i18n\GettextMessageSource;
+use yii\base\Application;
 
 /**
- * This bootstrap implementation is used to add translations automatically to application configuration.
- *
- * @author Simon Karlen <simi.albi@gmail.com>
+ * This bootstrap implementation is used to add translations automatically to app configuration
  */
-class TranslationBootstrap implements BootstrapInterface
+class TranslationBootstrap implements \yii\base\BootstrapInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function bootstrap($app)
     {
-        $app->getI18n()->translations['yii/bootstrap5'] = [
-            'class' => GettextMessageSource::class,
+        $app->i18n->translations['yii/bootstrap5*'] = [
+            'class' => '\yii\i18n\GettextMessageSource',
             'sourceLanguage' => 'en-US',
             'basePath' => '@yii/bootstrap5/messages'
         ];

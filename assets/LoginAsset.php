@@ -19,11 +19,11 @@ class LoginAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'themes/emilk/assets/css/fontawesome-all.min.css',
-//        'themes/emilk/assets/css/pageloader.css',
+        'themes/emilk/assets/css/pageloader.css',
         'themes/emilk/assets/css/style.css',
     ];
     public $js = [
-        // 'themes/emilk/assets/js/liveloaderLogin.js',
+        'themes/emilk/assets/js/liveloaderLogin.js',
         'themes/emilk/assets/js/style.js',
     ];
     public $depends = [

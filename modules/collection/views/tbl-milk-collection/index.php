@@ -12,7 +12,7 @@ if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->g
 } else {
     $this->params['menu'][] = Yii::$app->controls->import('milk-collection-bulk', $this);
 }
-$this->params['menu'][] = Yii::$app->controls->custombutton('Online Farmer', 'online-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-map-marker"></i>');
+$this->params['menu'][] = Yii::$app->controls->custombutton('Online Farmer', 'online-collection', '', 'btn btn-danger btn-block', '<i class="fa fa-map-marker-alt"></i>');
 $url_path = [];
 $url_path[] = 'online-collection';
 $url = Url::to(array_values($url_path));
@@ -21,7 +21,7 @@ $url = Url::to(array_values($url_path));
     <div class="panel panel-default panel-grid panel-main">
         <div class="panel-heading">
             <?= $this->title; ?>           
-            <?= GhostHtml::a('<i class="fa fa-map-marker"></i>', $url, ['class' => 'headerIcon btn btn-danger apply-shortcut btn-block', 'shortcut_key' => 'ctrl+alt+c']); ?>           
+            <?= GhostHtml::a('<i class="fa fa-map-marker-alt"></i>', $url, ['class' => 'headerIcon btn btn-danger apply-shortcut btn-block', 'shortcut_key' => 'ctrl+alt+c']); ?>           
         </div>
         <div class="panel-body">
             <?=
