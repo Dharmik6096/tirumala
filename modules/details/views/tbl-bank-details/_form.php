@@ -25,7 +25,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'beneficiary_name')->textInput() ?>
 </div>
 <!--<div class="col-sm-2">
-<?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+<? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
 </div>-->
 <?php
 $script = "

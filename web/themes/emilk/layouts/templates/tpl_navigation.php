@@ -19,11 +19,16 @@ if (Yii::$app->session->get('Login-sess') == 'User') {
 } else if (Yii::$app->session->get('Login-sess') == 'Rail') {
     $logout_url[] = '/site/rail-logout';
 }
-$collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'collection_approval', 'PORTAL') == 1 ? TRUE : FALSE;
+$unions = Yii::$app->session->get('Unions');
+$unionArray = !empty($unions) ? explode(',', $unions) : []; // Check if $unions is not null before using explode()
+$collectionApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'collection_approval', 'PORTAL') == 1 ? true : false;
 $eiplCode = Yii::$app->session->get('eiplCode');
-$rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
-$batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
-?>
+$unions = Yii::$app->session->get('Unions');
+$unionArray = is_string($unions) ? explode(',', $unions) : []; // Check if $unions is a string before using explode()
+$unions = Yii::$app->session->get('Unions');
+$unionArray = is_string($unions) ? explode(',', $unions) : []; // Check if $unions is a string before using explode()
+$rateAppApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'rate_approval', 'PORTAL') == 1 ? true : false;
+$batchNoWise = Yii::$app->general->getUnionConfiguration($unionArray, 'batch_no_wise_inventory', 'PORTAL') == 1 ? true : false;?>
 <?php
 
 echo GhostMenu::widget([

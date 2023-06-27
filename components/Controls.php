@@ -36,12 +36,12 @@ class Controls extends Component {
     }
 
     public function save($value, $model, $class = '') {
-        echo Html::button(Yii::t('app', $value), ['class' => 'btn btn-primary apply-shortcut ' . $class, 'shortcut_key' => !empty($model->isNewRecord) ? 'ctrl+alt+s' : 'ctrl+alt+u', 'button' => 'save']);
+        echo Html::button(Yii::t('app', $value), ['class' => 'btn-login btn btn-primary apply-shortcut ' . $class, 'shortcut_key' => !empty($model->isNewRecord) ? 'ctrl+alt+s' : 'ctrl+alt+u', 'button' => 'save']);
     }
 
     public function update($id, $action = 'update') {
         //var_dump($action);exit;
-        return GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil"></i> Edit'), Url::to([$action, 'id' => $id]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
+        return GhostHtml::a(Yii::t('app', '<i class="fa fa-pencil-alt"></i> Edit'), Url::to([$action, 'id' => $id]), ['class' => 'btn btn-danger btn-block apply-shortcut', 'shortcut_key' => 'ctrl+alt+e']);
     }
 
     public function update_combo($id, $action = 'update', $params = '') {
@@ -50,13 +50,13 @@ class Controls extends Component {
     }
 
     public function reset() {
-        echo Html::resetButton(Yii::t('app', 'reset'), ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+r']);
+        echo Html::resetButton(Yii::t('app', 'reset'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+r']);
     }
 
     public function cancel($model = '', $action = 'index', $params = null, $backArrow = false) {
         // if (!$model->isNewRecord) {
         $label = 'cancel';
-        $class = 'btn btn-danger apply-shortcut';
+        $class = 'btn-login btn btn-danger apply-shortcut';
         if (Yii::$app->controller->action->id == 'view' || Yii::$app->controller->action->id == 'rate-chart' || $backArrow) {
             $class = 'btn btn-primary apply-shortcut';
             $label = '<i class="fa fa-arrow-left"></i>';

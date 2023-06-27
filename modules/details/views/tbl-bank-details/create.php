@@ -105,7 +105,7 @@ $this->title = Yii::$app->label->title('create', 'Bank Detail');
                                                         }
                                                  }'),
                         ],
-                        'options' => ['class' => 'btn btn-default btn-save-txn saveBankDetails',
+                        'options' => ['class' => 'btn-login btn btn-default btn-save-txn saveBankDetails',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();

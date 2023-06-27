@@ -2,7 +2,7 @@
 use yii\web\View;
 if($type=='successbar'){
     $class='fa fa-check';
-    $bg = 'bg-success';
+    $bg = 'bg-succ';
 }
 else{
     $class='fa fa-times';
