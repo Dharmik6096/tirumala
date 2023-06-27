@@ -744,8 +744,11 @@ select[multiple]{
 .radio input[type="radio"], .radio-inline input[type="radio"], .checkbox-inline input[type="checkbox"]{
     margin-left: -25px;
 }
-input[type="radio"], input[type="checkbox"]{
+input[type="radio"]{
     margin: 4px 5px 0 2px;
+    vertical-align: text-top;
+}
+input[type="checkbox"]{
     vertical-align: text-top;
 }
 .radio-list input[type="radio"]{
@@ -2922,8 +2925,8 @@ td.action-cell{
 }
 
 input[type="checkbox"]{
-    height: 10px !important;
-    width: 10px!important;
+   /* height: 10px !important;
+    width: 10px!important; */
 }
 .panel > .table-responsive > .table-bordered > thead > tr:first-child > th{
     white-space: nowrap;
@@ -5073,6 +5076,11 @@ tr.highlightRow {
     margin-bottom: 5px;
 }
 .input-group-text{
+    border-radius: 0px;
+}
+.form-check-input:checked {
+    background-color: rgb(122, 35, 28);
+    border-color: rgb(122, 35, 28);
     border-radius: 0px;
 }
 /*bu {

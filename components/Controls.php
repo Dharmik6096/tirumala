@@ -87,7 +87,7 @@ class Controls extends Component {
 //    }
 
     public function checkTemplateBootstrap5($model, $form, $label = 'is_active', $value = false) {
-        echo $form->field($model, $label, ['checkTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(['checked' => $value]);
+        echo $form->field($model, $label, ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(['checked' => $value]);
     }
 
     public function import($flag, $view, $text = '', $fields = [], $appendId = '') {

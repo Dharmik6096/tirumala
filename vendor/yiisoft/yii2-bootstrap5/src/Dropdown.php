@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
  *
  * ```php
  * <div class="dropdown">
- *     <a href="#" data-bs-toggle="dropdown" class="dropdown-toggle">Label <b class="caret"></b></a>
+ *     <a href="#" data-toggle="dropdown" class="dropdown-toggle">Label <b class="caret"></b></a>
  *     <?php
  *         echo Dropdown::widget([
  *             'items' => [
@@ -85,7 +85,7 @@ class Dropdown extends Widget
     public function run(): string
     {
         BootstrapPluginAsset::register($this->getView());
-        $this->registerClientEvents('dropdown');
+        $this->registerClientEvents();
 
         return $this->renderItems($this->items, $this->options);
     }
