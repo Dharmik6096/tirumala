@@ -47,6 +47,9 @@ class TblComplainSearch extends TblComplain {
 
         $this->load($params);
 
+        if (!empty($this->complain_datetime)) {
+            $query->andFilterWhere(['like', 'cast(tbl_complain.complain_datetime as date)', date('Y-m-d', strtotime($this->complain_datetime))]);
+        }
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -57,7 +60,6 @@ class TblComplainSearch extends TblComplain {
         $query->andFilterWhere([
             'complain_code' => $this->complain_code,
             'complain_type_code' => $this->complain_type_code,
-            'complain_datetime' => $this->complain_datetime,
             'complain_assignment_datetime' => $this->complain_assignment_datetime,
             'complain_problem_code' => $this->complain_problem_code,
             'complain_status_datetime' => $this->complain_status_datetime,
@@ -65,17 +67,9 @@ class TblComplainSearch extends TblComplain {
             'spare_required' => $this->spare_required,
             'affects_data' => $this->affects_data,
             'resolved_datetime' => $this->resolved_datetime,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-                ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-                ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-                ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-                ->andFilterWhere(['like', 'location_type', $this->location_type])
+        $query->andFilterWhere(['like', 'location_type', $this->location_type])
                 ->andFilterWhere(['like', 'complain_for', $this->complain_for])
                 ->andFilterWhere(['like', 'asset_code', $this->asset_code])
                 ->andFilterWhere(['like', 'serial_number', $this->serial_number])
@@ -89,11 +83,7 @@ class TblComplainSearch extends TblComplain {
                 ->andFilterWhere(['like', 'remarks', $this->remarks])
                 ->andFilterWhere(['like', 'entry_type', $this->entry_type])
                 ->andFilterWhere(['like', 'resolved_status', $this->resolved_status])
-                ->andFilterWhere(['like', 'resolved_remarks', $this->resolved_remarks])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'resolved_remarks', $this->resolved_remarks]);
 
         return $dataProvider;
     }

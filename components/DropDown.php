@@ -1614,6 +1614,7 @@ class DropDown extends Component {
             'asset_bom_code' => ['name' => 'spare_code', 'fields' => 'spare_code,spare_code,', 'prompt' => Yii::t('app', 'Select Spare'), 'model' => 'TblAssetBom', 'depend' => 'asset_code'],
             'complain_escalation_name' => ['name' => 'complain_escalation_code', 'fields' => 'complain_escalation_code,escalation_name', 'prompt' => 'Select Complain  Escalation Name', 'model' => 'TblComplainEscalation'],
             'complain_type' => ['name' => 'complain_type_code', 'fields' => 'complain_type_code,complain_type', 'prompt' => 'Select Complain Type', 'model' => 'TblComplainType'],
+            'contact_detail_complain_user' => ['name' => 'user_code', 'fields' => 'detail_code,firstname,mobile_no', 'prompt' => 'Select', 'model' => 'TblContactDetails'],
         ];
         return $label[$l];
     }

@@ -9,6 +9,9 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\assetmanagement\models\TblAssetMaster;
+use app\modules\details\models\TblContactDetails;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\organisation\models\TblDcsBmc;
 
 /**
  * This is the model class for table "tbl_complain".
@@ -71,6 +74,7 @@ class TblComplain extends \app\models\ChildModel {
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
+                [['user_code'], 'required', 'on' => ['assign_complain']],
         ];
     }
 
@@ -135,6 +139,10 @@ class TblComplain extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
     public function getComplainFors() {
         return $this->hasOne(TblComplainType::className(), ['complain_type_code' => 'complain_type_code']);
     }
@@ -153,6 +161,14 @@ class TblComplain extends \app\models\ChildModel {
 
     public function getComplainStatus($id) {
         return $this->find()->select('complain_status')->where(['complain_status' => 'CREATED', 'complain_code' => $id])->one();
+    }
+
+    public function getContactDetailsCode() {
+        return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'user_code']);
+    }
+
+    public function getContactDetailsCodes() {
+        return $this->hasOne(User::className(), ['id' => 'user_code']);
     }
 
 }

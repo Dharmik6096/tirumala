@@ -16,6 +16,11 @@ use app\modules\complaint\models\TblComplainType;
 use app\modules\assetmanagement\models\TblAssetMaster;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\complaint\models\TblComplainActivityHistory;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\sms\models\TblApiMaster;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\sms\models\TblAlertNotification;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -65,7 +70,7 @@ class TblComplainController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             if ($this->model->validate()) {
-                $this->setComplaintActivityModel($complaint_activity_model);
+                $this->setComplaintActivityModel($complaint_activity_model, 'CREATED');
                 $auto_key_config['TblComplainActivity'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                 $transaction = $this->generalModel->saveTransactionAutoIncForeignKey([$this->model, $complaint_activity_model], ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
@@ -138,15 +143,17 @@ class TblComplainController extends \app\controllers\ChildController {
     }
 
     private function setModel() {
-//        $this->model->complain_datetime = ($this->model->complain_datetime == '') ? null : Yii::$app->formatter->asDate($this->model->complain_datetime, DATE_FORMAT);
-        $this->model->resolved_datetime = ($this->model->resolved_datetime == '') ? null : Yii::$app->formatter->asDate($this->model->resolved_datetime, DATE_FORMAT);
+        $this->model->complain_datetime = ($this->model->complain_datetime == '') ? null : $this->model->complain_datetime;
+        $this->model->resolved_datetime = ($this->model->resolved_datetime == '') ? null : date('Y-m-d H:i:s');
+        $this->model->complain_status_datetime = date('Y-m-d H:i:s');
     }
 
-    private function setComplaintActivityModel($complaint_activity_model) {
+    private function setComplaintActivityModel($complaint_activity_model, $status) {
         $complaint_activity_model->complain_code = $this->model->complain_code;
-        $complaint_activity_model->activity_type = $this->model->complain_status;
+        $complaint_activity_model->activity_type = $status;
         $complaint_activity_model->remarks = $this->model->remarks;
         $complaint_activity_model->entry_type = 'PORTAL';
+        $complaint_activity_model->user_code = $this->model->user_code;
     }
 
     public function actionProblemList() {
@@ -188,6 +195,103 @@ class TblComplainController extends \app\controllers\ChildController {
         $record = ['status' => 'success', 'msg' => $sno];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
+    }
+
+    public function actionAssignComplain($complain_code = '') {
+        $this->model = new TblComplain();
+        $this->model = $this->findModel($complain_code);
+        $child = [];
+        $historyModel = new TblComplainHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->scenario = 'assign_complain';
+        $notificationSent = true;
+        if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
+            $master = [];
+            $appLoginModel = new User();
+            $mobileNo = Yii::$app->general->getforeignkey($this->model->contactDetailsCodes, 'mobile_no');
+            $appLoginModel->mobile_no = !empty($mobileNo) && $mobileNo != 'N/A' ? $mobileNo : '';
+
+//            $appLoginModelData = $appLoginModel->getLoginDetails();
+//            public function getLoginDetails() {
+//                return $this->find()
+//                                ->where(['is_active' => 1, 'mobile_no' => $this->mobile_no])
+//                                ->one();
+//            }
+
+            if (!empty($appLoginModelData)) {
+                $recType = 'APP_NOTIFICATION';
+                $moduleType = 'Complain Assignment';
+                $apiMaster = new TblApiMaster();
+                $apiMasterData = $apiMaster->getRecord($recType, $this->model->union_code);
+
+                if (!empty($apiMasterData)) {
+                    $alertTemplate = new TblAlertTemplate();
+                    $alertTemplate->module_type = $moduleType;
+                    $alertTemplate->receiver_type = $recType;
+                    $alertTemplate->union_code = $this->model->union_code;
+                    $alertTemplateData = $alertTemplate->getRecord();
+
+                    if (!empty($alertTemplateData)) {
+                        $alertNotification = new TblAlertNotification();
+                        $alertNotification->receiver_detail = $appLoginModelData->device_id;
+                        $alertNotification->receiver_type = $recType;
+                        $masterDetail = '';
+                        if (!empty($this->model->dcs_code)) {
+                            $masterDetail = Yii::t('app', 'DCS') . '(' . Yii::$app->general->getforeignkey($this->model->dcsCode, 'dcs_name') . ' - ' . $this->model->dcs_code . ')';
+                        } else if (!empty($this->model->mcc_plant_code)) {
+                            $masterDetail = Yii::t('app', 'MCC') . '(' . Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'name') . ' - ' . $this->model->mcc_plant_code . ')';
+                        } else if (!empty($this->model->plant_code)) {
+                            $masterDetail = Yii::t('app', 'Plant') . '(' . Yii::$app->general->getforeignkey($this->model->plantCode, 'name') . ' - ' . $this->model->plant_code . ')';
+                        } else if (!empty($this->model->bmc_code)) {
+                            $masterDetail = Yii::t('app', 'BMC') . '(' . Yii::$app->general->getforeignkey($this->model->plantCode, 'bmc_name') . ' - ' . $this->model->bmc_code . ')';
+                        }
+                        $alertNotification->message = str_replace('{master_detail}', $masterDetail, $alertTemplateData->message);
+                        $alertNotification->header_info = str_replace('{complain_no}', $this->model->complain_code, $alertTemplateData->header_info);
+                        $alertNotification->send_status = 0;
+                        $alertNotification->content_id = $apiMasterData->api_master_id;
+                        $alertNotification->refecence_code = $this->model->complain_code;
+                        $alertNotification->module_type = $moduleType;
+                        $alertNotification->entry_datetime = date('Y-m-d H:i:s');
+                        $master[] = $alertNotification;
+                    } else {
+                        $notificationSent = false;
+                    }
+                } else {
+                    $notificationSent = false;
+                }
+            } else {
+                $notificationSent = false;
+            }
+
+            $complaint_activity_model = new TblComplainActivity();
+            $this->setModel($this->model);
+            $activityModel = TblComplainActivity::find()->where(['complain_code' => $this->model->complain_code, 'activity_type' => 'ASSIGN'])->orderBy('complain_activity_code', 'desc')->one();
+            $status = 'ASSIGN';
+            if (!empty($activityModel)) {
+                $status = 'RE-ASSIGN';
+            }
+            $this->setComplaintActivityModel($complaint_activity_model, $status);
+            $this->model->complain_status = 'INPROGRESS';
+            $this->model->complain_assignment_datetime = date('Y-m-d H:i:s');
+
+            $master[] = $this->model;
+            $master[] = $complaint_activity_model;
+            $child[] = $historyModel;
+
+            $transaction = $this->generalModel->saveTransaction($master, $child, ['Complain Assign', 'create']);
+            if ($transaction == 'customRedirect') {
+                if (!$notificationSent) {
+                    Yii::$app->getSession()->setFlash('success', [
+                        'type' => 'success',
+                        'message' => Yii::t('app', 'Complain successfully assigned and notification is not generated.'),
+                    ]);
+                }
+            }
+            return $this->redirect(['index']);
+        }
+        return $this->renderAjax('assign_complain', [
+                    'model' => $this->model
+        ]);
     }
 
 }
