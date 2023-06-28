@@ -79,16 +79,16 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('calc_based_on', $model, $form, 'form-group', $model->getAttributeLabel('calculation_based_on'), false, 'calculation_based_on', false); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_default', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_default'); ?>
     </div>   
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'has_slab'); ?>
     </div>
     <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>
     <div class="col-sm-2 mt15" id="isHold">
-        <?= $form->field($model, 'is_hold', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_hold'); ?>
     </div>
     <div class="col-sm-2" id="paymentCycleType">
         <?= Yii::$app->dropdown->dropdownStatic('payment_cycle_type', $model, $form, 'form-group', $model->getAttributeLabel('payment_cycle_type'), false, 'payment_cycle_type', false); ?>

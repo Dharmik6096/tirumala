@@ -55,7 +55,8 @@ class TblSchemeApplicationDisbursementSearch extends TblSchemeApplicationDisburs
 
         Yii::$app->general->filterByOrg($query, $this);
 
-        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d', strtotime($this->disburse_date));
+        $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : '';
+        $selected_date = !empty($from_date) ? $from_date : (!empty($this->disburse_date) ? date('Y-m-d', strtotime($this->disburse_date)) : '');
         $query->andFilterWhere(['>=', 'tbl_scheme_application_disbursement.disburse_date', $from_date]);
 
 

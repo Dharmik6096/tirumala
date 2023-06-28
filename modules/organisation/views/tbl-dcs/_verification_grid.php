@@ -84,7 +84,7 @@ $this->title = Yii::t('app', 'Bank Verification');
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'master-verification'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'master-verification','','btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

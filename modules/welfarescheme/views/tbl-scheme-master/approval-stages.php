@@ -74,7 +74,7 @@ $this->title = Yii::$app->label->title('create', 'Approval Stages');
                             <div class="form-group">                    
                                 <?= Yii::$app->controls->save(Yii::$app->label->button('create'), $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                                <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?>
                             </div>
                         </div>
                     </div>

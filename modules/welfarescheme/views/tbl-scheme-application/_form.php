@@ -79,7 +79,7 @@ $form = ActiveForm::begin([
         <div class="form-group">
             <?= Yii::$app->controls->save('NEXT', $model); ?>
             <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+            <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?>
         </div>  
     </div>
 </div>

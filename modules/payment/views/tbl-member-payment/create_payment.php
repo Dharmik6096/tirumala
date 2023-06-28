@@ -110,12 +110,12 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
                                                     }
                                      }'),
                         ],
-                        'options' => ['class' => 'btn btn-primary',
+                        'options' => ['class' => 'btn-login btn btn-primary',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                     <?php // Yii::$app->controls->save('Next', $model); ?>   
                     <?php // Yii::$app->controls->cancel(); ?>
                 </div>

@@ -187,7 +187,7 @@ $form = ActiveForm::begin(['options' => [
         ]);
         AjaxSubmitButton::end();
         ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
     </div>
 
 </div>

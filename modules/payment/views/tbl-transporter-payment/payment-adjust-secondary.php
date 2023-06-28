@@ -187,7 +187,7 @@ $model->final_pay = $model->final_amount;
                 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                     <div class="form-group">
                         <?= Yii::$app->controls->save('CONFIRM', $model); ?>  
-                        <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                        <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                     </div>
                 </div>
             </div>

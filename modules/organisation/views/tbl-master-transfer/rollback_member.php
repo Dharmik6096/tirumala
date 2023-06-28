@@ -67,7 +67,7 @@ $this->title = Yii::t('app', 'Roll Back Farmer');
                     echo Html::button(Yii::t('app', 'Roll Back'), ['class' => 'btn btn-primary', 'id' => 'rollback']);
                 }
                 ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
             </div>
             <?php ActiveForm::end(); ?>
         </div>

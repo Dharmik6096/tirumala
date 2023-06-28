@@ -105,7 +105,7 @@ if (!empty($dataProvider->getModels())) {
     echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary', 'id' => 'update']);
 }
 ?>
-<?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+<?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
 </div>-->
 
 <div class="col-sm-12 mt25 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

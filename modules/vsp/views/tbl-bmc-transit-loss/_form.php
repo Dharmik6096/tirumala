@@ -73,7 +73,7 @@ $action = Url::to(['update-transit-loss']);
         echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

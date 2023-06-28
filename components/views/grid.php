@@ -47,7 +47,7 @@ $(document).ready(function(){
         var id= $(this).attr('data-val');
         var name = $(this).attr('data-name');
         bootbox.confirm({
-            message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to delete \"'+name+'\"?</span></div></div>',
+            message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info-del\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to delete \"'+name+'\"?</span></div></div>',
             buttons: {
                 'cancel': {
                                 label: 'Cancel',
@@ -71,7 +71,7 @@ $(document).ready(function(){
                                 if (obj1.status == 'success')
                                 {
                                     $.pjax.reload({container: '#" . $id . "'});
-                                    bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                                    bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info-del\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
                                     //$.snackbar({content: 'Record successfully deleted.', timeout: 8000, style: 'successbar'});
                                 }
                                 else if (obj1.status == 'error'){

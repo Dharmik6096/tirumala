@@ -48,6 +48,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'mobile')->textInput(['class' => 'form-control check_mobile_length']) ?>
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'message')->textarea(['rows' => 6]) ?>
         </div>
@@ -60,6 +61,7 @@ $form = ActiveForm::begin([
     
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+        </div>
         </div>
     </div>
     <div class="clearfix"></div>

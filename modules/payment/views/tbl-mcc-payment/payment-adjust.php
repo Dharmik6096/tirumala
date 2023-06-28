@@ -127,7 +127,7 @@ $bmc_info = Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii
             echo Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust']);
         }
         ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
     </div>
 </div>
 <?php ActiveForm::end(); ?>

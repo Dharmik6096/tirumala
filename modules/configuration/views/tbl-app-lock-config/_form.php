@@ -80,7 +80,7 @@ $form = ActiveForm::begin([
         ?>
 </div>
 <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-    <div class="form-group">
+    <div class="form-group mt-3">
         <?php
         AjaxSubmitButton::begin([
             'label' => Yii::t('app', 'Save'),
@@ -112,7 +112,7 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
             ],
-            'options' => ['class' => 'btn btn-default btn-raised',
+            'options' => ['class' => 'btn-login btn btn-default btn-raised',
                 'type' => 'submit'],
         ]);
         AjaxSubmitButton::end();

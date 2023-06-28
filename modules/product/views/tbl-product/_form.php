@@ -52,23 +52,23 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('product_type', $model, $form, '', $model->getAttributeLabel('x_col3'), FALSE, 'x_col3') ?> 
     </div>
     <div class="col-sm-2 mt15 <?= $class ?>">
-        <?= $form->field($model, 'is_dpu_product', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['readonly' => $disableDpuProduct]); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_dpu_product'); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'dpu_product_code')->textInput(['readonly' => empty($model->is_dpu_product) || $disableDpuProduct, 'class' => 'form-control number-validate']) ?>
     </div>
 
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_inhouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_inhouse'); ?>
     </div>
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_inclusive_tax', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_inclusive_tax'); ?>
     </div>
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_saleable', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_saleable'); ?>
     </div>
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_indent', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_indent'); ?>
     </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>

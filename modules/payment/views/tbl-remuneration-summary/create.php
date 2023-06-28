@@ -44,10 +44,10 @@ $this->title = 'Remuneration Payment Process : Step 1';
                 <?= Yii::$app->controls->date($model, $form, 'to_datetime', '', '', false, false); ?>
             </div>
             <div class="col-sm-2 mt15">
-                <?= $form->field($model, 'calculate_milk_recovey', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'calculate_milk_recovey'); ?>
             </div>
             <div class="col-sm-2 mt15">
-                <?= $form->field($model, 'calculate_other_head', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'calculate_other_head'); ?>
             </div>
 
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
@@ -110,12 +110,12 @@ $this->title = 'Remuneration Payment Process : Step 1';
                                                     }
                                      }'),
                         ],
-                        'options' => ['class' => 'btn btn-primary',
+                        'options' => ['class' => 'btn-login btn btn-primary',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                 </div>
             </div>
         </div>

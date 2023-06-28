@@ -60,8 +60,8 @@ $btn = $type == 'create' ? 'create' : 'update';
             <div class="col-sm-2 from_bmc from_plant from_warehouse from_hide <?= $class ?>">
                 <?= $form->field($model, 'sap_code')->textInput() ?>
             </div>
-            <div class="col-sm-2 from_bmc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
-                <?= $form->field($model, 'status', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox()->label('In-Use'); ?>
+            <div class="mt-4 col-sm-2 from_bmc from_plant from_warehouse from_hide <?= $class ?><?= $class_dcs ?>">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'status'); ?>
             </div> 
         </div>
 
@@ -100,7 +100,7 @@ $btn = $type == 'create' ? 'create' : 'update';
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn-login btn btn-default btn-raised',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();

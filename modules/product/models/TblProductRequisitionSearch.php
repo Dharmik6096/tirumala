@@ -115,7 +115,7 @@ class TblProductRequisitionSearch extends TblProductRequisition {
         ]);
         $query->andWhere(['tbl_product_requisition.status' => ['Under Dispatch']]);
 
-        if (strtolower($this->vendor_type) == 'dcs') {
+        if (!empty($this->vendor_type) && strtolower($this->vendor_type) == 'dcs'){
             $query->andFilterWhere([
                 'tbl_product_requisition.dcs_code' => $this->dcs_code,
                 'tbl_dcs.route_code' => $this->route_code

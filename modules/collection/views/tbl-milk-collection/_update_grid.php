@@ -125,7 +125,7 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
         echo Html::button(Yii::t('app', 'Update'), ['class' => 'btn btn-primary', 'id' => 'update']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

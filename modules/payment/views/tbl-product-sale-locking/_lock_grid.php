@@ -66,7 +66,7 @@ $form = ActiveForm::begin([
         echo Html::submitButton(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary submit', 'id' => 'download', 'value' => 'download', 'name' => 'lock']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

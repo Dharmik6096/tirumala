@@ -226,6 +226,11 @@ ul{
 .bg-info{
     background-color: #7a231c;
 }
+.bg-info-del{
+    background-color: #7a231c;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 .bg-succ{
     background-color: rgb(122, 35, 28);
 }
@@ -2656,8 +2661,8 @@ div.crystalstyle{
     border-radius: 0;
     border: 1px solid #ccc;
     font-size: 10px !important;
-    padding: 4px;
-    height: 24px;
+    padding: 5px;
+    height: 13px;
     text-align: left;
 }
 .panel .panel-body select{
@@ -5087,4 +5092,35 @@ tr.highlightRow {
     background-color: rgb(122, 35, 28);
     border-color: rgb(122, 35, 28);
     border-radius: 0px;
+}
+.panel-footer {
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+}
+.form-control[readonly]{
+    background-color: #eee;
+    opacity: 1;
+}
+.select2-container--krajee-bs5 .select2-selection--multiple .select2-selection__choice {
+   color: #fff !important;
+    background: #7a231c !important;
+    border: 1px solid #7a231c !important;
+    border-radius: 8px;
+    cursor: default;
+    float: left;
+    margin: 1px 0 4px 2px;
+    padding: 0px 2px;
+    font-size: 12px;
+}
+.select2-container--krajee-bs5 .select2-selection--multiple {
+    height: 24px;
+}
+.select2-container .select2-selection--multiple {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    min-height: 24px;
+    user-select: none;
+    -webkit-user-select: none;
 }

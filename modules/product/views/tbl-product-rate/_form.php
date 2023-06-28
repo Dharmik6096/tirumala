@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_member_rate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_member_rate'); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'commission')->textInput() ?>
