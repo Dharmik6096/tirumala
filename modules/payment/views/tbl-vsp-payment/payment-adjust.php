@@ -155,7 +155,7 @@ $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model
             echo Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']);
         }
         ?>
-        <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+        <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
     </div>
 </div>
 <?php ActiveForm::end(); ?>

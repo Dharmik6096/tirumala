@@ -134,7 +134,7 @@ $this->title = Yii::t('app', $title);
         <?= Html::activeHiddenInput($model, 'route_code', ['value' => $searchModel->route_code]) ?>
 
         <?php
-        $vendorCode = strtolower($searchModel->vendor_type) == 'dcs' ? $searchModel->dcs_code : $searchModel->bmc_code;
+        $vendorCode = !empty($searchModel->vendor_type) && strtolower($searchModel->vendor_type) == 'dcs' ? $searchModel->dcs_code : $searchModel->bmc_code;
         echo Html::activeHiddenInput($model, 'vendor_type', ['value' => $searchModel->vendor_type]);
         echo Html::activeHiddenInput($model, 'vendor_code', ['value' => $vendorCode]);
         ?>
@@ -149,7 +149,7 @@ $this->title = Yii::t('app', $title);
     </div>
 
     <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <?= Html::submitButton($button, ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => $model->isNewRecord ? 'ctrl+alt+s' : 'ctrl+alt+u',]) ?>
+        <?= Html::submitButton($button, ['class' => 'btn-login btn btn-default apply-shortcut', 'shortcut_key' => $model->isNewRecord ? 'ctrl+alt+s' : 'ctrl+alt+u',]) ?>
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>

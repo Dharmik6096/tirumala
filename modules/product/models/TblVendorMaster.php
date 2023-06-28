@@ -118,7 +118,7 @@ class TblVendorMaster extends \app\models\ChildModel {
     public function checkDelete() {
         $grnModel = new TblGrn();
         $data = $grnModel->find()->where(['vendor_master_code' => $this->vendor_master_code])->one();
-        if (count($data) > 0) {
+        if (!empty($data) > 0) {
             return false;
         } else {
             return true;

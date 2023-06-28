@@ -18,7 +18,8 @@ $form = ActiveForm::begin([
         ]);
 ?>
 
-<div class="row">   
+<div class="row">  
+    <div class="col-sm-12">
     <div class="col-sm-3">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>    
     </div>
@@ -48,10 +49,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 mt20"> 
             <?= Html::a(Yii::t('app', 'View'), '#', ['class' => 'view-rate btn btn-danger']); ?>
         </div>
-
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_encrypted', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_encrypted'); ?>
+    </div>
     </div>
     <div class="clearfix"></div>
 

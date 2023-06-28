@@ -31,7 +31,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('is_on_role', $model, $form, 'form-group', $model->getAttributeLabel('leave_for'), FALSE, 'leave_for'); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_half', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_half'); ?>
     </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

@@ -42,7 +42,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('cmpl_product_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('cmpl_product_code')); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_serial_number', ['checkboxTemplate' => "<div class='checkbox " . $class . "'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_serial_number'); ?>
     </div>
 
     <div class="col-sm-2 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

@@ -74,7 +74,7 @@ $form = ActiveForm::begin([
         echo Html::button(Yii::t('app', 'Transfer'), ['class' => 'btn btn-primary', 'id' => 'delete']);
     }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

@@ -58,7 +58,7 @@ $form = ActiveForm::begin(['options' => [
     <?= Html::hiddenInput('product_req', '', ['id' => 'product_req']); ?>
 
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-        <?= Html::submitButton(($model->isNewRecord) ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn btn-default apply-shortcut', 'value' => 'save', 'name' => 'submit']) ?>
+        <?= Html::submitButton(($model->isNewRecord) ? Yii::t('app', 'Save') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-default apply-shortcut', 'value' => 'save', 'name' => 'submit']) ?>
         <?= Yii::$app->controls->reset(); ?>
         <?php
         echo Yii::$app->controls->cancel($model, 'tbl-product-requisition/index');

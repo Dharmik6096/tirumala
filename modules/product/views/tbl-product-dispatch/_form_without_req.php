@@ -110,7 +110,7 @@ $this->title = Yii::t('app', $title);
                 </div>
             </div>
             <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                <?= Html::submitButton(Yii::t('app', 'Submit Dispatch'), ['class' => 'btn btn-default apply-shortcut', 'value' => 'submit', 'name' => 'submit']) ?>
+                <?= Html::submitButton(Yii::t('app', 'Submit Dispatch'), ['class' => 'btn-login btn btn-default apply-shortcut', 'value' => 'submit', 'name' => 'submit']) ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
             <?php ActiveForm::end(); ?>

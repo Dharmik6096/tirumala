@@ -46,7 +46,7 @@ $form = ActiveForm::begin([
         ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'allow_after_collection', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_after_collection'); ?>
     </div>
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>

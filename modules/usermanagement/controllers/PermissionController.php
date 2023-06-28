@@ -140,7 +140,7 @@ class PermissionController extends \webvimark\modules\UserManagement\controllers
         return $this->renderIsAjax('set_permission', compact('item', 'main_menu', 'childRoutes'));
     }
 
-    protected function getChildren($type, $name, $sub_menu = [], $data = '', $origin) {
+    protected function getChildren($type, $name, $origin, $sub_menu = [], $data = '') {
         if ($type == 7) {
             $query = Route::find()->select(['name', 'description', 'type', 'data'])->where([$origin => '1', 'type' => 3, 'is_free' => 0])->andWhere(['not like', 'name', '*']);
             if (!empty($data)) {

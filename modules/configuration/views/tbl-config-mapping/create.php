@@ -29,7 +29,7 @@ $defaultToggle = true;
         <?php echo $form->errorSummary($model); ?>
         <div class="panel-body set_checkbox padding_top_0 tbl_border">
             <div class="grid-search search-filter padding_left_0 padding_right_0 searchBtnReport text-right beforeGridLoad">
-                <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
+                <div class="btn-login btn-group btn btn-default mis_report_modal_toggle float-end"><i class="fa fa-search"></i></div>
             </div>
             <div class="clearfix"></div>
             <div class="panel-subheading hide_help_block">

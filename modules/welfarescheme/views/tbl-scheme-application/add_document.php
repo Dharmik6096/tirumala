@@ -197,7 +197,7 @@ use yii\helpers\Url;
                                 ?>
                                 <?php //Yii::$app->controls->save('SAVE', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                                <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?>
                             </div>  
                         </div>
                     </div>

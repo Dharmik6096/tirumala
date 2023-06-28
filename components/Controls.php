@@ -75,7 +75,7 @@ class Controls extends Component {
         $sideclass = $sideButton ? 'btn-block' : '';
         $class = empty($class) ? '' : $class . ' ';
         //$url=str_replace('1%5B', '%5B', $url);
-        return GhostHtml::a($icon . Yii::t('app', ucfirst($name)), $url, ['class' => 'btn-login btn btn-danger apply-shortcut ' . $class . $sideclass, 'shortcut_key' => 'ctrl+alt+c']);
+        return GhostHtml::a($icon . Yii::t('app', ucfirst($name)), $url, ['class' => 'btn btn-danger apply-shortcut ' . $class . $sideclass, 'shortcut_key' => 'ctrl+alt+c']);
     }
 
     public function search() {

@@ -95,7 +95,7 @@ $action = !empty($action) ? 'inward-asset-transaction' : 'outward-asset-transact
                                         ?>
                                     <?php } ?>
 
-                                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                                 </div>
 
                                 <?php ActiveForm::end(); ?>

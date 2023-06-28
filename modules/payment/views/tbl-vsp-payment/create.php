@@ -127,7 +127,7 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create']);
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                 </div>
             </div>
         </div>

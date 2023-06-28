@@ -80,7 +80,7 @@ $disable = true;
         </div>
         <div class="col-sm-12 mt15 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group mt15">
-                <?= Html::a(Yii::t('app', 'Tax Test'), 'javascript:void(0)', ['class' => 'btn btn-default btn-create apply-shortcut test-tax', 'data-tax-id' => $searchModel->tax_code, 'shortcut_key' => 'ctrl+alt+c']); ?>
+                <?= Html::a(Yii::t('app', 'Tax Test'), 'javascript:void(0)', ['class' => 'btn-login btn btn-default btn-create apply-shortcut test-tax', 'data-tax-id' => $searchModel->tax_code, 'shortcut_key' => 'ctrl+alt+c']); ?>
             </div>
         </div>
     </div>

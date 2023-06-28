@@ -47,10 +47,10 @@ if (!empty($_POST)) {
                 <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblremunerationsummary-union_code,tblremunerationsummary-bmc_code,tblremunerationsummary-p_bmc_code', 'payment_cycle_code', 'Payment Cycle'); ?>
             </div>
             <div class="col-sm-2 mt15">
-                <?= $form->field($model, 'calculate_milk_recovey', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'calculate_milk_recovey'); ?>
             </div>
             <div class="col-sm-2 mt15">
-                <?= $form->field($model, 'calculate_other_head', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'calculate_other_head'); ?>
             </div>
 
             <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

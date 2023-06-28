@@ -95,7 +95,7 @@ $form = ActiveForm::begin(['options' => [
 </div>
 <div class=" shortcut-main padding_top_20" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <?= Yii::$app->controls->save($button, $model); ?>
-    <?= Html::button(Yii::t('app', 'reset'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+r', 'onClick' => 'window.location.reload();']); ?>
+    <?= Html::button(Yii::t('app', 'reset'), ['class' => 'btn-login btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+r', 'onClick' => 'window.location.reload();']); ?>
     <?= Yii::$app->controls->cancel($model, 'tbl-head-load/index'); ?>
 </div>
 <?php ActiveForm::end(); ?>
