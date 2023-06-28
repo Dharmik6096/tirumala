@@ -122,7 +122,7 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create']);
                                                     }
                                      }'),
                         ],
-                        'options' => ['class' => 'btn btn-primary',
+                        'options' => ['class' => 'btn-login btn btn-primary',
                             'type' => 'submit'],
                     ]);
                     AjaxSubmitButton::end();

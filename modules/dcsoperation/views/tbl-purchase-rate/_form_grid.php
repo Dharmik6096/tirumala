@@ -66,7 +66,7 @@ $grid_option = [
         'view_rate' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1], $options);
+            return GhostHtml::a('<i class="fa fa-chart-bar" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1], $options);
         },
         'export_rate_chart' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Export Rate Chart')];

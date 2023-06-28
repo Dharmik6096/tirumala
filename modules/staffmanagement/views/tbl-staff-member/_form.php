@@ -128,8 +128,10 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'bank_account_no')->textInput() ?>
             </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+            <div class="col-sm-12">
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
+                </div>
             </div>
         </div>
     </div>

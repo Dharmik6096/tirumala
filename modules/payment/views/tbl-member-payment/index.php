@@ -6,7 +6,7 @@ $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-lif
 if ($allow_stop_payment_member == '1') {
     $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-life-ring"></i> ' . Yii::t('app', 'Process Stop Payment'), ['/payment/tbl-member-payment/create-stop-payment'], true);
 }
-$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-money"></i> ' . Yii::t('app', 'Disburse Farmer Payment'), ['/payment/tbl-member-payment/member-payment-disburse'], true);
+$this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa fa-money-bill"></i> ' . Yii::t('app', 'Disburse Farmer Payment'), ['/payment/tbl-member-payment/member-payment-disburse'], true);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">

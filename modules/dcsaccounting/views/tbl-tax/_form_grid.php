@@ -28,7 +28,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = ''; //($model->disableTax()) ? '' : 'disabled';
             $options = ['title' => 'Edit', 'class' => $disable];
-            return GhostHtml::a('<span class="glyphicon glyphicon-pencil"></span>', ['/dcsaccounting/tbl-tax/update', 'id' => $model->tax_code], $options);
+            return GhostHtml::a('<span class="fa fa-pencil-alt"></span>', ['/dcsaccounting/tbl-tax/update', 'id' => $model->tax_code], $options);
         },
 //        'update' => true,
         'delete' => ['option' => 'tax_name,tax_code,/dcsaccounting/tbl-tax/delete'],

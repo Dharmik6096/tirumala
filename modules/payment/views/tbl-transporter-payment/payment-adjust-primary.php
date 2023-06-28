@@ -89,7 +89,7 @@ $net_amt = array_sum(array_map(function($array) {
                 'actions' => [
                     'payment-detail-primary' => function ($url, $model) {
                         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-payment-detail', 'data-original-title' => 'View Payment Detail', 'data-val' => $model->transporter_payment_code];
-                        return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-transporter-payment/payment-detail-primary', 'id' => $model->transporter_payment_code], $options);
+                        return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-transporter-payment/payment-detail-primary', 'id' => $model->transporter_payment_code], $options);
                     },
                 ]
             ];

@@ -43,14 +43,14 @@ $form = ActiveForm::begin([
     </div>
     <!-- <div class="clearfix"></div> -->
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'checked_ac_no', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'checked_ac_no'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'nationalized_bank', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'nationalized_bank'); ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'is_alpha_acno_allow', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox() ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_alpha_acno_allow'); ?>
     </div>
     <div class="clearfix"></div>   
     <div class="col-sm-12 national-bank" style="display: <?= $style ?>" id="national-bank">

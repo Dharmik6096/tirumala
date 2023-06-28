@@ -50,7 +50,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Quality Grade
                                 'edit' => function ($url, $model) {
                             $options = ['title' => 'Update'];
                             $getId = $model->getId($model->animal_type_code, $model->union_code, $model->grade_name);
-                            return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/globalmaster/tbl-milk-quality-grade/update', 'id' => $getId], $options);
+                            return Html::a('<span class="fa fa-pencil-alt"></span>', ['/globalmaster/tbl-milk-quality-grade/update', 'id' => $getId], $options);
                         },
                                 'delete' => ['option' => 'grade_name,grade_code,globalmaster/tbl-milk-quality-grade/delete'],
                             ]

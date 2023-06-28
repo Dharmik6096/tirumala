@@ -177,7 +177,7 @@ $tot_amt = array_sum(array_map(function($array) {
                                     <td class="action-cell skip-export kv-align-center kv-align-middle">
                                         <?php
                                         $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $m['payment_cycle_code'], 'data-bmc_code' => $m['bmc_code'], 'data-dcs_code' => $m['dcs_code'], 'data-member_code' => $m['member_code']];
-                                        echo GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
+                                        echo GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $m['payment_cycle_code'], 'bmc_code' => $m['bmc_code'], 'dcs_code' => $m['dcs_code'], 'member_code' => $m['member_code']], $options);
                                         ?>
 
                                         <?php

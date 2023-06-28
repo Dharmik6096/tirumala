@@ -63,15 +63,21 @@ $attribute = [
             return Yii::$app->controls->view_datetime($model->response_datetime);
         }],
     [
-        'attribute' => 'interval',
+    'attribute' => 'interval',
         'filter' => FALSE,
         'value' => function($model) {
-            $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+        $fromDate = !empty($model->cron_pick_datetime) ? $model->cron_pick_datetime : $model->pick_datetime;
+        if ($fromDate !== null && !empty($model->response_datetime)) {
             $datetime1 = new DateTime($fromDate);
             $datetime2 = new DateTime($model->response_datetime);
             $interval = $datetime1->diff($datetime2);
             return $interval->format('%h') . ":" . $interval->format('%i') . ":" . $interval->format('%s');
-        }],
+        } else {
+            return '0:0:0';
+        }
+    }
+],
+
     'response_msg',
     [
         'attribute' => 'error_file_path',

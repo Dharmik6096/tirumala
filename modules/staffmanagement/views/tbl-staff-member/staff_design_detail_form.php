@@ -57,7 +57,7 @@ $form = ActiveForm::begin(['options' => [
                                 <td class="tenure_from_date"><?= date('d-m-Y', strtotime($updateData->tenure_from_date)) ?></td>
                                 <td class="tenure_to_date"><?= !empty($updateData->tenure_to_date) ? date('d-m-Y', strtotime($updateData->tenure_to_date)) : ''; ?></td>
                                 <td class="remark"><?= $updateData->remark ?></td>
-                                <td class="staff_member_designation_code"><a href="javascript:void(0)" class='edit <?= $class ?> <?= $updateData->disableEdit() ? 'disabled' : '' ?>' onClick="editDesignation('<?= $updateData->staff_member_designation_code ?>')" id='<?= $updateData->staff_member_designation_code ?>' title='Edit'><span class='glyphicon glyphicon-pencil'></span></a></td>
+                                <td class="staff_member_designation_code"><a href="javascript:void(0)" class='edit <?= $class ?> <?= $updateData->disableEdit() ? 'disabled' : '' ?>' onClick="editDesignation('<?= $updateData->staff_member_designation_code ?>')" id='<?= $updateData->staff_member_designation_code ?>' title='Edit'><span class='fa fa-pencil-alt'></span></a></td>
                             </tr>
                             <?php
                         }

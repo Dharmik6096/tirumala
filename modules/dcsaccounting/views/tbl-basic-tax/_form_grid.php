@@ -26,7 +26,7 @@ $grid_option = [
 //            $disable = (trim($model->basic_tax_code) == 1) ? 'disabled' : '';
             $disable = '';
             $options = ['class' => $disable, 'title' => 'Update'];
-            return GhostHtml::a('<span title="Edit"><i class="glyphicon glyphicon-pencil"></i></span>', ['/dcsaccounting/tbl-basic-tax/update', 'id' => $model->basic_tax_code], $options);
+            return GhostHtml::a('<span title="Edit"><i class="fa fa-pencil-alt"></i></span>', ['/dcsaccounting/tbl-basic-tax/update', 'id' => $model->basic_tax_code], $options);
         },
         'delete' => ['option' => 'basic_tax_name,basic_tax_code,/dcsaccounting/tbl-basic-tax/delete,checkGrossAmount()'],
     ]

@@ -561,7 +561,7 @@ class Applicability extends \yii\base\Module {
         return [0 => $messagestring, 1 => $dcs];
     }
 
-    public function loadUnionDcs($dcs = [], $union_code, $returnQuery = false) {
+    public function loadUnionDcs($union_code, $dcs = [], $returnQuery = false) {
         //var_dump($dcs); exit;
         $dcsList = TblDcs::find()->joinWith(['societyCodes'])->where(['tbl_dcs.union_code' => $union_code, 'is_active' => 1])->andWhere(['not in', 'tbl_dcs.dcs_code', $dcs])->andWhere(['not', ['tbl_society_codes.bmc_code' => 0]])->andWhere(['not', ['tbl_society_codes.bmc_code' => null]]);
         if (!empty(Yii::$app->session->get('Dcs'))) {

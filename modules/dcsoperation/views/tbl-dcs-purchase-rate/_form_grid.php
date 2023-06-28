@@ -84,7 +84,7 @@ $grid_option = [
 //                        }
 //                    }
 //                    $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-//                    return GhostHtml::a('<span class="glyphicon glyphicon-pencil"></span>', ['/dcsoperation/tbl-dcs-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
+//                    return GhostHtml::a('<span class="fa fa-pencil-alt"></span>', ['/dcsoperation/tbl-dcs-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
 //                },
         'mapping' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
@@ -94,7 +94,7 @@ $grid_option = [
         'view_rate' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['title' => Yii::t('app', 'Rate Chart'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-bar-chart" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
+            return GhostHtml::a('<i class="fa fa-chart-bar" aria-hidden="true"></i>', ['/dcsoperation/tbl-dcs-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'milk_quality' => 1], $options);
         },
         'export_rate_chart' => function ($url, $model) {
             $options = ['title' => Yii::t('app', 'Export Rate Chart'),];

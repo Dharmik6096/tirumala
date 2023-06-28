@@ -29,7 +29,7 @@ $grid_option = [
         'edit' => function ($url, $dcsmodel) {
 
                 $options = ['data-name' => isset($dcsmodel->subCenterCode)?$dcsmodel->subCenterCode->sub_center_name:'', 'data-val' => $dcsmodel->subcenter_code,'title'=>'Update'];
-                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/organisation/tbl-dcs-bmc/update','id'=>$dcsmodel->bmc_code, 'dcs' => $dcsmodel->dcs_code,'dcsname'=> isset($dcsmodel->dcsCode)?$dcsmodel->dcsCode->dcs_name:'','subcenter'=> $dcsmodel->subcenter_code,'subname'=> isset($dcsmodel->subCenterCode)?$dcsmodel->subCenterCode->sub_center_name:''], $options);
+                return Html::a('<span class="fa fa-pencil-alt"></span>', ['/organisation/tbl-dcs-bmc/update','id'=>$dcsmodel->bmc_code, 'dcs' => $dcsmodel->dcs_code,'dcsname'=> isset($dcsmodel->dcsCode)?$dcsmodel->dcsCode->dcs_name:'','subcenter'=> $dcsmodel->subcenter_code,'subname'=> isset($dcsmodel->subCenterCode)?$dcsmodel->subCenterCode->sub_center_name:''], $options);
         },
         'delete' => ['option' => 'capacity,bmc_code,organisation/tbl-dcs-bmc/delete'],
 

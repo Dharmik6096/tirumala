@@ -48,7 +48,7 @@ $grid_option = [
                 $disable = ($model->checkEdit()==0)?'':'disabled';
                 $options = ['class'=>$disable];
                 
-                return GhostHtml::a('<span title="Edit"><i class="glyphicon glyphicon-pencil"></i></span>', ['/dcsaccounting/tbl-financial-year/update','id'=>$model->id], $options);
+                return GhostHtml::a('<span title="Edit"><i class="fa fa-pencil-alt"></i></span>', ['/dcsaccounting/tbl-financial-year/update','id'=>$model->id], $options);
                 
         },
         'delete' => ['option' => 'code,id,/dcsaccounting/tbl-financial-year/delete'],

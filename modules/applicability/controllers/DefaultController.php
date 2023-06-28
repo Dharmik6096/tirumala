@@ -77,7 +77,7 @@ class DefaultController extends Controller {
         }
         switch ($flag) {
             case 'society':
-                $dcs = $module->loadUnionDcs($values, $union_code);
+                $dcs = $module->loadUnionDcs($union_code, $values);
                 break;
             case 'routes':
                 //$routes=new TblRoutes();

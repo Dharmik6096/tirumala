@@ -137,7 +137,7 @@ class ChildModel extends \yii\db\ActiveRecord {
             if ($decryptData) {
                 $model->{$value} = $decryptData;
             } else {
-                if (($value == 'birth_date' || $value == 'dob') && !(bool) strtotime($model->{$value})) {
+                if (($value == 'birth_date' || $value == 'dob') && $model->{$value} !== null && !(bool) strtotime($model->{$value})) {
                     $model->{$value} = '';
                 }
             }

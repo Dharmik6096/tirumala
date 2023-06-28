@@ -51,7 +51,9 @@ $form = ActiveForm::begin(['options' => [
             foreach ($model as $models) {
                 $models->bmc_code = Yii::$app->general->getforeignkey($models->dcsCode, 'bmc_code');
                 $ref_code = Yii::$app->general->getforeignkey($models->bmcCode, 'ref_code');
-                $models->PPCode = substr($models->dcs_code, -3);
+                if ($models->dcs_code !== null) {
+                    $models->PPCode = substr($models->dcs_code, -3);
+                }
                 ?>
                 <tr>
                     <td><?= $models->dcs_code ?><?= Html::activeHiddenInput($models, '[' . $i . ']dcs_code') ?></td>

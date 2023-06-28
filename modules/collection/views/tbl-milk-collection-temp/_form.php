@@ -128,7 +128,7 @@ $form = ActiveForm::begin([
                                                                             if(keys != "milk_receipt_code"){
                                                                                 row += "<td>"+vals+"</td>";
                                                                             }else{
-                                                                                row += "<td><a href=\"javascript:void(0)\" class=\'edit\' onClick=\'editReceipt(\""+vals+"\")\' id=\""+vals+"\" title=\"Edit\"><span class=\"glyphicon glyphicon-pencil\"></span></a></td>";
+                                                                                row += "<td><a href=\"javascript:void(0)\" class=\'edit\' onClick=\'editReceipt(\""+vals+"\")\' id=\""+vals+"\" title=\"Edit\"><span class=\"fa fa-pencil-alt\"></span></a></td>";
                                                                             }
                                                                         });
                                                                         row += "</tr>";

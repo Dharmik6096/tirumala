@@ -283,7 +283,7 @@ $form = ActiveForm::begin(['options' => [
             body += '<td>' + local[i]['to_qty'] + '</td>';
             body += '<td>' + local[i]['km_value'] + '</td>';
             body += '<td>' + local[i]['value'] + '</td>';
-            var icon = '<span class=\'glyphicon glyphicon-pencil\'></span>';
+            var icon = '<span class=\'fa fa-pencil-alt\'></span>';
             var icondlt = '<span class=\'glyphicon glyphicon-trash\'></span>';
             var button = '<a href="#" title="<?php echo Yii::t('app', 'Edit') ?>" onclick=EditData(' + cnt + ')>' + icon + '</a><a href="#" title="<?php echo Yii::t('app', 'Delete') ?>" onclick=DeleteData(' + cnt + ')>' + icondlt + '</a>';
             body += '<td class="action-icons">' + button + '</td>';
