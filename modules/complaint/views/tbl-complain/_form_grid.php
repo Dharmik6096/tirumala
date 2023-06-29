@@ -52,7 +52,7 @@ $attribute = [
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status]) ? Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status] : '';
         }],
-        ['attribute' => 'assign_to', 'value' => function ($model) {
+        ['attribute' => 'user_code', 'value' => function ($model) {
             return !empty($model->contactDetailsCodes) ? $model->contactDetailsCodes->name . '(' . $model->contactDetailsCodes->mobile_no . ')' : '';
         }, 'visible' => true, 'filter' => false],
 ];
@@ -64,24 +64,15 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'edit' => function ($url, $model) {
-            $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);
-            $status = $model->getComplainStatus($model->complain_code);
-            $class = (!isset($status)) ? 'link-disable' : '';
+            $url = ($model->checkEditable()) ? Url::to(['tbl-complain/update', 'id' => $model->complain_code]) : '#';
+            $class = ($model->checkEditable()) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-//        'delete' => function ($url, $model) {
-//            $url = Url::to(['tbl-complain/delete', 'id' => $model->complain_code]);
-//            $status = $model->getComplainStatus($model->complain_code);
-//            $class = (!isset($status)) ? 'link-disable' : '';
-//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
-//            return GhostHtml::a('<i class="fa fa-trash"></i>', $url, $options);
-//        },
-        'delete' => ['option' => 'contact_person,complain_code,tbl-complain/delete'],
+        'delete' => ['option' => 'contact_person,complain_code,tbl-complain/delete,checkEditable()'],
         'assign-complain' => function ($url, $model) {
             $url = Url::to(['assign-complain', 'complain_code' => $model->complain_code]);
-            $status = $model->getComplainStatus($model->complain_code);
-            $class = (!isset($status)) ? 'link-disable' : '';
+            $class = ($model->checkAssign()) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign', 'class' => 'assign-complain' . $class, 'data-complain_code' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-user"></i>', $url, $options);
         },

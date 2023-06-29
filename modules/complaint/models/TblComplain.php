@@ -12,6 +12,7 @@ use app\modules\assetmanagement\models\TblAssetMaster;
 use app\modules\details\models\TblContactDetails;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\general\models\TblAttachment;
 
 /**
  * This is the model class for table "tbl_complain".
@@ -102,7 +103,7 @@ class TblComplain extends \app\models\ChildModel {
             'mobile_no' => Yii::t('app', 'Mobile No'),
             'complain_status' => Yii::t('app', 'Complain Status'),
             'complain_status_datetime' => Yii::t('app', 'Complain Status Datetime'),
-            'user_code' => Yii::t('app', 'User Code'),
+            'user_code' => Yii::t('app', 'User'),
             'physical_damage' => Yii::t('app', 'Physical Damage'),
             'spare_required' => Yii::t('app', 'Spare Required'),
             'affects_data' => Yii::t('app', 'Affects Data'),
@@ -159,8 +160,12 @@ class TblComplain extends \app\models\ChildModel {
         return $query->all();
     }
 
-    public function getComplainStatus($id) {
-        return $this->find()->select('complain_status')->where(['complain_status' => 'CREATED', 'complain_code' => $id])->one();
+    public function checkEditable() {
+        return $this->complain_status == 'CREATED' ? TRUE : FALSE;
+    }
+
+    public function checkAssign() {
+        return $this->complain_status == 'RESOLVED' ? TRUE : FALSE;
     }
 
     public function getContactDetailsCode() {
@@ -169,6 +174,31 @@ class TblComplain extends \app\models\ChildModel {
 
     public function getContactDetailsCodes() {
         return $this->hasOne(User::className(), ['id' => 'user_code']);
+    }
+
+    public function getAttachment() {
+        return $this->hasOne(TblAttachment::className(), ['module_code' => 'complain_code']);
+    }
+
+    public function uploadFile($attachment) {
+        if (isset($attachment)) {
+            // store the source file name
+            $this->attachment = $attachment->name;
+            $ext = (explode(".", $attachment->name));
+            // generate a unique file name
+            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path'], ['only' => ['*.' . $ext[1]]]);
+            if (isset($files[0])) {
+                foreach ($files as $index => $file) {
+                    $fileName = substr($file, strrpos($file, '/') + 2);
+                    if ($this->attachment == $fileName) {
+                        $fn = explode('.', $fileName);
+                        $fn = $fn[0] . '(' . ($index + 1) . ').' . $fn[1];
+                    }
+                }
+                return isset($fn) ? $fn : $this->attachment;
+            }
+            return $this->attachment;
+        }
     }
 
 }

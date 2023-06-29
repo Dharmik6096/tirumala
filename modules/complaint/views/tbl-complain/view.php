@@ -109,12 +109,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'columns' => [
                                 [
                                 'attribute' => 'serial_number',
-                                'valueColOptions' => ['style' => 'width:80%']
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
-//                                [
-//                                'attribute' => 'new_serial_number',
-//                                'valueColOptions' => ['style' => 'width:30%']
-//                            ],
+                                [
+                                'attribute' => 'new_serial_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                         ],
                     ],
                         [
@@ -123,12 +123,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'remarks',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-//                                [
-//                                'attribute' => 'assign_to',
-//                                'value' => !empty($model->contactDetailsCode) ? $model->contactDetailsCode->firstname . '(' . $model->contactDetailsCode->mobile_no . ')' : 'N/A',
-//                                'format' => 'raw',
-//                                'valueColOptions' => ['style' => 'width:30%']
-//                            ],
+                                [
+                                'attribute' => 'user_code',
+                                'value' => !empty($model->contactDetailsCodes) ? $model->contactDetailsCodes->name . '(' . $model->contactDetailsCodes->mobile_no . ')' : '',
+                                'format' => 'raw',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                         ],
                     ],
                 ];

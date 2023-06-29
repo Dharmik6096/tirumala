@@ -21,6 +21,7 @@ use webvimark\modules\UserManagement\models\User;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
+use app\modules\general\models\TblAttachment;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -70,9 +71,22 @@ class TblComplainController extends \app\controllers\ChildController {
         if ($this->model->load(Yii::$app->request->post())) {
             $this->setModel($this->model);
             if ($this->model->validate()) {
+                $saveModel = [];
+                $saveModel[] = $this->model;
                 $this->setComplaintActivityModel($complaint_activity_model, 'CREATED');
+                $saveModel[] = $complaint_activity_model;
                 $auto_key_config['TblComplainActivity'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
-                $transaction = $this->generalModel->saveTransactionAutoIncForeignKey([$this->model, $complaint_activity_model], ['Complain', 'create'], $auto_key_config);
+                $attachment = Yii::$app->request->post()['TblAttachment'];
+                if (!empty($attachment['attachment'])) {
+                    $complain_attachment = new TblAttachment();
+                    $complain_attachment->load(Yii::$app->request->post());
+                    $complain_attachment->module_name = 'tbl_complain';
+                    $ext = (explode(".", $complain_attachment->attachment));
+                    $complain_attachment->attachment_type = $ext[1];
+                    $saveModel[] = $complain_attachment;
+                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                }
+                $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
                     return $this->{$transaction}();
                 }
@@ -100,6 +114,14 @@ class TblComplainController extends \app\controllers\ChildController {
             }
         }
         return $this->customRender();
+    }
+
+    public function customRender() {
+        $complain_attachment = new TblAttachment();
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
+                    'complainAttachment' => $complain_attachment]
+        );
     }
 
     /**
@@ -292,6 +314,65 @@ class TblComplainController extends \app\controllers\ChildController {
         return $this->renderAjax('assign_complain', [
                     'model' => $this->model
         ]);
+    }
+
+    public function actionUploadFile() {
+        $path = Yii::$app->params['complaint_dir_path'];
+        if (!is_dir($path)) {
+            \yii\helpers\FileHelper::createDirectory($path, $mode = 0777, $recursive = true);
+        }
+
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $fn = $this->uploadFile($file);
+            if ($file->saveAs($path . $fn)) {
+                $record = ['status' => 'success', 'msg' => $fn];
+            } else {
+                $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        }
+    }
+
+    public function uploadFile($attachment) {
+        if (isset($attachment)) {
+            // store the source file name
+//            $this->attachment = $attachment->name;
+            $ext = (explode(".", $attachment->name));
+            // generate a unique file name
+            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path'], ['only' => ['*.' . $ext[1]]]);
+            if (isset($files[0])) {
+                foreach ($files as $index => $file) {
+                    $fileName = substr($file, strrpos($file, '/') + 2);
+                    if ($attachment->name == $fileName) {
+                        $fn = explode('.', $fileName);
+                        $fn = $fn[0] . '(' . ($index + 1) . ').' . $fn[1];
+                    }
+                }
+                return isset($fn) ? $fn : $attachment->name;
+            }
+            return Yii::$app->params['complaint_dir_path'] . $attachment->name;
+        }
+    }
+
+    public function actionRemove() {
+        $old_attachment = Yii::$app->request->post('value');
+        $path = Yii::$app->params['complaint_dir_path'];
+        if (!empty($old_attachment)) {
+            if (file_exists($path . $old_attachment)) {
+                if ($old_attachment != Yii::$app->request->post('old_value')) {
+                    unlink($path . $old_attachment);
+                }
+                return 1;
+            }
+        } else {
+            return 0;
+        }
     }
 
 }
