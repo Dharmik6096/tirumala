@@ -47,9 +47,9 @@ class TblCasteCategory extends ChildModel
             [['local_name'], function ($attribute, $params) {
                 Yii::$app->general->vaildateLocalField($this, $attribute,$params);
             },'skipOnEmpty'=> false],
-            [['dcs_type_name'], function ($attribute, $params) {
-                    Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
-                },'skipOnEmpty'=> false],
+//            [['dcs_type_name'], function ($attribute, $params) {
+//                    Yii::$app->general->validateAlphaNumber($this, $attribute,$params);
+//                },'skipOnEmpty'=> false],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['local_name'], function ($attribute, $params) {
                 Yii::$app->general->vaildateLocalField($this, $attribute,$params);
