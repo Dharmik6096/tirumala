@@ -2837,6 +2837,7 @@ td.action-cell{
 
 .panel-main .panel-body .grid-search .btn {
     padding: 3px 15px;
+    float: right;
 }
 
 .dropdown-menu{
@@ -3469,9 +3470,9 @@ input[type="checkbox"]:after{
     display: none;
 }
 
-.modal-open .modal {
+/*.modal-open .modal {
     z-index: 9999 !important;
-}
+}*/
 
 
 .div_dash_block {

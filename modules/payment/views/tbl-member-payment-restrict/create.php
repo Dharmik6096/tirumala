@@ -36,7 +36,7 @@ $defaultToggle = true;
                             <?= Yii::$app->controls->date($searchModel, $form, 'wef_date', 'form-group col-sm-2', false); ?>
                         </div>
                     <?php } ?>
-                    <div class="btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
+                    <div class="btn-login btn-group btn btn-default mis_report_modal_toggle float-end"><i class="fa fa-search"></i></div>
                 </div>
                 <div class="clearfix"></div>
                 <div class="panel-subheading hide_help_block">

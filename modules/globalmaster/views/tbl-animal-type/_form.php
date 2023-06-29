@@ -23,7 +23,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'short_name')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_milch', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_milch'); ?>
     </div>
     <div class="col-sm-1 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
