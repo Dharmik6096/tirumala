@@ -73,7 +73,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'product_code'], 'required', 'on' => ['AdvancePm']],
                 [['to_date'], 'validateToDate', 'on' => ['AdvancePm']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['CcMilkPayment']],
-                [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment','RouteWiseReconciliation']],
+                [['union_code', 'plant_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['FarmerFarmPayment', 'RouteWiseReconciliation']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['RateApplicabilityDetailsHistory']],
                 [['to_date'], 'validateDate', 'on' => ['RateApplicabilityDetailsHistory']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MissingShift', 'CleaningFormat', 'VlccTransactionDataReport']],
@@ -124,6 +124,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportDcs']],
                 [['union_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required', 'on' => ['MccRecipationSummary', 'MccRecipationDetail']],
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcWiseSocietyWiseAutoManual', 'BmcWiseAutoManualSummary']],
         ];
     }
 
