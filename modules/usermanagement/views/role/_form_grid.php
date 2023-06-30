@@ -47,14 +47,14 @@ $grid_option = [
     'actions' => [
         'views' => function($url, $model) {
             $class = $model->checkNotVendor() ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Permission Group', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Permission Group', 'class' => $class];
             return Html::a('<i class="fa fa-key"></i>', ['/user-management/role/view', 'id' => $model->name], $options);
         },
         'edit' => function($url, $model) {
             $class = $model->checkNotVendor() ? '' : 'link-disable';
             $url = str_replace('edit', 'update', $url);
             $url = ['/user-management/role/update', 'id' => $model->name];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update', 'class' => $class];
             return Html::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         //'update' => true,

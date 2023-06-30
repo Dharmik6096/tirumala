@@ -53,12 +53,12 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view-detai' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-customer-deactive/view', 'id' => $model->customer_code], $options);
         },
                 'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'customer-active ' . $class, 'data-customer_deactive_code' => $model->customer_deactive_code];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Active', 'class' => 'customer-active ' . $class, 'data-customer_deactive_code' => $model->customer_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-customer-deactive/activate-customer'], $options);
         },
             ]

@@ -10,7 +10,7 @@ $society_name = !empty($dataProvider->getModels()) ?
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Bill Head Detail') . $society_name ?></h4>
             </div>
             <div class="popup-header bg_white">

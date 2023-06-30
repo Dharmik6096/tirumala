@@ -27,7 +27,7 @@ if ($isaction) {
         'active_column' => false,
         'actions' => [
             'edit' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->staff_family_details_code, 'data-name' => $model->staff_family_details_code, 'title' => Yii::t('app', 'Edit')];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->staff_family_details_code, 'data-name' => $model->staff_family_details_code, 'title' => Yii::t('app', 'Edit')];
                 return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/staffmanagement/tbl-staff-member-family-details/update-family'], $options);
             },
         ]

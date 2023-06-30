@@ -25,7 +25,7 @@ echo $this->render('@app/modules/import/views/default/index', ['type' => $model[
     <div class="panel panel-main">
         <div class="panel-heading"><?php echo $model['data']['title']; ?>
             <div class="btn-group pull-right">
-                <button id="w3" class="btn dropdown-toggle" title="Export data in selected format" data-toggle="dropdown" aria-expanded="false">
+                <button id="w3" class="btn dropdown-toggle" title="Export data in selected format" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="glyphicon glyphicon-export"></i> <i class="glyphicon"></i> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">

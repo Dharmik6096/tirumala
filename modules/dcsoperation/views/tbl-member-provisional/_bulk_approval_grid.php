@@ -62,7 +62,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Member
                 'actions' => [
                     'milk_collection' => function ($url, $model) {
                         $class = ($model->is_approved == 1) ? 'link-disable' : '';
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Milk Collection', 'class' => 'view_data '. $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Milk Collection', 'class' => 'view_data '. $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code];
                         return GhostHtml::a_alert('<i class="fa fa-list"></i>', ['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list'], $options);
                     },
                 ]

@@ -47,7 +47,7 @@ $grid_option = [
     'actions' => [
         'view_details' => function ($url, $model) {
             $class = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-stock-adjustment/view', 'id' => $model->product_stock_adjustment_code], $options);
         },
     ]

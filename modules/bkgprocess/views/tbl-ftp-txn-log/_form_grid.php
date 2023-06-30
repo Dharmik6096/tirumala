@@ -61,7 +61,7 @@ use app\modules\usermanagement\components\GhostHtml;
                 $moduleArr = ['TblBmcCollection', 'TblMilkCollection'];
                 $class = in_array($model->module_name, $moduleArr) ? '' : 'disabled';
 //                $class = $model->module_name == 'TblBmcCollection' ? '' : ($model->module_name == 'TblMilkCollection' ? '' : '');
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $class];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $class];
                 return GhostHtml::a('<i class="fa fa-eye"></i>', [$url, $search => ['f_union_code' => $model->union_code, 'f_plant_code' => $plant, 'f_mcc_code' => $model->mcc_plant_code, 'from_date' => $date, "from_shift" => $shift, "to_date" => $date, "to_shift" => $shift]], $options);
             },
         ]

@@ -52,7 +52,7 @@ $grid_option = [
     'actions' => [
         'view-collection' => function ($url, $model) {
             $class = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Detail', 'class' => 'view-detail ' . $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Detail', 'class' => 'view-detail ' . $class];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/bkgprocess/tbl-ftp-txn-log/view-collection', 'id' => $model->ftp_txn_log_id], $options);
         },
     ]

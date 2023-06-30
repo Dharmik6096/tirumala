@@ -52,11 +52,11 @@ $grid_option = [
     'actions' => [
         'view_details' => function ($url, $model) {
             $class = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-rate/view', 'id' => $model->product_sale_rate_code, 'is_member_rate' => $model->is_member_rate], $options);
         },
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_sale_rate_code], $options);
         }
     ]

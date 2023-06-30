@@ -20,7 +20,7 @@ $readonly = false;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Import File'); ?></h4>
             </div>
 
@@ -132,7 +132,7 @@ $readonly = false;
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
             </div>
             <?php ActiveForm::end(); ?>
         </div>

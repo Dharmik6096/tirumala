@@ -53,9 +53,9 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Sale installments'
                 'actions' => [
                     'view' => false,
 //        'deactivate' => function ($url, $model) {       
-//        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Skip Payment'];
+//        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Skip Payment'];
 //        if($model->is_active==1 && $model->installment_status==0)
-//        return GhostHtml::a('<i class="fa fa-close"></i>', ['/payment/tbl-product-sale/skip-installment', 'id' => $model->installment_code], $options);
+//        return GhostHtml::a('<i class="fa fa-times"></i>', ['/payment/tbl-product-sale/skip-installment', 'id' => $model->installment_code], $options);
 //        },
                 //'delete' => ['option' => 'name,plant_code,tbl-plant/delete'],
                 ]

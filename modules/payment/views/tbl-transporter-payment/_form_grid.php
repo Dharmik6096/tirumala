@@ -89,11 +89,11 @@ $grid_option = [
             $class = ($model->status == 'processed') ? '' : 'disabled';
             $url = Url::to(['lock-bill']);
             $name = $model->transporter_name  . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
             return GhostHtml::a_alert($icon, ['/payment/tbl-transporter-payment/lock-bill'], $options);
         },
 //                'print-bill' => function ($url, $model) {
-//            $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Bill'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Bill')];
+//            $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Bill'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'View Bill')];
 //            return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/payment/tbl-transporter-payment/view-bill', 'union_code' => $model->union_code, 'transporter_code' => $model->transporter_code, 'from_date' => $model->from_date, 'to_date' => $model->to_date, 'transporter_type' => $model->transporter_type, 'route_code' => $model->route_code], $options);
 //        },
     ]

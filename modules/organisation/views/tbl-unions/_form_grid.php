@@ -124,27 +124,27 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'union_name,union_code,tbl-unions/delete'],
         'mapping' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'District Mapping'];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'District Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-unions/map-districts', 'id' => $model->union_code], $options);
         },
         'bank-details' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details'];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details'];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-unions/bank-details', 'id' => $model->union_code], $options);
         },
         'contact-details' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-unions/contact-details', 'id' => $model->union_code], $options);
         },
         'union-config' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Union Configurations')];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Union Configurations')];
             return GhostHtml::a('<i class="fa fa-cog"></i>', ['/configuration/tbl-config/create', 'id' => $model->union_code], $options);
         },
         'control-mapping' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Control Mapping')];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Control Mapping')];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/configuration/tbl-config-mapping/index', 'id' => $model->union_code], $options);
         },
         'payment-config' => function ($url, $model) {
-            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Payment Configurations')];
+            $options = ['data-name' => $model->union_name, 'data-val' => $model->union_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Payment Configurations')];
             return GhostHtml::a('<i class="fa fa fa-money-bill"></i>', ['/configuration/tbl-config-mapping/index', 'id' => $model->union_code], $options);
         },
     ]

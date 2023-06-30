@@ -29,17 +29,17 @@ $grid_option = [
         'view' => true,
         'mapping' => function ($url, $model) {
             $disable = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-vsp-bill-head-criteria/vsp-bill-head-applicability', 'id' => $model->vsp_criteria_code], $options);
         },
         'update' => function($url, $model) {
             $disable = !empty($model->isApplicability) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['update', 'id' => $model->vsp_criteria_code], $options);
         },
         'update_to_date' => function ($url, $model) {
             $disable = empty($model->isApplicability) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit To Date', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit To Date', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa fa-pencil-alt-square"></i>', ['/vsp/tbl-vsp-bill-head-criteria/update-to-date', 'id' => $model->vsp_criteria_code], $options);
         },
     ]

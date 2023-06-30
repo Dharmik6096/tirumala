@@ -16,7 +16,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Quality Grade
         <div class="panel-heading">
             <?= $this->title; ?>
             <div class="dropdown pull-right shortcut-main" shortcut="true" display_shortcut="false" highlight_shortcut="true">
-                <a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle btn btn-fab btn-fab-mini"><i class="fa fa-ellipsis-v"></i></a>
+                <a href="#" data-target="#" data-bs-toggle="dropdown" class="dropdown-toggle btn btn-fab btn-fab-mini"><i class="fa fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu">
                     <li><?= Yii::$app->controls->add('Milk Quality Grade'); ?></li>
                     <li><?php //echo Html::a(Yii::t('app', 'Import Tax'), 'javascript:void(0)', ['class' => 'btn btn-default btn-create apply-shortcut', 'id' => 'import-file', 'shortcut_key' => 'ctrl+alt+i']);     ?></li>

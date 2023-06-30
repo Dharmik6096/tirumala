@@ -70,7 +70,7 @@ $grid_option = [
     'actions' => [
         'repush' => function ($url, $model) {
             $class = 'repush';
-            $options = ['data-id' => $model->staging_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Re-Push', 'class' => '' . $class];
+            $options = ['data-id' => $model->staging_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Re-Push', 'class' => '' . $class];
             return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/collection/tbl-mcc-shift-lock-staging/re-push-data'], $options);
         },
 //        'view' => TRUE

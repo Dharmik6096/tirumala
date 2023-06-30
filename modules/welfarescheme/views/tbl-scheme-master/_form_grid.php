@@ -71,7 +71,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/welfarescheme/tbl-scheme-master/update', 'id' => $model->scheme_id], $options);
         },
         'scheme-criteria' => function ($url, $model) {
-            $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Scheme Criteria'];
+            $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Scheme Criteria'];
             return GhostHtml::a('<i class="fa fa-plus-square"></i>', ['/welfarescheme/tbl-scheme-master/scheme-criteria', 'id' => $model->scheme_id], $options);
         },
         'approval-stages' => function ($url, $model) {
@@ -79,7 +79,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-list-ol"></i>', ['/welfarescheme/tbl-scheme-master/approval-stages', 'id' => $model->scheme_id], $options);
         },
         'scheme-document-mapping' => function ($url, $model) {
-            $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Scheme Document Mapping'];
+            $options = ['data-name' => $model->scheme_name, 'data-val' => $model->scheme_id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Scheme Document Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/welfarescheme/tbl-scheme-master/scheme-document-mapping', 'id' => $model->scheme_id], $options);
         },
     ]

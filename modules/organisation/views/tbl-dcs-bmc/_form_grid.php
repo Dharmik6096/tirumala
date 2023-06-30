@@ -108,27 +108,27 @@ $grid_option = [
     'actions' => [
         'view-record' => function ($url, $dcsmodel) {
             $options = ['data-name' => isset($dcsmodel->subCenterCode) ? $dcsmodel->subCenterCode->sub_center_name : '', 'data-val' => $dcsmodel->subcenter_code, 'title' => 'View'];
-            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-bmc/view', 'id' => $dcsmodel->bmc_code, 'type' => Yii::$app->request->get('type')], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'], $options);
+            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-bmc/view', 'id' => $dcsmodel->bmc_code, 'type' => Yii::$app->request->get('type')], ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'], $options);
         },
         'edit' => function ($url, $dcsmodel) {
             $options = ['data-name' => isset($dcsmodel->subCenterCode) ? $dcsmodel->subCenterCode->sub_center_name : '', 'data-val' => $dcsmodel->subcenter_code, 'title' => 'Update'];
-            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dcs-bmc/update', 'id' => $dcsmodel->bmc_code], ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit'], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/organisation/tbl-dcs-bmc/update', 'id' => $dcsmodel->bmc_code], ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit'], $options);
         },
         'delete' => ['option' => 'bmc_name,bmc_code,tbl-dcs-bmc/delete'],
         'bank-details' => function ($url, $model) {
-            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details'];
+            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details'];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-dcs-bmc/bank-details', 'id' => $model->bmc_code], $options);
         },
         'contact-details' => function ($url, $model) {
-            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-dcs-bmc/contact-details', 'id' => $model->bmc_code], $options);
         },
         'mapping' => function ($url, $model) {
-            $options = ['data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'BMC Mapping'];
+            $options = ['data-val' => $model->bmc_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'BMC Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-dcs-bmc/bmc-mapping', 'id' => $model->bmc_code], $options);
         },
         'silos-info' => function ($url, $model) {
-            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Silos Info.'];
+            $options = ['data-name' => $model->bmc_name, 'data-val' => $model->bmc_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Silos Info.'];
             return GhostHtml::a('<i class="fa fa-plus-square"></i>', ['/organisation/tbl-dcs-bmc/silos-info', 'id' => $model->bmc_code], $options);
         },
         'generate_sentbox' => function ($url, $model) {

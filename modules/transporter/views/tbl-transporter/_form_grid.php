@@ -87,23 +87,23 @@ $grid_option = [
 //        'delete' => ['option' => 'transporter_name,transporter_code,tbl-transporter/delete'],
         'bank-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
+            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/transporter/tbl-transporter/bank-details', 'id' => $model->transporter_code], $options);
         },
         'contact-details' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            $options = ['data-name' => $model->transporter_name, 'data-val' => $model->transporter_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/transporter/tbl-transporter/contact-details', 'id' => $model->transporter_code], $options);
         },
         'active' => function ($url, $model) {
             $title = ($model->is_active == 1) ? Yii::t('app', 'Deactivate') : Yii::t('app', 'Activate');
-            $icon = ($model->is_active == 1) ? 'fa fa-close' : 'fa fa-check';
+            $icon = ($model->is_active == 1) ? 'fa fa-times' : 'fa fa-check';
             $url = ($model->is_active == 1) ? '/transporter/tbl-transporter/transporter-deactivate' : '/transporter/tbl-transporter/transporter-activate';
             $popupWindowMsg = 'Are you sure you want to ' . ($model->is_active == 1 ? 'Deactivate ' : 'Activate ') . $model->transporter_name;
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => $title,
+                'title' => $title,
                 'data-popup-message' => $popupWindowMsg,
                 'class' => ' generalGridConfirmationPopup ',
                 'data-post-url' => Url::to([$url, 'id' => $model->transporter_code])

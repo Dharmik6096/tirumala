@@ -29,7 +29,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'mapping' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/configuration/tbl-config-mapping/mapping-view', 'union' => $model->union_code, 'plant' => $model->plant_code, 'mcc' => $model->mcc_plant_code, 'bmc' => $model->bmc_code, 'for' => $model->config_for, 'process' => $model->process_name], $options);
         },
     ]

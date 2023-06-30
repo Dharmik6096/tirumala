@@ -13,7 +13,7 @@ $name = ($type == 'DCS' ? $model->dcs_name : ($type == 'MEMBER' ? $model->member
     <div class="modal-dialog width_100-200">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Verification Details'); ?> (<?= $code ?>-<?= $name ?>)</h4>
             </div>
             <div class="modal-body">            

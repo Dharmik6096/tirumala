@@ -165,7 +165,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                     <h4 class="modal-title"><?php echo 'Asset Serial No'; ?></h4>
                 </div>
                 <div class="">
@@ -415,7 +415,7 @@ $script = "
         }
         
         record += '<div class=\"modal-footer\">';
-        record += '<button type=\"button\" class=\"btn btn-danger close-import\" data-dismiss=\"modal\">" . Yii::t('app', 'Cancel') . "</button>';
+        record += '<button type=\"button\" class=\"btn btn-danger close-import\" data-bs-dismiss=\"modal\">" . Yii::t('app', 'Cancel') . "</button>';
         record += '</div>'; 
         $('#select_serial_no_area').html(record);
         $('#select_serial_nos').modal('toggle');   

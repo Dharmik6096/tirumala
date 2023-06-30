@@ -37,7 +37,7 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $class = (Yii::$app->general->validateVehiclePayment($model)) ? '' : 'disabled';
-            $options = ['data-name' => $model->qty_code, 'data-val' => $model->qty_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $class];
+            $options = ['data-name' => $model->qty_code, 'data-val' => $model->qty_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/transporter/tbl-qty-wise-rate/update', 'id' => $model->qty_code], $options);
         },
     ]

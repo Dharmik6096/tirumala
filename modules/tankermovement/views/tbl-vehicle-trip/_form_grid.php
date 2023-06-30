@@ -78,8 +78,8 @@ $grid_option = [
             if ($disable) {
                 return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan'], ['class' => 'disabled']);
             } else {
-                $options = ['title' => Yii::t('app', 'Generate Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top',
-                    'data-original-title' => Yii::t('app', 'Generate Challan')
+                $options = ['title' => Yii::t('app', 'Generate Challan'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top',
+                    'title' => Yii::t('app', 'Generate Challan')
                 ];
                 return GhostHtml::a('<i class="fa fa-cog"></i>', ['/tankermovement/tbl-vehicle-trip/generate-challan',
                             'id' => $model->vehicle_trip_code]
@@ -93,7 +93,7 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan'], ['class' => 'disabled']);
             } else {
 
-                $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Challan'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Print Challan')];
+                $options = ['target' => '_blank', 'title' => Yii::t('app', 'Print Challan'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Print Challan')];
                 return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tankermovement/tbl-vehicle-trip/print-challan', 'id' => $model->trip_code], $options);
             }
         },
@@ -101,10 +101,10 @@ $grid_option = [
             $disable = (in_array($model->trip_status, ['closed'])) ? TRUE : FALSE;
             $disable = ($model->is_active == 1) ? $disable : TRUE;
             if ($disable) {
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip'], ['class' => 'disabled']);
+                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip'], ['class' => 'disabled']);
             } else {
-                $options = ['title' => Yii::t('app', 'Close Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Close Trip'), 'class' => 'close-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip', 'id' => $model->vehicle_trip_code], $options);
+                $options = ['title' => Yii::t('app', 'Close Trip'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Close Trip'), 'class' => 'close-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
+                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/tankermovement/tbl-vehicle-trip/close-trip', 'id' => $model->vehicle_trip_code], $options);
             }
         },
         'inactive-trip' => function ($url, $model) {
@@ -113,7 +113,7 @@ $grid_option = [
             if ($disable) {
                 return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip'], ['class' => 'disabled']);
             } else {
-                $options = ['title' => Yii::t('app', 'In-Active Trip'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'In-Active Trip'), 'class' => 'inactive-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
+                $options = ['title' => Yii::t('app', 'In-Active Trip'), 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'In-Active Trip'), 'class' => 'inactive-trip', 'data-val' => $model->vehicle_trip_code, 'data-name' => $model->trip_code];
                 return GhostHtml::a_alert('<i class="fa fa-ban"></i>', ['/tankermovement/tbl-vehicle-trip/inactive-trip', 'id' => $model->vehicle_trip_code], $options);
             }
         },

@@ -70,31 +70,31 @@ $grid_option = [
         'view' => TRUE,
         'update' => true,
         'km-wise-rate' => function ($url, $model) {
-            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Km Wise Rate', 'class' => ''];
+            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Km Wise Rate', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-road"></i>', ['/transporter/tbl-km-wise-rate/create', 'vehicle_code' => $model->vehicle_code, 'tr_code' => $model->transporter_code], $options);
         },
 //        'mobile-oil-rate' => function ($url, $model) {
-//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile Oil Rate', 'class' => ''];
+//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mobile Oil Rate', 'class' => ''];
 //            return GhostHtml::a('<i class="fa fa-mobile"></i>', ['/transporter/tbl-mobile-oil-rate-master/create', 'vehicle_code' => $model->vehicle_code], $options);
 //        },
 //        'vehicle-billing-type' => function ($url, $model) {
-//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Billing Type', 'class' => ''];
+//            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Vehicle Billing Type', 'class' => ''];
 //            return GhostHtml::a('<i class="fa fa fa-money-bill"></i>', ['/transporter/tbl-vehicle-billing-type/create', 'vehicle_code' => $model->vehicle_code], $options);
 //        },
         'transporter-payment-head' => function ($url, $model) {
-            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Vehicle Transporter Payment Head', 'class' => ''];
+            $options = ['data-name' => $model->vehicle_code, 'data-val' => $model->vehicle_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Vehicle Transporter Payment Head', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-truck"></i>', ['/transporter/tbl-vehicle-transporter-head-mapping/create', 'vehicle_code' => $model->vehicle_code, 'tr_code' => $model->transporter_code], $options);
         },
 //        'delete' => ['option' => 'vehicle_code,vehicle_code,tbl-vehicle-master/delete'],
         'active' => function ($url, $model) {
             $title = ($model->is_active == 1) ? Yii::t('app', 'Deactivate') : Yii::t('app', 'Activate');
-            $icon = ($model->is_active == 1) ? 'fa fa-close' : 'fa fa-check';
+            $icon = ($model->is_active == 1) ? 'fa fa-times' : 'fa fa-check';
             $url = ($model->is_active == 1) ? '/transporter/tbl-vehicle-master/vehicle-deactivate' : '/transporter/tbl-vehicle-master/vehicle-activate';
             $popupWindowMsg = 'Are you sure you want to ' . ($model->is_active == 1 ? 'Deactivate ' : 'Activate ') . $model->parsing_no;
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => $title,
+                'title' => $title,
                 'data-popup-message' => $popupWindowMsg,
                 'class' => ' generalGridConfirmationPopup ',
                 'data-post-url' => Url::to([$url, 'id' => $model->vehicle_code])

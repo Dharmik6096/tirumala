@@ -7,7 +7,7 @@ if ($popup != 'allow_popup') {
             <!-- Modal content-->
             <div class="modal-content dashboardWidhetModalPopup">
                 <div class="modal-header dashboardWidgetHeader">
-                    <button type="button" class="close color_fff opacity_one" data-dismiss="modal">×</button>
+                    <button type="button" class="close color_fff opacity_one" data-bs-dismiss="modal">×</button>
                     <h4 class="modal-title " id="modal-title"><?= $title; ?></h4>
                 </div>
                 <div class="modal-body rm_padding" id="modal-body">

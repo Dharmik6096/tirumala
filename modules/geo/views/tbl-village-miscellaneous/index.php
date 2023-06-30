@@ -9,7 +9,7 @@ Url::remember();
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
-        <?= Html::a(Yii::t('app', '<i class="fa fa-arrow-left"></i>'), ['tbl-villages/index'], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+n', 'data-toggle' => 'tooltip', 'data-placement' => 'right', 'title' => 'Back To Village List']); ?>
+        <?= Html::a(Yii::t('app', '<i class="fa fa-arrow-left"></i>'), ['tbl-villages/index'], ['class' => 'btn btn-primary apply-shortcut', 'shortcut_key' => 'ctrl+alt+n', 'data-bs-toggle' => 'tooltip', 'data-placement' => 'right', 'title' => 'Back To Village List']); ?>
         <?= $this->title; ?>
     </div>
     <div class="panel-body">

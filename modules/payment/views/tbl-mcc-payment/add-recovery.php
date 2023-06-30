@@ -16,7 +16,7 @@ $adjust_recovery = abs($model->net_payable);
     <div class="modal-dialog">
         <div class="modal-content panel">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel">
                     <?= Yii::t('app', 'Recovery Detail of ') . $society_name ?><br/>
                     <?= Yii::t('app', 'Total Amount : ') . $adjust_recovery

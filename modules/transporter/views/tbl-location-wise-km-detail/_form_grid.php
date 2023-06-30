@@ -50,7 +50,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'detail-view' => function ($url, $model) {
-            $options = [ 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'view',];
+            $options = [ 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'view',];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/transporter/tbl-location-wise-km-detail/view', 'from_type' => $model->from_type, 'from_dest' => $model->from_dest, 'to_type' => $model->to_type, 'to_dest' => $model->to_dest], $options);
         },
                 'update' => true,

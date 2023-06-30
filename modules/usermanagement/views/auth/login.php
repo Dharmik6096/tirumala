@@ -42,7 +42,7 @@ if (Yii::$app->session->hasFlash('success')) {
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                <!-- <button type="button" class="close" data-bs-dismiss="modal">&times;</button> -->
                 <h4 class="modal-title"><?= Yii::t('app', 'EVEREST Application') ?></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -158,7 +158,7 @@ if (Yii::$app->session->hasFlash('success')) {
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <div class="col-sm-12 loginError">
                     <div class="bg-danger text-center">
                         <i class="fa fa-times"></i>
@@ -170,7 +170,7 @@ if (Yii::$app->session->hasFlash('success')) {
                 <span><?= $message ?></span>
             </div>
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-primary">OK</button>
+                <button type="button" data-bs-dismiss="modal" class="btn btn-primary">OK</button>
             </div>
         </div>
     </div>

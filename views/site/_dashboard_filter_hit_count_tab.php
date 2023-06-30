@@ -36,7 +36,7 @@ $mccCode = !empty($model->mcc_code) ? $model->mcc_code : '';
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 <h4 class="modal-title"><?= $popup_title ?></h4>
             </div>
             <h1 class="col-sm-6 cal-header dashboardWidgetHeader border_right_white"><?= Yii::t('app', 'Previous'); ?></h1>

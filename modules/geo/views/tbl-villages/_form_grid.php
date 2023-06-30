@@ -28,7 +28,7 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'village_name,village_code,tbl-villages/delete'],
         'miscellaneous' => function ($url, $model) {
-                $options = ['data-name' => $model->village_name, 'data-val' => $model->village_name, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous Info' , 'class' => 'miscellaneous'];
+                $options = ['data-name' => $model->village_name, 'data-val' => $model->village_name, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Miscellaneous Info' , 'class' => 'miscellaneous'];
                 return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/geo/tbl-village-miscellaneous/index', 'id' => $model->village_code, 'name' => $model->village_name], $options);
             }
     ]

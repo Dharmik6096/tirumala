@@ -51,7 +51,7 @@ use yii\helpers\Url;
         'active_column' => FALSE,
         'actions' => [
             'view-config' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'data-original-title' => 'View Config Input', 'data-val' => $model->milk_vehicle_entry_transaction_code];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'title' => 'View Config Input', 'data-val' => $model->milk_vehicle_entry_transaction_code];
                 return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/tankermovement/tbl-milk-vehicle-entry/view-config', 'id' => $model->milk_vehicle_entry_transaction_code], $options);
             },
         ]

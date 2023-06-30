@@ -255,9 +255,9 @@ class TblPaymentCycleController extends ChildController {
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' data for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => $popupClass,
                     'data-post-url' => Url::to([$url, 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
@@ -280,9 +280,9 @@ class TblPaymentCycleController extends ChildController {
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Sync for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => $popupClass,
                     'data-post-url' => Url::to([$url, 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
@@ -300,9 +300,9 @@ class TblPaymentCycleController extends ChildController {
                 $title = $model->billing_lock_bmc == 1 ? 'Billing Unlock - BMC' : 'Billing Lock - BMC';
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_bmc == 1 ? 'Unlock' : 'Lock') . ' Billing for BMC(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => ' disabled ',
                     'data-post-url' => Url::to(['/payment/tbl-payment-cycle/bmc-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
@@ -324,9 +324,9 @@ class TblPaymentCycleController extends ChildController {
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->data_lock_member == 1 ? 'Unlock' : 'Lock') . ' data for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => $popupClass,
                     'data-post-url' => Url::to([$url, 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
@@ -349,9 +349,9 @@ class TblPaymentCycleController extends ChildController {
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model->sync_lock_member == 1 ? 'Unlock' : 'Lock') . ' Sync for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => $popupClass,
                     'data-post-url' => Url::to([$url, 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])
@@ -374,9 +374,9 @@ class TblPaymentCycleController extends ChildController {
                     }
                     $popupWindowTitle = 'Are you sure you want to ' . ($model->billing_lock_member == 1 ? 'Unlock' : 'Lock') . ' Billing for Member(' . $model->getName($model->applicable_for) . '-' . $model->applicable_code . ')';
                     $options = [
-                        'data-toggle' => 'tooltip',
+                        'data-bs-toggle' => 'tooltip',
                         'data-placement' => 'top',
-                        'data-original-title' => $title,
+                        'title' => $title,
                         'data-popup-message' => $popupWindowTitle,
                         'class' => $popupClass,
                         'data-post-url' => Url::to(['/payment/tbl-payment-cycle/member-billing-lock', 'payment_cycle_code' => $model->payment_cycle_code, 'id' => $model->payment_cycle_applicabilty_code])

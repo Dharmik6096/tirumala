@@ -61,7 +61,7 @@ $this->title = Yii::t('app', 'Bank Verification');
                     $type = $model['verify_for'];
                     $class = '';
                     $url = ['/organisation/tbl-dcs/view-verification'];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => 'view-verification' . $class, 'data-val' => $id, 'data-name' => $type];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => 'view-verification' . $class, 'data-val' => $id, 'data-name' => $type];
                     return GhostHtml::a_alert('<i class="fa fa-eye"></i>', $url, $options);
                 },
                 'get-attachments' => function ($url, $model) {
@@ -69,7 +69,7 @@ $this->title = Yii::t('app', 'Bank Verification');
                     $type = $model['verify_for'];
                     $class = '';
                     $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Attachments', 'class' => 'get-attachments' . $class, 'data-val' => $id, 'data-name' => $type];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Attachments', 'class' => 'get-attachments' . $class, 'data-val' => $id, 'data-name' => $type];
                     return GhostHtml::a_alert('<i class="fa fa-image"></i>', $url, $options);
                 },
             ]

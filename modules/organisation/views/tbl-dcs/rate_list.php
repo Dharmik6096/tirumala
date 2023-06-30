@@ -47,7 +47,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
                         $icon_class = ($model->is_active == 1) ? 'fa-close' : 'fa-check';
                         $title = ($model->is_active == 1) ? 'Block' : 'Un-Block';
                         $name = ($model->is_active == 1) ? 'Block ' . $name : 'Un-Block ' . $name;
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => 'deact-rate', 'data-val' => $model->rate_app_code, 'data-name' => $name];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => 'deact-rate', 'data-val' => $model->rate_app_code, 'data-name' => $name];
                         return GhostHtml::a_alert('<i class="fa ' . $icon_class . '""></i>', $url, $options);
                     }
                         ]

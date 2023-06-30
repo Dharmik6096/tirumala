@@ -296,7 +296,7 @@ $this->title = Yii::$app->label->title('view', 'Member Payment');
                     'active_column' => FALSE,
                     'actions' => [
                         'member-bill-head' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code, 'data-member_code' => $model->member_code];
                             return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-member-payment/member-bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'member_code' => $model->member_code], $options);
                         },
                     ]

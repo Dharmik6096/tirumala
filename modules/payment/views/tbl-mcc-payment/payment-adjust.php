@@ -111,7 +111,7 @@ $bmc_info = Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii
             'showPageSummary' => true,
             'actions' => [
                 'bill-head' => function ($url, $model) {
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->mcc_payment_code];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'title' => 'View Bill Head', 'data-val' => $model->mcc_payment_code];
                     return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-mcc-payment/bill-head', 'id' => $model->mcc_payment_code], $options);
                 },
             ]

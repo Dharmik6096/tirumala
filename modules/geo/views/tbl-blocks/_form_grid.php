@@ -28,7 +28,7 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'block_name,block_code,tbl-blocks/delete'],
         'miscellaneous' => function ($url, $model) {
-                $options = ['data-name' => $model->block_name, 'data-val' => $model->block_name, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous Info' , 'class' => 'miscellaneous'];
+                $options = ['data-name' => $model->block_name, 'data-val' => $model->block_name, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Miscellaneous Info' , 'class' => 'miscellaneous'];
                 return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/geo/tbl-block-miscellaneous/index', 'id' => $model->block_code, 'name' => $model->block_name], $options);
             }
     ]

@@ -46,7 +46,7 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $class = (Yii::$app->general->validateVehiclePayment($model)) ? '' : 'disabled';
-            $options = ['data-name' => $model->km_info_code, 'data-val' => $model->km_info_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $class];
+            $options = ['data-name' => $model->km_info_code, 'data-val' => $model->km_info_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/transporter/tbl-vehicle-km-info/update', 'id' => $model->km_info_code], $options);
         },
     ]

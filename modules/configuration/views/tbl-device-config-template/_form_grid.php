@@ -19,7 +19,7 @@ $grid_option = [
         'update' => TRUE,
         'mapping' => function ($url, $model) {
             $disable = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/configuration/tbl-device-config-template/device-config-mapping-applicability', 'id' => $model->device_temp_code], $options);
         },
     ]

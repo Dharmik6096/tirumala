@@ -24,7 +24,7 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'soc-map' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Map Societies'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Map Societies'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/general/tbl-society-vendor/create', 'id' => $model->role], $options);
         },
     ]

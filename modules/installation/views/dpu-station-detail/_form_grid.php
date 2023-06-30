@@ -50,7 +50,7 @@ $grid_option = [
         'force-sent' => function ($url, $model) {
             $name = $model->flag_value;
             $ref = Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-            $options = [ 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Force Sent', 'class' => 'force-sent', 'data-val' => $model->id, 'data-name' => $name,'data-ref'=>$ref];
+            $options = [ 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Force Sent', 'class' => 'force-sent', 'data-val' => $model->id, 'data-name' => $name,'data-ref'=>$ref];
             return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/installation/dpu-station-detail/force-sent', 'id' => $model->id], $options);
         },
             ]

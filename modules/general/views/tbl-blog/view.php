@@ -87,7 +87,7 @@ $folder = Yii::getAlias('@webroot') . '/web/uploads/attachments/';
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <img src="" alt="" class="img-responsive">
             </div>
         </div>

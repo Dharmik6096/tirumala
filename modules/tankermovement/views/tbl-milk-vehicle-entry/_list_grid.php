@@ -44,11 +44,11 @@ use yii\web\View;
         'active_column' => FALSE,
         'actions' => [
             'edit' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_vehicle_entry_transaction_code, 'data-name' => $model->milk_vehicle_entry_transaction_code, 'title' => Yii::t('app', 'Edit')];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_vehicle_entry_transaction_code, 'data-name' => $model->milk_vehicle_entry_transaction_code, 'title' => Yii::t('app', 'Edit')];
                 return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/tankermovement/tbl-milk-vehicle-entry/update-transaction'], $options);
             },
             'view-config' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'data-original-title' => 'View Config Input', 'data-val' => $model->milk_vehicle_entry_transaction_code];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'title' => 'View Config Input', 'data-val' => $model->milk_vehicle_entry_transaction_code];
                 return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/tankermovement/tbl-milk-vehicle-entry/view-config', 'id' => $model->milk_vehicle_entry_transaction_code], $options);
             },
         ]

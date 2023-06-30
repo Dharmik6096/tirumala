@@ -3,7 +3,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 <h4 class="modal-title" id="modal-title">Data for <?= $bmc ?></h4>
             </div>
             <div class="modal-body" id="modal-body">

@@ -63,12 +63,12 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view-detai' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-deactive/view', 'id' => $model->dcs_code], $options);
         },
                 'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'dcs-active ' . $class, 'data-dcs_deactive_code' => $model->dcs_deactive_code];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Active', 'class' => 'dcs-active ' . $class, 'data-dcs_deactive_code' => $model->dcs_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/organisation/tbl-dcs-deactive/activate-dcs'], $options);
         },
             ]

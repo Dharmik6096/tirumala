@@ -71,7 +71,7 @@ $client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
         'default_sorting' => FALSE
 //        'actions' => [
 //            'edit' => function ($url, $model) {
-//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_collection_code, 'data-name' => $model->milk_collection_code, 'title' => Yii::t('app', 'Edit')];
+//                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->milk_collection_code, 'data-name' => $model->milk_collection_code, 'title' => Yii::t('app', 'Edit')];
 //                return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/collection/tbl-bmc-collection/update-collection'], $options);
 //            },
 //        ]

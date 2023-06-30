@@ -103,8 +103,8 @@ $grid_option = [
             } elseif ($type == 'VLC') {
                 $name = Yii::$app->general->getmultiforeignkey($model->androidInstallationCode, ['dcsCode'], 'dcs_name');
             }
-            $icon = '<i class="fa fa-close"></i>';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'title' => Yii::t('app', 'Deactivate'), 'class' => 'deactivate-identity', 'data-val' => $model->android_installation_details_id, 'data-name' => $name];
+            $icon = '<i class="fa fa-times"></i>';
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Activate', 'title' => Yii::t('app', 'Deactivate'), 'class' => 'deactivate-identity', 'data-val' => $model->android_installation_details_id, 'data-name' => $name];
             return GhostHtml::a_alert($icon, ['/installation/tbl-android-installation/deactivate-identity'], $options);
         },
         'generate-password' => function ($url, $model) {

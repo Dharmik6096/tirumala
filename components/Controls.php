@@ -108,7 +108,7 @@ class Controls extends Component {
                 return Html::a(Yii::t('app', '<i class="fa fa-download"></i> ' . $btnText), 'javascript:void(0)', ['class' => 'btn btn-danger btn-block apply-shortcut import-file' . $appendId, 'data-map-flag' => 0, 'id' => 'import-file' . $appendId, 'shortcut_key' => 'ctrl+alt+i']);
             } else {
                 $mappField = explode(',', $check['mapping_fields']);
-                $code = '<a href="" class="btn btn-danger btn-block dropdown-toggle" data-toggle="dropdown"><i class="fa fa-download"></i> Import Data <span class="caret"></span></a>
+                $code = '<a href="" class="btn btn-danger btn-block dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-download"></i> Import Data <span class="caret"></span></a>
                 <ul class="dropdown-menu"><li>' . Html::a(Yii::t('app', 'Master Import'), 'javascript:void(0)', ['data-map-flag' => 0, 'class' => 'import-file']) . '</li>
                     <li>' . Html::a(Yii::t('app', 'Mapping Import'), 'javascript:void(0)', ['data-map-flag' => 1, 'class' => 'import-file']) . '</li></ul>';
 

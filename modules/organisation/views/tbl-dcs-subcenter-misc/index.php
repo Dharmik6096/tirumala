@@ -11,7 +11,7 @@ $this->params['menu'][]=Yii::$app->controls->add('Society Miscellaneous', ['crea
 
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
-        <?= Html::a(Yii::t('app', '<i class="fa fa-arrow-left"></i>'), ['tbl-' . $back . '/index'], ['class' => 'btn btn-primary', 'data-toggle' => 'tooltip', 'data-placement' => 'right', 'data-original-title' => 'Back To Society List']); ?>
+        <?= Html::a(Yii::t('app', '<i class="fa fa-arrow-left"></i>'), ['tbl-' . $back . '/index'], ['class' => 'btn btn-primary', 'data-bs-toggle' => 'tooltip', 'data-placement' => 'right', 'title' => 'Back To Society List']); ?>
         <?= $this->title; ?>
     </div>
     <div class="panel-body">

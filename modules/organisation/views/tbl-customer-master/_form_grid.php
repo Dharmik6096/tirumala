@@ -131,17 +131,17 @@ $grid_option = [
         'update' => function ($url, $model) {
             $name = $model->customer_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->customer_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'bank-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-customer-master/bank-details', 'id' => $model->customer_code], $options);
         },
         'contact-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            $options = ['data-name' => $model->customer_name, 'data-val' => $model->customer_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-customer-master/contact-details', 'id' => $model->customer_code], $options);
         },
         'upload-photos' => function ($url, $model) {
@@ -149,7 +149,7 @@ $grid_option = [
             $type = 'CUSTOMER';
             $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
             $url = ['/organisation/tbl-customer-master/import-attachements', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload-alt"></i>', $url, $options);
         },
     ]

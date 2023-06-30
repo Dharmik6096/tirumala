@@ -48,11 +48,11 @@ $grid_option = [
     'actions' => [
         'view_details' => function ($url, $model) {
             $class = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/product/tbl-product-purchase-rate/view', 'id' => $model->product_purchase_rate_code], $options);
         },
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-purchase-rate/product-purchase-rate-applicability', 'id' => $model->product_purchase_rate_code], $options);
         }
     ]
