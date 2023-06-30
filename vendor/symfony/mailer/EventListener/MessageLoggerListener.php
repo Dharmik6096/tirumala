@@ -23,7 +23,7 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class MessageLoggerListener implements EventSubscriberInterface, ResetInterface
 {
-    private MessageEvents $events;
+    private $events;
 
     public function __construct()
     {
@@ -31,7 +31,7 @@ class MessageLoggerListener implements EventSubscriberInterface, ResetInterface
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
     public function reset()
     {
@@ -48,7 +48,7 @@ class MessageLoggerListener implements EventSubscriberInterface, ResetInterface
         return $this->events;
     }
 
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()
     {
         return [
             MessageEvent::class => ['onMessage', -255],

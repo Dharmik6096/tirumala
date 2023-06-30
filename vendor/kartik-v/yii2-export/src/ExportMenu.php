@@ -4,7 +4,7 @@
  * @package   yii2-export
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2015 - 2021
- * @version   1.4.2
+ * @version   1.4.3
  */
 
 namespace kartik\export;
@@ -691,13 +691,13 @@ class ExportMenu extends GridView
     /**
      * @var string the data output format type. Defaults to `ExportMenu::FORMAT_EXCEL_X`.
      */
-    private $_exportType;
+    protected $_exportType;
 
     /**
      * @var boolean private flag that will use $_POST [[exportRequestParam]] setting if available or use the
      * [[triggerDownload]] setting
      */
-    private $_triggerDownload;
+    protected $_triggerDownload;
 
     /**
      * Appends slash to path if it does not exist
@@ -860,8 +860,13 @@ class ExportMenu extends GridView
         }
         $this->_columnSelectorEnabled = $this->showColumnSelector && $this->asDropdown;
         $request = Yii::$app->request;
-        $this->_triggerDownload = $request->post($this->exportRequestParam, $this->triggerDownload);
-        $this->_exportType = $request->post($this->exportTypeParam, $this->exportType);
+        if ($request instanceof \yii\web\Request) {
+          $this->_triggerDownload = $request->post($this->exportRequestParam, $this->triggerDownload);
+          $this->_exportType = $request->post($this->exportTypeParam, $this->exportType);
+        } else {
+            $this->_triggerDownload = $this->triggerDownload;
+            $this->_exportType = $this->exportType;
+        }
         if (!$this->stream) {
             $this->target = self::TARGET_SELF;
         }
@@ -869,7 +874,9 @@ class ExportMenu extends GridView
             if ($this->stream) {
                 Yii::$app->controller->layout = false;
             }
-            $this->_columnSelectorEnabled = $request->post($this->colSelFlagParam, $this->_columnSelectorEnabled);
+            $this->_columnSelectorEnabled = $request instanceof \yii\web\Request ?
+                $request->post($this->colSelFlagParam, $this->_columnSelectorEnabled) :
+                $this->_columnSelectorEnabled;
             $this->initSelectedColumns();
         }
         if ($this->dynagrid) {
@@ -1402,7 +1409,7 @@ class ExportMenu extends GridView
 
             //20201026 Scott: To avoid 'Closure object cannot have properties' error 
             try {
-                $format = ArrayHelper::getValue($column->contentOptions, 'cellFormat');
+                $format = ArrayHelper::getValue($contentOptions, 'cellFormat');
             } catch (Exception $e) {
                 $format = null;
             }
@@ -1750,13 +1757,14 @@ class ExportMenu extends GridView
             ],
             $this->columnSelectorMenuOptions
         );
+        $dataToggle = 'data-'.($this->isBs(5) ? 'bs-' : '').'toggle';
         $this->columnSelectorOptions = array_replace_recursive(
             [
                 'id' => $id,
                 'icon' => !$this->isBs(3) ? '<i class="fas fa-list"></i>' : '<i class="glyphicon glyphicon-list"></i>',
                 'title' => Yii::t('kvexport', 'Select columns to export'),
                 'type' => 'button',
-                'data-toggle' => 'dropdown',
+                $dataToggle => 'dropdown',
                 'aria-haspopup' => 'true',
                 'aria-expanded' => 'false',
             ],
