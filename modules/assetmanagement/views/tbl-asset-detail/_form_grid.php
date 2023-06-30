@@ -13,9 +13,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false],
     //  ['attribute' => 'asset_detail_code'],
-    ['attribute' => 'asset_group_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->assetCode->assetGroupCode, 'asset_group_name');
-        }, 'visible' => false],
+//    ['attribute' => 'asset_group_code', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->assetCode->assetGroupCode, 'asset_group_name');
+//        }, 'visible' => false],
     ['attribute' => 'asset_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->assetCode, 'asset_name');
         }],
@@ -64,7 +64,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->assetDetail, 'make');
         }],
     ['attribute' => 'current_status', 'value' => function($model) {
-            return (isset($model->current_status) && $model->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model->current_status] : '';
+            return (isset($model->current_status) && $model->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model['assetDetail']->current_status] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('asset_detail_status', $searchModel, 'current_status')],
     ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
         // ['attribute' => 'maintanance_duration_in_days'],
