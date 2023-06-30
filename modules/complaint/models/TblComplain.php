@@ -168,6 +168,10 @@ class TblComplain extends \app\models\ChildModel {
         return $this->complain_status == 'RESOLVED' ? TRUE : FALSE;
     }
 
+    public function getComplainStatus($id) {
+        return $this->find()->select('complain_status')->where(['complain_status' => 'RESOLVED', 'complain_code' => $id])->one();
+    }
+
     public function getContactDetailsCode() {
         return $this->hasOne(TblContactDetails::className(), ['detail_code' => 'user_code']);
     }
@@ -180,25 +184,5 @@ class TblComplain extends \app\models\ChildModel {
         return $this->hasOne(TblAttachment::className(), ['module_code' => 'complain_code']);
     }
 
-    public function uploadFile($attachment) {
-        if (isset($attachment)) {
-            // store the source file name
-            $this->attachment = $attachment->name;
-            $ext = (explode(".", $attachment->name));
-            // generate a unique file name
-            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path'], ['only' => ['*.' . $ext[1]]]);
-            if (isset($files[0])) {
-                foreach ($files as $index => $file) {
-                    $fileName = substr($file, strrpos($file, '/') + 2);
-                    if ($this->attachment == $fileName) {
-                        $fn = explode('.', $fileName);
-                        $fn = $fn[0] . '(' . ($index + 1) . ').' . $fn[1];
-                    }
-                }
-                return isset($fn) ? $fn : $this->attachment;
-            }
-            return $this->attachment;
-        }
-    }
 
 }

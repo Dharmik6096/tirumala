@@ -35,7 +35,7 @@ class TblAttachment extends \yii\db\ActiveRecord {
         return [
                 [['attachment', 'thumbnail'], 'safe'],
                 [['created_at'], 'safe'],
-                [['attachment_code', 'module_code', 'attachment_type', 'created_by'], 'safe'],
+                [['module_code', 'attachment_type', 'created_by'], 'safe'],
                 [['module_name', 'remarks'], 'safe'],
         ];
     }

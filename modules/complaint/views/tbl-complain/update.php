@@ -8,6 +8,7 @@ $this->title = Yii::$app->label->title('edit', 'Complain');
         $this->render('_form', [
             'model' => $model,
             'type' => 'edit',
+            'complainAttachment' => $complainAttachment
         ])
         ?>
 

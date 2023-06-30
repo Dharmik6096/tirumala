@@ -9,8 +9,15 @@ use yii\web\JsExpression;
 
 $url = \yii\helpers\Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
-file_exists($path . $model->attachment) ? $size = filesize($path . $model->attachment) : $size = '';
-
+$size = '';
+$attachment = '';
+$attachment_code = '';
+if (!empty($model['attachment'])) {
+    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
+    $attachmentData = $model['attachment'];
+    $attachment = $attachmentData->attachment;
+    $attachment_code = $attachmentData->attachment_code;
+}
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
             'validateOnChange' => FALSE,
@@ -77,8 +84,9 @@ $form = ActiveForm::begin([
     <div class="clearfix"></div>
 
     <div class="col-sm-12">
-        <?php echo Html::hiddenInput('TblAttachment[old_attachment]', $complainAttachment->attachment, ['id' => 'old_attachment']); ?>
-        <?php echo Html::hiddenInput('TblAttachment[attachment]', $complainAttachment->attachment, ['id' => 'attachment']); ?>
+        <?php echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']); ?>
+        <?php echo Html::hiddenInput('TblAttachment[old_attachment]', $attachment, ['id' => 'old_attachment']); ?>
+        <?php echo Html::hiddenInput('TblAttachment[attachment]', $attachment, ['id' => 'attachment']); ?>
         <?=
         Dropzone::widget([
             'id' => 'mainDrop',
@@ -89,10 +97,10 @@ $form = ActiveForm::begin([
                 'autoDiscover' => false,
                 'maxFiles' => 1,
                 'init' => new JsExpression("function(file){
-                        if('$complainAttachment->attachment' != '' && '{$size}' != ''){
-                            var data = '$path'+'$complainAttachment->attachment';
+                        if('$attachment' != '' && '{$size}' != ''){
+                            var data = '$path'+'$attachment';
                             var mockFile = {
-                                name: '$complainAttachment->attachment',
+                                name: '$attachment',
                                 size: '{$size}',
                             };
                             mockFile.isMock = true;
@@ -136,8 +144,10 @@ $form = ActiveForm::begin([
                                                                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
                                                             }
                                                         });
-                                                        $('#attachment').val('');
-                                                        this.options.maxFiles++;
+                                                        if(name == val){
+                                                            $('#attachment').val('');
+                                                            this.options.maxFiles++;
+                                                        }
                                            }",
                 'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
             ]

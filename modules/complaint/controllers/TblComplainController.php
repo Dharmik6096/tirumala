@@ -17,11 +17,11 @@ use app\modules\assetmanagement\models\TblAssetMaster;
 use app\modules\complaint\models\TblComplainHistory;
 use app\modules\complaint\models\TblComplainActivityHistory;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
-use webvimark\modules\UserManagement\models\User;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\general\models\TblAttachment;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -105,10 +105,21 @@ class TblComplainController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
+            $saveModel = [];
+            $this->model->load(Yii::$app->request->post());
             $historyModel = new TblComplainHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $this->model->load(Yii::$app->request->post());
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Complain', 'edit']);
+            $saveModel[] = $this->model;
+            $saveModel[] = $historyModel;
+            $attachment = Yii::$app->request->post()['TblAttachment'];
+            if (!empty($attachment['attachment_code'])) {
+                $attachment_model = TblAttachment::find($attachment['attachment_code'])->one();
+                $attachment_model->load(Yii::$app->request->post());
+                $ext = (explode(".", $attachment_model->attachment));
+                $attachment_model->attachment_type = $ext[1];
+                $saveModel[] = $attachment_model;
+            }
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -132,21 +143,27 @@ class TblComplainController extends \app\controllers\ChildController {
      */
     public function actionDelete() {
         $saveModel = [];
+        $deleteModel = [];
         $this->model = $this->findModel(Yii::$app->request->post('id'));
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, DELETE);
-        $saveModel[] = $this->model;
+        $deleteModel[] = $this->model;
         $saveModel[] = $historyModel;
 
         $model = TblComplainActivity::find()->where(['complain_code' => Yii::$app->request->post('id')])->one();
         $activityHistoryModel = new TblComplainActivityHistory();
         Yii::$app->operation->history($model, $activityHistoryModel, DELETE);
-        $saveModel[] = $model;
+        $deleteModel[] = $model;
         $saveModel[] = $activityHistoryModel;
 
-        $record = $this->generalModel->deleteTransaction($saveModel);
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+        $attachmentModel = TblAttachment::find()->where(['module_code' => Yii::$app->request->post('id')])->one();
+        if (!empty($attachmentModel)) {
+            $deleteModel[] = $attachmentModel;
+        }
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Complain', 'delete']);
+        if ($transaction == 'customRedirect') {
+            return $this->redirect(['index']);
+        }
     }
 
     /**
@@ -232,13 +249,7 @@ class TblComplainController extends \app\controllers\ChildController {
             $appLoginModel = new User();
             $mobileNo = Yii::$app->general->getforeignkey($this->model->contactDetailsCodes, 'mobile_no');
             $appLoginModel->mobile_no = !empty($mobileNo) && $mobileNo != 'N/A' ? $mobileNo : '';
-
-//            $appLoginModelData = $appLoginModel->getLoginDetails();
-//            public function getLoginDetails() {
-//                return $this->find()
-//                                ->where(['is_active' => 1, 'mobile_no' => $this->mobile_no])
-//                                ->one();
-//            }
+            $appLoginModelData = $appLoginModel->getLoginDetails();
 
             if (!empty($appLoginModelData)) {
                 $recType = 'APP_NOTIFICATION';
@@ -345,7 +356,7 @@ class TblComplainController extends \app\controllers\ChildController {
 //            $this->attachment = $attachment->name;
             $ext = (explode(".", $attachment->name));
             // generate a unique file name
-            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path'], ['only' => ['*.' . $ext[1]]]);
+            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path']);
             if (isset($files[0])) {
                 foreach ($files as $index => $file) {
                     $fileName = substr($file, strrpos($file, '/') + 2);
