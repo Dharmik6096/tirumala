@@ -58,7 +58,7 @@ $form = ActiveForm::begin([
         'showPageSummary' => false,
         'actions' => [
             'member-delete' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberwisedelete', 'data-original-title' => 'Member Detail', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection']];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'memberwisedelete', 'title' => 'Member Detail', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection']];
                 return GhostHtml::a_alert('<i class="fa fa-plus"></i>', ['/collection/tbl-milk-collection/delete-member-wise', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
             },
         ]

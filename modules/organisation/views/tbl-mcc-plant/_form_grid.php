@@ -95,14 +95,14 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'name,mcc_plant_code,tbl-mcc-plant/delete'],
         'contact-details' => function ($url, $model) {
-            $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+            $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
             return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-mcc-plant/contact-details', 'id' => $model->mcc_plant_code], $options);
         }, 'mapping' => function ($url, $model) {
-            $options = ['data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'MCC Mapping'];
+            $options = ['data-val' => $model->mcc_plant_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'MCC Mapping'];
             return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-mcc-plant/mcc-mapping', 'id' => $model->mcc_plant_code], $options);
         },
         'silos-info' => function ($url, $model) {
-            $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Silos Info.'];
+            $options = ['data-name' => $model->name, 'data-val' => $model->mcc_plant_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Silos Info.'];
             return GhostHtml::a('<i class="fa fa-plus-square"></i>', ['/organisation/tbl-mcc-plant/silos-info', 'id' => $model->mcc_plant_code], $options);
         },
     ]

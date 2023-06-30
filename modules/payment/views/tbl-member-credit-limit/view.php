@@ -45,7 +45,7 @@ $grid_option = [
     'active_column' => false,
 //    'actions' => [
 //        'member-credit-limit-transaction' => function ($url, $model) {
-//            $options = ['data-name' => $model->member_credit_limit_code, 'data-val' => $model->member_credit_limit_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Credit Limit Transaction', 'class' => ''];
+//            $options = ['data-name' => $model->member_credit_limit_code, 'data-val' => $model->member_credit_limit_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Credit Limit Transaction', 'class' => ''];
 //            return GhostHtml::a('<i class="fa fa-eye"></i>', ['/payment/tbl-member-credit-limit/view', 'member_credit_limit_code' => $model->member_credit_limit_code], $options);
 //        },
 //    ]

@@ -53,7 +53,7 @@ $grid_option = [
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $disable = $model->salaryDisburse() ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'data-original-title' => 'Edit'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'title' => 'Edit'];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/staffmanagement/tbl-staff-salary/update', 'id' => $model->staff_salary_code], $options);
         },
     ]

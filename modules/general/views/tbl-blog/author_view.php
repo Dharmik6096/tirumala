@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="panel-heading">
         <?= Html::encode($this->title) ?>
         <div class="dropdown pull-right">
-            <button data-toggle="dropdown" class="dropdown-toggle btn btn-danger">Actions <b class="caret"></b></button>
+            <button data-bs-toggle="dropdown" class="dropdown-toggle btn btn-danger">Actions <b class="caret"></b></button>
             <ul class="dropdown-menu">
                 <li><?= Yii::$app->controls->update($model->id); ?></li>
                 <li><?= Yii::$app->controls->cancel($model); ?></li>

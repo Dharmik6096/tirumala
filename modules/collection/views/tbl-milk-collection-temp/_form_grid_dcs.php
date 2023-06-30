@@ -54,7 +54,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Milk Collection Ap
                     'deactive' => function ($url, $model) {
 //                        $name = $model->member_name;
 //                        $class = ($model->is_active == 1) ? '' : 'link-disable';
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => 'view_data', 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-is_approved' => $model['is_approved'], 'data-shift_code' => $model['shift_code'], 'data-is_updated' => $model['is_updated']];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => 'view_data', 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-is_approved' => $model['is_approved'], 'data-shift_code' => $model['shift_code'], 'data-is_updated' => $model['is_updated']];
                         return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/collection/tbl-milk-collection-temp/milk-collection-list'], $options);
                     },
                         ],

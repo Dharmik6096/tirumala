@@ -125,7 +125,7 @@ $grid_option = [
         'view-collection' => function ($url, $model) {
             $options = ['title' => 'View', 'target' => '_blank'];
             $url = '/collection/tbl-bmc-collection/view-allow';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-eye"></i>', [$url, 'id' => $model->milk_collection_code], $options);
         },
     ]

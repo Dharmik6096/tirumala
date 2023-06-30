@@ -18,7 +18,7 @@ $Header = substr($aliasmodel->member_code, -4) . ' > ' . Yii::$app->general->get
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×  </button>
                 <!--<h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Recovery') ?></h4>-->
                 <div class="panel-heading">
                     <?= $this->title . ' (' . $Header . ')' ?>   

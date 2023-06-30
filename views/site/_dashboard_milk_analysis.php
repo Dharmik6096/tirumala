@@ -28,7 +28,7 @@ $model->mag_to_shift = empty($model->mag_to_shift) ? 2 : $model->mag_to_shift;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 <h4 class="modal-title"><?= $popup_title ?></h4>
             </div>
             <div class="modal-body dashboard_controls">

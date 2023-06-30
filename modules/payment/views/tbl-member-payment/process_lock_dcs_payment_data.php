@@ -101,15 +101,15 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                     'showPageSummary' => true,
                     'actions' => [
                         'bill-head' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-dcs-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-dcs-head', 'title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
                             return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-member-payment/bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
                         },
                         'member_data_update' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head-pencil', 'data-original-title' => 'Member Payment Adjustment', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-union_code' => $model->union_code, 'data-plant_code' => $model->plant_code, 'data-mcc_plant_code' => $model->mcc_plant_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head-pencil', 'title' => 'Member Payment Adjustment', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-union_code' => $model->union_code, 'data-plant_code' => $model->plant_code, 'data-mcc_plant_code' => $model->mcc_plant_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
                             return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/payment/tbl-member-payment/member-payment-adjust-list', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
                         },
                         'members' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Members')];
+                            $options = ['data-bs-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'title' => Yii::t('app', 'View Members')];
                             return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model->payment_cycle_code, 'dcs_code' => $model->dcs_code], $options);
                         },
                     ]

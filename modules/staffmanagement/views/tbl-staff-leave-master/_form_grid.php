@@ -40,7 +40,7 @@ $grid_option = [
     'actions' => [
         'edit' => function ($url, $model) {
             $disable = $model->is_default == 1 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'data-original-title' => 'Edit'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => $disable, 'title' => 'Edit'];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/staffmanagement/tbl-staff-leave-master/update', 'id' => $model->staff_leave_code], $options);
         },
     ]

@@ -41,13 +41,13 @@ $grid_option = [
     'actions' => [        
         'view' => true,
         'applicabilty' => function ($url, $model) {       
-        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
         return GhostHtml::a('<i class="fa fa-plus"></i>', ['/payment/tbl-dcs-payment-cycle/payment-cycle-applicability', 'id' => $model->dcs_payment_cycle_code], $options);
         },
         'data_lock' => function ($url, $model) {
             $url=Url::to(['lock-payment-cycle']);
             $name=Yii::$app->controls->view_date($model->from_date).' - '.Yii::$app->controls->view_date($model->to_date);    
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Lock Data','class'=>'lock-data','data-val'=>$model->dcs_payment_cycle_code,'data-name'=>$name,'data-url'=>$url,'data-flag'=>'data'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Lock Data','class'=>'lock-data','data-val'=>$model->dcs_payment_cycle_code,'data-name'=>$name,'data-url'=>$url,'data-flag'=>'data'];
             if($model->lock_data==0)
             return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/payment/tbl-dcs-payment-cycle/lock-payment-cycle'], $options);
         },
@@ -55,7 +55,7 @@ $grid_option = [
         $url=Url::to(['lock-payment-cycle']);
         $name=Yii::$app->controls->view_date($model->from_date).' - '.Yii::$app->controls->view_date($model->to_date);    
         
-        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Lock Billing','class'=>'lock-bill','data-val'=>$model->dcs_payment_cycle_code,'data-name'=>$name,'data-url'=>$url,'data-flag'=>'billing'];
+        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Lock Billing','class'=>'lock-bill','data-val'=>$model->dcs_payment_cycle_code,'data-name'=>$name,'data-url'=>$url,'data-flag'=>'billing'];
         if($model->lock_data==1 && $model->lock_billing_process==0)
             return GhostHtml::a_alert('<i class="fa fa-expeditedssl"></i>', ['/payment/tbl-dcs-payment-cycle/lock-payment-cycle'], $options);
         },

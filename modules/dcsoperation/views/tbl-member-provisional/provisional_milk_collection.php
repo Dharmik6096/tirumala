@@ -8,7 +8,7 @@ use kartik\detail\DetailView;
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal">×</button>
                 <h4 class="modal-title" id="modal-title">Provisional Milk Collection Detail of member <?= $model->member_name?> (<?= $model->member_code?>) of society <?=Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name')?></h4>
             </div>
             <div class="modal-body full_width_grid" id="modal-body">

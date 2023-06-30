@@ -53,5 +53,5 @@ use yii\helpers\Url;
             <?=
             Html::a(Yii::t('app', 'Save'), 'javascript:void(0)', ['class' => 'btn btn-primary add_serial_no'])
             ?>
-            <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+            <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
         </div> 

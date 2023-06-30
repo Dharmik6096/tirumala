@@ -41,7 +41,7 @@ $grid_option = [
     'actions' => [
         'update' => true,
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/collection/tbl-collection-penalty-rate/collection-penalty-rate-applicability', 'id' => $model->penalty_rate_code], $options);
         }
     ]

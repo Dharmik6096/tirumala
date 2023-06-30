@@ -22,7 +22,7 @@ $this->title = ucfirst(Yii::$app->getRequest()->getQueryParam('l')) . ' Translat
         <?php echo ucfirst(Yii::$app->getRequest()->getQueryParam('l')); ?>
         Name
         <div class="btn-group pull-right">
-            <button id="w3" class="btn dropdown-toggle" title="Export data in selected format" data-toggle="dropdown" aria-expanded="false">
+            <button id="w3" class="btn dropdown-toggle" title="Export data in selected format" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="glyphicon glyphicon-export"></i> <i class="glyphicon"></i> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">

@@ -132,12 +132,12 @@ $allow_stop_payment_vendor = isset(Yii::$app->session->get('unionConfig')[$model
             'showPageSummary' => true,
             'actions' => [
                 'bill-head' => function ($url, $model) {
-                    $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->vsp_payment_code];
+                    $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'title' => 'View Bill Head', 'data-val' => $model->vsp_payment_code];
                     return GhostHtml::a_alert('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-vsp-payment/bill-head', 'id' => $model->vsp_payment_code], $options);
                 },
                 'vendor-recovery' => function ($url, $model) use ($recovery_from_other_vendor) {
                     if ($recovery_from_other_vendor) {
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'add-recovery', 'data-original-title' => 'Add Recovery', 'data-val' => $model->vsp_payment_code];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'add-recovery', 'title' => 'Add Recovery', 'data-val' => $model->vsp_payment_code];
                         return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/payment/tbl-vsp-payment/add-recovery', 'id' => $model->vsp_payment_code], $options);
                     }
                 },

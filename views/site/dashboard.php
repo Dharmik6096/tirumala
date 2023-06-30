@@ -178,16 +178,16 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                             <?= Yii::$app->dropdown->union_mcc($model, $form, 'dashboard-union_code,load_all', 'mcc_code', false, false, false); ?>
                         </div>
                         <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                            <button type="button" class="widget_table_setting_btn" data-toggle="collapse" data-target="#modal_widget_selection"><i class="fa fa-cog faa-spin animated faa-slow"></i></button>
+                            <button type="button" class="widget_table_setting_btn" data-bs-toggle="collapse" data-bs-target="#modal_widget_selection"><i class="fa fa-cog faa-spin animated faa-slow"></i></button>
                         </div>
                         <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
                             <?= Yii::$app->controls->search(); ?>
                         </div>
                         <div class="col-sm-1 searchFilterHeader widget_filter_margin padding_left_right_0">
-                            <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile" title="Member Mobile Info."></i></a>
+                            <a class="member-mobile-info pull-Left pie_chart_icon"><i class="fa fa-mobile-alt" title="Member Mobile Info."></i></a>
                         </div>
                         <div class="col-sm-1 searchFilterHeader dup_data_icon_margin padding_left_right_0">
-                            <a type="button" class="pull-Left dpu_data_icon pie_chart_icon" data-toggle="collapse" data-target="#dpu_widget_filter"><img src="<?= $imageIconPath . 'dpu_data.png' ?>"></img></a>
+                            <a type="button" class="pull-Left dpu_data_icon pie_chart_icon" data-bs-toggle="collapse" data-bs-target="#dpu_widget_filter"><img src="<?= $imageIconPath . 'dpu_data.png' ?>"></img></a>
                             <!-- <a class="dpu_data_popup"></a> -->
                         </div>
                     </span>
@@ -361,7 +361,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         <!-- Modal content-->
         <div class="modal-content dashboardWidhetModalPopup">
             <div class="modal-header dashboardWidgetHeader">
-                <button type="button" class="close  color_fff opacity_one" data-dismiss="modal">&times;</button>
+                <button type="button" class="close  color_fff opacity_one" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id='cal_modal-title'></h4>
             </div>
             <div class="modal-body" id='calendar_details'>
@@ -376,7 +376,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?= Yii::t('app', 'Member V/S Mobile APP'); ?></h4>
             </div>
             <div class="modal-body" id='piecontainer'>
@@ -392,7 +392,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         <div class="modal-content">
             <div class="modal-header">
                 <div onclick="exportThisWithParameter('dup_collection_table', '<?= $this->title ?>')" class="widget_table_search_btn_right_margin mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?= Yii::t('app', 'DPU Data'); ?></h4>
             </div>
             <div class="modal-body" id='DPU_data_container'>
@@ -412,11 +412,11 @@ $script = "
     var clientCodeForData = '" . $client_code . "';
 // $( '.sortable' ).sortable();
 $('.widget_table_setting_btn').click(function(){
-    $('#dpu_widget_filter').removeClass('in');
+    $('#dpu_widget_filter').collapse('hide');
 });
 
 $('.dpu_data_icon').click(function(){
-    $('#modal_widget_selection').removeClass('in');
+    $('#modal_widget_selection').collapse('hide');
 });
 
 

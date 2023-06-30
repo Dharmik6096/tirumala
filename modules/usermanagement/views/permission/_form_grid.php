@@ -107,13 +107,13 @@ $grid_option = [
     'actions' => [
         'views' => function($url, $model) {
             $class = $model->checkNotVendor() ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign Permission', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Assign Permission', 'class' => $class];
             return Html::a('<i class="fa fa-key"></i>', ['/user-management/permission/view', 'id' => $model->name], $options);
         },
         'update' => function($url, $model) {
             $class = $model->checkNotVendor() ? '' : 'link-disable';
 //                    $url=  str_replace('edit', 'update', $url);
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'class' => $class];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Update', 'class' => $class];
             return Html::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'delete' => ['option' => 'group_code,name,/user-management/permission/delete,checkNotVendor()'],

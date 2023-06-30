@@ -27,7 +27,7 @@ $form = ActiveForm::begin(['options' => [
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Manual Product'); ?></h4>
             </div>
 
@@ -56,7 +56,7 @@ $form = ActiveForm::begin(['options' => [
                     </div>                   
                     <div class="panel-footer">
                         <?php echo Html::button(Yii::t('app', 'Add'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'onClick' => 'js:AddTransaction();', 'id' => 'addbutton']); ?>                       
-                        <button type="button" class="btn btn-default btn-raised close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                        <button type="button" class="btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                     </div>
                 </div>
             </div>

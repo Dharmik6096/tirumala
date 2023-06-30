@@ -9,7 +9,7 @@ use yii\helpers\Url;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Tax Test'); ?></h4>
             </div>
 
@@ -44,7 +44,7 @@ use yii\helpers\Url;
                         </div>
                     </div>
                     <div class="panel-footer">
-                        <button type="button" class="btn btn-default btn-raised close-import" data-dismiss="modal"><?= Yii::t('app', 'Close') ?></button>
+                        <button type="button" class="btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Close') ?></button>
                     </div>
                 </div>
             </div>

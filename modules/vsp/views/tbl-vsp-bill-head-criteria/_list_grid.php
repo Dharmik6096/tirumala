@@ -21,7 +21,7 @@ use app\modules\usermanagement\components\GhostHtml;
         'active_column' => FALSE,
         'actions' => [
             'delete-slab' => function($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'class' => 'delete-slab', 'data-from' => $model->from_val, 'data-to' => $model->to_val, 'data-id' => $model->vsp_slab_code];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Delete', 'class' => 'delete-slab', 'data-from' => $model->from_val, 'data-to' => $model->to_val, 'data-id' => $model->vsp_slab_code];
                 return GhostHtml::a_alert('<i class="fa fa-trash"></i>', ['delete-slab', 'id' => $model->vsp_slab_code], $options);
             }]
     ];

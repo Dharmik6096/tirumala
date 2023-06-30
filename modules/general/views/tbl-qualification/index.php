@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading"><?= Html::encode($this->title) ?>
         <div class="dropdown pull-right shortcut-main" shortcut="true" display_shortcut="false" highlight_shortcut="true">
-            <button data-toggle="dropdown" class="dropdown-toggle btn btn-danger">Actions <b class="caret"></b></button>
+            <button data-bs-toggle="dropdown" class="dropdown-toggle btn btn-danger">Actions <b class="caret"></b></button>
             <ul class="dropdown-menu">
                 <li><?= Yii::$app->controls->add('Qualification'); ?></li>
             </ul>

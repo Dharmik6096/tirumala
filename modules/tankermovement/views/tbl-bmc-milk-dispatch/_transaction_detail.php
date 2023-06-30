@@ -67,7 +67,7 @@ use yii\helpers\Url;
         'active_column' => FALSE,
         'actions' => [
             'view-config' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'data-original-title' => 'View Config Input', 'data-val' => $model->bmc_milk_dispatch_txn_code];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-config', 'title' => 'View Config Input', 'data-val' => $model->bmc_milk_dispatch_txn_code];
                 return GhostHtml::a_alert('<i class="fa fa-eye"></i>', ['/tankermovement/tbl-bmc-milk-dispatch/view-config', 'id' => $model->bmc_milk_dispatch_txn_code], $options);
             },
         ]

@@ -75,7 +75,7 @@ $grid_option = [
     'default_sorting' => FALSE,
     'actions' => [
         'detail-view' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View'), 'class' => ''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'View'), 'class' => ''];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/payment/tbl-member-payment/view', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'payment_status' => $model->payment_status], $options);
         },
     ]

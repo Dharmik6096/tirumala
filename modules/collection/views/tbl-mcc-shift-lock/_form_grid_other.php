@@ -40,9 +40,9 @@ $attribute = [
             }
             $popupWindowTitle = 'Are you sure you want to ' . ($model['bmc_lock'] == 1 ? 'Unlock BMC Data' : 'Lock BMC Data');
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => $title,
+                'title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
                 'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
@@ -64,9 +64,9 @@ $attribute = [
                 }
                 $popupWindowTitle = 'Are you sure you want to ' . ($model['member_lock'] == 1 ? 'Unlock Member Data' : 'Lock Member Data');
                 $options = [
-                    'data-toggle' => 'tooltip',
+                    'data-bs-toggle' => 'tooltip',
                     'data-placement' => 'top',
-                    'data-original-title' => $title,
+                    'title' => $title,
                     'data-popup-message' => $popupWindowTitle,
                     'class' => $popupClass,
                     'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
@@ -91,9 +91,9 @@ $attribute = [
             }
             $popupWindowTitle = 'Are you sure you want to ' . ($model['product_sale_lock'] == 1 ? 'Unlock Product Sale Data' : 'Lock Product Sale Data');
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => $title,
+                'title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
                 'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
@@ -114,9 +114,9 @@ $attribute = [
             }
             $popupWindowTitle = 'Are you sure you want to ' . ($model['vm_data_lock'] == 1 ? 'Unlock VM Data' : 'Lock VM Data');
             $options = [
-                'data-toggle' => 'tooltip',
+                'data-bs-toggle' => 'tooltip',
                 'data-placement' => 'top',
-                'data-original-title' => $title,
+                'title' => $title,
                 'data-popup-message' => $popupWindowTitle,
                 'class' => $popupClass,
                 'data-post-url' => Url::to([$url, 'mcc' => $model['mcc_plant_code'], 'date' => date('Y-m-d', strtotime($model['date_time_of_collection'])), 'shift' => $model['shift_code'], 'qty' => $model['qty'], 'fat' => $model['avgFAT'], 'snf' => $model['avgSNF'], 'amount' => $model['amount']])
@@ -144,11 +144,11 @@ $grid_option = [
             }
             if (!empty($data) && $data->data_lock == 1) {
                 $class = 'lock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
+                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'ALL DATA UN-LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-lock"></i>', ['/collection/tbl-mcc-shift-lock/unlock-data-other'], $options);
             } else {
                 $class = 'unlock'; //!empty($notAllowUnlock) ? 'unlock disabled' : 'unlock';
-                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'ALL DATA LOCK', 'class' => '' . $class];
+                $options = ['data-union' => $model['union_code'], 'data-plant' => $model['plant_code'], 'data-mcc' => $model['mcc_plant_code'], 'data-date' => $model['date_time_of_collection'], 'data-shift' => $model['shift_code'], 'data-qty' => $model['qty'], 'data-fat' => $model['avgFAT'], 'data-snf' => $model['avgSNF'], 'data-amount' => $model['amount'], 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'ALL DATA LOCK', 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-unlock"></i>', ['/collection/tbl-mcc-shift-lock/lock-data-other'], $options);
             }
         },
@@ -157,7 +157,7 @@ $grid_option = [
 //            $data = $lockModel->getStatus($model);
 //            $class = !empty($data) ? '' : 'disabled';
 //            $url = Url::to(['tbl-mcc-shift-lock/view-other', 'mcc' => $model['mcc_plant_code'], 'date' => $model['date_time_of_collection'], 'shift' => $model['shift_code']]);
-//            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'class' => '' . $class]);
+//            return GhostHtml::a('<i class="fa fa-eye"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View', 'class' => '' . $class]);
 //        },
     ]
 ];

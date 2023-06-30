@@ -18,7 +18,7 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $class = (Yii::$app->general->validateVehiclePayment($model)) ? '' : 'disabled' ;
-            $options = ['data-name' => $model->mobile_oil_rate_master_code, 'data-val' => $model->mobile_oil_rate_master_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $class];
+            $options = ['data-name' => $model->mobile_oil_rate_master_code, 'data-val' => $model->mobile_oil_rate_master_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $class];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/transporter/tbl-mobile-oil-rate-master/update', 'id' => $model->mobile_oil_rate_master_code], $options);
         },
 //        'delete' => ['option' => 'rate,km_code,tbl-km-wise-rate/delete'],

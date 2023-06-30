@@ -57,7 +57,7 @@ $grid_option = [
         'delete' => ['option' => 'federation_name,federation_code,tbl-federations/delete'],
         //  'mapping'=> ['option' => 'federation_name,federation_code,/organisation/tbl-federations/map-states'],
 //        'mapping' => function ($url, $model) {
-//            $options = ['data-name' => $model->federation_name, 'data-val' => $model->federation_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'State Mapping'];
+//            $options = ['data-name' => $model->federation_name, 'data-val' => $model->federation_code, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'State Mapping'];
 //            return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-federations/map-states', 'id' => $model->federation_code], $options);
 //        }
 //                       ,

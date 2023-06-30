@@ -58,7 +58,7 @@ $this->title = 'Process for Payment Disburse';
         'showPageSummary' => true,
         'actions' => [
             'vehicles' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Vehicles'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Vehicles'];
                 return GhostHtml::a('<i class="fa fa-truck"></i>', ['/payment/tbl-transporter-payment/payment-vehicles', 'transporter_payment_code' => $model['transporter_payment_code']], $options);
             },
                 ]

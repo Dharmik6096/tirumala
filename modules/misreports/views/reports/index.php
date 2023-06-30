@@ -62,7 +62,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                            <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                             <h4 class="modal-title"><?php echo $title; ?></h4>
                         </div>
                         <!--<div class="table-responsive mt10 panel-collapse collapse <?= $inclass ?>" id="panel1">-->
@@ -469,7 +469,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
-                                        <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                                        <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                                     </div>
                                 </div>
                                 <?php ActiveForm::end(); ?>

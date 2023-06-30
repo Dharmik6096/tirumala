@@ -63,7 +63,7 @@ $grid_option = [
         'approve' => function ($url, $model) {
             $name = $model->uuid;
             $class = ($model->is_approve == 1) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve', 'class' => '' . $class, 'data-val' => $model->uuid, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Approve', 'class' => '' . $class, 'data-val' => $model->uuid, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-check"></i>', ['/collection/tbl-collection-approval/approve-collection', 'id' => $model->uuid], $options);
         },
     ]

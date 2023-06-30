@@ -81,7 +81,7 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'installment' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Installments'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Installments'];
             return GhostHtml::a('<i class="fa fa fa-money-bill"></i>', ['/payment/tbl-product-sale/sale-installments', 'id' => $model->product_sale_code], $options);
         },
         'delete' => ['option' => 'product_sale_code,product_sale_code,/payment/tbl-product-sale/delete,checkPaymentCycleLock()'],

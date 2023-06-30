@@ -23,7 +23,7 @@ use yii\helpers\Url;
             foreach ($output as $data) {
                 $date = $data['dtdate'] . ' ';
                 $date .= $data['Shift'] == 'E' ? '18:00:00' : '06:00:00';
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'cross-tab-modal', 'data-p_date' => $date, 'data-bmc_name' => $data['bmc_name'], 'data-shift' => $data['Shift'], 'data-union_Code' => $union_code, 'data-p_bmc_code' => $data['bmc_code']];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'cross-tab-modal', 'data-p_date' => $date, 'data-bmc_name' => $data['bmc_name'], 'data-shift' => $data['Shift'], 'data-union_Code' => $union_code, 'data-p_bmc_code' => $data['bmc_code']];
                 ?>
                 <tr>
                     <td><?= $data['bmc_code'] ?></td>

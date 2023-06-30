@@ -54,22 +54,22 @@ $grid_option = [
 //            if ($disable == '' && $model->rate_gen_method_code == 3) {
 //                $disable = 'disabled';
 //            }
-//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $disable];
+//            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $disable];
 //
 //            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/dcsoperation/tbl-purchase-rate-details/create-rate', 'id' => $model->purchase_rate_code, 'method' => $model->rate_gen_method_code], $options);
 //        },
         'mapping' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/dcsoperation/tbl-purchase-rate/purchase-rate-applicability', 'id' => $model->purchase_rate_code], $options);
         },
         'view_rate' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Rate Chart', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Rate Chart', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-chart-bar" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/rate-chart', 'id' => $model->purchase_rate_code, 'milk_type' => 1, 'rate_class' => 0, 'milk_quality' => 1], $options);
         },
         'export_rate_chart' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Export Rate Chart')];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'Export Rate Chart')];
             return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/dcsoperation/tbl-purchase-rate-details/export-rate-chart', 'id' => $model->purchase_rate_code], $options);
         },
         'deactivate' => function ($url, $model) {
@@ -79,7 +79,7 @@ $grid_option = [
             $name = $active ? 'Deactivate' : 'Activate';
             $name .= '-' . $model->purchase_rate_code;
             $class = 'deact-rate';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class, 'data-val' => $model->purchase_rate_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => $class, 'data-val' => $model->purchase_rate_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa ' . $icon_class . '""></i>', $url, $options);
         },
     ]

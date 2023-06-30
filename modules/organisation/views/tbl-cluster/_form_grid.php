@@ -68,7 +68,7 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'name,cluster_code,tbl-cluster/delete'],
         'contact-details' => function ($url, $model) {
-    $options = ['data-name' => $model->name, 'data-val' => $model->cluster_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+    $options = ['data-name' => $model->name, 'data-val' => $model->cluster_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details'];
     return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-cluster/contact-details', 'id' => $model->cluster_code], $options);
 },
     ]

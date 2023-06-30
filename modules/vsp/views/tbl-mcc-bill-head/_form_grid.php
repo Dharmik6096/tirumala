@@ -55,12 +55,12 @@ $grid_option = [
     'actions' => [
         'edit' => function ($url, $model) {
             $disable = !empty($model->billHeadCode) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/vsp/tbl-mcc-bill-head/update', 'id' => $model->mcc_bill_head_code], $options);
         },
         'mapping' => function ($url, $model) {
             $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-mcc-bill-head/bill-head-applicability', 'id' => $model->mcc_bill_head_code], $options);
         },
     ]

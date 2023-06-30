@@ -46,7 +46,7 @@ $grid_option = [
     'actions' => [
 //        'view' => true,
         'applicabilty' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/payment/tbl-payment-cycle/payment-cycle-applicability', 'id' => $model->payment_cycle_code], $options);
         },
         'delete' => ['option' => 'payment_cycle_code,payment_cycle_code,tbl-payment-cycle/delete,disableDelete()'],

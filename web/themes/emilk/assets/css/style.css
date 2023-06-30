@@ -2950,7 +2950,7 @@ input[type="checkbox"]{
 .modal-title {
     font-size: 14px;
     font-weight: 600;
-    margin-left: 2px;
+    margin-left: -82px;
 }
 
 .modal-header{
@@ -3463,6 +3463,8 @@ input[type="checkbox"]:after{
 .field-farmer_widgets_list{
     box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
     margin: 3px;
+    position: fixed;
+    background-color: inherit;
 }
 
 .field-rmrd_widgets_list .help-block,
@@ -3649,7 +3651,7 @@ input[type="checkbox"]:after{
 .searchFilterArea  {
     width: calc(100% - 50px);
     color: #fff;
-    right: -220px;
+    margin-right: -220px;
     text-align: center;
     padding-top: 8px;
 }
@@ -3807,7 +3809,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 
 .dashboard_search_filter {
     width: calc(100% - 24px);
-    margin: auto !important;
+    margin: -15px !important;
     /*margin-top: -16px !important;*/
     background: #fff;
     -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -3951,24 +3953,24 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     position: absolute;
     cursor: pointer;
     color: #7a231c;
-    top: -5px;
+    top: 5px;
     background: transparent;
     border: none !important;
     box-shadow: none;
-    font-size: 25px !important;
+    font-size: 22px !important;
 }
 
 .pie_chart_icon i{
-    margin-left: -29px;
-    font-size: 29px !important;
+    margin-left: -75px;
+    font-size: 22px !important;
     color: #7a231c;
-    top: -3px;
+    top: 10px;
     position: absolute;
     cursor: pointer;
 }
 
 .widget_filter_margin{
-    margin: 0px 23px 0px -48px;
+    margin: 0px 23px 1px -20px;
 }
 
 .mt34 {
@@ -4281,13 +4283,13 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .dup_data_icon_margin{
-    margin: 0px 23px 0px -98px;
+    margin: 0px 23px 0px -130px;
 }
 
 .dpu_data_icon img{
     top: 1px !important;
     height: 24px;
-    margin-left: -38px;
+    margin-left: -60px;
 }
 
 .custom_width_dup_modal{
@@ -4521,7 +4523,9 @@ td.custom_grid_normal.dynamic_value {
     box-shadow: -2px 1px 7px 2px rgba(0, 0, 0, 0.1), 0 1px 6px 0 rgba(0, 0, 0, 0.1) !important;
     padding: 3px;
     background: #fff !important;
-    right: -227px;
+    right: 16px;
+    position: fixed;
+    width: 32%;
 }
 
 .margin_top_22_reverse{
@@ -4790,9 +4794,9 @@ table.dataTable thead .search_filter input[type="text"] {
     background-color: #fff !important;
 }
 
-#collapse1{
+/*#collapse1{
     position: fixed;
-}
+}*/
 
 .width_50-10 {
     width: calc(50% - 10px) !important
@@ -5124,4 +5128,8 @@ tr.highlightRow {
     min-height: 24px;
     user-select: none;
     -webkit-user-select: none;
+}
+.btn-outline-secondary{
+    background-color: rgb(122, 35, 28) !important;
+    color: #fff;
 }

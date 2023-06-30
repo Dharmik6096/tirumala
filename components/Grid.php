@@ -116,7 +116,7 @@ class Grid extends Widget {
                 'buttons' => [
                     'view' => function ($url, $model)use ($grid_option) {
                         if (isset($grid_option->actions['view']) && $grid_option->actions['view'] !== FALSE) {
-                            return GhostHtml::a('<i class="fas fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+                            return GhostHtml::a('<i class="fas fa-eye"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View']);
                         }
                     },
                     'update' => function ($url, $model)use ($grid_option) {
@@ -124,7 +124,7 @@ class Grid extends Widget {
                             if (is_callable($grid_option->actions['update'])) {
                                 return $grid_option->actions['update']($url, $model);
                             }
-                            return GhostHtml::a('<i class="fas fa-pencil-alt"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+                            return GhostHtml::a('<i class="fas fa-pencil-alt"></i>', $url, ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit']);
                         }
                     },
                     'delete' => function ($url, $model) use ($option, $grid_option) {
@@ -152,7 +152,7 @@ class Grid extends Widget {
                                 $option[0] = $model->{$option[0]};
                             }
 
-                            $options = ['class' => 'delete-record ' . $class, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'data-name' => $option[0], 'data-val' => $model->{$option[1]}];
+                            $options = ['class' => 'delete-record ' . $class, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Delete', 'data-name' => $option[0], 'data-val' => $model->{$option[1]}];
                             return Html::a('<i class="fas fa-trash"></i>', 'javascript:void(0)', $options);
                         }
                     },
@@ -162,7 +162,7 @@ class Grid extends Widget {
                         foreach ($primaryKey as $primary) {
                             $id = $model->$primary;
                         }
-                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View History'), 'class' => 'view_history', 'data-table_name' => $table_name, 'data-id' => $id];
+                        $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => Yii::t('app', 'View History'), 'class' => 'view_history', 'data-table_name' => $table_name, 'data-id' => $id];
                         return GhostHtml::a_alert('<i class="fas fa-history"></i>', ['/misreports/reports/view-history'], $options);
                     },
                 ]
@@ -306,19 +306,19 @@ class Grid extends Widget {
 //                            $VURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '1']);
 //                            $RURL = Url::to(['/verification/verification/verify-bank-detail', 'id' => $id, 'type' => '2']);
 //                            $message = '<div class = \"row\"><div class = \"bg-info\"><i class = \"fa fa-question\"></i></div><span>Are you sure you want to verify bank details ?' . $name . '<br/> Bank : ' . $bank . '<br/> Branch : ' . $branch . '<br/> Acc. No. : ' . $model->bank_account_no . '<br/> IFSC : ' . $model->ifsc . '</span></div>';
-//                            $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Bank Detail',
+//                            $options = ['data-name' => $model->bank_account_no, 'data-val' => $id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Verify Bank Detail',
 //                                'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
 //                            return GhostHtml::a('<i class="fa fa-bank"></i>', $VURL, $options);
 //                        } else {
 //                            if ($checkdata[0]->status == 1) {
-//                                return GhostHtml::a('<i class="fa fa-bank text-success"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+//                                return GhostHtml::a('<i class="fa fa-bank text-success"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-bs-toggle' => 'tooltip',
 //                                            'data-placement' => 'top',
-//                                            'data-original-title' => 'Verified',
+//                                            'title' => 'Verified',
 //                                ]);
 //                            } else if ($checkdata[0]->status == 2) {
-//                                return GhostHtml::a('<i class="fa fa-bank text-danger"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+//                                return GhostHtml::a('<i class="fa fa-bank text-danger"></i>', ['/verification/verification/verify-bank-detail'], ['class' => 'link-disable', 'data-bs-toggle' => 'tooltip',
 //                                            'data-placement' => 'top',
-//                                            'data-original-title' => 'Rejected',
+//                                            'title' => 'Rejected',
 //                                ]);
 //                            }
 //                        }
@@ -341,19 +341,19 @@ class Grid extends Widget {
 //                            $VURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '1']);
 //                            $RURL = Url::to(['/verification/verification/verify-contact-detail', 'id' => $id, 'type' => '2']);
 //                            $message = '<div class=\'row\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to verify Contact details ?' . $name . '<br/> Mobile No. : ' . $model->mobile_no . '</span></div>';
-//                            $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Verify Contact Detail',
+//                            $options = ['data-name' => $model->mobile_no, 'data-val' => $id, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Verify Contact Detail',
 //                                'onClick' => 'js:VerifyAlert("' . $VURL . '","' . $RURL . '","' . $message . '");'];
 //                            return GhostHtml::a('<i class="fa fa-phone-square"></i>', $VURL, $options);
 //                        } else {
 //                            if ($checkdata[0]->status == 1) {
-//                                return GhostHtml::a('<i class="fa fa-phone-square text-success"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+//                                return GhostHtml::a('<i class="fa fa-phone-square text-success"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-bs-toggle' => 'tooltip',
 //                                            'data-placement' => 'top',
-//                                            'data-original-title' => 'Verified',
+//                                            'title' => 'Verified',
 //                                ]);
 //                            } else if ($checkdata[0]->status == 2) {
-//                                return GhostHtml::a('<i class="fa fa-phone-square text-danger"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+//                                return GhostHtml::a('<i class="fa fa-phone-square text-danger"></i>', ['/verification/verification/verify-contact-detail'], ['class' => 'link-disable', 'data-bs-toggle' => 'tooltip',
 //                                            'data-placement' => 'top',
-//                                            'data-original-title' => 'Rejected',
+//                                            'title' => 'Rejected',
 //                                ]);
 //                            }
 //                        }
@@ -371,10 +371,10 @@ class Grid extends Widget {
                         $checkdata = TblKycRecord::find()->where(['module_name' => $details['model'], 'module_id' => $model->{$details['field']}])->all();
                         if (!$checkdata) {
                             $KYCURL = Url::to(['/verification/verification/kyc-detail']);
-                            $options = ['data-name' => $details['model'], 'data-val' => $model->{$details['field']}, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'KYC Detail', 'class' => 'kyc-modal'];
+                            $options = ['data-name' => $details['model'], 'data-val' => $model->{$details['field']}, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'KYC Detail', 'class' => 'kyc-modal'];
                             return GhostHtml::a_alert('<i class="fas fa-id-badge"></i>', $KYCURL, $options);
                         } else {
-                            return GhostHtml::a('<i class="fas fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-toggle' => 'tooltip',
+                            return GhostHtml::a('<i class="fas fa-id-badge text-success"></i>', ['/verification/verification/kyc-detail'], ['class' => 'link-disable', 'data-bs-toggle' => 'tooltip',
                                         'data-placement' => 'top',
                             ]);
                         }

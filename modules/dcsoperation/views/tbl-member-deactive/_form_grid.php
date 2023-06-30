@@ -66,12 +66,12 @@ $grid_option = [
     'active_column' => false,
     'actions' => [
         'view-detai' => function ($url, $model) {
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View'];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View'];
             return GhostHtml::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-deactive/view', 'id' => $model->member_code], $options);
         },
                 'active' => function ($url, $model) {
             $class = !empty($model->to_date) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'member-active ' . $class, 'data-member_deactive_code' => $model->member_deactive_code];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Active', 'class' => 'member-active ' . $class, 'data-member_deactive_code' => $model->member_deactive_code];
             return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/dcsoperation/tbl-member-deactive/activate-member'], $options);
         },
             ]

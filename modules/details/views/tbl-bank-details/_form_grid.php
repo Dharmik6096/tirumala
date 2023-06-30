@@ -33,11 +33,11 @@ $grid_option = [
     'actions' => [
         //'view' => true,
         'disable' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
+            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive', 'data-is-default' => $model->is_default];
             return $model->is_active == 1 ? Html::a('<i class="fa fa-times"></i>', ['/details/tbl-bank-details/deactivate', 'id' => $model->detail_code], $options) : '';
         },
         'default' => function ($url, $model) {
-            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default'];
+            $options = ['data-name' => $model->bank_account_no, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Set as Default', 'class' => 'set-default'];
             return ($model->is_default == 0 && $model->is_active == 1) ? Html::a('<i class="fa fa-check"></i>', ['/details/tbl-bank-details/set-default', 'id' => $model->detail_code], $options) : '';
         },
     ]

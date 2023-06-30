@@ -21,7 +21,7 @@ $form = ActiveForm::begin(['options' => [
     <div class="modal-dialog width_100-200">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Mobile App Information'); ?> (<?= $model->member_name ?>-<?= $model->member_code ?>)</h4>
             </div>
             <div class="modal-body">            
@@ -74,7 +74,7 @@ $form = ActiveForm::begin(['options' => [
 
                 </br>
                 <div class="footer">
-                    <button type="button" class="btn btn-default btn-raised close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                    <button type="button" class="btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                     <?php
                     if (!empty($appInfo) && $appInfo->is_active == 1 && $model->is_active == 1) {
                         echo Html::hiddenInput('member_code', $model->member_code);

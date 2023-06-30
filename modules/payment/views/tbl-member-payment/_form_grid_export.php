@@ -53,7 +53,7 @@ $this->title = 'Process for Payment Disburse';
         'showPageSummary' => true,
         'actions' => [
             'members' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
+                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'View Members'];
                 return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members', 'cycle' => $model['dcs_payment_cycle_code'], 'dcs_code' => $model['dcs_code']], $options);
             },
         ]

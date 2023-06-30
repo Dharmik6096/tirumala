@@ -121,7 +121,7 @@ $readonly = false;
             ]);
             AjaxSubmitButton::end();
             ?>
-            <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+            <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
         </div>
         <?php ActiveForm::end(); ?>
     </div>

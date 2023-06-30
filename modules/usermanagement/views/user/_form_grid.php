@@ -96,18 +96,18 @@ $grid_option = [
         'update' => true,
         'delete_user' => function ($url, $model) {
             $disable = ($model->checkNotSelf() && $model->is_active == 1) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'data-val' => $model->id, 'data-name' => $model->name, 'class' => 'user-record ' . $disable];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user'], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'data-val' => $model->id, 'data-name' => $model->name, 'class' => 'user-record ' . $disable];
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/user-management/user/deactivate-user'], $options);
         },
         'role' => function ($url, $model) {
             $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Role', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Role', 'class' => $disable];
             $link = $model->portal_type == 'desktop' ? '/setting/tbl-user-profile-mapping/role-assign' : '/user-management/user-permission/set';
             return Html::a('<i class="fa fa-key"></i>', [$link, 'id' => $model->id], $options);
         },
         'org-map' => function ($url, $model) {
             $disable = ($model->checkNotSelf()) ? '' : 'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Organization', 'class' => $disable];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Organization', 'class' => $disable];
             return Html::a('<i class="fa fa-link"></i>', ['/user-management/user/organization-map', 'id' => $model->id], $options);
         },
     ]

@@ -8,7 +8,7 @@ use kartik\grid\GridView;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Member Installment') ?></h4>
             </div>
             <div class="popup-header bg_white">

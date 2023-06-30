@@ -50,18 +50,18 @@ $grid_option = [
 //      'delete' => ['option' => 'contact_person,detail_code,/details/tbl-contact-details/delete'],
         'disable' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deactive ' . $class, 'data-is-default' => $model->is_default];
 //            die('here');
             return Html::a('<i class="fa fa-times"></i>', ['/details/tbl-contact-details/deactivate', 'id' => $model->detail_code], $options);
         },
         'default' => function ($url, $model) {
             $class = $model->is_default == 0 && $model->is_active == 1 && !empty($model->mobile_no) ? '' : 'disabled';
-            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Set as Default', 'class' => 'set-default ' . $class];
+            $options = ['data-name' => $model->contact_person, 'data-val' => $model->detail_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Set as Default', 'class' => 'set-default ' . $class];
             return Html::a('<i class="fa fa-check"></i>', ['/details/tbl-contact-details/set-default', 'id' => $model->detail_code], $options);
         },
         'edit' => function ($url, $model) {
             $class = $model->is_active == 1 ? '' : 'disabled';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->detail_code, 'data-name' => $model->detail_code, 'title' => Yii::t('app', 'Edit')];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => 'edit-record ' . $class, 'data-val' => $model->detail_code, 'data-name' => $model->detail_code, 'title' => Yii::t('app', 'Edit')];
             return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/details/tbl-contact-details/update-contact'], $options);
         },
     ]

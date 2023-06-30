@@ -42,8 +42,8 @@ $grid_option = [
         },
         'in-active' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'inact-record ' . $disable, 'data-val' => $model->head_load_code, 'data-name' => $model->head_load_code, 'title' => Yii::t('app', 'InActive')];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/vsp/tbl-head-load/in-active'], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'inact-record ' . $disable, 'data-val' => $model->head_load_code, 'data-name' => $model->head_load_code, 'title' => Yii::t('app', 'InActive')];
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/vsp/tbl-head-load/in-active'], $options);
         },
     ]
 ];

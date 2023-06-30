@@ -47,7 +47,7 @@ $grid_option = [
             $url = Url::to(['tbl-complaint-activity/create', 'id' => $model->complaint_code]);
             $status = $model->getComplaintStatus($model->complaint_code);
             $class=(!isset($status))?'':'link-disable';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit','class'=>''.$class,'data-val'=>$model->complaint_code,'data-name'=>''];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit','class'=>''.$class,'data-val'=>$model->complaint_code,'data-name'=>''];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
     ]

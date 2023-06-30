@@ -107,21 +107,21 @@ $grid_option = [
         'update' => function ($url, $model) {
             $name = $model->member_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'view' => true,
         'deactive' => function ($url, $model) {
             $name = $model->member_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-member ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/dcsoperation/tbl-member/deactivate-user'], $options);
         },
         //'delete' => ['option' => 'member_name,member_code,tbl-member/delete'],
         'block-unblock' => function ($url, $model) {
             $name = $model->member_name;
             $class = '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Mobile App Info', 'class' => 'block-unblock ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Mobile App Info', 'class' => 'block-unblock ' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
             return GhostHtml::a_alert('<i class="fa fa-mobile"></i>', ['/dcsoperation/tbl-member/block-unblock'], $options);
         },
         'upload-photos' => function ($url, $model) {
@@ -129,7 +129,7 @@ $grid_option = [
             $type = 'MEMBER';
             $class = ($model->is_verified == 1) ? 'link-disable disabled' : '';
             $url = ['/dcsoperation/tbl-member/import-attachements', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload-alt"></i>', $url, $options);
         },
     ]

@@ -54,7 +54,7 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                     'active_column' => false,
                     'actions' => [
                         'applicabilty' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability'];
+                            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability'];
                             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/product/tbl-product-rate/product-rate-applicability', 'id' => $model->product_sale_rate_code], $options);
                         }
                     ]

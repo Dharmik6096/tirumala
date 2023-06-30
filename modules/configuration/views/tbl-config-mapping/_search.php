@@ -7,7 +7,7 @@ use yii\bootstrap5\ActiveForm;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close close-import" data-dismiss="modal">&times;</button>
+                <button type="button" class="close close-import" data-bs-dismiss="modal">&times;</button>
                 <h4 class="modal-title"><?php echo Yii::t('app', 'Search Control Mapping'); ?></h4>
             </div>
             <div class="">
@@ -48,7 +48,7 @@ use yii\bootstrap5\ActiveForm;
                     </div>
                     <div class="modal-footer mt10 col-sm-12">
                         <?= Yii::$app->controls->search(); ?>
-                        <button type="button" class="btn btn-danger close-import" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                        <button type="button" class="btn btn-danger close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
                     </div>
                 </div>
                 <?php ActiveForm::end(); ?>

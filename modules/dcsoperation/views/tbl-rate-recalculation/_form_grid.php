@@ -91,7 +91,7 @@ $grid_option = [
             $prms['TblRateRecalculationSearch']['bmc_code'] = $model->bmc_code;
             $prms['TblRateRecalculationSearch']['module_type'] = $model->module_type;
             $url = ['/dcsoperation/tbl-rate-recalculation/view'] + $prms;
-            $options = ['data-name' => $model->dcs_code, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Details', 'class' => ''];
+            $options = ['data-name' => $model->dcs_code, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Details', 'class' => ''];
             return GhostHtml::a('<i class="fa fa-eye"></i>', $url, $options);
         },
             ]
