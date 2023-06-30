@@ -17,6 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\View;
 use ReflectionClass;
 use dosamigos\multiselect\MultiSelect;
+use kartik\select2\Select2;
 use yii\web\JsExpression;
 use yii\db\Query;
 
@@ -37,7 +38,7 @@ class DepDropComp extends DepDrop {
         DepDropExtAsset::register($view);
         $this->registerPlugin($this->pluginName);
         if ($this->type === self::TYPE_MULTISELECT) {
-            
+
             $loading = ArrayHelper::getValue($this->pluginOptions, 'loadingText', 'Loading ...');
             $this->multiSelectOptions['data'] = $this->data;
             $this->multiSelectOptions['options'] = $this->options;
@@ -52,7 +53,7 @@ class DepDropComp extends DepDrop {
                             'value' => $this->value
                 ]);
             }
-            echo MultiSelect::widget($settings);
+            echo Select2::widget($settings);
             //var_dump($settings); exit;
             $id = !empty($this->options['id'])?$this->options['id']:'msdrop';
             $vals=  json_encode($this->value);

@@ -850,7 +850,7 @@ class DropDown extends Component {
             'value' => !empty($model->{$name}) ? array_values($model->{$name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
-                'clientOptions' =>
+                'options' =>
                     [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
@@ -1741,7 +1741,8 @@ class DropDown extends Component {
             'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
             'multiSelectOptions' => [
                 'id' => $id,
-                'clientOptions' =>
+                ''
+                . 'options' =>
                     [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,

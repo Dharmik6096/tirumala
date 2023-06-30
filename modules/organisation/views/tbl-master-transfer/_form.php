@@ -89,7 +89,7 @@ $form = ActiveForm::begin([
             </div>
         </div>
         <div class="col-sm-2 mt10 UPDATETRANSACTION">
-            <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'update_transaction'); ?>
         </div>
     </div>
     <div class="UPDATETRANSACTIONDETAIL">

@@ -36,7 +36,7 @@ $appendId = !empty($appendId) ? $appendId : '';
             ?>
             <div class="modal-body">
                 <div id='sample_download'>
-                    <?= Html::a('Download Sample', ['/import/default/download-sample', 'flag' => $type, 'local_field' => $param], ['class' => 'btn btn-primary']); ?>
+                    <?= Html::a('Download Sample', ['/import/default/download-sample', 'flag' => $type, 'local_field' => $param], ['class' => 'btn-login btn btn-primary']); ?>
                 </div>    
                 <?= Html::hiddenInput('mapping', 0, ['id' => 'mappingField' . $appendId]); ?>
                 <div class="modal-msg">
