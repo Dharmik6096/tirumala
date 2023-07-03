@@ -236,6 +236,8 @@ class TblUserAndroidController extends \app\controllers\ChildController {
             foreach($activeDevice as $value) {
                 $usrAckModel = new TblUserDownloadAck();
         //        $usrAckModel->attributes = $ackModel->attributes;
+                $usrAckModel->hash_key = $value->hash_key;
+                $usrAckModel->device_id = $value->device_id;
                 $usrAckModel->union_code = $ackModel->union_code;
                 $usrAckModel->plant_code = $ackModel->plant_code;
                 $usrAckModel->mcc_plant_code = $ackModel->mcc_plant_code;
