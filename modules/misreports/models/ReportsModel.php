@@ -126,6 +126,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MilkCollectionAbsent']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['LeftPourer']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required', 'on' => ['MccRecipationSummary', 'MccRecipationDetail']],
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcWiseSocietyWiseAutoManual', 'BmcWiseAutoManualSummary']],
         ];
     }
 
