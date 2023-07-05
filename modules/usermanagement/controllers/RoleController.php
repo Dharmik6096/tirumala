@@ -9,6 +9,9 @@ use yii\helpers\Html;
 
 class RoleController extends \webvimark\modules\UserManagement\controllers\RoleController {
 
+    public $modelClass = 'app\modules\usermanagement\models\rbacDB\Role';
+    public $modelSearchClass = 'app\modules\usermanagement\models\rbacDB\search\RoleSearch';
+
     public function actionCreate() {
         $model = new Role;
         if ($model->load(Yii::$app->request->post())) {

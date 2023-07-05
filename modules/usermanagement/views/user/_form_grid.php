@@ -1,9 +1,8 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\models\User;
-use webvimark\modules\UserManagement\UserManagementModule;
+use app\modules\usermanagement\components\GhostHtml;
+use app\modules\usermanagement\models\rbacDB\Role;
+use app\modules\usermanagement\models\User;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -20,7 +19,7 @@ use yii\web\View;
  * @var yii\data\ActiveDataProvider $dataProvider
  * @var webvimark\modules\UserManagement\models\search\UserSearch $searchModel
  */
-$this->title = UserManagementModule::t('back', 'Users');
+$this->title = Yii::t('app', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

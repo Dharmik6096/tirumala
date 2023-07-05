@@ -11,6 +11,9 @@ use app\modules\usermanagement\models\rbacDB\Route;
 
 class PermissionController extends \webvimark\modules\UserManagement\controllers\PermissionController {
 
+    public $modelClass = 'app\modules\usermanagement\models\rbacDB\Permission';
+    public $modelSearchClass = 'app\modules\usermanagement\models\rbacDB\search\PermissionSearch';
+
     public function actionView($id) {
         $item = $this->findModel($id);
         ($item->UNION == '1') ? $item->organizations_type = 'UNION' : $item->organizations_type = 'FEDERATION';

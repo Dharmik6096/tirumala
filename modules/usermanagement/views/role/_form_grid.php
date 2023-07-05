@@ -2,11 +2,8 @@
 
 use webvimark\extensions\GridBulkActions\GridBulkActions;
 use webvimark\extensions\GridPageSize\GridPageSize;
-use webvimark\modules\UserManagement\components\GhostHtml;
-use webvimark\modules\UserManagement\models\rbacDB\AuthItemGroup;
-use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\UserManagementModule;
-//use yii\grid\GridView;
+use app\modules\usermanagement\components\GhostHtml;
+use app\modules\usermanagement\models\rbacDB\Role;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -20,7 +17,7 @@ use yii\web\View;
  * @var webvimark\modules\UserManagement\models\rbacDB\search\RoleSearch $searchModel
  * @var yii\web\View $this
  */
-$this->title = UserManagementModule::t('back', 'Roles');
+$this->title = Yii::t('app', 'Roles');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -61,6 +58,5 @@ $grid_option = [
         'delete' => ['option' => 'name,name,/user-management/role/delete,checkNotVendor()'],
     ]
 ];
-
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

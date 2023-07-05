@@ -16,7 +16,7 @@ class AuthHelper extends \webvimark\modules\UserManagement\components\AuthHelper
      *
      * @return array
      */
-    public static function getChildrenByType($itemName, $childType, $organizations_type) {
+    public static function getChildrenByType($itemName, $childType, $organizations_type = '') {
         $dbManager = Yii::$app->authManager instanceof DbManager ? Yii::$app->authManager : new DbManager();
         $children = $dbManager->getChildren($itemName);
         $result = [];
