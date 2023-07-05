@@ -24,9 +24,9 @@ use app\modules\collection\models\TblMilkCollection;
 use phpseclib\Net\SFTP;
 use app\modules\payment\models\TblPaymentTransaction;
 use app\modules\payment\models\TblBankPaymentLog;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PHPExcel_Cell;
-use PHPExcel_IOFactory;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use app\modules\payment\models\TblMemberPayment;
 use app\modules\payment\models\TblDcsPayment;
 use app\components\FTPConnection;
@@ -482,12 +482,12 @@ class SiteController extends Controller {
                 break;
         }
 
-        $reader = \PHPExcel_IOFactory::createReader($format);
+        $reader = IOFactory::createReaderForFile($format);
         $reader->setReadDataOnly(true);
         $excel = $reader->load($path);
 
         $savePath = Yii::$app->basePath . '/web/data.csv';
-        $writer = \PHPExcel_IOFactory::createWriter($excel, 'CSV');
+        $writer = IOFactory::createWriter($spreadsheet, "CSV");
         $writer->save($savePath);
 
         chmod($savePath, 0777);
@@ -993,7 +993,7 @@ class SiteController extends Controller {
             if ($dh = opendir($folder)) {
                 while (($file = readdir($dh)) !== false) {
                     if (pathinfo($file, PATHINFO_EXTENSION) == $file_type) {
-                        $objPHPExcel = PHPExcel_IOFactory::load($folder . $file);
+                        $objPHPExcel = IOFactory::load($folder . $file);
                         $objPHPExcel->getDefaultStyle()
                                 ->getNumberFormat()
                                 ->setFormatCode(

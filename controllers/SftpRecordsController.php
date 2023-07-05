@@ -8,7 +8,8 @@ use app\models\SftpRecordsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * SftpRecordsController implements the CRUD actions for SftpRecords model.
@@ -41,7 +42,7 @@ class SftpRecordsController extends Controller {
             'extension' => 'csv',
             'writer' => 'CSV',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $objPHPExcel->setActiveSheetIndex(0);
         $rowCount = 1;
         $column = 'A';
@@ -111,7 +112,7 @@ class SftpRecordsController extends Controller {
             $objPHPExcel->getActiveSheet()->SetCellValue('AB' . $rowCount, $row['bene_email']);
         }
         $fileName = "payment_disburse." . $header['extension'];
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         $path = Yii::$app->basePath . '/sftp';
         Yii::$app->general->checkDirectory($path);
         $objWriter->save($path . $fileName);

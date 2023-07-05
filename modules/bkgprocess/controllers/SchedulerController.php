@@ -13,7 +13,7 @@ use ruskid\csvimporter\CSVImporter;
 use ruskid\csvimporter\CSVReader;
 use \app\modules\collection\models\TblBulkDataImport;
 use yii\helpers\Url;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\import\controllers\DefaultController;
 use app\modules\import\importData;
 use app\modules\organisation\models\TblDcsDeactive;
@@ -29,6 +29,7 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\collection\models\TblMilkCollectionSummary;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class SchedulerController extends ChildController {
 
@@ -356,7 +357,7 @@ class SchedulerController extends ChildController {
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
                         $absoluteBaseUrl = Url::base(true);
-                        $objPHPExcel = new PHPExcel();
+                        $objPHPExcel = new Spreadsheet();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
                                 $column_header, // The data to set
@@ -371,7 +372,7 @@ class SchedulerController extends ChildController {
                                 //    we want to set these values (default is A1)
                         );
                         $filePath = $path . 'error_' . $row->file_name;
-                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
                         $objWriter->save($filePath);
                         copy($row->file_path, $path . $row->file_name);
                         unlink($row->file_path);
@@ -383,7 +384,7 @@ class SchedulerController extends ChildController {
                     $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                     if (Yii::$app->general->checkDirectory($path)) {
                         $absoluteBaseUrl = Url::base(true);
-                        $objPHPExcel = new PHPExcel();
+                        $objPHPExcel = new Spreadsheet();
                         $sheet = $objPHPExcel->getActiveSheet();
                         $sheet->fromArray(
                                 $column_header, // The data to set
@@ -398,7 +399,7 @@ class SchedulerController extends ChildController {
                                 //    we want to set these values (default is A1)
                         );
                         $successfilePath = $path . 'success_' . $row->file_name;
-                        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
                         $objWriter->save($successfilePath);
 //                    copy($row->file_path, $path . $row->file_name);
 //                    unlink($row->file_path);
@@ -457,7 +458,7 @@ class SchedulerController extends ChildController {
                 $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                 if (Yii::$app->general->checkDirectory($path)) {
                     $absoluteBaseUrl = Url::base(true);
-                    $objPHPExcel = new PHPExcel();
+                    $objPHPExcel = new Spreadsheet();
                     $sheet = $objPHPExcel->getActiveSheet();
                     $sheet->fromArray(
                             $column_header, // The data to set
@@ -472,7 +473,7 @@ class SchedulerController extends ChildController {
                             //    we want to set these values (default is A1)
                     );
                     $filePath = $path . 'error_' . $row->file_name;
-                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
                     $objWriter->save($filePath);
                     copy($row->file_path, $path . $row->file_name);
                     unlink($row->file_path);
@@ -485,7 +486,7 @@ class SchedulerController extends ChildController {
                 $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . '/web/bulkdata/' . $row->file_type . '/archive/';
                 if (Yii::$app->general->checkDirectory($path)) {
                     $absoluteBaseUrl = Url::base(true);
-                    $objPHPExcel = new PHPExcel();
+                    $objPHPExcel = new Spreadsheet();
                     $sheet = $objPHPExcel->getActiveSheet();
                     $sheet->fromArray(
                             $column_header, // The data to set
@@ -500,7 +501,7 @@ class SchedulerController extends ChildController {
                             //    we want to set these values (default is A1)
                     );
                     $successfilePath = $path . 'success_' . $row->file_name;
-                    $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
                     $objWriter->save($successfilePath);
 //                    copy($row->file_path, $path . $row->file_name);
 //                    unlink($row->file_path);
@@ -706,7 +707,7 @@ class SchedulerController extends ChildController {
         $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $folder;
         if (\Yii::$app->general->checkDirectory($path)) {
             $absoluteBaseUrl = Url::base(true);
-            $objPHPExcel = new PHPExcel();
+            $objPHPExcel = new Spreadsheet();
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->fromArray(
                     $column_header, // The data to set
@@ -721,7 +722,7 @@ class SchedulerController extends ChildController {
                     //    we want to set these values (default is A1)
             );
             $filePath = $path . $fileName;
-            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $folder . $fileName;
         }

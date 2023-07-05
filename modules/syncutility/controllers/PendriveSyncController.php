@@ -7,7 +7,7 @@ use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\syncutility\models\TblPendriveImportExport;
 use ZipArchive;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PHPExcel_Cell;
 use app\modules\installation\models\TblIdentity;
 use app\models\TblSyncHistory;
@@ -23,6 +23,7 @@ use app\modules\hardwareconfiguration\models\TblUnionConfig;
 use app\models\TblSentboxClone;
 use app\components\FTPConnection;
 use app\modules\installation\models\TblAndroidInstallation;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class PendriveSyncController extends \app\controllers\ChildController {
 
@@ -96,7 +97,7 @@ class PendriveSyncController extends \app\controllers\ChildController {
                     sort($filearray);
                     foreach ($filearray as $key => $value) {
                         $file = $zipname . '-' . $value . '.csv';
-                        $objPHPExcel = \PHPExcel_IOFactory::load($ExtractPath . $file);
+                        $objPHPExcel = IOFactory::load($ExtractPath . $file);
                         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                             $sheetTitle = strtolower($worksheet->getTitle());
                             $i = 0;
@@ -362,7 +363,7 @@ class PendriveSyncController extends \app\controllers\ChildController {
                     $data = [];
                     foreach ($filearray as $key => $value) {
                         $file = $zipname . '-' . $value . '.csv';
-                        $objPHPExcel = \PHPExcel_IOFactory::load($ExtractPath . $file);
+                        $objPHPExcel = IOFactory::load($ExtractPath . $file);
                         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                             //   $HighestColumn = $worksheet->getHighestColumn();
                             //  $HighestcolumnIndex = PHPExcel_Cell::columnIndexFromString($HighestColumn);

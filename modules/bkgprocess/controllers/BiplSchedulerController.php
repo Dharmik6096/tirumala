@@ -6,7 +6,7 @@ use yii\web\Controller;
 use yii;
 use app\modules\sap\models\SapModel;
 use yii\data\ArrayDataProvider;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use app\components\FTPConnection;
 use app\modules\organisation\models\TblDcs;

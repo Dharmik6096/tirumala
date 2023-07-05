@@ -6,7 +6,7 @@ use yii\web\Controller;
 use yii;
 use app\modules\bkgprocess\models\FtpGenerate;
 use yii\data\ArrayDataProvider;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\components\FTPConnection;
 use app\modules\bkgprocess\models\TblFtpDetail;
 
@@ -224,7 +224,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
 //            'extension' => 'xls',
 //            'writer' => 'Excel2007',
 //        ];
-//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel = new Spreadsheet();
 //        $sheet = $objPHPExcel->getActiveSheet();
 //        /* $objPHPExcel->getDefaultStyle()
 //          ->getNumberFormat()
@@ -258,7 +258,7 @@ class FtpGenerateController extends \app\controllers\ChildController {
 ////                header('Content-Type: ' . $header['mime']);
 //        header('Content-Disposition: attachment;filename=' . $fileName);
 //        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();

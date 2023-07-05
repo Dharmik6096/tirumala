@@ -8,9 +8,10 @@ use Jaspersoft\Client\Client;
 use app\modules\misreports\models\ReportsModel;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Default controller for the `JasperReports` module
@@ -2841,7 +2842,7 @@ class ReportsController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -2873,7 +2874,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
@@ -2947,7 +2948,7 @@ class ReportsController extends \app\controllers\ChildController {
 //            'extension' => 'xls',
 //            'writer' => 'Excel2007',
 //        ];
-//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel = new Spreadsheet();
 //        $sheet = $objPHPExcel->getActiveSheet();
 //        $objPHPExcel->getActiveSheet()->getStyle('C2:C100')
 //                ->getNumberFormat()
@@ -2979,7 +2980,7 @@ class ReportsController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
 //        header('Content-Disposition: attachment;filename=' . $fileName);
 //        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
 //        ob_end_clean();
 //        $objWriter->save('php://output');
         exit();
@@ -2991,7 +2992,7 @@ class ReportsController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
         $sheet->fromArray(
@@ -3014,7 +3015,7 @@ class ReportsController extends \app\controllers\ChildController {
         fopen($fileName, "w+");
         $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
     }
 

@@ -16,9 +16,10 @@ use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateDetailsHistory;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateBasedHistory;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * TblDcsPurchaseRateDetailsController implements the CRUD actions for TblDcsPurchaseRateDetails model.
@@ -308,7 +309,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
     }
 
     public function actionExportRateChart($id) {
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheetcnt = 0;
         $model = new TblDcsPurchaseRateBased();
         $RateChart = $model->find()->select(['milk_type_code', 'rate_type', 'purchase_rate_code', 'milk_quality_type_code'])->distinct()->where(['purchase_rate_code' => $id])->all();
@@ -374,7 +375,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
         header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

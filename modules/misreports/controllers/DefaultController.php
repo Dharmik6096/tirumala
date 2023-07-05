@@ -8,8 +8,9 @@ use Jaspersoft\Client\Client;
 use app\modules\misreports\models\ReportsModelOld;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Default controller for the `JasperReports` module
@@ -528,7 +529,7 @@ class DefaultController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         $file_header = !empty($this->output) ? array_keys($this->output[0]) : [];
         $sheet->fromArray(
@@ -551,7 +552,7 @@ class DefaultController extends \app\controllers\ChildController {
         fopen($fileName, "w+");
         $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
     }
 

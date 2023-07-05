@@ -11,7 +11,8 @@ use yii\filters\VerbFilter;
 use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblProductSaleTransactionHistory;
 use app\modules\payment\models\TblProductSaleTransactionSearch;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * TblProductSaleLockingController implements the CRUD actions for TblProductSaleLocking model.
@@ -158,7 +159,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -190,7 +191,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
@@ -202,7 +203,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -242,7 +243,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

@@ -23,10 +23,11 @@ use app\modules\dcsoperation\models\TblDcsPurchaseRate;
 use app\modules\dcsoperation\models\TblPurchaseRate;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblAlertNotification;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\details\models\TblContactDetails;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitityAlias;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * applicability module definition class
@@ -1015,7 +1016,7 @@ class Applicability extends \yii\base\Module {
         $path = str_replace('\\', '/', realpath(\Yii::$app->basePath)) . $this->attachment_folder;
         if (\Yii::$app->general->checkDirectory($path)) {
             $absoluteBaseUrl = Url::base(true);
-            $objPHPExcel = new PHPExcel();
+            $objPHPExcel = new Spreadsheet();
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->fromArray(
                     $column_header, // The data to set
@@ -1030,7 +1031,7 @@ class Applicability extends \yii\base\Module {
                     //    we want to set these values (default is A1)
             );
             $filePath = $path . $fileName;
-            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $this->attachment_folder . $fileName;
         }

@@ -15,7 +15,7 @@ use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\payment\models\TblDcsPaymentHistory;
 use app\modules\payment\models\TblMemberPaymentHistory;
 use app\modules\payment\models\TblUnionBankPayment;
@@ -1210,7 +1210,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            'writer' => 'Excel2007',
 //        ];
 //
-//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel = new Spreadsheet();
 //        $objPHPExcel->setActiveSheetIndex(0);
 //        $objPHPExcel->getDefaultStyle()
 //                ->getNumberFormat()
@@ -1271,7 +1271,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
 //        header('Content-Disposition: attachment;filename=' . $fileName);
 //        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();

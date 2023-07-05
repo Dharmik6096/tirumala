@@ -5,7 +5,7 @@ namespace app\modules\bkgprocess\controllers;
 use yii;
 use app\controllers\ChildController;
 use yii\helpers\Url;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\components\WebApi;
 use app\modules\collection\models\TblMccShiftLockStaging;
 

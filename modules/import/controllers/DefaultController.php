@@ -219,22 +219,22 @@ class DefaultController extends \app\controllers\ChildController {
                 if ($file->extension != 'csv') {
                     switch ($file->extension) {
                         case 'xls':
-                            $format = 'Excel5';
+                            $format = IOFactory::READER_XLS;
                             break;
                         case 'xlsx':
-                            $format = 'Excel2007';
+                            $format = IOFactory::READER_XLSX;
                             break;
                         case 'xml':
-                            $format = 'Excel2003XML';
+                            $format = IOFactory::READER_XML;
                             break;
                     }
-
-                    $reader = \IOFactory::createReader($format);
-                    $reader->setReadDataOnly(true);
+                    
+                    $reader = IOFactory::createReader($format);
+//                  $reader->setReadDataOnly(true);
                     $excel = $reader->load($path . $name);
                     $name = (pathinfo($name, PATHINFO_FILENAME)) . '.csv';
                     $savePath = Yii::$app->basePath . '/web/import/' . $name;
-                    $writer = \IOFactory::createWriter($excel, 'CSV');
+                    $writer = IOFactory::createWriter($excel, IOFactory::WRITER_CSV);         
                     $writer->setDelimiter(';');
                     $writer->save($savePath);
                 }
@@ -250,7 +250,7 @@ class DefaultController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
     }
-
+    
     public function actionImportRateExcel() {
         $path = Yii::$app->basePath . '/web/import/';
         if (!is_dir($path)) {
@@ -345,4 +345,4 @@ class DefaultController extends \app\controllers\ChildController {
         }
     }
 
-}
+        }

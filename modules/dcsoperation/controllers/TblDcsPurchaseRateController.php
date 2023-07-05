@@ -21,7 +21,7 @@ use app\modules\globalmaster\models\TblMilkQualityType;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitity;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabitityHistory;
 use yii\helpers\Json;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicabilityHistory;
@@ -32,6 +32,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use yii\helpers\Url;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateHistory;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * TblDcsPurchaseRateController implements the CRUD actions for TblDcsPurchaseRate model.
@@ -52,7 +53,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         if (isset(Yii::$app->request->post()['templet-download'])) {
             $transaction = Json::decode($_POST['range_table']);
             if (count($transaction) > 0) {
-                $objPHPExcel = new PHPExcel();
+                $objPHPExcel = new Spreadsheet();
                 $sheetcnt = 0;
             }
             for ($i = 0; $i < count($transaction); $i++) {
@@ -128,7 +129,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 header('Content-Type: ' . $header['mime']);
                 header('Content-Disposition: attachment;filename=' . $fileName);
                 header('Cache-Control: max-age=0');
-                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+                $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
                 ob_end_clean();
                 $objWriter->save('php://output');
                 // exit();
@@ -205,7 +206,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
 
     public function uploadExcel($fileName, $purchaseRate) {
 
-        $objPHPExcel = \PHPExcel_IOFactory::load(IMPORT_PATH . $fileName);
+        $objPHPExcel = IOFactory::load(IMPORT_PATH . $fileName);
         $data = [];
         $rateTypeModel = new TblRateType();
         $milkTypeModel = new TblAnimalType();

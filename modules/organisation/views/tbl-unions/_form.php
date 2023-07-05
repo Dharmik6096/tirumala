@@ -205,6 +205,7 @@ $form = ActiveForm::begin([
 <?php
 
 $script = "
+    Dropzone.autoDiscover = false;
     var delay=2000;
     $('#tblunions-contact_person_pan_no').on('input', function(evt) {
         $(this).val(function(_, val) {

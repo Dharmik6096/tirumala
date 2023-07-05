@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblVspPaymentTransactionSearch;
 use app\modules\payment\models\TblVspPaymentHistory;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\payment\models\TblPaymentTransaction;
 use app\modules\payment\models\TblUnionBankPayment;
 use app\modules\payment\models\TblBankPaymentLog;
@@ -685,7 +685,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
 //            'writer' => 'CSV',
 //        ];
 //
-//        $objPHPExcel = new PHPExcel();
+//        $objPHPExcel = new Spreadsheet();
 //        $objPHPExcel->setActiveSheetIndex(0);
 //        $objPHPExcel->getDefaultStyle()
 //                ->getNumberFormat()
@@ -722,7 +722,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
 //                header('Content-Type: ' . $header['mime']);
 //        header('Content-Disposition: attachment;filename=' . $fileName);
 //        header('Cache-Control: max-age=0');
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+//        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
 //        ob_end_clean();
 //        $objWriter->save('php://output');
 //        exit();

@@ -12,7 +12,8 @@ use app\modules\payment\models\TblLoanProductSaleDetails;
 use app\modules\payment\models\TblLoanProductSaleDetailsSearch;
 use app\modules\payment\models\TblProductSaleTransaction;
 use app\modules\payment\models\TblProductSaleTransactionHistory;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * TblLoanProductSaleLockingController implements the CRUD actions for TblLoanProductSaleLocking model.
@@ -139,7 +140,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -171,7 +172,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
@@ -183,7 +184,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         /* $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()
@@ -222,7 +223,7 @@ class TblLoanProductSaleLockingController extends \app\controllers\ChildControll
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

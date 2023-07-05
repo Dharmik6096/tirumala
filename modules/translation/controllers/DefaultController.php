@@ -6,7 +6,8 @@ use Yii;
 use app\controllers\ChildController;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Default controller for the `translation` module
@@ -290,7 +291,7 @@ class DefaultController extends ChildController {
 
         $header = \app\modules\translation\Translation::getContentHeaders($type);
         $exportField = empty($exportField)?'local_name':$exportField;
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $objPHPExcel->setActiveSheetIndex(0);
         $rowCount = 1;
         $column = 'A';
@@ -391,7 +392,7 @@ class DefaultController extends ChildController {
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

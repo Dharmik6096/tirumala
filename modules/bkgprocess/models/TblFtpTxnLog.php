@@ -3,7 +3,7 @@
 namespace app\modules\bkgprocess\models;
 
 use Yii;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\bkgprocess\models\TblFileCreator;
@@ -16,6 +16,7 @@ use app\modules\sms\models\TblApiMaster;
 use yii\helpers\Url;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\details\models\TblContactDetails;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * This is the model class for table "tbl_ftp_txn_log".
@@ -201,7 +202,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** csv generate * */
         if (!empty($output) && Yii::$app->general->checkDirectory($filePath)) {
             if (Yii::$app->session->get('eiplCode') == 'DODLA') {
-                $objPHPExcel = new PHPExcel();
+                $objPHPExcel = new Spreadsheet();
                 $sheet = $objPHPExcel->getActiveSheet();
                 $sheet->setTitle('Sheet1');
                 $sheet->fromArray(
@@ -217,7 +218,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                         //    we want to set these values (default is A1)
                 );
                 $successfilePath = $filePath . $fileName;
-                $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
                 $objWriter->save($successfilePath);
             } else {
                 $header = array_keys($output[0]);
@@ -237,7 +238,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         /** xlsx generate * */
         /*
           $header = array_keys($output[0]);
-          $objPHPExcel = new PHPExcel();
+          $objPHPExcel = new Spreadsheet();
           $objPHPExcel->setActiveSheetIndex(0);
           $objPHPExcel->getDefaultStyle()
           ->getNumberFormat()

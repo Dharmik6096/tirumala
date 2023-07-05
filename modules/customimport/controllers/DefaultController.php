@@ -9,11 +9,12 @@ use arogachev\excel\import\basic\Importer;
 use app\modules\organisation\models\TblDcs;
 use yii\base\UserException;
 use yii\helpers\Html;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\customimport\models\ImportForm;
 use ReflectionClass;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Default controller for the import module
@@ -228,12 +229,12 @@ class DefaultController extends \app\controllers\ChildController {
                             break;
                     }
 
-                    $reader = \PHPExcel_IOFactory::createReader($format);
+                    $reader = IOFactory::createReaderForFile($format);
                     $reader->setReadDataOnly(true);
                     $excel = $reader->load($path . $name);
                     $name = (pathinfo($name, PATHINFO_FILENAME)) . '.csv';
                     $savePath = Yii::$app->basePath . '/web/import/' . $name;
-                    $writer = \PHPExcel_IOFactory::createWriter($excel, 'CSV');
+                    $writer = IOFactory::createWriter($excel, 'CSV');
                     $writer->setDelimiter(';');
                     $writer->save($savePath);
                 }
@@ -281,7 +282,7 @@ class DefaultController extends \app\controllers\ChildController {
 
         $data = \app\modules\customimport\importData::getLabels($flag);
         $header = \app\modules\translation\Translation::getContentHeaders('excel');
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $objPHPExcel->setActiveSheetIndex(0);
         $rowCount = 1;
         $column = 'A';
@@ -313,7 +314,7 @@ class DefaultController extends \app\controllers\ChildController {
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

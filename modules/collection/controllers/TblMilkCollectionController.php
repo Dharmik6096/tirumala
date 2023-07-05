@@ -25,7 +25,8 @@ use app\modules\organisation\models\TblUnions;
 use app\modules\collection\models\OnlineCollectionModel;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -1300,7 +1301,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             'extension' => 'xls',
             'writer' => 'Excel2007',
         ];
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
         $file_header = !empty($download) ? array_keys($download[0]) : [];
         $sheet->fromArray(
@@ -1323,7 +1324,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         fopen($fileName, "w+");
         $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save($fileName);
     }
 

@@ -11,11 +11,12 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use app\modules\payment\models\TblVspOutstanding;
 use app\modules\payment\models\TblVspOutstandingHistory;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use yii\data\ArrayDataProvider;
 use app\modules\payment\models\TblPaymentStop;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class TblRemunerationSummaryController extends \app\controllers\ChildController {
 
@@ -350,7 +351,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
             'writer' => 'CSV',
         ];
 
-        $objPHPExcel = new PHPExcel();
+        $objPHPExcel = new Spreadsheet();
         $objPHPExcel->setActiveSheetIndex(0);
         $objPHPExcel->getDefaultStyle()
                 ->getNumberFormat()
@@ -387,7 +388,7 @@ class TblRemunerationSummaryController extends \app\controllers\ChildController 
                 header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

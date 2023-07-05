@@ -6,7 +6,7 @@ use yii;
 use app\controllers\ChildController;
 use app\modules\bkgprocess\Bkgprocess;
 use yii\helpers\Url;
-use PHPExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use app\modules\bkgprocess\models\TblDataExchangeConfig;
 use app\components\WebApi;
 
