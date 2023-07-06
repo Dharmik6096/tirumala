@@ -566,6 +566,7 @@ echo GhostMenu::widget([
                             ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
                             ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
                             ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
+                            ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
                     ]
                 ],
                     [

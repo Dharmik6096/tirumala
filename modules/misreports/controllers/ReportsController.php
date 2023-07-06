@@ -941,6 +941,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VlccTransactionDataReport';
         return $this->actionIndex();
     }
+    
+    public function actionMpgPaymentBillStatement() {
+        $this->report = 'MpgPaymentBillStatement';
+        return $this->actionIndex();
+    }
 
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
@@ -2731,6 +2736,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_bmc_wise_auto_manual_summary',
                 'scenario' => 'BmcWiseAutoManualSummary',
                 'title' => 'BMC Wise Auto Manual Summary',
+            ],
+            'MpgPaymentBillStatement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_mpg_payment_bill_statement',
+                'scenario' => 'MpgPaymentBillStatement',
+                'title' => 'MPG Payment Bill Statement',
             ],
         ];
         return $label[$l];
