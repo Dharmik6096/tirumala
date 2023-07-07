@@ -26,9 +26,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-2 number-validate">  
-        <?= $form->field($model, 'asset_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('asset_group_code', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('asset_group_code')); ?>
     </div>
