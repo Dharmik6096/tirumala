@@ -76,6 +76,13 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Assign', 'class' => 'assign-complain' . $class, 'data-complain_code' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-user"></i>', $url, $options);
         },
+        'resolve-complain' => function ($url, $model) {
+            $url = Url::to(['tbl-complain/resolve-complain', 'id' => $model->complain_code]);
+            $status = $model->getComplainStatus($model->complain_code);
+            $class = (!isset($status) && ($model->physical_damage != 1)) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+        },
     ]
 ];
 

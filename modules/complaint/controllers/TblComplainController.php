@@ -22,6 +22,8 @@ use app\modules\sms\models\TblAlertTemplate;
 use app\modules\sms\models\TblAlertNotification;
 use app\modules\general\models\TblAttachment;
 use app\modules\usermanagement\models\User;
+use yii\helpers\FileHelper;
+use app\modules\general\models\TblAttachmentHistory;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -76,15 +78,21 @@ class TblComplainController extends \app\controllers\ChildController {
                 $this->setComplaintActivityModel($complaint_activity_model, 'CREATED');
                 $saveModel[] = $complaint_activity_model;
                 $auto_key_config['TblComplainActivity'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
-                $attachment = Yii::$app->request->post()['TblAttachment'];
-                if (!empty($attachment['attachment'])) {
-                    $complain_attachment = new TblAttachment();
-                    $complain_attachment->load(Yii::$app->request->post());
-                    $complain_attachment->module_name = 'tbl_complain';
-                    $ext = (explode(".", $complain_attachment->attachment));
-                    $complain_attachment->attachment_type = $ext[1];
-                    $saveModel[] = $complain_attachment;
-                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                $attachmentString = Yii::$app->request->post()['attachment'];
+                if (!empty($attachmentString)) {
+                    $attachments = explode(',', $attachmentString);
+                    foreach ($attachments as $atta) {
+                        $complain_attachment = new TblAttachment();
+                        $complain_attachment->load(Yii::$app->request->post());
+                        $complain_attachment->module_name = 'tbl_complain';
+                        $ext = (explode(".", $atta));
+                        $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                        $complain_attachment->attachment = $file;
+                        $complain_attachment->file_name = $atta;
+                        $complain_attachment->attachment_type = $ext[1];
+                        $saveModel[] = $complain_attachment;
+                        $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                    }
                 }
                 $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
@@ -106,32 +114,66 @@ class TblComplainController extends \app\controllers\ChildController {
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
             $saveModel = [];
-            $this->model->load(Yii::$app->request->post());
             $historyModel = new TblComplainHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $saveModel[] = $this->model;
             $saveModel[] = $historyModel;
-            $attachment = Yii::$app->request->post()['TblAttachment'];
-            if (!empty($attachment['attachment_code'])) {
-                $attachment_model = TblAttachment::find($attachment['attachment_code'])->one();
-                $attachment_model->load(Yii::$app->request->post());
-                $ext = (explode(".", $attachment_model->attachment));
-                $attachment_model->attachment_type = $ext[1];
-                $saveModel[] = $attachment_model;
+            $this->model->load(Yii::$app->request->post());
+            $saveModel[] = $this->model;
+            $attachmentString = Yii::$app->request->post()['attachment'];
+            if (!empty($attachmentString)) {
+                $attachments = explode(',', $attachmentString);
+                foreach ($attachments as $atta) {
+                    $complain_attachment = new TblAttachment();
+                    $complain_attachment->load(Yii::$app->request->post());
+                    $complain_attachment->module_name = 'tbl_complain';
+                    $ext = (explode(".", $atta));
+                    $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                    $complain_attachment->attachment = $file;
+                    $complain_attachment->file_name = $atta;
+                    $complain_attachment->attachment_type = $ext[1];
+                    $saveModel[] = $complain_attachment;
+                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+                }
             }
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain', 'edit']);
+//            $attachment = Yii::$app->request->post()['TblAttachment'];
+//            $attachment = Yii::$app->request->post()['attachment'];
+//            if (!empty($attachment['attachment_code'])) {
+//                $attachment_model = TblAttachment::findOne($attachment['attachment_code']);
+//                $attachment_model->load(Yii::$app->request->post());
+//                $ext = (explode(".", $attachment_model->attachment));
+//                $attachment_model->attachment_type = $ext[1];
+//                $saveModel[] = $attachment_model;
+//            }
+//            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain', 'edit']);
+            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'edit'], $auto_key_config);
+
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+//        $searchModel = new TblAttachment();
+        $complain_attachment = new TblAttachment();
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $complain_attachment->find()->where(['module_code' => $this->model->complain_code]),
+        ]);
+
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
+                    'complainAttachment' => $complain_attachment,
+                    'dropdownSerialNo' => [],
+                    'dataProvider' => $dataProvider,
+                        ]
+        );
     }
 
-    public function customRender() {
+    public function customRender($serialNo = []) {
         $complain_attachment = new TblAttachment();
         return $this->render($this->viewFile, [
                     'model' => $this->model,
-                    'complainAttachment' => $complain_attachment]
+                    'complainAttachment' => $complain_attachment,
+                    'dropdownSerialNo' => $serialNo,
+                        ]
         );
     }
 
@@ -156,10 +198,25 @@ class TblComplainController extends \app\controllers\ChildController {
         $deleteModel[] = $model;
         $saveModel[] = $activityHistoryModel;
 
-        $attachmentModel = TblAttachment::find()->where(['module_code' => Yii::$app->request->post('id')])->one();
-        if (!empty($attachmentModel)) {
-            $deleteModel[] = $attachmentModel;
+        $attachmentModel = TblAttachment::find()->where(['module_code' => Yii::$app->request->post('id')])->all();
+        foreach ($attachmentModel as $key => $id) {
+            $attachmentHistoryModel = new TblAttachmentHistory();
+            Yii::$app->operation->history($id, $attachmentHistoryModel, 'UPDATE');
+            $deleteModel[] = $id;
+            $saveModel[] = $attachmentHistoryModel;
         }
+
+
+//        $attachmentModel = TblAttachment::find()->where(['module_code' => Yii::$app->request->post('id')])->all();
+//        if (!empty($attachmentModel)) {
+//            foreach ($attachmentModel as $key => $id) {
+//                $deleteModel[] = $attachmentModel[$key];
+//            }
+//        }
+//        $attachmentHistoryModel = new TblAttachmentHistory();
+//        Yii::$app->operation->history($model, $attachmentHistoryModel, DELETE);
+//        $saveModel[] = $attachmentHistoryModel;
+
         $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Complain', 'delete']);
         if ($transaction == 'customRedirect') {
             return $this->redirect(['index']);
@@ -183,7 +240,6 @@ class TblComplainController extends \app\controllers\ChildController {
 
     private function setModel() {
         $this->model->complain_datetime = ($this->model->complain_datetime == '') ? null : $this->model->complain_datetime;
-        $this->model->resolved_datetime = ($this->model->resolved_datetime == '') ? null : date('Y-m-d H:i:s');
         $this->model->complain_status_datetime = date('Y-m-d H:i:s');
     }
 
@@ -329,10 +385,12 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function actionUploadFile() {
         $path = Yii::$app->params['complaint_dir_path'];
+//        if (!is_dir($path)) {
+//            \yii\helpers\FileHelper::createDirectory($path, $mode = 0777, $recursive = true);
+//        }
         if (!is_dir($path)) {
-            \yii\helpers\FileHelper::createDirectory($path, $mode = 0777, $recursive = true);
+            Yii::$app->general->CreateDirectory($path);
         }
-
         try {
             $file = \yii\web\UploadedFile::getInstanceByName('file');
             $fn = $this->uploadFile($file);
@@ -352,10 +410,10 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function uploadFile($attachment) {
         if (isset($attachment)) {
-            // store the source file name
+// store the source file name
 //            $this->attachment = $attachment->name;
             $ext = (explode(".", $attachment->name));
-            // generate a unique file name
+// generate a unique file name
             $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path']);
             if (isset($files[0])) {
                 foreach ($files as $index => $file) {
@@ -367,7 +425,7 @@ class TblComplainController extends \app\controllers\ChildController {
                 }
                 return isset($fn) ? $fn : $attachment->name;
             }
-            return Yii::$app->params['complaint_dir_path'] . $attachment->name;
+            return $attachment->name;
         }
     }
 
@@ -376,9 +434,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $path = Yii::$app->params['complaint_dir_path'];
         if (!empty($old_attachment)) {
             if (file_exists($path . $old_attachment)) {
-                if ($old_attachment != Yii::$app->request->post('old_value')) {
-                    unlink($path . $old_attachment);
-                }
+                unlink($path . $old_attachment);
                 return 1;
             }
         } else {
@@ -386,4 +442,211 @@ class TblComplainController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionResolveComplain($id) {
+        $complaint_activity_model = new TblComplainActivity();
+        $this->model = new TblComplain();
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'resolve_complain';
+        $this->setComplaintActivityModel($complaint_activity_model, 'SERVICE');
+        $this->model->complain_status = 'RESOLVED';
+        $this->model->resolved_datetime = date('Y-m-d H:i:s');
+
+        if ($this->model->load(Yii::$app->request->post())) {
+            $attachment = Yii::$app->request->post()['TblAttachment'];
+            if (!empty($attachment['attachment_code'])) {
+                $attachment_model = TblAttachment::findOne($attachment['attachment_code']);
+                $attachment_model->load(Yii::$app->request->post());
+                $old_attachment = $attachment_model->oldattributes['attachment'];
+            }
+            $complain_attachment = new TblAttachment();
+            $transaction = $this->generalModel->saveTransaction([$this->model, $complaint_activity_model], ['Complain Activity', 'edit']);
+            if ($transaction == 'customRedirect') {
+                if ($complain_attachment->attachment != $old_attachment && !empty($old_attachment)) {
+                    unlink(Yii::$app->params['complaint_dir_path'] . $old_attachment);
+                }
+                return $this->redirect(['tbl-complain/index']);
+            }
+        }
+
+        $sp_param = [];
+        $sp_name = 'sp_serial_no_list';
+        $sp_param[] = $this->model->mcc_plant_code;
+        $sp_param[] = $this->model->asset_code;
+        $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
+        $serialNo = [];
+        if (!empty($srNos)) {
+            $serialNo = array_column($srNos, 'serial_number');
+            $serialNo = array_combine($serialNo, $serialNo);
+        }
+        return $this->customRender($serialNo);
+    }
+
+    public function actionAttachmentDelete() {
+//        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $attachment = Yii::$app->request->post('id');
+        $deleteModel = [];
+        if (!empty($attachment)) {
+            $attachmentModel = TblAttachment::find()->where(['attachment_code' => $attachment])->one();
+            if (!empty($attachmentModel)) {
+                $deleteModel[] = $attachmentModel;
+            }
+            $record = $this->generalModel->deleteTransaction($deleteModel);
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+//    public function actionUploadFile() {
+//        $path = Yii::$app->params['complaint_dir_path'];
+////        $path = Yii::$app->basePath . '/web/uploads/complain/';
+//        Yii::$app->general->checkDirectory($path, '0777');
+//        try {
+//            $file = \yii\web\UploadedFile::getInstanceByName('file');
+//            $name = $file->name;
+//            if ($this->validateFileName($name)) {
+//                if ($file->saveAs($path . $name)) {
+//                    $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+//                } else {
+//                    $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+//                }
+//            } else {
+//                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'Invalid File ' . $name];
+//            }
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        } catch (\Exception $e) {
+//            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        }
+//    }
+//    public function actionUploadFile() {
+//        $path = Yii::$app->params['complaint_dir_path'];
+//        Yii::$app->general->checkDirectory($path, '0777');
+//        try {
+//            $file = \yii\web\UploadedFile::getInstanceByName('file');
+//            $name = time() . $file->name;
+//            if ($file->saveAs($path . $name)) {
+//                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+//            } else {
+//                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+//            }
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        } catch (\Exception $e) {
+//            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        }
+//    }
+//    public function actionAttachmentUpload() {
+//        $model = new TblAttachment();
+//        if ($model->load(Yii::$app->request->post())) {
+//            $error_file = [];
+//            $path = Yii::$app->params['complaint_dir_path'];
+//            $CollectionData = Yii::$app->basePath . Yii::$app->params['complaint_dir_path'];
+//            if (Yii::$app->general->checkDirectory($CollectionData . 'archive/')) {
+//                $status = 'success';
+//                $files = array_filter(explode(',', $model->attachment));
+//                $cnt = 0;
+//                $file_id = [];
+//                foreach ($files as $key => $value) {
+//                    try {
+//                        $old_path = $path . $value;
+//                        $file_path = $CollectionData . $value;
+//                        if (copy($old_path, $file_path)) {
+//                            $file = new TblAttachment();
+//                            $file->attributes = $model->attributes;
+////                            $file->file_path = str_replace('\\', '/', $file_path);
+////                            $file->module_name = 'tbl_complain';
+//                            $file->attachment = $value;
+//                            if ($file->save(FALSE)) {
+//                                $file_id[] = $file->attachment_code;
+//                                $cnt++;
+//                                unlink($old_path);
+//                            } else {
+//                                $error_file[] = $value;
+//                            }
+//                        } else {
+//                            $error_file[] = $value;
+//                        }
+//                    } catch (\Throwable $ex) {
+//                        
+//                    }
+//                }
+////                if (!empty(attachment_code)) {
+////                    return $this->redirect(['process-files', 'attachment_code' => implode(',', $file_id)]);
+////                }
+//                $msg = $cnt . ' Files Uploaded Successfully<br/>';
+//                if (!empty($error_file)) {
+//                    $msg .= 'Following files not uploaded' . implode('<br/>', $error_file);
+//                }
+//            } else {
+//                $status = 'error';
+//                $msg = 'Error While Save data';
+//            }
+//            $result = ['status' => $status, 'data' => $msg];
+//            echo (Json::encode($result));
+//        } else {
+//            return $this->render('create', ['model' => $model]);
+//        }
+//    }
+//     public function actionUploadFile() {
+//        $path = Yii::$app->params['complaint_dir_path'];
+//        if (!is_dir($path)) {
+//            \yii\helpers\FileHelper::createDirectory($path, $mode = 0777, $recursive = true);
+//        }
+//
+//        try {
+//            $file = \yii\web\UploadedFile::getInstanceByName('file');
+//            $fn = $this->uploadFile($file);
+//            if ($file->saveAs($path . $fn)) {
+//                $record = ['status' => 'success', 'msg' => $fn];
+//            } else {
+//                $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+//            }
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        } catch (\Exception $e) {
+//            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+//            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+//            return Json::encode($record);
+//        }
+//    }
+//
+//    public function uploadFile($attachment) {
+//        if (isset($attachment)) {
+//// store the source file name
+////            $this->attachment = $attachment->name;
+//            $ext = (explode(".", $attachment->name));
+//// generate a unique file name
+//            $files = \yii\helpers\FileHelper::findFiles(Yii::$app->params['complaint_dir_path']);
+//            if (isset($files[0])) {
+//                foreach ($files as $index => $file) {
+//                    $fileName = substr($file, strrpos($file, '/') + 2);
+//                    if ($attachment->name == $fileName) {
+//                        $fn = explode('.', $fileName);
+//                        $fn = $fn[0] . '(' . ($index + 1) . ').' . $fn[1];
+//                    }
+//                }
+//                return isset($fn) ? $fn : $attachment->name;
+//            }
+//            return Yii::$app->params['complaint_dir_path'] . $attachment->name;
+//        }
+//    }
+//    public function actionRemove() {
+//        $old_attachment = Yii::$app->request->post('value');
+//        $path = Yii::$app->params['complaint_dir_path'];
+//        if (!empty($old_attachment)) {
+//            if (file_exists($path . $old_attachment)) {
+//                if ($old_attachment != Yii::$app->request->post('old_value')) {
+//                    unlink($path . $old_attachment);
+//                }
+//                return 1;
+//            }
+//        } else {
+//            return 0;
+//        }
+//    }
+//    
 }

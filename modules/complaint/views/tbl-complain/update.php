@@ -3,7 +3,7 @@ $this->title = Yii::$app->label->title('edit', 'Complain');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
-    <div class="panel-body">
+    <div class="panel-body hide-grid-settings">
         <?=
         $this->render('_form', [
             'model' => $model,
@@ -12,6 +12,12 @@ $this->title = Yii::$app->label->title('edit', 'Complain');
         ])
         ?>
 
+        <?=
+        $this->render('_attachment_grid', [
+            'dataProvider' => $dataProvider,
+            'complainAttachment' => $complainAttachment
+        ])
+        ?>
     </div>
 </div>
 

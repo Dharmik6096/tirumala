@@ -111,9 +111,9 @@ class TblComplain extends \app\models\ChildModel {
             'location_details' => Yii::t('app', 'Location Details'),
             'remarks' => Yii::t('app', 'Remarks'),
             'entry_type' => Yii::t('app', 'Entry Type'),
-            'resolved_status' => Yii::t('app', 'Resolved Status'),
+            'resolved_status' => Yii::t('app', 'Resolve Status'),
             'resolved_datetime' => Yii::t('app', 'Resolved Datetime'),
-            'resolved_remarks' => Yii::t('app', 'Resolved Remarks'),
+            'resolved_remarks' => Yii::t('app', 'Resolve Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -181,8 +181,7 @@ class TblComplain extends \app\models\ChildModel {
     }
 
     public function getAttachment() {
-        return $this->hasOne(TblAttachment::className(), ['module_code' => 'complain_code']);
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'complain_code']);
     }
-
 
 }

@@ -6,23 +6,28 @@ use yii\web\View;
 use yii\helpers\Url;
 use zainiafzan\widget\Dropzone;
 use yii\web\JsExpression;
+use demogorgorn\ajax\AjaxSubmitButton;
 
-$url = \yii\helpers\Url::to(['/complaint/tbl-complain/remove']);
+$url = Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
+//$button_type = ($type == 'create') ? $type : 'edit';
+$type == 'create' ? ($urls = ['create']) : ($urls = ['update', 'id' => $model->complain_code]);
+$button_type = $type == 'create' ? 'create' : 'update';
 $size = '';
 $attachment = '';
 $attachment_code = '';
-if (!empty($model['attachment'])) {
-    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
-    $attachmentData = $model['attachment'];
-    $attachment = $attachmentData->attachment;
-    $attachment_code = $attachmentData->attachment_code;
-}
+//if (!empty($model['attachment'])) {
+//    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
+//    $attachmentData = $model['attachment'];
+//    $attachment = $attachmentData->attachment;
+//    $attachment_code = $attachmentData->attachment_code;
+//}
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
+            'id' => 'import-pendrive-packet',
         ]);
 ?>
 <?= $form->errorSummary($model); ?>
@@ -71,9 +76,14 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->complain_problem($model, $form, 'tblcomplain-complain_type_code', 'complain_problem_code', $model->getAttributeLabel('complain_problem_code')); ?>
     </div>
-    <div class="col-sm-3">
-        <?= $form->field($model, 'remarks')->textarea() ?>
-    </div>
+    <?php
+    if ($type != 'resolve') {
+        ?>
+        <div class = "col-sm-3">
+            <?= $form->field($model, 'remarks')->textarea() ?>
+        </div>
+    <?php }
+    ?>
     <div class="col-sm-2 mt10">
         <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>
@@ -81,12 +91,32 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'physical_damage', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>
 
+
+    <?php
+    if ($type == 'resolve') {
+        ?>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('resolved_status', $model, $form, 'form-group', $model->getAttributeLabel('resolved_status')); ?>
+        </div>
+        <div class = "col-sm-2 mt20">
+            <?= $form->field($model, 'spare_required', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        </div>
+        <div class = "col-sm-2">
+            <?= $form->field($model, 'new_serial_no', ['options' => ['class' => 'form-group']])->dropDownList($dropdownSerialNo, ['prompt' => Yii::t('app', 'Select New Serial Number')])->label($model->getAttributeLabel('new_serial_no')); ?>
+        </div>
+        <div class = "col-sm-3">
+            <?= $form->field($model, 'resolved_remarks')->textarea() ?>
+        </div>
+        <?php
+    }
+    ?>
     <div class="clearfix"></div>
 
     <div class="col-sm-12">
-        <?php echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']); ?>
-        <?php echo Html::hiddenInput('TblAttachment[old_attachment]', $attachment, ['id' => 'old_attachment']); ?>
-        <?php echo Html::hiddenInput('TblAttachment[attachment]', $attachment, ['id' => 'attachment']); ?>
+        <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
+        <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']); ?>
+        <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']); ?>
+
         <?=
         Dropzone::widget([
             'id' => 'mainDrop',
@@ -95,68 +125,117 @@ $form = ActiveForm::begin([
                     'main' => 1,]),
                 'addRemoveLinks' => true,
                 'autoDiscover' => false,
-                'maxFiles' => 1,
-                'init' => new JsExpression("function(file){
-                        if('$attachment' != '' && '{$size}' != ''){
-                            var data = '$path'+'$attachment';
-                            var mockFile = {
-                                name: '$attachment',
-                                size: '{$size}',
-                            };
-                            mockFile.isMock = true;
-
-                            // Tell eveyone this file was accepted.
-                            mockFile.status = Dropzone.ADDED;
-                            mockFile.accepted = true;
-                            this.emit('addedfile', mockFile);
-                            this.emit('success', mockFile);
-                            this.emit('complete', mockFile);
-                            this.options.maxFiles--;
-    //                        var myDropzone = $('#mainDrop').dropzone;
-    //                        console.log(myDropzone);
-                    }
-                   }"),
+                'maxFiles' => 5,
             ],
             'clientEvents' => [
+//                'addedfile' => 'function(file) {
+//                        var filenames = [];
+//                        var existingFiles = this.files;
+//                        console.log(existingFiles);
+//                        for (var i = 0; i < existingFiles.length; i++) {
+//                            filenames.push(existingFiles[i].name);
+//                        }
+//                        if (filenames.includes(file.name)) {
+//                            this.removeFile(file);
+//                            alert("File with the same name already exists.");
+//                        }  
+//                    }',
                 'success' => "function( file, response ){
-                                            var data=$.parseJSON(response);
-                                            if(data.status=='success')
-                                            { 
-                                                $('#attachment').val(data.msg);
-                                                $('#upload-btn').attr('disabled',false);
-                                            }
-                                            else
-                                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
-                                                
-                                        }",
+                        var data=$.parseJSON(response);
+                        if(data.status=='success')
+                        { 
+                            var new_attachment = $('#attachment').val();
+                            $('.dz-filename').text(data.msg);
+                            $('.dz-details img').attr('alt',data.msg);
+                            if(new_attachment == ''){
+                                $('#attachment').val(data.msg);
+                            } else {
+                                $('#attachment').val(new_attachment+','+data.msg);
+                            }                            
+                            $('#upload-btn').attr('disabled',false);
+                            this.options.maxFiles--;
+                        }
+                        else
+                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
+
+                    }",
                 'removedfile' => "function(file){
-                                                        var name = file.name;
-                                                        var val = $('#attachment').val();
-                                                        var old_val = $('#old_attachment').val();
-                                                        $.ajax({
-                                                            type: 'POST',
-                                                            'url': '{$url}',
-                                                            data: {'id':name,'value':val},
-                                                            success: function(data) {                                        
-                                                            var obj1 = $.parseJSON(data);
-                                                            },
-                                                            error:function(data){
-                                                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
-                                                            }
-                                                        });
-                                                        if(name == val){
-                                                            $('#attachment').val('');
-                                                            this.options.maxFiles++;
-                                                        }
-                                           }",
+                        console.log(file.name);
+                        var name = file.name;
+                        var val = $('#attachment').val();
+                        $.ajax({
+                            type: 'POST',
+                            'url': '{$url}',
+                            data: {'id':name,'value':val},
+                            success: function(data) {                                        
+                              var obj1 = $.parseJSON(data);
+                                var new_val = val.replace(name,'');
+                                $('#attachment').val(new_val);
+                                this.options.maxFiles++;
+                            },
+                            error:function(data){
+                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
+                            }
+                        });
+                        
+                   }",
                 'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
             ]
         ]);
         ?>
     </div> 
+
+    <div class="clearfix"></div>
+    <!--    <div class="modal-footer">-->
+    <div class="col-sm-12">
+        <?php
+        AjaxSubmitButton::begin([
+            'label' => Yii::t('app', $button_type),
+            'ajaxOptions' => [
+                'type' => 'POST',
+//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/attachment-upload']),
+//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/create']),
+                'url' => Url::to($urls),
+                'beforeSend' => new \yii\web\JsExpression('function(data){
+                                            $("#loadercontent").show();
+                                            $("#pageloader").show();
+                                    }'),
+                'success' => new \yii\web\JsExpression('function(data){                                   
+                                            $("#pageloader").hide();
+                                            $("#loadercontent").hide();
+                                            var obj1 = $.parseJSON(data);
+                                            if (obj1.status == "success"){
+                                                $("#importModal").modal("toggle");
+                                                $("#import-pendrive-packet")[0].reset();
+                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            }else{
+                                                $("#importModal").modal("toggle");
+                                                $("#import-pendrive-packet")[0].reset();
+                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            }
+                             }'),
+                'error' => new \yii\web\JsExpression('function(){
+                                    $("#pageloader").hide();
+                                    $("#loadercontent").hide();
+                                    if($("#attachment").val()==""){
+                                     bootbox.alert("Please select file.");
+                                    }else{
+                                        $("#importModal").modal("toggle");
+                                        $("#import-pendrive-packet")[0].reset();
+                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                    }
+                             }'),
+            ],
+            'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
+        ]);
+        AjaxSubmitButton::end();
+        ?>
+    </div>
     <div class="col-sm-2">
         <div class="form-group">
-            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <!--<? Yii::$app->controls->save(Yii::$app->label->button($button_type), $model); ?>-->
             <?= Yii::$app->controls->reset(); ?>
             <?= Yii::$app->controls->cancel($model); ?>
         </div>
@@ -288,7 +367,7 @@ $script = "
             });
         }
     }
-
+    
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>

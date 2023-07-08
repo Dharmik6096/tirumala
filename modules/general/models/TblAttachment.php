@@ -3,6 +3,7 @@
 namespace app\modules\general\models;
 
 use Yii;
+use app\modules\complaint\models\TblComplain;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -33,7 +34,7 @@ class TblAttachment extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['attachment', 'thumbnail'], 'safe'],
+                [['attachment', 'thumbnail', 'file_name'], 'safe'],
                 [['created_at'], 'safe'],
                 [['module_code', 'attachment_type', 'created_by'], 'safe'],
                 [['module_name', 'remarks'], 'safe'],
@@ -74,6 +75,15 @@ class TblAttachment extends \yii\db\ActiveRecord {
                         ->andFilterWhere(['remarks' => $this->remarks])
                         ->orderBy('created_at desc')->all();
         // }
+    }
+
+    public function attachmentDelete() {
+        $user = Yii::$app->session->get('UserCode');
+        $attachment = TblComplain::find()->where(['created_by' => $user])->one();
+        if (!empty($attachment))
+            return true;
+        else
+            return false;
     }
 
 }
