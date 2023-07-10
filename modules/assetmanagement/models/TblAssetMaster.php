@@ -58,7 +58,7 @@ class TblAssetMaster extends \app\models\ChildModel {
                 [['asset_name'], 'unique'],
                 [['asset_group_code'], 'assignAutoData', 'skipOnError' => true],
                 [['ref_code'], 'number'],
-                ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Refference Code has already been taken.')],
+                ['ref_code', 'unique', 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Reference Code has already been taken.')],
         ];
     }
 
@@ -79,7 +79,7 @@ class TblAssetMaster extends \app\models\ChildModel {
             'local_name' => Yii::t('app', 'Local Name'),
             'union_code' => Yii::t('app', 'Union'),
             'cmpl_product_code' => Yii::t('app', 'Asset Type'),
-            'ref_code' => Yii::t('app', 'Refference Code'),
+            'ref_code' => Yii::t('app', 'Reference Code'),
             'is_spare' => Yii::t('app', 'Is Spare'),
         ];
     }
@@ -142,22 +142,35 @@ class TblAssetMaster extends \app\models\ChildModel {
         $this->union_code = $this->assetGroupCode->union_code;
     }
 
-    public static function getSrNo($asset_code = NULL) {
+    public static function getSrNo($to_code = '', $asset_code = NULL) {
 
-        if (!empty($asset_code)) {
-            $asset = Self::findOne($asset_code);
-            if (!empty($asset) && $asset->is_serial_number == 1) {
-                $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.serial_number'])
-                        ->where(['tbl_asset_transaction.status' => [2], 'tbl_asset_transaction.asset_code' => $asset_code])
-                        ->one();
-
-                if (!empty($details)) {
-                    $sno = $details->serial_number;
-                    return $sno;
-                }
+        if (!empty($to_code)) {
+            $asset = TblAssetTransaction::find()
+                            ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+                            ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.serial_number' => $asset_code])->one();
+            if (!empty($asset)) {
+                $sno = $asset->serial_number;
+                return $sno;
             }
         }
         return '';
     }
 
+//        public static function getSrNo($asset_code = NULL) {
+//
+//        if (!empty($asset_code)) {
+//            $asset = Self::findOne($asset_code);
+//            if (!empty($asset) && $asset->is_serial_number == 1) {
+//                $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.serial_number'])
+//                        ->where(['tbl_asset_transaction.status' => [2], 'tbl_asset_transaction.serial_number' => $asset_code])
+//                        ->one();
+//
+//                if (!empty($details)) {
+//                    $sno = $details->serial_number;
+//                    return $sno;
+//                }
+//            }
+//        }
+//        return '';
+//    }
 }

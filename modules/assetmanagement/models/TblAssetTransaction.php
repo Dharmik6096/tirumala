@@ -314,10 +314,18 @@ class TblAssetTransaction extends \app\models\ChildModel {
                 ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code])
                 ->all();
 
-        $value = ArrayHelper::map($details, 'asset_code', function ($value) {
-                    return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
-                });
-
+//        $value = ArrayHelper::map($details, 'asset_code', function ($value) {
+//                    return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
+//                });
+//        if ($concatSrNo) {
+            $value = ArrayHelper::map($details,'serial_number', function ($value) {
+                        return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name') . ' - ' . $value->serial_number;
+                    });
+//        } else {
+//            $value = ArrayHelper::map($details, 'asset_code', function ($value) {
+//                        return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
+//                    });
+//        }
         return $value;
     }
 

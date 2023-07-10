@@ -1,45 +1,77 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use app\components\GeneralFunctions;
+use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\modules\assetmanagement\models\TblAssetDetailBom */
-
-$this->title = $model->asset_detail_bom_code;
-$this->params['breadcrumbs'][] = ['label' => 'Tbl Asset Detail Boms', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = Yii::$app->label->title('view', 'Asset Detail Bom');
 ?>
-<div class="tbl-asset-detail-bom-view">
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'asset_detail_bom_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'spare_code',
+                            'value' => Yii::$app->general->getforeignkey($model->spareCode, 'asset_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'asset_detail_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:80%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'qty',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'serial_number',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+            ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
+            // View file rendering the widget
+            echo DetailView::widget([
+                'model' => $model,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->asset_detail_bom_code], ['class' => 'btn btn-primary']) ?>
-        <?=
-        Html::a('Delete', ['delete', 'id' => $model->asset_detail_bom_code], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ])
-        ?>
-    </p>
-
-    <?=
-    DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'asset_detail_bom_code',
-            'asset_detail_code',
-            'spare_code',
-            'serial_number',
-            'qty',
-            'union_code',
-            'is_active',
-        ],
-    ])
-    ?>
-
+        </div>
+    </div>
 </div>

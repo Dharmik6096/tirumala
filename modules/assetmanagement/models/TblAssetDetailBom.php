@@ -50,6 +50,7 @@ class TblAssetDetailBom extends \app\models\ChildModel {
             [['asset_code', 'spare_code', 'serial_number'], 'safe'],
             [['originating_org_code', 'originating_org_type', 'created_at', 'updated_at',], 'safe'],
             [['asset_detail_code','spare_code'], 'required', 'on' => 'importCsv'],
+            [['spare_code'], 'checkUnique', 'on' => 'importCsv'],
             [['spare_code'], 'checkUnique', 'on' => 'create', 'except' => ['update']],
             [['qty'], 'default', 'value' => 1],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],

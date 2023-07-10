@@ -152,7 +152,7 @@ $form = ActiveForm::begin([
                             } else {
                                 $('#attachment').val(new_attachment+','+data.msg);
                             }                            
-                            $('#upload-btn').attr('disabled',false);
+//                            $('#upload-btn').attr('disabled',false);
                             this.options.maxFiles--;
                         }
                         else
@@ -207,12 +207,12 @@ $form = ActiveForm::begin([
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }else{
                                                 $("#importModal").modal("toggle");
                                                 $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }
                              }'),
@@ -224,11 +224,11 @@ $form = ActiveForm::begin([
                                     }else{
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
-                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+//                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                     }
                              }'),
             ],
-            'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
+            'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
         ]);
         AjaxSubmitButton::end();
         ?>
@@ -275,10 +275,19 @@ $script = "
 
  $('#tblcomplain-asset_code').on('change', function() {
         var asset_code = $(this).val();
+        var location_type = $('#tblcomplain-location_type').val();
+        var code = '';
+        if(location_type == 2){
+            code = $('#tblcomplain-bmc_code').val();
+        } else if (location_type == 1) {
+            code = $('#tblcomplain-plant_code').val();
+        } else {
+            code = $('#tblcomplain-dcs_code').val();
+        }
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-sr-number']) . "',
-            data: {asset_code : asset_code},
+            data: {asset_code : asset_code, code: code},
             success: function(data) {
                 var obj1 = $.parseJSON(data);
                 if(obj1.status == 'success') {

@@ -32,7 +32,10 @@ class TblAssetGroup extends \app\models\ChildModel {
     public function rules() {
         return [
             [['asset_group_name', 'union_code'], 'required'],
-            [['asset_group_name', 'reference_code'], 'unique'],
+            [['asset_group_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
+            [['reference_code'], 'unique'],
             [['asset_group_name', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'default', 'value' => 1],
             [['created_at', 'updated_at', 'reference_code'], 'safe'],

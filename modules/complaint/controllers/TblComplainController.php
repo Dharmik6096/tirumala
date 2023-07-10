@@ -24,6 +24,7 @@ use app\modules\general\models\TblAttachment;
 use app\modules\usermanagement\models\User;
 use yii\helpers\FileHelper;
 use app\modules\general\models\TblAttachmentHistory;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -126,13 +127,14 @@ class TblComplainController extends \app\controllers\ChildController {
                     $complain_attachment = new TblAttachment();
                     $complain_attachment->load(Yii::$app->request->post());
                     $complain_attachment->module_name = 'tbl_complain';
+                    $complain_attachment->module_code = $this->model->complain_code;
                     $ext = (explode(".", $atta));
                     $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
                     $complain_attachment->attachment = $file;
                     $complain_attachment->file_name = $atta;
                     $complain_attachment->attachment_type = $ext[1];
                     $saveModel[] = $complain_attachment;
-                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+//                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                 }
             }
 //            $attachment = Yii::$app->request->post()['TblAttachment'];
@@ -144,8 +146,8 @@ class TblComplainController extends \app\controllers\ChildController {
 //                $attachment_model->attachment_type = $ext[1];
 //                $saveModel[] = $attachment_model;
 //            }
-//            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain', 'edit']);
-            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'edit'], $auto_key_config);
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain', 'edit']);
+//            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'edit'], $auto_key_config);
 
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
@@ -154,7 +156,7 @@ class TblComplainController extends \app\controllers\ChildController {
 //        $searchModel = new TblAttachment();
         $complain_attachment = new TblAttachment();
 
-        $dataProvider = new \yii\data\ActiveDataProvider([
+        $dataProvider = new ActiveDataProvider([
             'query' => $complain_attachment->find()->where(['module_code' => $this->model->complain_code]),
         ]);
 
@@ -201,7 +203,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $attachmentModel = TblAttachment::find()->where(['module_code' => Yii::$app->request->post('id')])->all();
         foreach ($attachmentModel as $key => $id) {
             $attachmentHistoryModel = new TblAttachmentHistory();
-            Yii::$app->operation->history($id, $attachmentHistoryModel, 'UPDATE');
+            Yii::$app->operation->history($id, $attachmentHistoryModel, DELETE);
             $deleteModel[] = $id;
             $saveModel[] = $attachmentHistoryModel;
         }
@@ -286,7 +288,8 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function actionGetSrNumber() {
         $asset_code = Yii::$app->request->post()['asset_code'];
-        $sno = TblAssetMaster::getSrNo($asset_code);
+        $to_code = Yii::$app->request->post()['code'];
+        $sno = TblAssetMaster::getSrNo($to_code, $asset_code);
         $record = ['status' => 'success', 'msg' => $sno];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
@@ -482,15 +485,18 @@ class TblComplainController extends \app\controllers\ChildController {
     }
 
     public function actionAttachmentDelete() {
-//        $this->model = $this->findModel(Yii::$app->request->post('id'));
         $attachment = Yii::$app->request->post('id');
         $deleteModel = [];
+        $savedelModel = [];
         if (!empty($attachment)) {
             $attachmentModel = TblAttachment::find()->where(['attachment_code' => $attachment])->one();
             if (!empty($attachmentModel)) {
-                $deleteModel[] = $attachmentModel;
+                $attachmentHistoryModel = new TblAttachmentHistory();
+                Yii::$app->operation->history($attachmentModel, $attachmentHistoryModel, DELETE);
+                $savedelModel[] = $attachmentModel;
+                $savedelModel[] = $attachmentHistoryModel;
             }
-            $record = $this->generalModel->deleteTransaction($deleteModel);
+            $record = $this->generalModel->deleteTransaction($savedelModel);
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);

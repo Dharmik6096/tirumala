@@ -50,7 +50,7 @@ class TblStoreLocation extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => false],
             [['store_location_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocationType::className(), 'targetAttribute' => ['store_location_type' => 'slt_code']],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            ['reference_code', 'unique', 'targetAttribute' => ['reference_code', 'store_location_type'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Refference Code has already been taken.')],
+            ['reference_code', 'unique', 'targetAttribute' => ['reference_code', 'store_location_type'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Reference Code has already been taken.')],
             [['store_location_name', 'sloc_code'], 'unique'],
         ];
     }

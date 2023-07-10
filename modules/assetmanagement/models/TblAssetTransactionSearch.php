@@ -77,7 +77,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
     public function gridsearch($params) {
         $query = TblAssetTransaction::find();
         $query->where(['tbl_asset_transaction.status' => [0, -1, 2]]);
-        $query->where(['tbl_asset_transaction.current_status' => [0, 1, 2, 3]]);
+//        $query->where(['tbl_asset_transaction.current_status' => [0, 1, 2, 3]]);
 //        $query->where(['or',
 //            ['status' => [0, -1, 2]]
 //        ]);

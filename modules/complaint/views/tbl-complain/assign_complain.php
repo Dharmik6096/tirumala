@@ -149,10 +149,14 @@ use kartik\detail\DetailView;
                     ?>
                     <div class="show-error"></div>
 
-                    <div class="col-sm-6" >
-                        <!--<? Yii::$app->dropdown->dropdown('contact_detail_complain_user', $model, $form, '', $model->getAttributeLabel('assign_to'), false, 'user_code'); ?>-->
-                        <?= Yii::$app->dropdown->dropdown('user', $model, $form, '', $model->getAttributeLabel('assign_to'), false, 'user_code'); ?>
-                    </div>
+                    <!--                    <div class="col-sm-6" >
+                                            <? Yii::$app->dropdown->dropdown('assign', $model, $form, '', $model->getAttributeLabel('assign_to'), false, 'user_code'); ?>
+                                        </div>-->
+                    <!--                    <div class="col-sm-6" >
+                    <?php //Html::hiddenInput('location_type', '', ['id' => 'location_type']); ?>
+                    <?php // Html::hiddenInput('code', '', ['id' => 'code']); ?>
+                                            <? Yii::$app->dropdown->depend_dropdown('assign_to', $model, $form, 'location_type', 'form-group col-sm-12', $model->getAttributeLabel('assign_to'), 'user_code', false, 0, [], FALSE, '', false, false); ?>
+                                        </div>-->
 
                     <?= Html::activeHiddenInput($model, 'complain_code'); ?>
 
