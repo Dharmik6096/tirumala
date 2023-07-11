@@ -241,6 +241,9 @@ class Grid extends Widget {
             'showPersonalize' => true,
             'storage' => 'cookie',
             'showSort' => true,
+            'allowThemeSetting' => false,
+            'allowFilterSetting' => false,
+            'allowSortSetting' => false,
             'gridOptions' => [
                 'dataProvider' => $dataProvider,
                 'rowOptions' => $rowOptions,

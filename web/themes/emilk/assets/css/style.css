@@ -61,6 +61,7 @@ ul{
     border-radius: 0;
     border: none;
     margin: 0;
+    height: 50px;
 }
 .clearfix:before, .clearfix:after, .dl-horizontal dd:before, .dl-horizontal dd:after, .container:before, 
 .container:after, .container-fluid:before, .container-fluid:after, .row:before, .row:after, 
@@ -5087,6 +5088,9 @@ tr.highlightRow {
 .input-group-text{
     border-radius: 0px;
     padding: 5px;
+    line-height: 0.5;
+    font-size: 10px;
+    color: gray;
 }
 .card{
     position: unset;
@@ -5131,4 +5135,9 @@ tr.highlightRow {
 .btn-outline-secondary{
     background-color: rgb(122, 35, 28) !important;
     color: #fff;
+}
+.btn-close{
+    top: 10px;
+    right: 12px;
+    position: absolute;
 }

@@ -20,6 +20,10 @@ use yii\helpers\FileHelper;
  */
 class UserController extends \webvimark\modules\UserManagement\controllers\UserController {
 
+    protected $viewFile;
+    protected $model;
+    protected $generalModel;
+
     /**
      * @var User
      */

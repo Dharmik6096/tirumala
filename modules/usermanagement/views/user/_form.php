@@ -1,7 +1,6 @@
 <?php
 
 use webvimark\modules\UserManagement\models\User;
-use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 use webvimark\extensions\BootstrapSwitch\BootstrapSwitch;
@@ -68,7 +67,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
     </div>
     <div class="col-sm-2 mt18 user_type_show">
-        <?= $form->field($model, 'allow_app_login', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_app_login'); ?>
     </div> 
 
     <?php /* if ($model->checkNotSelf()) { ?>
@@ -105,7 +104,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 multiple">
             <?php
             echo $form->field($model, 'role')
-                    ->dropDownList(User::getAvailableRoles(), ['multiple' => 'multiple']);
+                    ->dropDownList(\app\modules\usermanagement\models\User::getAvailableRoles(), ['multiple' => 'multiple']);
             ?>
         </div>
     <?php endif; ?>
