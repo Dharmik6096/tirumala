@@ -25,6 +25,7 @@ use app\modules\usermanagement\models\User;
 use yii\helpers\FileHelper;
 use app\modules\general\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
+use app\modules\complaint\models\TblComplainActivitySearch;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -53,8 +54,12 @@ class TblComplainController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $searchModel = new TblComplainActivitySearch();
+        $searchModel->complain_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider
         ]);
     }
 
@@ -302,10 +307,10 @@ class TblComplainController extends \app\controllers\ChildController {
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->scenario = 'assign_complain';
+        $appLoginModel = new User();
         $notificationSent = true;
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
             $master = [];
-            $appLoginModel = new User();
             $mobileNo = Yii::$app->general->getforeignkey($this->model->contactDetailsCodes, 'mobile_no');
             $appLoginModel->mobile_no = !empty($mobileNo) && $mobileNo != 'N/A' ? $mobileNo : '';
             $appLoginModelData = $appLoginModel->getLoginDetails();
@@ -382,7 +387,8 @@ class TblComplainController extends \app\controllers\ChildController {
             return $this->redirect(['index']);
         }
         return $this->renderAjax('assign_complain', [
-                    'model' => $this->model
+                    'model' => $this->model,
+                    'appLoginModel' => $appLoginModel
         ]);
     }
 
@@ -655,4 +661,20 @@ class TblComplainController extends \app\controllers\ChildController {
 //        }
 //    }
 //    
+    public function actionAssignList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0])) {
+                $user = new User();
+                $data = $user->getAssignList($parents[0], $parents[1]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
 }

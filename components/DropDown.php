@@ -547,6 +547,10 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-master/asset-lists', Yii::t('app', 'Select Asset'), $multiple, '', $readOnly);
     }
 
+    public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1501,6 +1505,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Status'),
                 'data' => ['other' => Yii::t('app', 'Other'), 'service' => Yii::t('app', 'Service'), 'repair' => Yii::t('app', 'Repair'), 'replace' => Yii::t('app', 'Replace')],
             ],
+            'activity_type' => [
+                'name' => 'activity_type',
+                'prompt' => Yii::t('app', 'Select Activity Status'),
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'ASSIGN' => Yii::t('app', 'ASSIGN'), 'RE-ASSIGN' => Yii::t('app', 'RE-ASSIGN'), 'SERVICE' => Yii::t('app', 'SERVICE')],
+            ],
         ];
         return $records[$l];
     }
@@ -1620,7 +1629,6 @@ class DropDown extends Component {
             'complain_escalation_name' => ['name' => 'complain_escalation_code', 'fields' => 'complain_escalation_code,escalation_name', 'prompt' => 'Select Complain  Escalation Name', 'model' => 'TblComplainEscalation'],
             'complain_type' => ['name' => 'complain_type_code', 'fields' => 'complain_type_code,complain_type', 'prompt' => 'Select Complain Type', 'model' => 'TblComplainType'],
             'contact_detail_complain_user' => ['name' => 'user_code', 'fields' => 'detail_code,firstname,mobile_no', 'prompt' => 'Select', 'model' => 'TblContactDetails'],
-            'assign_to' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select User'), 'model' => 'User', 'depend' => ['location_type', 'code']],
         ];
         return $label[$l];
     }

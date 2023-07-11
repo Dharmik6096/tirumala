@@ -3,6 +3,8 @@
 namespace app\modules\complaint\models;
 
 use Yii;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\complaint\models\TblComplain;
 
 /**
  * This is the model class for table "tbl_complain_activity".
@@ -60,6 +62,14 @@ class TblComplainActivity extends \app\models\ChildModel {
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
+    }
+
+    public function getContactDetailsCodes() {
+        return $this->hasOne(User::className(), ['id' => 'user_code']);
+    }
+
+    public function getComplainActivity() {
+        return $this->hasOne(TblComplain::className(), ['complain_code' => 'complain_code']);
     }
 
 }

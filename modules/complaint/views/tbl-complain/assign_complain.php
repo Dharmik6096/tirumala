@@ -8,7 +8,20 @@ use webvimark\modules\UserManagement\models\User;
 use kartik\date\DatePicker;
 use kartik\detail\DetailView;
 ?>
-
+<?php
+$location_type = $model->location_type;
+$location_type_name = 'DCS';
+if ($location_type == 2) {
+    $code = $model->bmc_code;
+    $location_type_name = 'BMC';
+} else if ($location_type == 1) {
+    $code = $model->plant_code;
+    $location_type_name = 'PLANT';
+} else {
+    $code = $model->dcs_code;
+    $location_type_name = 'DCS';
+}
+?>
 <div class="modal modal-default fade in" id="AssignComplaintModal" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -46,62 +59,75 @@ use kartik\detail\DetailView;
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
                                 'attribute' => 'dcs_code',
                                 'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'contact_person',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
-                                'attribute' => 'mobile_no',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
                         ],
                     ],
                         [
                         'columns' => [
+                                [
+                                'attribute' => 'mobile_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
                                 [
                                 'attribute' => 'complain_type_code',
                                 'value' => isset($model->complainFors) ? $model->complainFors->complain_type : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'complain_datetime',
                                 'value' => Yii::$app->controls->view_date($model->complain_datetime),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'affects_data',
                                 'value' => $model->affects_data == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'physical_damage',
                                 'value' => $model->physical_damage == 1 ? 'Yes' : 'No',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'asset_code',
                                 'value' => isset($model->asset) ? $model->asset->asset_name : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'complain_status',
                                 'value' => Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status],
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'serial_number',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -109,12 +135,8 @@ use kartik\detail\DetailView;
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'serial_number',
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
                                 'attribute' => 'remarks',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -152,11 +174,11 @@ use kartik\detail\DetailView;
                     <!--                    <div class="col-sm-6" >
                                             <? Yii::$app->dropdown->dropdown('assign', $model, $form, '', $model->getAttributeLabel('assign_to'), false, 'user_code'); ?>
                                         </div>-->
-                    <!--                    <div class="col-sm-6" >
-                    <?php //Html::hiddenInput('location_type', '', ['id' => 'location_type']); ?>
-                    <?php // Html::hiddenInput('code', '', ['id' => 'code']); ?>
-                                            <? Yii::$app->dropdown->depend_dropdown('assign_to', $model, $form, 'location_type', 'form-group col-sm-12', $model->getAttributeLabel('assign_to'), 'user_code', false, 0, [], FALSE, '', false, false); ?>
-                                        </div>-->
+                    <div class="col-sm-6" >
+                        <?php echo Html::hiddenInput('location_type', $location_type_name, ['id' => 'location_type']); ?>
+                        <?php echo Html::hiddenInput('code', $code, ['id' => 'code']); ?>
+                        <?= Yii::$app->dropdown->assign_list($model, $form, 'location_type,code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>               
+                    </div>
 
                     <?= Html::activeHiddenInput($model, 'complain_code'); ?>
 

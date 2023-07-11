@@ -13,6 +13,7 @@ use app\modules\details\models\TblContactDetails;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\general\models\TblAttachment;
+use app\modules\complaint\models\TblComplainProblem;
 
 /**
  * This is the model class for table "tbl_complain".
@@ -150,6 +151,10 @@ class TblComplain extends \app\models\ChildModel {
 
     public function getAsset() {
         return $this->hasOne(TblAssetMaster::className(), ['asset_code' => 'asset_code']);
+    }
+
+    public function getComplainProblem() {
+        return $this->hasOne(TblComplainProblem::className(), ['complain_problem_code' => 'complain_problem_code']);
     }
 
     public function getComplainFor($complain_type) {

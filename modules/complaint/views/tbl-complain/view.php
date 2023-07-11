@@ -5,6 +5,7 @@ use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\organisation\models\TblPlant */
@@ -151,5 +152,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
         </div>
+        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Complain Activity</h5></div>
+        <div class="clearfix"></div>
+        <?php
+        ?>
+        <?=
+        ListView::widget([
+            'dataProvider' => $dataProvider,
+            'layout' => '{items}',
+            'itemView' => '_complaint_activity',
+        ]);
+        ?>
     </div>
 </div>

@@ -98,10 +98,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('resolved_status', $model, $form, 'form-group', $model->getAttributeLabel('resolved_status')); ?>
         </div>
-        <div class = "col-sm-2 mt20">
+        <div class = "col-sm-2 mt20 default_hide">
             <?= $form->field($model, 'spare_required', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
         </div>
-        <div class = "col-sm-2">
+        <div class = "col-sm-2 default_hide">
             <?= $form->field($model, 'new_serial_no', ['options' => ['class' => 'form-group']])->dropDownList($dropdownSerialNo, ['prompt' => Yii::t('app', 'Select New Serial Number')])->label($model->getAttributeLabel('new_serial_no')); ?>
         </div>
         <div class = "col-sm-3">
@@ -377,6 +377,20 @@ $script = "
         }
     }
     
+    $('#tblcomplain-resolved_status').on('change', function(){
+        var resolved_status = $(this).val();
+        hideSection(resolved_status);
+    });
+    
+    function hideSection(type){
+        if(type == 'replace'){
+            $('.field-tblcomplain-spare_required').parent('div').show();
+            $('.field-tblcomplain-new_serial_no').parent('div').show();
+        } else if(type) {
+            $('.field-tblcomplain-spare_required').parent('div').hide();
+            $('.field-tblcomplain-new_serial_no').parent('div').hide();
+        }
+    }
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>
