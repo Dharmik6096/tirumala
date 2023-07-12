@@ -9,7 +9,7 @@ use app\modules\organisation\models\TblUnions;
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
 
     public function actionLogin() {
-        $this->layout = 'loginLayout.php';
+        $this->layout = '@app/web/themes/emilk/layouts/loginLayout.php';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }

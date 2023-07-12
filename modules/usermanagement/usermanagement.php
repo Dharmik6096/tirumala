@@ -17,9 +17,6 @@ class usermanagement extends \webvimark\modules\UserManagement\UserManagementMod
      */
     public function init() {
         parent::init();
-
-        // custom initialization code goes here
-//        $this->layout = '@web/themes/emilk/layouts/main.php';
     }
 
 }

@@ -76,7 +76,7 @@ $config = [
                 'eipl-vendor-api' => 'vendorapi/vendor/vendor-services',
                 'webservice/supervisor/v1/<slug:[A-Za-z0-9 -_.]+>' => 'webservice/supervisor/v1/request-master',
                 'webservice/emilkprolite/v1' => 'webservice/emilkprolite/v1/request-master',
-                    ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',
+                ['class' => 'app\components\UrlRule', 'connectionID' => 'db', 'pattern' => '...', 'route' => 'site/index',
                 ],
             //              ['class' => 'app\components\UrlRule', 'connectionID' => 'db'],
             ],
@@ -147,7 +147,7 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
-                    [
+                [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning', 'trace', 'info'],
                 ],
@@ -206,7 +206,9 @@ $config = [
             // Tip: you can use this event in any module
             'on beforeAction' => function (yii\base\ActionEvent $event) {
                 if ($event->action->uniqueId == 'user-management/auth/login') {
-                    $event->action->controller->layout = 'loginLayout.php';
+                    $event->action->controller->layout = '@app/web/themes/emilk/layouts/loginLayout.php';
+                } else {
+                    $event->action->controller->layout = '@app/web/themes/emilk/layouts/main.php';
                 };
             },
         ],
