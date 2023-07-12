@@ -202,6 +202,34 @@ class TblAssetMasterController extends \app\controllers\ChildController {
         return Json::encode($data);
     }
 
+//    public function actionAssetLists() {
+//        $out = [];
+//
+//        if (isset($_POST['depdrop_parents']) && $_POST['depdrop_parents'][4] == 'asset_complain') {
+//            $parents = $_POST['depdrop_parents'];
+//
+//            $ref_code = '';
+//            $slocType = $parents[0];
+//            if ($slocType == 1 && !empty($parents[1])) {
+//                $ref_code = $parents[1];
+//            } else if ($slocType == 2 && !empty($parents[2])) {
+//                $ref_code = $parents[2];
+//            } else if ($slocType == 3 && !empty($parents[3])) {
+//                $ref_code = $parents[3];
+//            }
+//            if (!empty($ref_code)) {
+//                $asset_txn = new TblAssetTransaction();
+//                $data = $asset_txn->getAssets($ref_code, $slocType);
+//                foreach ($data as $key => $val) {
+//                    $out[] = array('id' => $key, 'name' => $val);
+//                }
+//                return Json::encode(['output' => $out, 'selected' => '']);
+//                return;
+//            }
+//        }
+//        return Json::encode(['output' => '', 'selected' => '']);
+//    }
+
     public function actionAssetLists() {
         $out = [];
 
@@ -219,7 +247,7 @@ class TblAssetMasterController extends \app\controllers\ChildController {
             }
             if (!empty($ref_code)) {
                 $asset_txn = new TblAssetTransaction();
-                $data = $asset_txn->getAssets($ref_code, $slocType);
+                $data = $asset_txn->getSrNoAssets($ref_code, $slocType, true);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }

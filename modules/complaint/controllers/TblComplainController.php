@@ -34,6 +34,11 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public $freeAccessActions = ['problem-list', 'get-asset'];
 
+    public function init() {
+        parent::init();
+        $this->enableCsrfValidation = FALSE;
+    }
+
     /**
      * Lists all TblComplain models.
      * @return mixed
@@ -77,6 +82,10 @@ class TblComplainController extends \app\controllers\ChildController {
         $this->model->complain_status = 'CREATED'; //create
         $this->model->entry_type = 'PORTAL';
         if ($this->model->load(Yii::$app->request->post())) {
+            if ($this->model->asset_code) {
+                $assetsr = explode('##', $this->model->asset_code);
+                $this->model->asset_code = $assetsr[0];
+            }
             $this->setModel($this->model);
             if ($this->model->validate()) {
                 $saveModel = [];
@@ -96,6 +105,7 @@ class TblComplainController extends \app\controllers\ChildController {
                         $complain_attachment->attachment = $file;
                         $complain_attachment->file_name = $atta;
                         $complain_attachment->attachment_type = $ext[1];
+                        $complain_attachment->remarks = $this->model->remarks;
                         $saveModel[] = $complain_attachment;
                         $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                     }
@@ -124,6 +134,13 @@ class TblComplainController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
             $this->model->load(Yii::$app->request->post());
+            if ($this->model->asset_code) {
+                $assetsr = explode('##', $this->model->asset_code);
+                $this->model->asset_code = $assetsr[0];
+            } else {
+                $this->model->asset_code = '';
+                $this->model->serial_number = '';
+            }
             $saveModel[] = $this->model;
             $attachmentString = Yii::$app->request->post()['attachment'];
             if (!empty($attachmentString)) {
@@ -138,6 +155,7 @@ class TblComplainController extends \app\controllers\ChildController {
                     $complain_attachment->attachment = $file;
                     $complain_attachment->file_name = $atta;
                     $complain_attachment->attachment_type = $ext[1];
+                    $complain_attachment->remarks = $this->model->remarks;
                     $saveModel[] = $complain_attachment;
 //                    $auto_key_config['TblAttachment'][] = ['self_key' => 'module_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
                 }
@@ -293,8 +311,10 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function actionGetSrNumber() {
         $asset_code = Yii::$app->request->post()['asset_code'];
+        $assetsr = explode('##', $asset_code);
         $to_code = Yii::$app->request->post()['code'];
-        $sno = TblAssetMaster::getSrNo($to_code, $asset_code);
+//        $sno = TblAssetMaster::getSrNo($to_code, $asset_code);
+        $sno = TblAssetMaster::getSrNo($to_code, $assetsr[0], $assetsr[1]);
         $record = ['status' => 'success', 'msg' => $sno];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);

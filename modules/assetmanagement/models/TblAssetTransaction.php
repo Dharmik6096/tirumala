@@ -307,25 +307,47 @@ class TblAssetTransaction extends \app\models\ChildModel {
         }
     }
 
-    public function getAssets($ref_code, $slocType) {
+//    public function getAssets($ref_code, $slocType) {
+//        $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.asset_code', 'tbl_asset_transaction.serial_number'])
+//                ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_transaction.asset_code')
+//                ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+//                ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code])
+//                ->all();
+//
+////        $value = ArrayHelper::map($details, 'asset_code', function ($value) {
+////                    return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
+////                });
+////        if ($concatSrNo) {
+//            $value = ArrayHelper::map($details,'serial_number', function ($value) {
+//                    return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name') . ' - ' . $value->serial_number;
+//                });
+////        } else {
+////            $value = ArrayHelper::map($details, 'asset_code', function ($value) {
+////                        return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
+////                    });
+////        }
+//        return $value;
+//    }
+
+    public function getAssetList($ref_code, $slocType, $concatSrNo = false) {
         $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.asset_code', 'tbl_asset_transaction.serial_number'])
                 ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_transaction.asset_code')
-                ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+                ->joinWith(['toStoreLocCode', 'assetDetail'])
                 ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code])
+                ->orderBy(['tbl_asset_detail.put_to_use_date' => SORT_DESC])
                 ->all();
 
-//        $value = ArrayHelper::map($details, 'asset_code', function ($value) {
-//                    return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
-//                });
-//        if ($concatSrNo) {
-            $value = ArrayHelper::map($details,'serial_number', function ($value) {
+        if ($concatSrNo) {
+            $value = ArrayHelper::map($details, function ($value) {
+                        return $value->asset_code . '##' . $value->serial_number;
+                    }, function ($value) {
                         return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name') . ' - ' . $value->serial_number;
                     });
-//        } else {
-//            $value = ArrayHelper::map($details, 'asset_code', function ($value) {
-//                        return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
-//                    });
-//        }
+        } else {
+            $value = ArrayHelper::map($details, 'asset_code', function ($value) {
+                        return Yii::$app->general->getforeignkey($value->assetCode, 'asset_name');
+                    });
+        }
         return $value;
     }
 

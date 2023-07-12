@@ -16,6 +16,10 @@ $button_type = $type == 'create' ? 'create' : 'update';
 $size = '';
 $attachment = '';
 $attachment_code = '';
+$disabled = $type == 'resolve' ? True : false;
+
+//$class = 'default_hide';
+//$disabled = $type == 'resolve' ? '' : $class;
 //if (!empty($model['attachment'])) {
 //    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
 //    $attachmentData = $model['attachment'];
@@ -33,26 +37,26 @@ $form = ActiveForm::begin([
 <?= $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), false, 'complain_type_code'); ?>
+        <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), $disabled, 'complain_type_code'); ?>
         <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']); ?>
     </div>
     <div class="col-sm-2">       
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code')); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $disabled); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('location_type', $model, $form, '', $model->getAttributeLabel('location_type'), false, 'location_type', FALSE, FALSE, FALSE); ?>
+        <?= Yii::$app->dropdown->dropdownStatic('location_type', $model, $form, '', $model->getAttributeLabel('location_type'), $disabled, 'location_type', FALSE, FALSE, FALSE); ?>
     </div>
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcomplain-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblcomplain-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $disabled); ?>
     </div>
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcomplain-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcomplain-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $disabled); ?>
     </div>  
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcomplain-mcc_plant_code', 'bmc_code', Yii::t('app', 'bmc_code'), FALSE); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcomplain-mcc_plant_code', 'bmc_code', Yii::t('app', 'bmc_code'), FALSE, '', '', $disabled); ?>
     </div>  
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcomplain-bmc_code', 'dcs_code', Yii::t('app', 'dcs_code')); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcomplain-bmc_code', 'dcs_code', Yii::t('app', 'dcs_code'), false, '', $disabled); ?>
     </div>
     <div class="col-sm-2 contact_dis">
         <?= $form->field($model, 'contact_person')->textInput(['data-val' => $model->contact_person]) ?>
@@ -246,6 +250,8 @@ $form = ActiveForm::begin([
 $script = "
 //    var _csrf_token = yii.getCsrfParam() ? yii.getCsrfToken() : '';
     $('.default_hide').hide();
+    hideSectionManage($('#tblcomplain-location_type').val());
+    
     $('#tblcomplain-location_type').on('change', function(){
         var location_type = $(this).val();
         hideSectionManage(location_type);

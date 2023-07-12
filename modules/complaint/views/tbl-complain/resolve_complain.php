@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'Complain');
+$this->title = Yii::$app->label->title('edit', 'Complain Resolve');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

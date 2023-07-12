@@ -142,20 +142,35 @@ class TblAssetMaster extends \app\models\ChildModel {
         $this->union_code = $this->assetGroupCode->union_code;
     }
 
-    public static function getSrNo($to_code = '', $asset_code = NULL) {
+//    public static function getSrNo($to_code = '', $asset_code = NULL) {
+//
+//        if (!empty($to_code)) {
+//            $asset = TblAssetTransaction::find()
+//                            ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+//                            ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.serial_number' => $asset_code])->one();
+//            if (!empty($asset)) {
+//                $sno = $asset->serial_number;
+//                return $sno;
+//            }
+//        }
+//        return '';
+//    }
 
-        if (!empty($to_code)) {
-            $asset = TblAssetTransaction::find()
-                            ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-                            ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.serial_number' => $asset_code])->one();
-            if (!empty($asset)) {
-                $sno = $asset->serial_number;
+        public static function getSrNo($to_code = '', $asset = NULL, $srno = NULL) {
+
+            if (!empty($to_code)) {
+                $assets = TblAssetTransaction::find()
+                                ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+                                ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.asset_code' => $asset, 'tbl_asset_transaction.serial_number' => $srno])->one();
+                
+            if (!empty($assets)) {
+                $sno = $assets['serial_number'];
                 return $sno;
             }
-        }
+            }
         return '';
-    }
-
+//            return $assets;
+        }
 //        public static function getSrNo($asset_code = NULL) {
 //
 //        if (!empty($asset_code)) {
