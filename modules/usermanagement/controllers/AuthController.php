@@ -8,6 +8,8 @@ use app\modules\organisation\models\TblUnions;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
 
+    use \app\controllers\ChildControllerTrait;
+    
     public function actionLogin() {
         $this->layout = '@app/web/themes/emilk/layouts/loginLayout.php';
         if (!Yii::$app->user->isGuest) {

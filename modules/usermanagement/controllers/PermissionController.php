@@ -10,6 +10,8 @@ use app\modules\usermanagement\models\rbacDB\Permission;
 use app\modules\usermanagement\models\rbacDB\Route;
 
 class PermissionController extends \webvimark\modules\UserManagement\controllers\PermissionController {
+    
+    use \app\controllers\ChildControllerTrait;
 
     public $modelClass = 'app\modules\usermanagement\models\rbacDB\Permission';
     public $modelSearchClass = 'app\modules\usermanagement\models\rbacDB\search\PermissionSearch';

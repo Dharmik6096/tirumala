@@ -7,6 +7,8 @@ use app\modules\usermanagement\models\rbacDB\Role;
 use app\modules\usermanagement\models\User;
 
 class UserPermissionController extends \webvimark\modules\UserManagement\controllers\UserPermissionController {
+    
+    use \app\controllers\ChildControllerTrait;
 
     public function actionSetRoles($id) {
         if (!Yii::$app->user->isSuperadmin AND Yii::$app->user->id == $id) {

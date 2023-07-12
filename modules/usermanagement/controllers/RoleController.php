@@ -8,6 +8,8 @@ use app\modules\usermanagement\models\rbacDB\Role;
 use yii\helpers\Html;
 
 class RoleController extends \webvimark\modules\UserManagement\controllers\RoleController {
+    
+    use \app\controllers\ChildControllerTrait;
 
     public $modelClass = 'app\modules\usermanagement\models\rbacDB\Role';
     public $modelSearchClass = 'app\modules\usermanagement\models\rbacDB\search\RoleSearch';

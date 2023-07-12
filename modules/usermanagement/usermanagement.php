@@ -2,6 +2,8 @@
 
 namespace app\modules\usermanagement;
 
+use app\models\GeneralModel;
+
 /**
  * usermanagement module definition class
  */
