@@ -6,7 +6,7 @@ use Yii;
 use app\modules\dcsoperation\models\TblShift;
 use app\modules\installation\models\TblUserAndroid;
 use app\modules\syncutility\models\TblSentbox;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_collection_approval".

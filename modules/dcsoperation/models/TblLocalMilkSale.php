@@ -4,7 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\modules\organisation\models\TblCollectionPoint;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblSubCenter;

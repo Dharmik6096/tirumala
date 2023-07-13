@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use app\modules\collection\models\TblMccShiftLock;
 use app\modules\collection\models\TblMccShiftLockStaging;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 ?>
 
 <?php

@@ -5,7 +5,7 @@ namespace app\modules\vsp\models;
 use Yii;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblUnions;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_head_load_history".

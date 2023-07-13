@@ -4,7 +4,7 @@ namespace app\modules\general\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcs;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_society_vendor".

@@ -8,7 +8,7 @@ use yii\helpers\Json;
 use app\modules\organisation\models\TblFederations;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use ruskid\csvimporter\CSVImporter;
 use ruskid\csvimporter\CSVReader;

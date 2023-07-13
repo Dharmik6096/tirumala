@@ -2,7 +2,7 @@
 
 namespace app\modules\webservice\ho\v2\controllers;
 use app\modules\webservice\models\TblAppActivation;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\IdentityMaster;
 use Yii;
 

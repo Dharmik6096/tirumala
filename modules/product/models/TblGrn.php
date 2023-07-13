@@ -11,7 +11,7 @@ use app\modules\globalmaster\models\TblUnits;
 use app\modules\product\models\TblProductStock;
 use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_grn".

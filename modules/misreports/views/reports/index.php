@@ -18,6 +18,7 @@ $model->date = empty($model->date) ? date('d-m-Y') : $model->date;
 if (isset($data['url1'])) {
     $this->params['menu'][] = Yii::$app->controls->custombutton($data['url1'][0], $data['url1'][1], $data['url1'][2]);
 }
+$fileDownloadArr = '';
 $downloadSapFiles = json_encode($fileDownloadArr);
 ?>
 <div class="panel panel-default panel-main">
@@ -91,7 +92,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
                                             ?>
-                                    <div class="col-sm-3 reportDate">
+                                            <div class="col-sm-3 reportDate">
                                                 <?php
                                                 echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
                                                 ?>
@@ -759,8 +760,19 @@ $this->registerJs($script, View::POS_READY, 'mis-report-script');
 
 <?php
 $baseUrl = Yii::$app->request->baseUrl;
-$count = count($fileDownloadArr);
-$timeOutForLoader = ($count * 1000) + 2000;
+if (is_array($fileDownloadArr)) {
+    $count = count($fileDownloadArr);
+} else {   
+}
+
+$fileDownloadArr = array();
+if (is_array($fileDownloadArr)) {
+    $count = count($fileDownloadArr);
+    $timeOutForLoader = ($count * 1000) + 2000;
+} else {
+    
+}
+//$timeOutForLoader = ($count * 1000) + 2000;
 $scriptDownload = "
 
 var timeOut = 500;

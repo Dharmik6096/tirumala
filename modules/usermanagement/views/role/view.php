@@ -10,7 +10,7 @@
  * @var array $currentPermissions
  * @var yii\rbac\Role $role
  */
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\Role;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;

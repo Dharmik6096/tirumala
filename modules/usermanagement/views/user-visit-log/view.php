@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 
 /**
  * @var yii\web\View $this
- * @var webvimark\modules\UserManagement\models\UserVisitLog $model
+ * @var app\modules\usermanagement\models\UserVisitLog $model
  */
 
 $this->title = $model->id;

@@ -8,7 +8,7 @@ use Yii;
 use ReflectionClass;
 use DateTime;
 use app\modules\vendorapi\models\TblVendorApiData;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\vendorapi\Vendorapi;
 use app\models\TblUserOrganizationMapping;
 use app\modules\organisation\models\TblDcs;

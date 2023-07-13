@@ -24,7 +24,7 @@ use app\modules\product\models\TblProductStockHistory;
 use app\modules\product\models\TblProductStockTransaction;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\product\models\TblProduct;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\product\models\TblProductReceipt;
 use app\modules\product\models\TblProductReceiptTransaction;
 

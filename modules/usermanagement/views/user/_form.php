@@ -1,6 +1,6 @@
 <?php
 
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 use webvimark\extensions\BootstrapSwitch\BootstrapSwitch;
@@ -10,7 +10,7 @@ use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
- * @var webvimark\modules\UserManagement\models\User $model
+ * @var app\modules\usermanagement\models\User $model
  * @var yii\bootstrap\ActiveForm $form
  */
 $title = Yii::$app->label->title($type, 'user');

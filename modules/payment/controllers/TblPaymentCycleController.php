@@ -17,7 +17,7 @@ use yii\helpers\Json;
 use app\modules\usermanagement\components\GhostHtml;
 use app\modules\payment\models\TblPaymentCycleApplicabilityHistory;
 use yii\helpers\Url;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * TblPaymentCycleController implements the CRUD actions for TblPaymentCycle model.

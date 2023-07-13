@@ -5,7 +5,7 @@ namespace app\modules\import\models;
 use Yii;
 use yii\db\ActiveQuery;
 use app\modules\organisation\models\TblUnions;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_import_file_log".

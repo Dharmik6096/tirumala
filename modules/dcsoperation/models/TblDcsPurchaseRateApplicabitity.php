@@ -19,7 +19,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\syncutility\models\TblSentbox;
 use app\modules\dcsoperation\models\TblPurchaseRate;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_dcs_purchase_rate_applicability".

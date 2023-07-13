@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TblAnalyzerCleaningController implements the CRUD actions for TblAnalyzerCleaning model.
  */
-class TblAnalyzerCleaningController extends Controller
+class TblAnalyzerCleaningController extends \app\controllers\ChildController
 {
     /**
      * @inheritdoc
