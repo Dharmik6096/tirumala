@@ -30,10 +30,9 @@ class DefaultController extends \app\controllers\ChildController {
      */
     public function actionIndex($flag) {
         if (Yii::$app->request->post()) {
+           
             $post = Yii::$app->request->post();
-
             $ext = pathinfo($post['file_name'], PATHINFO_EXTENSION);
-            //echo $ext; exit;
             $data = \app\modules\import\importData::getLabels($flag);
             $table = (!empty($data['import_class'])) ? $data['import_class'] : $data['table_name'];
             $modelName = str_replace('_', ' ', $table);
@@ -46,7 +45,7 @@ class DefaultController extends \app\controllers\ChildController {
                 // echo 'there'; exit;
                 $className = Yii::$app->path->getModel($data['mapping_model']);
             }
-
+            
             if ($ext == 'csv') {
                 $values = $this->importCsv($post['file_name'], $className, $data, $post['mapping'], $flag);
             } else if ($ext == 'xls' || $ext == 'xlsx') {
@@ -157,7 +156,7 @@ class DefaultController extends \app\controllers\ChildController {
                 'file_path' => Yii::$app->basePath . '/web/import/' . trim($fileName),
                 'file_name' => trim($fileName)
             ]));
-
+            
             return ['status' => $primaryKeys['status'], 'msg' => $primaryKeys['msg'], 'allData' => $primaryKeys];
         } catch (UserException $e) {
             return ['status' => 'error', 'msg' => $e->getMessage()];

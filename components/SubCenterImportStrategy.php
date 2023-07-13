@@ -8,7 +8,7 @@ namespace app\components;
 use yii\base\Exception;
 use ruskid\csvimporter\ImportInterface;
 use ruskid\csvimporter\BaseImportStrategy;
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use app\modules\organisation\models\TblSubCenter;
 use app\modules\organisation\models\TblCollectionPoint;
 use app\modules\organisation\models\TblDcsVillageMapping;

@@ -7,7 +7,7 @@
 
 namespace app\components;
 
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use Yii;
 use app\modules\vsp\models\TblBillHeadInstallment;
 

@@ -7,7 +7,7 @@
 
 namespace app\components;
 
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use app\modules\organisation\models\TblDcsVillageMapping;
 use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;

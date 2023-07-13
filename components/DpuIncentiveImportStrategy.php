@@ -2,7 +2,7 @@
 
 namespace app\components;
 
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\general\models\TblDpuIncentiveMaster;

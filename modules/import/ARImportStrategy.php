@@ -2,6 +2,7 @@
 
 namespace app\modules\import;
 
+use app\modules\reil\reil;
 use ruskid\csvimporter\ARImportStrategy as CsvimporterARImportStrategy;
 use yii;
 use yii\base\Exception;
@@ -68,8 +69,6 @@ class ARImportStrategy extends CsvimporterARImportStrategy
         $data = array_filter($data, function ($var) {
             return !empty($var[0]) && !is_null($var);
         });
-        $data = array_filter($data);
-
         foreach ($data as $key => $row) {
             $skipImport = isset($this->skipImport) ? call_user_func($this->skipImport, $row) : false;
             if ($key == 0)
@@ -103,7 +102,7 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         $model->{$config['attribute']} = $value;
                     }
                 }
-
+                
                 if (isset($this->defaultFields)) {
                     foreach ($this->defaultFields as $default) {
                         if (isset($default['attribute']) && $model->hasAttribute($default['attribute'])) {
@@ -133,9 +132,9 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         }
                     }
                 }
+                
                 $error = ActiveForm::validate($model);
-
-
+                
                 if (!empty($findField)) {
                     $findFields = explode(',', $findField);
                     foreach ($findFields as $val) {
@@ -202,19 +201,19 @@ class ARImportStrategy extends CsvimporterARImportStrategy
                         foreach ($model->getErrors() as $errorkey => $value) {
                             $message .= $value[0] . '<br/>';
                         }
-                        return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
+                        return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '-' . $message];
                     }
                 } else {
                     $message = '';
                     foreach ($model->getErrors() as $errorkey => $value) {
-                        $message .= $value[0] . '<br>';
+                        $message .= $value[0];
                     }
                     foreach ($errors as $array) {
                         foreach ($array as $errorkey => $value) {
-                            $message .= $value[0] . '<br>';
+                            $message .= $value[0] . '<br/>';
                         }
                     }
-                    return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message /* ,'error'=>$errors */];
+                    return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '-' . $message];
                 }
 
                 //Check if model is unique and saved with success
@@ -224,8 +223,11 @@ class ARImportStrategy extends CsvimporterARImportStrategy
 
             }
         }
-        if ($count == count($data) - 1) {
-            return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks) /* ,'error'=>$errors */];
+        if ($count == count($data) || $count == count($data) - 1) {
+            return ['total' => count($importedPks), 
+                    'status' => 'success', 
+                    'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 
+                    'pk' => count($importedPks)];
         }
     }
 

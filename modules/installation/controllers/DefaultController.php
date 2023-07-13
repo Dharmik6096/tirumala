@@ -12,7 +12,7 @@ use webvimark\modules\UserManagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use ruskid\csvimporter\CSVImporter;
 use ruskid\csvimporter\CSVReader;
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use app\models\TblAddressbook;
 use app\models\GeneralModel;
 use yii\base\UserException;

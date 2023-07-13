@@ -2,6 +2,7 @@
 
 namespace app\components;
 
+use app\modules\import\ARImportStrategy;
 use yii;
 use yii\base\Exception;
 use yii\base\UserException;
@@ -9,7 +10,7 @@ use yii\widgets\ActiveForm;
 use yii\base\Model;
 use app\modules\import\models\TblImportFileLog;
 
-class BulkImportStrategy extends \ruskid\csvimporter\ARImportStrategy {
+class BulkImportStrategy extends ARImportStrategy {
 
     public function import(&$data) {
 

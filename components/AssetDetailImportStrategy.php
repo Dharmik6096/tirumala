@@ -2,7 +2,6 @@
 
 namespace app\components;
 
-use ruskid\csvimporter\ARImportStrategy;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\assetmanagement\models\TblAssetDetail;
@@ -11,6 +10,7 @@ use app\modules\assetmanagement\models\TblAssetTransactionHistory;
 use app\modules\assetmanagement\models\TblAssetTransaction;
 use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
+use app\modules\import\ARImportStrategy;
 
 class AssetDetailImportStrategy extends ARImportStrategy {
 

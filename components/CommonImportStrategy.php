@@ -5,14 +5,14 @@
  */
 namespace app\components;
 
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\PlantImport;
 use app\modules\organisation\models\TblMccPlant;
 
 use yii\widgets\ActiveForm;
 
-class CommonImportStrategy extends ARImportStrategy{
+class CommonImportStrategy extends ARImportStrategy {
     
     public function import(&$data) {
         $importedPks = [];

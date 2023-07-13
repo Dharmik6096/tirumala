@@ -8,7 +8,7 @@
 namespace app\components;
 
 use yii;
-use ruskid\csvimporter\ARImportStrategy;
+use app\modules\import\ARImportStrategy;
 use yii\widgets\ActiveForm;
 
 class MemberImportStrategy extends ARImportStrategy {
