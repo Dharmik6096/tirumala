@@ -20,9 +20,9 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
      */
     public function rules() {
         return [
-            [['bill_head_detail_code', 'payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
-            [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'no_installment', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_name', 'from_date', 'to_date', 'transaction_date'], 'safe'],
+                [['bill_head_detail_code', 'payment_cycle_code', 'is_installment', 'is_active'], 'integer'],
+                [['union_code', 'bill_head_code', 'dcs_code', 'amount', 'no_installment', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+                [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_name', 'from_date', 'to_date', 'transaction_date', 'remarks'], 'safe'],
         ];
     }
 
@@ -91,7 +91,9 @@ class TblBillHeadDetailSearch extends TblBillHeadDetail {
                 ->andFilterWhere(['like', 'tbl_bill_head_detail.amount', $this->amount])
                 ->andFilterWhere(['like', 'tbl_bill_head_detail.no_installment', $this->no_installment])
                 //                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-                ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_code', $this->customer_code]);
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_bill_head_detail.remarks', $this->remarks]);
+
         // $query->orderBy(['tbl_bill_head_installment.installment_date' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_bill_head_detail.customer_code' => SORT_ASC]);
         return $dataProvider;
     }
