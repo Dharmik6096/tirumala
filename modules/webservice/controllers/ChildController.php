@@ -5,7 +5,7 @@ namespace app\modules\webservice\controllers;
 use Yii;
 use app\models\GeneralModel;
 use app\modules\installation\models\InstallationIdentity;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use app\models\IdentityMaster;
 

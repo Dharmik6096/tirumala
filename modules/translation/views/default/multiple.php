@@ -8,7 +8,7 @@ use yii\helpers\Html;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use yii\helpers\Url;
 
 $this->title = ucfirst(Yii::$app->getRequest()->getQueryParam('l')) . ' Translation';

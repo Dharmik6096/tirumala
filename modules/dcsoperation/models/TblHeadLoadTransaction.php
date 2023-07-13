@@ -3,7 +3,7 @@
 namespace app\modules\dcsoperation\models;
 
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 /**
  * This is the model class for table "tbl_head_load_transaction".
  *

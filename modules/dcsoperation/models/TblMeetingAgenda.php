@@ -3,7 +3,7 @@
 namespace app\modules\dcsoperation\models;
 
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\organisation\models\TblDcs;
 use app\modules\globalmaster\models\TblMeetingType;
 use app\modules\organisation\models\TblUnions;

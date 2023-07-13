@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use kartik\dynagrid\DynaGrid;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 ?>
 <?php if (!empty($dataProvider->getModels())) {
     ?>

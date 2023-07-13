@@ -8,7 +8,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_app_lock_password".

@@ -21,7 +21,7 @@ use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\modules\general\models\TblSocietyVendor;
 use app\models\TblUserOrganizationMapping;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use yii\helpers\FileHelper;
 use yii\web\Response;
 use yii\helpers\Json;

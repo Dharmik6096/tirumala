@@ -5,7 +5,7 @@ namespace app\modules\geo\models;
 use Yii;
 use app\modules\organisation\models\TblFederations;
 use app\modules\organisation\models\TblUnions;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\ChildModel;
 
 /**

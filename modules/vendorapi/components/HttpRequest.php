@@ -4,7 +4,7 @@ namespace app\modules\vendorapi\components;
 
 use yii\helpers\Json;
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\models\TblUserOrganizationMapping;
 use app\modules\vendorapi\models\TblVendorApiRequestLog;
 use app\modules\vendorapi\Vendorapi;

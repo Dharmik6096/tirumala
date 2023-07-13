@@ -7,7 +7,7 @@ use app\modules\product\models\TblProductRequisition;
 use app\modules\product\models\TblProduct;
 use app\modules\globalmaster\models\TblUnits;
 use yii\helpers\Json;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\syncutility\models\TblSentbox;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 use webvimark\modules\UserManagement\models\rbacDB\Role;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use webvimark\modules\UserManagement\UserManagementModule;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -11,7 +11,7 @@ use yii\web\View;
 
 /**
  * @var yii\web\View $this
- * @var webvimark\modules\UserManagement\models\User $model
+ * @var app\modules\usermanagement\models\User $model
  */
 $this->title = Yii::$app->label->title('view', Yii::$app->general->getUserName($model->username));
 ?>

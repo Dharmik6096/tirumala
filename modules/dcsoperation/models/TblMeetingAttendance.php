@@ -4,7 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use yii\data\ActiveDataProvider;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_meeting_attendance".

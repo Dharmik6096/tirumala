@@ -5,7 +5,7 @@ namespace app\modules\webservice\ho\v1\controllers;
 use app\modules\webservice\controllers\ChildController;
 use app\modules\webservice\models\TblAppActivation;
 use app\modules\installation\models\InstallationIdentity;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use webvimark\modules\UserManagement\models\forms\LoginForm;
 use Yii;
 

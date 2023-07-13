@@ -5,7 +5,7 @@ namespace app\modules\organisation\models;
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblCapacity;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\organisation\models\TblDcs;
 use app\modules\geo\models\TblStates;
 use app\modules\geo\models\TblDistricts;

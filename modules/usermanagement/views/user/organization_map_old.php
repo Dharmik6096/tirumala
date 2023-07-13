@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

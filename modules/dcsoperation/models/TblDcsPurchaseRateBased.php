@@ -4,7 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use app\modules\globalmaster\models\TblAnimalType;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\globalmaster\models\TblMilkQualityType;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;

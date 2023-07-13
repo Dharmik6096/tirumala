@@ -3,7 +3,7 @@
 namespace app\modules\dcsoperation\models;
 
 use Yii;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblAnimalType;
 use app\modules\organisation\models\TblUnions;

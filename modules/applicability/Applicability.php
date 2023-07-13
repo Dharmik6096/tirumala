@@ -13,7 +13,7 @@ use ReflectionClass;
 use DateTime;
 use yii\helpers\FileHelper;
 use app\models\TblUserOrganizationMapping;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\dcsoperation\models\TblPurchaseRateApplicability;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;

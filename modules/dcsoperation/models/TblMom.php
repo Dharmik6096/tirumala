@@ -4,7 +4,7 @@ namespace app\modules\dcsoperation\models;
 
 use Yii;
 use yii\data\ActiveDataProvider;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use app\modules\globalmaster\models\TblMeetingType;
 
 use app\modules\organisation\models\TblDcs;

@@ -12,7 +12,7 @@ use yii\web\View;
 use kartik\dynagrid\DynaGrid;
 use yii\helpers\ArrayHelper;
 use app\modules\usermanagement\components\GhostHtml;
-use webvimark\modules\UserManagement\models\User;
+use app\modules\usermanagement\models\User;
 use yii\helpers\Url;
 
 $disable = true;
