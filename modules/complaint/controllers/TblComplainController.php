@@ -134,7 +134,7 @@ class TblComplainController extends \app\controllers\ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $saveModel[] = $historyModel;
             $this->model->load(Yii::$app->request->post());
-            if ($this->model->asset_code) {
+            if (isset(Yii::$app->request->post()['TblComplain']['asset_code'])) {
                 $assetsr = explode('##', $this->model->asset_code);
                 $this->model->asset_code = $assetsr[0];
             } else {
@@ -471,35 +471,117 @@ class TblComplainController extends \app\controllers\ChildController {
         }
     }
 
+//    public function actionResolveComplain($id) {
+//        $complaint_activity_model = new TblComplainActivity();
+//        $this->model = new TblComplain();
+//        $this->model = $this->findModel($id);
+//        $this->viewFile = 'resolve_complain';
+//        $this->setComplaintActivityModel($complaint_activity_model, 'SERVICE');
+//        $this->model->complain_status = 'RESOLVED';
+//        $this->model->resolved_datetime = date('Y-m-d H:i:s');
+//
+//        if ($this->model->load(Yii::$app->request->post())) {
+//            $attachment = Yii::$app->request->post()['TblAttachment'];
+//            if (!empty($attachment['attachment_code'])) {
+//                $attachment_model = TblAttachment::findOne($attachment['attachment_code']);
+//                $attachment_model->load(Yii::$app->request->post());
+//                $old_attachment = $attachment_model->oldattributes['attachment'];
+//            }
+//            $complain_attachment = new TblAttachment();
+//            $transaction = $this->generalModel->saveTransaction([$this->model, $complaint_activity_model], ['Complain Activity', 'edit']);
+//            if ($transaction == 'customRedirect') {
+//                if ($complain_attachment->attachment != $old_attachment && !empty($old_attachment)) {
+//                    unlink(Yii::$app->params['complaint_dir_path'] . $old_attachment);
+//                }
+//                return $this->redirect(['tbl-complain/index']);
+//            }
+//        }
+//
+//        $sp_param = [];
+//        $sp_name = 'sp_serial_no_list';
+//        $sp_param[] = $this->model->location_type;
+//        $sp_param[] = $this->model->plant_code;
+//        $sp_param[] = $this->model->bmc_code;
+//        $sp_param[] = $this->model->dcs_code;
+//        $sp_param[] = $this->model->asset_code;
+//        $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
+//        $serialNo = [];
+//        if (!empty($srNos)) {
+//            $serialNo = array_column($srNos, 'serial_number');
+//            $serialNo = array_combine($serialNo, $serialNo);
+//        }
+//        return $this->customRender($serialNo);
+//    }
+
+
+
     public function actionResolveComplain($id) {
-        $complaint_activity_model = new TblComplainActivity();
-        $this->model = new TblComplain();
+
         $this->model = $this->findModel($id);
         $this->viewFile = 'resolve_complain';
-        $this->setComplaintActivityModel($complaint_activity_model, 'SERVICE');
-        $this->model->complain_status = 'RESOLVED';
-        $this->model->resolved_datetime = date('Y-m-d H:i:s');
+        if (Yii::$app->request->post()) {
+            $saveModel = [];
+            $historyModel = new TblComplainHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $saveModel[] = $historyModel;
 
-        if ($this->model->load(Yii::$app->request->post())) {
-            $attachment = Yii::$app->request->post()['TblAttachment'];
-            if (!empty($attachment['attachment_code'])) {
-                $attachment_model = TblAttachment::findOne($attachment['attachment_code']);
-                $attachment_model->load(Yii::$app->request->post());
-                $old_attachment = $attachment_model->oldattributes['attachment'];
+            $existData = TblComplainActivity::findOne($this->model->complain_code);
+            $activityHistoryModel = new TblComplainActivityHistory();
+            Yii::$app->operation->history($existData, $activityHistoryModel, 'UPDATE');
+            $saveModel[] = $activityHistoryModel;
+
+            $this->model->load(Yii::$app->request->post());
+
+            $this->model->complain_status = 'RESOLVED';
+            $this->model->complain_status_datetime = date('Y-m-d H:i:s');
+            $this->model->resolved_datetime = date('Y-m-d H:i:s');
+            if (isset(Yii::$app->request->post()['TblComplain']['asset_code'])) {
+                $assetsr = explode('##', $this->model->asset_code);
+                $this->model->asset_code = $assetsr[0];
+            } else {
+                $this->model->asset_code = '';
+                $this->model->serial_number = '';
             }
-            $complain_attachment = new TblAttachment();
-            $transaction = $this->generalModel->saveTransaction([$this->model, $complaint_activity_model], ['Complain Activity', 'edit']);
-            if ($transaction == 'customRedirect') {
-                if ($complain_attachment->attachment != $old_attachment && !empty($old_attachment)) {
-                    unlink(Yii::$app->params['complaint_dir_path'] . $old_attachment);
+            $saveModel[] = $this->model;
+
+            $complaint_activity_model = new TblComplainActivity();
+            $this->setComplaintActivityModel($complaint_activity_model, 'SERVICE');
+            $saveModel[] = $complaint_activity_model;
+
+            $attachment = Yii::$app->request->post()['attachment'];
+            if (!empty($attachment)) {
+                $attachments = explode(',', $attachment);
+                foreach ($attachments as $atta) {
+                    $complain_attachment = new TblAttachment();
+                    $complain_attachment->load(Yii::$app->request->post());
+                    $complain_attachment->module_name = 'tbl_complain';
+                    $complain_attachment->module_code = $this->model->complain_code;
+                    $ext = (explode(".", $atta));
+                    $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                    $complain_attachment->attachment = $file;
+                    $complain_attachment->file_name = $atta;
+                    $complain_attachment->attachment_type = $ext[1];
+                    $complain_attachment->remarks = $this->model->remarks;
+                    $saveModel[] = $complain_attachment;
                 }
+            }
+
+//            $complain_attachment = new TblAttachment();
+            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain Activity', 'edit']);
+            if ($transaction == 'customRedirect') {
+//                if ($complain_attachment->attachment != $old_attachment && !empty($old_attachment)) {
+//                    unlink(Yii::$app->params['complaint_dir_path'] . $old_attachment);
+//                }
                 return $this->redirect(['tbl-complain/index']);
             }
         }
 
         $sp_param = [];
         $sp_name = 'sp_serial_no_list';
-        $sp_param[] = $this->model->mcc_plant_code;
+        $sp_param[] = $this->model->location_type;
+        $sp_param[] = $this->model->plant_code;
+        $sp_param[] = $this->model->bmc_code;
+        $sp_param[] = $this->model->dcs_code;
         $sp_param[] = $this->model->asset_code;
         $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $serialNo = [];

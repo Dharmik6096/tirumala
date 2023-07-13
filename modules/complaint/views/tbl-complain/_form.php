@@ -10,13 +10,13 @@ use demogorgorn\ajax\AjaxSubmitButton;
 
 $url = Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
-//$button_type = ($type == 'create') ? $type : 'edit';
-$type == 'create' ? ($urls = ['create']) : ($urls = ['update', 'id' => $model->complain_code]);
-$button_type = $type == 'create' ? 'create' : 'update';
+$button_type = (($type == 'create') ? 'create' : ($type == 'edit' ? 'update' : 'resolve' ));
+$type = ($type == 'create' ? ($urls = ['create']) : ($type == 'edit' ? $urls = ['update', 'id' => $model->complain_code] : ($urls = ['resolve-complain', 'id' => $model->complain_code])));
+
 $size = '';
 $attachment = '';
 $attachment_code = '';
-$disabled = $type == 'resolve' ? True : false;
+$disabled = $type[0] == 'resolve-complain' ? True : false;
 
 //$class = 'default_hide';
 //$disabled = $type == 'resolve' ? '' : $class;
@@ -38,7 +38,7 @@ $form = ActiveForm::begin([
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), $disabled, 'complain_type_code'); ?>
-        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']); ?>
+        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']);   ?>
     </div>
     <div class="col-sm-2">       
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $disabled); ?>
@@ -71,7 +71,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 default_hide">
         <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, '', FALSE, TRUE); ?>               
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 default_hide">
         <?= $form->field($model, 'serial_number')->textInput(['readonly' => true, 'data-val' => $model->serial_number]) ?>
     </div>
     <!--    <div class="col-sm-2 disp_none">
@@ -81,7 +81,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->complain_problem($model, $form, 'tblcomplain-complain_type_code', 'complain_problem_code', $model->getAttributeLabel('complain_problem_code')); ?>
     </div>
     <?php
-    if ($type != 'resolve') {
+    if ($type[0] != 'resolve-complain') {
         ?>
         <div class = "col-sm-3">
             <?= $form->field($model, 'remarks')->textarea() ?>
@@ -97,7 +97,7 @@ $form = ActiveForm::begin([
 
 
     <?php
-    if ($type == 'resolve') {
+    if ($type[0] == 'resolve-complain') {
         ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('resolved_status', $model, $form, 'form-group', $model->getAttributeLabel('resolved_status')); ?>
@@ -118,8 +118,8 @@ $form = ActiveForm::begin([
 
     <div class="col-sm-12">
         <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
-        <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']); ?>
-        <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']); ?>
+        <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']);  ?>
+        <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']);   ?>
 
         <?=
         Dropzone::widget([
