@@ -69,7 +69,12 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('complain_for', $model, $form, 'form-group', $model->getAttributeLabel('complain_for')); ?>
     </div>
     <div class="col-sm-2 default_hide">
-        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, '', FALSE, TRUE); ?>               
+        <?php
+        if ($model->asset_code != '') {
+            $model->asset_code = $model->asset_code . '##' . $model->serial_number;
+        }
+        ?>
+        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, $disabled); ?>               
     </div>
     <div class="col-sm-2 default_hide">
         <?= $form->field($model, 'serial_number')->textInput(['readonly' => true, 'data-val' => $model->serial_number]) ?>
@@ -86,15 +91,15 @@ $form = ActiveForm::begin([
         <div class = "col-sm-3">
             <?= $form->field($model, 'remarks')->textarea() ?>
         </div>
+
+        <div class="col-sm-2 mt10">
+            <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        </div>
+        <div class="col-sm-2 mt20">
+            <?= $form->field($model, 'physical_damage', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        </div>
     <?php }
     ?>
-    <div class="col-sm-2 mt10">
-        <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
-    </div>
-    <div class="col-sm-2 mt20">
-        <?= $form->field($model, 'physical_damage', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
-    </div>
-
 
     <?php
     if ($type[0] == 'resolve-complain') {
@@ -114,6 +119,16 @@ $form = ActiveForm::begin([
         <?php
     }
     ?>
+    <div class="col-sm-2">
+        <?= Html::activeHiddenInput($model, 'asset_code'); ?>
+        <?php Yii::$app->dropdown->bom_list($asset_detail_bom, $form, 'tblcomplain-asset_code', 'spare_code', $asset_detail_bom->getAttributeLabel('spare_code')); ?>
+    </div>   
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $asset_detail, $form, 'form-group', $asset_detail->getAttributeLabel('current_status')); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($asset_detail_bom, 'serial_number')->textInput(['readonly' => true]) ?>
+    </div>
     <div class="clearfix"></div>
 
     <div class="col-sm-12">
@@ -251,7 +266,8 @@ $script = "
 //    var _csrf_token = yii.getCsrfParam() ? yii.getCsrfToken() : '';
     $('.default_hide').hide();
     hideSectionManage($('#tblcomplain-location_type').val());
-    
+    var complainFor = $('#tblcomplain-complain_for').val();
+    manageAsset(complainFor);
     $('#tblcomplain-location_type').on('change', function(){
         var location_type = $(this).val();
         hideSectionManage(location_type);
@@ -302,7 +318,17 @@ $script = "
             },
         });
     });
-    
+
+    function manageAsset(complain_for){
+        if(complain_for == 'asset_complain'){
+            $('.field-tblcomplain-asset_code').parent('div').show();
+            $('.field-tblcomplain-serial_number').parent('div').show();
+        } else if(complain_for == 'general_complain') {
+            $('.field-tblcomplain-asset_code').parent('div').hide();
+            $('.field-tblcomplain-serial_number').parent('div').hide();
+       }
+    }
+
     function hideSectionManage(type){
         if(type == '1'){
             $('.field-tblcomplain-plant_code').parent('div').show();
@@ -322,6 +348,8 @@ $script = "
         }
     }
     
+   
+
     $('#tblcomplain-plant_code').on('change',function(){
         setContactDetails();
     });
@@ -397,6 +425,19 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').hide();
         }
     }
+    
+   $('#tblcomplain-spare_required').click(function(){
+        serial_no_enable();
+    });
+
+    function serial_no_enable(){
+        if($('#tblcomplain-spare_required').is(':checked')) {
+            $('.field-tblcomplain-new_serial_no').parent('div').hide();
+        } else {
+            $('.field-tblcomplain-new_serial_no').parent('div').show();
+        }
+    }
+   
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>

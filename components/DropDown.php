@@ -551,6 +551,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
 
+    public function bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom', 'Select', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text

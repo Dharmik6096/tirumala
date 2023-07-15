@@ -16,7 +16,7 @@ use yii\helpers\Json;
  */
 class TblAssetBomController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['bom-list'];
+    public $freeAccessActions = ['bom-list', 'asset-bom'];
 
     /**
      * Lists all TblAssetBom models.
@@ -168,6 +168,23 @@ class TblAssetBomController extends \app\controllers\ChildController {
             if (!empty($parents[0])) {
                 $bom = new TblAssetBom();
                 $data = $bom->getBomList($parents[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['spare_code'], 'name' => $val['asset_name']);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionAssetBom() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            $asset = explode('##', $parents[0]);
+            if (!empty($parents[0])) {
+                $bom = new TblAssetBom();
+                $data = $bom->getBomLists($asset[0]);
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $val['spare_code'], 'name' => $val['asset_name']);
                 }

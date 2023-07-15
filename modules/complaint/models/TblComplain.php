@@ -86,11 +86,11 @@ class TblComplain extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'complain_code' => Yii::t('app', 'Complain Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'location_type' => Yii::t('app', 'Location Type'),
             'complain_for' => Yii::t('app', 'Complain For'),
             'complain_type_code' => Yii::t('app', 'Complain Type'),

@@ -26,6 +26,8 @@ use yii\helpers\FileHelper;
 use app\modules\general\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
 use app\modules\complaint\models\TblComplainActivitySearch;
+use app\modules\assetmanagement\models\TblAssetDetailBom;
+use app\modules\assetmanagement\models\TblAssetDetail;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -311,10 +313,13 @@ class TblComplainController extends \app\controllers\ChildController {
 
     public function actionGetSrNumber() {
         $asset_code = Yii::$app->request->post()['asset_code'];
-        $assetsr = explode('##', $asset_code);
-        $to_code = Yii::$app->request->post()['code'];
+        $sno = [];
+        if ($asset_code) {
+            $assetsr = explode('##', $asset_code);
+            $to_code = Yii::$app->request->post()['code'];
 //        $sno = TblAssetMaster::getSrNo($to_code, $asset_code);
-        $sno = TblAssetMaster::getSrNo($to_code, $assetsr[0], $assetsr[1]);
+            $sno = TblAssetMaster::getSrNo($to_code, $assetsr[0], $assetsr[1]);
+        }
         $record = ['status' => 'success', 'msg' => $sno];
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
@@ -519,6 +524,8 @@ class TblComplainController extends \app\controllers\ChildController {
 
         $this->model = $this->findModel($id);
         $this->viewFile = 'resolve_complain';
+        $asset_detail_bom = new TblAssetDetailBom();
+        $asset_detail = new TblAssetDetail();
         if (Yii::$app->request->post()) {
             $saveModel = [];
             $historyModel = new TblComplainHistory();
@@ -535,13 +542,6 @@ class TblComplainController extends \app\controllers\ChildController {
             $this->model->complain_status = 'RESOLVED';
             $this->model->complain_status_datetime = date('Y-m-d H:i:s');
             $this->model->resolved_datetime = date('Y-m-d H:i:s');
-            if (isset(Yii::$app->request->post()['TblComplain']['asset_code'])) {
-                $assetsr = explode('##', $this->model->asset_code);
-                $this->model->asset_code = $assetsr[0];
-            } else {
-                $this->model->asset_code = '';
-                $this->model->serial_number = '';
-            }
             $saveModel[] = $this->model;
 
             $complaint_activity_model = new TblComplainActivity();
@@ -589,7 +589,15 @@ class TblComplainController extends \app\controllers\ChildController {
             $serialNo = array_column($srNos, 'serial_number');
             $serialNo = array_combine($serialNo, $serialNo);
         }
-        return $this->customRender($serialNo);
+        $complain_attachment = new TblAttachment();
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
+                    'complainAttachment' => $complain_attachment,
+                    'dropdownSerialNo' => $serialNo,
+                    'asset_detail_bom' => $asset_detail_bom,
+                    'asset_detail' => $asset_detail,
+                        ]
+        );
     }
 
     public function actionAttachmentDelete() {

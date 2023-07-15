@@ -42,12 +42,12 @@ class TblAssetBom extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_serial_number', 'qty', 'is_active', 'originating_type'], 'safe'],
-            [['union_code', 'spare_code', 'created_at', 'updated_at', 'asset_code', 'is_serial_number', 'qty', 'is_active', 'originating_type'], 'safe'],
-            [['is_active'], 'default', 'value' => 1],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['spare_code', 'union_code', 'qty'], 'required'],
-            [['spare_code'], 'checkUnique', 'on' => 'create', 'except' => ['update']],
+                [['is_serial_number', 'qty', 'is_active', 'originating_type'], 'safe'],
+                [['union_code', 'spare_code', 'created_at', 'updated_at', 'asset_code', 'is_serial_number', 'qty', 'is_active', 'originating_type'], 'safe'],
+                [['is_active'], 'default', 'value' => 1],
+                [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
+                [['spare_code', 'union_code', 'qty'], 'required'],
+                [['spare_code'], 'checkUnique', 'on' => 'create', 'except' => ['update']],
         ];
     }
 
@@ -101,6 +101,13 @@ class TblAssetBom extends \app\models\ChildModel {
         if ($data != 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Spare Code has already been taken.'));
         }
+    }
+
+    public function getBomLists($asset_code) {
+        return $this->find()
+                        ->select(['tbl_asset_bom.spare_code', 'tbl_asset_master.asset_name'])
+                        ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_bom.spare_code')
+                        ->where(['tbl_asset_bom.asset_code' => $asset_code])->asArray()->all();
     }
 
 }
