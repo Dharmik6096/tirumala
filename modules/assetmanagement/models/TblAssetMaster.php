@@ -47,6 +47,8 @@ class TblAssetMaster extends \app\models\ChildModel {
             [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
             [['asset_group_code', 'asset_name', 'created_by', 'updated_by', 'local_name'], 'string'],
             [['is_serial_number', 'is_spare'], 'integer'],
+            [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
+            [['is_serial_number', 'is_spare'], 'boolean', 'on' => 'importCsv'],
             [['is_active'], 'default', 'value' => 1],
             [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare'], 'safe'],
             [['local_name'], function ($attribute, $params) {
@@ -140,6 +142,10 @@ class TblAssetMaster extends \app\models\ChildModel {
 
     public function assignAutoData($attribute, $params) {
         $this->union_code = $this->assetGroupCode->union_code;
+    }
+
+    public function getAssetBom() {
+        return $this->hasMany(TblAssetBom::className(), ['asset_code' => 'asset_code']);
     }
 
 }

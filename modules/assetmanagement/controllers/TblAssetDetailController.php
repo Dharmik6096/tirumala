@@ -452,7 +452,11 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $msg .= !empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
                 }
             }
-            if ($diffQty < $_POST['qty'] || !empty($msg)) {
+            if ($diffQty <= 0 || !empty($msg)) {
+                $e = $diffQty <= 0 ? Yii::t('app', 'Quantity not available') : '';
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
+                $data['msg'] = $msg;
+            } else if ($diffQty < $_POST['qty'] || !empty($msg)) {
                 $e = $diffQty < $_POST['qty'] ? Yii::t('app', 'Quantity can not be greater than ') . $diffQty : '';
                 $msg .= !empty($msg) ? '<br/>' . $e : $e;
                 $data['msg'] = $msg;
@@ -528,11 +532,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         try {
             $master = [];
             $oldSr = $model->oldAttributes['serial_number'];
+            $oldCs = $model->oldAttributes['current_status'];
             $master[] = $model->save();
             $master[] = $hist->save();
             if (!in_array(FALSE, $master)) {
                 $assetTrans = new TblAssetTransaction();
-                $assetTrans->updateAll(['serial_number' => $model->serial_number], ['serial_number' => $oldSr, 'asset_detail_code' => $model->asset_detail_code]);
+                $assetTrans->updateAll(['serial_number' => $model->serial_number, 'current_status' => $model->current_status], ['serial_number' => $oldSr, 'current_status' => $oldCs, 'asset_detail_code' => $model->asset_detail_code]);
                 $transaction->commit();
                 Yii::$app->display->message(true, $message[0], $message[1]);
                 return 'customRedirect';
