@@ -4,6 +4,7 @@ namespace app\modules\assetmanagement\models;
 
 use app\modules\organisation\models\TblUnions;
 use Yii;
+use app\modules\assetmanagement\models\TblStoreLocation;
 
 /**
  * This is the model class for table "tbl_asset_bom".
@@ -103,11 +104,20 @@ class TblAssetBom extends \app\models\ChildModel {
         }
     }
 
-    public function getBomLists($asset_code) {
+    public function getBomLists($asset_code, $slocType, $ref_code) {
+//        return $this->find()
+//                        ->select(['tbl_asset_bom.spare_code', 'tbl_asset_master.asset_name'])
+//                        ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_bom.spare_code')
+//                        ->where(['tbl_asset_bom.asset_code' => $asset_code])->asArray()->all();
+//    }
+
         return $this->find()
-                        ->select(['tbl_asset_bom.spare_code', 'tbl_asset_master.asset_name'])
+                        ->select(['DISTINCT(tbl_asset_bom.spare_code) as spare_code,tbl_asset_master.asset_name'])
+                        ->innerJoin('tbl_asset_detail_bom', 'tbl_asset_detail_bom.spare_code = tbl_asset_bom.spare_code')
+                        ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
                         ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_bom.spare_code')
-                        ->where(['tbl_asset_bom.asset_code' => $asset_code])->asArray()->all();
+                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+                        ->where(['tbl_asset_bom.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '2', 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code])->asArray()->all();
     }
 
 }

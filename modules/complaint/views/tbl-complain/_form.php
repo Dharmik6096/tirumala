@@ -116,19 +116,21 @@ $form = ActiveForm::begin([
         <div class = "col-sm-3">
             <?= $form->field($model, 'resolved_remarks')->textarea() ?>
         </div>
+
+        <div class="col-sm-2">
+            <?= Html::activeHiddenInput($model, 'asset_code'); ?>
+            <?php Yii::$app->dropdown->bom_list($asset_detail_bom, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code', 'spare_code', $asset_detail_bom->getAttributeLabel('spare_code')); ?>
+        </div>   
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $asset_detail, $form, 'form-group', $asset_detail->getAttributeLabel('current_status')); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($asset_detail_bom, 'serial_number')->textInput(['readonly' => true]) ?>
+        </div>
+
         <?php
     }
     ?>
-    <div class="col-sm-2">
-        <?= Html::activeHiddenInput($model, 'asset_code'); ?>
-        <?php Yii::$app->dropdown->bom_list($asset_detail_bom, $form, 'tblcomplain-asset_code', 'spare_code', $asset_detail_bom->getAttributeLabel('spare_code')); ?>
-    </div>   
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $asset_detail, $form, 'form-group', $asset_detail->getAttributeLabel('current_status')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($asset_detail_bom, 'serial_number')->textInput(['readonly' => true]) ?>
-    </div>
     <div class="clearfix"></div>
 
     <div class="col-sm-12">
@@ -428,6 +430,7 @@ $script = "
     
    $('#tblcomplain-spare_required').click(function(){
         serial_no_enable();
+        spare_list();
     });
 
     function serial_no_enable(){
@@ -435,6 +438,20 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').hide();
         } else {
             $('.field-tblcomplain-new_serial_no').parent('div').show();
+        }
+    }
+    $('.field-tblassetdetailbom-spare_code').parent('div').hide();
+    $('.field-tblassetdetail-current_status').parent('div').hide();
+    $('.field-tblassetdetailbom-serial_number').parent('div').hide();
+    function spare_list(){
+        if($('#tblcomplain-spare_required').is(':checked')) {
+            $('.field-tblassetdetailbom-spare_code').parent('div').show();
+            $('.field-tblassetdetail-current_status').parent('div').show();
+            $('.field-tblassetdetailbom-serial_number').parent('div').show();
+        } else {
+            $('.field-tblassetdetailbom-spare_code').parent('div').hide();
+            $('.field-tblassetdetail-current_status').parent('div').hide();
+            $('.field-tblassetdetailbom-serial_number').parent('div').hide();
         }
     }
    
