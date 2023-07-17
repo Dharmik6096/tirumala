@@ -33,9 +33,9 @@ $attribute = [
         'value' => function($model) {
     return Yii::$app->controls->view_date($model->transaction_date);
 }],
-    ['attribute' => 'asset_type', 'value' => function($model) {
-            return isset($model->asset_type) ? Yii::$app->dropdown->getRecords('asset_type')['data'][$model->asset_type] : '';
-        }, 'filter' => false],
+//    ['attribute' => 'asset_type', 'value' => function($model) {
+//            return isset($model->asset_type) ? Yii::$app->dropdown->getRecords('asset_type')['data'][$model->asset_type] : '';
+//        }, 'filter' => false],
     ['attribute' => 'status', 'value' => function($model) {
             return isset($model->status) ? Yii::$app->dropdown->getRecords('asset_status')['data'][$model->status] : '';
         }, 'filter' => false],

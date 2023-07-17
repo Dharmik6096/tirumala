@@ -112,6 +112,9 @@ class TblAssetDetailBom extends \app\models\ChildModel {
         } else {
             $data = TblAssetDetail::find()
                             ->where(['asset_detail_code' => $this->asset_detail_code])->count();
+            if ($data == 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Asset Detail code is not exist'));
+        }
         }
         if ($data == 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Spare code is not exist'));
