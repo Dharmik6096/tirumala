@@ -10,7 +10,12 @@ $allowRouteSelection = Yii::$app->general->getUnionConfiguration(explode(',', Yi
 
 $allowCanSelection = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_can_selection', 'PORTAL');
 
+$allowCanAntibioticSelection = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'allow_can_antibiotic', 'PORTAL');
+
 $key = 'bmc-collection-bulk';
+if ($allowCanAntibioticSelection == 1) {
+    $key = 'bmc-collection-bulk-antibiotic';
+}
 //100
 if ($mappedBmc == 1 && $allowRouteSelection != 1 && $allowCanSelection != 1) {
     $key = 'bmc-mapped-collection-bulk';

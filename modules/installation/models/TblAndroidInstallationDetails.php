@@ -149,7 +149,7 @@ class TblAndroidInstallationDetails extends \app\models\ChildModel
     public function getActiveDeviceData($dest_org_id, $dest_org_type, $device = '')
     {
         $query = $this->find()
-            ->select('tbl_android_installation_details.device_id')
+            ->select('tbl_android_installation_details.device_id, tbl_android_installation_details.hash_key')
             ->distinct()
             ->joinWith(['androidInstallationCode'])
             ->where(['tbl_android_installation_details.is_active' => 1, 'tbl_android_installation_details.is_expired' => 0])

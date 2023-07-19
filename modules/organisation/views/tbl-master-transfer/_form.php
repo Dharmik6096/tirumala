@@ -64,31 +64,47 @@ $form = ActiveForm::begin([
         </div>
 
     </div>
-    <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO reset_field">
+    <div class="col-md-12 padding_10_0 theme-box theme_border_right NEWINFO">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'New Details') ?></h4>
         </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
+        <div class="reset_field">
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmastertransfer-plant_code', 'new_mcc_plant_code', $model->getAttributeLabel('new_mcc_plant_code')); ?>
+            </div>
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
+            </div>
+            <div class="col-sm-2 FARMER">
+                <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
+            </div>
+            <!--        <div class="col-sm-2 number-validate FARMER">
+            <?php //$form->field($model, 'ex_member_code')->textInput()  ?>
+                    </div>-->
+            <div class="col-sm-2 DCS route">
+                <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
+            </div>
+            <div class="col-sm-2 DCSFARMER">
+                <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
+            </div>
         </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmastertransfer-new_mcc_plant_code', 'new_bmc_code', $model->getAttributeLabel('new_bmc_code')); ?>
-        </div>
-        <div class="col-sm-2 FARMER">
-            <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmastertransfer-new_bmc_code', 'new_dcs_code', $model->getAttributeLabel('new_dcs_code')); ?>         
-        </div>
-        <!--        <div class="col-sm-2 number-validate FARMER">
-        <?php //$form->field($model, 'ex_member_code')->textInput()  ?>
-                </div>-->
-        <div class="col-sm-2 DCS route">
-            <?= Yii::$app->dropdown->all_routes($model, $form, 'tblmastertransfer-plant_code,tblmastertransfer-new_mcc_plant_code,tblmastertransfer-new_bmc_code', 'new_route_code', $model->getAttributeLabel('new_route_code')); ?>
-        </div>
-        <div class="col-sm-2 DCSFARMER">
-            <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE); ?>
+        <div class="col-sm-2 mt10 UPDATETRANSACTION">
+            <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
     </div>
-    <div class="col-sm-2  UPDATETRANSACTION">
-        <?= $form->field($model, 'update_transaction', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    <div class="UPDATETRANSACTIONDETAIL">
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'from_datetime', '', FALSE); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->shift($model, $form, 'from_shift', 'From Shift', 'shift', false) ?>    
+        </div>  
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'to_datetime', '', FALSE); ?>
+        </div> 
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->shift($model, $form, 'to_shift', 'To Shift', 'shift', false) ?>    
+        </div>
     </div>
     <?= Html::hiddenInput('plant', $model->plant_code, ['id' => 'plant']); ?>
 </div>
@@ -105,7 +121,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "$(document).ready(function(){
      setvisible();
-    $(document).on('change', '#tblmastertransfer-master_type', function() {  
+    $(document).on('change', '#tblmastertransfer-master_type', function() { 
       setvisible();
     });
     $(document).on('change', '#tblmastertransfer-transfer_type', function() {
@@ -118,13 +134,15 @@ $script = "$(document).ready(function(){
                 $('#tblmastertransfer-new_mcc_plant_code').prop('disabled',false);
                 $('#master-transfer-form .reset_field input').val('');
                 $('#master-transfer-form .reset_field select').val('');
-            }
+            }             
         setvisible();
     });
 function setvisible(){
     $('.CURRENTINFO').hide();
-    $('.NEWINFO').hide();
-        $('.UPDATETRANSACTION').hide();
+    $('.NEWINFO').hide();        
+    $('.UPDATETRANSACTION').hide();
+    $('.UPDATETRANSACTIONDETAIL').hide();    
+
         var master_type = $('#tblmastertransfer-master_type').val();
         var transfer_type = $('#tblmastertransfer-transfer_type').val();
         if(master_type!=''){
@@ -136,6 +154,10 @@ function setvisible(){
                 $('.vendor_type').hide();
                 $('.vendor_code').hide();
                 $('.dcs_code').show();
+            if($('#tblmastertransfer-update_transaction').val()=='1'){
+                $('.UPDATETRANSACTION').show();
+                $('.UPDATETRANSACTIONDETAIL').show();    
+                }
             }else if(master_type=='FARMER'){
                 $('.DCS').hide();
                 $('.vendor_type').hide();
@@ -160,6 +182,7 @@ function setvisible(){
         }
      }
 }
+
 $('#tblmastertransfer-old_mcc_plant_code').on('change', function() {
     $('#tblmastertransfer-old_mcc_plant_code').trigger('select2:select');
     var old_mcc = $(this).val();
@@ -201,9 +224,7 @@ $('#tblmastertransfer-new_bmc_code').on('change', function() {
     }
 });
 
-$(document).on('change', '#tblmastertransfer-wef_date', function() {
-    $('#tblmastertransfer-update_transaction').prop('checked', false);
-    $('.UPDATETRANSACTION').hide();
+$(document).on('change', '#tblmastertransfer-wef_date', function() {   
             if($('#tblmastertransfer-master_type').val()=='DCS'){
             var req_date = $(this).val().split('-');
             var d = new Date();
@@ -221,9 +242,25 @@ $(document).on('change', '#tblmastertransfer-wef_date', function() {
             secondDate.setHours(0, 0, 0, 0)
             if(firstDate <= secondDate){
             $('.UPDATETRANSACTION').show();
+            }else{
+             $('#tblmastertransfer-update_transaction').prop('checked', false);
+             $('.UPDATETRANSACTION').hide();
+             $('.UPDATETRANSACTIONDETAIL').hide();
             }
+            }else{
+            $('#tblmastertransfer-update_transaction').prop('checked', false);
+            $('.UPDATETRANSACTION').hide();
+            $('.UPDATETRANSACTIONDETAIL').hide();            
             }
 });
+
+$('#tblmastertransfer-update_transaction').on('change', function() {
+        $('.UPDATETRANSACTIONDETAIL').hide();
+   if($('#tblmastertransfer-update_transaction').is(':checked')){
+        $('.UPDATETRANSACTIONDETAIL').show();
+   }
+});
+
 });
 ";
 $this->registerJs($script, View::POS_END, 'transfer-utility-form');
