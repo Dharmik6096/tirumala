@@ -720,6 +720,13 @@ echo GhostMenu::widget([
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">TMS<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
+                    ]
+                ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Asset Group'), 'url' => ['/assetmanagement/tbl-asset-group/index'], 'active' => ($cntrl == 'tbl-asset-group')],

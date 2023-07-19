@@ -1,0 +1,87 @@
+<?php
+
+namespace app\modules\tms\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "tbl_task_activity".
+ *
+ * @property integer $task_activity_code
+ * @property integer $task_code
+ * @property string $user_code
+ * @property string $module_type
+ * @property string $module_code
+ * @property integer $form_type_code
+ * @property string $contact_person
+ * @property string $contact_person_mobile_no
+ * @property string $task_datetime
+ * @property string $activity_datetime
+ * @property string $status
+ * @property string $remarks
+ * @property string $form_data
+ * @property string $created_at
+ * @property string $created_by
+ * @property string $updated_at
+ * @property string $updated_by
+ * @property integer $originating_type
+ * @property string $originating_org_code
+ * @property string $originating_org_type
+ */
+class TblTaskActivity extends \app\models\ChildModel
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'tbl_task_activity';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['task_code', 'form_type_code', 'originating_type'], 'integer'],
+            [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
+            [['form_data'], 'string'],
+            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+            [['module_type', 'status'], 'string', 'max' => 10],
+            [['module_code'], 'string', 'max' => 20],
+            [['contact_person'], 'string', 'max' => 100],
+            [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'task_activity_code' => Yii::t('app', 'Task Activity Code'),
+            'task_code' => Yii::t('app', 'Task Code'),
+            'user_code' => Yii::t('app', 'User Code'),
+            'module_type' => Yii::t('app', 'Module Type'),
+            'module_code' => Yii::t('app', 'Module Code'),
+            'form_type_code' => Yii::t('app', 'Form Type Code'),
+            'contact_person' => Yii::t('app', 'Contact Person'),
+            'contact_person_mobile_no' => Yii::t('app', 'Contact Person Mobile No'),
+            'task_datetime' => Yii::t('app', 'Task Datetime'),
+            'activity_datetime' => Yii::t('app', 'Activity Datetime'),
+            'status' => Yii::t('app', 'Status'),
+            'remarks' => Yii::t('app', 'Remarks'),
+            'form_data' => Yii::t('app', 'Form Data'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'created_by' => Yii::t('app', 'Created By'),
+            'updated_at' => Yii::t('app', 'Updated At'),
+            'updated_by' => Yii::t('app', 'Updated By'),
+            'originating_type' => Yii::t('app', 'Originating Type'),
+            'originating_org_code' => Yii::t('app', 'Originating Org Code'),
+            'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+        ];
+    }
+}
