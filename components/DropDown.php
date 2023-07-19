@@ -573,7 +573,7 @@ class DropDown extends Component {
 
     public function new_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail-bom/new-sr-no', 'Select', $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail/new-sr-no', 'Select', $multiple, $model->$name, $readonly);
     }
 
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
