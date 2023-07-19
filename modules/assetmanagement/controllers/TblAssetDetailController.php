@@ -19,6 +19,7 @@ use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
 use yii\widgets\ActiveForm;
 use app\models\ChildModel;
+use yii\base\UserException;
 
 /**
  * TblAssetDetailController implements the CRUD actions for TblAssetDetail model.
@@ -77,6 +78,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->setModel($this->model);
             $master[] = $this->model;
+            $assetTrans->current_status = $this->model->current_status;
             $assetTrans->asset_detail_code = $this->model->asset_detail_code;
             $assetTrans->from_type = 'VEN';
             $assetTrans->from_dest = $this->model->manufacturer_code;
@@ -162,6 +164,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
     private function setModel() {
         $this->model->purchase_date = ($this->model->purchase_date == '') ? null : Yii::$app->formatter->asDate($this->model->purchase_date, DATE_FORMAT);
         $this->model->put_to_use_date = ($this->model->put_to_use_date == '') ? null : Yii::$app->formatter->asDate($this->model->put_to_use_date, DATE_FORMAT);
+        $this->model->verification_date = ($this->model->verification_date == '') ? null : Yii::$app->formatter->asDate($this->model->verification_date, DATE_FORMAT);
     }
 
     public function actionGetAssetIsSerial() {
@@ -349,6 +352,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $out_model->remarks = $model->remarks;
                             $out_model->qty = $out_model->remain_qty = 1;
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model->sap_code;
+                            $out_model->current_status = $trn_model->current_status;
                             $saveModel[] = $out_model;
                         } else {
                             $trn_model->status = 2;
@@ -387,6 +391,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                         $out_model->put_to_use_date = $model->transaction_date;
                         $out_model->qty = ($out_qty >= $act_qty) ? $act_qty : $out_qty;
                         $out_model->remain_qty = $out_model->qty;
+                        $out_model->current_status = $trn_model[$cnt]->current_status;
                         if ($model->in_ward == '0') {
                             $out_model->status = ($model->to_type == 3) ? 2 : '-1';
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
@@ -444,12 +449,16 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if (!$trModel->validate()) {
                 foreach ($trModel->getErrors() as $e) {
                     $errMsg = !empty($e[0]) ? $e[0] : '';
-                    $msg .=!empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
+                    $msg .= !empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
                 }
             }
-            if ($diffQty < $_POST['qty'] || !empty($msg)) {
+            if ($diffQty <= 0 || !empty($msg)) {
+                $e = $diffQty <= 0 ? Yii::t('app', 'Quantity not available') : '';
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
+                $data['msg'] = $msg;
+            } else if ($diffQty < $_POST['qty'] || !empty($msg)) {
                 $e = $diffQty < $_POST['qty'] ? Yii::t('app', 'Quantity can not be greater than ') . $diffQty : '';
-                $msg .=!empty($msg) ? '<br/>' . $e : $e;
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
                 $data['msg'] = $msg;
             } else {
                 $isSerialNo = Yii::$app->general->getforeignkey($trModel->assetCode, 'is_serial_number');
@@ -523,11 +532,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         try {
             $master = [];
             $oldSr = $model->oldAttributes['serial_number'];
+            $oldCs = $model->oldAttributes['current_status'];
             $master[] = $model->save();
             $master[] = $hist->save();
             if (!in_array(FALSE, $master)) {
                 $assetTrans = new TblAssetTransaction();
-                $assetTrans->updateAll(['serial_number' => $model->serial_number], ['serial_number' => $oldSr, 'asset_detail_code' => $model->asset_detail_code]);
+                $assetTrans->updateAll(['serial_number' => $model->serial_number, 'current_status' => $model->current_status], ['serial_number' => $oldSr, 'current_status' => $oldCs, 'asset_detail_code' => $model->asset_detail_code]);
                 $transaction->commit();
                 Yii::$app->display->message(true, $message[0], $message[1]);
                 return 'customRedirect';

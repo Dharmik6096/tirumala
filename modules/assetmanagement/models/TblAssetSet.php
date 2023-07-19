@@ -46,8 +46,8 @@ class TblAssetSet extends \app\models\ChildModel {
             [['from_type'], 'required', 'on' => ['create_main']],
             [['sap_code'], 'uniqueValidate', 'on' => ['create_single', 'create_dcs', 'update_dcs', 'update_single']],
             [['from_plant', 'from_mcc'], 'required', 'when' => function ($model) {
-            return $model->from_type == '3' || $model->from_type == '2';
-        }, 'whenClient' => "function (attribute, value) { 
+                    return $model->from_type == '3' || $model->from_type == '2';
+                }, 'whenClient' => "function (attribute, value) { 
               return $('#tblassetset-from_type').val() == '3' || $('#tblassetset-from_type').val() == '2'; 
           }", 'on' => ['create_main']],
             [['sap_code'], 'statusValidate', 'on' => ['create_single', 'create_dcs', 'update_dcs', 'update_single']],

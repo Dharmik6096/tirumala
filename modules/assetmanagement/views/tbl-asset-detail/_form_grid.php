@@ -13,9 +13,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => false],
     //  ['attribute' => 'asset_detail_code'],
-    ['attribute' => 'asset_group_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->assetCode->assetGroupCode, 'asset_group_name');
-        }, 'visible' => false],
+//    ['attribute' => 'asset_group_code', 'value' => function($model) {
+//            return Yii::$app->general->getforeignkey($model->assetCode->assetGroupCode, 'asset_group_name');
+//        }, 'visible' => false],
     ['attribute' => 'asset_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->assetCode, 'asset_name');
         }],
@@ -34,7 +34,7 @@ $attribute = [
                 'autoclose' => true]
         ],
         'value' => function($model) {
-            return Yii::$app->controls->view_date($model->assetDetail->purchase_date);
+            return Yii::$app->controls->view_date($model->assetDetail['purchase_date']);
         }],
     ['attribute' => 'put_to_use_date',
         'filterType' => GridView::FILTER_DATE,
@@ -63,6 +63,9 @@ $attribute = [
     ['attribute' => 'make', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->assetDetail, 'make');
         }],
+    ['attribute' => 'current_status', 'value' => function($model) {
+            return (isset($model->current_status) && $model->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model['assetDetail']->current_status] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('asset_detail_status', $searchModel, 'current_status')],
     ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
         // ['attribute' => 'maintanance_duration_in_days'],
 //    ['attribute' => 'is_active', 'visible' => false],
@@ -80,6 +83,11 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-asset-detail/update', 'id' => $model->asset_detail_code]);
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit']);
+        },
+        'asset-detail-bom' => function ($url, $model) {
+            $class = $model->assetCode['is_spare'] == 0 ? '' : 'disabled';
+            $options = ['data-code' => $model->asset_detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Detail Bom', 'class' => $class,];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/assetmanagement/tbl-asset-detail-bom/create', 'id' => $model->asset_detail_code], $options);
         },
     ]
 ];

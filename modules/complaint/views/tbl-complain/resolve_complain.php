@@ -1,0 +1,19 @@
+<?php
+$this->title = Yii::$app->label->title('edit', 'Complain Resolve');
+?>
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <?=
+        $this->render('_form', [
+            'model' => $model,
+            'type' => 'resolve',
+            'dropdownSerialNo' => $dropdownSerialNo,
+            'asset_detail_bom' => $asset_detail_bom,
+            'asset_detail' => $asset_detail,
+            'asset_bom' => $asset_bom,
+            'complain_spare' => $complain_spare,
+        ])
+        ?>
+    </div>
+</div>
