@@ -157,11 +157,23 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         ?>
         <?=
+        $this->render('_complaint_activity', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+        ])
+        ?>
+<!--        <?
         ListView::widget([
             'dataProvider' => $dataProvider,
             'layout' => '{items}',
             'itemView' => '_complaint_activity',
         ]);
+        ?>-->
+        <?=
+        $this->render('_attachment_list', [
+            'complain_attachment' => $complain_attachment,
+            'attachmentDataProvider' => $attachmentDataProvider
+        ])
         ?>
     </div>
 </div>

@@ -71,7 +71,7 @@ class TblComplain extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['user_code', 'mobile_no', 'location_details', 'complain_type_code', 'remarks', 'resolved_remarks', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'bmc_code', 'dcs_code', 'complain_for', 'serial_number', 'new_serial_no', 'asset_code', 'contact_person', 'lat_long', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['plant_code'], 'required', 'on' => ['portal_create_complaint']],
+                [['plant_code', 'complain_type_code', 'location_type', 'contact_person', 'mobile_no', 'serial_number', 'complain_problem_code'], 'required', 'on' => ['portal_create_complaint']],
                 [['physical_damage'], 'default', 'value' => 0],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);

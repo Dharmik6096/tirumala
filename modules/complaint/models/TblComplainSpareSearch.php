@@ -17,7 +17,7 @@ class TblComplainSpareSearch extends TblComplainSpare {
      */
     public function rules() {
         return [
-                [['complain_spare_code', 'complain_code', 'spare_code', 'qty', 'originating_type', 'old_serial_no', 'new_serial_no', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['complain_spare_code', 'complain_code', 'spare_code', 'qty', 'originating_type', 'old_serial_no', 'new_serial_no', 'remarks', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'new_spare_status', 'old_spare_status'], 'safe'],
         ];
     }
 

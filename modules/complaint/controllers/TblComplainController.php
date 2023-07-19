@@ -28,6 +28,8 @@ use yii\data\ActiveDataProvider;
 use app\modules\complaint\models\TblComplainActivitySearch;
 use app\modules\assetmanagement\models\TblAssetDetailBom;
 use app\modules\assetmanagement\models\TblAssetDetail;
+use app\modules\assetmanagement\models\TblAssetBom;
+use app\modules\complaint\models\TblComplainSpare;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -64,9 +66,16 @@ class TblComplainController extends \app\controllers\ChildController {
         $searchModel = new TblComplainActivitySearch();
         $searchModel->complain_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $complain_attachment = new TblAttachment();
+        $attachmentDataProvider = new ActiveDataProvider([
+            'query' => $complain_attachment->find()->where(['module_code' => $id]),
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'complain_attachment' => $complain_attachment,
+                    'attachmentDataProvider' => $attachmentDataProvider,
         ]);
     }
 
@@ -526,6 +535,8 @@ class TblComplainController extends \app\controllers\ChildController {
         $this->viewFile = 'resolve_complain';
         $asset_detail_bom = new TblAssetDetailBom();
         $asset_detail = new TblAssetDetail();
+        $asset_bom = new TblAssetBom();
+        $complain_spare = new TblComplainSpare();
         if (Yii::$app->request->post()) {
             $saveModel = [];
             $historyModel = new TblComplainHistory();
@@ -596,6 +607,8 @@ class TblComplainController extends \app\controllers\ChildController {
                     'dropdownSerialNo' => $serialNo,
                     'asset_detail_bom' => $asset_detail_bom,
                     'asset_detail' => $asset_detail,
+                    'asset_bom' => $asset_bom,
+                    'complain_spare' => $complain_spare,
                         ]
         );
     }

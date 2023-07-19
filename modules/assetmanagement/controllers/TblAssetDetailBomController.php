@@ -17,7 +17,7 @@ use yii\web\Response;
  */
 class TblAssetDetailBomController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-asset-is-serial'];
+    public $freeAccessActions = ['get-asset-is-serial', 'old-sr-no'];
 
     /**
      * Lists all TblAssetDetailBom models.
@@ -180,6 +180,87 @@ class TblAssetDetailBomController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+//    public function actionOldSrNo() {
+//        $out = [];
+//        if (isset($_POST['depdrop_parents'])) {
+//            $parents = $_POST['depdrop_parents'];
+//            $asset = explode('##', $parents[0]);
+//            $ref_code = '';
+//            $slocType = $parents[1];
+//            if ($slocType == 1 && !empty($parents[2])) {
+//                $ref_code = $parents[2];
+//            } else if ($slocType == 2 && !empty($parents[3])) {
+//                $ref_code = $parents[3];
+//            } else if ($slocType == 3 && !empty($parents[4])) {
+//                $ref_code = $parents[4];
+//            }
+//            $spare_code = $parents[5];
+//            if (!empty($parents[0])) {
+//                $bom = new TblAssetDetailBom();
+//                $data = $bom->getOldSrNo($asset[0], $slocType, $ref_code, $spare_code);
+//                foreach ($data as $key => $val) {
+//                    $out[] = array('id' => $val['spare_code'], 'name' => $val['serial_number']);
+//                }
+//                return Json::encode(['output' => $out, 'selected' => '']);
+//            }
+//        }
+//        return Json::encode(['output' => '', 'selected' => '']);
+//    }
+
+    public function actionOldSrNo() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            $asset = explode('##', $parents[0]);
+            $ref_code = '';
+            $slocType = $parents[1];
+            if ($slocType == 1 && !empty($parents[2])) {
+                $ref_code = $parents[2];
+            } else if ($slocType == 2 && !empty($parents[3])) {
+                $ref_code = $parents[3];
+            } else if ($slocType == 3 && !empty($parents[4])) {
+                $ref_code = $parents[4];
+            }
+            $spare_code = $parents[5];
+            if (!empty($parents[0])) {
+                $bom = new TblAssetDetailBom();
+                $data = $bom->getOldSrNo($asset[0], $slocType, $ref_code, $spare_code);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['serial_number'], 'name' => $val['serial_number']);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionNewSrNo() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            $asset = explode('##', $parents[0]);
+//            $ref_code = '';
+//            $slocType = $parents[1];
+//            if ($slocType == 1 && !empty($parents[2])) {
+//                $ref_code = $parents[2];
+//            } else if ($slocType == 2 && !empty($parents[3])) {
+//                $ref_code = $parents[3];
+//            } else if ($slocType == 3 && !empty($parents[4])) {
+//                $ref_code = $parents[4];
+//            }
+//            $spare_code = $parents[5];
+            if (!empty($parents[0])) {
+                $bom = new TblAssetDetailBom();
+                $data = $bom->getNewSrNo($asset[0]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['spare_code'], 'name' => $val['serial_number']);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

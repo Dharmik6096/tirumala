@@ -40,7 +40,7 @@ class TblComplainSpareHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['remarks', 'old_serial_no', 'new_serial_no', 'complain_spare_code', 'complain_code', 'spare_code', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'qty', 'originating_type', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['remarks', 'old_serial_no', 'new_serial_no', 'complain_spare_code', 'complain_code', 'spare_code', 'operation_type', 'originating_org_code', 'originating_org_type', 'created_by', 'updated_by', 'history_created_by', 'qty', 'originating_type', 'created_at', 'updated_at', 'history_created_at', 'new_spare_status', 'old_spare_status'], 'safe'],
         ];
     }
 

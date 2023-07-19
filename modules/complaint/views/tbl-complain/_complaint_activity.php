@@ -1,16 +1,36 @@
 <?php
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 use yii\helpers\Html;
-
-$statusList = Yii::$app->dropdown->getRecords('activity_type')['data'];
+use kartik\grid\GridView;
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Url;
 ?>
-<a href="#" class="list-group-item">
-    <h5 class="list-group-item-heading"><span class="badge"><?= in_array($model->activity_type, array_keys($statusList)) ? $statusList[$model->activity_type] : ''; ?></span> | <?= Yii::$app->controls->view_date($model->created_at) ?> | <?= isset($model->complainActivity->asset) ? $model->complainActivity->asset->asset_name : '' ?> | <?= Yii::$app->general->getmultiforeignkey($model->complainActivity, ['complainProblem'], 'problem_desc') ? Yii::$app->general->getmultiforeignkey($model->complainActivity, ['complainProblem'], 'problem_desc') : '' ?></h5>
-    <p class="text-muted"><?= $model->getAttributeLabel('contact_person') ?>:  <?= $model->complainActivity->contact_person ?></p>
-    <p class="text-muted"><?= $model->getAttributeLabel('assign_to') ?>:  <?= !empty($model->contactDetailsCodes) ? $model->contactDetailsCodes->name . '(' . $model->contactDetailsCodes->mobile_no . ')' : 'N/A' ?></p>
-    <p class="list-group-item-text"><?= $model->getAttributeLabel('remarks') ?>: <?= $model->remarks ?></p>
-</a>
+
+<?php
+
+$attribute = [
+        ['attribute' => 'activity_type', 'filter' => false],
+        ['attribute' => 'created_at', 'filter' => false],
+        ['attribute' => 'contact_person', 'value' => function ($model) {
+            return Yii::$app->general->getforeignkey($model->complainActivity, 'contact_person');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'asset', 'value' => function ($model) {
+            return Yii::$app->general->getmultiforeignkey($model->complainActivity, ['asset'], 'asset_name');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'problem_desc', 'value' => function ($model) {
+            return Yii::$app->general->getmultiforeignkey($model->complainActivity, ['complainProblem'], 'problem_desc');
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'assign_to', 'value' => function ($model) {
+            return !empty($model->contactDetailsCodes) ? $model->contactDetailsCodes->name . '(' . $model->contactDetailsCodes->mobile_no . ')' : '';
+        }, 'visible' => true, 'filter' => false],
+        ['attribute' => 'remarks', 'filter' => false],
+];
+
+$grid_option = [
+    'id' => 'complaint_activity',
+    'attributes' => $attribute,
+    'active_column' => false,
+];
+
+Yii::$app->grid->bind($dataProvider, $model, $grid_option, '', false);
+?>

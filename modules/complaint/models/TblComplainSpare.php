@@ -36,7 +36,7 @@ class TblComplainSpare extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['complain_code', 'spare_code', 'qty', 'old_serial_no', 'remarks', 'new_serial_no', 'created_by', 'updated_by', 'originating_type', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['complain_code', 'spare_code', 'qty', 'old_serial_no', 'remarks', 'new_serial_no', 'created_by', 'updated_by', 'originating_type', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'new_spare_status', 'old_spare_status'], 'safe'],
         ];
     }
 
@@ -52,6 +52,8 @@ class TblComplainSpare extends \app\models\ChildModel {
             'old_serial_no' => Yii::t('app', 'Old Serial No'),
             'new_serial_no' => Yii::t('app', 'New Serial No'),
             'remarks' => Yii::t('app', 'Remarks'),
+            'new_spare_status' => Yii::t('app', 'New Spare Status'),
+            'old_spare_status' => Yii::t('app', 'Old Spare Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),

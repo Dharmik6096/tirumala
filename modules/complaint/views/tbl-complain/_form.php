@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use zainiafzan\widget\Dropzone;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
+use webvimark\modules\UserManagement\components\GhostHtml;
 
 $url = Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
@@ -38,7 +39,7 @@ $form = ActiveForm::begin([
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), $disabled, 'complain_type_code'); ?>
-        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']);   ?>
+        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']);     ?>
     </div>
     <div class="col-sm-2">       
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $disabled); ?>
@@ -116,39 +117,56 @@ $form = ActiveForm::begin([
         <div class = "col-sm-3">
             <?= $form->field($model, 'resolved_remarks')->textarea() ?>
         </div>
+    </div>
+    <div class="br-s-eee dis-table">
+        <h4 class="center-text">Spare Detail</h4>
+        <hr class="m0">
+        <div class="col-md-12">
+            <div class="col-sm-2">
+                <?= Html::activeHiddenInput($model, 'asset_code'); ?>
+                <?php Yii::$app->dropdown->asset_bom_list($asset_bom, $form, 'tblcomplain-asset_code', 'spare_code', $asset_bom->getAttributeLabel('spare_code')); ?>
+            </div>
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->old_sr_no($asset_detail_bom, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblassetbom-spare_code', 'serial_number', $asset_detail_bom->getAttributeLabel('serial_number')); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdownStatic('new_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('new_spare_status')); ?>
+            </div>
 
-        <div class="col-sm-2">
-            <?= Html::activeHiddenInput($model, 'asset_code'); ?>
-            <?php Yii::$app->dropdown->bom_list($asset_detail_bom, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code', 'spare_code', $asset_detail_bom->getAttributeLabel('spare_code')); ?>
-        </div>   
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $asset_detail, $form, 'form-group', $asset_detail->getAttributeLabel('current_status')); ?>
+            <div class="col-md-1">
+                <div class="mt22" >
+                    <?php
+                    $options = ['title' => 'Add', 'class' => 'btn btn-effect-ripple btn-fab btn-fab-xs btn-danger product-del pull-right', 'id' => 'add_spare'];
+                    echo GhostHtml::a_alert('<i id = "" class="fa fa-plus"></i>', ['#'], $options)
+                    ?>                                            
+                </div>
+            </div>
         </div>
-        <div class="col-sm-2">
-            <?= $form->field($asset_detail_bom, 'serial_number')->textInput(['readonly' => true]) ?>
-        </div>
+    </div>
 
-        <?php
-    }
-    ?>
-    <div class="clearfix"></div>
 
-    <div class="col-sm-12">
-        <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
-        <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']);  ?>
-        <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']);   ?>
 
-        <?=
-        Dropzone::widget([
-            'id' => 'mainDrop',
-            'options' => [
-                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/upload-file',
-                    'main' => 1,]),
-                'addRemoveLinks' => true,
-                'autoDiscover' => false,
-                'maxFiles' => 5,
-            ],
-            'clientEvents' => [
+    <?php
+}
+?>
+<div class="clearfix"></div>
+
+<div class="col-sm-12">
+    <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
+    <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']);  ?>
+    <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']);     ?>
+
+    <?=
+    Dropzone::widget([
+        'id' => 'mainDrop',
+        'options' => [
+            'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/upload-file',
+                'main' => 1,]),
+            'addRemoveLinks' => true,
+            'autoDiscover' => false,
+            'maxFiles' => 5,
+        ],
+        'clientEvents' => [
 //                'addedfile' => 'function(file) {
 //                        var filenames = [];
 //                        var existingFiles = this.files;
@@ -161,7 +179,7 @@ $form = ActiveForm::begin([
 //                            alert("File with the same name already exists.");
 //                        }  
 //                    }',
-                'success' => "function( file, response ){
+            'success' => "function( file, response ){
                         var data=$.parseJSON(response);
                         if(data.status=='success')
                         { 
@@ -180,7 +198,7 @@ $form = ActiveForm::begin([
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
 
                     }",
-                'removedfile' => "function(file){
+            'removedfile' => "function(file){
                         console.log(file.name);
                         var name = file.name;
                         var val = $('#attachment').val();
@@ -200,28 +218,28 @@ $form = ActiveForm::begin([
                         });
                         
                    }",
-                'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
-            ]
-        ]);
-        ?>
-    </div> 
+            'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
+        ]
+    ]);
+    ?>
+</div> 
 
-    <div class="clearfix"></div>
-    <!--    <div class="modal-footer">-->
-    <div class="col-sm-12">
-        <?php
-        AjaxSubmitButton::begin([
-            'label' => Yii::t('app', $button_type),
-            'ajaxOptions' => [
-                'type' => 'POST',
+<div class="clearfix"></div>
+<!--    <div class="modal-footer">-->
+<div class="col-sm-12">
+    <?php
+    AjaxSubmitButton::begin([
+        'label' => Yii::t('app', $button_type),
+        'ajaxOptions' => [
+            'type' => 'POST',
 //                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/attachment-upload']),
 //                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/create']),
-                'url' => Url::to($urls),
-                'beforeSend' => new \yii\web\JsExpression('function(data){
+            'url' => Url::to($urls),
+            'beforeSend' => new \yii\web\JsExpression('function(data){
                                             $("#loadercontent").show();
                                             $("#pageloader").show();
                                     }'),
-                'success' => new \yii\web\JsExpression('function(data){                                   
+            'success' => new \yii\web\JsExpression('function(data){                                   
                                             $("#pageloader").hide();
                                             $("#loadercontent").hide();
                                             var obj1 = $.parseJSON(data);
@@ -237,7 +255,7 @@ $form = ActiveForm::begin([
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }
                              }'),
-                'error' => new \yii\web\JsExpression('function(){
+            'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
                                     if($("#attachment").val()==""){
@@ -248,19 +266,19 @@ $form = ActiveForm::begin([
 //                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                     }
                              }'),
-            ],
-            'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
-        ]);
-        AjaxSubmitButton::end();
-        ?>
+        ],
+        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
+    ]);
+    AjaxSubmitButton::end();
+    ?>
+</div>
+<div class="col-sm-2">
+    <div class="form-group">
+        <!--<? Yii::$app->controls->save(Yii::$app->label->button($button_type), $model); ?>-->
+        <?= Yii::$app->controls->reset(); ?>
+        <?= Yii::$app->controls->cancel($model); ?>
     </div>
-    <div class="col-sm-2">
-        <div class="form-group">
-            <!--<? Yii::$app->controls->save(Yii::$app->label->button($button_type), $model); ?>-->
-            <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->cancel($model); ?>
-        </div>
-    </div>
+</div>
 </div>
 <?php ActiveForm::end(); ?>
 <?php
@@ -415,7 +433,9 @@ $script = "
     
     $('#tblcomplain-resolved_status').on('change', function(){
         var resolved_status = $(this).val();
-        hideSection(resolved_status);
+        if(complainFor != 'general_complain'){
+            hideSection(resolved_status);
+        }
     });
     
     function hideSection(type){
@@ -443,18 +463,28 @@ $script = "
     $('.field-tblassetdetailbom-spare_code').parent('div').hide();
     $('.field-tblassetdetail-current_status').parent('div').hide();
     $('.field-tblassetdetailbom-serial_number').parent('div').hide();
+    $('.field-tblassetdetailbom-spare').parent('div').hide();
+    $('.field-tblassetdetail-sr_number').parent('div').hide();
+    $('.field-tblassetdetailbom-current_status').parent('div').hide();
     function spare_list(){
         if($('#tblcomplain-spare_required').is(':checked')) {
             $('.field-tblassetdetailbom-spare_code').parent('div').show();
             $('.field-tblassetdetail-current_status').parent('div').show();
             $('.field-tblassetdetailbom-serial_number').parent('div').show();
+            $('.field-tblassetdetailbom-spare').parent('div').show();
+            $('.field-tblassetdetail-sr_number').parent('div').show();
+            $('.field-tblassetdetailbom-current_status').parent('div').show();
         } else {
             $('.field-tblassetdetailbom-spare_code').parent('div').hide();
             $('.field-tblassetdetail-current_status').parent('div').hide();
             $('.field-tblassetdetailbom-serial_number').parent('div').hide();
+            $('.field-tblassetdetailbom-spare').parent('div').hide();
+            $('.field-tblassetdetail-sr_number').parent('div').hide();
+            $('.field-tblassetdetailbom-current_status').parent('div').hide();
+
         }
     }
-   
+    
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>
