@@ -47,6 +47,7 @@ class TblAssetMaster extends \app\models\ChildModel {
                 [['is_serial_number', 'is_spare'], 'required', 'on' => 'importCsv'],
                 [['asset_group_code', 'asset_name', 'created_by', 'updated_by', 'local_name'], 'string'],
                 [['is_serial_number', 'is_spare'], 'integer'],
+                [['is_serial_number', 'is_spare'], 'boolean', 'on' => 'importCsv'],
                 [['is_active'], 'default', 'value' => 1],
                 [['created_at', 'updated_at', 'cmpl_product_code', 'ref_code', 'is_spare'], 'safe'],
                 [['local_name'], function ($attribute, $params) {
@@ -156,21 +157,22 @@ class TblAssetMaster extends \app\models\ChildModel {
 //        return '';
 //    }
 
-        public static function getSrNo($to_code = '', $asset = NULL, $srno = NULL) {
+    public static function getSrNo($to_code = '', $asset = NULL, $srno = NULL) {
 
-            if (!empty($to_code)) {
-                $assets = TblAssetTransaction::find()
-                                ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-                                ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.asset_code' => $asset, 'tbl_asset_transaction.serial_number' => $srno])->one();
-                
+        if (!empty($to_code)) {
+            $assets = TblAssetTransaction::find()
+                            ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
+                            ->where(['tbl_store_location.reference_code' => $to_code, 'tbl_asset_transaction.asset_code' => $asset, 'tbl_asset_transaction.serial_number' => $srno])->one();
+
             if (!empty($assets)) {
                 $sno = $assets['serial_number'];
                 return $sno;
             }
-            }
+        }
         return '';
 //            return $assets;
-        }
+    }
+
 //        public static function getSrNo($asset_code = NULL) {
 //
 //        if (!empty($asset_code)) {
@@ -188,4 +190,8 @@ class TblAssetMaster extends \app\models\ChildModel {
 //        }
 //        return '';
 //    }
+    public function getAssetBom() {
+        return $this->hasMany(TblAssetBom::className(), ['asset_code' => 'asset_code']);
+    }
+
 }

@@ -50,7 +50,11 @@ class TblAssetDetailBom extends \app\models\ChildModel {
                 [['asset_code', 'spare_code', 'serial_number'], 'safe'],
                 [['originating_org_code', 'originating_org_type', 'created_at', 'updated_at',], 'safe'],
                 [['asset_detail_code', 'spare_code'], 'required', 'on' => 'importCsv'],
+                [['spare_code'], 'checkCode', 'on' => 'importCsv'],
                 [['spare_code'], 'checkUnique', 'on' => 'importCsv'],
+                [['spare_code'], 'checkIsSerialNumber'],
+                [['asset_detail_code'], 'checkCode', 'on' => 'importCsv'],
+                [['spare_code'], 'checkIsSerialNumber', 'on' => 'importCsv'],
                 [['spare_code'], 'checkUnique', 'on' => 'create', 'except' => ['update']],
                 [['qty'], 'default', 'value' => 1],
                 [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
@@ -90,7 +94,7 @@ class TblAssetDetailBom extends \app\models\ChildModel {
 
     public function checkUnique($attribute) {
         $data = 0;
-        $data = $this->find()->where(['spare_code' => $this->spare_code, 'serial_number' => $this->serial_number, 'is_active' => $this->is_active])
+        $data = $this->find()->where(['asset_detail_code' => $this->asset_detail_code, 'spare_code' => $this->spare_code, 'serial_number' => $this->serial_number])
                 ->count();
 
         if ($data != 0) {
@@ -122,6 +126,39 @@ class TblAssetDetailBom extends \app\models\ChildModel {
                         ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
                         ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
                         ->where(['tbl_asset_transaction.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '0'])->asArray()->all();
+    }
+
+    public function checkCode($attribute) {
+        $data = 0;
+        if ($attribute == 'spare_code') {
+            $data = TblAssetBom::find()
+                            ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_bom.spare_code')
+                            ->where(['tbl_asset_bom.spare_code' => $this->spare_code])->count();
+        } else {
+            $data = TblAssetDetail::find()
+                            ->where(['asset_detail_code' => $this->asset_detail_code])->count();
+            if ($data == 0) {
+                $this->addError($attribute, Yii::t('app/validation', 'Asset Detail code is not exist'));
+            }
+        }
+        if ($data == 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Spare code is not exist'));
+        }
+    }
+
+    public function checkIsSerialNumber($attribute) {
+        $data = TblAssetBom::find()
+                ->where(['spare_code' => $this->spare_code])
+                ->one();
+        if (!empty($data) && isset($data->is_serial_number)) {
+            if ($data->is_serial_number == 1) {
+                if ($this->serial_number == '') {
+                    $this->addError('serial_number', Yii::t('app/validation', 'Please enter serial number'));
+                }
+            } else {
+                $this->addError('is_serial_number', Yii::t('app/validation', 'No Serial Number for this Spare'));
+            }
+        }
     }
 
 }

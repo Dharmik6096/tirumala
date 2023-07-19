@@ -54,6 +54,7 @@ class TblAssetDetailBomSearch extends TblAssetDetailBom {
             return $dataProvider;
         }
 
+        $query->joinWith(['spareCode']);
         // grid filtering conditions
         $query->andFilterWhere([
             'asset_detail_bom_code' => $this->asset_detail_bom_code,
@@ -65,18 +66,13 @@ class TblAssetDetailBomSearch extends TblAssetDetailBom {
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'spare_code', $this->spare_code])
+        $query->andFilterWhere(['like', 'tbl_asset_master.asset_name', $this->spare_code])
                 ->andFilterWhere(['like', 'serial_number', $this->serial_number])
                 ->andFilterWhere(['like', 'union_code', $this->union_code])
                 ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
                 ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-                ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-                ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-                ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-                ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
 
         return $dataProvider;
     }
