@@ -135,8 +135,11 @@ class TblUserDownloadAck extends \app\models\ChildModel {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getExistDataAck($org_type) {
+    public function getExistDataAck($org_type, $check_device_id = false) {
         $query = $this->find()->where(['union_code' => $this->union_code, 'download_pending' => 1]);
+        if($check_device_id){
+              $query->andWhere(['device_id' => $this->device_id, 'hash_key' => $this->hash_key]);
+        }
         if (strtoupper($org_type == 'MCC')) {
             $query->andWhere(['plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code])->andWhere(['=', 'ISNULL(bmc_code,\'\')', '']);
         } elseif ($org_type == 'BMC') {

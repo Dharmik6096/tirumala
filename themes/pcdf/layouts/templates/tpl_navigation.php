@@ -598,6 +598,7 @@ echo GhostMenu::widget([
                             ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
                             ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
                             ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
+                            ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
                     ]
                 ],
                     [
@@ -658,6 +659,8 @@ echo GhostMenu::widget([
                         //  ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail'], 'visible' => User::canRoute(['/misreports/reports/mcc-recipation-detail']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
                         ['label' => Yii::t('app', 'MCC Recipation Summary'), 'url' => ['/misreports/reports/mcc-recipation-summary']],
                             ['label' => Yii::t('app', 'MCC Recipation Detail'), 'url' => ['/misreports/reports/mcc-recipation-detail']],
+                            ['label' => Yii::t('app', 'BMC Wise Society Wise Auto Manual Report'), 'url' => ['/misreports/reports/bmc-wise-society-wise-auto-manual']],
+                            ['label' => Yii::t('app', 'BMC Wise Auto Manual Summary Report'), 'url' => ['/misreports/reports/bmc-wise-auto-manual-summary']],
                     ]
                 ],
                     [

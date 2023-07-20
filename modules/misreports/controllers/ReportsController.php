@@ -941,7 +941,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VlccTransactionDataReport';
         return $this->actionIndex();
     }
-    
+
+    public function actionMpgPaymentBillStatement() {
+        $this->report = 'MpgPaymentBillStatement';
+        return $this->actionIndex();
+    }
+
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -1359,6 +1364,21 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'StockRegisterMccToSummary';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionBmcWiseSocietyWiseAutoManual() {
+        $this->report = 'BmcWiseSocietyWiseAutoManual';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BmcWiseSocietyWiseAutoManualSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionBmcWiseAutoManualSummary() {
+        $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
 
@@ -2630,13 +2650,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vendor Sale Report',
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,mcc_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',
             ],
             'SummaryReportDcs' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_vlcc_stock_summary_report',
                 'scenario' => 'SummaryReportDcs',
                 'title' => 'Summary Report - DCS',
@@ -2775,6 +2795,32 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vlcc_transaction_ftp_data',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
+            ],
+            'BmcWiseSocietyWiseAutoManual' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_details',
+                'scenario' => 'BmcWiseSocietyWiseAutoManual',
+                'title' => 'BMC Wise Society Wise Auto Manual',
+                'report_type' => [Yii::t('app', 'Details '), Yii::t('app', 'Summary')],
+            ],
+            'BmcWiseSocietyWiseAutoManualSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_summary',
+                'scenario' => 'BmcWiseSocietyWiseAutoManual',
+                'title' => 'BMC Wise Society Wise Auto Manual',
+                'report_type' => [Yii::t('app', 'Details '), Yii::t('app', 'Summary')],
+            ],
+            'BmcWiseAutoManualSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_auto_manual_summary',
+                'scenario' => 'BmcWiseAutoManualSummary',
+                'title' => 'BMC Wise Auto Manual Summary',
+            ],
+            'MpgPaymentBillStatement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_mpg_payment_bill_statement',
+                'scenario' => 'MpgPaymentBillStatement',
+                'title' => 'MPG Payment Bill Statement',
             ],
         ];
         return $label[$l];
