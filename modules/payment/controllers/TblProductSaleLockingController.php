@@ -191,7 +191,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();
@@ -243,7 +243,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
 //                header('Content-Type: ' . $header['mime']);
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
-        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
         ob_end_clean();
         $objWriter->save('php://output');
         exit();

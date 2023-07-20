@@ -112,7 +112,7 @@ class SftpRecordsController extends Controller {
             $objPHPExcel->getActiveSheet()->SetCellValue('AB' . $rowCount, $row['bene_email']);
         }
         $fileName = "payment_disburse." . $header['extension'];
-        $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
         $path = Yii::$app->basePath . '/sftp';
         Yii::$app->general->checkDirectory($path);
         $objWriter->save($path . $fileName);

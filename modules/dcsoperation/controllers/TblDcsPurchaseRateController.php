@@ -52,10 +52,11 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
         $this->purchaseModel = new TblDcsPurchaseRateBased();
         if (isset(Yii::$app->request->post()['templet-download'])) {
             $transaction = Json::decode($_POST['range_table']);
-            if (count($transaction) > 0) {
+            if (is_array($transaction) && count($transaction) > 0) {
                 $objPHPExcel = new Spreadsheet();
                 $sheetcnt = 0;
             }
+            if(is_array($transaction)){
             for ($i = 0; $i < count($transaction); $i++) {
                 // $milk_quality = $transaction[$i]['milk_quality'];
                 // $milk_type = $transaction[$i]['milk_type'];
@@ -119,7 +120,8 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 }
                 $sheetcnt++;
             }
-            if (count($transaction) > 0) {
+        }
+            if (is_array($transaction) && count($transaction) > 0) {
                 $header = [
                     'mime' => 'application/vnd.ms-excel',
                     'extension' => 'xls',
@@ -129,7 +131,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                 header('Content-Type: ' . $header['mime']);
                 header('Content-Disposition: attachment;filename=' . $fileName);
                 header('Cache-Control: max-age=0');
-                $objWriter = IOFactory::createWriter($objPHPExcel, $header['writer']);
+                $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                 ob_end_clean();
                 $objWriter->save('php://output');
                 // exit();
