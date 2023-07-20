@@ -49,7 +49,7 @@ $multiple = isset($multiple) ? TRUE : FALSE;
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
     </div>
 
-    <div class="col-sm-3 mt23">
+    <div class="col-sm-3 mt18">
         <?= Yii::$app->controls->search(); ?>
     </div>
 
