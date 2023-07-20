@@ -124,15 +124,20 @@ $form = ActiveForm::begin([
         <div class="col-md-12">
             <div class="col-sm-2">
                 <?= Html::activeHiddenInput($model, 'asset_code'); ?>
-                <?php Yii::$app->dropdown->asset_bom_list($asset_bom, $form, 'tblcomplain-asset_code', 'spare_code', $asset_bom->getAttributeLabel('spare_code')); ?>
+                <?php Yii::$app->dropdown->asset_bom_list($complain_spare, $form, 'tblcomplain-asset_code', 'spare_code', $complain_spare->getAttributeLabel('spare_code')); ?>
             </div>
             <div class="col-sm-2">
-                <?php Yii::$app->dropdown->old_sr_no($asset_detail_bom, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblassetbom-spare_code', 'serial_number', $asset_detail_bom->getAttributeLabel('serial_number')); ?>
+                <?php Yii::$app->dropdown->old_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-serial_number,tblcomplainspare-spare_code', 'old_serial_no', $complain_spare->getAttributeLabel('old_serial_no')); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdownStatic('new_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('new_spare_status')); ?>
             </div>
-
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->new_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplainspare-spare_code', 'new_serial_no', $complain_spare->getAttributeLabel('new_serial_no')); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($complain_spare, 'qty')->textInput(['value' => 1]) ?>
+            </div>
             <div class="col-md-1">
                 <div class="mt22" >
                     <?php
