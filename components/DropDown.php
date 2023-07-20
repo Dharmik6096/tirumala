@@ -1535,8 +1535,8 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Activity Status'),
                 'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'ASSIGN' => Yii::t('app', 'ASSIGN'), 'RE-ASSIGN' => Yii::t('app', 'RE-ASSIGN'), 'SERVICE' => Yii::t('app', 'SERVICE')],
             ],
-            'new_spare_status' => [
-                'name' => 'new_spare_status',
+            'old_spare_status' => [
+                'name' => 'old_spare_status',
                 'prompt' => Yii::t('app', 'Select Activity Status'),
                 'data' => ['0' => Yii::t('app', 'Faulty'), '1' => Yii::t('app', 'Scrapped')],
             ],

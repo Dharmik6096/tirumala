@@ -133,7 +133,7 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->old_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-serial_number,tblcomplainspare-spare_code', 'old_serial_no', $complain_spare->getAttributeLabel('old_serial_no')); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('new_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('new_spare_status')); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('old_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('old_spare_status')); ?>
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->new_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplainspare-spare_code', 'new_serial_no', $complain_spare->getAttributeLabel('new_serial_no')); ?>
@@ -224,6 +224,24 @@ $form = ActiveForm::begin([
     ]);
     ?>
 </div> 
+
+<div class="clearfix"></div>
+<div class="col-sm-12">
+    <table class="table table-bordered table-striped table-main table-language br_grey bl_grey asset_transaction_table">
+        <thead>
+            <tr>
+                <th>Spare</th>
+                <th>Old Serial No</th>
+                <th>Old Spare Status</th>
+                <th>New Serial No</th>
+                <th>Qty</th>
+            </tr> 
+        </thead>
+        <tbody id="product_list">
+
+        </tbody>
+    </table>
+</div>
 
 <div class="clearfix"></div>
 <!--    <div class="modal-footer">-->
@@ -461,31 +479,65 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').show();
         }
     }
-    $('.field-tblassetdetailbom-spare_code').parent('div').hide();
-    $('.field-tblassetdetail-current_status').parent('div').hide();
-    $('.field-tblassetdetailbom-serial_number').parent('div').hide();
-    $('.field-tblassetdetailbom-spare').parent('div').hide();
-    $('.field-tblassetdetail-sr_number').parent('div').hide();
-    $('.field-tblassetdetailbom-current_status').parent('div').hide();
+    $('.QltyParamDiv').hide();
+    
     function spare_list(){
         if($('#tblcomplain-spare_required').is(':checked')) {
-            $('.field-tblassetdetailbom-spare_code').parent('div').show();
-            $('.field-tblassetdetail-current_status').parent('div').show();
-            $('.field-tblassetdetailbom-serial_number').parent('div').show();
-            $('.field-tblassetdetailbom-spare').parent('div').show();
-            $('.field-tblassetdetail-sr_number').parent('div').show();
-            $('.field-tblassetdetailbom-current_status').parent('div').show();
+            $('.QltyParamDiv').show();
         } else {
-            $('.field-tblassetdetailbom-spare_code').parent('div').hide();
-            $('.field-tblassetdetail-current_status').parent('div').hide();
-            $('.field-tblassetdetailbom-serial_number').parent('div').hide();
-            $('.field-tblassetdetailbom-spare').parent('div').hide();
-            $('.field-tblassetdetail-sr_number').parent('div').hide();
-            $('.field-tblassetdetailbom-current_status').parent('div').hide();
+            $('.QltyParamDiv').hide();
 
         }
     }
     
+
+   $('#add_product').on('click', function(){
+        var err = '';
+        var spare_code = $('#tblcomplainspare-spare_code option:selected').val();
+        if(spare_code == ''){
+            err += '\\nSpare can not be Blank.';
+        }
+        
+        if(err == ''){
+            var tr_class;
+                var spare = $('#tblcomplainspare-spare_code option:selected').text();
+                var old_serial_no = $('#tblcomplainspare-old_serial_no option:selected').val();
+                var old_spare_status = $('#tblcomplainspare-old_spare_status option:selected').text();
+                var new_serial_no = $('#tblcomplainspare-new_serial_no option:selected').val();
+                var qty = $('#tblcomplainspare-qty').val();
+                var append_data = '<tr class='+tr_class+'>';
+                append_data += '<td>'+spare+'<input type=\'hidden\' name=\'tblcomplainspare['+tr_class+'][spare_code]\' value='+spare_code+'></td>';
+                append_data += '<td>'+old_serial_no+'<input type=\'hidden\' name=\'tblcomplainspare['+tr_class+'][old_serial_no]\' value='+old_serial_no+'></td>';
+                append_data += '<td>'+old_spare_status+'<input type=\'hidden\' name=\'tblcomplainspare['+tr_class+'][old_spare_status]\' value=\''+old_spare_status+'\'></td>';
+                append_data += '<td>'+new_serial_no+'<input type=\'hidden\' name=\'tblcomplainspare['+tr_class+'][new_serial_no]\' value=\''+new_serial_no+'\'></td>';
+                append_data += '<td>'+qty+'<input type=\'hidden\' name=\'tblcomplainspare['+tr_class+'][qty]\' value=\''+qty+'\'></td>';
+                append_data += '</tr>';
+                $('#product_list').append(append_data);
+                $('#tblcomplainspare-spare_code').val(null).trigger('change');
+                $('#tblcomplainspare-old_serial_no').val(null).trigger('change');
+                $('#tblcomplainspare-old_spare_status').val(null).trigger('change');
+                $('#tblcomplainspare-new_serial_no').val(null).trigger('change');
+                $('#tblcomplainspare-qty').val('');
+                $('.btn-save-txn').removeClass('disabled no_pointer');
+            
+        } else {
+            bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle\'></i></div><div class=\'col-sm-10 padding-left-0\'>'+err+'</div></div>');
+        }
+    });
+    
+  $('#tblcomplainspare-spare_code').on('change', function(){
+        addBtnEnable();
+    });
+    
+  function addBtnEnable(){
+    var type = $('#tblcomplainspare-spare_code').val();
+
+    if(type != '') {
+        $('.add-asset-record').removeClass('disabled no_pointer');
+    } else {
+        $('.add-asset-record').addClass('disabled no_pointer');
+    }
+}
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>
