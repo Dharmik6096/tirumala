@@ -61,7 +61,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
     </div>
     <div class="col-sm-3  mt25">
-        <?= $form->field($model, 'for_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'for_member'); ?>
     </div>
     <?= Html::hiddenInput('file_name', '', ['id' => 'file_name']); ?>
 

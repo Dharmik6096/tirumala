@@ -72,8 +72,8 @@ $form = ActiveForm::begin(['options' => [
                     </div>
                     <div class="panel-footer">
 
-                        <button type="button" class="btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Close') ?></button>
-                        <?php echo Html::submitButton(Yii::t('app', 'Download'), ['class' => 'btn btn-default', 'name' => 'templet-download']); ?>
+                        <button type="button" class="btn-login btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Close') ?></button>
+                        <?php echo Html::submitButton(Yii::t('app', 'Download'), ['class' => 'btn-login btn-default', 'name' => 'templet-download']); ?>
                     </div>
                 </div>
             </div>
