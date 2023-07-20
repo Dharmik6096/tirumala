@@ -156,7 +156,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 ->andFilterWhere(['like', 'tbl_milk_collection.deduction', $this->deduction])
                 ->andFilterWhere(['like', 'tbl_dcs.ref_code', $this->ref_code])
                 ->andFilterWhere(['like', 'tbl_milk_collection.originating_org_type', $this->originating_org_type])
-                ->andFilterWhere(['like', 'tbl_dcs.dcs_name', $this->dcs_name]);
+                ->andFilterWhere(['like', 'tbl_dcs.dcs_code', $this->dcs_code]);
 //        echo $query->createCommand()->getRawSql();die;
         return $dataProvider;
     }

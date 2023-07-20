@@ -931,6 +931,33 @@ input[type="hidden"] + .help-block{
     font-family: FontAwesome;
 }
 
+.alert-danger{
+    background: #fff5f5;
+    border-left: 2px solid rgb(122, 35, 28);
+    padding: 5px 10px;
+    color: rgb(122, 35, 28);
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+.alert-danger p{
+    color: #607188;
+}
+.alert-danger ul{
+    list-style: none;
+    padding: 0;
+}
+.alert-danger ul li{
+    position: relative;
+    padding-left: 20px;
+}
+.alert-danger ul li:before{
+    position: absolute;
+    top: 0;
+    left: 0;
+/*    content: "\f192";
+    font-family: FontAwesome;*/
+}
+
 /* SNF CALC CSS */
 /* Basic reset */
 
@@ -2335,6 +2362,9 @@ div.crystalstyle{
 .report-area .kv-panel-before [title="Personalize grid settings"] {
     display: none !important;
 }
+.select2-container--krajee-bs5 .select2-selection--single .select2-selection__clear[title="Remove all items"]{
+    display: none !important;
+}
 
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
@@ -2665,6 +2695,7 @@ div.crystalstyle{
     padding: 5px;
     height: 13px;
     text-align: left;
+    margin: 0px !important;
 }
 .panel .panel-body select{
     padding: 1px !important;
@@ -4079,6 +4110,18 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
     right: 12px;
     top: -1px;
 }
+.select2-container--krajee-bs5 .select2-selection--multiple .select2-selection__clear {
+    float: right;
+    color: #000;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    opacity: 0.4;
+    position: absolute;
+    right: 0;
+    margin-top: auto;
+}
 
 .dashboard_collection_grid_tbl .table tbody tr td {
     text-align: center;
@@ -4728,6 +4771,10 @@ table.dataTable tbody tr:nth-child(odd) {
     margin: 2px 0 0 3px;
     opacity: -3.6 !important;
 }
+.select2-selection__choice__remove {
+   color: #7a231c !important;
+   text-shadow: 0 0  !important;
+}
 
 .fht-table-wrapper{
     overflow: auto !important;
@@ -5078,6 +5125,16 @@ tr.highlightRow {
     color: #999;
     padding: 0;
 }
+.select2-container--krajee-bs5 .select2-selection--multiple .select2-selection__rendered {
+    box-sizing: border-box;
+    line-height: 1.5;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: inline-flex;
+    overflow-x: auto;
+}
 
 .kv-dp-icon {
     font-size: 10px;
@@ -5113,13 +5170,14 @@ tr.highlightRow {
 .select2-container--krajee-bs5 .select2-selection--multiple .select2-selection__choice {
    color: #fff !important;
     background: #7a231c !important;
-    border: 1px solid #7a231c !important;
+    border: 0px solid #7a231c !important;
     border-radius: 8px;
     cursor: default;
     float: left;
-    margin: 1px 0 4px 2px;
-    padding: 0px 2px;
-    font-size: 12px;
+    margin: 2px 0 6px 0px;
+    padding: 0px 4px;
+    font-size: 11px;
+    line-height: 18px;
 }
 .select2-container--krajee-bs5 .select2-selection--multiple {
     height: 24px;
@@ -5140,4 +5198,7 @@ tr.highlightRow {
     top: 10px;
     right: 12px;
     position: absolute;
+}
+.hide {
+    display: none !important;
 }

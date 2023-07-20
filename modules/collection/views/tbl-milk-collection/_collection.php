@@ -94,17 +94,19 @@ $form = ActiveForm::begin([
         <div class="clearfix"></div>
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?php
-                AjaxSubmitButton::begin([
-                    'label' => Yii::t('app', 'Add'),
-                    'ajaxOptions' => [
-                        'type' => 'POST',
-                        'url' => Url::to(['create']),
-                        'beforeSend' => new JsExpression("function(data){
+                <div class="row">
+                    <div class="col-sm-3">
+                        <?php
+                        AjaxSubmitButton::begin([
+                            'label' => Yii::t('app', 'Add'),
+                            'ajaxOptions' => [
+                                'type' => 'POST',
+                                'url' => Url::to(['create']),
+                                'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),
-                        'success' => new JsExpression('function(data){
+                                'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
@@ -151,16 +153,19 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary").show();
                                                                 }
                                                  }'),
-                    ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
-                        'type' => 'submit'],
-                ]);
-                AjaxSubmitButton::end();
-                ?>
-                <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
+                            ],
+                            'options' => ['class' => 'btn btn-default btn-raised',
+                                'type' => 'submit'],
+                        ]);
+                        AjaxSubmitButton::end();
+                        ?>
+                    </div>
+                    <div class="col-sm-3">
+                        <?= Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login'); ?> 
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>
