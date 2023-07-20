@@ -412,34 +412,38 @@ class GeneralModel {
     }
 
     public function deleteMapping($modelName, $fieldName, $fieldValue) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        $flag = [];
+        try {
+            $model = Yii::$app->path->define($modelName[0]);
 
-        $model = Yii::$app->path->define($modelName[0]);
-
-        $data = $model::find()->where([$fieldName => $fieldValue])->all();
-        if ($data) {
-            foreach ($data as $row) {
-                $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
-                Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
-                $flag[] = $modelMappingHistory->save();
-                //$row->is_delete = 1;
-                //$row->deleted_by = \Yii::$app->user->identity->user_code;
-                //$row->deleted_at = date('Y-m-d H:i:s');
-                $flag[] = $row->delete();
+            $data = $model::find()->where([$fieldName => $fieldValue])->all();
+            if ($data) {
+                foreach ($data as $row) {
+                    $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
+                    Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
+                    $flag[] = $modelMappingHistory->save();
+                    $flag[] = $row->delete();
+                }
+                if (!in_array(FALSE, $flag)) {
+                    $transaction->commit();
+                    return $flag;
+                } else {
+                    $transaction->rollback();
+                    return $flag;
+                }
             }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return $flag;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return $flag;
         }
-
-
-        /* if ($data) {
-          Yii::$app->operation->history($data, $modelMappingHistory, DELETE);
-          $flag[] = $modelMappingHistory->save();
-          $data->is_delete = 1;
-          $data->deleted_by = \Yii::$app->user->identity->user_code;
-          $data->deleted_at = date('Y-m-d H:i:s');
-          $flag[] = $data->save();
-          return $flag;
-          } */
-        return true;
     }
 
     public function deleteContacts($modelName, $code, $type) {

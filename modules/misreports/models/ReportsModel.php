@@ -99,14 +99,14 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummarySocietyWise']],
                 [['union_code', 'p_date'], 'required', 'on' => ['ProductStockDetailSummaryMccWise']],
                 [['union_code', 'plant_code', 'p_date'], 'required', 'on' => ['MemberWiseOutstanding', 'DcsWiseOutstanding', 'VendorWiseOutstanding', 'MccWiseOutstanding']],
-                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk', 'StockRegisterToSap', 'StockRegisterMccToSap', 'MilkCollectionProc', 'MilkCollectionProcDetail']],
+                [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberProductSaleForPaidInstallment', 'DcsProductSaleForPaidInstallment', 'VendorProductSaleForPaidInstallment', 'MccProductSaleForPaidInstallment', 'NewMemberPouringMilk', 'MilkCollectionProc', 'MilkCollectionProcDetail']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['NewMemberPouringMilk', 'NewCustomerPouringMilk']],
                 [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'report_type'], 'required', 'on' => ['CenterLossGainReport']],
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'action_perform'], 'required', 'on' => ['BmcCollectionHistory']],
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 15, '>', 'Day Difference can not be greater than 15.');
                 }, 'skipOnEmpty' => false, 'on' => ['MemberDailyCollection', 'MilkCollectionData', 'MemberMilkBill']],
-                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyCompositeVsActual']],
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SocietyCompositeVsActual', 'MpgPaymentBillStatement']],
                 [['union_code', 'channel_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['SdFileSummary']],
                 [['union_code', 'mcc_code', 'date', 'shift', 'report_type'], 'required', 'on' => 'SapReport'],
                 [['union_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => 'SapReportCdpl'],
@@ -121,17 +121,17 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['TankerReceiptNote']],
                 [['from_date', 'to_date', 'bmc_code'], 'required', 'on' => ['MccReceiptVsBmcDispatch']],
                 [['from_date', 'to_date', 'bmc_code'], 'required', 'on' => ['MccDayBookDispatchHubHorizontal']],
-                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['StockDispatchToMccFromStore', 'StockReceivedToMcc', 'StockDispatchToSale']],
+                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['StockDispatchToMccFromStore', 'StockReceivedToMcc', 'StockDispatchToSale', 'StockRegisterToSap', 'StockRegisterMccToSap']],
                 [['union_code', 'p_date'], 'required', 'on' => ['StockTransferToDcs', 'StockAtMcc']],
                 [['union_code', 'p_date'], 'required', 'on' => ['StockAtDcs']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportFarmer']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
-                [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportMcc']],
-                [['union_code', 'p_date'], 'required', 'on' => ['SummaryReportDcs']],
+                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportMcc', 'SummaryReportDcs']],
                 [['union_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']],
                 [['union_code', 'plant_code', 'mcc_code', 'p_date'], 'required', 'on' => ['MilkCollectionAbsent']],
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['LeftPourer']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'required', 'on' => ['MccRecipationSummary', 'MccRecipationDetail']],
+                [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['BmcWiseSocietyWiseAutoManual', 'BmcWiseAutoManualSummary']],
         ];
     }
 

@@ -39,13 +39,13 @@ class TblBillHeadDetailHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['bill_head_detail_code', 'bill_head_code', 'payment_cycle_code', 'dcs_code', 'is_active', 'bill_head_for'], 'safe'],
-            [['bill_head_detail_code', 'union_code', 'bill_head_code', 'dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
-            [['payment_cycle_code', 'is_installment', 'no_installment', 'is_active'], 'safe'],
-            [['amount'], 'safe'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
-            [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
+                [['bill_head_detail_code', 'bill_head_code', 'payment_cycle_code', 'dcs_code', 'is_active', 'bill_head_for'], 'safe'],
+                [['bill_head_detail_code', 'union_code', 'bill_head_code', 'dcs_code', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
+                [['payment_cycle_code', 'is_installment', 'no_installment', 'is_active'], 'safe'],
+                [['amount'], 'safe'],
+                [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['customer_type', 'customer_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'remarks'], 'safe'],
         ];
     }
 
