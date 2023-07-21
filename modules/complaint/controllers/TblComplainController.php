@@ -30,6 +30,7 @@ use app\modules\assetmanagement\models\TblAssetDetailBom;
 use app\modules\assetmanagement\models\TblAssetDetail;
 use app\modules\assetmanagement\models\TblAssetBom;
 use app\modules\complaint\models\TblComplainSpare;
+use yii\widgets\ActiveForm;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -533,9 +534,6 @@ class TblComplainController extends \app\controllers\ChildController {
 
         $this->model = $this->findModel($id);
         $this->viewFile = 'resolve_complain';
-        $asset_detail_bom = new TblAssetDetailBom();
-        $asset_detail = new TblAssetDetail();
-        $asset_bom = new TblAssetBom();
         $complain_spare = new TblComplainSpare();
         if (Yii::$app->request->post()) {
             $saveModel = [];
@@ -576,15 +574,50 @@ class TblComplainController extends \app\controllers\ChildController {
                     $saveModel[] = $complain_attachment;
                 }
             }
+            $spare = [];
+            if (!empty(Yii::$app->request->post()['tblcomplainspare'])) {
+                $spare = Yii::$app->request->post()['tblcomplainspare'];
+                if (!empty($spare)) {
+                    foreach ($spare as $spare_list) {
+                        $complain_spare = new TblComplainSpare();
+                        $complain_spare->spare_code = $spare_list['spare_code'];
+                        $complain_spare->old_serial_no = $spare_list['old_serial_no'];
+                        $complain_spare->old_spare_status = $spare_list['old_spare_status'];
+                        $complain_spare->new_serial_no = $spare_list['new_serial_no'];
+                        $complain_spare->qty = $spare_list['qty'];
+                        $saveModel[] = $complain_spare;
+                    }
+                }
+            }
 
 //            $complain_attachment = new TblAttachment();
-            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain Activity', 'edit']);
-            if ($transaction == 'customRedirect') {
+//            $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain Activity', 'edit']);
+//            if ($transaction == 'customRedirect') {
+            if (!empty($spare)) {
+                foreach ($spare as $key => $spare_list) {
+                    $sp_param = [];
+                    $sp_name = 'Proc_complain_asset';
+                    $sp_param[] = $this->model->complain_code;
+                    if ($this->model->asset_code) {
+                        $assetsr = explode('##', $this->model->asset_code);
+                        $sp_param[] = $assetsr[0];
+                    }
+                    $sp_param[] = $this->model->plant_code;
+                    $sp_param[] = $this->model->mcc_plant_code;
+                    $sp_param[] = $this->model->bmc_code;
+                    $sp_param[] = $this->model->dcs_code;
+                    $sp_param[] = $this->model->spare_required;
+                    $sp_param[] = $spare_list['spare_code'];
+                    $sp_param[] = $this->model->resolved_status;
+                    $sp_param[] = $spare_list['new_serial_no'];
+                    $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
+                }
+            }
 //                if ($complain_attachment->attachment != $old_attachment && !empty($old_attachment)) {
 //                    unlink(Yii::$app->params['complaint_dir_path'] . $old_attachment);
 //                }
-                return $this->redirect(['tbl-complain/index']);
-            }
+            return $this->redirect(['tbl-complain/index']);
+//            }
         }
 
         $sp_param = [];
@@ -593,7 +626,10 @@ class TblComplainController extends \app\controllers\ChildController {
         $sp_param[] = $this->model->plant_code;
         $sp_param[] = $this->model->bmc_code;
         $sp_param[] = $this->model->dcs_code;
-        $sp_param[] = $this->model->asset_code;
+        if ($this->model->asset_code) {
+            $assetsr = explode('##', $this->model->asset_code);
+            $sp_param[] = $assetsr[0];
+        }
         $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
         $serialNo = [];
         if (!empty($srNos)) {
@@ -605,9 +641,6 @@ class TblComplainController extends \app\controllers\ChildController {
                     'model' => $this->model,
                     'complainAttachment' => $complain_attachment,
                     'dropdownSerialNo' => $serialNo,
-                    'asset_detail_bom' => $asset_detail_bom,
-                    'asset_detail' => $asset_detail,
-                    'asset_bom' => $asset_bom,
                     'complain_spare' => $complain_spare,
                         ]
         );
@@ -798,6 +831,25 @@ class TblComplainController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionSpareIsSerial() {
+        $data = [];
+        $data['status'] = 'error';
+        if (!empty($_POST)) {
+            $asset = $_POST['asset_code'] ? explode('##', $_POST['asset_code']) : '';
+            $asset_code = !empty($asset) ? $asset[0] : '';
+            $model = new TblAssetBom();
+            $model->spare_code = $_POST['spare_code'];
+            $model->asset_code = $asset_code;
+            $asset_serial = $model->getAssetData();
+
+            if (!empty($asset_serial)) {
+                $data['status'] = 'success';
+                $data['is_serial_number'] = $asset_serial->is_serial_number;
+            }
+        }
+        return Json::encode($data);
     }
 
 }

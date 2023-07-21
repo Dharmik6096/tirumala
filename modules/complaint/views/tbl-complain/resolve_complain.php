@@ -9,9 +9,6 @@ $this->title = Yii::$app->label->title('edit', 'Complain Resolve');
             'model' => $model,
             'type' => 'resolve',
             'dropdownSerialNo' => $dropdownSerialNo,
-            'asset_detail_bom' => $asset_detail_bom,
-            'asset_detail' => $asset_detail,
-            'asset_bom' => $asset_bom,
             'complain_spare' => $complain_spare,
         ])
         ?>
