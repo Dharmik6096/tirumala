@@ -14,7 +14,7 @@ $this->title = 'Complaint Detail (' . $model->complain_code . ')';
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Complains'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="panel panel-default panel-grid panel-main tbl-complain-view">
+<div class="panel panel-default panel-grid panel-main tbl-complain-view hide-grid-settings">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
         <?= Html::encode($this->title) ?>
@@ -152,28 +152,34 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
             </div>
         </div>
-        <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Complain Activity</h5></div>
-        <div class="clearfix"></div>
-        <?php
-        ?>
-        <?=
-        $this->render('_complaint_activity', [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-        ])
-        ?>
-<!--        <?
-        ListView::widget([
-            'dataProvider' => $dataProvider,
-            'layout' => '{items}',
-            'itemView' => '_complaint_activity',
-        ]);
-        ?>-->
-        <?=
-        $this->render('_attachment_list', [
-            'complain_attachment' => $complain_attachment,
-            'attachmentDataProvider' => $attachmentDataProvider
-        ])
-        ?>
+
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Complain Activity</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_complaint_activity', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Complain Attachment</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_attachment_list', [
+                    'complain_attachment' => $complain_attachment,
+                    'attachmentDataProvider' => $attachmentDataProvider
+                ])
+                ?>
+            </div>
+        </div>
     </div>
 </div>

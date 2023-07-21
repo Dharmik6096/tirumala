@@ -214,9 +214,15 @@ class TblAssetDetailBomController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             $asset = explode('##', $parents[0]);
-            $sr_no = $parents[1];
-            $spare_code = $parents[2];
-            if (!empty($parents[0])) {
+            $sr_no = '';
+            $spare_code = '';
+            if ($parents[1] && $parents[1] != 'Loading ...') {
+                $sr_no = $parents[1];
+            }
+            if ($parents[2] && $parents[2] != 'Loading ...') {
+                $spare_code = $parents[2];
+            }
+            if (!empty($parents[0]) && $parents[0] != 'Loading ...') {
                 $bom = new TblAssetDetailBom();
                 $data = $bom->getOldSrNo($asset[0], $sr_no, $spare_code);
                 foreach ($data as $key => $val) {

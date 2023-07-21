@@ -87,7 +87,7 @@ $form = ActiveForm::begin([
             $model->asset_code = $model->asset_code . '##' . $model->serial_number;
         }
         ?>
-        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, $disabled); ?>               
+        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for,tblcomplain-complain_type_code', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, $disabled); ?>               
     </div>
     <div class="col-sm-2 default_hide">
         <?= $form->field($model, 'serial_number')->textInput(['readonly' => true, 'data-val' => $model->serial_number]) ?>
@@ -178,7 +178,7 @@ $form = ActiveForm::begin([
                 'main' => 1,]),
             'addRemoveLinks' => true,
             'autoDiscover' => false,
-            'maxFiles' => 5,
+            'maxFiles' => 1,
         ],
         'clientEvents' => [
 //                'addedfile' => 'function(file) {
@@ -213,25 +213,30 @@ $form = ActiveForm::begin([
 
                     }",
             'removedfile' => "function(file){
-                        console.log(file.name);
-                        var name = file.name;
-                        var val = $('#attachment').val();
-                        $.ajax({
-                            type: 'POST',
-                            'url': '{$url}',
-                            data: {'id':name,'value':val},
-                            success: function(data) {                                        
-                              var obj1 = $.parseJSON(data);
-                                var new_val = val.replace(name,'');
-                                $('#attachment').val(new_val);
-                                this.options.maxFiles++;
-                            },
-                            error:function(data){
-                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
-                            }
-                        });
-                        
-                   }",
+                        var file_str = $('#attachment').val();
+                        var res = file_str.replace(file.name,''); 
+                         $('#attachment').val(res);
+                    }",
+//            'removedfile' => "function(file){
+//                        console.log(file.name);
+//                        var name = file.name;
+//                        var val = $('#attachment').val();
+//                        $.ajax({
+//                            type: 'POST',
+//                            'url': '{$url}',
+//                            data: {'id':name,'value':val},
+//                            success: function(data) {                                        
+//                              var obj1 = $.parseJSON(data);
+//                                var new_val = val.replace(name,'');
+//                                $('#attachment').val(new_val);
+//                                this.options.maxFiles++;
+//                            },
+//                            error:function(data){
+//                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
+//                            }
+//                        });
+//                        
+//                   }",
             'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
         ]
     ]);
@@ -272,9 +277,13 @@ if ($type == 'resolve') {
 //                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/create']),
             'url' => Url::to($urls),
             'beforeSend' => new \yii\web\JsExpression('function(data){
-                                            $("#loadercontent").show();
-                                            $("#pageloader").show();
-                                    }'),
+                 if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
+                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please add spare at least one</span></div></div>");
+                            return false;
+                        }
+                        $("#loadercontent").show();
+                        $("#pageloader").show();
+                    }'),
             'success' => new \yii\web\JsExpression('function(data){                                   
                                             $("#pageloader").hide();
                                             $("#loadercontent").hide();
@@ -284,23 +293,39 @@ if ($type == 'resolve') {
                                                 $("#import-pendrive-packet")[0].reset();
 //                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }else{
-                                                $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                            } else {
+                                                $("#loadercontent").hide();
+                                                $("#pageloader").hide();
+                                                $(".help-block").text("");
+                                                $(".form-group").removeClass("has-error");
+                                                $(".error-summary").hide();
+                                                $(".error-summary li").remove();
+                                                $.each(obj1, function(key, val) {
+                                                    $(".error-summary ul").append("<li>"+val+"</li>");
+                                                    if(key != "tblmilkcollection-date_time_of_collection"){
+                                                    var parent_div = $("#"+key).parent("div");
+                                                    parent_div.find(".help-block").remove();
+                                                    $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
+                                                    $("#"+key).closest(".form-group").addClass("has-error");   
                                                }
+                                                });
+                                                $(".error-summary").show();
+//                                                 $("#importModal").modal("toggle");
+//                                                 $("#import-pendrive-packet")[0].reset();
+//                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                                }
                              }'),
             'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
-                                    if($("#attachment").val()==""){
-                                     bootbox.alert("Please select file.");
-                                    }else{
-                                        $("#importModal").modal("toggle");
-                                        $("#import-pendrive-packet")[0].reset();
-//                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                    }
+//                                    if($("#attachment").val()==""){
+//                                     bootbox.alert("Please select file.");
+//                                    }else{
+//                                        $("#importModal").modal("toggle");
+//                                        $("#import-pendrive-packet")[0].reset();
+////                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+//                                    }
                              }'),
         ],
         'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
@@ -330,6 +355,7 @@ $script = "
     });
     $('#tblcomplain-complain_type_code').on('change', function() {
         var complainType = $(this).val();
+        $('#tblcomplain-location_type').val('').trigger('change');
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-complain-for']) . "',
@@ -391,16 +417,25 @@ $script = "
             $('.field-tblcomplain-mcc_plant_code').parent('div').hide();
             $('.field-tblcomplain-bmc_code').parent('div').hide();
             $('.field-tblcomplain-dcs_code').parent('div').hide();
+            $('#tblcomplain-mcc_plant_code').val('').trigger('change');
+            $('#tblcomplain-bmc_code').val('').trigger('change');
+            $('#tblcomplain-dcs_code').val('').trigger('change');
         } else if(type == '2') {
             $('.field-tblcomplain-plant_code').parent('div').show();
             $('.field-tblcomplain-mcc_plant_code').parent('div').show();
             $('.field-tblcomplain-bmc_code').parent('div').show();
             $('.field-tblcomplain-dcs_code').parent('div').hide();
+            $('#tblcomplain-dcs_code').val('').trigger('change');
         } else if(type == '3') {
             $('.field-tblcomplain-plant_code').parent('div').show();
             $('.field-tblcomplain-mcc_plant_code').parent('div').show();
             $('.field-tblcomplain-bmc_code').parent('div').show();
             $('.field-tblcomplain-dcs_code').parent('div').show();
+        } else {
+            $('.field-tblcomplain-plant_code').parent('div').hide();
+            $('.field-tblcomplain-mcc_plant_code').parent('div').hide();
+            $('.field-tblcomplain-bmc_code').parent('div').hide();
+            $('.field-tblcomplain-dcs_code').parent('div').hide();
         }
     }
     
@@ -480,6 +515,9 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').show();
         } else if(type) {
             $('.field-tblcomplain-spare_required').parent('div').hide();
+            if($('#tblcomplain-spare_required').is(':checked')) {
+                $('#tblcomplain-spare_required').trigger('click');
+            }
             $('.field-tblcomplain-new_serial_no').parent('div').hide();
         }
     }

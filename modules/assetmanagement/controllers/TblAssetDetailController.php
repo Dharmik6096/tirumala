@@ -26,7 +26,7 @@ use yii\base\UserException;
  */
 class TblAssetDetailController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-asset-is-serial', 'get-serial-no', 'validate-asset-qty'];
+    public $freeAccessActions = ['get-asset-is-serial', 'get-serial-no', 'validate-asset-qty', 'new-sr-no'];
 
     public function init() {
         parent::init();
@@ -575,15 +575,19 @@ class TblAssetDetailController extends \app\controllers\ChildController {
 //            } else if ($slocType == 3 && !empty($parents[4])) {
 //                $ref_code = $parents[4];
 //            }
-            if (!empty($parents[2])) {
+            if (!empty($parents[2] && $parents[2] != 'Loading ...')) {
                 $code[] = $parents[2];
                 $type[] = 1;
             }
-            if (!empty($parents[3])) {
+            if (!empty($parents[3] && $parents[3] != 'Loading ...')) {
                 $code[] = $parents[3];
                 $type[] = 2;
             }
-            $spare_code = $parents[5];
+            if (!empty($parents[4]) && $parents[4] != 'Loading ...') {
+                $code[] = $parents[4];
+                $type[] = 3;
+            }
+            $spare_code = $parents[5] && $parents[5] != 'Loading ...';
             if (!empty($parents[0])) {
                 $bom = new TblAssetTransaction();
                 $data = $bom->getNewSrNo($asset[0], $code, $spare_code, $type);

@@ -13,18 +13,6 @@ $attribute = [
         ['attribute' => 'module_name', 'filter' => false],
         ['attribute' => 'attachment_type', 'filter' => false],
         ['attribute' => 'file_name', 'filter' => false],
-//        ['attribute' => 'module_code', 'value' => function ($model) {
-//            return $model->module_code;
-//        }, 'visible' => true, 'filter' => false],
-//        ['attribute' => 'module_name', 'value' => function ($model) {
-//            return $model->module_name;
-//        }, 'visible' => true, 'filter' => false],
-//        ['attribute' => 'attachment_type', 'value' => function ($model) {
-//            return $model->attachment_type;
-//        }, 'visible' => true, 'filter' => false],
-//        ['attribute' => 'attachment', 'value' => function ($model) {
-//            return $model->attachment;
-//        }, 'visible' => true, 'filter' => false],
 ];
 
 $grid_option = [
