@@ -566,7 +566,6 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $asset = explode('##', $parents[0]);
             $code = [];
             $type = [];
-            $slocType = $parents[1];
             if (!empty($parents[2] && $parents[2] != 'Loading ...')) {
                 $code[] = $parents[2];
                 $type[] = 1;

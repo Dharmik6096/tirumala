@@ -494,46 +494,67 @@ class TblComplainController extends \app\controllers\ChildController {
                     }
                 }
                 $spare = [];
-                if (!empty(Yii::$app->request->post()['tblcomplainspare'])) {
-                    $spare = Yii::$app->request->post()['tblcomplainspare'];
-                    if (!empty($spare)) {
-                        foreach ($spare as $spare_list) {
-                            $complain_spare = new TblComplainSpare();
-                            $complain_spare->spare_code = $spare_list['spare_code'];
-                            $complain_spare->old_serial_no = $spare_list['old_serial_no'];
-                            $complain_spare->old_spare_status = $spare_list['old_spare_status'];
-                            $complain_spare->new_serial_no = $spare_list['new_serial_no'];
-                            $complain_spare->qty = $spare_list['qty'];
-                            $saveModel[] = $complain_spare;
+                if ($this->model->spare_required == 1) {
+                    if (!empty(Yii::$app->request->post()['tblcomplainspare'])) {
+                        $spare = Yii::$app->request->post()['tblcomplainspare'];
+                        if (!empty($spare)) {
+                            foreach ($spare as $spare_list) {
+                                $complain_spare = new TblComplainSpare();
+                                $complain_spare->spare_code = $spare_list['spare_code'];
+                                $complain_spare->old_serial_no = $spare_list['old_serial_no'];
+                                $complain_spare->old_spare_status = $spare_list['old_spare_status'];
+                                $complain_spare->new_serial_no = $spare_list['new_serial_no'];
+                                $complain_spare->qty = $spare_list['qty'];
+                                $saveModel[] = $complain_spare;
+                            }
                         }
                     }
                 }
-
                 $transaction = $this->generalModel->saveTransaction($saveModel, ['Complain Activity', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if (!empty($spare)) {
-                        foreach ($spare as $key => $spare_list) {
-                            $sp_param = [];
-                            $sp_name = 'Proc_complain_asset';
-                            $sp_param[] = $this->model->complain_code;
-                            if ($this->model->asset_code) {
-                                $assetsr = explode('##', $this->model->asset_code);
-                                $sp_param[] = $assetsr[0];
-                            } else {
-                                $sp_param[] = '';
+                    if ($this->model->spare_required == 1) {
+                        if (!empty($spare)) {
+                            foreach ($spare as $key => $spare_list) {
+                                $sp_param = [];
+                                $sp_name = 'Proc_complain_asset';
+                                $sp_param[] = $this->model->complain_code;
+                                if ($this->model->asset_code) {
+                                    $assetsr = explode('##', $this->model->asset_code);
+                                    $sp_param[] = $assetsr[0];
+                                } else {
+                                    $sp_param[] = '';
+                                }
+                                $sp_param[] = $this->model->plant_code;
+                                $sp_param[] = $this->model->mcc_plant_code;
+                                $sp_param[] = $this->model->bmc_code;
+                                $sp_param[] = $this->model->dcs_code;
+                                $sp_param[] = $this->model->spare_required;
+                                $sp_param[] = $spare_list['spare_code'];
+                                $sp_param[] = $this->model->resolved_status;
+                                $sp_param[] = $spare_list['new_serial_no'];
+                                $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
                             }
-                            $sp_param[] = $this->model->plant_code;
-                            $sp_param[] = $this->model->mcc_plant_code;
-                            $sp_param[] = $this->model->bmc_code;
-                            $sp_param[] = $this->model->dcs_code;
-                            $sp_param[] = $this->model->spare_required;
-                            $sp_param[] = $spare_list['spare_code'];
-                            $sp_param[] = $this->model->resolved_status;
-                            $sp_param[] = $spare_list['new_serial_no'];
-                            $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
                         }
+                    } else {
+                        $sp_param = [];
+                        $sp_name = 'Proc_complain_asset';
+                        $sp_param[] = $this->model->complain_code;
+                        if ($this->model->asset_code) {
+                            $assetsr = explode('##', $this->model->asset_code);
+                            $sp_param[] = $assetsr[0];
+                        } else {
+                            $sp_param[] = '';
+                        }
+                        $sp_param[] = $this->model->plant_code;
+                        $sp_param[] = $this->model->mcc_plant_code;
+                        $sp_param[] = $this->model->bmc_code;
+                        $sp_param[] = $this->model->dcs_code;
+                        $sp_param[] = $this->model->spare_required;
+                        $sp_param[] = '';
+                        $sp_param[] = $this->model->resolved_status;
+                        $sp_param[] = $this->model->new_serial_no;
+                        $srNos = \Yii::$app->general->getSpData($sp_name, $sp_param);
                     }
-
                     return $this->redirect(['tbl-complain/index']);
                 }
             } else {
