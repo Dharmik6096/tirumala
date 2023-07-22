@@ -564,17 +564,9 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             $asset = explode('##', $parents[0]);
-//            $ref_code = '';
             $code = [];
             $type = [];
             $slocType = $parents[1];
-//            if ($slocType == 1 && !empty($parents[2])) {
-//                $ref_code = $parents[2];
-//            } else if ($slocType == 2 && !empty($parents[3])) {
-//                $ref_code = $parents[3];
-//            } else if ($slocType == 3 && !empty($parents[4])) {
-//                $ref_code = $parents[4];
-//            }
             if (!empty($parents[2] && $parents[2] != 'Loading ...')) {
                 $code[] = $parents[2];
                 $type[] = 1;

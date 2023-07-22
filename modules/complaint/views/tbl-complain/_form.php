@@ -9,10 +9,7 @@ use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$url = Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
-//$button_type = (($type == 'create') ? 'create' : ($type == 'edit' ? 'update' : 'resolve' ));
-//$type = ($type == 'create' ? ($urls = ['create']) : ($type == 'edit' ? $urls = ['update', 'id' => $model->complain_code] : ($urls = ['resolve-complain', 'id' => $model->complain_code])));
 $button_type = '';
 $urls = '';
 if ($type == 'create') {
@@ -31,27 +28,18 @@ $attachment = '';
 $attachment_code = '';
 $disabled = $type == 'resolve' ? True : false;
 
-//$class = 'default_hide';
-//$disabled = $type == 'resolve' ? '' : $class;
-//if (!empty($model['attachment'])) {
-//    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
-//    $attachmentData = $model['attachment'];
-//    $attachment = $attachmentData->attachment;
-//    $attachment_code = $attachmentData->attachment_code;
-//}
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
-            'id' => 'import-pendrive-packet',
+            'id' => 'complain-form',
         ]);
 ?>
 <?= $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), $disabled, 'complain_type_code'); ?>
-        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']);       ?>
     </div>
     <div class="col-sm-2">       
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $disabled); ?>
@@ -92,9 +80,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 default_hide">
         <?= $form->field($model, 'serial_number')->textInput(['readonly' => true, 'data-val' => $model->serial_number]) ?>
     </div>
-    <!--    <div class="col-sm-2 disp_none">
-            <? $form->field($model, 'complain_type_code')->textInput(['data-val' => $model->complain_type_code]) ?>
-        </div>-->
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->complain_problem($model, $form, 'tblcomplain-complain_type_code', 'complain_problem_code', $model->getAttributeLabel('complain_problem_code')); ?>
     </div>
@@ -167,9 +152,6 @@ $form = ActiveForm::begin([
 
 <div class="col-sm-12">
     <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
-    <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']);  ?>
-    <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']);       ?>
-
     <?=
     Dropzone::widget([
         'id' => 'mainDrop',
@@ -181,18 +163,6 @@ $form = ActiveForm::begin([
             'maxFiles' => 1,
         ],
         'clientEvents' => [
-//                'addedfile' => 'function(file) {
-//                        var filenames = [];
-//                        var existingFiles = this.files;
-//                        console.log(existingFiles);
-//                        for (var i = 0; i < existingFiles.length; i++) {
-//                            filenames.push(existingFiles[i].name);
-//                        }
-//                        if (filenames.includes(file.name)) {
-//                            this.removeFile(file);
-//                            alert("File with the same name already exists.");
-//                        }  
-//                    }',
             'success' => "function( file, response ){
                         var data=$.parseJSON(response);
                         if(data.status=='success')
@@ -216,27 +186,8 @@ $form = ActiveForm::begin([
                         var file_str = $('#attachment').val();
                         var res = file_str.replace(file.name,''); 
                          $('#attachment').val(res);
+                         this.options.maxFiles++;
                     }",
-//            'removedfile' => "function(file){
-//                        console.log(file.name);
-//                        var name = file.name;
-//                        var val = $('#attachment').val();
-//                        $.ajax({
-//                            type: 'POST',
-//                            'url': '{$url}',
-//                            data: {'id':name,'value':val},
-//                            success: function(data) {                                        
-//                              var obj1 = $.parseJSON(data);
-//                                var new_val = val.replace(name,'');
-//                                $('#attachment').val(new_val);
-//                                this.options.maxFiles++;
-//                            },
-//                            error:function(data){
-//                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
-//                            }
-//                        });
-//                        
-//                   }",
             'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
         ]
     ]);
@@ -266,15 +217,12 @@ if ($type == 'resolve') {
 }
 ?>
 <div class="clearfix"></div>
-<!--    <div class="modal-footer">-->
 <div class="col-sm-12">
     <?php
     AjaxSubmitButton::begin([
         'label' => Yii::t('app', $button_type),
         'ajaxOptions' => [
             'type' => 'POST',
-//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/attachment-upload']),
-//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/create']),
             'url' => Url::to($urls),
             'beforeSend' => new \yii\web\JsExpression('function(data){
                  if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
@@ -290,8 +238,7 @@ if ($type == 'resolve') {
                                             var obj1 = $.parseJSON(data);
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                $("#complain-form")[0].reset();
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             } else {
@@ -311,21 +258,11 @@ if ($type == 'resolve') {
                                                }
                                                 });
                                                 $(".error-summary").show();
-//                                                 $("#importModal").modal("toggle");
-//                                                 $("#import-pendrive-packet")[0].reset();
-//                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                                 }
                              }'),
             'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
-//                                    if($("#attachment").val()==""){
-//                                     bootbox.alert("Please select file.");
-//                                    }else{
-//                                        $("#importModal").modal("toggle");
-//                                        $("#import-pendrive-packet")[0].reset();
-////                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
-//                                    }
                              }'),
         ],
         'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
@@ -335,7 +272,6 @@ if ($type == 'resolve') {
 </div>
 <div class="col-sm-2">
     <div class="form-group">
-        <!--<? Yii::$app->controls->save(Yii::$app->label->button($button_type), $model); ?>-->
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
@@ -344,7 +280,6 @@ if ($type == 'resolve') {
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-//    var _csrf_token = yii.getCsrfParam() ? yii.getCsrfToken() : '';
     $('.default_hide').hide();
     hideSectionManage($('#tblcomplain-location_type').val());
     var complainFor = $('#tblcomplain-complain_for').val();
@@ -439,8 +374,6 @@ $script = "
         }
     }
     
-   
-
     $('#tblcomplain-plant_code').on('change',function(){
         setContactDetails();
     });

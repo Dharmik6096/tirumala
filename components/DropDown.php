@@ -551,11 +551,6 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
 
-    public function bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
-        $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom', 'Select', $multiple, $model->$name, $readonly);
-    }
-
     public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom-list', 'Select', $multiple, $model->$name, $readonly);
@@ -564,11 +559,6 @@ class DropDown extends Component {
     public function old_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail-bom/old-sr-no', 'Select', $multiple, $model->$name, $readonly);
-    }
-
-    public function new_spare_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
-        $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/new-spare-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
     public function new_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {

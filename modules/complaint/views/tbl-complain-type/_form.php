@@ -23,9 +23,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdownStatic('complain_for', $model, $form, '', $model->getAttributeLabel('complain_for'), false, 'complain_for', FALSE, FALSE, FALSE); ?>
     </div>
-<!--    <div class="col-sm-2 mt15">
-        <? $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
-    </div>-->
     <div class="clearfix"></div>
     <div class="col-sm-2">
         <div class="form-group">

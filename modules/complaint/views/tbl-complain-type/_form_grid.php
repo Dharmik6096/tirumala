@@ -30,7 +30,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
-//        'view' => true,
         'update' => true,
         'delete' => ['option' => 'complain_type,complain_type_code,tbl-complain-type/delete'],
         'deactive' => function ($url, $model) {

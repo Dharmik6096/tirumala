@@ -69,8 +69,6 @@ $grid_option = [
                 $url = '#';
                 $class = 'disabled';
             }
-//            $url = ($model->checkEditable()) ? Url::to(['tbl-complain/update', 'id' => $model->complain_code]) : '#';
-//            $class = ($model->checkEditable()) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
