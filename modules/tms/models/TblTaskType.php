@@ -9,6 +9,7 @@ use Yii;
  *
  * @property integer $task_type_code
  * @property string $task_type
+ * @property integer $has_form
  * @property integer $is_active
  * @property string $union_code
  * @property string $created_at
@@ -35,7 +36,7 @@ class TblTaskType extends \app\models\ChildModel
     public function rules()
     {
         return [
-            [['is_active', 'originating_type'], 'integer'],
+            [['has_form', 'is_active', 'originating_type'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['task_type'], 'string', 'max' => 255],
             [['union_code'], 'string', 'max' => 3],
@@ -52,6 +53,7 @@ class TblTaskType extends \app\models\ChildModel
         return [
             'task_type_code' => Yii::t('app', 'Task Type Code'),
             'task_type' => Yii::t('app', 'Task Type'),
+            'has_form' => Yii::t('app', 'Has Form'),
             'is_active' => Yii::t('app', 'Is Active'),
             'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),

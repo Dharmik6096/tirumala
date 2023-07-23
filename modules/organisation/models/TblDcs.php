@@ -725,8 +725,8 @@ class TblDcs extends ChildModel {
     public function getRouteDcsList($routeCode, $dcsCode = '') {
 
 
-        if ($routeCode === '')
-            $routeCode = 0;
+     //   if ($routeCode === '')
+    //       $routeCode = 0;
         $value = $this->getRouteDcs($routeCode);
         $value = ArrayHelper::map($value, 'dcs_code', function ($value) {
                     return $value['dcs_name'] . ' - ' . $value['ref_code'];

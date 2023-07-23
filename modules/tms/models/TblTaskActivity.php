@@ -3,6 +3,7 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcs;
 
 /**
  * This is the model class for table "tbl_task_activity".
@@ -10,6 +11,7 @@ use Yii;
  * @property integer $task_activity_code
  * @property integer $task_code
  * @property string $user_code
+ * @property string $route_code
  * @property string $module_type
  * @property string $module_code
  * @property integer $form_type_code
@@ -28,43 +30,43 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblTaskActivity extends \app\models\ChildModel
-{
+class TblTaskActivity extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_task_activity';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['task_code', 'form_type_code', 'originating_type'], 'integer'],
-            [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['form_data'], 'string'],
-            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['module_type', 'status'], 'string', 'max' => 10],
-            [['module_code'], 'string', 'max' => 20],
-            [['contact_person'], 'string', 'max' => 100],
-            [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['status'], 'default', 'value' => 'OPEN'],
+                [['task_code', 'form_type_code', 'originating_type'], 'safe'],
+                [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['form_data'], 'safe'],
+                [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['route_code'], 'string', 'max' => 12],
+                [['module_type', 'status'], 'string', 'max' => 10],
+                [['module_code'], 'string', 'max' => 20],
+                [['contact_person'], 'string', 'max' => 100],
+                [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'task_activity_code' => Yii::t('app', 'Task Activity Code'),
             'task_code' => Yii::t('app', 'Task Code'),
             'user_code' => Yii::t('app', 'User Code'),
+            'route_code' => Yii::t('app', 'Route Code'),
             'module_type' => Yii::t('app', 'Module Type'),
             'module_code' => Yii::t('app', 'Module Code'),
             'form_type_code' => Yii::t('app', 'Form Type Code'),
@@ -84,4 +86,9 @@ class TblTaskActivity extends \app\models\ChildModel
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
+    }
+
 }

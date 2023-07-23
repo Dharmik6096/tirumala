@@ -216,7 +216,9 @@ class DropDown extends Component {
 
     public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false) {
 //$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
-        if ($multiselect) {
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), $multiple, '', $readonly, '', true, TRUE);
+        } else if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs/route-dcs-list');
         } else {
             return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), '', '', $readonly);
@@ -379,7 +381,11 @@ class DropDown extends Component {
 
     public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, '', $readonly, '', true, TRUE);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
@@ -1540,6 +1546,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Activity Status'),
                 'data' => ['0' => Yii::t('app', 'Faulty'), '1' => Yii::t('app', 'Scrapped')],
             ],
+            'task_performed_for' => [
+                'name' => 'task_performed_for',
+                'prompt' => Yii::t('app', 'Select Location Type'),
+                'data' => ['PLANT' => Yii::t('app', 'PLANT'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
+            'task_repeat_interval' => [
+                'name' => 'task_repeat_interval',
+                'prompt' => Yii::t('app', 'Select Repeat Interval'),
+                'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
+            ],
         ];
         return $records[$l];
     }
@@ -1659,6 +1675,8 @@ class DropDown extends Component {
             'complain_escalation_name' => ['name' => 'complain_escalation_code', 'fields' => 'complain_escalation_code,escalation_name', 'prompt' => 'Select Complain  Escalation Name', 'model' => 'TblComplainEscalation'],
             'complain_type' => ['name' => 'complain_type_code', 'fields' => 'complain_type_code,complain_type', 'prompt' => 'Select Complain Type', 'model' => 'TblComplainType'],
             'contact_detail_complain_user' => ['name' => 'user_code', 'fields' => 'detail_code,firstname,mobile_no', 'prompt' => 'Select', 'model' => 'TblContactDetails'],
+            'task_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType'],
+            'form_type' => ['name' => 'form_type_code', 'fields' => 'form_type_code,form_name,', 'prompt' => Yii::t('app', 'Select Form'), 'model' => 'TblFormType', 'depend' => 'task_type_code'],
         ];
         return $label[$l];
     }

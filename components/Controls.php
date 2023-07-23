@@ -342,4 +342,18 @@ class Controls extends Component {
         return ($value == NULL || $value == '') ? '' : Yii::$app->formatter->asDatetime($value . Yii::$app->getTimeZone(), 'php:m-Y');
     }
 
+    public function weekday_list($model, $form) {
+        return $form->field($model, 'week_days')->checkboxList(
+                        ['Sun' => 'S', 'Mon' => 'M', 'Tue' => 'T', 'Wed' => 'W', 'Thu' => 'T', 'Fri' => 'F', 'Sat' => 'S'], [
+                    'id' => 'day-list',
+                    'class' => 'days-container',
+                    'item' =>
+                    function ($index, $label, $name, $checked, $value) {
+                        return Html::checkbox($name, $checked, [
+                                    'value' => $value,
+                                    'id' => $value,
+                                ]) . '<label for=' . $value . '>' . $label . '</label>';
+                    },]);
+    }
+
 }
