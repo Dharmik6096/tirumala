@@ -75,7 +75,7 @@ class TblTask extends \app\models\ChildModel {
                 [['form_type_code'], 'required', 'when' => function ($model) {
                     return FALSE;
                 }, 'whenClient' => "function (attribute, value) { 
-                   return $('#tbltask-form_type_code').has('option').length > 0 
+                   return $('select#tbltask-form_type_code option').length > 1 
                    }", 'on' => ['addTask']],
                 [['end_date'], 'required', 'when' => function ($model) {
                     return in_array($model->repeat_interval, ['1', '2']);
@@ -104,10 +104,10 @@ class TblTask extends \app\models\ChildModel {
             'task_datetime' => Yii::t('app', 'Task Datetime'),
             'is_cancel' => Yii::t('app', 'Is Cancel'),
             'user_code' => Yii::t('app', 'User'),
-            'dcs_code' => Yii::t('app', 'DCS (multiselect visible when Location DCS)'),
-            'route_code' => Yii::t('app', 'ROUTE (visible when Location DCS)'),
-            'bmc_code' => Yii::t('app', 'BMC (visible when Location BMC/DCS)'),
-            'mcc_plant_code' => Yii::t('app', 'MCC (visible when Location BMC/DCS)'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'route_code' => Yii::t('app', 'ROUTE'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
             'plant_code' => Yii::t('app', 'PLANT'),
             'union_code' => Yii::t('app', 'UNION'),
             'is_notified' => Yii::t('app', 'Is Notified'),
@@ -121,6 +121,8 @@ class TblTask extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'end_date' => Yii::t('app', 'End Date *'),
+            'week_days' => Yii::t('app', 'Week Days *'),
         ];
     }
 

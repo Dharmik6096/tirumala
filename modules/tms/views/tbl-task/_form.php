@@ -26,23 +26,23 @@ echo $form->errorSummary($model);
         <?= Yii::$app->dropdown->union_plant($model, $form, 'tbltask-union_code', 'plant_code', $model->getAttributeLabel('plant_code')); ?>
     </div>
     <div class="col-sm-2 default_hide_input location_bmc location_dcs">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbltask-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code')); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tbltask-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code') . ' *'); ?>
     </div>  
     <div class="col-sm-2 default_hide_input location_bmc location_dcs">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbltask-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code')); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbltask-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code') . ' *'); ?>
     </div>  
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('task_type', $model, $form, '', $model->getAttributeLabel('task_type_code'), FALSE, 'task_type_code'); ?>
     </div>
     <div class="col-sm-2 default_hide_input task_form">
-        <?= Yii::$app->dropdown->depend_dropdown('form_type', $model, $form, 'tbltask-task_type_code', '', $model->getAttributeLabel('form_type_code')); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('form_type', $model, $form, 'tbltask-task_type_code', '', $model->getAttributeLabel('form_type_code') . ' *'); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-4 default_hide_input location_dcs">
-        <?= Yii::$app->dropdown->all_routes($model, $form, 'tbltask-plant_code,tbltask-mcc_plant_code,tbltask-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), TRUE); ?>
+        <?= Yii::$app->dropdown->all_routes($model, $form, 'tbltask-plant_code,tbltask-mcc_plant_code,tbltask-bmc_code', 'route_code', $model->getAttributeLabel('route_code') . ' *', TRUE); ?>
     </div>
     <div class="col-sm-8 default_hide_input location_dcs">
-        <?= Yii::$app->dropdown->route_dcs($model, $form, 'tbltask-route_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), TRUE); ?>
+        <?= Yii::$app->dropdown->route_dcs($model, $form, 'tbltask-route_code', 'dcs_code', $model->getAttributeLabel('dcs_code') . ' *', TRUE); ?>
     </div>
     <div class="col-sm-8">
         <div class="col-sm-3">
@@ -57,7 +57,7 @@ echo $form->errorSummary($model);
         <div class="col-sm-3">
             <?= Yii::$app->dropdown->dropdownStatic('task_repeat_interval', $model, $form, '', $model->getAttributeLabel('repeat_interval'), FALSE, 'repeat_interval'); ?>
         </div>
-        <div class="col-sm-3 default_hide_input repeat_daily">
+        <div class="col-sm-3 default_hide_input repeat_daily repeat_weekly">
             <?= Yii::$app->controls->date($model, $form, 'end_date', '', FALSE, date('Y-m-d', strtotime('+1 day')), FALSE, true); ?>
         </div>
         <div class="col-sm-6 default_hide_input repeat_weekly">
@@ -105,8 +105,7 @@ $script = "
         }  
         function showForm() {
             $('.task_form').hide();
-            if($('#tbltask-form_type_code').has('option').length > 0){
-            console.log($('#tbltask-form_type_code').has('option').length);
+            if($('select#tbltask-form_type_code option').length > 1){
                 $('.task_form').show();
             }
         }
