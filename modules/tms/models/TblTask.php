@@ -3,6 +3,13 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\usermanagement\models\User;
+use app\modules\tms\models\TblTaskType;
+use app\modules\tms\models\TblFormType;
 
 /**
  * This is the model class for table "tbl_task".
@@ -101,8 +108,8 @@ class TblTask extends \app\models\ChildModel {
             'task_performed_for' => Yii::t('app', 'Location Type'),
             'title' => Yii::t('app', 'Title'),
             'description' => Yii::t('app', 'Description'),
-            'task_datetime' => Yii::t('app', 'Task Datetime'),
-            'is_cancel' => Yii::t('app', 'Is Cancel'),
+            'task_datetime' => Yii::t('app', 'Task Date'),
+            'is_cancel' => Yii::t('app', 'Is Cancel ?'),
             'user_code' => Yii::t('app', 'User'),
             'dcs_code' => Yii::t('app', 'DCS'),
             'route_code' => Yii::t('app', 'ROUTE'),
@@ -110,7 +117,7 @@ class TblTask extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'plant_code' => Yii::t('app', 'PLANT'),
             'union_code' => Yii::t('app', 'UNION'),
-            'is_notified' => Yii::t('app', 'Is Notified'),
+            'is_notified' => Yii::t('app', 'Is Notified ?'),
             'notified_datetime' => Yii::t('app', 'Notified Datetime'),
             'pick_datetime' => Yii::t('app', 'Pick Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
@@ -124,6 +131,34 @@ class TblTask extends \app\models\ChildModel {
             'end_date' => Yii::t('app', 'End Date *'),
             'week_days' => Yii::t('app', 'Week Days *'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getTaskTypeCode() {
+        return $this->hasOne(TblTaskType::className(), ['task_type_code' => 'task_type_code']);
+    }
+
+    public function getFormTypeCode() {
+        return $this->hasOne(TblFormType::className(), ['form_type_code' => 'form_type_code']);
     }
 
 }
