@@ -14,7 +14,7 @@ $attribute = [
         ['attribute' => 'attachment_type', 'filter' => false],
         ['attribute' => 'file_name', 'filter' => false],
         ['attribute' => 'attachment', 'filter' => false],
-        ['attribute' => 'remark', 'filter' => false],
+        ['attribute' => 'remarks', 'filter' => false],
 ];
 
 $grid_option = [

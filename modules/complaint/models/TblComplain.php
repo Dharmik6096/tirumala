@@ -71,12 +71,48 @@ class TblComplain extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['user_code', 'mobile_no', 'location_details', 'complain_type_code', 'remarks', 'resolved_remarks', 'complain_problem_code', 'physical_damage', 'spare_required', 'affects_data', 'originating_type', 'union_code', 'plant_code', 'mcc_plant_code', 'location_type', 'bmc_code', 'dcs_code', 'complain_for', 'serial_number', 'new_serial_no', 'asset_code', 'contact_person', 'lat_long', 'complain_datetime', 'complain_assignment_datetime', 'complain_status_datetime', 'resolved_datetime', 'created_at', 'updated_at', 'complain_status', 'entry_type', 'resolved_status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['plant_code', 'complain_type_code', 'location_type', 'contact_person', 'mobile_no', 'serial_number', 'complain_problem_code'], 'required', 'on' => ['portal_create_complaint']],
+                [['complain_type_code', 'location_type', 'contact_person', 'mobile_no', 'complain_problem_code'], 'required', 'on' => ['portal_create_complaint', 'portal_update_complaint']],
                 [['physical_damage'], 'default', 'value' => 0],
                 [['mobile_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
                 [['user_code'], 'required', 'on' => ['assign_complain']],
+                [['complain_problem_code', 'resolved_status'], 'required', 'on' => ['portal_resolve_complaint']],
+                [['plant_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->location_type == '1' || $model->location_type == '2' || $model->location_type == '3');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-location_type').val() == '1' || $('#tblcomplain-location_type').val() == '2' || $('#tblcomplain-location_type').val() == '3');
+                  }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['mcc_plant_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->location_type == '2' || $model->location_type == '3');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-location_type').val() == '2' || $('#tblcomplain-location_type').val() == '3');
+                  }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->location_type == '2' || $model->location_type == '3');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-location_type').val() == '2' || $('#tblcomplain-location_type').val() == '3');
+                  }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['dcs_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->location_type == '3');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-location_type').val() == '3');
+                  }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['serial_number'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->complain_for == 'asset_complain');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain');
+                    }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['asset_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->complain_for == 'asset_complain');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain');
+                  }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
+                [['new_serial_no'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->resolved_status == 'replace' && $model->spare_required == 0);
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblcomplain-complain_for').val() == 'asset_complain');
+                }", 'on' => ['portal_create_complaint', 'portal_resolve_complaint']],
         ];
     }
 

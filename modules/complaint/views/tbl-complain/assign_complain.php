@@ -166,14 +166,9 @@ if ($location_type == 2) {
                                     'class' => 'form-group popup-form',
                                     'id' => 'complaint-assignment-form',
                                 ],
-//                                'action' => Url::to(['assign-complain'])
                     ]);
                     ?>
                     <div class="show-error"></div>
-
-                    <!--                    <div class="col-sm-6" >
-                                            <? Yii::$app->dropdown->dropdown('assign', $model, $form, '', $model->getAttributeLabel('assign_to'), false, 'user_code'); ?>
-                                        </div>-->
                     <div class="col-sm-6" >
                         <?php echo Html::hiddenInput('location_type', $location_type_name, ['id' => 'location_type']); ?>
                         <?php echo Html::hiddenInput('code', $code, ['id' => 'code']); ?>

@@ -738,7 +738,7 @@ echo GhostMenu::widget([
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Complain CP<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Complain<b class="caret"></b></a>',
                     'items' => [
                             ['label' => Yii::t('app', 'Complain Escalation'), 'url' => ['/complaint/tbl-complain-escalation/index'], 'active' => ($cntrl == 'tbl-complain-escalation')],
                             ['label' => Yii::t('app', 'Complain Type'), 'url' => ['/complaint/tbl-complain-type/index'], 'active' => ($cntrl == 'tbl-complain-type')],

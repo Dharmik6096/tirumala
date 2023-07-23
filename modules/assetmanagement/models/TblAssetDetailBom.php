@@ -102,37 +102,12 @@ class TblAssetDetailBom extends \app\models\ChildModel {
         }
     }
 
-//    public function getOldSrNo($asset_code, $slocType, $ref_code, $spare_code) {
-//        return $this->find()
-//                        ->select(['DISTINCT(tbl_asset_detail_bom.spare_code) as spare_code,tbl_asset_detail_bom.serial_number'])
-//                        ->innerJoin('tbl_asset_detail', 'tbl_asset_detail.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
-//                        ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
-//                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-//                        ->where(['tbl_asset_transaction.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '2', 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code, 'tbl_asset_detail_bom.spare_code' => $spare_code])->asArray()->all();
-//    }
-//    public function getOldSrNo($asset_code, $slocType, $ref_code, $spare_code) {
-//        return $this->find()
-//                        ->select(['DISTINCT(tbl_asset_detail_bom.spare_code) as spare_code,tbl_asset_detail_bom.serial_number'])
-//                        ->innerJoin('tbl_asset_bom', 'tbl_asset_bom.spare_code = tbl_asset_detail_bom.spare_code')
-//                        ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
-//                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-//                        ->where(['tbl_asset_transaction.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '2', 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code, 'tbl_asset_detail_bom.spare_code' => $spare_code, 'tbl_asset_bom.is_serial_number' => 1])->asArray()->all();
-//    }
     public function getOldSrNo($asset_code, $sr_no, $spare_code) {
         return $this->find()
                         ->select(['DISTINCT(tbl_asset_detail_bom.serial_number) as serial_number'])
                         ->innerJoin('tbl_asset_detail', 'tbl_asset_detail.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
                         ->where(['tbl_asset_detail.serial_number' => $sr_no, 'tbl_asset_detail.asset_code' => $asset_code, 'tbl_asset_detail_bom.spare_code' => $spare_code, 'tbl_asset_detail_bom.is_active' => 1])->asArray()->all();
     }
-
-//    public function getNewSrNo($asset_code) {
-//        return $this->find()
-//                        ->select(['DISTINCT(tbl_asset_detail_bom.spare_code) as spare_code,tbl_asset_detail_bom.serial_number'])
-//                        ->innerJoin('tbl_asset_detail', 'tbl_asset_detail.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
-//                        ->innerJoin('tbl_asset_transaction', 'tbl_asset_transaction.asset_detail_code = tbl_asset_detail_bom.asset_detail_code')
-//                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest')
-//                        ->where(['tbl_asset_transaction.asset_code' => $asset_code, 'tbl_asset_transaction.status' => '0'])->asArray()->all();
-//    }
 
     public function checkCode($attribute) {
         $data = 0;

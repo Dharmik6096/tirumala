@@ -9,7 +9,6 @@ use yii\helpers\Url;
 <?php
 
 $attribute = [
-        ['attribute' => 'complain_code', 'filter' => false],
         ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false],
@@ -64,12 +63,16 @@ $grid_option = [
     'actions' => [
         'view' => TRUE,
         'edit' => function ($url, $model) {
-            $url = ($model->checkEditable()) ? Url::to(['tbl-complain/update', 'id' => $model->complain_code]) : '#';
-            $class = ($model->checkEditable()) ? '' : 'link-disable';
+            $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);
+            $class = '';
+            if (!$model->checkEditable()) {
+                $url = '#';
+                $class = 'disabled';
+            }
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'delete' => ['option' => 'contact_person,complain_code,tbl-complain/delete,checkEditable()'],
+        'delete' => ['option' => 'complain_code,complain_code,tbl-complain/delete,checkEditable()'],
         'assign-complain' => function ($url, $model) {
             $url = Url::to(['assign-complain', 'complain_code' => $model->complain_code]);
             $class = ($model->checkAssign()) ? 'link-disable' : '';

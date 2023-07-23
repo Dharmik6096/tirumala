@@ -32,9 +32,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-3">
                 <?= $form->field($model, 'escalation_remarks')->textarea() ?>
             </div>
-<!--            <div class="col-sm-2 mt15">
-                <? $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
-            </div>-->
         </div>
     </div>
     <div class="clearfix"></div>

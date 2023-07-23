@@ -9,37 +9,37 @@ use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$url = Url::to(['/complaint/tbl-complain/remove']);
 $path = Yii::$app->params['complaint_dir_path'];
-$button_type = (($type == 'create') ? 'create' : ($type == 'edit' ? 'update' : 'resolve' ));
-$type = ($type == 'create' ? ($urls = ['create']) : ($type == 'edit' ? $urls = ['update', 'id' => $model->complain_code] : ($urls = ['resolve-complain', 'id' => $model->complain_code])));
+$button_type = '';
+$urls = '';
+if ($type == 'create') {
+    $button_type = 'create';
+    $urls = ['create'];
+} else if ($type == 'edit') {
+    $button_type = 'update';
+    $urls = ['update', 'id' => $model->complain_code];
+} else {
+    $button_type = 'resolve';
+    $urls = ['resolve-complain', 'id' => $model->complain_code];
+}
 
 $size = '';
 $attachment = '';
 $attachment_code = '';
-$disabled = $type[0] == 'resolve-complain' ? True : false;
+$disabled = $type == 'resolve' ? True : false;
 
-//$class = 'default_hide';
-//$disabled = $type == 'resolve' ? '' : $class;
-//if (!empty($model['attachment'])) {
-//    file_exists($path . $model['attachment']->attachment) ? $size = filesize($path . $model['attachment']->attachment) : $size = '';
-//    $attachmentData = $model['attachment'];
-//    $attachment = $attachmentData->attachment;
-//    $attachment_code = $attachmentData->attachment_code;
-//}
 $form = ActiveForm::begin([
             'validateOnBlur' => false,
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
-            'id' => 'import-pendrive-packet',
+            'id' => 'complain-form',
         ]);
 ?>
 <?= $form->errorSummary($model); ?>
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('complain_type', $model, $form, '', $model->getAttributeLabel('complain_type_code'), $disabled, 'complain_type_code'); ?>
-        <?php // echo Html::hiddenInput('TblComplain[complain_for]', '', ['id' => 'complain_for']);     ?>
     </div>
     <div class="col-sm-2">       
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $disabled); ?>
@@ -75,19 +75,16 @@ $form = ActiveForm::begin([
             $model->asset_code = $model->asset_code . '##' . $model->serial_number;
         }
         ?>
-        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, $disabled); ?>               
+        <?= Yii::$app->dropdown->asset_list($model, $form, 'tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplain-complain_for,tblcomplain-complain_type_code', 'asset_code', $model->getAttributeLabel('asset_code'), FALSE, $disabled); ?>               
     </div>
     <div class="col-sm-2 default_hide">
         <?= $form->field($model, 'serial_number')->textInput(['readonly' => true, 'data-val' => $model->serial_number]) ?>
     </div>
-    <!--    <div class="col-sm-2 disp_none">
-            <? $form->field($model, 'complain_type_code')->textInput(['data-val' => $model->complain_type_code]) ?>
-        </div>-->
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->complain_problem($model, $form, 'tblcomplain-complain_type_code', 'complain_problem_code', $model->getAttributeLabel('complain_problem_code')); ?>
     </div>
     <?php
-    if ($type[0] != 'resolve-complain') {
+    if ($type != 'resolve') {
         ?>
         <div class = "col-sm-3">
             <?= $form->field($model, 'remarks')->textarea() ?>
@@ -103,7 +100,7 @@ $form = ActiveForm::begin([
     ?>
 
     <?php
-    if ($type[0] == 'resolve-complain') {
+    if ($type == 'resolve') {
         ?>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('resolved_status', $model, $form, 'form-group', $model->getAttributeLabel('resolved_status')); ?>
@@ -128,12 +125,13 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Html::activeHiddenInput($model, 'asset_code'); ?>
             <?php Yii::$app->dropdown->asset_bom_list($complain_spare, $form, 'tblcomplain-asset_code', 'spare_code', $complain_spare->getAttributeLabel('spare_code')); ?>
+            <?php echo Html::hiddenInput('is_serial_number', '', ['id' => 'is_serial_number']); ?>
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->old_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-serial_number,tblcomplainspare-spare_code', 'old_serial_no', $complain_spare->getAttributeLabel('old_serial_no')); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('new_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('new_spare_status')); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('old_spare_status', $complain_spare, $form, 'form-group', $complain_spare->getAttributeLabel('old_spare_status')); ?>
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->new_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplainspare-spare_code', 'new_serial_no', $complain_spare->getAttributeLabel('new_serial_no')); ?>
@@ -143,7 +141,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2 padding_top_20 shortcut-main">
             <?=
-            Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn btn-primary add-asset-record disabled no_pointer', 'id' => 'add_product'])
+            Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn btn-primary add-asset-record disabled no_pointer', 'id' => 'add_spare'])
             ?>
         </div>        
     </div>
@@ -154,9 +152,6 @@ $form = ActiveForm::begin([
 
 <div class="col-sm-12">
     <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
-    <?php // echo Html::hiddenInput('TblAttachment[attachment]', '', ['id' => 'attachment']);  ?>
-    <?php // echo Html::hiddenInput('TblAttachment[attachment_code]', $attachment_code, ['id' => 'attachment_code']);     ?>
-
     <?=
     Dropzone::widget([
         'id' => 'mainDrop',
@@ -165,21 +160,9 @@ $form = ActiveForm::begin([
                 'main' => 1,]),
             'addRemoveLinks' => true,
             'autoDiscover' => false,
-            'maxFiles' => 5,
+            'maxFiles' => 1,
         ],
         'clientEvents' => [
-//                'addedfile' => 'function(file) {
-//                        var filenames = [];
-//                        var existingFiles = this.files;
-//                        console.log(existingFiles);
-//                        for (var i = 0; i < existingFiles.length; i++) {
-//                            filenames.push(existingFiles[i].name);
-//                        }
-//                        if (filenames.includes(file.name)) {
-//                            this.removeFile(file);
-//                            alert("File with the same name already exists.");
-//                        }  
-//                    }',
             'success' => "function( file, response ){
                         var data=$.parseJSON(response);
                         if(data.status=='success')
@@ -200,72 +183,86 @@ $form = ActiveForm::begin([
 
                     }",
             'removedfile' => "function(file){
-                        console.log(file.name);
-                        var name = file.name;
-                        var val = $('#attachment').val();
-                        $.ajax({
-                            type: 'POST',
-                            'url': '{$url}',
-                            data: {'id':name,'value':val},
-                            success: function(data) {                                        
-                              var obj1 = $.parseJSON(data);
-                                var new_val = val.replace(name,'');
-                                $('#attachment').val(new_val);
-                                this.options.maxFiles++;
-                            },
-                            error:function(data){
-                                bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Not Removed Due to Error</span></div></div>');
-                            }
-                        });
-                        
-                   }",
+                        var file_str = $('#attachment').val();
+                        var res = file_str.replace(file.name,''); 
+                         $('#attachment').val(res);
+                         this.options.maxFiles++;
+                    }",
             'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
         ]
     ]);
     ?>
 </div> 
+<?php
+if ($type == 'resolve') {
+    ?>
+    <div class="clearfix"></div>
+    <div class="col-sm-12 QltyParamDiv">
+        <table class="table table-bordered table-striped table-main table-language br_grey bl_grey asset_transaction_table">
+            <thead>
+                <tr>
+                    <th>Spare</th>
+                    <th>Old Serial No</th>
+                    <th>Old Spare Status</th>
+                    <th>New Serial No</th>
+                    <th>Qty</th>
+                </tr> 
+            </thead>
+            <tbody id="spare_list">
 
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+?>
 <div class="clearfix"></div>
-<!--    <div class="modal-footer">-->
 <div class="col-sm-12">
     <?php
     AjaxSubmitButton::begin([
         'label' => Yii::t('app', $button_type),
         'ajaxOptions' => [
             'type' => 'POST',
-//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/attachment-upload']),
-//                'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/create']),
             'url' => Url::to($urls),
             'beforeSend' => new \yii\web\JsExpression('function(data){
-                                            $("#loadercontent").show();
-                                            $("#pageloader").show();
-                                    }'),
+                 if($("#tblcomplain-resolved_status").val() == "replace" && $("#tblcomplain-spare_required").is(":checked") && $("#spare_list tr").length <= 0){
+                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>Please add spare at least one</span></div></div>");
+                            return false;
+                        }
+                        $("#loadercontent").show();
+                        $("#pageloader").show();
+                    }'),
             'success' => new \yii\web\JsExpression('function(data){                                   
                                             $("#pageloader").hide();
                                             $("#loadercontent").hide();
                                             var obj1 = $.parseJSON(data);
                                             if (obj1.status == "success"){
                                                 $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                $("#complain-form")[0].reset();
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }else{
-                                                $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-//                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }
+                                            } else {
+                                                $("#loadercontent").hide();
+                                                $("#pageloader").hide();
+                                                $(".help-block").text("");
+                                                $(".form-group").removeClass("has-error");
+                                                $(".error-summary").hide();
+                                                $(".error-summary li").remove();
+                                                $.each(obj1, function(key, val) {
+                                                    $(".error-summary ul").append("<li>"+val+"</li>");
+                                                    if(key != "tblmilkcollection-date_time_of_collection"){
+                                                    var parent_div = $("#"+key).parent("div");
+                                                    parent_div.find(".help-block").remove();
+                                                    $("#"+key).after("<div class=\"help-block\">"+val+"</div>");
+                                                    $("#"+key).closest(".form-group").addClass("has-error");   
+                                               }
+                                                });
+                                                $(".error-summary").show();
+                                                }
                              }'),
             'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
-                                    if($("#attachment").val()==""){
-                                     bootbox.alert("Please select file.");
-                                    }else{
-                                        $("#importModal").modal("toggle");
-                                        $("#import-pendrive-packet")[0].reset();
-//                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                    }
                              }'),
         ],
         'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
@@ -275,7 +272,6 @@ $form = ActiveForm::begin([
 </div>
 <div class="col-sm-2">
     <div class="form-group">
-        <!--<? Yii::$app->controls->save(Yii::$app->label->button($button_type), $model); ?>-->
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
@@ -284,7 +280,6 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
-//    var _csrf_token = yii.getCsrfParam() ? yii.getCsrfToken() : '';
     $('.default_hide').hide();
     hideSectionManage($('#tblcomplain-location_type').val());
     var complainFor = $('#tblcomplain-complain_for').val();
@@ -295,6 +290,7 @@ $script = "
     });
     $('#tblcomplain-complain_type_code').on('change', function() {
         var complainType = $(this).val();
+        $('#tblcomplain-location_type').val('').trigger('change');
         $.ajax({
             type: 'post',
             url: '" . Url::to(['get-complain-for']) . "',
@@ -356,21 +352,28 @@ $script = "
             $('.field-tblcomplain-mcc_plant_code').parent('div').hide();
             $('.field-tblcomplain-bmc_code').parent('div').hide();
             $('.field-tblcomplain-dcs_code').parent('div').hide();
+            $('#tblcomplain-mcc_plant_code').val('').trigger('change');
+            $('#tblcomplain-bmc_code').val('').trigger('change');
+            $('#tblcomplain-dcs_code').val('').trigger('change');
         } else if(type == '2') {
             $('.field-tblcomplain-plant_code').parent('div').show();
             $('.field-tblcomplain-mcc_plant_code').parent('div').show();
             $('.field-tblcomplain-bmc_code').parent('div').show();
             $('.field-tblcomplain-dcs_code').parent('div').hide();
+            $('#tblcomplain-dcs_code').val('').trigger('change');
         } else if(type == '3') {
             $('.field-tblcomplain-plant_code').parent('div').show();
             $('.field-tblcomplain-mcc_plant_code').parent('div').show();
             $('.field-tblcomplain-bmc_code').parent('div').show();
             $('.field-tblcomplain-dcs_code').parent('div').show();
+        } else {
+            $('.field-tblcomplain-plant_code').parent('div').hide();
+            $('.field-tblcomplain-mcc_plant_code').parent('div').hide();
+            $('.field-tblcomplain-bmc_code').parent('div').hide();
+            $('.field-tblcomplain-dcs_code').parent('div').hide();
         }
     }
     
-   
-
     $('#tblcomplain-plant_code').on('change',function(){
         setContactDetails();
     });
@@ -445,6 +448,9 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').show();
         } else if(type) {
             $('.field-tblcomplain-spare_required').parent('div').hide();
+            if($('#tblcomplain-spare_required').is(':checked')) {
+                $('#tblcomplain-spare_required').trigger('click');
+            }
             $('.field-tblcomplain-new_serial_no').parent('div').hide();
         }
     }
@@ -461,31 +467,131 @@ $script = "
             $('.field-tblcomplain-new_serial_no').parent('div').show();
         }
     }
-    $('.field-tblassetdetailbom-spare_code').parent('div').hide();
-    $('.field-tblassetdetail-current_status').parent('div').hide();
-    $('.field-tblassetdetailbom-serial_number').parent('div').hide();
-    $('.field-tblassetdetailbom-spare').parent('div').hide();
-    $('.field-tblassetdetail-sr_number').parent('div').hide();
-    $('.field-tblassetdetailbom-current_status').parent('div').hide();
+    $('.QltyParamDiv').hide();
+    
     function spare_list(){
         if($('#tblcomplain-spare_required').is(':checked')) {
-            $('.field-tblassetdetailbom-spare_code').parent('div').show();
-            $('.field-tblassetdetail-current_status').parent('div').show();
-            $('.field-tblassetdetailbom-serial_number').parent('div').show();
-            $('.field-tblassetdetailbom-spare').parent('div').show();
-            $('.field-tblassetdetail-sr_number').parent('div').show();
-            $('.field-tblassetdetailbom-current_status').parent('div').show();
+            $('.QltyParamDiv').show();
         } else {
-            $('.field-tblassetdetailbom-spare_code').parent('div').hide();
-            $('.field-tblassetdetail-current_status').parent('div').hide();
-            $('.field-tblassetdetailbom-serial_number').parent('div').hide();
-            $('.field-tblassetdetailbom-spare').parent('div').hide();
-            $('.field-tblassetdetail-sr_number').parent('div').hide();
-            $('.field-tblassetdetailbom-current_status').parent('div').hide();
+            $('.QltyParamDiv').hide();
 
         }
     }
     
+   var rowCount = 0;
+   $('#add_spare').on('click', function(){
+        var err = '';
+        var spare_code = $('#tblcomplainspare-spare_code option:selected').val();
+        var old_spare_status = $('#tblcomplainspare-old_spare_status option:selected').val();
+        if(spare_code == ''){
+            err += 'Spare can not be Blank.<br>';
+        }
+        if(old_spare_status == ''){
+            err += 'Old spare status can not be Blank.<br>';
+        }
+        var tr_class_new_serial;
+        var tr_class_old_serial;
+        var tr_class;            
+        var isSerialNumber = $('#is_serial_number').val();
+        if(isSerialNumber == 'yes'){
+            var spareCode = $('#tblcomplainspare-spare_code').val();
+            var old_serial_number = $('#tblcomplainspare-old_serial_no').val();
+            var new_serial_number = $('#tblcomplainspare-new_serial_no').val();
+            if(old_serial_number == ''){
+                err += 'Old serial number can not be Blank.<br>';
+            }
+            if(new_serial_number == ''){
+                err += 'New serial number can not be Blank.<br>';
+            }
+            tr_class_old_serial = spareCode+'_'+old_serial_number;
+            tr_class_new_serial = spareCode+'_'+new_serial_number;
+            if($('.'+tr_class_old_serial).length > 0){
+                err += 'Already exist spare and old serial number. Please select another spare and old serial number.<br>';
+            }
+            if($('.'+tr_class_new_serial).length > 0){
+                err += 'Already exist spare and new serial number. Please select another spare and new serial number.<br>';
+            }
+            tr_class = tr_class_old_serial+' '+tr_class_new_serial;
+        } else {
+            var spareCode = $('#tblcomplainspare-spare_code').val();
+            tr_class = spareCode;
+            if($('.'+tr_class).length > 0){
+                err += 'Already exist spare. Please select another spare.<br>';
+            }
+        }
+        if(err == ''){
+            var spare = $('#tblcomplainspare-spare_code option:selected').text();
+            var old_serial_no = $('#tblcomplainspare-old_serial_no option:selected').val();
+            var old_spare_status = $('#tblcomplainspare-old_spare_status option:selected').text();
+            var new_serial_no = $('#tblcomplainspare-new_serial_no option:selected').val();
+            var qty = $('#tblcomplainspare-qty').val();
+            var append_data = '<tr class=\"'+tr_class+'\">';
+            append_data += '<td>'+spare+'<input type=\'hidden\' name=\'tblcomplainspare['+rowCount+'][spare_code]\' value='+spare_code+'></td>';
+            append_data += '<td>'+old_serial_no+'<input type=\'hidden\' name=\'tblcomplainspare['+rowCount+'][old_serial_no]\' value='+old_serial_no+'></td>';
+            append_data += '<td>'+old_spare_status+'<input type=\'hidden\' name=\'tblcomplainspare['+rowCount+'][old_spare_status]\' value=\''+old_spare_status+'\'></td>';
+            append_data += '<td>'+new_serial_no+'<input type=\'hidden\' name=\'tblcomplainspare['+rowCount+'][new_serial_no]\' value=\''+new_serial_no+'\'></td>';
+            append_data += '<td>'+qty+'<input type=\'hidden\' name=\'tblcomplainspare['+rowCount+'][qty]\' value=\''+qty+'\'></td>';
+            append_data += '</tr>';
+            rowCount++;
+            $('#spare_list').append(append_data);
+            $('#tblcomplainspare-spare_code').val('').trigger('change');
+            $('#tblcomplainspare-old_serial_no').val(null).trigger('change');
+            $('#tblcomplainspare-old_spare_status').val(null).trigger('change');
+            $('#tblcomplainspare-new_serial_no').val(null).trigger('change');
+            $('#tblcomplainspare-qty').val('');
+            $('.btn-save-txn').removeClass('disabled no_pointer');
+
+        } else {
+            bootbox.alert('<div class=\'row\'><div class=\'col-sm-2\'><i class=\'fa fa-3x fa-times-circle\'></i></div><div class=\'col-sm-10 padding-left-0\'>'+err+'</div></div>');
+        }
+    });
+    
+  $('#tblcomplainspare-spare_code').on('change', function(){
+        addBtnEnable();
+    });
+    
+  function addBtnEnable(){
+    var type = $('#tblcomplainspare-spare_code').val();
+
+    if(type != '') {
+        $('.add-asset-record').removeClass('disabled no_pointer');
+    } else {
+        $('.add-asset-record').addClass('disabled no_pointer');
+    }
+  }
+  
+$('#tblcomplainspare-spare_code').on('change', function(){
+    hideSerialno();
+})
+
+function hideSerialno(){
+    var spare_code = $('#tblcomplainspare-spare_code').val(); 
+    var asset_code = $('#tblcomplain-asset_code').val(); 
+    $.ajax({
+        type: 'post',
+        url: '" . Url::to(['/complaint/tbl-complain/spare-is-serial']) . "',
+        data: {'spare_code' : spare_code, 'asset_code' : asset_code},
+        success: function(data) {
+            var obj1 = $.parseJSON(data);
+            if(obj1.status == 'success'){
+                if(obj1.is_serial_number == 0){
+                    $('#is_serial_number').val('no');
+                    $('.field-tblcomplainspare-old_serial_no').parent('div').hide(); 
+                    $('.field-tblcomplainspare-new_serial_no').parent('div').hide(); 
+                    $('.field-tblcomplainspare-qty').parent('div').show(); 
+                    $('#tblcomplainspare-old_serial_no').val(''); 
+                    $('#tblcomplainspare-new_serial_no').val('');
+                } else {
+                    $('#is_serial_number').val('yes');
+                    $('.field-tblcomplainspare-old_serial_no').parent('div').show(); 
+                    $('.field-tblcomplainspare-new_serial_no').parent('div').show(); 
+                    $('.field-tblcomplainspare-qty').parent('div').hide(); 
+                }
+            }
+        },
+    });
+}
+
 ";
 $this->registerJs($script, View::POS_END, 'create-complain');
 ?>
