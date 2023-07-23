@@ -351,4 +351,14 @@ class TblAssetTransaction extends \app\models\ChildModel {
         return $value;
     }
 
+    public function getNewSrNo($asset_code, $ref_code, $spare_code, $type) {
+        return $this->find()
+                        ->select(['DISTINCT(tbl_asset_transaction.serial_number) as serial_number'])
+                        ->innerJoin('tbl_store_location', 'tbl_store_location.store_location_code = tbl_asset_transaction.to_dest and tbl_store_location.store_location_type=tbl_asset_transaction.to_type')
+                        ->where(['tbl_asset_transaction.asset_code' => $spare_code, 'tbl_asset_transaction.status' => '0'])
+                        ->andWhere(['tbl_store_location.store_location_type' => $type])
+                        ->andWhere(['tbl_store_location.reference_code' => $ref_code])
+                        ->asArray()->all();
+    }
+
 }

@@ -564,25 +564,31 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
             $asset = explode('##', $parents[0]);
-            $ref_code = '';
+//            $ref_code = '';
             $code = [];
+            $type = [];
             $slocType = $parents[1];
-            if ($slocType == 1 && !empty($parents[2])) {
-                $ref_code = $parents[2];
-            } else if ($slocType == 2 && !empty($parents[3])) {
-                $ref_code = $parents[3];
+//            if ($slocType == 1 && !empty($parents[2])) {
+//                $ref_code = $parents[2];
+//            } else if ($slocType == 2 && !empty($parents[3])) {
+//                $ref_code = $parents[3];
+//            } else if ($slocType == 3 && !empty($parents[4])) {
+//                $ref_code = $parents[4];
+//            }
+            if (!empty($parents[2])) {
                 $code[] = $parents[2];
-            } else if ($slocType == 3 && !empty($parents[4])) {
-                $ref_code = $parents[4];
-                $code[] = $parents[3];
+                $type[] = 1;
             }
-            $code[] = $ref_code;
+            if (!empty($parents[3])) {
+                $code[] = $parents[3];
+                $type[] = 2;
+            }
             $spare_code = $parents[5];
             if (!empty($parents[0])) {
-                $bom = new TblAssetDetail();
-                $data = $bom->getNewSrNo($asset[0], $code, $spare_code);
+                $bom = new TblAssetTransaction();
+                $data = $bom->getNewSrNo($asset[0], $code, $spare_code, $type);
                 foreach ($data as $key => $val) {
-                    $out[] = array('id' => $val['spare_code'], 'name' => $val['serial_number']);
+                    $out[] = array('id' => $val['serial_number'], 'name' => $val['serial_number']);
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
             }
