@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 
-$this->title = Yii::$app->label->title('view', 'Task Detail');
+$this->title = Yii::$app->label->title('view', 'Task');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -65,8 +65,8 @@ $this->title = Yii::$app->label->title('view', 'Task Detail');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'task_type_code',
-                                'value' => Yii::$app->general->getforeignkey($model->taskTypeCode, 'task_type'),
+                                'attribute' => 'task_datetime',
+                                'value' => Yii::$app->controls->view_date($model->task_datetime),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -74,13 +74,22 @@ $this->title = Yii::$app->label->title('view', 'Task Detail');
                         [
                         'columns' => [
                                 [
+                                'attribute' => 'task_type_code',
+                                'value' => Yii::$app->general->getforeignkey($model->taskTypeCode, 'task_type'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
                                 'attribute' => 'form_type_code',
                                 'value' => Yii::$app->general->getforeignkey($model->formTypeCode, 'form_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'title',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'valueColOptions' => ['style' => 'width:80%']
                             ],
                         ],
                     ],
@@ -95,32 +104,23 @@ $this->title = Yii::$app->label->title('view', 'Task Detail');
                         [
                         'columns' => [
                                 [
-                                'attribute' => 'task_datetime',
-                                'value' => Yii::$app->controls->view_date($model->task_datetime),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
                                 'attribute' => 'status',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'is_cancel',
                                 'value' => Yii::$app->general->getStaticValue($model->is_cancel, 'boolean_value'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
                                 [
                                 'attribute' => 'is_notified',
                                 'value' => Yii::$app->general->getStaticValue($model->is_notified, 'boolean_value'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
                                 [
                                 'attribute' => 'notified_datetime',
                                 'value' => Yii::$app->controls->view_date($model->notified_datetime),

@@ -19,6 +19,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }, 'filter' => false],
+        ['attribute' => 'task_datetime',
+        'value' => function($model) {
+            return Yii::$app->controls->view_date($model->task_datetime);
+        }, 'filter' => false],
         ['attribute' => 'user_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->userCode, 'name');
         }],
@@ -30,10 +34,6 @@ $attribute = [
         }],
     'title',
     'description',
-        ['attribute' => 'task_datetime',
-        'value' => function($model) {
-            return Yii::$app->controls->view_date($model->task_datetime);
-        }, 'filter' => false],
     'status',
         [
         'attribute' => 'is_cancel',

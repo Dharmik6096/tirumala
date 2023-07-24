@@ -84,6 +84,11 @@ class TblTaskController extends ChildController {
         return $this->customRender();
     }
 
+    public function actionViewForm($id) {
+        $model = TblTaskActivity::findOne($id);
+        print_r($model->form_data);
+    }
+
     /**
      * Finds the TblTask model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

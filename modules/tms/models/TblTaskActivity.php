@@ -3,7 +3,10 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblRouteMapping;
 
 /**
  * This is the model class for table "tbl_task_activity".
@@ -66,12 +69,12 @@ class TblTaskActivity extends \app\models\ChildModel {
             'task_activity_code' => Yii::t('app', 'Task Activity Code'),
             'task_code' => Yii::t('app', 'Task Code'),
             'user_code' => Yii::t('app', 'User Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'module_type' => Yii::t('app', 'Module Type'),
-            'module_code' => Yii::t('app', 'Module Code'),
+            'route_code' => Yii::t('app', 'Route'),
+            'module_type' => Yii::t('app', 'Type'),
+            'module_code' => Yii::t('app', 'Code'),
             'form_type_code' => Yii::t('app', 'Form Type Code'),
             'contact_person' => Yii::t('app', 'Contact Person'),
-            'contact_person_mobile_no' => Yii::t('app', 'Contact Person Mobile No'),
+            'contact_person_mobile_no' => Yii::t('app', 'Contact Person No.'),
             'task_datetime' => Yii::t('app', 'Task Datetime'),
             'activity_datetime' => Yii::t('app', 'Activity Datetime'),
             'status' => Yii::t('app', 'Status'),
