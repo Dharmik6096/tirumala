@@ -56,6 +56,9 @@ $grid_option = [
     'id' => 'task-detail-list',
     'attributes' => $attribute,
     'active_column' => FALSE,
+    'actions' => [
+        'view' => TRUE
+    ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

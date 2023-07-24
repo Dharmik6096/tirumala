@@ -8,6 +8,7 @@ use app\modules\tms\models\TblTaskSearch;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
 use app\modules\tms\models\TblTaskActivity;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblTaskController implements the CRUD actions for TblTask model.
@@ -34,8 +35,12 @@ class TblTaskController extends ChildController {
      * @return mixed
      */
     public function actionView($id) {
+        $dataProvider = new ActiveDataProvider([
+            'query' => TblTaskActivity::find()->where(['task_code' => $id]),
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'dataProvider' => $dataProvider,
         ]);
     }
 

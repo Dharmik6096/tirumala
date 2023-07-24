@@ -32,7 +32,7 @@ echo $form->errorSummary($model);
         <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tbltask-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code') . ' *'); ?>
     </div>  
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('task_type', $model, $form, '', $model->getAttributeLabel('task_type_code'), FALSE, 'task_type_code'); ?>
+        <?= Yii::$app->dropdown->depend_dropdown('task_type', $model, $form, 'tbltask-union_code', '', $model->getAttributeLabel('task_type_code')); ?>
     </div>
     <div class="col-sm-2 default_hide_input task_form">
         <?= Yii::$app->dropdown->depend_dropdown('form_type', $model, $form, 'tbltask-task_type_code', '', $model->getAttributeLabel('form_type_code') . ' *'); ?>
