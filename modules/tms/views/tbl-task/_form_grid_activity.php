@@ -3,7 +3,9 @@
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $attribute = [
-        ['attribute' => 'route_code',],
+        ['attribute' => 'route_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+        }],
         ['attribute' => 'module_type',],
         ['attribute' => 'module_code',],
         ['attribute' => 'module_code',

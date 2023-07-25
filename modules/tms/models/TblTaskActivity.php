@@ -94,4 +94,16 @@ class TblTaskActivity extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
     }
 
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'module_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'module_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
 }
