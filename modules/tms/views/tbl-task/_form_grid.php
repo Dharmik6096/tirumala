@@ -1,5 +1,9 @@
 <?php
 
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Url;
+use yii\web\View;
+
 $attribute = [
     'task_performed_for',
         ['attribute' => 'union_code', 'value' => function($model) {
@@ -40,7 +44,7 @@ $attribute = [
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_cancel'),
         'value' => function($model) {
             return Yii::$app->general->getStaticValue($model->is_cancel, 'boolean_value');
-        }, 'visible' => false],
+        }],
         [
         'attribute' => 'is_notified',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_notified'),
@@ -57,9 +61,60 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
-        'view' => TRUE
+        'view' => TRUE,
+        'cancel' => function ($url, $model) {
+            $name = $model->title . ' of ' . date('d-m-Y', strtotime($model->task_datetime));
+            $class = ($model->status == 'OPEN' && $model->is_cancel == 0) ? '' : 'link-disable';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Cancel', 'class' => 'deact-task ' . $class, 'data-val' => $model->task_code, 'data-name' => $name];
+            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tms/tbl-task/cancel'], $options);
+        },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
+<?php
+
+$script = "
+$(document).ready(function(){
+    $(document).on('click','.deact-task',function(e){
+    var id= $(this).attr('data-val');
+    var name = $(this).attr('data-name');
+    bootbox.confirm({
+        message: '<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-question\'></i></div><span>Are you sure you want to cancel \"'+name+'\"?</span></div></div>',
+        buttons: {
+            'cancel': {
+                            label: 'Cancel',
+                            className: 'btn btn-danger'
+              },
+            'confirm': {
+                            label: 'Ok',
+                            className: 'btn btn-primary'
+             }
+        },
+        callback: function(result) {
+            if (result) {
+              $('#loader').show();
+                 $.ajax({
+                        type: 'get',
+                        url: '" . Url::to(['cancel']) . "',
+                        data:{'id':id},
+                        success: function(data) {
+                            var obj1 = $.parseJSON(data);
+                            if (obj1.status == 'success')
+                            {
+                                $.pjax.reload({container: '#task-detail-list'});
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                            else if (obj1.status == 'error'){
+                                bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
+                            }
+                        },
+               });
+            }
+        }
+    });
+    });
+   });";
+$this->registerJs($script, View::POS_END, 'task-list-index');
+?> 

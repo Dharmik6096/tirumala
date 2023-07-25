@@ -9,6 +9,9 @@ use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
 use app\modules\tms\models\TblTaskActivity;
 use yii\data\ActiveDataProvider;
+use app\modules\tms\models\TblTaskHistory;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblTaskController implements the CRUD actions for TblTask model.
@@ -87,6 +90,22 @@ class TblTaskController extends ChildController {
     public function actionViewForm($id) {
         $model = TblTaskActivity::findOne($id);
         print_r($model->form_data);
+    }
+
+    public function actionCancel($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblTaskHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_cancel = 1;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['task cancel', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Task Canceled Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Task Not Canceled.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**
