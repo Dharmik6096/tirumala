@@ -54,7 +54,7 @@ class TblFormType extends \app\models\ChildModel
     {
         return [
             'form_type_code' => Yii::t('app', 'Form Type Code'),
-            'task_type_code' => Yii::t('app', 'Task Type Code'),
+            'task_type_code' => Yii::t('app', 'Task Type'),
             'form_name' => Yii::t('app', 'Form Name'),
             'remarks' => Yii::t('app', 'Remarks'),
             'is_active' => Yii::t('app', 'Is Active'),
@@ -68,4 +68,10 @@ class TblFormType extends \app\models\ChildModel
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
+
+    public function getTaskType()
+    {
+        return $this->hasOne(TblTaskType::class, ['task_type_code' => 'task_type_code']);
+    }
+
 }
