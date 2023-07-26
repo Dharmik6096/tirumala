@@ -60,7 +60,7 @@ class TblTaskHistory extends \yii\db\ActiveRecord {
                 [['user_code', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['bmc_code'], 'safe'],
                 [['mcc_plant_code', 'plant_code'], 'safe'],
-                [['union_code'], 'safe'],
+                [['union_code', 'reference_type', 'reference_code'], 'safe'],
         ];
     }
 
