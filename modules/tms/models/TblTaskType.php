@@ -3,6 +3,7 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_task_type".
@@ -55,7 +56,7 @@ class TblTaskType extends \app\models\ChildModel
             'task_type' => Yii::t('app', 'Task Type'),
             'has_form' => Yii::t('app', 'Has Form'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'union_code' => Yii::t('app', 'Union Code'),
+            'union_code' => Yii::t('app', 'UNION'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -64,5 +65,9 @@ class TblTaskType extends \app\models\ChildModel
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::class, ['union_code' => 'union_code']);
     }
 }

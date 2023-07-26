@@ -5,14 +5,14 @@ namespace app\modules\tms\controllers;
 use Yii;
 use app\modules\tms\models\TblFormType;
 use app\modules\tms\models\TblFormTypeSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use app\controllers\ChildController;
+use app\modules\tms\models\TblFormTypeHistory;
 
 /**
  * TblFormTypeController implements the CRUD actions for TblFormType model.
  */
-class TblFormTypeController extends Controller
+class TblFormTypeController extends ChildController
 {
     /**
      * Lists all TblFormType models.
@@ -30,33 +30,21 @@ class TblFormTypeController extends Controller
     }
 
     /**
-     * Displays a single TblFormType model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
      * Creates a new TblFormType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new TblFormType();
-        $model->is_active = 1;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        $this->model = new TblFormType();
+        $this->viewFile = 'create';
+        if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Form Type', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**
@@ -67,28 +55,20 @@ class TblFormTypeController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblFormTypeHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Form Type', 'edit']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
-    }
-
-    /**
-     * Deletes an existing TblFormType model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**

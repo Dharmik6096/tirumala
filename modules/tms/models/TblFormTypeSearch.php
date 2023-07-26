@@ -62,8 +62,7 @@ class TblFormTypeSearch extends TblFormType
         
         // grid filtering conditions
         $query->andFilterWhere([            
-            // 'task_type_code' => $this->task_type_code,
-            'is_active' => $this->is_active,
+            'tbl_form_type.is_active' => $this->is_active,
         ]);
 
         $query->andFilterWhere(['like', 'form_name', $this->form_name])
