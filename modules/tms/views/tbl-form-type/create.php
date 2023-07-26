@@ -1,5 +1,6 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Task');
+$this->title =Yii::$app->label->title('create', 'Form Type');
+
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

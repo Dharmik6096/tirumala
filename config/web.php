@@ -58,6 +58,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'pdf' => ['class' => 'app\components\PDF'],
+        'DayHelper' => ['class' => 'app\components\DayHelper'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,

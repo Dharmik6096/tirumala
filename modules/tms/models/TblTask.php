@@ -3,6 +3,13 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\usermanagement\models\User;
+use app\modules\tms\models\TblTaskType;
+use app\modules\tms\models\TblFormType;
 
 /**
  * This is the model class for table "tbl_task".
@@ -16,7 +23,6 @@ use Yii;
  * @property string $task_datetime
  * @property integer $is_cancel
  * @property string $user_code
- * @property string $route_code
  * @property string $bmc_code
  * @property string $mcc_plant_code
  * @property string $plant_code
@@ -33,56 +39,85 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblTask extends \app\models\ChildModel
-{
+class TblTask extends \app\models\ChildModel {
+
+    public $dcs_code, $route_code, $repeat_interval, $week_days, $start_date, $end_date;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_task';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
-            [['task_datetime', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['task_performed_for'], 'string', 'max' => 10],
-            [['title'], 'string', 'max' => 100],
-            [['description'], 'string', 'max' => 255],
-            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['route_code', 'bmc_code'], 'string', 'max' => 12],
-            [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['status'], 'default', 'value' => 'OPEN'],
+                [['is_cancel', 'is_notified'], 'default', 'value' => 0],
+                [['task_performed_for', 'task_type_code', 'plant_code', 'title', 'description', 'user_code', 'start_date', 'repeat_interval'], 'required', 'on' => ['addTask']],
+                [['task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type', 'reference_type', 'reference_code'], 'safe'],
+                [['task_datetime', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['task_performed_for'], 'string', 'max' => 10],
+                [['title'], 'string', 'max' => 100],
+                [['description'], 'string', 'max' => 255],
+                [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['bmc_code'], 'string', 'max' => 12],
+                [['mcc_plant_code', 'plant_code'], 'string', 'max' => 6],
+                [['union_code'], 'string', 'max' => 3],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['dcs_code', 'route_code', 'repeat_interval', 'week_days', 'start_date', 'end_date'], 'safe'],
+                [['mcc_plant_code', 'bmc_code'], 'required', 'when' => function ($model) {
+                    return in_array($model->task_performed_for, ['BMC', 'DCS']);
+                }, 'whenClient' => "function (attribute, value) { 
+                   return jQuery.inArray($('#tbltask-task_performed_for').val(), ['BMC','DCS']) != -1
+                   }", 'on' => ['addTask']],
+                [['dcs_code', 'route_code'], 'required', 'when' => function ($model) {
+                    return in_array($model->task_performed_for, ['DCS']);
+                }, 'whenClient' => "function (attribute, value) { 
+                   return jQuery.inArray($('#tbltask-task_performed_for').val(), ['DCS']) != -1
+                   }", 'on' => ['addTask']],
+                [['form_type_code'], 'required', 'when' => function ($model) {
+                    return FALSE;
+                }, 'whenClient' => "function (attribute, value) { 
+                   return $('select#tbltask-form_type_code option').length > 1 
+                   }", 'on' => ['addTask']],
+                [['end_date'], 'required', 'when' => function ($model) {
+                    return in_array($model->repeat_interval, ['1', '2']);
+                }, 'whenClient' => "function (attribute, value) { 
+                   return jQuery.inArray($('#tbltask-repeat_interval').val(), ['1', '2']) != -1 
+                   }", 'on' => ['addTask']],
+                [['week_days'], 'required', 'when' => function ($model) {
+                    return in_array($model->repeat_interval, ['2']);
+                }, 'whenClient' => "function (attribute, value) { 
+                   return jQuery.inArray($('#tbltask-repeat_interval').val(), ['2']) != -1 
+                   }", 'on' => ['addTask']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'task_code' => Yii::t('app', 'Task Code'),
-            'task_type_code' => Yii::t('app', 'Task Type Code'),
-            'form_type_code' => Yii::t('app', 'Form Type Code'),
-            'task_performed_for' => Yii::t('app', 'Task Performed For'),
+            'task_type_code' => Yii::t('app', 'Task Type'),
+            'form_type_code' => Yii::t('app', 'Form Type'),
+            'task_performed_for' => Yii::t('app', 'Location Type'),
             'title' => Yii::t('app', 'Title'),
             'description' => Yii::t('app', 'Description'),
-            'task_datetime' => Yii::t('app', 'Task Datetime'),
-            'is_cancel' => Yii::t('app', 'Is Cancel'),
-            'user_code' => Yii::t('app', 'User Code'),
-            'route_code' => Yii::t('app', 'Route Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'is_notified' => Yii::t('app', 'Is Notified'),
+            'task_datetime' => Yii::t('app', 'Task Date'),
+            'is_cancel' => Yii::t('app', 'Is Cancel ?'),
+            'user_code' => Yii::t('app', 'User'),
+            'dcs_code' => Yii::t('app', 'DCS'),
+            'route_code' => Yii::t('app', 'ROUTE'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'plant_code' => Yii::t('app', 'PLANT'),
+            'union_code' => Yii::t('app', 'UNION'),
+            'is_notified' => Yii::t('app', 'Is Notified ?'),
             'notified_datetime' => Yii::t('app', 'Notified Datetime'),
             'pick_datetime' => Yii::t('app', 'Pick Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
@@ -93,6 +128,37 @@ class TblTask extends \app\models\ChildModel
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'end_date' => Yii::t('app', 'End Date *'),
+            'week_days' => Yii::t('app', 'Week Days *'),
         ];
     }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getTaskTypeCode() {
+        return $this->hasOne(TblTaskType::className(), ['task_type_code' => 'task_type_code']);
+    }
+
+    public function getFormTypeCode() {
+        return $this->hasOne(TblFormType::className(), ['form_type_code' => 'form_type_code']);
+    }
+
 }

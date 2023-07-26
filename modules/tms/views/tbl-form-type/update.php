@@ -1,5 +1,7 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Task');
+$this->title = Yii::t('app', 'Update {modelClass}: ', [
+    'modelClass' => 'Form Type',
+]) . $model->form_type_code;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -7,7 +9,7 @@ $this->title = Yii::$app->label->title('create', 'Task');
         <?=
         $this->render('_form', [
             'model' => $model,
-            'type' => 'create',
+            'type' => 'edit',
         ])
         ?>
     </div>

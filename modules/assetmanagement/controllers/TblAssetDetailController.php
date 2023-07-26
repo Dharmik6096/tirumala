@@ -94,10 +94,13 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $assetTrans->put_to_use_date = $this->model->put_to_use_date;
             $assetTrans->remain_qty = $assetTrans->qty;
             if ($assetTrans->status == 2) {
-                if (empty($assetTrans->inUseSAPCode)) {
-                    $this->model->addError('store_location_code', Yii::t('app', 'Please define SAP Code for the destination'));
-                    return $this->customRender();
-                } else {
+//                if (empty($assetTrans->inUseSAPCode)) {
+//                    $this->model->addError('store_location_code', Yii::t('app', 'Please define SAP Code for the destination'));
+//                    return $this->customRender();
+//                } else {
+//                    $assetTrans->sap_code = $assetTrans->inUseSAPCode->sap_code;
+//                }
+                if (!empty($assetTrans->inUseSAPCode)) {
                     $assetTrans->sap_code = $assetTrans->inUseSAPCode->sap_code;
                 }
             }
@@ -309,17 +312,19 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if ($model->to_type == 3 || $model->in_ward == '1') {
                 $check_data = TblAssetSet::find()->where(['store_location_type' => $model->to_type, 'store_location_code' => $model->to_dest, 'status' => [2]])
                         ->one();
-                if (empty($check_data)) {
-                    $record = ['status' => 'success', 'msg' => Yii::t('app', 'Please define SAP Code for the destination')];
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return Json::encode($record);
+//                if (empty($check_data)) {
+//                    $record = ['status' => 'success', 'msg' => Yii::t('app', 'Please define SAP Code for the destination')];
+//                    Yii::$app->response->format = Response::FORMAT_JSON;
+//                    return Json::encode($record);
+//                }
+                if(!empty($check_data)){
+                    $historyModel = new TblAssetSetHistory();
+                    Yii::$app->operation->history($check_data, $historyModel, UPDATE);
+                    $HisModel[] = $historyModel;
+                    $check_data->status = 2;
+                    $saveModel[] = $check_data;
+                    $sap_code = $check_data->sap_code;
                 }
-                $historyModel = new TblAssetSetHistory();
-                Yii::$app->operation->history($check_data, $historyModel, UPDATE);
-                $HisModel[] = $historyModel;
-                $check_data->status = 2;
-                $saveModel[] = $check_data;
-                $sap_code = $check_data->sap_code;
             }
             foreach ($model->selected_sr_no as $asset_code => $asset_detail) {
                 if ($asset_detail['is_serial_number'] == '1') {
@@ -351,8 +356,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $out_model->union_code = $trn_model->union_code;
                             $out_model->remarks = $model->remarks;
                             $out_model->qty = $out_model->remain_qty = 1;
-                            $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model->sap_code;
+                            $out_model->sap_code = ($model->to_type == 3) ? (isset($sap_code) ? $sap_code : NULL) : $trn_model->sap_code;             
                             $out_model->current_status = $trn_model->current_status;
+                            $out_model->status = '-1';
+                            if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
+                                $out_model->status = 2;
+                            }
                             $saveModel[] = $out_model;
                         } else {
                             $trn_model->status = 2;
@@ -393,6 +402,10 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                         $out_model->remain_qty = $out_model->qty;
                         $out_model->current_status = $trn_model[$cnt]->current_status;
                         if ($model->in_ward == '0') {
+                            $out_model->status = '-1';
+                            if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
+                                $out_model->status = 2;
+                            }
                             $out_model->status = ($model->to_type == 3) ? 2 : '-1';
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
                         } else {

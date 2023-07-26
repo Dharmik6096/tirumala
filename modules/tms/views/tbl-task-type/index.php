@@ -1,6 +1,5 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Task'));
-$this->params['menu'][] = Yii::$app->controls->add('Task');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Task Type'));
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

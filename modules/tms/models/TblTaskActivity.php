@@ -3,6 +3,12 @@
 namespace app\modules\tms\models;
 
 use Yii;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblRouteMapping;
+use app\modules\tms\models\TblFormType;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_task_activity".
@@ -10,6 +16,7 @@ use Yii;
  * @property integer $task_activity_code
  * @property integer $task_code
  * @property string $user_code
+ * @property string $route_code
  * @property string $module_type
  * @property string $module_code
  * @property integer $form_type_code
@@ -28,48 +35,48 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblTaskActivity extends \app\models\ChildModel
-{
+class TblTaskActivity extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_task_activity';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['task_code', 'form_type_code', 'originating_type'], 'integer'],
-            [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['form_data'], 'string'],
-            [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['module_type', 'status'], 'string', 'max' => 10],
-            [['module_code'], 'string', 'max' => 20],
-            [['contact_person'], 'string', 'max' => 100],
-            [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['status'], 'default', 'value' => 'OPEN'],
+                [['task_code', 'form_type_code', 'originating_type'], 'safe'],
+                [['task_datetime', 'activity_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['form_data'], 'safe'],
+                [['user_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['route_code'], 'string', 'max' => 12],
+                [['module_type', 'status'], 'string', 'max' => 10],
+                [['module_code'], 'string', 'max' => 20],
+                [['contact_person'], 'string', 'max' => 100],
+                [['contact_person_mobile_no', 'remarks'], 'string', 'max' => 255],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'task_activity_code' => Yii::t('app', 'Task Activity Code'),
             'task_code' => Yii::t('app', 'Task Code'),
             'user_code' => Yii::t('app', 'User Code'),
-            'module_type' => Yii::t('app', 'Module Type'),
-            'module_code' => Yii::t('app', 'Module Code'),
+            'route_code' => Yii::t('app', 'Route'),
+            'module_type' => Yii::t('app', 'Type'),
+            'module_code' => Yii::t('app', 'Code'),
             'form_type_code' => Yii::t('app', 'Form Type Code'),
             'contact_person' => Yii::t('app', 'Contact Person'),
-            'contact_person_mobile_no' => Yii::t('app', 'Contact Person Mobile No'),
+            'contact_person_mobile_no' => Yii::t('app', 'Contact Person No.'),
             'task_datetime' => Yii::t('app', 'Task Datetime'),
             'activity_datetime' => Yii::t('app', 'Activity Datetime'),
             'status' => Yii::t('app', 'Status'),
@@ -84,4 +91,29 @@ class TblTaskActivity extends \app\models\ChildModel
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
     }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'module_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'module_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'module_code']);
+    }
+
+    public function getRouteCode() {
+        return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getFormTypeCode() {
+        return $this->hasOne(TblFormType::className(), ['form_type_code' => 'form_type_code']);
+    }
+
 }

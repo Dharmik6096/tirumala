@@ -95,6 +95,7 @@ class Path extends Component {
         '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
         '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
+        '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
     ];
 
     public function get($model) {
