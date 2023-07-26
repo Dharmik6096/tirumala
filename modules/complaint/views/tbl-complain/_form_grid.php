@@ -84,7 +84,7 @@ $grid_option = [
             $status = $model->getComplainStatus($model->complain_code);
             $class = !isset($status) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->complain_code, 'data-name' => ''];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-registered"></i>', $url, $options);
         },
     ]
 ];

@@ -52,6 +52,10 @@ class GeneralModel {
             switch (count($arguments)) {
                 case 3 : return $this->save3AutoIncForeignKey($arguments[0], $arguments[1], $arguments[2]);
             }
+        } else if ($name == 'saveTransactionWithSp') {
+            switch (count($arguments)) {
+                case 3 : return $this->saveWithSp($arguments[0], $arguments[1], $arguments[2]);
+            }
         }
     }
 
@@ -622,6 +626,48 @@ class GeneralModel {
                     }
                 }
                 $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            } else {
+                $child = new ChildModel();
+                foreach ($model as $m) {
+                    $child->decryptModel($m);
+                }
+                $transaction->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Your transaction is not saved successfully']);
+                return 'customRender';
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
+    public function saveWithSp($model, $spCall, $message) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($spCall as $sp) {
+                $result = \Yii::$app->general->getSpData($sp[0], $sp[1]);
+                foreach ($result as $res) {
+                    $master[] = $res['retuns_value'];
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($model as $m) {
+                    $master[] = $m->save();
+                }
             }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();

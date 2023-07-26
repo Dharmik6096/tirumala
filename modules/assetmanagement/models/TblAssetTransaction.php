@@ -251,12 +251,15 @@ class TblAssetTransaction extends \app\models\ChildModel {
         return $this->find()->where(['from_type' => $this->from_type, 'asset_detail_code' => $this->asset_detail_code])->count();
     }
 
-    public function getSrNoAssets($ref_code, $slocType, $concatSrNo = false) {
+    public function getSrNoAssets($ref_code, $slocType, $concatSrNo = false, $is_spare = false) {
         $details = TblAssetTransaction::find()->select(['tbl_asset_transaction.asset_code', 'tbl_asset_transaction.serial_number'])
                 ->innerJoin('tbl_asset_master', 'tbl_asset_master.asset_code = tbl_asset_transaction.asset_code')
                 ->joinWith(['toStoreLocCode', 'assetDetail'])
-                ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code])
-                ->orderBy(['tbl_asset_detail.put_to_use_date' => SORT_DESC])
+                ->where(['tbl_asset_transaction.status' => [2], 'tbl_store_location.store_location_type' => $slocType, 'tbl_store_location.reference_code' => $ref_code]);
+        if ($is_spare) {
+            $details = $details->andWhere(['tbl_asset_master.is_spare' => 0]);
+        }
+        $details = $details->orderBy(['tbl_asset_detail.put_to_use_date' => SORT_DESC])
                 ->all();
 
         if ($concatSrNo) {

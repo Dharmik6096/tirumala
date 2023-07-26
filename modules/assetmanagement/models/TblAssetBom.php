@@ -83,8 +83,9 @@ class TblAssetBom extends \app\models\ChildModel {
     }
 
     public function getAssetData() {
+        $spare_code = (int) $this->spare_code;
         return $this->find()
-                        ->where(['spare_code' => $this->spare_code, 'asset_code' => $this->asset_code])
+                        ->where(['spare_code' => $spare_code, 'asset_code' => $this->asset_code])
                         ->one();
     }
 

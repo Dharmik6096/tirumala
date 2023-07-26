@@ -137,7 +137,7 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->new_sr_no($complain_spare, $form, 'tblcomplain-asset_code,tblcomplain-location_type,tblcomplain-plant_code,tblcomplain-bmc_code,tblcomplain-dcs_code,tblcomplainspare-spare_code', 'new_serial_no', $complain_spare->getAttributeLabel('new_serial_no')); ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($complain_spare, 'qty')->textInput(['value' => 1]) ?>
+            <?= $form->field($complain_spare, 'qty')->textInput(['value' => 1, 'readonly' => TRUE]) ?>
         </div>
         <div class="col-sm-2 padding_top_20 shortcut-main">
             <?=

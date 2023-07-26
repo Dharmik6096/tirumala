@@ -578,7 +578,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                 $code[] = $parents[4];
                 $type[] = 3;
             }
-            $spare_code = $parents[5] && $parents[5] != 'Loading ...';
+            $spare_code = (!empty($parents[5]) && $parents[5] != 'Loading ...') ? $parents[5] : '';
             if (!empty($parents[0])) {
                 $bom = new TblAssetTransaction();
                 $data = $bom->getNewSrNo($asset[0], $code, $spare_code, $type);
