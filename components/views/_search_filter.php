@@ -39,7 +39,7 @@ if (!empty($filter_data)) {
                         ?>
                         <div class="row margin_0">
 
-                            <div class="modal-body">
+                            <div class="row modal-body">
                                 <?php
                                 foreach ($filters as $key => $value) {
                                     $value_array = explode(':', $value);

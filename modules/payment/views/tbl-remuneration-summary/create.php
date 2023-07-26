@@ -115,7 +115,7 @@ $this->title = 'Remuneration Payment Process : Step 1';
                     ]);
                     AjaxSubmitButton::end();
                     ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
+                    <?= Yii::$app->controls->custombutton('Cancel', 'tbl-vsp-payment/index','','btn-login'); ?> 
                 </div>
             </div>
         </div>

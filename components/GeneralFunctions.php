@@ -1434,8 +1434,12 @@ class GeneralFunctions extends Component {
             $model->where_clause = str_replace('{union_code}', $model->union_code, $model->where_clause);
             $model->where_clause = str_replace('{plant_code}', $model->plant_code, $model->where_clause);
             $model->where_clause = str_replace('{mcc_plant_code}', $model->mcc_plant_code, $model->where_clause);
-            $model->where_clause = str_replace('{bmc_code}', $model->bmc_code, $model->where_clause);
-            $model->where_clause = str_replace('{dcs_code}', $model->dcs_code, $model->where_clause);
+            if ($model->bmc_code !== null) {
+                $model->where_clause = str_replace('{bmc_code}', $model->bmc_code, $model->where_clause);
+            }
+            if ($model->dcs_code !== null) {
+                $model->where_clause = str_replace('{dcs_code}', $model->dcs_code, $model->where_clause);
+            }
             $model->attributes = $main_org_data;
             $master[] = $model;
         }

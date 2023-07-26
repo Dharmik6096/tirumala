@@ -52,7 +52,7 @@ $depend = 'transitrecovery';
         <?= Yii::$app->dropdown->dropdownStatic('order_on', $model, $form, 'form-group', $model->getAttributeLabel('order_on'), false, 'order_on', false); ?>
     </div>
     <?php // if (empty($dataProvider->getModels())) { ?>
-    <div class="col-sm-2 mt20">
+    <div class="col-sm-2 mt18">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
     </div>
     <?php // } ?>

@@ -80,7 +80,7 @@ $action = Url::to(['bulk-delete']);
                 echo Html::button(Yii::t('app', 'Delete'), ['class' => 'btn btn-primary', 'id' => 'delete']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'delete-map-route'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'delete-map-route','','btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

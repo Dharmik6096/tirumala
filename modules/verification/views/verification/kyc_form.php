@@ -67,8 +67,8 @@ $form = ActiveForm::begin(['options' => [
                     </div>       
                 </div>
                 <div class="footer padding_top_20">
-                    <button type="button" class="btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
-                    <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-default']); ?>
+                    <button type="button" class="btn-login btn btn-default btn-raised close-import" data-bs-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
+                    <?php echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn-login btn btn-default']); ?>
                 </div>
 
             </div>

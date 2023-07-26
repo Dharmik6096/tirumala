@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TblAnalyzerCalibrationController implements the CRUD actions for TblAnalyzerCalibration model.
  */
-class TblAnalyzerCalibrationController extends Controller
+class TblAnalyzerCalibrationController extends \app\controllers\ChildController
 {
     /**
      * @inheritdoc

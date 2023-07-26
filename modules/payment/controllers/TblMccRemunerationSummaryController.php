@@ -95,8 +95,8 @@ class TblMccRemunerationSummaryController extends \app\controllers\ChildControll
             $model->to_datetime = $payment_cycle_code[1];
         }
 
-        $query = $model->find()->where(['CAST(from_datetime as date)' => date('Y-m-d', strtotime($model->from_datetime)),
-            'CAST(to_datetime as date)' => date('Y-m-d', strtotime($model->to_datetime)),
+        $query = $model->find()->where(['CAST(from_datetime as date)' => date('Y-m-d', strtotime((string) $model->from_datetime)),
+            'CAST(to_datetime as date)' => date('Y-m-d', strtotime((string) $model->to_datetime)),
             'bmc_code' => $model->bmc_code,
             'union_code' => $model->union_code,
             'billing_type' => 'mcc_remuneration',

@@ -81,7 +81,7 @@ $this->title = Yii::t('app', $title);
                     <?= Html::hiddenInput('dispatch_transaction', '', ['id' => 'dispatch_transaction']); ?>
                     <?= Html::hiddenInput('dispatch_master', '', ['id' => 'dispatch_master']); ?>
 
-                    <div class="col-sm-2 padding_top_20">
+                    <div class="col-sm-2 mt-3">
                         <?php echo Html::button(Yii::t('app', 'Add Product'), ['class' => 'btn btn-default apply-shortcut', 'shortcut_key' => 'ctrl+alt+s', 'button' => 'add', 'id' => 'addbutton']); ?>
                     </div>
                 </div>

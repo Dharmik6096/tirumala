@@ -111,7 +111,7 @@ $form = ActiveForm::begin([
 
 
         <div class="col-sm-2 mt10">
-            <?php Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_active', $model->is_active); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
         <div class="clearfix"></div>
     </div>

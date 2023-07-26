@@ -694,6 +694,10 @@ label{
     content: "*";
     margin-left: 3px;
 }
+.required > .form-label:after{
+    content: "*";
+    margin-left: 3px;
+}
 .has-error .control-label{
     color: #607188;
 }
@@ -954,8 +958,8 @@ input[type="hidden"] + .help-block{
     position: absolute;
     top: 0;
     left: 0;
-/*    content: "\f192";
-    font-family: FontAwesome;*/
+    /*    content: "\f192";
+        font-family: FontAwesome;*/
 }
 
 /* SNF CALC CSS */
@@ -1995,7 +1999,10 @@ ul.orderable label.checked {
 }
 .bootstrap-dialog.type-warning .modal-header {background-color: rgb(122, 35, 28);}
 .bootstrap-dialog.type-warning .btn-warning {background-color: rgb(122, 35, 28);}
-
+.btn-warning{
+    display: inline-block !important;
+    color: white !important;
+}
 .cal-header {
     background: rgb(122, 35, 28);
     display: block;
@@ -2413,7 +2420,7 @@ div.crystalstyle{
 
 #menu_buttons ul.dropdown-menu{
     position: relative !important;
-
+    transform: translateZ(10px) !important;
 }
 
 .margin_0 {
@@ -2695,7 +2702,7 @@ div.crystalstyle{
     padding: 5px;
     height: 13px;
     text-align: left;
-    margin: 0px !important;
+    /*margin: 0px !important;*/
 }
 .panel .panel-body select{
     padding: 1px !important;
@@ -2963,8 +2970,8 @@ td.action-cell{
 }
 
 input[type="checkbox"]{
-   /* height: 10px !important;
-    width: 10px!important; */
+    /* height: 10px !important;
+     width: 10px!important; */
 }
 .panel > .table-responsive > .table-bordered > thead > tr:first-child > th{
     white-space: nowrap;
@@ -4772,8 +4779,8 @@ table.dataTable tbody tr:nth-child(odd) {
     opacity: -3.6 !important;
 }
 .select2-selection__choice__remove {
-   color: #7a231c !important;
-   text-shadow: 0 0  !important;
+    color: #7a231c !important;
+    text-shadow: 0 0  !important;
 }
 
 .fht-table-wrapper{
@@ -5153,10 +5160,16 @@ tr.highlightRow {
     position: unset;
     display: block;
 }
+.form-check .form-check-input {
+    float: left;
+    margin-left: -1.5em;
+    margin-right: 7px !important;
+}
 .form-check-input:checked {
     background-color: rgb(122, 35, 28);
     border-color: rgb(122, 35, 28);
     border-radius: 0px;
+    margin-right: 7px !important;
 }
 .panel-footer {
     padding: 10px 15px;
@@ -5168,7 +5181,7 @@ tr.highlightRow {
     opacity: 1;
 }
 .select2-container--krajee-bs5 .select2-selection--multiple .select2-selection__choice {
-   color: #fff !important;
+    color: #fff !important;
     background: #7a231c !important;
     border: 0px solid #7a231c !important;
     border-radius: 8px;
@@ -5193,6 +5206,7 @@ tr.highlightRow {
 .btn-outline-secondary{
     background-color: rgb(122, 35, 28) !important;
     color: #fff;
+    display: inline-block !important;
 }
 .btn-close{
     top: 10px;
