@@ -722,6 +722,8 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">TMS<b class="caret"></b></a>',
                     'items' => [
+                            ['label' => Yii::t('app', 'Task Type'), 'url' => ['/tms/tbl-task-type/index'], 'active' => ($cntrl == 'tbl-task-type')],
+                            ['label' => Yii::t('app', 'Form Type'), 'url' => ['/tms/tbl-form-type/index'], 'active' => ($cntrl == 'tbl-form-type')],
                             ['label' => Yii::t('app', 'Task'), 'url' => ['/tms/tbl-task/index'], 'active' => ($cntrl == 'tbl-task')],
                     ]
                 ],
