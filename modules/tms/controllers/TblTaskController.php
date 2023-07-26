@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\tms\models\TblTaskHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use yii\data\ArrayDataProvider;
 
 /**
  * TblTaskController implements the CRUD actions for TblTask model.
@@ -89,7 +90,23 @@ class TblTaskController extends ChildController {
 
     public function actionViewForm($id) {
         $model = TblTaskActivity::findOne($id);
-        print_r($model->form_data);
+        $form_data = json_decode($model->form_data, TRUE);
+        $form_data = !empty($form_data['details']) ? $form_data['details'] : [];
+        ksort($form_data);
+        $dataPro = [
+            'allModels' => $form_data,
+            'sort' => [
+                'attributes' => [
+                    'Question', 'Answer'
+                ],
+            ],
+        ];
+        $dataProvider = new ArrayDataProvider($dataPro);
+
+        return $this->render('view_form', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionCancel($id) {

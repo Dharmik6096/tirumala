@@ -7,6 +7,8 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\organisation\models\TblRouteMapping;
+use app\modules\tms\models\TblFormType;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_task_activity".
@@ -104,6 +106,14 @@ class TblTaskActivity extends \app\models\ChildModel {
 
     public function getRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'route_code']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getFormTypeCode() {
+        return $this->hasOne(TblFormType::className(), ['form_type_code' => 'form_type_code']);
     }
 
 }
