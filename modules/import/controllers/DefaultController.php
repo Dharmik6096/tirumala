@@ -53,7 +53,7 @@ class DefaultController extends \app\controllers\ChildController {
             }
         }
         $result = ['status' => $values['status'], 'data' => $values['msg']];
-        echo (Json::encode($result));
+        return (Json::encode($result));
     }
 
     public function importCsv($fileName, $className, $data, $flag, $mappingFlag = 0, $filepath = '/web/import/') {
@@ -312,7 +312,7 @@ class DefaultController extends \app\controllers\ChildController {
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
         $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
-        ob_end_clean();
+        ob_start();
         $objWriter->save('php://output');
         exit();
     }

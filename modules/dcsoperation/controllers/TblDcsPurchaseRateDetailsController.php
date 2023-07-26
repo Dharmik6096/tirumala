@@ -376,7 +376,7 @@ class TblDcsPurchaseRateDetailsController extends \app\controllers\ChildControll
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
         $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
-        ob_end_clean();
+        ob_start();
         $objWriter->save('php://output');
         exit();
     }
