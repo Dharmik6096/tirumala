@@ -350,7 +350,7 @@ $defaultToggle = true;
                                             echo GhostHtml::submitButton(Yii::t('app', 'Generate'), ['class' => 'btn btn-default apply-shortcut', 'name' => 'html', 'value' => 'html', 'id' => 'html']);
                                         }
                                         ?>
-                                        <?= GhostHtml::submitButton('<i class="text-white fa fa-file-o"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
+                                        <?= GhostHtml::submitButton('<i class="text-white far fa-file"></i>', ['class' => 'btn btn-default submit_btn apply-shortcut', 'name' => 'html', 'value' => 'pdf', 'id' => 'pdf', 'title' => Yii::t('app', 'pdf')]); ?>
                                         <?php
                                         if (isset($data['tcpdf']) && $data['tcpdf']) {
                                             $client_code = \Yii::$app->session->get('eiplCode');
