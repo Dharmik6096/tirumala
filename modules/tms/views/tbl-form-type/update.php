@@ -1,7 +1,5 @@
 <?php
-$this->title = Yii::t('app', 'Update {modelClass}: ', [
-    'modelClass' => 'Form Type',
-]) . $model->form_type_code;
+$this->title = Yii::$app->label->title('edit', 'Form Type');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>

@@ -5,14 +5,13 @@ namespace app\modules\tms\controllers;
 use Yii;
 use app\modules\tms\models\TblTaskType;
 use app\modules\tms\models\TblTaskTypeSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use app\controllers\ChildController;
 
 /**
  * TblTaskTypeController implements the CRUD actions for TblTaskType model.
  */
-class TblTaskTypeController extends Controller
+class TblTaskTypeController extends ChildController
 {
     /**
      * Lists all TblTaskType models.
