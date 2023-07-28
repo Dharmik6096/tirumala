@@ -268,7 +268,7 @@ class SearchFilter {
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
             ],
             'TblTransporterPaymentSearch' => [
-                'filter' => ['f_union_code', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
             'TblVehicleExtraKmDaywiseSearch' => [
                 'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
@@ -392,6 +392,25 @@ class SearchFilter {
             ],
             'TblVspPaymentDataConfigSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'from_shift', 'to_date', 'to_shift'],
+            ],
+            'TblSchemeDocumentMasterSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblSchemeMasterSearch' => [
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
+            ],
+            'TblSchemeApplicationSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'application_status', 'from_date', 'to_date'],
+                'action' => ['index', 'pending-approval']
+            ],
+            'TblSchemeApplicationDisbursementSearch' => [
+                'filter' => ['f_union_code', 'scheme_id', 'from_date', 'to_date'],
+            ],
+            'TblQtyWiseRateSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
+            ],
+            'TblVehicleExtraQtyDaywiseSearch' => [
+                'filter' => ['f_union_code', 'transporter_code:f_union_code', 'vehicle_code:transporter_code', 'from_date', 'to_date'],
             ],
             'TblPlantDispatchSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code'],

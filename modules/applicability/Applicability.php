@@ -73,6 +73,7 @@ class Applicability extends \yii\base\Module {
     public $generateMail = false;
     public $attachment_folder = '/web/alert-data/';
     public $isApproval = false;
+    public $periodic_applicability = FALSE;
 
     /**
      * @inheritdoc
@@ -252,7 +253,6 @@ class Applicability extends \yii\base\Module {
                                 $aliasModel->setAttributes($this->assignStaticData);
                                 $aliasModel->{$main_field_name} = $value;
                                 $aliasModel->$field_name = $this->field_value;
-
                                 $aliasModel->union_code = $this->union_code;
                                 if ($aliasModel->hasAttribute('wef_date')) {
                                     $aliasModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
@@ -282,10 +282,10 @@ class Applicability extends \yii\base\Module {
                             }
                         }
                     } else {
-
                         foreach ($toRevoke as $value) {
                             if (!empty($value)) {
                                 try {
+//echo $value.'<br/>';
                                     $r = new ReflectionClass($this->model->className());
                                     $appModel = $r->newInstanceArgs();
                                     $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value]);
@@ -322,9 +322,15 @@ class Applicability extends \yii\base\Module {
                                 unset($appModel->$primaryKey);
                                 $appModel->{$main_field_name} = $value;
                                 $appModel->$field_name = $this->field_value;
-//$appModel->union_code = $this->union_code;  
-
                                 $appModel->union_code = $this->union_code;
+
+                                if ($this->periodic_applicability) {
+                                    $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                                    $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                                    if ($appModel->hasAttribute('wef_date')) {
+                                        $appModel->wef_date = $model->wef_date = $appModel->from_date;
+                                    }
+                                }
                                 if ($appModel->hasAttribute('wef_date')) {
                                     $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
                                     if ($model->hasAttribute('shift_code')) {
@@ -332,7 +338,11 @@ class Applicability extends \yii\base\Module {
                                     }
                                     $check = $this->checkDuplicateCount($appModel);
                                     if ($check == 1) {
-                                        $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                        if ($this->periodic_applicability) {
+                                            $model->addError('from_date', 'Date Range already taken by ' . $title . '.');
+                                        } else {
+                                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                        }
                                         return $this->customRender();
                                     }
                                 }

@@ -33,7 +33,12 @@ if ($model->is_active == 1) {
                             [
                             'attribute' => 'dcs_code',
                             'value' => isset($model->dcsCode) ? $model->dcsCode->dcs_name : '',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'is_dcs_member',
+                            'value' => ($model->is_dcs_member == '1') ? 'Yes' : 'No',
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

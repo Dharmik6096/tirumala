@@ -4859,6 +4859,24 @@ tr.highlightRow {
     height: 57px
 }
 
+.width_100-50_per {
+    width: calc(100% - 50%);
+}
+.progressbar li {
+    display: inline-block;
+}
+.progressbar li.inactive {
+    color: #607188;
+}
+
+.whiteSpaceAllowTable .table-bordered > tbody > tr > td {
+    white-space: normal !important;
+}
+
+.megaSizeDualList .bootstrap-duallistbox-container select {
+    min-height: 230px
+}
+
 /*milk collection summary*/
 .div_dash_blocks p {
     text-align: right;
@@ -4942,7 +4960,7 @@ tr.highlightRow {
 }
 
 .weight-data .table tr, .quality-data .table tr {
-   border-color: #000;
+    border-color: #000;
 }
 
 .weight-data .table tr td, .quality-data .table tr td {

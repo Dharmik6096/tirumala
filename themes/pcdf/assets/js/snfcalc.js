@@ -27,6 +27,8 @@ $(document).ready(function () {
         '[val7]': '^',
         '[val8]': '^',
         '[val9]': '^',
+        'DAYS': '!',
+        'PDAYS': '%',
     };
     //var fat={'FAT'=>'$','FATKG'=>'#','SNF'=>'@','SNFKG'=>'&'};
     var decimalAdded = false;
@@ -194,6 +196,7 @@ $(document).ready(function () {
             $('#formula_description').val(input.innerHTML);
             $('#tblgeneralformula-formula').val(input.innerHTML);
             $('#finalformula > div').text(input.innerHTML);
+            $('#tblmccgeneralformula-formula').val(input.innerHTML);
             $('.top .screen').scrollLeft(300);
             // prevent page jumps
             e.preventDefault();

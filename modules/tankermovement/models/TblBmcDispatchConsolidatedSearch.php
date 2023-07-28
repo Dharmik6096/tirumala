@@ -19,7 +19,7 @@ class TblBmcDispatchConsolidatedSearch extends TblBmcDispatchConsolidated
     {
         return [
             [['bmc_dispatch_consolidated_code', 'trip_code', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['total_qty', 'kg_fat', 'kf_snf'], 'number'],
+            [['total_qty', 'kg_fat', 'kg_snf'], 'number'],
             [['rejection_count', 'originating_type'], 'integer'],
         ];
     }
@@ -62,7 +62,7 @@ class TblBmcDispatchConsolidatedSearch extends TblBmcDispatchConsolidated
         $query->andFilterWhere([
             'total_qty' => $this->total_qty,
             'kg_fat' => $this->kg_fat,
-            'kf_snf' => $this->kf_snf,
+            'kg_snf' => $this->kg_snf,
             'rejection_count' => $this->rejection_count,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

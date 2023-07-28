@@ -90,6 +90,9 @@ $form = ActiveForm::begin([
             </div> -->
         <!--<div class="clearfix"></div>-->
         <div class="col-sm-2">
+            <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2">
@@ -120,6 +123,18 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
@@ -137,6 +152,19 @@ $form = ActiveForm::begin([
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
             'form' => $form
+        ])
+        ?>
+
+        <div class="clearfix"></div>
+
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Bank Details</h4>
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-bank-details/_form', [
+            'model' => $bankDetails,
+            'form' => $form,
+            'dist_field' => 'tbldcsbmc-district_code'
         ])
         ?>
     <?php } ?>

@@ -306,6 +306,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMccDayBookDispatchHub() {
+        $this->report = 'MccDayBookDispatchHub';
+        return $this->actionIndex();
+    }
+
     public function actionVendorMilkBillJgf() {
         $this->report = 'VendorMilkBillJgf';
         return $this->actionIndex();
@@ -731,6 +736,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VendorMilkBillSNMilk',
                 'scenario' => 'VendorMilkBillSnmilk',
                 'title' => '616 - Milk Bill',
+            ],
+            'MccDayBookDispatchHub' => [
+                'param' => 'p_union_code,p_bmc_code:union_code,p_from_date:string,p_to_date:string',
+                'path' => 'TankerMovement/MCCDayBook',
+                'scenario' => 'MccDayBookDispatchHub',
+                'title' => 'MCC Day Book Dispatch Hub',
             ],
             'VendorMilkBillJgf' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',

@@ -66,10 +66,10 @@ class TblBranch extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['bank_code', 'branch_name', 'ifsc', 'address', 'pincode'], 'required'],
-            [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from'], 'safe'],
-            [['is_active'], 'safe'],
-            [['branch_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+                [['bank_code', 'branch_name', 'ifsc', 'address', 'pincode'], 'required'],
+                [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from'], 'safe'],
+                [['is_active'], 'safe'],
+                [['branch_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
 //            [['ifsc'], 'unique', 'message' => Yii::t('app/validation', 'This {attribute} has already been taken')],
             [['branch_code'], 'unique'],
 //            [['ifsc'],'trim'],
@@ -78,8 +78,8 @@ class TblBranch extends ChildModel {
 //                    return ($data) ? true : false;
 //                }],
             [['local_name', 'local_address'], function ($attribute, $params) {
-            Yii::$app->general->vaildateLocalField($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                    Yii::$app->general->vaildateLocalField($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
 //            ['ifsc', 'unique', 'when' => function($model) {
 //                    $data = $this->find()->where(['bank_code'=>$model->bank_code,'ifsc'=>$model->ifsc])->andWhere(['<>','branch_code',$model->branch_code])->one();
 //                    return ($data)?true:false;
@@ -87,27 +87,27 @@ class TblBranch extends ChildModel {
 //            ['branch_name', 'unique','message'=>'{attribute} has been already taken.', 'targetAttribute' => ['bank_code']],
 //            ['branch_name', 'unique', 'targetAttribute' => 'bank_code'],
             [['branch_name', 'contact_person'], function ($attribute, $params) {
-            Yii::$app->general->validateName($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['contact_no'], function ($attribute, $params) {
-            Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
-            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['contact_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                 'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
-            [['address'], 'string', 'max' => 250],
-            [['branch_name'], 'string', 'max' => 100],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['ifsc'], function ($attribute, $params) {
-            Yii::$app->general->validateIfsc($this, $attribute, $params);
-        }, 'skipOnEmpty' => false],
+                [['address'], 'string', 'max' => 250],
+                [['branch_name'], 'string', 'max' => 100],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['ifsc'], function ($attribute, $params) {
+                    Yii::$app->general->validateIfsc($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
             //[['ifsc'], 'string', 'max' =>10,'min'=>10,'message'=>Yii::t('app/validation','Please enter a valid IFSC Length')],
             //[['ifsc'], 'integer', 'max' => 11, 'min' => 11, 'tooBig' => 'Please enter a valid IFSC Length', 'tooSmall' => 'Please enter a valid IFSC Length'],
             [['bank_code'], 'string', 'max' => 4],
-            [['sub_district_code'], 'string', 'max' => 5],
+                [['sub_district_code'], 'string', 'max' => 5],
             /* [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['updated_by' => 'user_id']], */
-            [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
-            [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
+                [['bank_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBanks::className(), 'targetAttribute' => ['bank_code' => 'bank_code']],
+                [['sub_district_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblSubDistricts::className(), 'targetAttribute' => ['sub_district_code' => 'sub_district_code']],
             //  [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['created_by' => 'user_id']],
             [['village_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVillages::className(), 'targetAttribute' => ['village_code' => 'village_code']],
         ];
@@ -276,7 +276,7 @@ class TblBranch extends ChildModel {
     public function getIfcs($code) {
 
         $record = $this->find()->where(['branch_code' => $code])->one();
-        return $record->ifsc;
+        return !empty($record) ? $record->ifsc : '';
     }
 
     public function getBranchIfcs($ifsc) {

@@ -51,6 +51,7 @@ class TblConfigMappingController extends \app\controllers\ChildController {
             $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
             $delete = [];
             $code = $this->model->org_type == 'MCC' ? $this->model->mcc_plant_code : $this->model->bmc_code;
+            $code = $this->model->org_type == 'PLANT' ? $this->model->plant_code : $code;
             if (!empty($toRevoke)) {
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblConfigMapping();
@@ -59,6 +60,7 @@ class TblConfigMappingController extends \app\controllers\ChildController {
                     $model->union_code = $id;
                     $model->org_type = $this->model->org_type;
                     $model->org_code = $code;
+                    $model->config_for = $model->org_type;
                     $record = $model->getExistMappedControl();
                     $historyModel = new TblConfigMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
@@ -77,6 +79,7 @@ class TblConfigMappingController extends \app\controllers\ChildController {
                     $model->union_code = $id;
                     $model->org_type = $this->model->org_type;
                     $model->org_code = $code;
+                    $model->config_for = $model->org_type;
                     $model->scenario = 'savemapping';
                     $master[] = $model;
                     $auto_inc++;

@@ -351,6 +351,12 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'cutoff_val')->textInput() ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'morning_kms')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'evening_kms')->textInput() ?>
+        </div>
     </div>
 
     <?php // if ($type == 'create') {  ?>

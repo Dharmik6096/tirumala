@@ -141,6 +141,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
                 <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
             </div>
         <?php } ?>
+        <div class="col-sm-4 mt10">
+            <?= $form->field($model, 'is_dcs_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
     </div>
     <!-- <div class="clearfix"></div>
     <div class="col-sm-12">

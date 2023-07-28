@@ -17,10 +17,10 @@ class TblBillHeadSearch extends TblBillHead {
      */
     public function rules() {
         return [
-            [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code'], 'safe'],
-            [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type'], 'integer'],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no', 'bill_head_for'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code'], 'safe'],
+                [['bill_head_code', 'bill_head_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'union_code', 'general_formula_code'], 'safe'],
+                [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type'], 'integer'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'default_bill_head_code', 'general_formula', 'sequence_no', 'bill_head_for'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'customer_type', 'payment_cycle_code', 'has_slab', 'calculation_based_on', 'is_hold', 'payment_cycle_type'], 'safe'],
         ];
     }
 
@@ -58,25 +58,24 @@ class TblBillHeadSearch extends TblBillHead {
         $query->joinWith(['defaultBillHeadCode']);
         // grid filtering conditions
         $query->andFilterWhere([
-            'is_default' => $this->is_default,
-            'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'is_disburse_allowed' => $this->is_disburse_allowed,
-            'bill_head_for' => $this->bill_head_for,
-//            'bill_head_type' => $this->bill_head_type,
+            'tbl_bill_head.bill_head_for' => $this->bill_head_for,
+            'tbl_bill_head.calculation_based_on' => $this->calculation_based_on,
+            'tbl_bill_head.is_hold' => $this->is_hold,
+            'tbl_bill_head.has_slab' => $this->has_slab,
         ]);
 
-        $query->andFilterWhere(['like', 'bill_head_code', $this->bill_head_code])
-                ->andFilterWhere(['like', 'bill_head_name', $this->bill_head_name])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'union_code', $this->union_code])
+        $query->andFilterWhere(['like', 'tbl_bill_head.bill_head_code', $this->bill_head_code])
+                ->andFilterWhere(['like', 'tbl_bill_head.bill_head_name', $this->bill_head_name])
+                ->andFilterWhere(['like', 'tbl_bill_head.union_code', $this->union_code])
                 ->andFilterWhere(['like', 'tbl_bill_head.bill_head_type', $this->bill_head_type])
-                ->andFilterWhere(['like', 'general_formula_code', $this->general_formula_code])
+                ->andFilterWhere(['like', 'tbl_bill_head.general_formula_code', $this->general_formula_code])
                 ->andFilterWhere(['like', 'tbl_bill_head_default.default_bill_head_name', $this->default_bill_head_code])
-                ->andFilterWhere(['like', 'general_formula', $this->general_formula])
-                ->andFilterWhere(['like', 'sequence_no', $this->sequence_no]);
+                ->andFilterWhere(['like', 'tbl_bill_head.general_formula', $this->general_formula])
+                ->andFilterWhere(['like', 'tbl_bill_head.sequence_no', $this->sequence_no])
+                ->andFilterWhere(['like', 'tbl_bill_head.payment_cycle_type', $this->payment_cycle_type])
+
+
+        ;
 
         return $dataProvider;
     }

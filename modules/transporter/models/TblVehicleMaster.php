@@ -78,9 +78,9 @@ class TblVehicleMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'billing_qty_flag');
                 }, 'on' => ['importCsv', 'vehicleWiseFlag']],
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
-                [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_type_code'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
-                [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_type_code'], 'required', 'on' => 'importCsv'],
-                [['vehicle_type_code', 'fuel_type_code', 'capacity_code', 'vehicle_use_type'], 'required', 'except' => ['activation']],
+                [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
+                [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
+                [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
             [['registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by'], 'string', 'except' => ['activation']],
@@ -254,7 +254,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
     }
 
     public function pastDateValidate($attribute, $params) {
-        $this->licence_expiry_date = ($this->licence_expiry_date == '') ? null : Yii::$app->formatter->asDate($this->licence_expiry_date, DATE_FORMAT);
+        $this->licence_expiry_date = empty($this->licence_expiry_date) ? NULL : Yii::$app->formatter->asDate($this->licence_expiry_date, DATE_FORMAT);
         if (!empty($this->licence_expiry_date) && ($this->licence_expiry_date < date('Y-m-d'))) {
             $this->addError('licence_expiry_date', Yii::t('app/validation', $this->getAttributeLabel('licence_expiry_date') . ' Must be Greater than ' . date('d-m-Y')));
         }
