@@ -64,7 +64,7 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->assetDetail, 'make');
         }],
     ['attribute' => 'current_status', 'value' => function($model) {
-            return (isset($model->current_status) && $model->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model['assetDetail']->current_status] : '';
+            return (isset($model['assetDetail']->current_status) && $model['assetDetail']->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model['assetDetail']->current_status] : '';
         }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('asset_detail_status', $searchModel, 'current_status')],
     ['attribute' => 'remarks', 'filter' => false, 'visible' => false],
         // ['attribute' => 'maintanance_duration_in_days'],
