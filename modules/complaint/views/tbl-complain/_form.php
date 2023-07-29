@@ -90,10 +90,10 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'remarks')->textarea() ?>
         </div>
 
-        <div class="col-sm-2 mt10">
+        <div class="col-sm-2 mt10 disp_none">
             <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
         </div>
-        <div class="col-sm-2 mt20">
+        <div class="col-sm-2 mt20 disp_none">
             <?= $form->field($model, 'physical_damage', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
         </div>
     <?php }
@@ -408,17 +408,17 @@ $script = "
                 success: function(data) {
                     var obj1 = $.parseJSON(data);
                     $('#tblcomplain-contact_person').val(obj1.contact_person);
-                     if(obj1.contact_person != '') {
-                           $('.contact_dis').addClass('disabled');                   
-                        }else{
-                           $('.contact_dis').removeClass('disabled'); 
-                        }
+//                     if(obj1.contact_person != '') {
+//                           $('.contact_dis').addClass('disabled');                   
+//                        }else{
+//                           $('.contact_dis').removeClass('disabled'); 
+//                        }
                     $('#tblcomplain-mobile_no').val(obj1.mobile_no);
-                     if(obj1.mobile_no != '') {
-                           $('.mobile_dis').addClass('disabled');                   
-                        }else{
-                           $('.mobile_dis').removeClass('disabled'); 
-                        }
+//                     if(obj1.mobile_no != '') {
+//                           $('.mobile_dis').addClass('disabled');                   
+//                        }else{
+//                           $('.mobile_dis').removeClass('disabled'); 
+//                        }
                     if(old_module_code == module_code) {
                         if($('#tblcomplain-contact_person').attr('data-val') != '') {
                             $('#tblcomplain-contact_person').val($('#tblcomplain-contact_person').attr('data-val'));

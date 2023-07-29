@@ -21,6 +21,7 @@ if ($location_type == 2) {
     $code = $model->dcs_code;
     $location_type_name = 'DCS';
 }
+$url = Url::to(['/complaint/tbl-complain/index']);
 ?>
 <div class="modal modal-default fade in" id="AssignComplaintModal" role="dialog">
     <div class="modal-dialog modal-lg">
@@ -193,6 +194,8 @@ if ($location_type == 2) {
 </div>
 
 
+<div id="AssignComplaint"></div>
+
 <?php
 $script = "
     $(document).ready(function(){
@@ -217,6 +220,11 @@ $script = "
                 }
             });
         });
+         $('#AssignComplaintModal').on('hidden.bs.modal', function () {
+            $('#pageloader').css('display', 'block');
+            $('#loadercontent').css('display', 'block');
+            window.location.href = '{$url}';
+        })
     });";
 $this->registerJs($script, View::POS_END, 'assign-complaint');
 ?>
