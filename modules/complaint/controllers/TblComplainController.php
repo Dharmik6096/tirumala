@@ -406,7 +406,7 @@ class TblComplainController extends \app\controllers\ChildController {
                 return $this->redirect(['index']);
             }
         }
-        return $this->renderAjax('assign_complain', [
+        return $this->render('assign_complain', [
                     'model' => $this->model,
                     'appLoginModel' => $appLoginModel
         ]);
