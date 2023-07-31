@@ -67,7 +67,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 </div>
                 <div class="clearfix"></div>
                     <?php
-                    $lable = Yii::t('app', 'S/C Code');
+                    $lable = Yii::t('app', 'Code');
                     if($type === 'memberWiseSale'){
                         $lable = Yii::t('app', 'Member Code');
                     }
@@ -77,7 +77,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                 </div>
                 <div class="col-sm-2 reset_field">
                     <?php
-                    $lable = Yii::t('app', 'S/C name');
+                    $lable = Yii::t('app', 'name');
                     if($type === 'memberWiseSale'){
                         $lable = Yii::t('app', 'Member name');
                     }

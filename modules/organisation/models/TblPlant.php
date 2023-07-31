@@ -85,7 +85,7 @@ class TblPlant extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'plant_code' => Yii::t('app', 'Code'),
+            'plant_code' => Yii::t('app', 'Plant Code'),
             'contact_person' => Yii::t('app', 'Contact Person'),
             'name' => Yii::t('app', 'Plant Name'),
             'district_code' => Yii::t('app', 'District'),
@@ -107,7 +107,7 @@ class TblPlant extends \app\models\ChildModel {
             'capacity' => Yii::t('app', 'Capacity (LPD)'),
             'valid_from' => Yii::t('app', 'Valid From'),
             'plant_code_ex' => Yii::t('app', 'Plant Code Ex'),
-            'ref_code' => Yii::t('app', 'Plant Code'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
