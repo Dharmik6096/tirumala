@@ -83,7 +83,7 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                     }
                     ?>
                     <?= Html::activeHiddenInput($model, 'customer_code') ?>
-                    <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true])->label($lable) ?>
+                    <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
                     <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
                 </div>
                 <!--<div class="clearfix"></div>-->

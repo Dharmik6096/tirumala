@@ -69,7 +69,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'route_type')->dropDownList(['Can' => 'Can', 'Tanker' => 'Tanker'], ['prompt' => 'Select Route Type']); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', Yii::t('app', 'To'), FALSE, 'to'); ?>
+            <?= Yii::$app->dropdown->routedestinationtype($model, $form, 'tblroutemapping-route_type,tblroutemapping-union_code', 'to_dest', 'To', FALSE, 'to'); ?>
             <?= $form->field($model, 'to_type')->hiddenInput()->label(false) ?>
         </div>
         <div class="col-sm-2">
