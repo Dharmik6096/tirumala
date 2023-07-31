@@ -79,7 +79,7 @@ $form = ActiveForm::begin([
             <?= $form->field($txModel, 'amount')->textInput(['readonly' => TRUE]) ?>
         </div>
         <div class="col-sm-1 reset_field">
-            <?= $form->field($txModel, 'lr_no')->textInput() ?>
+            <?= $form->field($txModel, 'lr_no')->textInput()->label(Yii::t('app', 'lr_no')) ?>
         </div>
 
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

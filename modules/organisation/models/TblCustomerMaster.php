@@ -146,7 +146,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'customer_code' => Yii::t('app', 'Customer Code'),
+            'customer_code' => Yii::t('app', 'Code'),
             'customer_code_ex' => Yii::t('app', 'Customer Code Ex.'),
             'customer_name' => Yii::t('app', 'Customer Name'),
             'address' => Yii::t('app', 'Address'),
@@ -179,8 +179,8 @@ class TblCustomerMaster extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'route_code' => Yii::t('app', 'Route'),
-            'ref_code' => Yii::t('app', 'Code'),
-            'aadhaar_no' => Yii::t('app', 'Aadhaar No.'),
+            'ref_code' => Yii::t('app', 'Customer Code'),
+            'aadhaar_no' => Yii::t('app', 'Aadhar No'),
         ];
     }
 

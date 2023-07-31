@@ -354,7 +354,7 @@ class TblDcs extends ChildModel {
      */
     public function attributeLabels() {
         return [
-            'dcs_code' => Yii::t('app', 'Society Code'),
+            'dcs_code' => Yii::t('app', 'Code'),
             'villages' => Yii::t('app', 'Applicable Villages'),
             //            'address' => Yii::t('app', 'Address'),
             'street1' => Yii::t('app', 'Address Street1'),
@@ -421,7 +421,7 @@ class TblDcs extends ChildModel {
             'f_mcc_code' => Yii::t('app', 'MCC'),
             'f_bmc_code' => Yii::t('app', 'BMC'),
             'f_union_code' => Yii::t('app', 'Union'),
-            'ref_code' => Yii::t('app', 'Code'),
+            'ref_code' => Yii::t('app', 'Society Code'),
             'x_col2' => Yii::t('app', 'Collection'),
             'auto_member_create' => Yii::t('app', 'Auto Member Create'),
             'rate_chart_member' => Yii::t('app', 'Rate Chart Member'),
