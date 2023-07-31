@@ -211,7 +211,7 @@ class TblMember extends ChildModel {
      */
     public function attributeLabels() {
         return [
-            'member_code' => Yii::t('app', 'Code'),
+            'member_code' => Yii::t('app', 'Member Code'),
             'dcs_code' => Yii::t('app', 'Society'),
             'ex_member_code' => Yii::t('app', 'Member Code Ex'),
             'member_name' => Yii::t('app', 'Member Name'),
@@ -271,7 +271,7 @@ class TblMember extends ChildModel {
             'registration_date' => Yii::t('app', 'Registration Date'),
             'member_class' => Yii::t('app', 'Member Class'),
             'reference_code' => Yii::t('app', 'Reference Code'),
-            'ref_code' => Yii::t('app', 'Member Code'),
+            'ref_code' => Yii::t('app', 'Code'),
             'beneficiary_name' => Yii::t('app', 'Beneficiary Name'),
             'max_allowed_qty' => Yii::t('app', 'Max Allowed Qty'),
             'x_col3' => Yii::t('app', 'Max Allowed Qty'),

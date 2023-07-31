@@ -20,10 +20,10 @@ $attribute = [
         ['label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type, true) : '';
         }, 'vAlign' => 'middle'],
-        ['label' => Yii::t('app', 'S/C Code'), 'value' => function($model) {
+        ['label' => Yii::t('app', 'Code'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, true) : '';
         }, 'vAlign' => 'middle'],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'S/C name'), 'value' => function($model) {
+        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
             return isset($model->customer_type) ? Yii::$app->general->getCustomer($model, $model->customer_type) : '';
         }, 'vAlign' => 'middle'],
 //        ['attribute' => 'member_code', 'value' => function($model) {

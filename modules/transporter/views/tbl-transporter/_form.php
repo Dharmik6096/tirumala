@@ -61,16 +61,16 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbltransporter-union_code,tbltransporter-state_code', 'district_code', Yii::t('app', 'District'), FALSE, $readonly); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbltransporter-union_code,tbltransporter-state_code', 'district_code', 'District', FALSE, $readonly); ?>
         </div>
         <div class="col-sm-4">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbltransporter-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code', $readonly); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbltransporter-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code', $readonly); ?>
         </div>
         <div class="col-sm-4"> 
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbltransporter-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), '', $readonly); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbltransporter-sub_district_code', 'form-group col-sm-4', 'Village', '', $readonly); ?>
         </div>
         <div class="col-sm-4">  
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbltransporter-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet'), '', $readonly); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbltransporter-village_code', 'form-group col-sm-4', 'Hamlet', '', $readonly); ?>
         </div>
         <div class="col-sm-4">  
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>

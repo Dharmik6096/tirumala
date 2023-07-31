@@ -64,7 +64,7 @@ class DropDown extends Component {
     public function uniondistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
 
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', Yii::t('app', 'Select District'), $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', 'Select District', $multiple, $model->$name, $readonly);
     }
 
     public function unionpaymentcycle($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
@@ -1556,12 +1556,12 @@ class DropDown extends Component {
             'land_unit' => ['name' => 'land_unit', 'fields' => 'land_unit_code,land_unit_name,local_name', 'prompt' => 'Select Data', 'model' => 'TblLandUnit'],
             'unit_code' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'local_model' => 'TblUnitsLocal'],
             'state_code' => ['name' => 'state_code', 'fields' => 'state_code,state_name,local_name', 'prompt' => 'Select State', 'model' => 'TblStates', 'local_model' => 'TblStatesLocal'],
-            'district_code' => ['name' => 'district_code', 'fields' => 'district_code,district_name,local_name', 'prompt' => 'Select Province', 'model' => 'TblDistricts', 'local_model' => 'TblDistrictsLocal', 'depend' => 'state_code'],
-            'sub_district_code' => ['name' => 'sub_district_code', 'fields' => 'sub_district_code,sub_district_name,local_name', 'prompt' => 'Select District', 'model' => 'TblSubDistricts', 'local_model' => 'TblSubDistrictsLocal', 'depend' => 'district_code'],
-            'village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select DS Division', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
+            'district_code' => ['name' => 'district_code', 'fields' => 'district_code,district_name,local_name', 'prompt' => 'Select District', 'model' => 'TblDistricts', 'local_model' => 'TblDistrictsLocal', 'depend' => 'state_code'],
+            'sub_district_code' => ['name' => 'sub_district_code', 'fields' => 'sub_district_code,sub_district_name,local_name', 'prompt' => 'Select Sub District', 'model' => 'TblSubDistricts', 'local_model' => 'TblSubDistrictsLocal', 'depend' => 'district_code'],
+            'village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
             'block_code' => ['name' => 'block_code', 'fields' => 'block_code,block_name,local_name', 'prompt' => 'Select Block', 'model' => 'TblBlocks', 'depend' => 'sub_district_code'],
             //'dcs_village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
-            'hamlet_code' => ['name' => 'hamlet_code', 'fields' => 'hamlet_code,hamlet_name,local_name', 'prompt' => 'Select GN Division', 'model' => 'TblHamlets', 'local_model' => 'TblHamletsLocal', 'depend' => 'village_code'],
+            'hamlet_code' => ['name' => 'hamlet_code', 'fields' => 'hamlet_code,hamlet_name,local_name', 'prompt' => 'Select Hamlet', 'model' => 'TblHamlets', 'local_model' => 'TblHamletsLocal', 'depend' => 'village_code'],
             //'animal_type_code'=>['name'=>'animal_type_code','fields'=>'animal_type_code,animal_type_name','prompt'=>'Select Animal Type','model'=>'TblAnimalType'],
             'vehicle_type_code' => ['name' => 'vehicle_type_code', 'fields' => 'vehicle_type_code,vehicle_type_name,local_name', 'prompt' => 'Select Vehicle Type', 'model' => 'TblVehicleType'],
             'milk_quality_type_code' => ['name' => 'milk_quality_type_code', 'fields' => 'milk_quality_type_code,milk_quality_type_name,local_name', 'prompt' => 'Select Milk Quality Type', 'model' => 'TblMilkQualityType'],

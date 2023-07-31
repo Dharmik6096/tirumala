@@ -122,7 +122,7 @@ class TblMccPlant extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'mcc_plant_code' => Yii::t('app', 'Code'),
+            'mcc_plant_code' => Yii::t('app', 'MCC Code'),
             'plant_code' => Yii::t('app', 'Plant'),
             'contact_person' => Yii::t('app', 'Contact Person'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -149,7 +149,7 @@ class TblMccPlant extends \app\models\ChildModel {
             'is_weight_manual' => Yii::t('app', 'Is Weight Manual'),
             'is_quality_manual' => Yii::t('app', 'Is Quality Manual'),
             'mcc_plant_code_ex' => Yii::t('app', 'MCC Code Ex'),
-            'ref_code' => Yii::t('app', 'MCC Code'),
+            'ref_code' => Yii::t('app', 'Code'),
             'gst_no' => Yii::t('app', 'GSTIN No.'),
         ];
     }

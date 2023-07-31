@@ -137,7 +137,7 @@ class TblRouteMapping extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'route_code' => Yii::t('app', 'Code'),
+            'route_code' => Yii::t('app', 'Route Code'),
             'capacity' => Yii::t('app', 'Vehicle Capacity(Ltr)'),
             'morning_start_time' => Yii::t('app', 'Morning Start Time'),
             'morning_end_time' => Yii::t('app', 'Morning End Time'),
@@ -160,7 +160,7 @@ class TblRouteMapping extends \app\models\ChildModel {
             'is_active' => Yii::t('app', 'Is Active'),
             'valid_from' => Yii::t('app', 'Valid From'),
             'route_code_ex' => Yii::t('app', 'Route Code Ex'),
-            'ref_code' => Yii::t('app', 'Route Code'),
+            'ref_code' => Yii::t('app', 'Code'),
         ];
     }
 
