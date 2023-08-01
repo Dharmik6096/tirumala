@@ -62,7 +62,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_bmc_transit_loss',
                 ],
                 'payment_installment_status' => [
-                    'param' => 'bmc_code,from_datetime,customer_type',
+                    'param' => 'bmc_code,from_datetime,customer_type,user_code',
                     'sp_name' => 'sp_payment_installment_status_update',
                 ],
                 'primary_tpt_payment' => [
@@ -170,6 +170,18 @@ class ClientPaymentConfig extends Component {
                 'primary_tpt_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
                     'sp_name' => 'sp_tpt_primary_payment_itc',
+                ],
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_itc',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_itc',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_itc',
                 ],
             ],
             'SAUMYA' => [

@@ -31,7 +31,7 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblRemunerationSummary extends \app\models\ChildModel {
 
-    public $p_bmc_code;
+    public $p_bmc_code, $payment_cycle_code, $stop_payment_only = 0;
 
     /**
      * @inheritdoc
@@ -46,10 +46,11 @@ class TblRemunerationSummary extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'p_bmc_code'], 'safe'],
-                [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['from_datetime', 'to_datetime', 'created_at', 'updated_at', 'payment_cycle_code'], 'safe'],
                 [['from_shift', 'to_shift', 'calculate_milk_recovey', 'calculate_other_head', 'originating_type'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'from_datetime', 'to_datetime'], 'required'],
-                [['bmc_code'], 'required', 'on' => 'processpayment'],
+                [['bmc_code'], 'required', 'on' => ['processpayment', 'processpaymentstop']],
+                [['payment_cycle_code'], 'required', 'on' => ['processpaymentstop']],
 //            [['from_datetime'], function ($attribute, $params) {
 //                    return Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_datetime', 'to_datetime', 30, '!=', 'Date Difference must be 30 Days.');
 //                }, 'skipOnError' => true, 'on' => 'processpayment'],
@@ -107,10 +108,10 @@ class TblRemunerationSummary extends \app\models\ChildModel {
 
         $query = TblRemunerationSummary::find()
                 ->where(['union_code' => $this->union_code, 'bmc_code' => $this->bmc_code]);
-        if ($process_alert) {
-            $query->andWhere(['in', 'status', ['processed']]);
+        if ($process_alert === TRUE) {
+            $query->andWhere(['in', 'status', ['generated', 'processed']]);
         } else {
-            $query->andWhere(['not in', 'status', ['processed']]);
+            $query->andWhere(['not in', 'status', ['generated', 'processed']]);
         }
         $count = $query->andWhere(['or',
                         ['or',
@@ -121,14 +122,15 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                         "'$from_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)",
                         "'$to_date' BETWEEN CAST([from_datetime] as date) AND CAST([to_datetime] as date)"
             ]])->count();
-        if ($process_alert) {
+        if ($process_alert === TRUE) {
             return $count > 0 ? FALSE : TRUE;
         } else {
             if ($count > 0) {
-                $this->addError($attribute, "Payment already done.");
+                $this->addError($attribute, "Payment already done/locked.");
+                return FALSE;
             } else {
                 $pending_disburse = $this->find()
-                                ->where(['status' => 'processed', 'bmc_code' => $this->bmc_code])
+                                ->where(['status' => ['generated', 'processed'], 'bmc_code' => $this->bmc_code])
                                 ->andWhere(['or',
                                         ['or',
                                             ['NOT BETWEEN', 'CAST(from_datetime as date)', $from_date, $to_date],
@@ -162,6 +164,7 @@ class TblRemunerationSummary extends \app\models\ChildModel {
                         ->count();
                 if ($unlock_cnt > 0) {
                     $this->addError($attribute, "Please Lock Data of all payment cycle included.");
+                    return FALSE;
                 }
             }
         }
@@ -170,7 +173,7 @@ class TblRemunerationSummary extends \app\models\ChildModel {
     public function RemunerationPaymentCycle($union_code, $bmc_code) {
         $data = $this->find()->select(['from_datetime', 'to_datetime'])
                         ->where(['union_code' => $union_code, 'bmc_code' => $bmc_code])
-                        ->andWhere(['in', 'status', ['processed']])->asArray()->all();
+                        ->andWhere(['in', 'status', ['locked']])->asArray()->all();
 
         return ArrayHelper::map($data, function($data) {
                     return $data['from_datetime'] . '#' . $data['to_datetime'];

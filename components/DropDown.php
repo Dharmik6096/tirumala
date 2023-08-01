@@ -851,7 +851,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1530,6 +1530,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash')],
             ],
+            'stop_payment_type' => [
+                'name' => 'stop_reason',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['data_missing' => Yii::t('app', 'Data Missing'), 'dispute' => Yii::t('app', 'Dispute'), 'recovery_issue' => Yii::t('app', 'Recovery Issue')],
+            ],
             'product_stock_issue_reason' => [
                 'name' => 'reason',
                 'prompt' => Yii::t('app', 'Select Reason'),
@@ -1737,7 +1742,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -1872,7 +1877,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
-    
+
     public function productBatchLstSixMonth($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list-last-six-month', Yii::t('app', 'Select Batch'), $multiple);

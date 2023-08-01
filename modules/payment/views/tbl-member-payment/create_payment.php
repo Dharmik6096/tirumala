@@ -7,7 +7,8 @@ use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
-$this->title = Yii::t('app', 'Member Payment Process : Step 1');
+$this->title = isset($title) ? $title : Yii::t('app', 'Member Payment Process : Step 1');
+$post_url = isset($post_url) ? $post_url : Url::to(['create-payment']);
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -17,7 +18,6 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                     //'action' => ['list-payment'],
                     //'method' => 'GET',
                     'validateOnBlur' => false,
-                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -38,7 +38,7 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmemberpaymentalias-mcc_plant_code', 'bmc_code', TRUE); ?>
             </div>
             <!--<div class="col-sm-2">-->
-            <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblmemberpaymentalias-bmc_code', 'customer_type', TRUE, FALSE); ?>
+            <?php // Yii::$app->dropdown->customer_type($model, $form, 'tblmemberpaymentalias-bmc_code', 'customer_type', TRUE, FALSE);  ?>
             <!--</div>-->
             <div class="col-sm-2">
                 <?php
@@ -58,7 +58,7 @@ $this->title = Yii::t('app', 'Member Payment Process : Step 1');
                         'id' => 'share-management',
                         'ajaxOptions' => [
                             'type' => 'POST',
-                            'url' => Url::to(['create-payment']),
+                            'url' => $post_url,
                             'beforeSend' => new JsExpression("function(data){  
                                         $('#loadercontent').show();
                                         $('#pageloader').show();
