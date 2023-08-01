@@ -11,7 +11,9 @@ use yii\helpers\Url;
 $client_code = \Yii::$app->session->get('eiplCode');
 $client_code = !empty($client_code) ? $client_code : '';
 $client_code = strtolower($client_code);
-$imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
+$imageIconPathClient = $this->theme->getUrl('/assets/' . $client_code . '/images/dashboard/');
+$imageIconPathEipl = $this->theme->getUrl('/assets/images/dashboard/');
+$imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? $imageIconPathClient : $imageIconPathEipl;
 
 $chart_url = Url::to(['load-chart']);
 $table_url = Url::to(['load-table']);
@@ -157,7 +159,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                         ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -265,7 +267,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                         ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
