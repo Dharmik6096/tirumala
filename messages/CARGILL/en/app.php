@@ -48,7 +48,7 @@ return [
     'No. of Societies' => 'No. of Society',
     'Data for PCDF' => 'Data for Everest',
     'Society' => 'Society',
-    'Society Code' => 'Code',
+    'Society Code' => 'Society Code',
     'Society Name' => 'Society Name',
     'Society Code Ex' => 'Society Code Ex',
     'Society Short Name' => 'Society Short Name',
