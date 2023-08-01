@@ -66,10 +66,22 @@ $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Y
                     <?= Yii::$app->controls->date($model, $form, 'invoice_date', '', true); ?>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-sm-1 reset_field">
-                    <?= $form->field($model, 'ex_code')->textInput() ?>
+                    <?php
+                    $lable = Yii::t('app', 'Code');
+                    if($type === 'memberWiseSale'){
+                        $lable = Yii::t('app', 'Member Code');
+                    }
+                    ?>
+                <div class="col-sm-2 reset_field">
+                    <?= $form->field($model, 'ex_code')->textInput()->label($lable) ?>
                 </div>
-                <div class="col-sm-1 reset_field">
+                <div class="col-sm-2 reset_field">
+                    <?php
+                    $lable = Yii::t('app', 'name');
+                    if($type === 'memberWiseSale'){
+                        $lable = Yii::t('app', 'Member name');
+                    }
+                    ?>
                     <?= Html::activeHiddenInput($model, 'customer_code') ?>
                     <?= $form->field($model, 'customer_name')->textInput(['readOnly' => true]) ?>
                     <?php // Yii::$app->dropdown->customer_code($model, $form, 'tblproductsale-bmc_code,tblproductsale-customer_type', 'customer_code', TRUE, FALSE);  ?>
