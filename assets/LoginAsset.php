@@ -9,7 +9,6 @@
 namespace app\assets;
 
 use yii\web\AssetBundle;
-use app\modules\organisation\models\TblUnions;
 
 /**
  * @author Qiang Xue <qiang.xue@gmail.com>
