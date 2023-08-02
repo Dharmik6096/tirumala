@@ -4746,7 +4746,6 @@ table.dataTable thead .search_filter input[type="text"] {
     font-size: 12px;
 }
 .dashboard_widget_table tr td span {
-    color: #111;
     font-weight: 600;
     font-size: 13px;
 }
