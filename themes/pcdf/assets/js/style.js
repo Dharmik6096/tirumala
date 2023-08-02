@@ -271,11 +271,6 @@
         $('[data-toggle="tooltip"]').tooltip();
     });
 })(jQuery);
-//new code
-barChart('bmc_dispatch_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Dispatch', [], []);
-barChart('milk_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " Milk Collection (Top 5)', [], []);
-barChart('bmc_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Collection', [], []);
-barChart('reconciliation_chart_widget_container', '" . Yii::$app->controls->view_date($date) . " Reconciliation Chart', [], []);
 
 function barChart(cont, text, xdata, ydata) {
     var bar_chart = $('#' + cont);

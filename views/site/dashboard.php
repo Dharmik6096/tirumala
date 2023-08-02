@@ -949,7 +949,12 @@ $('.dpu_data_icon').click(function(){
        // console.log(set_widget_id);
         // console.log(set_widget_id+'_container');
     }
-    
+    //new code
+    barChart('bmc_dispatch_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Dispatch', [], []);
+    barChart('milk_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " Milk Collection (Top 5)', [], []);
+    barChart('bmc_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Collection', [], []);
+    barChart('reconciliation_chart_widget_container', '" . Yii::$app->controls->view_date($date) . " Reconciliation Chart', [], []);
+
        //completed new code
 //calender functions
 var cal_data=" . $cal_data . ";
