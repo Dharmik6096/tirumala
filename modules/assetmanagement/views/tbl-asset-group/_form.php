@@ -26,9 +26,6 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
     </div>
-    <div class="col-sm-2 number-validate">  
-        <?= $form->field($model, 'asset_group_code')->textInput(['readonly' => $readonly]) ?>
-    </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'asset_group_name')->textInput() ?>
     </div>

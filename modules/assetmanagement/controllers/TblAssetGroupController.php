@@ -49,7 +49,7 @@ class TblAssetGroupController extends \app\controllers\ChildController {
         $this->model = new TblAssetGroup();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            // $this->model->asset_group_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+            $this->model->asset_group_code = (string) Yii::$app->general->getCodeAutoIncrement($this->model);
             $transaction = $this->generalModel->saveTransaction([$this->model], ['Asset Group', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();

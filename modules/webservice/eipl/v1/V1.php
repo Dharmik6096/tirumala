@@ -693,6 +693,19 @@ class V1 extends \yii\base\Module {
                 'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs',
                 'sp' => 'sp_app_eipl_v1_mcc_data_collection_member',
             ],
+            'indent/master' => [
+                'param' => 'from_datetime#to_datetime#union#plant#mcc#bmc#dcs#member',
+                'sp' => 'sp_app_eipl_v1_indent_master_data',
+            ],
+            'indentCreate' => [
+                'main_table' => 'TblIndentMaster',
+                'replace_array_key' => ['date' => 'indent_date'],
+                'save_child_other' => true,
+            ],
+            'indentUpdate' => [
+                'main_table' => 'TblIndentMaster',
+                'save_child_other' => true,
+            ],
         ];
         return $label;
     }

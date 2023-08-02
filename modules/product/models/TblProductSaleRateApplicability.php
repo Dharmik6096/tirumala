@@ -54,7 +54,7 @@ class TblProductSaleRateApplicability extends \app\models\ChildModel {
                 [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['product_sale_rate_code', 'dcs_code', 'union_code', 'created_by', 'updated_by', 'mcc_plant_code', 'applicable_code', 'applicable_for', 'applicable_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['product_code', 'originating_type', 'is_member_rate', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'rate_wharehouse'], 'safe'],
                 [['sale_rate', 'product_rate_applicability_code', 'commission', 'ex_code'], 'safe'],
 //            [['applicable_code'], 'validateProductRate', 'skipOnEmpty' => false], //Comment as Set Validation from DB Side: Hardik
             [['product_sale_rate_code'], 'validateProductSaleRate', 'skipOnEmpty' => false, 'except' => ['androidsync']],

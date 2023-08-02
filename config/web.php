@@ -35,6 +35,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'pdf' => ['class' => 'app\components\PDF'],
+        'DayHelper' => ['class' => 'app\components\DayHelper'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -248,6 +249,7 @@ $config = [
         'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
         'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
         'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
+        'tms' => ['class' => 'app\modules\tms\Tms',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

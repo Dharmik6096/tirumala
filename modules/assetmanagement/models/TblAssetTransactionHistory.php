@@ -45,7 +45,7 @@ class TblAssetTransactionHistory extends \yii\db\ActiveRecord {
             [['asset_transaction_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_by', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
             [['asset_detail_code', 'qty', 'put_to_use_date', 'remain_qty', 'reamrks'], 'safe'],
             [['asset_detail_code', 'status', 'remarks'], 'safe'],
-            [['received_date', 'created_at', 'updated_at', 'history_created_at', 'transaction_date', 'asset_type', 'sap_code'], 'safe'],
+            [['received_date', 'created_at', 'updated_at', 'history_created_at', 'transaction_date', 'asset_type', 'sap_code', 'current_status'], 'safe'],
         ];
     }
 
@@ -74,6 +74,7 @@ class TblAssetTransactionHistory extends \yii\db\ActiveRecord {
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'current_status' => Yii::t('app', 'Current Status'),
         ];
     }
 

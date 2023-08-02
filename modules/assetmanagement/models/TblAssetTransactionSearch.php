@@ -19,7 +19,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
      */
     public function rules() {
         return [
-            [['asset_transaction_code', 'asset_detail_code', 'status'], 'integer'],
+            [['asset_transaction_code', 'asset_detail_code', 'status', 'current_status'], 'integer'],
             [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_date', 'received_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_search', 'put_to_use_date', 'purchase_date', 'f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'make', 'sap_code'], 'safe'],
         ];
     }
@@ -56,6 +56,7 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
 
         $query->joinWith(['assetCode', 'toStoreLocCode']);
         $query->andFilterWhere(['status' => $this->status]);
+        $query->andFilterWhere(['tbl_asset_transaction.current_status' => $this->current_status]);
         if (Yii::$app->session->get('UserType') == 7) {
             $query->andFilterWhere(['tbl_store_location.reference_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         } elseif (Yii::$app->session->get('UserType') == 5) {
@@ -75,7 +76,8 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
 
     public function gridsearch($params) {
         $query = TblAssetTransaction::find();
-        $query->where(['status' => [0, -1, 2]]);
+        $query->where(['tbl_asset_transaction.status' => [0, -1, 2]]);
+//        $query->where(['tbl_asset_transaction.current_status' => [0, 1, 2, 3]]);
 //        $query->where(['or',
 //            ['status' => [0, -1, 2]]
 //        ]);
@@ -104,7 +106,10 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
             'tbl_asset_detail.maintanance_duration_in_days' => $this->maintanance_duration_in_days,
         ]);
 
-        $query->andFilterWhere(['status' => $this->status]);
+        $query->andFilterWhere([
+            'tbl_asset_transaction.status' => $this->status,
+            'tbl_asset_transaction.current_status' => $this->current_status,
+        ]);
         if (Yii::$app->session->get('UserType') == 7) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
         } elseif (Yii::$app->session->get('UserType') == 5) {

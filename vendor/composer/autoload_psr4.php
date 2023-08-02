@@ -108,4 +108,5 @@ return array(
     'Codeception\\Extension\\' => array($vendorDir . '/codeception/base/ext'),
     'Codeception\\' => array($vendorDir . '/codeception/base/src/Codeception'),
     'yii\\redis\\' => array($vendorDir . '/yiisoft/yii2-redis/src'),
+    'PhpAmqpLib\\' => array($vendorDir . '/php-amqplib/php-amqplib/PhpAmqpLib'),
 );

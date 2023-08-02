@@ -8,6 +8,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model app\modules\product\models\TblProductSaleRate */
 /* @var $form yii\widgets\ActiveForm */
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -31,6 +32,13 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'sale_rate')->textInput() ?>
     </div>
+    <?php
+    if($eiplCode == 'GYAN') { ?>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'rate_wharehouse')->textInput()->label('Rate for gyan') ?>
+        </div>
+    <?php
+    } ?>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>

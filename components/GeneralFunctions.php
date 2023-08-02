@@ -1232,6 +1232,9 @@ class GeneralFunctions extends Component {
             case 'vendor':
                 $rel = 'customerCode';
                 break;
+            case 'dcs':
+                $rel = 'dcsCode';
+                break;
             default :
                 $rel = '';
         }
@@ -2310,6 +2313,18 @@ class GeneralFunctions extends Component {
                 $layout->js[] = $client_js_file_path;
             }
         }
+    }
+
+    public function getMaxCode($model, $field, $dcs_code, $auto_inc = 1) {
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
+                ->from($tableName)
+                ->where(['dcs_code' => $dcs_code])
+                ->one();
+        $number = (int) $val[$field] + $auto_inc;
+
+        return $number;
     }
 
 }

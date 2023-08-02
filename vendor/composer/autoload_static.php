@@ -6,7 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
 {
-    public static $files = array (
+    public static $files = array(
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -18,13 +18,13 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
     );
 
-    public static $prefixLengthsPsr4 = array (
-        'z' => 
-        array (
+    public static $prefixLengthsPsr4 = array(
+        'z' =>
+        array(
             'zainiafzan\\widget\\' => 18,
         ),
-        'y' => 
-        array (
+        'y' =>
+        array(
             'yii\\swiftmailer\\' => 16,
             'yii\\queue\\sync\\' => 15,
             'yii\\queue\\stomp\\' => 16,
@@ -48,8 +48,8 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'yidas\\yii2BowerAsset\\' => 21,
             'yii\\redis\\' => 10,
         ),
-        'w' => 
-        array (
+        'w' =>
+        array(
             'webvimark\\modules\\UserManagement\\' => 33,
             'webvimark\\image\\' => 16,
             'webvimark\\helpers\\' => 18,
@@ -60,31 +60,32 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'webvimark\\components\\' => 21,
             'wbraganca\\dynamicform\\' => 22,
         ),
-        's' => 
-        array (
+        's' =>
+        array(
             'spanjeta\\modules\\backup\\' => 24,
             'softark\\duallistbox\\' => 20,
         ),
-        'r' => 
-        array (
+        'r' =>
+        array(
             'ruskid\\csvimporter\\' => 19,
         ),
-        'p' => 
-        array (
-            'phpseclib\\' => 10,
+        'p' =>
+        array(
+            // 'phpseclib\\' => 10,
+            'phpseclib3\\' => 11,
             'phpDocumentor\\Reflection\\' => 25,
         ),
-        'n' => 
-        array (
+        'n' =>
+        array(
             'nullref\\datatable\\' => 18,
             'nickcv\\encrypter\\' => 17,
         ),
-        'l' => 
-        array (
+        'l' =>
+        array(
             'linslin\\yii2\\curl\\' => 18,
         ),
-        'k' => 
-        array (
+        'k' =>
+        array(
             'kartik\\widgets\\' => 15,
             'kartik\\typeahead\\' => 17,
             'kartik\\touchspin\\' => 17,
@@ -120,26 +121,28 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'kartik\\alert\\' => 13,
             'kartik\\affix\\' => 13,
         ),
-        'd' => 
-        array (
+        'd' =>
+        array(
             'dosamigos\\tinymce\\' => 18,
             'dosamigos\\multiselect\\' => 22,
             'demogorgorn\\ajax\\' => 17,
         ),
-        'c' => 
-        array (
+        'c' =>
+        array(
             'cebe\\markdown\\' => 14,
+            'PhpAmqpLib\\' => 11,
+            'ParagonIE\\ConstantTime\\' => 23,
         ),
-        'a' => 
-        array (
+        'a' =>
+        array(
             'arogachev\\excel\\' => 16,
         ),
-        'W' => 
-        array (
+        'W' =>
+        array(
             'Webmozart\\Assert\\' => 17,
         ),
-        'S' => 
-        array (
+        'S' =>
+        array(
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\Yaml\\' => 23,
@@ -152,507 +155,519 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\BrowserKit\\' => 29,
         ),
-        'P' => 
-        array (
+        'P' =>
+        array(
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
         ),
-        'I' => 
-        array (
+        'I' =>
+        array(
             'Imagine\\' => 8,
         ),
-        'G' => 
-        array (
+        'G' =>
+        array(
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'F' => 
-        array (
+        'F' =>
+        array(
             'Faker\\' => 6,
         ),
-        'D' => 
-        array (
+        'D' =>
+        array(
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
         ),
-        'C' => 
-        array (
+        'C' =>
+        array(
             'Codeception\\Extension\\' => 22,
             'Codeception\\' => 12,
         ),
     );
 
-    public static $prefixDirsPsr4 = array (
-        'zainiafzan\\widget\\' => 
-        array (
+    public static $prefixDirsPsr4 = array(
+        'zainiafzan\\widget\\' =>
+        array(
             0 => __DIR__ . '/..' . '/zainiafzan/yii2-dropzone',
         ),
-        'yii\\swiftmailer\\' => 
-        array (
+        'yii\\swiftmailer\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-swiftmailer',
         ),
-        'yii\\queue\\sync\\' => 
-        array (
+        'yii\\queue\\sync\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/sync',
         ),
-        'yii\\queue\\stomp\\' => 
-        array (
+        'yii\\queue\\stomp\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/stomp',
         ),
-        'yii\\queue\\sqs\\' => 
-        array (
+        'yii\\queue\\sqs\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/sqs',
         ),
-        'yii\\queue\\redis\\' => 
-        array (
+        'yii\\queue\\redis\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/redis',
         ),
-        'yii\\queue\\gearman\\' => 
-        array (
+        'yii\\queue\\gearman\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/gearman',
         ),
-        'yii\\queue\\file\\' => 
-        array (
+        'yii\\queue\\file\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/file',
         ),
-        'yii\\queue\\db\\' => 
-        array (
+        'yii\\queue\\db\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/db',
         ),
-        'yii\\queue\\beanstalk\\' => 
-        array (
+        'yii\\queue\\beanstalk\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/beanstalk',
         ),
-        'yii\\queue\\amqp_interop\\' => 
-        array (
+        'yii\\queue\\amqp_interop\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/amqp_interop',
         ),
-        'yii\\queue\\amqp\\' => 
-        array (
+        'yii\\queue\\amqp\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src/drivers/amqp',
         ),
-        'yii\\queue\\' => 
-        array (
+        'yii\\queue\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-queue/src',
         ),
-        'yii\\jui\\' => 
-        array (
+        'yii\\jui\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-jui',
         ),
-        'yii\\imagine\\' => 
-        array (
+        'yii\\imagine\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-imagine/src',
         ),
-        'yii\\gii\\' => 
-        array (
+        'yii\\gii\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-gii',
         ),
-        'yii\\faker\\' => 
-        array (
+        'yii\\faker\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-faker',
         ),
-        'yii\\debug\\' => 
-        array (
+        'yii\\debug\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-debug',
         ),
-        'yii\\composer\\' => 
-        array (
+        'yii\\composer\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-composer',
         ),
-        'yii\\bootstrap\\' => 
-        array (
+        'yii\\bootstrap\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-bootstrap',
         ),
-        'yii\\' => 
-        array (
+        'yii\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
         ),
-        'yidas\\yii2BowerAsset\\' => 
-        array (
+        'yidas\\yii2BowerAsset\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yidas/yii2-bower-asset',
         ),
-        'webvimark\\modules\\UserManagement\\' => 
-        array (
+        'webvimark\\modules\\UserManagement\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/module-user-management',
         ),
-        'webvimark\\image\\' => 
-        array (
+        'webvimark\\image\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/image',
         ),
-        'webvimark\\helpers\\' => 
-        array (
+        'webvimark\\helpers\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/helpers',
         ),
-        'webvimark\\extensions\\GridPageSize\\' => 
-        array (
+        'webvimark\\extensions\\GridPageSize\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/grid-page-size',
         ),
-        'webvimark\\extensions\\GridBulkActions\\' => 
-        array (
+        'webvimark\\extensions\\GridBulkActions\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/grid-bulk-actions',
         ),
-        'webvimark\\extensions\\DateRangePicker\\' => 
-        array (
+        'webvimark\\extensions\\DateRangePicker\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/date-range-picker',
         ),
-        'webvimark\\extensions\\BootstrapSwitch\\' => 
-        array (
+        'webvimark\\extensions\\BootstrapSwitch\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/bootstrap-switch',
         ),
-        'webvimark\\components\\' => 
-        array (
+        'webvimark\\components\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webvimark/components',
         ),
-        'wbraganca\\dynamicform\\' => 
-        array (
+        'wbraganca\\dynamicform\\' =>
+        array(
             0 => __DIR__ . '/..' . '/wbraganca/yii2-dynamicform/src',
         ),
-        'spanjeta\\modules\\backup\\' => 
-        array (
+        'spanjeta\\modules\\backup\\' =>
+        array(
             0 => __DIR__ . '/..' . '/spanjeta/yii2-backup',
         ),
-        'softark\\duallistbox\\' => 
-        array (
+        'softark\\duallistbox\\' =>
+        array(
             0 => __DIR__ . '/..' . '/softark/yii2-dual-listbox',
         ),
-        'ruskid\\csvimporter\\' => 
-        array (
+        'ruskid\\csvimporter\\' =>
+        array(
             0 => __DIR__ . '/..' . '/ruskid/yii2-csv-importer',
         ),
-        'phpseclib\\' => 
+        // 'phpseclib\\' =>
+        // array(
+        //     0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        // ),
+        'phpseclib3\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
-        'phpDocumentor\\Reflection\\' => 
-        array (
+        'phpDocumentor\\Reflection\\' =>
+        array(
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
-        'nullref\\datatable\\' => 
-        array (
+        'nullref\\datatable\\' =>
+        array(
             0 => __DIR__ . '/..' . '/nullref/yii2-datatables/src',
         ),
-        'nickcv\\encrypter\\' => 
-        array (
+        'nickcv\\encrypter\\' =>
+        array(
             0 => __DIR__ . '/..' . '/nickcv/yii2-encrypter',
         ),
-        'linslin\\yii2\\curl\\' => 
-        array (
+        'linslin\\yii2\\curl\\' =>
+        array(
             0 => __DIR__ . '/..' . '/linslin/yii2-curl',
         ),
-        'kartik\\widgets\\' => 
-        array (
+        'kartik\\widgets\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widgets',
         ),
-        'kartik\\typeahead\\' => 
-        array (
+        'kartik\\typeahead\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-typeahead',
         ),
-        'kartik\\touchspin\\' => 
-        array (
+        'kartik\\touchspin\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-touchspin',
         ),
-        'kartik\\time\\' => 
-        array (
+        'kartik\\time\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-timepicker',
         ),
-        'kartik\\tabs\\' => 
-        array (
+        'kartik\\tabs\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-tabs-x',
         ),
-        'kartik\\switchinput\\' => 
-        array (
+        'kartik\\switchinput\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-switchinput',
         ),
-        'kartik\\spinner\\' => 
-        array (
+        'kartik\\spinner\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-spinner',
         ),
-        'kartik\\sortable\\' => 
-        array (
+        'kartik\\sortable\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-sortable',
         ),
-        'kartik\\sidenav\\' => 
-        array (
+        'kartik\\sidenav\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-sidenav',
         ),
-        'kartik\\select2\\' => 
-        array (
+        'kartik\\select2\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-select2',
         ),
-        'kartik\\rating\\' => 
-        array (
+        'kartik\\rating\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-rating',
         ),
-        'kartik\\range\\' => 
-        array (
+        'kartik\\range\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-rangeinput',
         ),
-        'kartik\\plugins\\tabs\\' => 
-        array (
+        'kartik\\plugins\\tabs\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-tabs-x',
         ),
-        'kartik\\plugins\\fileinput\\' => 
-        array (
+        'kartik\\plugins\\fileinput\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
         ),
-        'kartik\\plugins\\depdrop\\' => 
-        array (
+        'kartik\\plugins\\depdrop\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/dependent-dropdown',
         ),
-        'kartik\\mpdf\\' => 
-        array (
+        'kartik\\mpdf\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-mpdf',
         ),
-        'kartik\\helpers\\' => 
-        array (
+        'kartik\\helpers\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-helpers',
         ),
-        'kartik\\growl\\' => 
-        array (
+        'kartik\\growl\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl',
         ),
-        'kartik\\grid\\' => 
-        array (
+        'kartik\\grid\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-grid',
         ),
-        'kartik\\form\\' => 
-        array (
+        'kartik\\form\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-activeform',
         ),
-        'kartik\\file\\' => 
-        array (
+        'kartik\\file\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-fileinput',
         ),
-        'kartik\\field\\' => 
-        array (
+        'kartik\\field\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-field-range',
         ),
-        'kartik\\export\\' => 
-        array (
+        'kartik\\export\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-export',
         ),
-        'kartik\\dynagrid\\' => 
-        array (
+        'kartik\\dynagrid\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-dynagrid',
         ),
-        'kartik\\dialog\\' => 
-        array (
+        'kartik\\dialog\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-dialog',
         ),
-        'kartik\\detail\\' => 
-        array (
+        'kartik\\detail\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-detail-view',
         ),
-        'kartik\\depdrop\\' => 
-        array (
+        'kartik\\depdrop\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-depdrop',
         ),
-        'kartik\\datetime\\' => 
-        array (
+        'kartik\\datetime\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-datetimepicker',
         ),
-        'kartik\\daterange\\' => 
-        array (
+        'kartik\\daterange\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-date-range',
         ),
-        'kartik\\date\\' => 
-        array (
+        'kartik\\date\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-datepicker',
         ),
-        'kartik\\color\\' => 
-        array (
+        'kartik\\color\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-colorinput',
         ),
-        'kartik\\base\\' => 
-        array (
+        'kartik\\base\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base',
         ),
-        'kartik\\alert\\' => 
-        array (
+        'kartik\\alert\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-alert',
         ),
-        'kartik\\affix\\' => 
-        array (
+        'kartik\\affix\\' =>
+        array(
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-affix',
         ),
-        'dosamigos\\tinymce\\' => 
-        array (
+        'dosamigos\\tinymce\\' =>
+        array(
             0 => __DIR__ . '/..' . '/2amigos/yii2-tinymce-widget/src',
         ),
-        'dosamigos\\multiselect\\' => 
-        array (
+        'dosamigos\\multiselect\\' =>
+        array(
             0 => __DIR__ . '/..' . '/2amigos/yii2-multi-select-widget',
         ),
-        'demogorgorn\\ajax\\' => 
-        array (
+        'demogorgorn\\ajax\\' =>
+        array(
             0 => __DIR__ . '/..' . '/demogorgorn/yii2-ajax-submit-button',
         ),
-        'cebe\\markdown\\' => 
-        array (
+        'cebe\\markdown\\' =>
+        array(
             0 => __DIR__ . '/..' . '/cebe/markdown',
         ),
-        'arogachev\\excel\\' => 
-        array (
+        'arogachev\\excel\\' =>
+        array(
             0 => __DIR__ . '/..' . '/arogachev/yii2-excel/src',
         ),
-        'Webmozart\\Assert\\' => 
-        array (
+        'Webmozart\\Assert\\' =>
+        array(
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
-        array (
+        'Symfony\\Polyfill\\Php80\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
+        'Symfony\\Polyfill\\Mbstring\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Component\\Yaml\\' => 
-        array (
+        'Symfony\\Component\\Yaml\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/yaml',
         ),
-        'Symfony\\Component\\Process\\' => 
-        array (
+        'Symfony\\Component\\Process\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/process',
         ),
-        'Symfony\\Component\\Finder\\' => 
-        array (
+        'Symfony\\Component\\Finder\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
-        'Symfony\\Component\\EventDispatcher\\' => 
-        array (
+        'Symfony\\Component\\EventDispatcher\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
-        'Symfony\\Component\\DomCrawler\\' => 
-        array (
+        'Symfony\\Component\\DomCrawler\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/dom-crawler',
         ),
-        'Symfony\\Component\\Debug\\' => 
-        array (
+        'Symfony\\Component\\Debug\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/debug',
         ),
-        'Symfony\\Component\\CssSelector\\' => 
-        array (
+        'Symfony\\Component\\CssSelector\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
-        'Symfony\\Component\\Console\\' => 
-        array (
+        'Symfony\\Component\\Console\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
-        'Symfony\\Component\\BrowserKit\\' => 
-        array (
+        'Symfony\\Component\\BrowserKit\\' =>
+        array(
             0 => __DIR__ . '/..' . '/symfony/browser-kit',
         ),
-        'Psr\\Log\\' => 
-        array (
+        'Psr\\Log\\' =>
+        array(
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'Psr\\Http\\Message\\' => 
-        array (
+        'Psr\\Http\\Message\\' =>
+        array(
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Imagine\\' => 
-        array (
+        'Imagine\\' =>
+        array(
             0 => __DIR__ . '/..' . '/imagine/imagine/src',
         ),
-        'GuzzleHttp\\Psr7\\' => 
-        array (
+        'GuzzleHttp\\Psr7\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
-        array (
+        'GuzzleHttp\\Promise\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
-        array (
+        'GuzzleHttp\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Faker\\' => 
-        array (
+        'Faker\\' =>
+        array(
             0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
         ),
-        'Doctrine\\Instantiator\\' => 
-        array (
+        'Doctrine\\Instantiator\\' =>
+        array(
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
-        'DeepCopy\\' => 
-        array (
+        'DeepCopy\\' =>
+        array(
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Codeception\\Extension\\' => 
-        array (
+        'Codeception\\Extension\\' =>
+        array(
             0 => __DIR__ . '/..' . '/codeception/base/ext',
         ),
-        'Codeception\\' => 
-        array (
+        'Codeception\\' =>
+        array(
             0 => __DIR__ . '/..' . '/codeception/base/src/Codeception',
         ),
-        'yii\\redis\\' => 
-        array (
+        'yii\\redis\\' =>
+        array(
             0 => __DIR__ . '/..' . '/yiisoft/yii2-redis/src',
+        ),
+        'PhpAmqpLib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/php-amqplib/php-amqplib/PhpAmqpLib',
+        ),
+        'ParagonIE\\ConstantTime\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         )
     );
 
-    public static $prefixesPsr0 = array (
-        'P' => 
-        array (
-            'Prophecy\\' => 
-            array (
+    public static $prefixesPsr0 = array(
+        'P' =>
+        array(
+            'Prophecy\\' =>
+            array(
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
             ),
-            'PHPExcel' => 
-            array (
+            'PHPExcel' =>
+            array(
                 0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
             ),
         ),
-        'J' => 
-        array (
-            'Jaspersoft' => 
-            array (
+        'J' =>
+        array(
+            'Jaspersoft' =>
+            array(
                 0 => __DIR__ . '/..' . '/jaspersoft/rest-client/src',
             ),
         ),
-        'I' => 
-        array (
-            'Ikimea\\Browser\\' => 
-            array (
+        'I' =>
+        array(
+            'Ikimea\\Browser\\' =>
+            array(
                 0 => __DIR__ . '/..' . '/ikimea/browser/lib',
             ),
         ),
-        'H' => 
-        array (
-            'HTMLPurifier' => 
-            array (
+        'H' =>
+        array(
+            'HTMLPurifier' =>
+            array(
                 0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
             ),
         ),
-        'D' => 
-        array (
-            'Diff' => 
-            array (
+        'D' =>
+        array(
+            'Diff' =>
+            array(
                 0 => __DIR__ . '/..' . '/phpspec/php-diff/lib',
             ),
         ),
-        'C' => 
-        array (
-            'Codeception\\' => 
-            array (
+        'C' =>
+        array(
+            'Codeception\\' =>
+            array(
                 0 => __DIR__ . '/..' . '/codeception/specify/src',
             ),
         ),
-        'B' => 
-        array (
-            'Behat\\Gherkin' => 
-            array (
+        'B' =>
+        array(
+            'Behat\\Gherkin' =>
+            array(
                 0 => __DIR__ . '/..' . '/behat/gherkin/src',
             ),
         ),
     );
 
-    public static $classMap = array (
+    public static $classMap = array(
         'CGIF' => __DIR__ . '/..' . '/mpdf/mpdf/classes/gif.php',
         'CGIFCOLORTABLE' => __DIR__ . '/..' . '/mpdf/mpdf/classes/gif.php',
         'CGIFFILEHEADER' => __DIR__ . '/..' . '/mpdf/mpdf/classes/gif.php',
@@ -1167,7 +1182,6 @@ class ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe
             $loader->prefixDirsPsr4 = ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitd8b9bed270f1fb1157ee24109a113dbe::$classMap;
-
         }, null, ClassLoader::class);
     }
 }

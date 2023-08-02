@@ -1326,6 +1326,41 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionProc() {
+        $this->report = 'MilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionProcDetail() {
+        $this->report = 'MilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionAbsent() {
+        $this->report = 'MilkCollectionAbsent';
+        return $this->actionIndex();
+    }
+
+    public function actionLeftPourer() {
+        $this->report = 'LeftPourer';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionNegativeGroth() {
+        $this->report = 'MilkCollectionNegativeGroth';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkCollectionProc() {
+        $this->report = 'BmcMilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkCollectionProcDetail() {
+        $this->report = 'BmcMilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
     public function actionAntibioticReport() {
         $this->report = 'AntibioticReport';
         return $this->actionIndex();
@@ -2672,6 +2707,48 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
                 'title' => '218 - BMC Collection Report For SAP',
+            ],
+            'MilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per',
+                'scenario' => 'MilkCollectionProc',
+                'title' => '112 - VLCs comparison summary',
+            ],
+            'MilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per_detail',
+                'scenario' => 'MilkCollectionProcDetail',
+                'title' => '113 - VLCs comparison details',
+            ],
+            'MilkCollectionAbsent' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_absent_last_few_days',
+                'scenario' => 'MilkCollectionAbsent',
+                'title' => '114 - Absent Pouring VLCs',
+            ],
+            'LeftPourer' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_left_pourers',
+                'scenario' => 'LeftPourer',
+                'title' => '115 - VLC Left Pourers',
+            ],
+            'MilkCollectionNegativeGroth' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_negative_growth',
+                'scenario' => 'MilkCollectionNegativeGroth',
+                'title' => '116 - Negative Growth VLCs',
+            ],
+            'BmcMilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per',
+                'scenario' => 'BmcMilkCollectionProc',
+                'title' => '117 - MCC comparison summary',
+            ],
+            'BmcMilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per_detail',
+                'scenario' => 'BmcMilkCollectionProcDetail',
+                'title' => '118 - MCC comparison details',
             ],
             'AntibioticReport' => [
                 'param' => 'union_code,mcc_code:union_code,channel_code,bmc_code:channel_code:false,from_date:string:from_shift,to_date:string:to_shift',

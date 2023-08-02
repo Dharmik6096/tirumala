@@ -149,7 +149,7 @@ if ($model->isNewRecord) {
             </div>
         </div>
         <div class="col-sm-4">
-            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', FALSE); ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmemberprovisional-union_code,tblmemberprovisional-state_code', 'district_code', 'District'); ?>
@@ -165,7 +165,7 @@ if ($model->isNewRecord) {
             <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmemberprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()       ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()           ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -211,7 +211,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])       ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])           ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">
@@ -243,7 +243,7 @@ if ($model->isNewRecord) {
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<?php if ($type != 'create') {
+<?php if ($type != 'create' && $model->provisional_from != 'mobile_app') {
     ?>
     <div class="row">
         <div class="col-md-12 view-subtitle padding_10_0 theme-box ">

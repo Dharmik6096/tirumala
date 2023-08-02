@@ -74,6 +74,9 @@ class Applicability extends \yii\base\Module {
     public $attachment_folder = '/web/alert-data/';
     public $isApproval = false;
     public $periodic_applicability = FALSE;
+    public $login_type = '';
+    public $is_bulk_notification = false;
+    public $with_wef_date = true;
 
     /**
      * @inheritdoc
@@ -121,6 +124,12 @@ class Applicability extends \yii\base\Module {
                 $list = $this->loadUnionBmc($this->union_code);
                 $main_field_name = $this->mcc_field_name;
                 $title = 'BMCs';
+                break;
+            case 'dcs_mcc_user':
+                $selected = [];
+                $list = $this->loadUnionMcc($this->union_code);
+                $main_field_name = $this->mcc_field_name;
+                $title = '';
                 break;
             default :
                 $selected = [];
@@ -186,6 +195,8 @@ class Applicability extends \yii\base\Module {
                     'selectedBmcCode' => $this->selectedBmcCode,
                     'selectedRouteCode' => $this->selectedRouteCode,
                     'generateMail' => $this->generateMail,
+                    'login_type' => $this->login_type,
+                    'is_bulk_notification' => $this->is_bulk_notification,
         ]);
     }
 
@@ -209,6 +220,10 @@ class Applicability extends \yii\base\Module {
                 $title = 'MCC';
                 break;
             case 'tanker_rate':
+                $main_field_name = $this->mcc_field_name;
+                $title = 'MCC';
+                break;
+            case 'dcs_mcc_user':
                 $main_field_name = $this->mcc_field_name;
                 $title = 'MCC';
                 break;
@@ -321,6 +336,9 @@ class Applicability extends \yii\base\Module {
                                 $primaryKey = $model->tableSchema->primaryKey[0];
                                 unset($appModel->$primaryKey);
                                 $appModel->{$main_field_name} = $value;
+                                if ($appModel->hasMethod('setOrgDetail')) {
+                                    $appModel->setOrgDetail();
+                                }
                                 $appModel->$field_name = $this->field_value;
                                 $appModel->union_code = $this->union_code;
 
@@ -337,7 +355,7 @@ class Applicability extends \yii\base\Module {
                                         $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
                                     }
                                     $check = $this->checkDuplicateCount($appModel);
-                                    if ($check == 1) {
+                                    if ($check >= 1) {
                                         if ($this->periodic_applicability) {
                                             $model->addError('from_date', 'Date Range already taken by ' . $title . '.');
                                         } else {
@@ -399,6 +417,9 @@ class Applicability extends \yii\base\Module {
                                             $saveModel[] = $notificationmodel->save();
                                         }
                                     }
+                                }
+                                if ($appModel->hasMethod('setOrgDetail')) {
+                                    $appModel->setOrgDetail();
                                 }
 
                                 $saveModel[] = $appModel->save();
@@ -517,7 +538,7 @@ class Applicability extends \yii\base\Module {
             $query = $this->model->find()->select('dcs_code');
 //        if ($top_section)
 //            $query->andWhere(['<=', 'wef_date', date('Y-m-d')]);
-        if (!empty($date)) {
+        if (!empty($date) && $this->model->hasAttribute('wef_date')) {
             $query->andWhere(['wef_date' => $date]);
         }
         if ($returnQuery) {
@@ -1038,7 +1059,10 @@ class Applicability extends \yii\base\Module {
 
     public function checkDuplicateCount($model) {
         $field_name = $this->field_name;
-        $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;
+        if ($this->is_bulk_notification) {
+            $mcc_field_name = $this->mcc_field_name;
+        } else
+            $mcc_field_name = ($model->hasAttribute('dcs_code')) ? 'dcs_code' : $this->mcc_field_name;
         $query = $this->model->find()->where([$mcc_field_name => $model->{$mcc_field_name}, $field_name => $this->field_value, 'wef_date' => $model->wef_date]);
         foreach ($this->fields as $key => $f) {
             if (in_array('create', $f['view'])) {
