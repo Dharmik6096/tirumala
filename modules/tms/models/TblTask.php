@@ -56,7 +56,7 @@ class TblTask extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['status'], 'default', 'value' => 'OPEN'],
-                [['is_cancel', 'is_notified'], 'default', 'value' => 0],
+                [['is_cancel', 'is_notified', 'resp_status'], 'default', 'value' => 0],
                 [['task_performed_for', 'task_type_code', 'plant_code', 'title', 'description', 'user_code', 'start_date', 'repeat_interval'], 'required', 'on' => ['addTask']],
                 [['task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type', 'reference_type', 'reference_code'], 'safe'],
                 [['task_datetime', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'updated_at'], 'safe'],
@@ -159,6 +159,24 @@ class TblTask extends \app\models\ChildModel {
 
     public function getFormTypeCode() {
         return $this->hasOne(TblFormType::className(), ['form_type_code' => 'form_type_code']);
+    }
+
+    public function getPickRecords($limit = 100) {
+        return $query = $this->find()
+                        ->where(['or', ['resp_status' => NULL], ['resp_status' => ''], ['resp_status' => 0]])
+                        ->andWhere(['<=', 'task_datetime', date('Y-m-d H:i:s')])
+                        ->limit($limit)
+                        ->orderBy([
+                            'task_datetime' => SORT_ASC,
+                        ])->all();
+    }
+
+    public function updatePickStatus($ids) {
+        return $this->updateAll(['resp_status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['task_code' => $ids]);
+    }
+
+    public function updateProcessStatus() {
+        return $this->updateAll(['resp_status' => $this->resp_status, 'is_notified' => $this->is_notified, 'notified_datetime' => $this->notified_datetime, 'response_datetime' => date('Y-m-d H:i:s')], ['task_code' => $this->task_code]);
     }
 
 }
