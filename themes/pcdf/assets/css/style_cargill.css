@@ -3787,7 +3787,7 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 
 .fc-header-toolbar .fc-left h2 {
-    color: rgba(122, 35, 28,0.8) !important;
+    color: #2F3083 !important;
 }
 
 .fc-button {
@@ -4741,7 +4741,7 @@ table.dataTable thead .search_filter input[type="text"] {
 }
 
 .dashboard_widget_table tr td {
-    color: #333;
+    color: #fff;
     font-weight: 500;
     font-size: 12px;
 }
