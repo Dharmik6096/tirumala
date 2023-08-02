@@ -109,7 +109,7 @@ class TblComplain extends \app\models\ChildModel {
                       return ($('#tblcomplain-complain_for').val() == 'asset_complain');
                   }", 'on' => ['portal_create_complaint', 'portal_update_complaint']],
                 [['new_serial_no'], 'required', 'skipOnError' => true, 'when' => function ($model) {
-                    return ($model->resolved_status == 'replace' && $model->spare_required == 0);
+                    return ($model->resolved_status == 'replace' && $model->spare_required == 0 && $model->complain_for == 'asset_complain');
                 }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblcomplain-complain_for').val() == 'asset_complain');
                 }", 'on' => ['portal_create_complaint', 'portal_resolve_complaint']],
