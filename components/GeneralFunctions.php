@@ -2327,4 +2327,17 @@ class GeneralFunctions extends Component {
         return $number;
     }
 
+    public static function getAttachmentUrl($module_name, $module_Code)
+    {
+        $attachment = \app\modules\general\models\TblAttachment::find()
+            ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+            ->one();
+
+        if ($attachment) {
+            return $attachment->attachment;
+        }
+
+        return null;
+    }
+
 }
