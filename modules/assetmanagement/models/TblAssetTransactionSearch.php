@@ -104,11 +104,11 @@ class TblAssetTransactionSearch extends TblAssetTransaction {
         $query->andFilterWhere([
             'tbl_asset_detail.warranty_period' => $this->warranty_period,
             'tbl_asset_detail.maintanance_duration_in_days' => $this->maintanance_duration_in_days,
+            'tbl_asset_detail.current_status' => $this->current_status,
         ]);
 
         $query->andFilterWhere([
             'tbl_asset_transaction.status' => $this->status,
-            'tbl_asset_transaction.current_status' => $this->current_status,
         ]);
         if (Yii::$app->session->get('UserType') == 7) {
             $query->andFilterWhere(['tbl_dcs.dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
