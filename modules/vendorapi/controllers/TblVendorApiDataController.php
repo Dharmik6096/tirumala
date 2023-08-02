@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TblVendorApiDataController implements the CRUD actions for TblVendorApiData model.
  */
-class TblVendorApiDataController extends Controller
+class TblVendorApiDataController extends \app\controllers\ChildController
 {
     /**
      * @inheritdoc

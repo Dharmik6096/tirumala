@@ -18,25 +18,31 @@ use yii\bootstrap5\ActiveForm;
     <div class="panel-subheading">
         <div class="row">
 
-            <?= $form->field($model, 'backup_path', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'backup_path', ['options' => ['class' => 'form-group d-contents'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2 pb-2">{input}</div>{error}{hint}',])->textInput(['maxlength' => true]) ?>
             <div class='clearfix'></div>
 
-            <div class='pull-left'>
-                <?= Yii::t('app', 'Backup on closing application') ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class='row d-contents'>
+                <?= Yii::t('app', 'Backup on closing application') ?>
+                <div class="col">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_backup_on_closing'); ?>
+                </div>
             </div>
-            <?= $form->field($model, 'is_backup_on_closing', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
 
-            <div class='pull-left'>
-                <?= Yii::t('app', 'Confirm with user to initiate backup') ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class='row ps-0'>
+                <?= Yii::t('app', 'Confirm with user to initiate backup') ?>
+                <div class="col">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_backup_user_choice'); ?>
+                </div>
             </div>
-            <?= $form->field($model, 'is_backup_user_choice', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <?= $form->field($model, 'backup_per_shift', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+
+            <?= $form->field($model, 'backup_per_shift', ['options' => ['class' => 'form-group d-contents'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2 pb-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <div class='pull-left'>
-                <?= Yii::t('app', 'Backup on payment disbursement') ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class='row ps-0'>
+                <?= Yii::t('app', 'Backup on payment disbursement') ?>
+                <div class="col">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_backup_disbursement'); ?>
+                </div>
             </div>
-            <?= $form->field($model, 'is_backup_disbursement', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-
             <div class="form-group">
                 <?php
                 AjaxSubmitButton::begin([

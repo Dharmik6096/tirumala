@@ -16,6 +16,7 @@ use yii\web\View;
 <div class="panel-body">
     <div class="panel-subheading">
         <div class="row">
+            <div class="col-sm-12">
             <?= Yii::$app->dropdown->dropdownStatic('disp_in', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('milk_dispatch_in'), false, 'milk_dispatch_in', false); ?>
 
             <?= $form->field($model, 'headload_km', ['options' => ['class' => 'form-group col-sm-2']])->textInput() ?>
@@ -59,7 +60,7 @@ use yii\web\View;
                 AjaxSubmitButton::end();
                 ?>
             </div>
-
+            </div>
         </div>
     </div>
 </div>

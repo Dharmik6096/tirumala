@@ -17,13 +17,13 @@ use yii\bootstrap5\ActiveForm;
 <div class="panel-body">
     <div class="panel-subheading">
         <div class="row">
-            <?= $form->field($model, 'allow_multiple_voters', ['options' => ['class' => 'form-group '], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multiple_voters'); ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'election_term', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'election_term', ['options' => ['class' => 'mb-5 form-group d-contents'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2 pb-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'election_alert_day', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'election_alert_day', ['options' => ['class' => 'form-group d-contents'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2 pb-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'nos_of_reminders', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'nos_of_reminders', ['options' => ['class' => 'form-group d-contents'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
 
             <div class="form-group">
                 <?php

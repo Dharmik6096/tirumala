@@ -28,7 +28,7 @@ $this->title = Yii::t('app', isset($data['title']) ? $data['title'] : 'Search');
                 ]);
                 ?>    
                 <div class="row margin_0">
-                    <div class="modal-body">
+                    <div class="row modal-body">
                         <?php
                         $param = isset($data['param']) ? explode(',', $data['param']) : [];
                         foreach ($param as $key => $value) {

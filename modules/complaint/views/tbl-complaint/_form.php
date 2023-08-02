@@ -45,14 +45,14 @@ $status = array('Created' => 'Create', 'Processing' => 'Processing', 'Resolved' 
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'affects_data'); ?>    
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">
         <?php echo Html::hiddenInput('old_attachment', $model->attachment, ['id' => 'old_attachment']); ?>
         <?php echo Html::hiddenInput('attachment', $model->attachment, ['id' => 'attachment']); ?>
         <?=
-            Dropzone::widget([
+        DropZone::widget([
                 'id' => 'mainDrop',
                 'options' => [
 //                    'acceptedMimeTypes' => ".csv,.xls,.xlsx",

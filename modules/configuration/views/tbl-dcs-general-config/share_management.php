@@ -17,13 +17,13 @@ use yii\web\View;
 
             <?php $form = ActiveForm::begin(); ?>
 
-            <?= $form->field($model, 'share_unit_cost', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left mt-10">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'share_unit_cost', ['options' => ['class' => 'form-group d-flex pb-3'], 'template' => '<div class="pull-left mt-10">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'min_share_req', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'min_share_req', ['options' => ['class' => 'form-group d-flex pb-3'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'share_issued', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'share_issued', ['options' => ['class' => 'form-group d-flex pb-3'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
-            <?= $form->field($model, 'max_share_buy', ['options' => ['class' => 'form-group'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
+            <?= $form->field($model, 'max_share_buy', ['options' => ['class' => 'form-group d-flex'], 'template' => '<div class="pull-left">{label}</div><div class="col-sm-2">{input}</div>{error}{hint}',])->textInput() ?>
             <div class='clearfix'></div>
             <div class="form-group">
                 <?php

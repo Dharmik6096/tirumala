@@ -39,11 +39,13 @@ $depend = 'tblbillhead';
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'from_date', '', false); ?>
     </div>
+    <div class="col-sm-12">
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'to_date', '', false); ?>
     </div>
-    <div class="form-group padding_top_20">
+    <div class="col-sm-2 mt-3">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
+    </div>
     </div>
     <?php ActiveForm::end(); ?>
     <?php

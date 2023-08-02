@@ -18,17 +18,22 @@ use yii\bootstrap5\ActiveForm;
         <?php $form = ActiveForm::begin(); ?>
         <?php echo $form->errorSummary($model) ?>
         <div class="row">
-            <?= $form->field($model, 'purchase_rate_with_tax', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>" . Yii::t('app', 'Product Purchase Rate ') . "{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <div class='clearfix'></div>
-
-            <?= $form->field($model, 'sale_rate_with_tax', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>" . Yii::t('app', 'Product Sale Rate ') . "{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-            <div class='clearfix'></div>
-
-            <div class='pull-left'>
-                <?= Yii::t('app', 'Product Sale In Cash') ?> &nbsp;&nbsp;&nbsp;&nbsp;  
+            <div class="form-group d-contents">
+            <?= Yii::t('app', 'Purchase Rate with Tax'); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'purchase_rate_with_tax'); ?>
             </div>
-            <?= $form->field($model, 'product_sale_in_cash', ['options' => ['class' => 'form-group'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            <div class='clearfix'></div>
+            <div class="form-group d-contents">
+            <?= Yii::t('app', 'Product Sale Rate'); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'sale_rate_with_tax'); ?>
+            </div>
+            <div class='clearfix'></div>    
 
+            <div class='d-contents'>
+                <?= Yii::t('app', 'Product Sale In Cash') ?>  
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'product_sale_in_cash'); ?>
+            </div>
+            
             <div class="form-group">
                 <?php
                 AjaxSubmitButton::begin([

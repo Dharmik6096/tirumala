@@ -27,6 +27,7 @@ $this->params['menu'][] = Yii::$app->controls->custombutton(Yii::t('app', 'Expor
 <?= $this->render('_import_popup') ?>
 <?php
 $script = "
+    Dropzone.autoDiscover = false;
      $('.excel-import').on('click',function(e){                     
        $('#excelImport').modal('toggle');
             });

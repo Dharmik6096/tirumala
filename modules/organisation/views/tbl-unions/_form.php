@@ -72,7 +72,7 @@ $form = ActiveForm::begin([
     ?>
     <div class="col-sm-4 form-group hide_drop_box">
         <?=
-        Dropzone::widget([
+            DropZone::widget([
             'id' => 'mainDrop',
             'options' => [
                 'acceptedMimeTypes' => ".jpg, .png, .jpeg",

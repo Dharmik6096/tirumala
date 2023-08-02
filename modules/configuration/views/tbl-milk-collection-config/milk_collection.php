@@ -34,10 +34,10 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'can_warning_per', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
 
                 <?= $form->field($model, 'ltr_to_kg', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
-                <div class='col-sm-12 margin-top-10'>
-                    <p class="pull-left"><?= Yii::t('app', 'CLR Formula: (SNF -(FAT * ') ?></p>
+                <div class='col-sm-12 mt-4'>
+                    <p class="float-start"><?= Yii::t('app', 'CLR Formula: (SNF -(FAT * ') ?></p>
                     <?= $form->field($model, 'lr1_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
-                    <p class='pull-left'>) - </p>
+                    <p class='float-start'>) - </p>
                     <?= $form->field($model, 'lr2_for_clr', ['options' => ['class' => 'form-group pull-left mt-8 col-xs-6 col-md-2'], 'template' => '{input}{error}{hint}',])->textInput() ?>
                     <p class='pull-left'>) * 4</p>
                 </div>
@@ -52,42 +52,50 @@ $form = ActiveForm::begin([
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"></h4>
                 </div>
-                    <?= $form->field($model, 'variation_in_qty', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <?= $form->field($model, 'variation_in_qty', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <div class="form-group col-sm-4 mt-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'variation_in_qty_block'); ?>
+                </div>
+                <?= Yii::$app->dropdown->dropdownStatic('weight_setting', $model, $form, 'col-sm-4 form-group ', $model->getAttributeLabel('weight_setting'), false, 'weight_setting', false); ?>
+                <div class='clearfix'></div>
+                <?= $form->field($model, 'variation_in_fat', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <div class="form-group col-sm-4 mt-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'variation_in_fat_block'); ?>
+                </div>
+                <?= Yii::$app->dropdown->dropdownStatic('quality_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('quality_setting'), false, 'quality_setting', false); ?>
 
-                    <?= $form->field($model, 'variation_in_qty_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-
-                    <?= Yii::$app->dropdown->dropdownStatic('weight_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('weight_setting'), false, 'weight_setting', false); ?>
-                    <div class='clearfix'></div>
-                    <?= $form->field($model, 'variation_in_fat', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
-
-                    <?= $form->field($model, 'variation_in_fat_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-                    <?= Yii::$app->dropdown->dropdownStatic('quality_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('quality_setting'), false, 'quality_setting', false); ?>
-
-                    <div class='clearfix'></div>
-                    <?= $form->field($model, 'variation_in_snf', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
-
-                    <?= $form->field($model, 'variation_in_snf_block', ['options' => ['class' => 'form-group col-sm-4 mt15'], 'checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-                    <?= Yii::$app->dropdown->dropdownStatic('dispatch_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('dispatch_setting'), false, 'dispatch_setting', false); ?>
-                    <div class='clearfix'></div>
-                    <?= $form->field($model, 'sample_milk_size', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
-                    <?= Yii::$app->dropdown->dropdownStatic('collection_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_mode'), false, 'collection_mode', false); ?>
+                <div class='clearfix'></div>
+                <?= $form->field($model, 'variation_in_snf', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <div class="form-group col-sm-4 mt-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'variation_in_snf_block'); ?>
+                </div>
+                <?= Yii::$app->dropdown->dropdownStatic('dispatch_setting', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('dispatch_setting'), false, 'dispatch_setting', false); ?>
+                <div class='clearfix'></div>
+                <?= $form->field($model, 'sample_milk_size', ['options' => ['class' => 'form-group col-sm-4']])->textInput() ?>
+                <?= Yii::$app->dropdown->dropdownStatic('collection_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_mode'), false, 'collection_mode', false); ?>
             </div>
 
             <div class="col-md-6 padding_10_0 theme-box theme_border_right">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"></h4>
                 </div>
-                <?= $form->field($model, 'accept_milk', ['options' => ['class' => 'form-group col-sm-12'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-
+                <div class="form-group col-sm-12">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'accept_milk'); ?>
+                </div>
                 <div class='clearfix'></div>
                 <div class='pull-left col-sm-4'>
                     <?= Yii::t('app', 'Allow multiple entry for member collection ') ?>&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
-                <?= $form->field($model, 'multi_entry_diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" style="margin-top:0;">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
-
-                <?= $form->field($model, 'multi_entry_same_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <div class="form-group col-sm-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'multi_entry_diff_milk_type'); ?>
+                </div>
+                <div class="form-group col-sm-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'multi_entry_same_milk_type'); ?>
+                </div>
                 <div class='clearfix'></div>
-                <?= $form->field($model, 'seperate_can', ['options' => ['class' => 'form-group col-sm-12'], 'checkboxTemplate' => "<div class='checkbox' style='margin-top:0;'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                <div class="form-group col-sm-12">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'seperate_can'); ?>
+                </div>
                 <div class='clearfix'></div>
                 <?= Yii::$app->dropdown->dropdownStatic('qty_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_quantity_mode'), false, 'collection_quantity_mode', false); ?>
 
