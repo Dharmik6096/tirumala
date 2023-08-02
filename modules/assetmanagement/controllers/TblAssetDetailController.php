@@ -75,11 +75,11 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+//            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->setModel($this->model);
             $master[] = $this->model;
             $assetTrans->current_status = $this->model->current_status;
-            $assetTrans->asset_detail_code = $this->model->asset_detail_code;
+//            $assetTrans->asset_detail_code = $this->model->asset_detail_code;
             $assetTrans->from_type = 'VEN';
             $assetTrans->from_dest = $this->model->manufacturer_code;
 //            $assetTrans->to_type = Yii::$app->general->getforeignkey($this->model->storeLocCode, 'store_location_type');
@@ -106,7 +106,8 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             }
 
             $master[] = $assetTrans;
-            $transaction = $this->generalModel->saveTransaction($master, ['Asset Detail', 'create']);
+            $auto_key_config['TblAssetTransaction'][] = ['self_key' => 'asset_detail_code', 'parent_key' => 'asset_detail_code', 'parent_index' => 0];
+            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($master, ['Asset Detail', 'create'], $auto_key_config);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }

@@ -48,50 +48,49 @@ class TblAssetTransaction extends \app\models\ChildModel {
     public function rules() {
         return [
 //            [['asset_detail_code'], 'required'],
-                [['asset_detail_code', 'status'], 'integer'],
-                [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_by', 'created_by', 'updated_by', 'qty', 'in_ward', 'selected_sr_no', 'remarks', 'put_to_use_date', 'from_plant', 'from_mcc', 'from_bmc', 'from_dcs', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sap_code', 'remain_qty'], 'safe'],
-                [['received_date', 'created_at', 'updated_at', 'asset_type', 'transaction_date'], 'safe'],
-                [['asset_type'], 'default', 'value' => 0],
-                [['to_type', 'to_dest', 'transaction_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['asset_detail_code', 'status'], 'integer'],
+            [['from_type', 'from_dest', 'to_type', 'to_dest', 'asset_code', 'serial_number', 'union_code', 'received_by', 'created_by', 'updated_by', 'qty', 'in_ward', 'selected_sr_no', 'remarks', 'put_to_use_date', 'from_plant', 'from_mcc', 'from_bmc', 'from_dcs', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'sap_code', 'remain_qty'], 'safe'],
+            [['received_date', 'created_at', 'updated_at', 'asset_type', 'transaction_date'], 'safe'],
+            [['asset_type'], 'default', 'value' => 0],
+            [['to_type', 'to_dest', 'transaction_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return $model->is_outward == '1';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#is_outward').val() == '1'; 
           }"],
-                [['transaction_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['transaction_date'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return $model->is_outward == '0';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#is_outward').val() == '0'; 
           }"],
-                [['asset_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'transaction_date'], 'required', 'on' => 'importCsv'],
-                [['serial_number'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['asset_code', 'from_type', 'to_type', 'to_dest', 'transaction_date'], 'required', 'on' => 'importCsv'],
+            [['serial_number'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->assetCode, 'is_serial_number') == '1';
                 }, 'except' => ['validateOut']],
-                [['qty'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['qty'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return Yii::$app->general->getforeignkey($model->assetCode, 'is_serial_number') == '0';
                 }, 'except' => ['validateOut']],
-                [['asset_code'], function ($attribute, $params) {
+            [['asset_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'asset_code');
                 }, 'skipOnError' => true, 'on' => 'importCsv'],
-                [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
-                [['asset_code'], 'checkUnique', 'skipOnError' => true],
+            [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['asset_code'], 'checkUnique', 'skipOnError' => true],
             //   ['serial_number', 'unique', 'targetAttribute' => ['serial_number', 'asset_code', 'from_type', 'from_dest', 'to_type', 'to_dest', 'transaction_date'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Serial No. has already been taken.')],
             [['from_dest'], 'exist', 'skipOnError' => true,
                 'targetClass' => ($this->from_type == 'VEN') ? TblCustomerMaster::className() : TblStoreLocation::className()
                 , 'targetAttribute' =>
                 ($this->from_type == 'VEN') ? ['from_dest' => 'customer_code'] : ['from_dest' => 'store_location_code']
             ],
-                [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['to_dest' => 'store_location_code']],
-                [['received_date', 'received_by'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+            [['to_dest'], 'exist', 'skipOnError' => true, 'targetClass' => TblStoreLocation::className(), 'targetAttribute' => ['to_dest' => 'store_location_code']],
+            [['received_date', 'received_by'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return $model->is_outward == '2';
                 }, 'whenClient' => "function (attribute, value) { 
               return $('#is_outward').val() == '2'; 
           }"],
-                [['to_type', 'to_dest', 'transaction_date', 'from_type', 'from_dest', 'remarks'], 'required', 'on' => 'setmovement'],
-                [['sap_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
-                    return $model->status == 2;
-                }, 'on' => 'importCsv'],
-                [['sap_code'], 'validateDestination', 'skipOnError' => true, 'on' => ['setmovement']],
-                [['from_type'], 'validateOutValidate', 'skipOnError' => true, 'except' => ['setmovement']],
+//            [['sap_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+//                    return $model->status == 2;
+//                }, 'on' => 'importCsv'],
+//            [['sap_code'], 'validateDestination', 'skipOnError' => true, 'on' => ['setmovement']],
+            [['from_type'], 'validateOutValidate', 'skipOnError' => true, 'except' => ['setmovement']],
         ];
     }
 
@@ -172,7 +171,7 @@ class TblAssetTransaction extends \app\models\ChildModel {
 
     public function assignAutoData($attribute, $params) {
         $this->union_code = isset($this->assetCode) ? $this->assetCode->union_code : NULL;
-        $this->from_dest = $this->from_sloc;
+        $this->from_dest = $this->from_dest;
         ($this->from_type == 'VEN') ? Yii::$app->general->validateGlobalData($this, 'from_dest', 'customer_code') : NULL;
         $this->status = ($this->in_use == '1') ? 2 : (($this->from_type == 'VEN') ? 0 : '-1');
         if ($this->from_type != 'VEN') {
