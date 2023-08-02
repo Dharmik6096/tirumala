@@ -4996,3 +4996,19 @@ tr.highlightRow {
 .default_hide_input {
     display: none;
 }
+
+.colheight table > tbody > tr > td {
+    line-height: 3.42857143;
+}
+.pt15 {
+    padding-top: 15px;
+}
+.pb15 {
+    padding-bottom: 15px;
+}
+.pr8 {
+    padding-right: 8px;
+}
+.pl8 {
+    padding-left: 8px;
+}

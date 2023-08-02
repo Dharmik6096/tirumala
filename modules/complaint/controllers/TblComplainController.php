@@ -323,12 +323,12 @@ class TblComplainController extends \app\controllers\ChildController {
     public function actionAssignComplain($complain_code = '') {
         $this->model = new TblComplain();
         $this->model = $this->findModel($complain_code);
-        $child = [];
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->scenario = 'assign_complain';
         $appLoginModel = new User();
         $notificationSent = true;
+        $complianUser = $this->model->user_code;
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
             $master = [];
             $mobileNo = Yii::$app->general->getforeignkey($this->model->contactDetailsCodes, 'mobile_no');
@@ -393,9 +393,24 @@ class TblComplainController extends \app\controllers\ChildController {
 
             $master[] = $this->model;
             $master[] = $complaint_activity_model;
-            $child[] = $historyModel;
+            $master[] = $historyModel;
+            $spCall = [];
+            if (!empty($this->model->user_code)) {
+                $sp_param = [];
+                $sp_name = 'Proc_task_activity';
+                $sp_param[] = $this->model->union_code;
+                $sp_param[] = $this->model->complain_code;
+                $sp_param[] = !empty($complianUser) ? $complianUser : NULL;
+                $sp_param[] = $this->model->user_code;
+                if (!empty($this->model->resolved_status)) {
+                    $sp_param[] = $this->model->resolved_status;
+                } else {
+                    $sp_param[] = NULL;
+                }
+                $spCall[] = [$sp_name, $sp_param];
+            }
 
-            $transaction = $this->generalModel->saveTransaction($master, $child, ['Complain Assign', 'create']);
+            $transaction = $this->generalModel->saveTransactionWithSp($master, $spCall, ['Complain Assign', 'create']);
             if ($transaction == 'customRedirect') {
                 if (!$notificationSent) {
                     Yii::$app->getSession()->setFlash('success', [
@@ -406,7 +421,7 @@ class TblComplainController extends \app\controllers\ChildController {
                 return $this->redirect(['index']);
             }
         }
-        return $this->renderAjax('assign_complain', [
+        return $this->render('assign_complain', [
                     'model' => $this->model,
                     'appLoginModel' => $appLoginModel
         ]);
@@ -445,7 +460,7 @@ class TblComplainController extends \app\controllers\ChildController {
         $this->model = $this->findModel($id);
         $this->viewFile = 'resolve_complain';
         $this->model->scenario = 'portal_resolve_complaint';
-
+        $complianUser = $this->model->user_code;
         $complain_spare = new TblComplainSpare();
         if (Yii::$app->request->post()) {
             $this->model->load(Yii::$app->request->post());
@@ -550,6 +565,17 @@ class TblComplainController extends \app\controllers\ChildController {
                     $sp_param[] = $this->model->resolved_status;
                     $sp_param[] = $this->model->new_serial_no;
                     $sp_param[] = NULL;
+                    $spCall[] = [$sp_name, $sp_param];
+                }
+
+                if (!empty($this->model->resolved_status == 'replace')) {
+                    $sp_param = [];
+                    $sp_name = 'Proc_task_activity';
+                    $sp_param[] = $this->model->union_code;
+                    $sp_param[] = $this->model->complain_code;
+                    $sp_param[] = !empty($complianUser) ? $complianUser : NULL;
+                    $sp_param[] = $this->model->user_code;
+                    $sp_param[] = $this->model->resolved_status;
                     $spCall[] = [$sp_name, $sp_param];
                 }
                 $transaction = $this->generalModel->saveTransactionWithSp($saveModel, $spCall, ['Complain Activity', 'edit']);
