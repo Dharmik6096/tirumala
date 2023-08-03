@@ -236,7 +236,7 @@ class ARImportStrategy extends CsvimporterARImportStrategy
      * @param array $attributes
      * @return boolean
      */
-    private function isActiveRecordUnique($attributes)
+    protected function isActiveRecordUnique($attributes)
     {
         /* @var $class \yii\db\ActiveRecord */
         $class = $this->className;

@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblDcsMilkTypeHistory;
 use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblRouteMappingSourcesHistory;
 use app\modules\dcsoperation\models\TblMember;
+use yii\base\UserException;
 
 class DcsImportStrategy extends ARImportStrategy {
 
@@ -353,7 +354,7 @@ class DcsImportStrategy extends ARImportStrategy {
                 }
             }
         }
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
         }
     }

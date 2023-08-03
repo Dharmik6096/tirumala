@@ -41,7 +41,7 @@ class BulkImportStrategy extends ARImportStrategy {
                 }
                 $count++;
             }
-            if ($count == count($data) - 1) {
+            if ($count == count($data) || $count == count($data) - 1) {
                 $path = Yii::$app->basePath . '/web/bulkdata/' . $this->scenario . '/';
                 $path = str_replace('\\', '/', $path);
                 if (Yii::$app->general->checkDirectory($path . 'archive/')) {

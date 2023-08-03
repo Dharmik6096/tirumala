@@ -11,6 +11,7 @@ use app\modules\assetmanagement\models\TblAssetTransaction;
 use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
 use app\modules\import\ARImportStrategy;
+use yii\base\UserException;
 
 class AssetDetailImportStrategy extends ARImportStrategy {
 
@@ -255,7 +256,7 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                 }
             }
         }
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)];
         }
     }
