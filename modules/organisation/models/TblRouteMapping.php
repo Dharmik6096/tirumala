@@ -96,6 +96,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+            [['sap_route_code'], 'unique', 'targetAttribute' => ['sap_route_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
             [['union_code'], 'importData', 'on' => ['importCsv']],
             [['is_active'], 'default', 'value' => 1, 'on' => ['importCsv']],
             [['mobile_no', 'firstname'], 'required', 'on' => ['importCsv']],
