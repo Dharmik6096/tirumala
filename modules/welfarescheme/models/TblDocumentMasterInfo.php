@@ -6,7 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 
 /**
- * This is the model class for table "tbl_scheme_document_master".
+ * This is the model class for table "tbl_document_master_info".
  *
  * @property integer $doc_id
  * @property string $doc_group
@@ -22,13 +22,13 @@ use app\modules\organisation\models\TblUnions;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMaster extends \app\models\ChildModel {
+class TblDocumentMasterInfo extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_scheme_document_master';
+        return 'tbl_document_master_info';
     }
 
     /**

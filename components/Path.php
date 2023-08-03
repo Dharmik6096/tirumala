@@ -94,7 +94,7 @@ class Path extends Component {
         '\\app\modules\import\models\\' => ['BackGroundDataImport'],
         '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
         '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
-        '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblSchemeDocumentMaster', 'TblSchemeMaster'],
+        '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblDocumentMasterInfo', 'TblSchemeMaster'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
     ];
