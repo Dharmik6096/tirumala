@@ -45,7 +45,8 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'integer'],
-                [['dcs_code'], 'validateData'],
+                [['dcs_code'], 'validateData', 'on' => ['importCsv']],
+                [['dcs_code'], 'setFieldImport'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['searchModel']],
         ];
     }
@@ -107,6 +108,19 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
         if (!empty($data)) {
             $message = Yii::$app->general->getforeignkey($data->dcsCode, 'dcs_name') . '(' . Yii::$app->general->getforeignkey($data->dcsCode, 'dcs_code_ex') . '): ' . Yii::$app->controls->view_date($data->wef_date);
             $this->addError($attribute, $message);
+        }
+    }
+
+    public function setFieldImport($attribute, $params) {
+        if (empty($this->getErrors()) && !empty($this->dcs_code)) {
+            $this->union_code = Yii::$app->general->getforeignkey($this->dcsCode, 'union_code');
+            $this->plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'plant_code');
+            $this->mcc_plant_code = Yii::$app->general->getforeignkey($this->dcsCode, 'mcc_plant_code');
+            $this->bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            if (empty($this->union_code)) {
+                $this->addError('dcs_code', Yii::t('app/validation', $this->getAttributeLabel('dcs_code') . ' is Invalid.'));
+                return false;
+            }
         }
     }
 
