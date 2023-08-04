@@ -3114,9 +3114,9 @@ select[multiple]{
     margin-bottom: 10px;
 }
 
-#applicable_type-list {
+/*#applicable_type-list {
     margin-left: 10px;
-}
+}*/
 
 .hide-grid-export .kv-panel-before [role="group"] {
     display: none !important;
@@ -3212,7 +3212,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 }
 
 .checkboxFilterList{
-    margin-left: -8px;
+    /*margin-left: -8px;*/
     margin-right: -8px;
 }
 
