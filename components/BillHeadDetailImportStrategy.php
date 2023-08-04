@@ -10,6 +10,7 @@ namespace app\components;
 use app\modules\import\ARImportStrategy;
 use Yii;
 use app\modules\vsp\models\TblBillHeadInstallment;
+use yii\base\UserException;
 
 class BillHeadDetailImportStrategy extends ARImportStrategy {
 
@@ -128,7 +129,7 @@ class BillHeadDetailImportStrategy extends ARImportStrategy {
                 }
             }
         }
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
         }
     }

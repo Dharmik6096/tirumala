@@ -102,7 +102,7 @@ class MemberImportStrategy extends ARImportStrategy {
                 
             }
         }
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
 //            if(!empty($dcs_code))
 //            {
 //                if(Yii::$app->general->isVendor($dcs_code,'BIPL')){

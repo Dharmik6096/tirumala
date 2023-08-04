@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblSocietyCodes;
 use yii\widgets\ActiveForm;
 use Yii;
 use app\modules\organisation\models\TblDcsHistory;
+use yii\base\UserException;
 
 class DcsImportUpdateStrategy extends ARImportStrategy {
 
@@ -152,7 +153,7 @@ class DcsImportUpdateStrategy extends ARImportStrategy {
                 }
             }
         }
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
         }
     }

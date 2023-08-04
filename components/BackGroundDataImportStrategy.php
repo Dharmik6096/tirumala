@@ -223,7 +223,8 @@ class BackGroundDataImportStrategy extends ARImportStrategy {
         $total_cnt = count($data) - 1;
         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message, 'error_lines' => $error_lines, 'total_cnt' => $total_cnt, 'success_lines' => $success_lines];
 
-        if ($count == count($data) - 1) {
+        if ($count == count($data) || $count == count($data) - 1) {
+            
             return ['total' => count($importedPks), 'status' => 'success', 'msg' => 'Among ' . count($importedPks) . ' records,' . count($importedPks) . ' records have been processed.', 'pk' => count($importedPks)/* ,'error'=>$errors */];
         }
 //        } catch (UserException $e) {
