@@ -20,19 +20,25 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
             <div class="table-responsive">
                 <?php
                 $attribute = [
-                        ['attribute' => 'product_sale_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_sale_rate_code'],
-                        [
+                    ['attribute' => 'product_sale_rate_code_val', 'label' => Yii::t('app', 'Rate Code'), 'value' => 'product_sale_rate_code'],
+                    [
                         'attribute' => 'union_code', 'filter' => false,
                         'value' => function($model) {
                             return (!empty($model->union_code) || isset($model->union_code)) ? $model->unionCode->union_name : '-';
                         }],
-                        [
+                    [
                         'attribute' => 'product_name',
                         'value' => 'productCode.product_name',
                         'label' => Yii::t('app', 'Product'),
                     ],
-                        ['attribute' => 'sale_rate'],
-                        [
+                    ['attribute' => 'sale_rate'],
+                    [
+                        'label' => 'Rate for Gyan',
+                        'attribute' => 'rate_wharehouse',
+                        'value' => 'rate_wharehouse',
+                        'visible' => Yii::$app->session->get('eiplCode') == 'GYAN' ? true : false,
+                    ],
+                    [
                         'attribute' => 'wef_date', 'width' => '200px',
                         'filterType' => GridView::FILTER_DATE,
                         'filterWidgetOptions' => [
@@ -42,10 +48,10 @@ $this->title = Yii::t('app', 'Product Rate History') . ' (' . $searchModel->prod
                         'value' => function($model) {
                             return Yii::$app->controls->view_date($model->wef_date);
                         }],
-                        ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
+                    ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
                             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
                         }],
-                        ['attribute' => 'commission', 'value' => 'commission'],
+                    ['attribute' => 'commission', 'value' => 'commission'],
                 ];
 
                 $grid_option = [

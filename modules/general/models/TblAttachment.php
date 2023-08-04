@@ -3,6 +3,7 @@
 namespace app\modules\general\models;
 
 use Yii;
+use app\modules\complaint\models\TblComplain;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -19,35 +20,31 @@ use Yii;
  * @property string $updated_by
  * @property string $thumbnail
  */
-class TblAttachment extends \yii\db\ActiveRecord
-{
+class TblAttachment extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_attachment';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['attachment_code'], 'required'],
-            [['attachment', 'thumbnail'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['attachment_code', 'module_code', 'attachment_type', 'created_by', 'updated_by'], 'string', 'max' => 20],
-            [['module_name', 'remarks'], 'string', 'max' => 255],
+                [['attachment', 'thumbnail', 'file_name'], 'safe'],
+                [['created_at'], 'safe'],
+                [['module_code', 'attachment_type', 'created_by'], 'safe'],
+                [['module_name', 'remarks'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'attachment_code' => Yii::t('app', 'Attachment Code'),
             'module_name' => Yii::t('app', 'Module Name'),
@@ -62,21 +59,31 @@ class TblAttachment extends \yii\db\ActiveRecord
             'thumbnail' => Yii::t('app', 'Thumbnail'),
         ];
     }
-    
+
     public function getData() {
         // $replaceServer = Yii::$app->params['attachment_server'];
         // if (!empty($replaceServer)) {
         //     $currentServer = Yii::$app->request->serverName;
-            return $this->find()->select(['attachment_code',
-                                'module_name',
-                                'module_code',
-                                'attachment_type',
-                                'remarks',
-                                'attachment',
-                                'thumbnail'])
-                            ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name])
-                            ->andFilterWhere(['remarks' => $this->remarks])
-                            ->orderBy('created_at desc')->all();
+        return $this->find()->select(['attachment_code',
+                            'module_name',
+                            'module_code',
+                            'attachment_type',
+                            'remarks',
+                            'attachment',
+                            'thumbnail'])
+                        ->where(['module_code' => $this->module_code, 'module_name' => $this->module_name])
+                        ->andFilterWhere(['remarks' => $this->remarks])
+                        ->orderBy('created_at desc')->all();
         // }
     }
+
+    public function attachmentDelete() {
+        $user = Yii::$app->session->get('UserCode');
+        $attachment = TblComplain::find()->where(['created_by' => $user])->one();
+        if (!empty($attachment))
+            return true;
+        else
+            return false;
+    }
+
 }

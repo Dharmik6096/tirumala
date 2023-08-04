@@ -98,6 +98,10 @@ class RequestMasterController extends MasterController {
                 $model->setChildTable($model, $transaction_data, $childModel);
                 $saveModel = true;
             }
+            if (isset($moduleDetails['save_child_other']) && $moduleDetails['save_child_other']) {
+                $model->setChildTableOther($model, $transaction_data, $childModel);
+                $saveModel = true;
+            }
             if ($saveModel) {
                 $master = [];
                 $master[] = $model;

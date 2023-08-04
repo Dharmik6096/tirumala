@@ -84,4 +84,10 @@ class TblApiMaster extends \yii\db\ActiveRecord {
                         ->one();
     }
 
+    public function getRecord($rec_type, $union_code) {
+        return $this->find()
+                        ->where(['receiver_type' => $rec_type, 'union_code' => $union_code, 'is_active' => 1])
+                        ->one();
+    }
+
 }

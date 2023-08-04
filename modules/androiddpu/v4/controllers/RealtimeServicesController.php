@@ -283,7 +283,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
 
         $ackModel->hash_key = $hashKey;
         $ackModel->device_id = $devide_id;
-        $existAck = $ackModel->getExistDataAck($org_type);
+        $existAck = $ackModel->getExistDataAck($org_type, true);
         $role_data = [];
         $usr_data = [];
         $ackKey = [];

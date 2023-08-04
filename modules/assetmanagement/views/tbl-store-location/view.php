@@ -18,7 +18,7 @@ $this->title = Yii::$app->label->title('view', 'Store Location');
                 [
                     'columns' => [
                         [
-                            'attribute' => 'store_location_code',
+                            'attribute' => 'sloc_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [

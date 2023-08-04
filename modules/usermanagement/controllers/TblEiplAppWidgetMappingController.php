@@ -23,7 +23,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProviderOther = $searchModel->search(Yii::$app->request->queryParams, 2);
         $selectedArray = [];
-        $this->model->department = $this->model->login_type == 'MEMBER' ? 'MEMBER' : $this->model->department;
+//        $this->model->department = $this->model->login_type == 'MEMBER' ? 'MEMBER' : $this->model->department;
         $selectedArray = $this->model->getWidgets();
 
         if (Yii::$app->request->post()) {
@@ -70,7 +70,7 @@ class TblEiplAppWidgetMappingController extends \app\controllers\ChildController
                     $auto_inc++;
                 }
             }
-
+           
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Mobile Dashboard Permission', 'edit']);
             $selectedArray = !empty($postArray) ? $postArray : [];
             if ($transaction == 'customRedirect') {

@@ -19,13 +19,14 @@ use app\modules\assetmanagement\models\TblAssetSet;
 use app\modules\assetmanagement\models\TblAssetSetHistory;
 use yii\widgets\ActiveForm;
 use app\models\ChildModel;
+use yii\base\UserException;
 
 /**
  * TblAssetDetailController implements the CRUD actions for TblAssetDetail model.
  */
 class TblAssetDetailController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['get-asset-is-serial', 'get-serial-no', 'validate-asset-qty'];
+    public $freeAccessActions = ['get-asset-is-serial', 'get-serial-no', 'validate-asset-qty', 'new-sr-no'];
 
     public function init() {
         parent::init();
@@ -74,10 +75,11 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+//            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->setModel($this->model);
             $master[] = $this->model;
-            $assetTrans->asset_detail_code = $this->model->asset_detail_code;
+            $assetTrans->current_status = $this->model->current_status;
+//            $assetTrans->asset_detail_code = $this->model->asset_detail_code;
             $assetTrans->from_type = 'VEN';
             $assetTrans->from_dest = $this->model->manufacturer_code;
 //            $assetTrans->to_type = Yii::$app->general->getforeignkey($this->model->storeLocCode, 'store_location_type');
@@ -85,23 +87,27 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             $assetTrans->to_dest = $this->model->store_location_code;
             $assetTrans->asset_code = $this->model->asset_code;
             $assetTrans->serial_number = $this->model->serial_number;
-            $assetTrans->status = ($assetTrans->to_type == 3) ? 2 : 0;
+            $assetTrans->status = 0;
             $assetTrans->union_code = $this->model->union_code;
             $assetTrans->transaction_date = $this->model->put_to_use_date;
             $assetTrans->qty = empty($this->model->qty) ? 1 : $this->model->qty;
             $assetTrans->put_to_use_date = $this->model->put_to_use_date;
             $assetTrans->remain_qty = $assetTrans->qty;
             if ($assetTrans->status == 2) {
-                if (empty($assetTrans->inUseSAPCode)) {
-                    $this->model->addError('store_location_code', Yii::t('app', 'Please define SAP Code for the destination'));
-                    return $this->customRender();
-                } else {
+//                if (empty($assetTrans->inUseSAPCode)) {
+//                    $this->model->addError('store_location_code', Yii::t('app', 'Please define SAP Code for the destination'));
+//                    return $this->customRender();
+//                } else {
+//                    $assetTrans->sap_code = $assetTrans->inUseSAPCode->sap_code;
+//                }
+                if (!empty($assetTrans->inUseSAPCode)) {
                     $assetTrans->sap_code = $assetTrans->inUseSAPCode->sap_code;
                 }
             }
 
             $master[] = $assetTrans;
-            $transaction = $this->generalModel->saveTransaction($master, ['Asset Detail', 'create']);
+            $auto_key_config['TblAssetTransaction'][] = ['self_key' => 'asset_detail_code', 'parent_key' => 'asset_detail_code', 'parent_index' => 0];
+            $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($master, ['Asset Detail', 'create'], $auto_key_config);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -162,6 +168,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
     private function setModel() {
         $this->model->purchase_date = ($this->model->purchase_date == '') ? null : Yii::$app->formatter->asDate($this->model->purchase_date, DATE_FORMAT);
         $this->model->put_to_use_date = ($this->model->put_to_use_date == '') ? null : Yii::$app->formatter->asDate($this->model->put_to_use_date, DATE_FORMAT);
+        $this->model->verification_date = ($this->model->verification_date == '') ? null : Yii::$app->formatter->asDate($this->model->verification_date, DATE_FORMAT);
     }
 
     public function actionGetAssetIsSerial() {
@@ -218,8 +225,10 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $model->to_dest = Yii::$app->request->post()['TblAssetTransaction']['to_dest'];
                     $this->model->transaction_date = (Yii::$app->request->post()['TblAssetTransaction']['transaction_date'] == '') ? null : Yii::$app->formatter->asDate(Yii::$app->request->post()['TblAssetTransaction']['transaction_date'], DATE_FORMAT);
                     $model->serial_number = $this->model->serial_number;
-                    $model->status = ($model->to_type == 3) ? 2 : '-1';
-//                    $model->status = '-1';
+                    $model->status = '-1';
+                    if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
+                        $model->status = 2;
+                    }
                     $model->union_code = $this->model->union_code;
                     $saveModel[] = $model;
                 }
@@ -306,17 +315,19 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if ($model->to_type == 3 || $model->in_ward == '1') {
                 $check_data = TblAssetSet::find()->where(['store_location_type' => $model->to_type, 'store_location_code' => $model->to_dest, 'status' => [2]])
                         ->one();
-                if (empty($check_data)) {
-                    $record = ['status' => 'success', 'msg' => Yii::t('app', 'Please define SAP Code for the destination')];
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return Json::encode($record);
+//                if (empty($check_data)) {
+//                    $record = ['status' => 'success', 'msg' => Yii::t('app', 'Please define SAP Code for the destination')];
+//                    Yii::$app->response->format = Response::FORMAT_JSON;
+//                    return Json::encode($record);
+//                }
+                if (!empty($check_data)) {
+                    $historyModel = new TblAssetSetHistory();
+                    Yii::$app->operation->history($check_data, $historyModel, UPDATE);
+                    $HisModel[] = $historyModel;
+                    $check_data->status = 2;
+                    $saveModel[] = $check_data;
+                    $sap_code = $check_data->sap_code;
                 }
-                $historyModel = new TblAssetSetHistory();
-                Yii::$app->operation->history($check_data, $historyModel, UPDATE);
-                $HisModel[] = $historyModel;
-                $check_data->status = 2;
-                $saveModel[] = $check_data;
-                $sap_code = $check_data->sap_code;
             }
             foreach ($model->selected_sr_no as $asset_code => $asset_detail) {
                 if ($asset_detail['is_serial_number'] == '1') {
@@ -344,11 +355,15 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $out_model->serial_number = $trn_model->serial_number;
                             $out_model->transaction_date = $model->transaction_date;
                             $out_model->put_to_use_date = $model->transaction_date;
-                            $out_model->status = ($model->to_type == 3) ? 2 : '-1';
+                            $out_model->status = '-1';
+                            if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
+                                $out_model->status = 2;
+                            }
                             $out_model->union_code = $trn_model->union_code;
                             $out_model->remarks = $model->remarks;
                             $out_model->qty = $out_model->remain_qty = 1;
-                            $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model->sap_code;
+                            $out_model->sap_code = ($model->to_type == 3) ? (isset($sap_code) ? $sap_code : NULL) : $trn_model->sap_code;
+                            $out_model->current_status = $trn_model->current_status;
                             $saveModel[] = $out_model;
                         } else {
                             $trn_model->status = 2;
@@ -387,8 +402,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                         $out_model->put_to_use_date = $model->transaction_date;
                         $out_model->qty = ($out_qty >= $act_qty) ? $act_qty : $out_qty;
                         $out_model->remain_qty = $out_model->qty;
+                        $out_model->current_status = $trn_model[$cnt]->current_status;
                         if ($model->in_ward == '0') {
-                            $out_model->status = ($model->to_type == 3) ? 2 : '-1';
+                            $out_model->status = '-1';
+                            if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
+                                $out_model->status = 2;
+                            }
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
                         } else {
                             $out_model->status = 2;
@@ -444,12 +463,16 @@ class TblAssetDetailController extends \app\controllers\ChildController {
             if (!$trModel->validate()) {
                 foreach ($trModel->getErrors() as $e) {
                     $errMsg = !empty($e[0]) ? $e[0] : '';
-                    $msg .=!empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
+                    $msg .= !empty($msg) ? '<br/>' . Yii::t('app', $errMsg) : Yii::t('app', $errMsg);
                 }
             }
-            if ($diffQty < $_POST['qty'] || !empty($msg)) {
+            if ($diffQty <= 0 || !empty($msg)) {
+                $e = $diffQty <= 0 ? Yii::t('app', 'Quantity not available') : '';
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
+                $data['msg'] = $msg;
+            } else if ($diffQty < $_POST['qty'] || !empty($msg)) {
                 $e = $diffQty < $_POST['qty'] ? Yii::t('app', 'Quantity can not be greater than ') . $diffQty : '';
-                $msg .=!empty($msg) ? '<br/>' . $e : $e;
+                $msg .= !empty($msg) ? '<br/>' . $e : $e;
                 $data['msg'] = $msg;
             } else {
                 $isSerialNo = Yii::$app->general->getforeignkey($trModel->assetCode, 'is_serial_number');
@@ -523,11 +546,12 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         try {
             $master = [];
             $oldSr = $model->oldAttributes['serial_number'];
+            $oldCs = $model->oldAttributes['current_status'];
             $master[] = $model->save();
             $master[] = $hist->save();
             if (!in_array(FALSE, $master)) {
                 $assetTrans = new TblAssetTransaction();
-                $assetTrans->updateAll(['serial_number' => $model->serial_number], ['serial_number' => $oldSr, 'asset_detail_code' => $model->asset_detail_code]);
+                $assetTrans->updateAll(['serial_number' => $model->serial_number, 'current_status' => $model->current_status], ['serial_number' => $oldSr, 'current_status' => $oldCs, 'asset_detail_code' => $model->asset_detail_code]);
                 $transaction->commit();
                 Yii::$app->display->message(true, $message[0], $message[1]);
                 return 'customRedirect';
@@ -547,6 +571,38 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                 'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return false;
         }
+    }
+
+    public function actionNewSrNo() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            $asset = explode('##', $parents[0]);
+            $code = [];
+            $type = [];
+            if (!empty($parents[2] && $parents[2] != 'Loading ...')) {
+                $code[] = $parents[2];
+                $type[] = 1;
+            }
+            if (!empty($parents[3] && $parents[3] != 'Loading ...')) {
+                $code[] = $parents[3];
+                $type[] = 2;
+            }
+            if (!empty($parents[4]) && $parents[4] != 'Loading ...') {
+                $code[] = $parents[4];
+                $type[] = 3;
+            }
+            $spare_code = (!empty($parents[5]) && $parents[5] != 'Loading ...') ? $parents[5] : '';
+            if (!empty($parents[0])) {
+                $bom = new TblAssetTransaction();
+                $data = $bom->getNewSrNo($asset[0], $code, $spare_code, $type);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['serial_number'], 'name' => $val['serial_number']);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

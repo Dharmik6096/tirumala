@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Url;
 
 ?>
 <?php
@@ -17,10 +19,11 @@ $attribute = [
     ['attribute' => 'is_serial_number', 'value' => function($model) {
             return ($model->is_serial_number == 0) ? 'No' : 'Yes';
         }, 'filter' => FALSE],
-    ['attribute' => 'cmpl_product_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->assetType, 'cmpl_product_name');
-        }],
-    ['attribute' => 'local_name', 'visible' => TRUE, 'filter' => FALSE],
+    ['attribute' => 'is_spare', 'value' => function($model) {
+            return ($model->is_spare == 0) ? 'No' : 'Yes';
+        }, 'filter' => FALSE],
+    ['attribute' => 'local_name', 'filter' => FALSE],
+    ['attribute' => 'ref_code', 'filter' => FALSE],
 ];
 
 $grid_option = [
@@ -30,6 +33,11 @@ $grid_option = [
     'actions' => [
         'view' => true,
         'update' => true,
+        'asset-bom' => function ($url, $model) {
+            $class = $model->is_spare == 0 ? '' : 'disabled';
+            $options = ['data-code' => $model->asset_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Bom', 'class' => $class,];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/assetmanagement/tbl-asset-bom/create', 'id' => $model->asset_code], $options);
+        },
     ]
 ];
 

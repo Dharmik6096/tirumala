@@ -18,7 +18,8 @@ use yii\helpers\FileHelper;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends \webvimark\modules\UserManagement\controllers\UserController {
+class UserController extends \webvimark\modules\UserManagement\controllers\UserController
+{
 
     use \app\controllers\ChildControllerTrait;
 
@@ -32,7 +33,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
      */
     public $modelSearchClass = 'app\modules\usermanagement\models\search\UserSearch';
 
-    public function actionUpdate($id) {
+    public function actionUpdate($id)
+    {
         $model = $this->findModel($id);
 
         if ($this->scenarioOnUpdate) {
@@ -52,6 +54,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $historyModel = new UserHistory();
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
+                    $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
                     $master[] = $model;
 
@@ -210,20 +213,20 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     }
                 }
 
-//                else {
-//                    $model->load(Yii::$app->request->post());
-//                    $model->save();
-//                }
+                //                else {
+                //                    $model->load(Yii::$app->request->post());
+                //                    $model->save();
+                //                }
                 $transaction = $this->generalModel->saveDelete4($master, [], $delete, ['User', 'edit']);
-//                $redirect = $this->getRedirectPage('update', $model);
-//                Yii::$app->getSession()->setFlash('success', [
-//                    'type' => 'success',
-//                    'message' => Html::encode('Record successfully updated.'),
-//                    'title' => Html::encode('Success'),
-//                ]);
-//                if($tableName=="{{%user}}")
-//                    return $this->redirect(['organization-map','id'=>$model->id]);
-//                else
+                //                $redirect = $this->getRedirectPage('update', $model);
+                //                Yii::$app->getSession()->setFlash('success', [
+                //                    'type' => 'success',
+                //                    'message' => Html::encode('Record successfully updated.'),
+                //                    'title' => Html::encode('Success'),
+                //                ]);
+                //                if($tableName=="{{%user}}")
+                //                    return $this->redirect(['organization-map','id'=>$model->id]);
+                //                else
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -246,7 +249,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
     /**
      * @return mixed|string|\yii\web\Response
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $this->model = new User(['scenario' => 'newUser']);
         $this->viewFile = 'create';
 
@@ -301,11 +305,13 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
     }
 
-    public function customRedirect() {
+    public function customRedirect()
+    {
         return $this->redirect(['organization-map', 'id' => $this->model->id]);
     }
 
-    public function customRender() {
+    public function customRender()
+    {
         $searchModel = $this->modelSearchClass ? new $this->modelSearchClass : null;
 
         if ($searchModel) {
@@ -319,7 +325,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->render('create', ['model' => $this->model, 'dataProvider' => $dataProvider, 'searchModel' => $searchModel]);
     }
 
-    public function actionGetOrgazinations() {
+    public function actionGetOrgazinations()
+    {
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
             return Json::encode(['output' => '', 'selected' => '']);
@@ -333,7 +340,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return Json::encode(['output' => $out]);
     }
 
-    public function actionGetRoles() {
+    public function actionGetRoles()
+    {
         $out = '';
         if (!isset($_POST['depdrop_parents'])) {
             return Json::encode(['output' => '', 'selected' => '']);
@@ -341,13 +349,16 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         $roles = Role::getAvailableRoles(true, true);
 
         foreach ($roles as $key => $row) {
-            $out[] = array('id' => $key,
-                'name' => str_replace('_', ' ', $row));
+            $out[] = array(
+                'id' => $key,
+                'name' => str_replace('_', ' ', $row)
+            );
         }
         return Json::encode(['output' => $out, 'selected' => '']);
     }
 
-    public function actionOrganizationMap($id) {
+    public function actionOrganizationMap($id)
+    {
         $user = User::findOne($id);
         $model = new TblUserOrganizationMapping();
         $model->scenario = 'organizationMapping';
@@ -418,30 +429,36 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
 
             TblUserOrganizationMapping::deleteAll(['user_id' => $id]);
             switch ($_POST['user_type']) {
-                case 7 : $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
+                case 7:
+                    $this->addUserOrganizationMapping($model->dcs, 'DCS', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->dcs, 'DCS', $contactModel) : '';
                     $type = 'BMC';
                     $org_id = $model->bmc;
                     break;
-                case 6 : $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
+                case 6:
+                    $this->addUserOrganizationMapping($model->bmc, 'BMC', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->bmc, 'BMC', $contactModel) : '';
                     $type = 'BMC';
                     $org_id = $model->bmc;
                     break;
-                case 5 : $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
+                case 5:
+                    $this->addUserOrganizationMapping($model->mcc, 'MCC', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->mcc, 'MCC', $contactModel) : '';
                     $type = 'MCC';
                     $org_id = $model->mcc;
                     break;
-                case 4 : $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
+                case 4:
+                    $this->addUserOrganizationMapping($model->plant, 'PLANT', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->plant, 'PLANT', $contactModel) : '';
                     $type = 'PLANT';
                     $org_id = $model->plant;
                     break;
-                case 3 : $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
+                case 3:
+                    $this->addUserOrganizationMapping($model->union, 'UNION', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->union, 'UNION', $contactModel) : '';
                     break;
-                case 2 : $this->addUserOrganizationMapping($model->federation, 'FEDERATION', $id, $user->is_active);
+                case 2:
+                    $this->addUserOrganizationMapping($model->federation, 'FEDERATION', $id, $user->is_active);
                     $setAppOrgMap ? $this->setAppOrgMapping($model->federation, 'FEDERATION', $contactModel) : '';
                     break;
             }
@@ -453,7 +470,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         return $this->renderIsAjax('organization_map', ['model' => $model, 'user' => $user, 'federations' => $federations, 'unions' => $unions, 'plant' => $plant, 'mcc' => $mcc, 'bmc' => $bmc, 'dcs' => $dcs, 'route' => $route, 'stickeyOrgArray' => $stickeyOrgArray]);
     }
 
-    private function addUserOrganizationMapping($data, $type, $userId, $active) {
+    private function addUserOrganizationMapping($data, $type, $userId, $active)
+    {
         $userModel = new User();
         $users = $userModel->findByRole(['EIPL']);
         $users = \yii\helpers\ArrayHelper::getColumn($users, 'id');
@@ -508,7 +526,8 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
       return $this->renderIsAjax('organization_map',['model'=>$model,'values'=>$data['value'],'selected'=>$data['selected']]);
       } */
 
-    public function setAppOrgMapping($org_codes, $org_type, $contactModel) {
+    public function setAppOrgMapping($org_codes, $org_type, $contactModel)
+    {
         foreach ($org_codes as $org_code) {
             $appOrgMapModel = new TblAppOrganizationMapping();
             $appOrgMapModel->detail_code = $contactModel->detail_code;
@@ -520,4 +539,61 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
         }
     }
 
+    public function actionDeactiveUser()
+    {
+        $model = $this->findModel(Yii::$app->request->get()['id']);
+        if (Yii::$app->request->post()) {
+
+            $historyModel = new UserHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
+            $saveModel[] = $historyModel;
+            $model->load(Yii::$app->request->post());
+            $model->scenario = 'DeactiveUser';
+            if ($model->validate()) {
+                //                $model->is_active = 0;
+                $model->wef_date = !empty(Yii::$app->request->post()['User']['wef_date']) ? Yii::$app->formatter->asDate(Yii::$app->request->post()['User']['wef_date'], DATE_FORMAT) : '';
+                $saveModel[] = $model;
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['User Deactivated', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'error', 'msg' => $msg];
+
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($model));
+            }
+
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+        return $this->renderAjax('deactive_user', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionActivateUser($id)
+    {
+        $this->model = $this->findModel($id);
+        $historyModel = new UserHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        //        $this->model->scenario = 'deactivate';
+        $this->model->is_active = 1;
+        $this->model->wef_date = NULL;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['User', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'User Activated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'User Not Activated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
 }

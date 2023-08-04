@@ -10,7 +10,6 @@ use yii\web\JsExpression;
 $form = ActiveForm::begin([
             'options' => ['id' => 'member-bill-head-detail-form'],
             'validateOnBlur' => false,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -49,13 +48,13 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbillheaddetail-bmc_code,tblbillheaddetail-customer_type', 'dcs_code', $model->getAttributeLabel('dcs_code'), FALSE); ?>
     </div>
-    <div class="clearfix"></div>
     <?php
     echo Html::hiddenInput('head_for', 'MEMBER', ['id' => 'head_for']);
     ?>
     <div class="col-sm-2 reset_field">
         <?= Yii::$app->dropdown->billHead($model, $form, 'tblbillheaddetail-union_code,tblbillheaddetail-customer_type,tblbillheaddetail-dcs_code,head_for', 'bill_head_code', $model->getAttributeLabel('bill_head_code')); ?>       
     </div>
+    <div class="clearfix"></div>
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'member_code')->textInput()->label('Code') ?>
     </div>
@@ -71,7 +70,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-1 reset_field">
         <?= $form->field($model, 'installment_amount')->textInput(['class' => 'form-control', 'min' => 0]) ?>       
     </div>
-
+    <div class="col-sm-3 reset_field">
+        <?= $form->field($model, 'remarks')->textInput() ?>       
+    </div>
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?php

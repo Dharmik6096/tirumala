@@ -123,18 +123,18 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                                         if ($act_qty >= $out_qty) {
                                             $out_qty = 0;
                                         } else {
-                                            $out_qty-=$act_qty;
+                                            $out_qty -= $act_qty;
                                         }
                                         $cnt++;
                                     }
                                 }
                             }
                         }
-                      
+
                         if (!empty($detailModelNew)) {
                             $detailModel = $detailModelNew;
                         } else {
-                            $detailModel->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($detailModel);
+                            //$detailModel->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($detailModel);
                             $detailModel->store_location_code = $model->to_dest;
                             $detailModel->manufacturer_code = ($model->from_type == 'VEN') ? $model->from_dest : NULL;
                             $detailModel->put_to_use_date = $model->transaction_date;
@@ -156,7 +156,7 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                                 return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                             }
                             $outward = $model->getPreviousEntry();
-                          
+
                             if (!empty($outward) && in_array($outward->status, [-1, 0, 2])) {
                                 $historyModel = new TblAssetTransactionHistory();
                                 \Yii::$app->operation->history($outward, $historyModel, 'UPDATE');
@@ -174,8 +174,8 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                               } */
                         }
                         if ($add_mode) {
-                            $modelList[] = $model;
                             $modelList[] = $detailModel;
+                            $modelList[] = $model;
                         }
                         if (!empty($model->sap_code)) {
                             if ($model->to_type == 3 || $model->in_use) {
@@ -222,7 +222,15 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                                 }
                             }
                         }
-                        foreach ($modelList as $modelRow) {
+                        foreach ($modelList as $key => $modelRow) {
+                            if ($add_mode) {
+                                $m_name = $modelRow::className();
+                                $m_name = explode("\\", $m_name);
+                                $m_name = $m_name[count($m_name) - 1];
+                                if ($m_name == 'TblAssetTransaction') {
+                                    $modelRow->asset_detail_code = $modelList[$key - 1]->asset_detail_code;
+                                }
+                            }
                             $master[] = $modelRow->save();
                         }
                         if (!in_array(FALSE, $master)) {
@@ -233,20 +241,20 @@ class AssetDetailImportStrategy extends ARImportStrategy {
                             $trans->rollback();
                             $message = '';
                             foreach ($model->getErrors() as $errorkey => $value) {
-                                $message.=$value[0] . '<br/>';
+                                $message .= $value[0] . '<br/>';
                             }
                             foreach ($detailModel->getErrors() as $errorkey => $value) {
-                                $message.=$value[0] . '<br/>';
+                                $message .= $value[0] . '<br/>';
                             }
                             return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                         }
                     } else {
                         $message = '';
                         foreach ($model->getErrors() as $errorkey => $value) {
-                            $message.=$value[0] . '<br/>';
+                            $message .= $value[0] . '<br/>';
                         }
                         foreach ($detailModel->getErrors() as $errorkey => $value) {
-                            $message.=$value[0] . '<br/>';
+                            $message .= $value[0] . '<br/>';
                         }
                         return ['total' => 0, 'status' => 'error', 'pk' => 0, 'msg' => 'There is error in Record No : ' . $key . '<br>' . $message];
                     }

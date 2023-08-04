@@ -5,6 +5,7 @@ use yii\web\View;
 use kartik\grid\GridView;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
 <?php
 $form = ActiveForm::begin(['options' => [
@@ -63,8 +64,8 @@ $form = ActiveForm::begin(['options' => [
 
 <div class="col-sm-12 margin-top-10 form-group" >
     <?php if (!empty($dataProvider->getModels())) { ?>
-        <?= Html::button(Yii::t('app', 'LOCK'), ['class' => 'btn btn-primary save', 'name' => 'lock-data']); ?>
-        <?= Html::button(Yii::t('app', 'UN-LOCK'), ['class' => 'btn btn-primary save', 'name' => 'unlock-data']); ?>
+        <?= GhostHtml::a_alert(Yii::t('app', 'LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-lock'], ['class' => 'btn btn-primary save', 'name' => 'lock-data']); ?>
+        <?= GhostHtml::a_alert(Yii::t('app', 'UN-LOCK'), ['/collection/tbl-mcc-shift-lock/member-data-unlock'], ['class' => 'btn btn-primary save', 'name' => 'unlock-data']); ?>
         <?= Yii::$app->controls->custombutton('Cancel', 'index-member'); ?> 
     <?php } ?>
 </div>

@@ -140,6 +140,7 @@ class TblProductSale extends \app\models\ChildModel {
               }", 'on' => ['saleProduct', 'productSaleImport', 'productSaleMemberImport']], */
             //  [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['productSaleImport', 'productSaleMemberImport']],
             [['quantity'], 'integer', 'on' => ['productSaleImport', 'productSaleMemberImport']],
+                [['product_sale_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
 
@@ -1072,6 +1073,13 @@ class TblProductSale extends \app\models\ChildModel {
 
     public function getUserCode() {
         return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+    public function validateDuplicate($attribute, $param) {
+        $cnt = $this->find()->where(['x_col1' => $this->x_col1])->count();
+        if (!empty($cnt) && $cnt > 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found.'));
+        }
     }
 
 }

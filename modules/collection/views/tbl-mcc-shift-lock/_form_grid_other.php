@@ -106,7 +106,7 @@ $attribute = [
         }, 'filter' => false],
     ['attribute' => 'vm_data_lock', 'label' => Yii::t('app', 'VM Data'), 'value' => function($model) {
             $class = $model['vm_data_lock'] == 1 ? 'fa-lock' : 'fa-unlock';
-            $title = $model['vm_data_lock'] == 1 ? 'Data Unlock - Product Sale' : 'Data Lock - Product Sale';
+            $title = $model['vm_data_lock'] == 1 ? 'Data Unlock - VM' : 'Data Lock - VM';
             $url = $model['vm_data_lock'] == 1 ? '/collection/tbl-mcc-shift-lock/vm-data-unlock' : '/collection/tbl-mcc-shift-lock/vm-data-lock';
             $popupClass = ''; //' disabled ';
             if (User::canRoute($url)) {

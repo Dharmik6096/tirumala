@@ -2,10 +2,6 @@
 
 ini_set("memory_limit", "-1");
 set_time_limit(3600);
-/* test commit */
-$params = require(__DIR__ . '/params.php');
-
-//echo Yii::$app->session['LanguageCode'];exit
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -17,7 +13,7 @@ $config = [
         '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
-        // 'session' => ['name' => 'tirumala'],
+        // 'session' => ['name' => 'eiplportal'],
         'session' => [
             'cookieParams' => [
                 'httpOnly' => true,
@@ -37,7 +33,7 @@ $config = [
                 'database' => 1,
             ]
         ],
-        'cache' => ['class' => 'yii\caching\FileCache'],
+        // 'cache' => ['class' => 'yii\caching\FileCache'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
@@ -58,6 +54,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'pdf' => ['class' => 'app\components\PDF'],
+        'DayHelper' => ['class' => 'app\components\DayHelper'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -222,107 +219,82 @@ $config = [
         'translation' => ['class' => 'app\modules\translation\Translation'],
         'import' => ['class' => 'app\modules\import\importData'],
         'customimport' => ['class' => 'app\modules\customimport\importData'],
-        'geo' => ['class' => 'app\modules\geo\geo',
-        ],
+        'geo' => ['class' => 'app\modules\geo\geo',],
         'organisation' => ['class' => 'app\modules\organisation\Organisation'],
-        'globalmaster' => ['class' => 'app\modules\globalmaster\GlobleMaster',
-        ],
-        'dcsaccounting' => ['class' => 'app\modules\dcsaccounting\DcsAccounting',
-        ],
-        'staffmanagement' => ['class' => 'app\modules\staffmanagement\StaffManagement',
-        ],
-        'setting' => ['class' => 'app\modules\setting\Setting',
-        ],
-        'miscellaneous' => ['class' => 'app\modules\miscellaneous\Miscellaneous',
-        ],
-        'dcsoperation' => ['class' => 'app\modules\dcsoperation\dcsoperation',
-        ],
-        'installation' => ['class' => 'app\modules\installation\Installation',
-        ],
-        'backup' => ['class' => 'spanjeta\modules\backup\Module',
-        ],
-        'hardwareconfigutation' => ['class' => 'app\modules\hardwareconfigutation\Hardwareconfiguration',
-        ],
-        'general' => ['class' => 'app\modules\general\General',
-        ],
-        'collection' => ['class' => 'app\modules\collection\collection',
-        ],
-        'product' => ['class' => 'app\modules\product\Product',
-        ],
-        'applicability' => ['class' => 'app\modules\applicability\Applicability',
-        ],
+        'globalmaster' => ['class' => 'app\modules\globalmaster\GlobleMaster',],
+        'dcsaccounting' => ['class' => 'app\modules\dcsaccounting\DcsAccounting',],
+        'staffmanagement' => ['class' => 'app\modules\staffmanagement\StaffManagement',],
+        'setting' => ['class' => 'app\modules\setting\Setting',],
+        'miscellaneous' => ['class' => 'app\modules\miscellaneous\Miscellaneous',],
+        'dcsoperation' => ['class' => 'app\modules\dcsoperation\dcsoperation',],
+        'installation' => ['class' => 'app\modules\installation\Installation',],
+        'backup' => ['class' => 'spanjeta\modules\backup\Module',],
+        'hardwareconfigutation' => ['class' => 'app\modules\hardwareconfigutation\Hardwareconfiguration',],
+        'general' => ['class' => 'app\modules\general\General',],
+        'collection' => ['class' => 'app\modules\collection\collection',],
+        'product' => ['class' => 'app\modules\product\Product',],
+        'applicability' => ['class' => 'app\modules\applicability\Applicability',],
         'details' => ['class' => 'app\modules\details\Details'],
         'payment' => ['class' => 'app\modules\payment\Payment'],
-        'restservices' => ['class' => 'app\modules\restservices\rest',
-        ],
-        'bipl' => ['class' => 'app\modules\bipl\bipl',
-        ],
+        'restservices' => ['class' => 'app\modules\restservices\rest',],
+        'bipl' => ['class' => 'app\modules\bipl\bipl',],
         'report' => ['class' => 'app\modules\report\report'],
-        'complaint' => ['class' => 'app\modules\complaint\Complaint',
-        ],
-        'notification' => ['class' => 'app\modules\notification\Notification',
-        ],
-        'jasperreports' => ['class' => 'app\modules\jasperreports\JasperReports',
-        ],
-        'crystalreports' => ['class' => 'app\modules\crystalreports\CrystalReports',
-        ],
-        'verification' => ['class' => 'app\modules\verification\Verification',
-        ],
-        'changelog' => ['class' => 'app\modules\changelog\ChangeLog',
-        ],
-        'webservice' => ['class' => 'app\modules\webservice\Webservice',
-        ],
-        'email' => ['class' => 'app\modules\email\email',
-        ],
-        'transporter' => ['class' => 'app\modules\transporter\transporter',
-        ],
+        'complaint' => ['class' => 'app\modules\complaint\Complaint',],
+        'notification' => ['class' => 'app\modules\notification\Notification',],
+        'jasperreports' => ['class' => 'app\modules\jasperreports\JasperReports',],
+        'crystalreports' => ['class' => 'app\modules\crystalreports\CrystalReports',],
+        'verification' => ['class' => 'app\modules\verification\Verification',],
+        'changelog' => ['class' => 'app\modules\changelog\ChangeLog',],
+        'webservice' => ['class' => 'app\modules\webservice\Webservice',],
+        'email' => ['class' => 'app\modules\email\email',],
+        'transporter' => ['class' => 'app\modules\transporter\transporter',],
         'rmrd' => ['class' => 'app\modules\rmrd\Rmrd'],
-        'stellapps' => ['class' => 'app\modules\stellapps\Stellapps',
-        ],
-        'misreports' => ['class' => 'app\modules\misreports\MisReports',
-        ],
-        'vendorapi' => ['class' => 'app\modules\vendorapi\Vendorapi',
-        ],
-        'creamy' => ['class' => 'app\modules\creamy\modules',
-        ],
-        'androiddpu' => ['class' => 'app\modules\androiddpu\Androiddpu',
-        ],
-        'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',
-        ],
-        'configuration' => ['class' => 'app\modules\configuration\configuration',
-        ],
-        'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',
-        ],
-        'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',
-        ],
-        'sms' => ['class' => 'app\modules\sms\Sms',
-        ],
-        'vsp' => ['class' => 'app\modules\vsp\Vsp',
-        ],
-        'bkgprocess' => ['class' => 'app\modules\bkgprocess\Bkgprocess',
-        ],
-        'soap' => ['class' => 'app\modules\soap\Soap',
-        ],
-        'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',
-        ],
-        'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',
-        ],
-        'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',
-        ],
-        'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',
-        ],
-        'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',
-        ],
-        'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',
-        ],
-        'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',
-        ],
-        'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',
-        ],
+        'stellapps' => ['class' => 'app\modules\stellapps\Stellapps',],
+        'misreports' => ['class' => 'app\modules\misreports\MisReports',],
+        'vendorapi' => ['class' => 'app\modules\vendorapi\Vendorapi',],
+        'creamy' => ['class' => 'app\modules\creamy\modules',],
+        'androiddpu' => ['class' => 'app\modules\androiddpu\Androiddpu',],
+        'syncutility' => ['class' => 'app\modules\syncutility\SyncUtility',],
+        'configuration' => ['class' => 'app\modules\configuration\configuration',],
+        'eipl' => ['class' => 'app\modules\webservice\eipl\Eipl',],
+        'embededdpu' => ['class' => 'app\modules\embededdpu\Embededdpu',],
+        'sms' => ['class' => 'app\modules\sms\Sms',],
+        'vsp' => ['class' => 'app\modules\vsp\Vsp',],
+        'bkgprocess' => ['class' => 'app\modules\bkgprocess\Bkgprocess',],
+        'soap' => ['class' => 'app\modules\soap\Soap',],
+        'usermanagement' => ['class' => 'app\modules\usermanagement\usermanagement',],
+        'emilkprolite' => ['class' => 'app\modules\webservice\emilkprolite\emilkProLite',],
+        'tankermovement' => ['class' => 'app\modules\tankermovement\Tankermovement',],
+        'eipldpu' => ['class' => 'app\modules\eipldpu\Eipldpu',],
+        'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
+        'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
+        'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
+        'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
+        'tms' => ['class' => 'app\modules\tms\Tms',],
     ],
-    'params' => $params,
+    'params' => require(__DIR__ . '/params.php'),
 ];
-
+$params = $config['params'];
+if (!empty($params ['mailer'])) {
+    $config['components']['mailer'] = $params ['mailer'];
+}
+if (!empty($params['redis'])) {
+    $config['components']['session'] = [
+        'cookieParams' => [
+            'httpOnly' => true,
+            'secure' => false
+        ]
+    ];
+    $config['components']['cookies'] = [
+        'class' => 'yii\web\Cookie',
+        'httpOnly' => true,
+        'secure' => true
+    ];
+    $config['components']['cache'] = [
+        'class' => 'yii\redis\Cache',
+        'redis' => $params ['redis']
+    ];
+}
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
@@ -336,5 +308,4 @@ if (YII_ENV_DEV) {
         'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
-
 return $config;

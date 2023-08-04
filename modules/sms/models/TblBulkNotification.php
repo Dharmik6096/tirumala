@@ -10,11 +10,11 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\sms\models\TblApiMaster;
 use app\modules\dcsoperation\models\TblMember;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_bulk_notification".
  *
- * @property integer $bulk_notification_id
  * @property string $union_code
  * @property string $plant_code
  * @property string $mcc_plant_code
@@ -50,12 +50,17 @@ class TblBulkNotification extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by'], 'safe'],
-            [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
-            [['content_id', 'status'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'wef_date'], 'required'],
-            [['status'], 'default', 'value' => 0],
-            [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe']
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'app_type', 'login_type', 'title', 'message', 'campaign_name', 'created_by', 'payment_cycle_code', 'from_date', 'to_date'], 'safe'],
+                [['wef_date', 'created_at', 'entry_datetime', 'pickup_datetime', 'response_datetime', 'receiver_type'], 'safe'],
+                [['content_id', 'status'], 'integer'],
+                [['login_type', 'message', 'wef_date', 'receiver_type', 'notification_type'], 'required'],
+                [['status'], 'default', 'value' => 0],
+                [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'when' => function ($model) {
+                    return $model->notification_type == '4';
+                }, 'whenClient' => "function (attribute, value) { 
+                            return $('#tblbulknotification-notification_type').val() == '4'; 
+                        }"],
         ];
     }
 
@@ -85,6 +90,7 @@ class TblBulkNotification extends \app\models\ChildModel {
             'entry_datetime' => Yii::t('app', 'Entry Datetime'),
             'pickup_datetime' => Yii::t('app', 'Pickup Datetime'),
             'response_datetime' => Yii::t('app', 'Response Datetime'),
+            'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
         ];
     }
 
@@ -136,6 +142,11 @@ class TblBulkNotification extends \app\models\ChildModel {
             return false;
         else
             return true;
+    }
+
+    public function getBMCDCS() {
+        $model = new TblDcs();
+        return ArrayHelper::toArray($model->getAllRlsDCS($this->union_code, $this->plant_code, $this->mcc_plant_code, $this->bmc_code, $this->dcs_code));
     }
 
 }

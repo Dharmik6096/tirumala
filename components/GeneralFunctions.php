@@ -1234,7 +1234,10 @@ class GeneralFunctions extends Component {
             case 'vendor':
                 $rel = 'customerCode';
                 break;
-            default:
+            case 'dcs':
+                $rel = 'dcsCode';
+                break;
+            default :
                 $rel = '';
         }
         return $rel;
@@ -2295,6 +2298,56 @@ class GeneralFunctions extends Component {
             $model->addError($attribute, Yii::t('app/validation', 'Date Range is invalid'));
             return false;
         }
+    }
+
+    public function setDesignTheme(&$layout, $eiplCode = '') {
+        if (empty($eiplCode)) {
+            $unionData = TblUnions::find()->where(['is_active' => 1])->one();
+            $eiplCode = !empty($unionData) && !empty($unionData->eipl_code) ? ($unionData->eipl_code) : '';
+        }
+        $eipl_css_file_path = 'themes/pcdf/assets/css/style.css';
+        $eipl_js_file_path = 'themes/pcdf/assets/js/style.js';
+        $client_css_file_path = 'themes/pcdf/assets/css/style_' . strtolower($eiplCode) . '.css';
+        $client_js_file_path = 'themes/pcdf/assets/js/style_' . strtolower($eiplCode) . '.js';
+        $check_client_css_file_path = \Yii::$app->basePath . '/' . $client_css_file_path;
+        $check_client_js_file_path = \Yii::$app->basePath . '/' . $client_js_file_path;
+        if (file_exists($check_client_css_file_path)) {
+            if (($key = array_search($eipl_css_file_path, $layout->css)) !== false) {
+                unset($layout->css[$key]);
+                $layout->css[] = $client_css_file_path;
+            }
+        }
+        if (file_exists($check_client_js_file_path)) {
+            if (($key = array_search($eipl_js_file_path, $layout->js)) !== false) {
+                unset($layout->js[$key]);
+                $layout->js[] = $client_js_file_path;
+            }
+        }
+    }
+
+    public function getMaxCode($model, $field, $dcs_code, $auto_inc = 1) {
+        $tableName = $model->tableName();
+        $val = (new \yii\db\Query)
+                ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
+                ->from($tableName)
+                ->where(['dcs_code' => $dcs_code])
+                ->one();
+        $number = (int) $val[$field] + $auto_inc;
+
+        return $number;
+    }
+
+    public static function getAttachmentUrl($module_name, $module_Code)
+    {
+        $attachment = \app\modules\general\models\TblAttachment::find()
+            ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+            ->one();
+
+        if ($attachment) {
+            return $attachment->attachment;
+        }
+
+        return null;
     }
 
 }
