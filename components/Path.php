@@ -97,6 +97,7 @@ class Path extends Component {
         '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblDocumentMasterInfo', 'TblSchemeMaster'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
+        '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
     ];
 
     public function get($model) {

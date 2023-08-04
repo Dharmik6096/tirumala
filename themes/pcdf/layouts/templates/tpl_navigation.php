@@ -906,6 +906,14 @@ echo GhostMenu::widget([
                             ['label' => 'Android Import', 'url' => ['/collection/tbl-milk-collection/android-collection']],
                     ]
                 ],
+                    [
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Document Upload<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
+                            ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
+                    ]
+                ],
             ],
         ],
             [
