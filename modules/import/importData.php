@@ -163,10 +163,9 @@ class importData extends \yii\base\Module {
             'indent-master' => ['table_name' => 'tbl_indent_master', 'fields' => 'dcs_code,member,indent_date,product_code,qty', 'scenario' => 'importCsv', 'increment' => 1, 'default_fields' => 'originating_type:1', 'save_child' => true],
             'indent-master-other' => ['table_name' => 'tbl_indent_master', 'fields' => 'dcs_code,warehouse_code,indent_date,product_code,qty', 'scenario' => 'importCsvOther', 'increment' => 1, 'default_fields' => 'originating_type:1', 'save_child' => true],
             'asset-detail-bom' => ['table_name' => 'tbl_asset_detail_bom', 'fields' => 'asset_detail_code,spare_code,serial_number,qty,is_active', 'scenario' => 'importCsv'],
-
             'bmc-quality-test' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'customer_type,customer_code,union_code,bmc_code,date_time_of_collection,shift_code,sample_no,fat,snf,clr,water,clr,protein,density,lactose,route_arrival_time,quality_datetime', 'scenario' => 'bmc-quality-test'],
-
             'bmc-weight-collection' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'customer_type,customer_code,union_code,bmc_code,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,route_arrival_time,weight_datetime', 'scenario' => 'bmc-weight-collection'],
+            'member-payment-restrict' => ['table_name' => 'tbl_member_payment_restrict', 'fields' => 'dcs_code,wef_date', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }
