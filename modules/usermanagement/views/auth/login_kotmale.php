@@ -135,7 +135,7 @@ if (Yii::$app->session->hasFlash('success')) {
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="login-content text-center">
+                                    <div class="login-content text-justify">
                                         <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/kotmale/images/'; ?>
                                         <div class="col-sm-12">
                                             <?= Html::img($image_path . 'about.jpg', ['class' => 'img-responsive']); ?>
@@ -143,7 +143,13 @@ if (Yii::$app->session->hasFlash('success')) {
                                         </div>
 
                                         <h3>About Us</h3>
-                                        <p class="text-justify">Everest brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
+                                        <p>Vision: To be a global corporate role model in community – friendly national development.</p>
+
+                                        <p>Mission: Serve the rural community, our customers and all other stakeholders, through our core business</p> 
+                                        <p> – food with love – and other related businesses, based on the three main principles of</p>
+                                        <p>• Reducing the cost of living</p>
+                                        <p>• Enhancing youth skills</p>
+                                        <p>• Bridging regional disparity</p>
 <!--                                        <p class="text-justify">Everest, keeping the above in mind, has entered into MOU with Gujarat Knowledge Application &Facilitation Centre of Confederation of Indian Industries, Western Branch and Anand Agriculture University to conduct research for our instruments to evaluate the performance, suggest further modification and upon their approval, issue the necessary accreditations.</p>
                                         <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
                                         <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
