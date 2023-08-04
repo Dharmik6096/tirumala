@@ -240,7 +240,7 @@ class SqliteCreate extends Component {
     //use for Android
     public function createSqlFileDcs($fileName, $dcs_code, $bmc_code, $mcc_plant_code, $plant_code, $org_code, $org_type, $union_code = '') {
         set_time_limit(5400);
-        $this->android_db = new SQLite3('installation-identity/' . $fileName);
+        $this->android_db = new SQLite3(Yii::$app->basePath . '/installation-identity/' . $fileName);
         $this->db_name = $org_code;
         $this->back_temp_file = $fileName;
         $this->export_db = Yii::$app->db;
