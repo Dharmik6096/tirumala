@@ -307,10 +307,10 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_antibiotic') {
                 $flag = 'bmc-collection-bulk-antibiotic';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
-            } else if ($row->file_type == 'bmc-weight-collection') {
+            } else if ($row->file_type == 'bmc_weight_collection') {
                 $flag = 'bmc-weight-collection';
                 $sp_name = 'DB_JOB_PORTAL_WEIGHT_Collection';
-            } else if ($row->file_type == 'bmc-quality-test') {
+            } else if ($row->file_type == 'bmc_quality_test') {
                 $flag = 'bmc-quality-test';
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
             }
