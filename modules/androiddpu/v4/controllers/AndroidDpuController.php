@@ -368,7 +368,7 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
                     if (empty($id_model['d2d_request'])) {
                         $file = $org_type . '_' . $org_code . '_' . date('Y.m.d_H.i.s');
                         $fileName = $file . '.db';
-                        $id_model->db_path = '/installation-identity/' . $file . '.db';
+                        $id_model->db_path = '/web/installation-identity/' . $file . '.db';
                         $FolderPath = Yii::$app->basePath . '/installation-identity/';
                         //                $zipfolder = Yii::$app->basePath . '/installation-identity/' . $file;
                         if (!is_dir($FolderPath)) {
