@@ -31,40 +31,28 @@ use Yii;
  * @property string $history_created_at
  * @property string $history_created_by
  */
-class TblAttachmentHistory extends \yii\db\ActiveRecord
-{
+class TblAttachmentHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_attachment_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['attachment_code', 'doc_id', 'originating_type'], 'integer'],
-            [['attachment', 'thumbnail'], 'string'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['module_code', 'attachment_type', 'created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 20],
-            [['module_name', 'lat_long'], 'string', 'max' => 255],
-            [['remarks', 'file_name'], 'string', 'max' => 1000],
-            [['parent_code'], 'string', 'max' => 50],
-            [['device_id'], 'string', 'max' => 500],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['operation_type'], 'string', 'max' => 10],
+                [['remarks', 'device_id', 'parent_code', 'file_name', 'module_name', 'lat_long', 'attachment_code', 'operation_type', 'originating_org_code', 'originating_org_type', 'doc_id', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'updated_at', 'history_created_at', 'module_code', 'attachment_type', 'created_by', 'updated_by', 'history_created_by'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'attachment_code' => Yii::t('app', 'Attachment Code'),
@@ -91,4 +79,5 @@ class TblAttachmentHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }

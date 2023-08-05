@@ -3,6 +3,8 @@
 namespace app\modules\document\models;
 
 use Yii;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
+use app\modules\document\models\TblDocumentMapping;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -41,15 +43,7 @@ class TblAttachment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['doc_id', 'originating_type'], 'integer'],
-                [['attachment', 'thumbnail'], 'string'],
-                [['created_at'], 'safe'],
-                [['module_code', 'attachment_type', 'created_by'], 'string', 'max' => 20],
-                [['module_name', 'lat_long', 'updated_at', 'updated_by'], 'string', 'max' => 255],
-                [['remarks', 'file_name'], 'string', 'max' => 1000],
-                [['parent_code'], 'string', 'max' => 50],
-                [['device_id'], 'string', 'max' => 500],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
         ];
     }
 
@@ -77,7 +71,16 @@ class TblAttachment extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'mapping_id' => Yii::t('app', 'Master Mapping'),
         ];
+    }
+
+    public function getDocId() {
+        return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
+    }
+
+    public function getMappingId() {
+        return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id']);
     }
 
 }

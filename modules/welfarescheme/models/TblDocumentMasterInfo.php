@@ -24,6 +24,8 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblDocumentMasterInfo extends \app\models\ChildModel {
 
+    public $is_mandate;
+
     /**
      * @inheritdoc
      */
@@ -37,7 +39,7 @@ class TblDocumentMasterInfo extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['is_active', 'originating_type'], 'integer'],
-                [['created_by', 'updated_by', 'union_code', 'doc_ext', 'doc_name', 'created_at', 'is_active', 'originating_type', 'updated_at', 'doc_group', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['is_mandate', 'created_by', 'updated_by', 'union_code', 'doc_ext', 'doc_name', 'created_at', 'is_active', 'originating_type', 'updated_at', 'doc_group', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['is_active'], 'default', 'value' => 1],
                 [['doc_name', 'doc_group', 'union_code'], 'required'],
         ];

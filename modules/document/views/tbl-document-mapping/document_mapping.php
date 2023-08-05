@@ -1,9 +1,5 @@
-<?php
-//$this->title = Yii::t('app', 'Document Mapping');
-?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
-        <!--<? $this->title; ?>-->           
     </div>
     <div class="panel-body">
         <div class=" large-search hidden-print">

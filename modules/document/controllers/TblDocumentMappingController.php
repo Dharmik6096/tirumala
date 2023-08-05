@@ -68,12 +68,14 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
         $searchModel->is_active = 1;
         $dataProvider = $searchModel->mappingsearch(Yii::$app->request->queryParams);
         $selectedArray = [];
-        $selectedArray = $this->model->getWidgets();
+        $selectedArray = $this->model->getExistingMapping();
         $mandateselectedArray = [];
         $mandateselectedArray = $this->model->getExistingMappingIsmandate();
         if (Yii::$app->request->post()) {
-            $postArray = [];
-            $postArray = Yii::$app->request->post('selection');
+            $data = Yii::$app->request->post();
+            $postMasterArray = $this->model['master_type'] ? $this->model['master_type'] : [];
+            $postArray = !empty($data['docId']) ? $data['docId'] : [];
+            $postMendateArray = !empty($data['isMandate']) ? $data['isMandate'] : [];
             $master = [];
             $auto_inc = 1;
             $newAssignments = [];
@@ -86,13 +88,15 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
             }
             $toAssign = array_diff($newAssignments, $oldAssignments);
             $toRevoke = array_values(array_diff($oldAssignments, $newAssignments));
+            $toUpdate = array_diff($newAssignments, array_merge($toAssign, $toRevoke));
+
             $delete = [];
             if (!empty($toRevoke)) {
                 foreach ($toRevoke as $revoke_widget) {
                     $model = new TblDocumentMapping();
-                    $model->doc_id = (string) $revoke_widget;
-                    $model->master_type = $this->model->master_type;
-                    $record = $model->getExistMappedWidgets();
+                    $model->doc_id = $revoke_widget;
+                    $model->union_code = $model->docId->union_code;
+                    $record = $model->getExistMappedControl();
                     $historyModel = new TblDocumentMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
                     $master[] = $historyModel;
@@ -101,19 +105,37 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                     }
                 }
             }
-
             if (!empty($toAssign)) {
                 foreach ($toAssign as $Assign_widget) {
                     $model = new TblDocumentMapping();
                     $model->doc_id = $Assign_widget;
-                    $model->master_type = $this->model->master_type;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($Assign_widget, $postMendateArray) ? 1 : 0;
+                    $model->master_type = $postMasterArray;
+                    $model->union_code = $model->docId->union_code;
                     $master[] = $model;
                     $auto_inc++;
                 }
             }
 
+            if (!empty($toUpdate)) {
+                foreach ($toUpdate as $update_widget) {
+                    $model = new TblDocumentMapping();
+                    $model->doc_id = $update_widget;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($update_widget, $postMendateArray) ? 1 : 0;
+                    $record = $model->getExistMappedControl();
+                    if (!empty($record) && ($model->is_mandate != $record->is_mandate)) {
+                        $historyModel = new TblDocumentMappingHistory();
+                        Yii::$app->operation->history($record, $historyModel, 'UPDATE');
+                        $master[] = $historyModel;
+                        $model->master_type = $postMasterArray;
+                        $record->is_mandate = $model->is_mandate;
+                        $master[] = $record;
+                    }
+                }
+            }
             $transaction = $this->generalModel->saveDeleteTransaction($master, [], $delete, ['Document Mapping', 'edit']);
             $selectedArray = !empty($postArray) ? $postArray : [];
+            $mandateselectedArray = !empty($postMendateArray) ? $postMendateArray : [];
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }

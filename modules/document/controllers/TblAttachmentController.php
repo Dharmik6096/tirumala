@@ -45,15 +45,15 @@ class TblAttachmentController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionCreate() {
-        $model = new TblAttachment();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->attachment_code]);
-        } else {
-            return $this->render('create', [
-                        'model' => $model,
-            ]);
+        $this->model = new TblAttachment();
+        $this->viewFile = 'create';
+        if ($this->model->load(Yii::$app->request->post())) {
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Attachment', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**

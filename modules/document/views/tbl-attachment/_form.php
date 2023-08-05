@@ -1,57 +1,40 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
+use yii\web\View;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\document\models\TblAttachment */
+/* @var $model app\modules\product\models\TblProduct */
 /* @var $form yii\widgets\ActiveForm */
+
+$readonly = $type == 'create' ? FALSE : TRUE;
 ?>
 
-<div class="tbl-attachment-form">
+<?php
+$form = ActiveForm::begin([
+            'validateOnBlur' => false,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
+?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'doc_id')->textInput() ?>
-
-    <?= $form->field($model, 'module_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'module_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'attachment_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'remarks')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'file_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'attachment')->textInput() ?>
-
-    <?= $form->field($model, 'lat_long')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'parent_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'device_id')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'thumbnail')->textInput() ?>
-
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_code')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_org_type')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'originating_type')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+<?= $form->errorSummary($model); ?>
+<div class="row">
+    <div class="col-sm-2">
+        <?= $form->field($model, 'mapping_id')->textInput() ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
+    <!--    <div class="col-sm-2">
+    <? Yii::$app->dropdown->dropdownStatic('master_type', $model, $form, 'form-group', $model->getAttributeLabel('mapping_id'), false, 'mapping_id', false); ?>
+        </div>-->
+    <div class="clearfix"></div>
+    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
+        </div>
+    </div>
 </div>
+<?php ActiveForm::end(); ?>

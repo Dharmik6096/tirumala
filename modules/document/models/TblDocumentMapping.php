@@ -80,7 +80,7 @@ class TblDocumentMapping extends \app\models\ChildModel {
             }
             $query = $this->find()
                     ->where(['IN', 'doc_id', $codes])
-//                    ->andWhere(['scheme_id' => $this->scheme_id])
+                    ->andWhere(['master_type' => $this->master_type])
                     ->all();
             return ArrayHelper::map($query, 'doc_id', 'doc_id');
         } else {
@@ -101,8 +101,7 @@ class TblDocumentMapping extends \app\models\ChildModel {
             }
             $query = $this->find()
                     ->where(['IN', 'doc_id', $codes])
-                    ->andWhere(['is_mandate' => 1])
-//                    ->andWhere(['scheme_id' => $this->scheme_id, 'is_mandate' => 1])
+                    ->andWhere(['master_type' => $this->master_type, 'is_mandate' => 1])
                     ->all();
             return ArrayHelper::map($query, 'doc_id', 'doc_id');
         } else {
@@ -113,23 +112,6 @@ class TblDocumentMapping extends \app\models\ChildModel {
     public function getExistMappedControl() {
         return $this->find()
                         ->where(['doc_id' => $this->doc_id])
-                        ->one();
-    }
-
-    public function getWidgets() {
-        if (!empty($this->master_type)) {
-            $query = $this->find()
-                    ->where(['master_type' => $this->master_type])
-                    ->all();
-            return ArrayHelper::map($query, 'doc_id', 'doc_id');
-        } else {
-            return [];
-        }
-    }
-
-    public function getExistMappedWidgets() {
-        return $this->find()
-                        ->where(['master_type' => $this->master_type, 'doc_id' => $this->doc_id])
                         ->one();
     }
 

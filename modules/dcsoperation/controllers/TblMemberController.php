@@ -348,4 +348,15 @@ class TblMemberController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionDocumentUpload($id) {
+        $this->model = $this->findModel($id);
+
+        $this->viewFile = 'document_upload';
+        if (Yii::$app->request->post()) {
+
+            $this->model->load(Yii::$app->request->post());
+        }
+        return $this->customRender();
+    }
+
 }
