@@ -230,9 +230,6 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblVspBillHeadCriteriaApplicability();
-        $customerType = new TblCustomerType();
-        $customerType->union_code = $model->union_code;
-        $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
         $appModel->model->wef_date = $appModel->model->from_date = date('Y-m-d');
         $appModel->model->to_date = date('Y-m-d', strtotime('+ 1 year'));
         $appModel->periodic_applicability = TRUE;
@@ -242,8 +239,9 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $appModel->trans_label = 'bill head criteria applicability';
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
+        $billHead = $model->billHead;
         $appModel->assignStaticData = [
-            'bill_head_for' => $model->billHead->bill_head_for,
+            'bill_head_for' => $billHead->bill_head_for,
             'bill_head_code' => $model->bill_head_code,
         ];
         $appModel->header_title = ' [Criteria: ' . $model->criteria_name . '] ';
@@ -268,6 +266,13 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
                     return $model->getName($model->applicable_for);
                 }],
         ];
+        if ($billHead->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
         $appModel->dcs_filters = $value;
         $appModel->actions = ['delete' => ['option' => 'bill_head_criteria_applicability_code,bill_head_criteria_applicability_code,tbl-vsp-bill-head-criteria/delete-applicability']];
 
@@ -380,6 +385,59 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         return $this->render('update_to_date', [
                     'model' => $model,
         ]);
+    }
+
+    public function actionUpdateToDateApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblVspBillHeadCriteriaApplicability();
+        $appModel->model->scenario = 'updateToDate';
+        $appModel->update_applicability = TRUE;
+        $appModel->check_wef_date = TRUE;
+        $appModel->model->to_date = date('Y-m-d');
+        $appModel->union_code = $model->union_code;
+        $appModel->field_name = 'vsp_criteria_code';
+        $appModel->field_value = $id;
+        $appModel->trans_label = 'bill head criteria applicability';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['tanker_rate'];
+        $billHead = $model->billHead;
+        $appModel->assignStaticData = [
+            'bill_head_for' => $billHead->bill_head_for,
+            'bill_head_code' => $model->bill_head_code,
+        ];
+        $appModel->header_title = ' To Date Upadte [Criteria: ' . $model->criteria_name . '] ';
+        $appModel->fields = [
+            'from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->to_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
+                }],
+            'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
+            'name' => ['view' => ['grid'], 'value' => function($model) {
+                    return $model->getName($model->applicable_for);
+                }],
+        ];
+
+        if ($billHead->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
+        $appModel->dcs_filters = $value;
+        return $appModel->createApp();
     }
 
 }
