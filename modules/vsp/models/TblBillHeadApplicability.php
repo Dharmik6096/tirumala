@@ -40,11 +40,12 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['created_at', 'updated_at', 'wef_date', 'from_date', 'to_date'], 'safe'],
-                [['from_date', 'to_date', 'applicable_code'], 'required'],
+                [['to_date', 'applicable_code'], 'required'],
+                [['from_date'], 'required', 'except' => ['updateToDate']],
                 [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
                 [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe'],
-                [['applicable_code'], 'setBMCCode']
+                [['applicable_code'], 'setBMCCode', 'except' => ['updateToDate']]
         ];
     }
 
@@ -101,11 +102,17 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     }
 
     public function setBMCCode($attribute, $params) {
-        $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
+        if (empty($this->bmc_code)) {
+            $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
+        }
     }
 
     public function getCustomerType() {
         return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'applicable_for', 'union_code' => 'union_code']);
+    }
+
+    public function getEditRecord() {
+        return $this->find()->where(['bill_head_code' => $this->bill_head_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for])->all();
     }
 
 }
