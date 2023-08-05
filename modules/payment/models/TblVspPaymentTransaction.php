@@ -33,6 +33,7 @@ class TblVspPaymentTransaction extends \app\models\ChildModel {
                 [['vsp_payment_code'], 'safe'],
                 [['bill_head_code'], 'safe'],
                 [['amount', 'bill_head_type', 'general_formula', 'is_hold', 'is_skippable', 'payment_cycle_type'], 'safe'],
+                [['current_amount', 'previous_amount', 'release_date', 'is_release'], 'safe'],
         ];
     }
 

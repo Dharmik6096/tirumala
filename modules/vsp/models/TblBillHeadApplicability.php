@@ -112,7 +112,8 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
     }
 
     public function getEditRecord() {
-        return $this->find()->where(['bill_head_code' => $this->bill_head_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for])->all();
+        return $this->find()->where(['bill_head_code' => $this->bill_head_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for])
+                        ->andWhere(['<=', 'from_date', $this->to_date])->all();
     }
 
 }

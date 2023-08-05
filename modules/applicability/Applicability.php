@@ -349,6 +349,8 @@ class Applicability extends \yii\base\Module {
                                     if ($appModel->hasAttribute('wef_date')) {
                                         $appModel->wef_date = $model->wef_date = $appModel->from_date;
                                     }
+                                } else if ($appModel->hasAttribute('from_date') && !empty($model->from_date)) {
+                                    $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
                                 }
                                 if ($this->update_applicability) {
                                     $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);

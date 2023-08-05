@@ -37,9 +37,10 @@ class TblMemberPaymentHead extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_code', 'dcs_code', 'member_code', 'bill_head_code', 'is_hold', 'is_skippable', 'general_formula','payment_cycle_type'], 'safe'],
+                [['bmc_code', 'dcs_code', 'member_code', 'bill_head_code', 'is_hold', 'is_skippable', 'general_formula', 'payment_cycle_type'], 'safe'],
                 [['payment_cycle_code', 'bill_head_type'], 'safe'],
                 [['amount'], 'safe'],
+                [['current_amount', 'previous_amount', 'release_date', 'is_release'], 'safe'],
         ];
     }
 

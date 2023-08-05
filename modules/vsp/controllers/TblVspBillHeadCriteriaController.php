@@ -357,9 +357,10 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($historyModel->save()) {
-                        Yii::$app->db->createCommand("update tbl_vsp_bill_head_criteria_applicability set to_date = :to_date where vsp_criteria_code = :vsp_criteria_code")
+                        Yii::$app->db->createCommand("update tbl_vsp_bill_head_criteria_applicability set to_date = :to_date where vsp_criteria_code = :vsp_criteria_code  and from_date <= :from_date")
                                 ->bindValue(':to_date', $model->to_date)
                                 ->bindValue(':vsp_criteria_code', $model->vsp_criteria_code)
+                                ->bindValue(':from_date', $model->to_date)
                                 ->execute();
                         $transaction->commit();
                         Yii::$app->display->message(true, 'Bill Head Criteria Applicability To Date', 'edit');
