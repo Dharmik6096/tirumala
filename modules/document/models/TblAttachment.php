@@ -31,6 +31,8 @@ use app\modules\document\models\TblDocumentMapping;
  */
 class TblAttachment extends \app\models\ChildModel {
 
+    public $doc_name;
+
     /**
      * @inheritdoc
      */
@@ -43,7 +45,7 @@ class TblAttachment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
+                [['doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
         ];
     }
 
@@ -81,6 +83,19 @@ class TblAttachment extends \app\models\ChildModel {
 
     public function getMappingId() {
         return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id']);
+    }
+
+    public function getDocumentMappingCode() {
+        return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id', 'doc_id' => 'doc_id']);
+    }
+
+    public function attachmentDelete() {
+        $user = Yii::$app->session->get('UserCode');
+        $attachment = \app\modules\dcsoperation\models\TblMember::find()->where(['created_by' => $user])->one();
+        if (!empty($attachment))
+            return true;
+        else
+            return false;
     }
 
 }

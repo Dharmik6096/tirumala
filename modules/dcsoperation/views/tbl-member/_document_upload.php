@@ -1,0 +1,154 @@
+<?php
+$this->title = 'Upload Documents';
+
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
+use kartik\detail\DetailView;
+use demogorgorn\ajax\AjaxSubmitButton;
+use yii\web\JsExpression;
+use yii\helpers\Url;
+?>
+
+<div class="panel-heading">
+    <ul class="progressbar">
+        <li class="inactive">Member No. <?= $model->member_code ?>  > </li>
+        <li>  Upload Member Documents</li>
+    </ul>
+</div>
+<div class="panel-body">
+    <div class="table-responsive">
+
+        <?php
+        $attributes = [
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'member_code',
+                        'valueColOptions' => ['style' => 'width:30%']
+                    ],
+                        [
+                        'attribute' => 'ex_member_code',
+                        'valueColOptions' => ['style' => 'width:30%']
+                    ],
+                ],
+            ],
+                [
+                'columns' => [
+                        [
+                        'attribute' => 'ref_code',
+                        'valueColOptions' => ['style' => 'width:30%']
+                    ],
+                        [
+                        'attribute' => 'member_name',
+                        'valueColOptions' => ['style' => 'width:30%']
+                    ],
+                ],
+            ],
+        ];
+
+        echo DetailView::widget([
+            'model' => $model,
+            'attributes' => $attributes,
+            'mode' => 'view',
+            'bordered' => true,
+            'striped' => false,
+            'responsive' => true,
+            'hAlign' => 'left',
+            'vAlign' => 'top',
+            'container' => ['id' => 'kv-demo'],
+        ]);
+        ?>
+    </div>
+    <div class="col-md-12 padding_10_0 theme-box">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+            <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Document List') ?></h4>
+        </div>
+        <div class="form-grid">
+            <?php
+            if (!empty($doc_model)) {
+                $form = ActiveForm::begin([
+                            'options' => ['id' => 'create-document-form',
+                                'enctype' => 'multipart/form-data'
+                            ],
+                            'validateOnBlur' => false,
+                            'validateOnChange' => FALSE,
+                            'enableClientValidation' => true,
+                            'validateOnSubmit' => true,
+                            'fieldConfig' => [
+                ]]);
+                ?>
+                <?= $form->errorSummary($doc_model) ?>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered table-striped table-main table-language table-rate">
+                            <tbody>
+                                <?php foreach ($doc_model as $key => $doc) { ?>
+                                    <tr>
+                                        <td width='60%'><?= $doc->doc_name; ?></td>
+                                        <td width='40%' class="hide_help_block">
+                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']attachment_code'); ?>
+                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']mapping_id'); ?>
+                                            <!--<? Html::activeHiddenInput($doc, '[' . $key . ']scheme_id'); ?>-->
+                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']doc_id'); ?>
+                                            <?php
+                                            $accept = !empty($doc->doc_ext) ? $doc->doc_ext : 'application/pdf,image/jpeg,.docx';
+                                            echo $form->field($doc, '[' . $key . ']file_name')->fileInput(['accept' => $accept])->label(FALSE);
+                                            ?>
+
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                        <div class="form-group">
+                            <?php
+                            AjaxSubmitButton::begin([
+                                'label' => Yii::t('app', 'Save'),
+                                'useWithActiveForm' => 'create-scheme-document-form',
+                                'ajaxOptions' => [
+                                    'type' => 'POST',
+                                    'url' => Url::to(['document-upload', 'id' => $model->member_code]),
+                                    'processData' => false,
+                                    'contentType' => false,
+                                    'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
+                                    'beforeSend' => new JsExpression("function(data){
+                                                $('#loadercontent').show();
+                                                $('#pageloader').show();
+                                                }"),
+                                    'success' => new JsExpression('function(data){
+                                                                var data=$.parseJSON(data);
+                                                                $("#loadercontent").hide();
+                                                                $("#pageloader").hide();
+                                                                if (data.status == "success"){ 
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();
+                                                                    window.location=data.msg;                                                                     
+                                                                }else{                                                       
+                                                                    $("#loadercontent").hide();
+                                                                    $("#pageloader").hide();                                                                   
+                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
+                                                                }
+                                                 }'),
+                                ],
+                                'options' => ['class' => 'btn btn-default btn-raised',
+                                    'type' => 'submit'],
+                            ]);
+                            AjaxSubmitButton::end();
+                            ?>
+                            <?php //Yii::$app->controls->save('SAVE', $model); ?>
+                            <?= Yii::$app->controls->reset(); ?>
+                            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    ActiveForm::end();
+}
+?>
+

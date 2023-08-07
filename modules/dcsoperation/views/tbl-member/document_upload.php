@@ -1,28 +1,22 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'Members');
+$this->title = Yii::$app->label->title('edit', 'Document Upload');
 
 use yii\web\View;
-$this->title.= ' > ' . $model->ex_member_code . ' > ' . $model->ref_code;
-
 ?>
 <div class="panel panel-default panel-main">
-    <div class="panel-heading"><?= $this->title ?></div>
-    <div class="panel-body">
+    <div class="panel-body  hide-grid-settings">
         <?=
-        $this->render('_form', [
+        $this->render('_document_upload', [
             'model' => $model,
-            'type' => 'edit', 
-//            'disable' => $disable
+            'doc_model' => $doc_model,
+            'type' => 'edit',
+        ])
+        ?>
+        <?=
+        $this->render('_attachment_grid', [
+            'dataProvider' => $dataProvider,
+            'attachment' => $attachment,
         ])
         ?>
     </div>
 </div>
-<?php
-$script = "
-        $(document).ajaxStop(function() {
-            $('.depend-control').each(function(){
-                $(this).attr('disabled', 'disabled');
-            })
-        });";
-Yii::$app->view->registerJs($script, View::POS_READY,'disable-dep');
-?>

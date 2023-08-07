@@ -6,6 +6,7 @@ use Yii;
 use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use yii\helpers\ArrayHelper;
 use app\modules\organisation\models\TblUnions;
+use app\modules\document\models\TblAttachment;
 
 /**
  * This is the model class for table "tbl_document_mapping".
@@ -113,6 +114,10 @@ class TblDocumentMapping extends \app\models\ChildModel {
         return $this->find()
                         ->where(['doc_id' => $this->doc_id])
                         ->one();
+    }
+
+    public function getUploadDocument() {
+        return $this->hasOne(TblAttachment::className(), ['mapping_id' => 'mapping_id', 'doc_id' => 'doc_id']);
     }
 
 }
