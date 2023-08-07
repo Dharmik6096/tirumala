@@ -3512,6 +3512,7 @@ input[type="checkbox"]:after{
     margin: 3px;
     position: fixed;
     background-color: inherit;
+    width: -webkit-fill-available;
 }
 
 .field-rmrd_widgets_list .help-block,

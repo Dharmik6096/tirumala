@@ -131,6 +131,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
 
 <?php
 $script = "
+   Dropzone.autoDiscover = false;
    $(document).ready(function() {
         $('.shift select option:contains(\'All\')').remove();
     });

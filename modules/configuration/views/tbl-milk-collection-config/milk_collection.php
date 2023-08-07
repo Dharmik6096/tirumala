@@ -24,7 +24,7 @@ $form = ActiveForm::begin([
 <div class="panel-body">
     <div class="panel-subheading">
         <div class="row theme_border_left theme_border_right theme_border_bottom">
-            <div class="col-md-6 padding_10_0 theme-box ">
+            <div class="col-md-6 padding_left_10 theme-box ">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"></h4>
                 </div>
@@ -75,7 +75,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdownStatic('collection_mode', $model, $form, 'col-sm-4 form-group', $model->getAttributeLabel('collection_mode'), false, 'collection_mode', false); ?>
             </div>
 
-            <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+            <div class="col-md-6 padding_left_10 theme-box theme_border_right">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                     <h4 class="theme-box-heading"></h4>
                 </div>
