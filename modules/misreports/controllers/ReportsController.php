@@ -942,7 +942,12 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'VlccTransactionDataReport';
         return $this->actionIndex();
     }
-    
+
+    public function actionMpgPaymentBillStatement() {
+        $this->report = 'MpgPaymentBillStatement';
+        return $this->actionIndex();
+    }
+
     public function uploadFTPData($title, $output, $model, $bmc) {
         $data_array = [];
         $data_array['module_name'] = $model->report_type == '1' ? 'TblBmcCollection_dodla_WQ' : 'TblBmcCollection_dodla_VM';
@@ -1322,6 +1327,41 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionProc() {
+        $this->report = 'MilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionProcDetail() {
+        $this->report = 'MilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionAbsent() {
+        $this->report = 'MilkCollectionAbsent';
+        return $this->actionIndex();
+    }
+
+    public function actionLeftPourer() {
+        $this->report = 'LeftPourer';
+        return $this->actionIndex();
+    }
+
+    public function actionMilkCollectionNegativeGroth() {
+        $this->report = 'MilkCollectionNegativeGroth';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkCollectionProc() {
+        $this->report = 'BmcMilkCollectionProc';
+        return $this->actionIndex();
+    }
+
+    public function actionBmcMilkCollectionProcDetail() {
+        $this->report = 'BmcMilkCollectionProcDetail';
+        return $this->actionIndex();
+    }
+
     public function actionAntibioticReport() {
         $this->report = 'AntibioticReport';
         return $this->actionIndex();
@@ -1360,6 +1400,21 @@ class ReportsController extends \app\controllers\ChildController {
                 $this->report = 'StockRegisterMccToSummary';
             }
         }
+        return $this->actionIndex();
+    }
+
+    public function actionBmcWiseSocietyWiseAutoManual() {
+        $this->report = 'BmcWiseSocietyWiseAutoManual';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BmcWiseSocietyWiseAutoManualSummary';
+            }
+        }
+        return $this->actionIndex();
+    }
+
+    public function actionBmcWiseAutoManualSummary() {
+        $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
 
@@ -2631,13 +2686,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Vendor Sale Report',
             ],
             'SummaryReportMcc' => [
-                'param' => 'union_code,plant_code,mcc_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_summary_report_at_cc',
                 'scenario' => 'SummaryReportMcc',
                 'title' => 'Summary Report - MCC',
             ],
             'SummaryReportDcs' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_vlcc_stock_summary_report',
                 'scenario' => 'SummaryReportDcs',
                 'title' => 'Summary Report - DCS',
@@ -2653,6 +2708,48 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'portal_export_bmc_collection',
                 'scenario' => 'RmrdMilkCollectionForSap',
                 'title' => '218 - BMC Collection Report For SAP',
+            ],
+            'MilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per',
+                'scenario' => 'MilkCollectionProc',
+                'title' => '112 - VLCs comparison summary',
+            ],
+            'MilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_proc_per_detail',
+                'scenario' => 'MilkCollectionProcDetail',
+                'title' => '113 - VLCs comparison details',
+            ],
+            'MilkCollectionAbsent' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_milk_collection_absent_last_few_days',
+                'scenario' => 'MilkCollectionAbsent',
+                'title' => '114 - Absent Pouring VLCs',
+            ],
+            'LeftPourer' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_left_pourers',
+                'scenario' => 'LeftPourer',
+                'title' => '115 - VLC Left Pourers',
+            ],
+            'MilkCollectionNegativeGroth' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_milk_collection_negative_growth',
+                'scenario' => 'MilkCollectionNegativeGroth',
+                'title' => '116 - Negative Growth VLCs',
+            ],
+            'BmcMilkCollectionProc' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per',
+                'scenario' => 'BmcMilkCollectionProc',
+                'title' => '117 - MCC comparison summary',
+            ],
+            'BmcMilkCollectionProcDetail' => [
+                'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_proc_per_detail',
+                'scenario' => 'BmcMilkCollectionProcDetail',
+                'title' => '118 - MCC comparison details',
             ],
             'AntibioticReport' => [
                 'param' => 'union_code,mcc_code:union_code,channel_code,bmc_code:channel_code:false,from_date:string:from_shift,to_date:string:to_shift',
@@ -2776,6 +2873,32 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_vlcc_transaction_ftp_data',
                 'scenario' => 'VlccTransactionDataReport',
                 'title' => 'VLCC Transaction Data Report',
+            ],
+            'BmcWiseSocietyWiseAutoManual' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_details',
+                'scenario' => 'BmcWiseSocietyWiseAutoManual',
+                'title' => 'BMC Wise Society Wise Auto Manual',
+                'report_type' => [Yii::t('app', 'Details '), Yii::t('app', 'Summary')],
+            ],
+            'BmcWiseSocietyWiseAutoManualSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_society_wise_auto_manual_summary',
+                'scenario' => 'BmcWiseSocietyWiseAutoManual',
+                'title' => 'BMC Wise Society Wise Auto Manual',
+                'report_type' => [Yii::t('app', 'Details '), Yii::t('app', 'Summary')],
+            ],
+            'BmcWiseAutoManualSummary' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_bmc_wise_auto_manual_summary',
+                'scenario' => 'BmcWiseAutoManualSummary',
+                'title' => 'BMC Wise Auto Manual Summary',
+            ],
+            'MpgPaymentBillStatement' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'sp_mis_mpg_payment_bill_statement',
+                'scenario' => 'MpgPaymentBillStatement',
+                'title' => 'MPG Payment Bill Statement',
             ],
         ];
         return $label[$l];

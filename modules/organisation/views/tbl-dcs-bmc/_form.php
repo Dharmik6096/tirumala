@@ -96,17 +96,17 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', 'District', FALSE); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code'); ?>
         </div>
         <!--        <div class="clearfix"></div>-->
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>

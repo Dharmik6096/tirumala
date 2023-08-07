@@ -37,7 +37,8 @@ $this->title = Yii::$app->label->title('create', 'Mapping');
             'check_wef_date' => $check_wef_date,
             'mccList' => $mccList,
             'selectedMccCode' => $selectedMccCode,
-            'selectedBmcCode' => $selectedBmcCode
+            'selectedBmcCode' => $selectedBmcCode,
+            'login_type' => $login_type
         ])
         ?>
         <div class="row">

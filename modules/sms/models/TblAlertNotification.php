@@ -41,6 +41,7 @@ class TblAlertNotification extends \app\models\ChildModel {
             [['language_code'], 'safe'],
             [['entry_datetime', 'pick_datetime', 'response_datetime', 'content_id', 'send_mail', 'created_by', 'activity_type'], 'safe'],
             [['send_mail'], 'default', 'value' => 0],
+            [['queue_name', 'generate_queue', 'eipl_code'], 'safe'],
         ];
     }
 
@@ -105,6 +106,23 @@ class TblAlertNotification extends \app\models\ChildModel {
 
         $array = \yii\helpers\ArrayHelper::map($data, 'module_type', 'module_type');
         return $array;
+    }
+
+    public function getPickRecords($limit = 100) {
+        $query = $this->find()
+                ->where(['send_status' => $this->send_status, 'generate_queue' => 1])
+                ->andWhere(['IS NOT', 'queue_name', NULL])
+                ->andWhere(['!=', 'queue_name', '']);
+        $query->limit($limit);
+        $query->orderBy([
+            'entry_datetime' => SORT_ASC,
+            'queue_name' => SORT_ASC,
+        ]);
+        return $query->all();
+    }
+
+    public function updateRecordStatus($value) {
+        return $this->updateAll(['send_status' => $this->send_status, 'pick_datetime' => date('Y-m-d H:i:s')], ['alert_notification_id' => $value]);
     }
 
 }

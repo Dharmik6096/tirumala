@@ -22,7 +22,7 @@ class TblEiplAppMenuActionsController extends \app\controllers\ChildController {
         $mappingModel = new TblEiplAppMenuActionsMapping();
         $mappingModel->load(Yii::$app->request->queryParams);
         $selectedArray = [];
-        $mappingModel->department = $mappingModel->login_type == 'MEMBER' ? 'MEMBER' : $mappingModel->department;
+//        $mappingModel->department = $mappingModel->login_type == 'MEMBER' ? 'MEMBER' : $mappingModel->department;
         $selectedArray = $mappingModel->getExistMapingMenu();
 
         if (Yii::$app->request->post()) {

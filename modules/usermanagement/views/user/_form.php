@@ -63,13 +63,25 @@ $form = ActiveForm::begin([
         </div>
 
     <?php endif; ?>
-    <div class="col-sm-2 user_type_show">
-        <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, '', 'Login Type', FALSE, 'login_type', FALSE, TRUE) ?> 
     </div>
     <div class="col-sm-2 mt18 user_type_show">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_app_login'); ?>
     </div> 
+    <div class="col-sm-2 user_type_show">
+        <?= Yii::$app->dropdown->dropdown('department', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('department'), false, 'department'); ?>
+    </div>
 
+    <div class="col-sm-2 h450">
+        <?= Yii::$app->dropdown->dropdown('designation_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('designation_code'), false); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('primary_parent'), false, 'primary_parent'); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdown('user', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('secondary_parent'), false, 'secondary_parent'); ?>
+    </div>
     <?php /* if ($model->checkNotSelf()) { ?>
       <div class="col-sm-2 mt25">
       <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>

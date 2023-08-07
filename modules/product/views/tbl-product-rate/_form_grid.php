@@ -18,18 +18,24 @@ use yii\helpers\Html;
 <?php
 $attribute = [
     //'rate_code',
-        ['attribute' => 'product_sale_rate_code', 'value' => 'product_sale_rate_code', 'visible' => false],
-        [
+    ['attribute' => 'product_sale_rate_code', 'value' => 'product_sale_rate_code', 'visible' => false],
+    [
         'attribute' => 'union_code', 'filter' => false,
         'value' => function($model) {
             return (!empty($model->union_code) || isset($model->unionCode)) ? $model->unionCode->union_name : '-';
         }],
-        ['attribute' => 'product_code',
+    ['attribute' => 'product_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->productCode, 'product_name');
         }],
     'sale_rate',
-        [
+    [
+        'label' => 'Rate for Gyan',
+        'attribute' => 'rate_wharehouse',
+        'value' => 'rate_wharehouse',
+        'visible' => Yii::$app->session->get('eiplCode') == 'GYAN' ? true : false,
+    ],
+    [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
@@ -39,10 +45,10 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-        ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
+    ['attribute' => 'is_member_rate', 'filter' => false, 'value' => function($model) {
             return $model->is_member_rate == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No');
         }],
-        ['attribute' => 'commission', 'value' => 'commission'],
+    ['attribute' => 'commission', 'value' => 'commission'],
 ];
 
 $grid_option = [

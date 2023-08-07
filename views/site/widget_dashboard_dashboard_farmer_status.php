@@ -2,7 +2,11 @@
 
 use yii\helpers\Url;
 
-$imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
+$eiplCode = strtolower(\Yii::$app->session['eiplCode']);
+$imageIconPathClient = $this->theme->getUrl('/assets/' . $eiplCode . '/images/dashboard/');
+$imageIconPathEipl = $this->theme->getUrl('/assets/images/dashboard/');
+$imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? $imageIconPathClient : $imageIconPathEipl;
+
 ?>
 
 <div class="col-sm-12 dashboard_farmer_status">

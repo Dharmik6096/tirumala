@@ -31,8 +31,11 @@ class TblAssetGroup extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['asset_group_name', 'union_code', 'reference_code'], 'required'],
-            [['asset_group_name', 'asset_group_code', 'reference_code'], 'unique'],
+            [['asset_group_name', 'union_code'], 'required'],
+            [['asset_group_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateName($this, $attribute, $params);
+                }, 'skipOnEmpty' => false,],
+            [['reference_code'], 'unique'],
             [['asset_group_name', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'default', 'value' => 1],
             [['created_at', 'updated_at', 'reference_code'], 'safe'],
@@ -40,10 +43,6 @@ class TblAssetGroup extends \app\models\ChildModel {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code']],
-            [['asset_group_code'], 'integer'],
-            [['asset_group_code'], 'string', 'min' => 8],
-            [['asset_group_code'], 'string', 'max' => 8],
-            [['asset_group_code'], 'number'],
         ];
     }
 

@@ -58,4 +58,9 @@ class DashboardAssets extends AssetBundle {
         'yii\bootstrap5\BootstrapPluginAsset',
     ];
 
+    public function init() {
+        parent::init();
+        \Yii::$app->general->setDesignTheme($this, \Yii::$app->session['eiplCode']);
+    }
+
 }

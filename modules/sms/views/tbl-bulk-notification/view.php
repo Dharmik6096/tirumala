@@ -15,128 +15,36 @@ $this->title = Yii::$app->label->title('view', 'Bulk Notification');
         <div class="table-responsive">
             <?php
             $attributes = [
-                [
+                    [
                     'columns' => [
-                        [
-                            'attribute' => 'bulk_notification_id'
-                        ],
-                        [
-                            'attribute' => 'union_code',
-                            'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                            [
+                            'attribute' => 'bulk_notification_id',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'plant_code',
-                            'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'mcc_plant_code',
-                            'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'dcs_code',
-                            'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        ['attribute' => 'member_code'],
-                        [
-                            'attribute' => 'member_code',
-                            'label' => Yii::t('app', 'Member Name'),
-                            'value' => Yii::$app->general->getforeignkey($model->memberCode, 'member_name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'app_type',
-                            'value' => Yii::$app->general->getforeignkey($model->apiMaster, 'api_name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
+                            [
                             'attribute' => 'login_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
+                            [
+                            'attribute' => 'receiver_type',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
                             'attribute' => 'wef_date',
                             'value' => Yii::$app->controls->view_date($model->wef_date),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
-                            'attribute' => 'status',
-                            'value' => isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
                     ],
                 ],
-                [
+                    [
                     'columns' => [
-                        [
-                            'attribute' => 'campaign_name',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'title',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
+                            [
                             'attribute' => 'message',
                             'valueColOptions' => ['style' => 'width:80%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'content_id',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'entry_datetime',
-                            'value' => Yii::$app->controls->view_date($model->entry_datetime),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'pickup_datetime',
-                            'value' => Yii::$app->controls->view_date($model->pickup_datetime),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
-                            'attribute' => 'response_datetime',
-                            'value' => Yii::$app->controls->view_date($model->response_datetime),
-                            'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],

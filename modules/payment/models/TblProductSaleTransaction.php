@@ -70,7 +70,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 'on' => ['saleProduct', 'SaleImport']],
                 [['data_lock'], 'default', 'value' => 0],
                 [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
-                [['quantity'], 'integer', 'except' => ['locksale']],
+                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync']],
+                [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
 
@@ -391,6 +392,39 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->productSaleCode->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function validateDuplicate($attribute, $param) {
+        $productSaleData = TblProductSale::find()->where(['x_col2' => $this->product_sale_code])->orderBy('created_at desc')->one();
+        if (empty($productSaleData)) {
+            $productSaleData = $this->productSaleCode;
+        }
+        if (!empty($productSaleData)) {
+            $productSaleData->invoice_date = date('Y-m-d H:i:s', strtotime($productSaleData->invoice_date)) . '.000000';
+            $product = $this->productCode;
+            $union = !empty($product) ? $product->unionCode : [];
+            if (!empty($union) && $union->eipl_code == 'PRABHAT' && $product->dpu_product_code == '994') {
+                $cnt = TblLoanProductSaleDetails::find()
+                        ->where(['sale_date_time' => $productSaleData->invoice_date, 'dcs_code' => $productSaleData->dcs_code])
+                        ->andWhere(["ISNULL(member_code,'')" => ($productSaleData->customer_type == 'MEMBER') ? $productSaleData->customer_code : ''])
+                        ->count();
+                if (!empty($cnt) && $cnt > 0) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found-Loan.'));
+                }
+            } else {
+                $cnt = $this->find()
+                        ->innerJoinWith(['productSaleCode'])
+                        ->where(['tbl_product_sale.invoice_date' => $productSaleData->invoice_date])
+                        ->andWhere(['tbl_product_sale.customer_code' => $productSaleData->customer_code, 'tbl_product_sale.customer_type' => $productSaleData->customer_type])
+                        ->andWhere(['tbl_product_sale_transaction.product_code' => $this->product_code])
+                        ->count();
+                if (!empty($cnt) && $cnt > 0) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found.'));
+                }
+            }
+        } else {
+            $this->addError($attribute, Yii::t('app/validation', 'Product Sale Record Not Found.'));
+        }
     }
 
 }

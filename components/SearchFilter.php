@@ -148,7 +148,7 @@ class SearchFilter {
                 'filter' => ['from_date', 'to_date'],
             ],
             'TblBulkNotificationSearch' => [
-                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'filter' => ['f_union_code', 'from_date', 'to_date'],
             ],
             'TblBillHeadSearch' => [
                 'filter' => ['f_union_code'],
@@ -420,6 +420,41 @@ class SearchFilter {
             ],
             'TblProductSaleLockingSearch' => [
                 'filter' => ['f_union_code'],
+            ],
+            'TblIndentMasterSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'action' => ['index-other', 'index']
+            ],
+            'TblIndentDispatchSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
+                'action' => ['index-other', 'index']
+            ],
+            'TblIndentProductSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblAnimalInspectorSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblAnimalInspectorRequestSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code'],
+            ],
+            'TblTaskType' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblFormType' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblTaskSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
+            ],
+            'TblTaskTypeSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblFormTypeSearch' => [
+                'filter' => ['f_union_code'],
+            ],
+            'TblUserAttendanceSearch' => [
+                'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'from_date', 'to_date'],
             ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;

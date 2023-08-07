@@ -1203,6 +1203,14 @@ class SSH2
             ? \WeakReference::create($this)
             : $this;
 
+        /**
+         * Typehint is required due to a bug in Psalm: https://github.com/vimeo/psalm/issues/7508
+         * @var \WeakReference<SSH2>|SSH2
+         */
+        self::$connections[$this->getResourceId()] = class_exists('WeakReference')
+            ? \WeakReference::create($this)
+            : $this;
+
         if (is_resource($host)) {
             $this->fsock = $host;
             return;

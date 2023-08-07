@@ -12,10 +12,8 @@ $class = $type == 'create' ? '' : 'disabled';
 
 <?php
 $form = ActiveForm::begin([
-
             'options' => [],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -25,10 +23,11 @@ $form = ActiveForm::begin([
 <div class="row">
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+        <?php echo $form->field($model, 'store_location_type')->hiddenInput(['value' => '', 'id' => 'store_location_type'])->label(false); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('store_location_type', $model, $form, 'form-group col-sm-2', $model->getAttributeLabel('store_location_type'), $readonly); ?>
-    </div>
+    </div>    
     <div class="col-sm-2">
         <?= $form->field($model, 'store_location_name')->textInput() ?>   
     </div>
@@ -51,4 +50,20 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
+
+<?php
+$eiplCode = Yii::$app->session->get('eiplCode');
+$script = "
+    var eiplCode = '$eiplCode';
+    $(document).ready(function(){
+        if(eiplCode == 'GYAN') {
+            $('#tblstorelocation-store_location_type').val('4').trigger('change');
+            $('#tblstorelocation-store_location_type').attr('disabled', true);
+            $('#store_location_type').val('4');
+        }
+    });
+    
+";
+Yii::$app->view->registerJs($script, View::POS_END, 'asset_form');
+?>
 

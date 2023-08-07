@@ -14,7 +14,6 @@ $class = $type == 'create' ? '' : 'disabled';
 $form = ActiveForm::begin([
             'options' => [],
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -82,7 +81,18 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'maintanance_duration_in_days')->textInput() ?>
     </div>
-    <?= Html::activeHiddenInput($model, 'is_serial_number', ['id' => 'is_serial_number']) ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $model, $form, 'form-group', $model->getAttributeLabel('current_status'), false, 'current_status', false); ?>
+    </div>
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'is_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'verification_date', '', FALSE); ?>
+    </div>
+</div>   
+<?= Html::activeHiddenInput($model, 'is_serial_number', ['id' => 'is_serial_number']) ?>
+<div class="row">
     <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
@@ -97,6 +107,7 @@ $form = ActiveForm::begin([
 <?php
 $script = "
 $(document).ready(function(){
+$('#tblassetdetail-verification_date').attr('disabled', true);
    $('.hide-serial-no').hide(); 
    $('.hide-qty-no').hide(); 
    if('$type'!='create'){ 
@@ -161,6 +172,19 @@ function showHideParams(type) {
             },
         });
     }
+    
+        $('#tblassetdetail-is_verified').click(function(){
+              isverified_enable();
+         });
+
+         function isverified_enable(){
+              if($('#tblassetdetail-is_verified').is(':checked')) {
+                  $('#tblassetdetail-verification_date').attr('disabled',false);
+              } else {
+                $('#tblassetdetail-verification_date').attr('disabled',true);
+         }
+       }
+    
      function getStoreLocationCode(select_type, checkEvent = 'No'){
         var selectParam = $('#tblassetdetail-store_location_type').val();
         selectParam = selectParam.toLowerCase();

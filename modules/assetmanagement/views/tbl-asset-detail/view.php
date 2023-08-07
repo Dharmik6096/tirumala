@@ -99,8 +99,13 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
                     'columns' => [
                         [
                             'attribute' => 'make',
-                            'valueColOptions' => ['style' => 'width:80%']
+                            'valueColOptions' => ['style' => 'width:30%']
                         ],
+                        [
+                            'attribute' => 'current_status',
+                            'value' => (isset($model->current_status) && $model->current_status != null) ? Yii::$app->dropdown->getRecords('asset_detail_status')['data'][$model->current_status] : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ]
                     ],
                 ],
                 [
@@ -128,7 +133,7 @@ $this->title = Yii::$app->label->title('view', 'Asset Detail');
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [ // your ajax delete parameters
+                'deleteOptions' => [// your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],
