@@ -70,7 +70,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
-                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code',
+                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code,is_without_release',
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
@@ -78,7 +78,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_secondary_payment_cargill',
                 ],
                 'member_payment_disburse' => [
-                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
+                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type,is_without_release',
                     'sp_name' => 'member_payment_disburse',
                 ],
                 'mcc_remuneration_payment' => [

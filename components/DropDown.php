@@ -839,7 +839,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
-        if (!in_array($flag, array('p_type'))) {
+        if (!in_array($flag, array('p_type', 'payment_release_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
 
@@ -861,7 +861,11 @@ class DropDown extends Component {
                 'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
-            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
+            $options = ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable];
+            if ($data['prompt'] === FALSE) {
+                unset($options['prompt']);
+            }
+            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, $options)->label(Yii::t('app', $label));
         }
     }
 
@@ -1678,6 +1682,11 @@ class DropDown extends Component {
                 'name' => 'task_repeat_interval',
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
+            ],
+            'payment_release_type' => [
+                'name' => 'payment_release_type',
+                'prompt' => FALSE,
+                'data' => ['0' => Yii::t('app', 'With Release'), '1' => Yii::t('app', 'W/O Release')],
             ],
         ];
         return $records[$l];
