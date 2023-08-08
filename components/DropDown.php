@@ -1679,6 +1679,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
+            'payment_type' => [
+                'name' => 'payment_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
+            ],
         ];
         return $records[$l];
     }
