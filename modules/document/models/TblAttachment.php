@@ -89,13 +89,4 @@ class TblAttachment extends \app\models\ChildModel {
         return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id', 'doc_id' => 'doc_id']);
     }
 
-    public function attachmentDelete() {
-        $user = Yii::$app->session->get('UserCode');
-        $attachment = \app\modules\dcsoperation\models\TblMember::find()->where(['created_by' => $user])->one();
-        if (!empty($attachment))
-            return true;
-        else
-            return false;
-    }
-
 }

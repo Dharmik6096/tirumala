@@ -5,13 +5,8 @@ namespace app\modules\document\controllers;
 use Yii;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\document\models\TblDocumentMappingSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use app\models\ChildModel;
 use app\modules\welfarescheme\models\TblDocumentMasterInfoSearch;
 use app\modules\document\models\TblDocumentMappingHistory;
-use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 
 /**
  * TblDocumentMappingController implements the CRUD actions for TblDocumentMapping model.
@@ -30,34 +25,6 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
-    }
-
-    /**
-     * Displays a single TblDocumentMapping model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new TblDocumentMapping model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate() {
-        $model = new TblDocumentMapping();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->mapping_id]);
-        } else {
-            return $this->render('create', [
-                        'model' => $model,
-            ]);
-        }
     }
 
     public function actionDocumentMapping() {
@@ -147,51 +114,6 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                     'selectedArray' => $selectedArray,
                     'mandateselectedArray' => $mandateselectedArray,
         ]);
-    }
-
-    /**
-     * Updates an existing TblDocumentMapping model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->mapping_id]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Deletes an existing TblDocumentMapping model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the TblDocumentMapping model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return TblDocumentMapping the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id) {
-        if (($model = TblDocumentMapping::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 }

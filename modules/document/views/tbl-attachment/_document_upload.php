@@ -11,8 +11,8 @@ use yii\helpers\Url;
 
 <div class="panel-heading">
     <ul class="progressbar">
-        <li class="inactive">Member No. <?= $model->member_code ?>  > </li>
-        <li>  Upload Member Documents</li>
+        <li class="inactive">Member No. <?= $model->member_code ?> </li>
+        <li>Upload Documents</li>
     </ul>
 </div>
 <div class="panel-body">
@@ -24,6 +24,7 @@ use yii\helpers\Url;
                 'columns' => [
                         [
                         'attribute' => 'member_code',
+                            
                         'valueColOptions' => ['style' => 'width:30%']
                     ],
                         [
@@ -89,7 +90,6 @@ use yii\helpers\Url;
                                         <td width='40%' class="hide_help_block">
                                             <?= Html::activeHiddenInput($doc, '[' . $key . ']attachment_code'); ?>
                                             <?= Html::activeHiddenInput($doc, '[' . $key . ']mapping_id'); ?>
-                                            <!--<? Html::activeHiddenInput($doc, '[' . $key . ']scheme_id'); ?>-->
                                             <?= Html::activeHiddenInput($doc, '[' . $key . ']doc_id'); ?>
                                             <?php
                                             $accept = !empty($doc->doc_ext) ? $doc->doc_ext : 'application/pdf,image/jpeg,.docx';
@@ -107,10 +107,12 @@ use yii\helpers\Url;
                             <?php
                             AjaxSubmitButton::begin([
                                 'label' => Yii::t('app', 'Save'),
-                                'useWithActiveForm' => 'create-scheme-document-form',
+                                'useWithActiveForm' => 'create-document-form',
                                 'ajaxOptions' => [
                                     'type' => 'POST',
-                                    'url' => Url::to(['document-upload', 'id' => $model->member_code]),
+                                    'url' => Url::to(['/dcsoperation/tbl-member/member-document-upload', 'id' => $model->member_code]),
+//                                    'url' => Url::to(['/document/tbl-attachment/document-upload', 'id' => $model->member_code]),
+//                                    'url' => Url::to(['document-upload', 'id' => $model->member_code]),
                                     'processData' => false,
                                     'contentType' => false,
                                     'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
@@ -138,7 +140,6 @@ use yii\helpers\Url;
                             ]);
                             AjaxSubmitButton::end();
                             ?>
-                            <?php //Yii::$app->controls->save('SAVE', $model); ?>
                             <?= Yii::$app->controls->reset(); ?>
                             <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
                         </div>  

@@ -21,11 +21,7 @@ use yii\imagine\Image;
 use yii\web\UploadedFile;
 use app\modules\general\models\TblAttachment;
 use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
-use app\modules\document\models\TblDocumentMapping;
-use yii\base\Model;
-use yii\helpers\Url;
-use yii\data\ActiveDataProvider;
-use app\modules\document\models\TblAttachmentHistory;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -33,7 +29,7 @@ use app\modules\document\models\TblAttachmentHistory;
 class TblMemberController extends \app\controllers\ChildController {
 
     public $bankDetails;
-    public $freeAccessActions = ['import-file'];
+    public $freeAccessActions = ['import-file', 'member-document-upload'];
 
     /**
      * Lists all TblMember models.
@@ -353,108 +349,12 @@ class TblMemberController extends \app\controllers\ChildController {
         }
     }
 
-//    public function actionMemberDocumentUpload($id) {
-//        $model = $this->findModel($id);
-//        return \app\modules\document\controllers\TblAttachmentController::actiondocumentUpload('member', $id, $model);
-//    }
-
     public function actionMemberDocumentUpload($id) {
-//      return  \app\modules\document\controllers\TblAttachmentController::actionuploadDocument('member',$id);
-
         $model = $this->findModel($id);
-        $this->viewFile = 'document_upload';
-
-        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'member'])->all();
-
-        $doc_model = [];
-        foreach ($doc_mapping as $doc) {
-            $app_doc = $doc->uploadDocument;
-            $master_doc = $doc->docId;
-            if (empty($app_doc)) {
-                $app_doc = new \app\modules\document\models\TblAttachment;
-                $app_doc->module_code = $model->member_code;
-                $app_doc->doc_id = $doc->doc_id;
-            }
-            $app_doc->mapping_id = $doc->mapping_id;
-            $app_doc->attachment_type = $master_doc->doc_ext;
-            $app_doc->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
-            $doc_model[] = $app_doc;
-        }
-        if (Yii::$app->request->post()) {
-            $projec_dir = str_replace('\\', '/', realpath(\Yii::$app->basePath));
-            $doc_folder = '/web/document_upload/';
-            $doc_path = $projec_dir . $doc_folder;
-            if (Yii::$app->general->checkDirectory($doc_path)) {
-                $error_msg = '';
-                $save_model = [];
-                foreach ($doc_model as $key => $d) {
-                    if (!empty($d->attachment_code)) {
-                        $historyModel = new TblAttachmentHistory();
-                        Yii::$app->operation->history($d, $historyModel, UPDATE);
-                        $save_model[] = $historyModel;
-                    }
-                }
-                Model::loadMultiple($doc_model, Yii::$app->request->post());
-                foreach ($doc_model as $key => $d) {
-                    $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
-                    if (!empty($d->file_name)) {
-                        $file_name = $d->doc_id . '_' . $d->file_name->baseName . '.' . $d->file_name->extension;
-                        $d->attachment = $doc_path . $file_name;
-                        if (!$d->file_name->saveAs($d->attachment)) {
-                            $error_msg .= $d->doc_name . '<br/>';
-                        }
-                        $d->module_name = 'tbl_member';
-                        $d->file_name = $file_name;
-                        $save_model[] = $d;
-                    }
-                }
-                if (empty($error_msg)) {
-                    $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
-//                        return $this->redirect(['index']);
-                    } else {
-                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'error', 'msg' => $msg];
-                    }
-                } else {
-                    $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
-                }
-            } else {
-                $record = ['status' => 'error', 'msg' => 'Error while create directory.'];
-            }
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return Json::encode($record);
-        }
-        $attachment = new \app\modules\document\models\TblAttachment();
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $attachment->find()->where(['module_code' => $model->member_code]),
-        ]);
-        return $this->render('document_upload', [
-                    'model' => $model,
-                    'doc_model' => $doc_model,
-                    'attachment' => $attachment,
-                    'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    public function actionAttachmentDelete() {
-        $attachment = Yii::$app->request->post('id');
-        $deleteModel = [];
-        $savedelModel = [];
-        if (!empty($attachment)) {
-            $attachmentModel = TblAttachment::find()->where(['attachment_code' => $attachment])->one();
-            if (!empty($attachmentModel)) {
-                $attachmentHistoryModel = new TblAttachmentHistory();
-                Yii::$app->operation->history($attachmentModel, $attachmentHistoryModel, DELETE);
-                $savedelModel[] = $attachmentModel;
-                $savedelModel[] = $attachmentHistoryModel;
-            }
-            $record = $this->generalModel->deleteTransaction($savedelModel);
-        }
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+        $module_code = $model->member_code;
+        $module_name = 'tbl_member';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('member', $id, $model, $module_code, $module_name);
     }
 
 }

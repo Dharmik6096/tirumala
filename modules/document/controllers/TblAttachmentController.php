@@ -5,14 +5,20 @@ namespace app\modules\document\controllers;
 use Yii;
 use app\modules\document\models\TblAttachment;
 use app\modules\document\models\TblAttachmentSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use app\modules\document\models\TblDocumentMapping;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use app\modules\document\models\TblAttachmentHistory;
+use yii\web\Response;
+use yii\helpers\Json;
+use yii\web\UploadedFile;
 
 /**
  * TblAttachmentController implements the CRUD actions for TblAttachment model.
  */
 class TblAttachmentController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['document-upload', 'attachment-delete'];
 
     /**
      * Lists all TblAttachment models.
@@ -28,77 +34,98 @@ class TblAttachmentController extends \app\controllers\ChildController {
         ]);
     }
 
-    /**
-     * Displays a single TblAttachment model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
+    public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name) {
+        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
+        $attachment = new TblAttachment();
+        $doc_model = [];
+        foreach ($doc_mapping as $doc) {
+            $attachments = $doc->uploadDocument;
+            $master_doc = $doc->docId;
+            if (empty($attachments)) {
+                $attachments = new TblAttachment();
+                $attachments->module_code = $module_code;
+                $attachments->doc_id = $doc->doc_id;
+            }
+            $attachments->mapping_id = $doc->mapping_id;
+            $attachments->attachment_type = $master_doc->doc_ext;
+            $attachments->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
+            $doc_model[] = $attachments;
+        }
+        if (Yii::$app->request->post()) {
+            $doc_path = Yii::$app->params['document_upload'] . $master_type;
+            if (!is_dir($doc_path)) {
+                Yii::$app->general->CreateDirectory($doc_path);
+            }
+
+            if (Yii::$app->general->checkDirectory($doc_path)) {
+                $error_msg = '';
+                $save_model = [];
+                foreach ($doc_model as $key => $d) {
+                    if (!empty($d->attachment_code)) {
+                        $historyModel = new TblAttachmentHistory();
+                        Yii::$app->operation->history($d, $historyModel, UPDATE);
+                        $save_model[] = $historyModel;
+                    }
+                }
+                Model::loadMultiple($doc_model, Yii::$app->request->post());
+                foreach ($doc_model as $key => $d) {
+                    $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
+                    if (!empty($d->file_name)) {
+                        $file_name = $id . '_' . $d->doc_id . '_' . $d->file_name->baseName . '.' . $d->file_name->extension;
+                        $d->attachment = $doc_path . '/' . $file_name;
+                        if (!$d->file_name->saveAs($d->attachment)) {
+                            $error_msg .= $d->doc_name . '<br/>';
+                        }
+                        $d->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $d->attachment;
+                        $d->module_name = $module_name;
+                        $d->file_name = $file_name;
+                        $save_model[] = $d;
+                    }
+                }
+
+                if (empty($error_msg)) {
+                    $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'msg' => $msg];
+                    }
+                } else {
+                    $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
+                }
+            } else {
+                $record = ['status' => 'error', 'msg' => 'Error while create directory.'];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $module_code]),
+        ]);
+        return Yii::$app->controller->render('/../../document/views/tbl-attachment/document_upload', [
+                    'model' => $model,
+                    'doc_model' => $doc_model,
+                    'attachment' => $attachment,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Creates a new TblAttachment model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate() {
-        $this->model = new TblAttachment();
-        $this->viewFile = 'create';
-        if ($this->model->load(Yii::$app->request->post())) {
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Attachment', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+    public function actionAttachmentDelete() {
+        $attachment = Yii::$app->request->post('id');
+        $savedelModel = [];
+        if (!empty($attachment)) {
+            $attachmentModel = TblAttachment::find()->where(['attachment_code' => $attachment])->one();
+            if (!empty($attachmentModel)) {
+                $attachmentHistoryModel = new TblAttachmentHistory();
+                Yii::$app->operation->history($attachmentModel, $attachmentHistoryModel, DELETE);
+                $savedelModel[] = $attachmentModel;
+                $savedelModel[] = $attachmentHistoryModel;
             }
+            $record = $this->generalModel->deleteTransaction($savedelModel);
         }
-        return $this->customRender();
-    }
-
-    /**
-     * Updates an existing TblAttachment model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->attachment_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * Deletes an existing TblAttachment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the TblAttachment model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return TblAttachment the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id) {
-        if (($model = TblAttachment::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

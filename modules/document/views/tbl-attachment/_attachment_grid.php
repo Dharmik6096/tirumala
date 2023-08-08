@@ -13,6 +13,9 @@ $attribute = [
         ['attribute' => 'module_name', 'filter' => false],
         ['attribute' => 'attachment_type', 'filter' => false],
         ['attribute' => 'file_name', 'filter' => false],
+        ['label' => 'Document', 'attribute' => 'doc_id', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->docId, 'doc_name');
+        }],
 ];
 
 $grid_option = [
@@ -26,7 +29,7 @@ $grid_option = [
             $url = Url::to([$attachemnt]);
             return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
         },
-        'delete' => ['option' => 'attachment_code,attachment_code,tbl-member/attachment-delete,attachmentDelete()'],
+        'delete' => ['option' => 'attachment_code,attachment_code,/document/tbl-attachment/attachment-delete'],
     ]
 ];
 
