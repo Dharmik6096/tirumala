@@ -58,14 +58,12 @@ $recovery_from_other_vendor = ($searchModel->billing_type != 'remuneration' && i
                 <?php //} ?>
                 <div class="col-sm-2">
                     <?php
-                    if ($showButtons) {
-                        $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release'] : 0;
-                        if ($allow_disburse_without_release == '1') {
-                            echo Yii::$app->dropdown->dropdownStatic('payment_release_type', $searchModel, $form, 'form-group', $searchModel->getAttributeLabel('payment_release_type'), FALSE, 'payment_release_type', FALSE, FALSE, FALSE);
-                        } else {
-                            $searchModel->payment_release_type = '0';
-                            echo Html::activeHiddenInput($searchModel, 'payment_release_type');
-                        }
+                    $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$searchModel->union_code]['allow_disburse_without_release'] : 0;
+                    if ($allow_disburse_without_release == '1') {
+                        echo Yii::$app->dropdown->dropdownStatic('payment_release_type', $searchModel, $form, 'form-group', $searchModel->getAttributeLabel('payment_release_type'), FALSE, 'payment_release_type', FALSE, FALSE, FALSE);
+                    } else {
+                        $searchModel->payment_release_type = '0';
+                        echo Html::activeHiddenInput($searchModel, 'payment_release_type');
                     }
                     ?>
                 </div>
