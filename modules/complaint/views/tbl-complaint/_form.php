@@ -128,3 +128,9 @@ $status = array('Created' => 'Create', 'Processing' => 'Processing', 'Resolved' 
 </div>
 
 <?php ActiveForm::end(); ?>
+<?php
+$script = "
+            Dropzone.autoDiscover = false;
+            ";
+$this->registerJs($script, View::POS_END, 'import-manager');
+?>

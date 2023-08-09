@@ -105,7 +105,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
-        $id = 'milk-collection-approve-' . strtolower($searchModel->action_perform);
+        $id = 'milk-collection-approve-';
+        if(!empty($searchModel->action_perform)){
+            $id .= strtolower($searchModel->action_perform);
+        }
         $url = 'milk-collection-approve';
         return $this->render('milk_collection', [
                     'searchModel' => $searchModel,
@@ -211,7 +214,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $searchModel->scenario = 'approvalCollection';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
-        $id = 'bmc-collection-approve-' . strtolower($searchModel->action_perform);
+        $id = 'bmc-collection-approve-';
+        if(!empty($searchModel->action_perform)){
+            $id .= strtolower($searchModel->action_perform);
+        }
         $url = 'bmc-collection-approve';
         return $this->render('bmc_collection', [
                     'searchModel' => $searchModel,
@@ -323,7 +329,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $searchModel->scenario = 'approvalDispatch';
         $showField = $searchModel->action_perform == 'UPDATE' ? TRUE : FALSE;
-        $id = 'milk-dispatch-approve-' . strtolower($searchModel->action_perform);
+        $id = 'milk-dispatch-approve-';
+        if(!empty($searchModel->action_perform)){
+            $id .= strtolower($searchModel->action_perform);
+        }
         $url = 'milk-dispatch-approve';
         return $this->render('milk_dispatch', [
                     'searchModel' => $searchModel,

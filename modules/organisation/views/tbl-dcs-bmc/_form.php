@@ -70,67 +70,73 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'bmc_name')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-sm-2"> 
-            <?= $form->field($model, 'local_name')->textInput() ?>
+        <div class="col-sm-12">
+            <div class="col-sm-2"> 
+                <?= $form->field($model, 'local_name')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdown('manufacture', $model, $form, 'form-group col-sm-12', 'Manufacturer'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
+            </div>
+            <!--    <div class="col-sm-2">
+            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, 'form-group padding-right-5 col-sm-3', 'Milk Quality Type', false, 'bmc_milk_type'); ?>
+                </div> -->
+            <!--<div class="clearfix"></div>-->
+            <div class="col-sm-2">
+                <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
+            </div>
         </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdown('capacity', $model, $form, '', 'Capacity (LPD)', false, 'capacity'); ?>        
+        <div class="col-sm-12">
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
+            </div>
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code'); ?>
+            </div>
+            <!--        <div class="clearfix"></div>-->
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), ''); ?>
+            </div>
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdownStatic('billing_type', $model, $form, 'form-group', $model->getAttributeLabel('billing_type'), false, 'billing_type', false); ?>
+            </div>
         </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdown('manufacture', $model, $form, 'form-group col-sm-12', 'Manufacturer'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-        </div>
-        <!--    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, 'form-group padding-right-5 col-sm-3', 'Milk Quality Type', false, 'bmc_milk_type'); ?>
-            </div> -->
-        <!--<div class="clearfix"></div>-->
-        <div class="col-sm-2">
-            <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code'); ?>
-        </div>
-        <!--        <div class="clearfix"></div>-->
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), ''); ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('billing_type', $model, $form, 'form-group', $model->getAttributeLabel('billing_type'), false, 'billing_type', false); ?>
-        </div>
-        <div class="col-sm-2">  
-            <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        <div class="col-sm-12">
+            <div class="col-sm-2">  
+                <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+            </div>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
@@ -141,6 +147,13 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_quality_manual'); ?>
+        </div>
+        <div class="clearfix"></div>
         <?= Html::hiddenInput('from_bmc', 0, ['id' => 'bmc']); ?>
     </div>
     <div class="clearfix"></div>
@@ -168,13 +181,6 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_quality_manual'); ?>
-    </div>
-    <div class="clearfix"></div>
 </div>
 <div class="row">
     <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">

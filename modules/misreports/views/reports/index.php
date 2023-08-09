@@ -498,7 +498,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                 <div class="btn-login btn-group btn btn-default mis_report_modal_toggle"><i class="fa fa-search"></i></div>
                 <?php if (!empty($result)) {
                     ?>
-                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="fa fa-file-excel-o"></i></div>
+                    <div onclick="exportThisWithParameter('custom_report', '<?= $this->title ?>', true)" class="btn-group btn btn-default mis_custom_report"><i class="far fa-file-excel"></i></div>
                     <?php }
                     ?>
             </div>

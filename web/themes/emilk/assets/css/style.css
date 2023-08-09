@@ -47,6 +47,7 @@ h1, h2, h3, h4, h5, h6{
 }
 a{
     color: rgb(122, 35, 28);
+    text-decoration: none;
 }
 a:hover{
     text-decoration: none;
@@ -693,6 +694,7 @@ td.action-cell a:hover i{
 label{
     font-weight: 500;
     font-size: 10px;
+    padding-left: 5px;
 }
 .form-group.required > .control-label:after{
     content: "*";
@@ -4919,7 +4921,7 @@ table.dataTable thead .search_filter input[type="text"] {
     white-space: nowrap !important;
 }
 .fixed-table-container th {
-    background: #eee;
+    background: #eee !important;
     /*font-size: 12px;*/
     /*line-height: 16px;*/
 }

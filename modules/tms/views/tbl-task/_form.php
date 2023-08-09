@@ -1,6 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 ?>
 <?php
@@ -44,25 +44,23 @@ echo $form->errorSummary($model);
     <div class="col-sm-8 default_hide_input location_dcs">
         <?= Yii::$app->dropdown->route_dcs($model, $form, 'tbltask-route_code', 'dcs_code', $model->getAttributeLabel('dcs_code') . ' *', TRUE); ?>
     </div>
-    <div class="col-sm-8">
-        <div class="col-sm-3">
-            <?= Yii::$app->dropdown->dropdown('user', $model, $form, '', $model->getAttributeLabel('user_code'), FALSE, 'user_code'); ?>
-        </div>
-        <div class="col-sm-3">
-            <?= Yii::$app->controls->date($model, $form, 'start_date', '', FALSE, date('Y-m-d'), FALSE, true); ?>
-        </div>
-        <div class="col-sm-6">
-            <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-3">
-            <?= Yii::$app->dropdown->dropdownStatic('task_repeat_interval', $model, $form, '', $model->getAttributeLabel('repeat_interval'), FALSE, 'repeat_interval'); ?>
-        </div>
-        <div class="col-sm-3 default_hide_input repeat_daily repeat_weekly">
-            <?= Yii::$app->controls->date($model, $form, 'end_date', '', FALSE, date('Y-m-d', strtotime('+1 day')), FALSE, true); ?>
-        </div>
-        <div class="col-sm-6 default_hide_input repeat_weekly">
-            <?= Yii::$app->controls->weekday_list($model, $form); ?>
-        </div>
+    <div class="col-sm-3">    
+        <?= Yii::$app->dropdown->dropdown('user', $model, $form, '', $model->getAttributeLabel('user_code'), FALSE, 'user_code'); ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->controls->date($model, $form, 'start_date', '', FALSE, date('Y-m-d'), FALSE, true); ?>
+    </div>
+    <div class="col-sm-6">
+        <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col-sm-3">
+        <?= Yii::$app->dropdown->dropdownStatic('task_repeat_interval', $model, $form, '', $model->getAttributeLabel('repeat_interval'), FALSE, 'repeat_interval'); ?>
+    </div>
+    <div class="col-sm-3 default_hide_input repeat_daily repeat_weekly">
+        <?= Yii::$app->controls->date($model, $form, 'end_date', '', FALSE, date('Y-m-d', strtotime('+1 day')), FALSE, true); ?>
+    </div>
+    <div class="col-sm-6 default_hide_input repeat_weekly">
+        <?= Yii::$app->controls->weekday_list($model, $form); ?>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'description')->textarea() ?>

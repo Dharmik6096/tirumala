@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 
 /* @var $this yii\web\View */
@@ -31,11 +31,11 @@ $form = ActiveForm::begin([
     </div>
 
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_mcc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+       <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_mcc'); ?>
     </div>
 
     <div class="col-sm-1 mt15">
-        <?= $form->field($model, 'is_warehouse', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_warehouse'); ?>
     </div>
 
     <div class="col-sm-2 qty-validate">

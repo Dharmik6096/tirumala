@@ -14,7 +14,6 @@ use ReflectionClass;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\web\NotFoundHttpException;
-use PHPExcel_Cell;
 use yii\helpers\ArrayHelper;
 use app\modules\dcsoperation\models\TblDcsPurchaseRateApplicabititySearch;
 use app\modules\globalmaster\models\TblMilkQualityType;
@@ -341,14 +340,14 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                                 }
                             }
                             $HighestColumn = $worksheet->getHighestColumn();
-                            $HighestcolumnIndex = PHPExcel_Cell::columnIndexFromString($HighestColumn);
-                            $HighestColumnplus = PHPExcel_Cell::stringFromColumnIndex($HighestcolumnIndex);
+                            $HighestcolumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($HighestColumn);
+                            $HighestColumnplus = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($HighestcolumnIndex);
                             for ($col = 'B'; $col != $HighestColumnplus; $col ++) {
 // Column range missing validation
                                 $cell = $worksheet->getCell($col . $row)->getValue();
-                                $columnIndex = PHPExcel_Cell::columnIndexFromString($col);
+                                $columnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($col);
                                 if ($col != 'B') {
-                                    $oldcolrange = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . '1')->getValue());
+                                    $oldcolrange = floatval($worksheet->getCell((\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex - 1)) . '1')->getValue());
                                     $newcolrange = floatval($worksheet->getCell($col . '1')->getValue());
                                     if ((round(($newcolrange - $oldcolrange), 1) !== 0.1)) {
                                         return [
@@ -357,7 +356,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                                         ];
                                     }
                                 }
-                                if (is_float($cell)) {
+                                if (is_integer($cell) || is_int($cell) || is_float($cell) || is_double($cell)) {
 //                                    $currentcell = floatval($cell);
 //                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
 //                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
@@ -399,7 +398,7 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                                         }
                                     }
                                 } else {
-                                    return [
+                                   return [
                                         'status' => 'error',
                                         'message' => 'Invalid Value in Cell \'("' . $col . $row . '" of ' . $sheetTitle . ')\''
                                     ];

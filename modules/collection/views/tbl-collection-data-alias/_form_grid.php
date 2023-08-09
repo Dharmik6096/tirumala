@@ -109,7 +109,7 @@ use app\modules\usermanagement\components\GhostHtml;
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', $url); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', $url,'','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>

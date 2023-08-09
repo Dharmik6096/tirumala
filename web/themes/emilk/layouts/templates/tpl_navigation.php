@@ -39,7 +39,7 @@ echo GhostMenu::widget([
     //    'options' => ['class' => 'nav navbar-nav navbar-right', 'id' => 'menu-content'],
     'options' => ['class' => 'navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll float-end', 'id' => 'menu-content'],
     //    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
-    'submenuTemplate' => "\n<ul class='navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll'>\n{items}\n</ul>\n",
+    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
     'items' => [
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
@@ -125,7 +125,7 @@ echo GhostMenu::widget([
                     ]
                 ],
                 ['label' => Yii::t('app', 'Milk Collection'), 'url' => ['/collection/tbl-milk-collection/index'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
-                ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval')],
+                ['label' => Yii::t('app', 'Manual Collection Approval'), 'url' => ['/collection/tbl-collection-approval/index'], 'active' => ($cntrl == 'tbl-collection-approval'), 'visible' => ($eiplCode == 'VRS_NEWASA') ? FALSE : TRUE],
                 ['label' => Yii::t('app', 'Milk Dispatch'), 'url' => ['/collection/tbl-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-milk-dispatch')],
                 ['label' => Yii::t('app', 'Milk Dispatch - New'), 'url' => ['/collection/tbl-dcs-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-dcs-milk-dispatch')],
                 ['label' => Yii::t('app', 'DCS Closing'), 'url' => ['/collection/tbl-dcs-closing/index'], 'active' => ($cntrl == 'tbl-dcs-closing')],
@@ -832,7 +832,7 @@ echo GhostMenu::widget([
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-item" href="#">Asset <b class="caret"></b></a>',
                     'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">TMS<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-item">TMS<b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Task Type'), 'url' => ['/tms/tbl-task-type/index'], 'active' => ($cntrl == 'tbl-task-type')],
                         ['label' => Yii::t('app', 'Form Type'), 'url' => ['/tms/tbl-form-type/index'], 'active' => ($cntrl == 'tbl-form-type')],
@@ -842,7 +842,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-item">Asset <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Asset Group'), 'url' => ['/assetmanagement/tbl-asset-group/index'], 'active' => ($cntrl == 'tbl-asset-group')],
                         ['label' => Yii::t('app', 'Asset Master'), 'url' => ['/assetmanagement/tbl-asset-master/index'], 'active' => ($cntrl == 'tbl-asset-master')],
@@ -866,7 +866,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Complain<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-item">Complain<b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Complain Escalation'), 'url' => ['/complaint/tbl-complain-escalation/index'], 'active' => ($cntrl == 'tbl-complain-escalation')],
                         ['label' => Yii::t('app', 'Complain Type'), 'url' => ['/complaint/tbl-complain-type/index'], 'active' => ($cntrl == 'tbl-complain-type')],

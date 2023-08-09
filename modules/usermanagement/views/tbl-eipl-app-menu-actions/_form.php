@@ -159,7 +159,7 @@ use yii\bootstrap5\ActiveForm;
 
                 <div class="panel-footer">
                     <?php
-                    echo GhostHtml::a_alert(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-widget']);
+                    echo GhostHtml::a_alert(Yii::t('app', 'Save'), ['/usermanagement/tbl-eipl-app-menu-actions/app-menu-mapping'], ['class' => 'btn-login btn btn-primary', 'id' => 'mapping-widget']);
                     ?>
                 </div>
                 <?php ActiveForm::end(); ?>

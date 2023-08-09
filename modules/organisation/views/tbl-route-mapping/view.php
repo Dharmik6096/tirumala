@@ -180,7 +180,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fas fa-user-c
 
                 <!--                <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div>
                                 <div class="form-grid">
-                <?=
+                <?
                 $this->render('../../../details/views/tbl-bank-details/_bank_details', [
                     'model' => $model,
                     'dataProvider' => $bdataProvider,

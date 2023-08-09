@@ -59,12 +59,12 @@ $form = ActiveForm::begin([
                 </div>
             <?php } ?>
             <?php if ($readonly || $keyPattern['ref_code_type'] == 2) { ?>
-        <div class="col-sm-12">
                 <div class="col-sm-4 number-validate">  
                     <?= $form->field($model, 'ref_code')->textInput() ?>
                 </div>
             <?php } ?>
         <?php } ?>
+        <div class="col-sm-12">
         <div class="col-sm-4">
             <?= $form->field($model, 'customer_name')->textInput() ?>
         </div>
@@ -85,6 +85,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
+        </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
@@ -94,6 +95,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
         </div>
+        <div class="col-sm-12">
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_m')->textInput() ?>
         </div>

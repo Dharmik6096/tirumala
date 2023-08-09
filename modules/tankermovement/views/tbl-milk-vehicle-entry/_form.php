@@ -63,6 +63,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
+            <div class="col-sm-12">
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'qty')->textInput() ?>
             </div>
@@ -74,6 +75,7 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
+            </div>
             </div>
         </div>
         <div class="col-lg-12">
@@ -155,6 +157,7 @@ $form = ActiveForm::begin([
                 <div class="col-sm-1 number-validate"> 
                     <?= $form->field($txn_model, 'density')->textInput() ?>
                 </div>
+                <div class="col-sm-12">
                 <div class="col-sm-1 number-validate"> 
                     <?= $form->field($txn_model, 'lactose')->textInput() ?>
                 </div>
@@ -167,7 +170,8 @@ $form = ActiveForm::begin([
                 <div class="col-sm-1"> 
                     <?= Html::activeHiddenInput($txn_model, 'milk_vehicle_entry_transaction_code'); ?>
                     <?= $form->field($txn_model, 'acidity')->textInput() ?>
-                </div>                
+                </div>
+                </div>
             </div>
             <div id="transactions-from">             
             </div>
@@ -228,7 +232,7 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
+                    'options' => ['class' => 'btn-login btn btn-default btn-raised',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();

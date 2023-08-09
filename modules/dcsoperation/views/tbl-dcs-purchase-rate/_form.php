@@ -115,7 +115,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                                      bootbox.alert("You have error in your file");
                      }'),
                 ],
-                'options' => ['class' => 'btn btn-primary',
+                'options' => ['class' => 'btn-login btn btn-primary',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();

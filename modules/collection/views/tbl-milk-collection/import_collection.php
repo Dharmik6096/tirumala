@@ -141,3 +141,9 @@ $this->title = 'Import Android Files';
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+<?php
+$script = "
+            Dropzone.autoDiscover = false;
+            ";
+$this->registerJs($script, View::POS_END, 'import-manager');
+?>

@@ -308,7 +308,7 @@ $grid_option = [
         'election-list' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
             $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Election Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fa-address-card-o"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
+            return GhostHtml::a('<i class="far fa-address-card"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
         },
         'society-status' => function ($url, $model) {
 
