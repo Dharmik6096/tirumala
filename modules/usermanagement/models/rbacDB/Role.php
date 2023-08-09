@@ -9,6 +9,8 @@ use yii\rbac\DbManager;
 
 class Role extends \webvimark\modules\UserManagement\models\rbacDB\Role {
 
+    use AbstractItemTrait;
+
     public $portal_type;
 
     public function checkNotVendor() {

@@ -9,6 +9,8 @@ use Yii;
 
 class Route extends \webvimark\modules\UserManagement\models\rbacDB\Route {
 
+    use AbstractItemTrait;
+
     public static function getUserRoutes($userId, $withSubRoutes = true) {
         if (Yii::$app->session->get('organizations_type') == NULL) {
             Yii::$app->user->logout();
