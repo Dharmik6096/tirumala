@@ -32,11 +32,11 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
-        'update' => function ($url, $model) {
-            $class = !empty($model->status) ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->bulk_notification_id];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-        },
+//        'update' => function ($url, $model) {
+//            $class = !empty($model->status) ? 'disabled' : '';
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->bulk_notification_id];
+//            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+//        },
         'mapping' => function ($url, $model) {
             $class = ($model->login_type == 'all') ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => '' . $class,];

@@ -71,7 +71,14 @@ class ChildModel extends \yii\db\ActiveRecord {
 
             $encrypt = $this->encryptModel($this->attributes);
             $this->setAttributes($encrypt);
-            return true;
+            $result = $this->validateAttributesSingleSpace($this->attributes());
+
+            if ($result) {
+                $this->convertAttributesToUppercase();
+                return true;
+            } else {
+                return $result;
+            }
         } else {
             return false;
         }
@@ -90,6 +97,31 @@ class ChildModel extends \yii\db\ActiveRecord {
     public function afterFind() {
         $this->decryptModel($this);
         parent::afterFind();
+    }
+
+    public function convertAttributesToUppercase() {
+        $to_exclude_capital = [
+            'tbl_union_config_result' => ['config_key', 'config_result', 'originating_org_type'],
+        ];
+        $tableName = $this->tableName();
+        $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
+        $capital_data_conversion = isset(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion']) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion'] : 0;
+        if ($capital_data_conversion == 1) {
+            foreach ($this->attributes as $attribute => $value) {
+                if (is_string($value)) {
+                    if (isset($to_exclude_capital[$tableName])) {
+                        $excludedFields = $to_exclude_capital[$tableName];
+                        if (in_array($attribute, $excludedFields)) {
+                            $this->$attribute = $value;
+                        } else {
+                            $this->$attribute = strtoupper($value);
+                        }
+                    } else {
+                        $this->$attribute = strtoupper($value);
+                    }
+                }
+            }
+        }
     }
 
     public function validate($attributeNames = null, $clearErrors = true) {
@@ -128,6 +160,24 @@ class ChildModel extends \yii\db\ActiveRecord {
         }
         $this->decryptModel($this);
         return !$this->hasErrors();
+    }
+
+    public function validateAttributesSingleSpace($attributeNames) {
+        $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
+        $double_space_validation = isset(Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation']) ? Yii::$app->session->get('unionConfig')[$union_code]['double_space_validation'] : 0;
+        if ($double_space_validation == 1) {
+            foreach ($attributeNames as $attribute) {
+                $attributeValue = $this->$attribute;
+                if (is_string($attributeValue)) {
+                    if (!empty($attributeValue) && !preg_match('/^\S((?!.*  ).*\S)?$/', $attributeValue)) {
+                        $label = $this->getAttributeLabel($attribute);
+                        $this->addError($attribute, $label . ' must contain a single space.');
+                        return FALSE;
+                    }
+                }
+            }
+        }
+        return TRUE;
     }
 
     public function decryptModel($model) {
