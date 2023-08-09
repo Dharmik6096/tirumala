@@ -10,6 +10,7 @@ use yii\web\View;
             'model' => $model,
             'doc_model' => $doc_model,
             'type' => 'edit',
+            'master_type' => $master_type,
         ])
         ?>
         <?=

@@ -39,7 +39,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         $attachment = new TblAttachment();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
-            $attachments = $doc->uploadDocument;
+            $attachments = $doc->uploadedDocument($doc->mapping_id, $doc->doc_id, $id);
             $master_doc = $doc->docId;
             if (empty($attachments)) {
                 $attachments = new TblAttachment();
@@ -60,18 +60,20 @@ class TblAttachmentController extends \app\controllers\ChildController {
             if (Yii::$app->general->checkDirectory($doc_path)) {
                 $error_msg = '';
                 $save_model = [];
-                foreach ($doc_model as $key => $d) {
-                    if (!empty($d->attachment_code)) {
-                        $historyModel = new TblAttachmentHistory();
-                        Yii::$app->operation->history($d, $historyModel, UPDATE);
-                        $save_model[] = $historyModel;
-                    }
-                }
                 Model::loadMultiple($doc_model, Yii::$app->request->post());
+
                 foreach ($doc_model as $key => $d) {
                     $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
                     if (!empty($d->file_name)) {
-                        $file_name = $id . '_' . $d->doc_id . '_' . $d->file_name->baseName . '.' . $d->file_name->extension;
+                        $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
+                        if (!empty($attach)) {
+                            if ($d->file_name != $attach->file_name) {
+                                $historyModel = new TblAttachmentHistory();
+                                Yii::$app->operation->history($attach, $historyModel, UPDATE);
+                                $save_model[] = $historyModel;
+                            }
+                        }
+                        $file_name = $master_type . '_' . $id . '_' . $d->doc_id . '_' . time() . '.' . $d->file_name->extension;
                         $d->attachment = $doc_path . '/' . $file_name;
                         if (!$d->file_name->saveAs($d->attachment)) {
                             $error_msg .= $d->doc_name . '<br/>';
@@ -108,6 +110,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
                     'doc_model' => $doc_model,
                     'attachment' => $attachment,
                     'dataProvider' => $dataProvider,
+                    'master_type' => $master_type,
         ]);
     }
 

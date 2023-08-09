@@ -128,6 +128,8 @@ $defaultToggle = true;
                             <?php
                             echo GhostHtml::a(Yii::t('app', 'Save'), ['/document/tbl-document-mapping/document-mapping'], ['class' => 'btn btn-primary', 'id' => 'mapping-document']);
                             ?>
+                            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+
                         <?php } ?>
                     </div>
                 </div>

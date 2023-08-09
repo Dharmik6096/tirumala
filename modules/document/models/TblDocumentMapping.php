@@ -47,7 +47,7 @@ class TblDocumentMapping extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'mapping_id' => Yii::t('app', 'Mapping ID'),
-            'doc_id' => Yii::t('app', 'Doc ID'),
+            'doc_id' => Yii::t('app', 'Document Name'),
             'is_mandate' => Yii::t('app', 'Is Mandate ?'),
             'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -116,8 +116,8 @@ class TblDocumentMapping extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function getUploadDocument() {
-        return $this->hasOne(TblAttachment::className(), ['mapping_id' => 'mapping_id', 'doc_id' => 'doc_id']);
+    public function uploadedDocument($mapping_id, $doc_id, $module_code) {
+        return TblAttachment::find()->where(['mapping_id' => $mapping_id, 'doc_id' => $doc_id, 'module_code' => $module_code])->one();
     }
 
 }

@@ -9,11 +9,7 @@ use yii\helpers\Url;
 <?php
 
 $attribute = [
-        ['attribute' => 'module_code', 'filter' => false],
-        ['attribute' => 'module_name', 'filter' => false],
-        ['attribute' => 'attachment_type', 'filter' => false],
-        ['attribute' => 'file_name', 'filter' => false],
-        ['label' => 'Document', 'attribute' => 'doc_id', 'value' => function($model) {
+        ['attribute' => 'doc_id', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->docId, 'doc_name');
         }],
 ];
@@ -26,7 +22,7 @@ $grid_option = [
         'view-attachment' => function ($url, $model) {
             $attachemnt = $model->attachment;
             $url = !empty($attachemnt) ? $attachemnt : '';
-            return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View']);
+            return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
         },
         'delete' => ['option' => 'attachment_code,attachment_code,/document/tbl-attachment/attachment-delete'],
     ]

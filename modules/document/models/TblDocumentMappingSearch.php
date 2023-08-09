@@ -52,23 +52,15 @@ class TblDocumentMappingSearch extends TblDocumentMapping {
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith(['docId']);
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'mapping_id' => $this->mapping_id,
-            'doc_id' => $this->doc_id,
             'is_mandate' => $this->is_mandate,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
             'master_type' => $this->master_type,
         ]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-                ->andFilterWhere(['like', 'created_by', $this->created_by])
-                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['like', 'tbl_document_master_info.doc_name', $this->doc_id]);
 
         return $dataProvider;
     }

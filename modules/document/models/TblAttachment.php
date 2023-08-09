@@ -55,7 +55,7 @@ class TblAttachment extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'attachment_code' => Yii::t('app', 'Attachment Code'),
-            'doc_id' => Yii::t('app', 'Doc ID'),
+            'doc_id' => Yii::t('app', 'Document Name'),
             'module_code' => Yii::t('app', 'Module Code'),
             'module_name' => Yii::t('app', 'Module Name'),
             'attachment_type' => Yii::t('app', 'Attachment Type'),

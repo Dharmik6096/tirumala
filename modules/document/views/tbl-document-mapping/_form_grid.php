@@ -13,7 +13,7 @@ $attribute = [
         }, 'visible' => true, 'filter' => false],
         ['attribute' => 'doc_id', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->docId, 'doc_name');
-        }, 'visible' => true, 'filter' => false],
+        }, 'visible' => true],
         ['attribute' => 'master_type',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('master_type', $searchModel, 'master_type'),
         'value' => function ($model) {

@@ -3,63 +3,79 @@ $this->title = 'Upload Documents';
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use kartik\detail\DetailView;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+
+$urls = '';
+if ($master_type == 'member') {
+    $urls = ['/dcsoperation/tbl-member/member-document-upload', 'id' => $model->member_code];
+}
 ?>
 
 <div class="panel-heading">
     <ul class="progressbar">
-        <li class="inactive">Member No. <?= $model->member_code ?> </li>
         <li>Upload Documents</li>
     </ul>
 </div>
+<?php
+if (!empty($doc_model)) {
+    foreach ($doc_model as $doc) {
+        if ($doc['mappingId']->is_mandate == 1 && !isset($doc->attachment_code)) {
+            $doc_name = str_replace('*', '', $doc->doc_name);
+            ?>
+            <div class="alert alert-warning warning-single-box"><?= $doc_name; ?> is mandatory</div>
+            <?php
+        }
+    }
+}
+?>
 <div class="panel-body">
-    <div class="table-responsive">
+    <?php
+    if ($master_type == 'member') {
+        $code = $model['member_code'];
+        $ex_code = $model['ex_member_code'];
+        $ref_code = $model['ref_code'];
+        $name = $model['member_name'];
+    } else if ($master_type == 'dcs') {
+        $code = $model['dcs_code'];
+        $ex_code = $model['dcs_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['dcs_name'];
+    } else if ($master_type == 'bmc') {
+        $code = $model['bmc_code'];
+        $ex_code = $model['bmc_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['bmc_name'];
+    } else {
+        $code = $model['plant_code'];
+        $ex_code = $model['plant_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['name'];
+    }
+    ?>
+    <table class="table table-bordered table-striped table-language">
+        <thead>
+            <tr>
+                <th><?= Yii::t('app', 'Code') ?></th>
+                <td><?= $code; ?></td>
+                <th><?= Yii::t('app', 'Ex Code') ?></th>
+                <td><?= $ex_code; ?></td>
+            </tr>
+            <tr>
+                <th><?= Yii::t('app', 'Ref Code') ?></th>
+                <td><?= $ref_code; ?></td>
+                <th><?= Yii::t('app', 'Name') ?></th>
+                <td><?= $name; ?></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
 
-        <?php
-        $attributes = [
-                [
-                'columns' => [
-                        [
-                        'attribute' => 'member_code',
-                            
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                        [
-                        'attribute' => 'ex_member_code',
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                ],
-            ],
-                [
-                'columns' => [
-                        [
-                        'attribute' => 'ref_code',
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                        [
-                        'attribute' => 'member_name',
-                        'valueColOptions' => ['style' => 'width:30%']
-                    ],
-                ],
-            ],
-        ];
+            </tr>
+        </tbody>
+    </table>
 
-        echo DetailView::widget([
-            'model' => $model,
-            'attributes' => $attributes,
-            'mode' => 'view',
-            'bordered' => true,
-            'striped' => false,
-            'responsive' => true,
-            'hAlign' => 'left',
-            'vAlign' => 'top',
-            'container' => ['id' => 'kv-demo'],
-        ]);
-        ?>
-    </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
             <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Document List') ?></h4>
@@ -110,9 +126,7 @@ use yii\helpers\Url;
                                 'useWithActiveForm' => 'create-document-form',
                                 'ajaxOptions' => [
                                     'type' => 'POST',
-                                    'url' => Url::to(['/dcsoperation/tbl-member/member-document-upload', 'id' => $model->member_code]),
-//                                    'url' => Url::to(['/document/tbl-attachment/document-upload', 'id' => $model->member_code]),
-//                                    'url' => Url::to(['document-upload', 'id' => $model->member_code]),
+                                    'url' => Url::to($urls),
                                     'processData' => false,
                                     'contentType' => false,
                                     'data' => new JsExpression("new FormData($('#create-document-form')[0])"),

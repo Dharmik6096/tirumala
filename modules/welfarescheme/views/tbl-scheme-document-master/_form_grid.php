@@ -29,7 +29,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
-        'view' => true,
         'edit' => function ($url, $model) {
             $disable = '';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];

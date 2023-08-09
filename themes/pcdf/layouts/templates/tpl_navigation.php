@@ -67,6 +67,14 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Device Master'), 'url' => ['/globalmaster/tbl-device-master/index'], 'active' => ($cntrl == 'tbl-device-master')],
                     ['label' => Yii::t('app', 'Animal Inspector'), 'url' => ['/organisation/tbl-animal-inspector/index'], 'active' => ($cntrl == 'tbl-animal-inspector')],
                     ['label' => Yii::t('app', 'Animal Inspector Request'), 'url' => ['/organisation/tbl-animal-inspector-request/index'], 'active' => ($cntrl == 'tbl-animal-inspector-request')],
+                    [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Document Detail<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
+                            ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
+                    ]
+                ],
             ],
         ],
             [
@@ -766,7 +774,6 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Welfare Scheme<b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
                             ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
                             ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'index')],
                             ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/welfarescheme/tbl-scheme-application/pending-approval'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'pending-approval')],
@@ -904,14 +911,6 @@ echo GhostMenu::widget([
                             ['label' => 'Pendrive Files Detail', 'url' => ['/syncutility/pendrive-import/index']],
                             ['label' => 'FTP File Upload', 'url' => ['/bkgprocess/ftp-generate/ftp-milk-collection']],
                             ['label' => 'Android Import', 'url' => ['/collection/tbl-milk-collection/android-collection']],
-                    ]
-                ],
-                    [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Document Upload<b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
-                            ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
                     ]
                 ],
             ],
