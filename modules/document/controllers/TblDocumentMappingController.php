@@ -59,9 +59,9 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
 
             $delete = [];
             if (!empty($toRevoke)) {
-                foreach ($toRevoke as $revoke_widget) {
+                foreach ($toRevoke as $revoke_doc) {
                     $model = new TblDocumentMapping();
-                    $model->doc_id = $revoke_widget;
+                    $model->doc_id = $revoke_doc;
                     $model->union_code = $model->docId->union_code;
                     $record = $model->getExistMappedControl();
                     $historyModel = new TblDocumentMappingHistory();
@@ -73,10 +73,10 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                 }
             }
             if (!empty($toAssign)) {
-                foreach ($toAssign as $Assign_widget) {
+                foreach ($toAssign as $Assign_doc) {
                     $model = new TblDocumentMapping();
-                    $model->doc_id = $Assign_widget;
-                    $model->is_mandate = !empty($postMendateArray) && in_array($Assign_widget, $postMendateArray) ? 1 : 0;
+                    $model->doc_id = $Assign_doc;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($Assign_doc, $postMendateArray) ? 1 : 0;
                     $model->master_type = $postMasterArray;
                     $model->union_code = $model->docId->union_code;
                     $master[] = $model;
@@ -85,10 +85,10 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
             }
 
             if (!empty($toUpdate)) {
-                foreach ($toUpdate as $update_widget) {
+                foreach ($toUpdate as $update_doc) {
                     $model = new TblDocumentMapping();
-                    $model->doc_id = $update_widget;
-                    $model->is_mandate = !empty($postMendateArray) && in_array($update_widget, $postMendateArray) ? 1 : 0;
+                    $model->doc_id = $update_doc;
+                    $model->is_mandate = !empty($postMendateArray) && in_array($update_doc, $postMendateArray) ? 1 : 0;
                     $record = $model->getExistMappedControl();
                     if (!empty($record) && ($model->is_mandate != $record->is_mandate)) {
                         $historyModel = new TblDocumentMappingHistory();

@@ -3,8 +3,6 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
-use yii\jui\DatePicker;
-use yii\helpers\Url;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $button = Yii::$app->label->button('create');
