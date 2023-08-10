@@ -19,19 +19,18 @@ if ($master_type == 'member') {
     </ul>
 </div>
 <?php
-$message_flage = true;
-if (!empty($doc_model)) {
-    $attachement_codes = array_column($attach_doc_mappings, 'doc_id');
-    foreach ($doc_model as $doc) {
-//        echo !in_array($doc->doc_id, $attachement_codes);
-        if ($doc->is_mandate == 1 && $message_flage && !in_array($doc->doc_id, $attachement_codes)) {
-            $message_flage = false;
-            ?>
-            <div class="alert alert-danger warning-single-box">* Mandate Document Upload Pending.</div>
+//$message_flage = true;
+//if (!empty($doc_model)) {
+//    $attachement_codes = array_column($attach_doc_mappings, 'doc_id');
+//    foreach ($doc_model as $doc) {
+//        if ($doc->is_mandate == 1 && $message_flage && !in_array($doc->doc_id, $attachement_codes)) {
+//            $message_flage = false;
+//            ?>
+            <!--<div class="alert alert-danger warning-single-box">* Mandate Document Upload Pending.</div>-->
             <?php
-        }
-    } die;
-}
+//        }
+//    } 
+//}
 ?>
 <div class="panel-body">
     <?php
