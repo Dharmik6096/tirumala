@@ -103,22 +103,13 @@ class ChildModel extends \yii\db\ActiveRecord {
         $to_exclude_capital = [
             'tbl_union_config_result' => ['config_key', 'config_result', 'originating_org_type'],
         ];
-        $tableName = $this->tableName();
         $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
         $capital_data_conversion = isset(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion']) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion'] : 0;
         if ($capital_data_conversion == 1) {
+            $tableName = $this->tableName();
             foreach ($this->attributes as $attribute => $value) {
-                if (is_string($value)) {
-                    if (isset($to_exclude_capital[$tableName])) {
-                        $excludedFields = $to_exclude_capital[$tableName];
-                        if (in_array($attribute, $excludedFields)) {
-                            $this->$attribute = $value;
-                        } else {
-                            $this->$attribute = strtoupper($value);
-                        }
-                    } else {
-                        $this->$attribute = strtoupper($value);
-                    }
+                if (is_string($value) && (empty(($to_exclude_capital[$tableName])) || !in_array($attribute, $to_exclude_capital[$tableName]))) {
+                    $this->$attribute = strtoupper($value);
                 }
             }
         }
