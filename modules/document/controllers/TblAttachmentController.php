@@ -35,11 +35,13 @@ class TblAttachmentController extends \app\controllers\ChildController {
     }
 
     public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name) {
+        $attach_doc_mappings = TblAttachment::find()->where(['module_code' => $module_code, 'module_name' => $module_name])->all();
+
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
         $attachment = new TblAttachment();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
-            $attachments = $doc->uploadedDocument($doc->mapping_id, $doc->doc_id, $id);
+            $attachments = $doc->uploadedDocument($doc->doc_id, $id);
             $master_doc = $doc->docId;
             if (empty($attachments)) {
                 $attachments = new TblAttachment();
@@ -111,6 +113,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
                     'attachment' => $attachment,
                     'dataProvider' => $dataProvider,
                     'master_type' => $master_type,
+                    'attach_doc_mappings' => $attach_doc_mappings
         ]);
     }
 
