@@ -122,6 +122,7 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_datetime($model->qlty_time, 'php:d-m-Y H:i:s');
         }],
+    ['attribute' => 'antibiotic', 'filter' => FALSE],
 ];
 
 

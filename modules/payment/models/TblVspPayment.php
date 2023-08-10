@@ -41,6 +41,7 @@ class TblVspPayment extends \app\models\ChildModel {
     public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
     public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc, $stop_payment_type;
     public $stop_payment_only = 0;
+    public $payment_release_type;
 
     /**
      * @inheritdoc
@@ -63,6 +64,7 @@ class TblVspPayment extends \app\models\ChildModel {
                 [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
                 [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
+                [['payment_release_type'], 'safe']
         ];
     }
 
@@ -108,6 +110,7 @@ class TblVspPayment extends \app\models\ChildModel {
             'p_bmc_code' => Yii::t('app', 'BMC'),
             'p_customer_type' => Yii::t('app', 'Type'),
             'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
+            'payment_release_type' => Yii::t('app', 'Disburse Type'),
         ];
     }
 

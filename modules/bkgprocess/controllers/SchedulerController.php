@@ -307,10 +307,10 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_antibiotic') {
                 $flag = 'bmc-collection-bulk-antibiotic';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
-            } else if ($row->file_type == 'bmc-weight-collection') {
+            } else if ($row->file_type == 'bmc_weight_collection') {
                 $flag = 'bmc-weight-collection';
                 $sp_name = 'DB_JOB_PORTAL_WEIGHT_Collection';
-            } else if ($row->file_type == 'bmc-quality-test') {
+            } else if ($row->file_type == 'bmc_quality_test') {
                 $flag = 'bmc-quality-test';
                 $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
             }
@@ -329,10 +329,19 @@ class SchedulerController extends ChildController {
                 ]));
                 $config = importData::getLabels($flag);
                 $header = explode(',', $config['fields']);
+                $accept_old_template = (!empty($config['accept_old_template']) && $config['accept_old_template']) ? TRUE : FALSE;
                 $fileData = $importer->getData();
                 unset($fileData[0]);
                 foreach ($fileData as $line) {
                     $total_cnt++;
+                    if ($accept_old_template) {
+                        $key_count_diff = count($header) - count($line);
+                        $header_count = count($header);
+                        while ($key_count_diff > 0) {
+                            unset($header[$header_count - $key_count_diff]);
+                            $key_count_diff -= 1;
+                        }
+                    }
                     $data = array_combine($header, $line);
                     $model = new TblBulkDataImport();
                     $model->attributes = $data;
