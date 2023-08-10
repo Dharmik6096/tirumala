@@ -4978,3 +4978,6 @@ tr.highlightRow {
 .no_pointer {
     pointer-events: none;
 }
+.float_right{
+    float:right;
+}
