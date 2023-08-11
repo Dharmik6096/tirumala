@@ -33,7 +33,7 @@ use yii\web\View;
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('payment_type', $model, $form, '', 'Payment Type *'); ?>
         </div>
-        <div class="col-sm-2" id="customer-type-wrapper" style="display: none;">
+        <div class="col-sm-2 cust-type" id="customer-type-wrapper">
             <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', 'Customer Type *', FALSE); ?>
         </div>
         <div class=" col-sm-3 form-group mt23">
@@ -46,13 +46,15 @@ use yii\web\View;
 
 </div>
 <?php
-$script = "  
+$script = " 
+    $('.cust-type').css('display','none'); 
     $('#tblvsppayment-payment_type').on('change', function() {
         var payment_type = $(this).val();
         if (payment_type === 'VENDOR') {
             $('#customer-type-wrapper').show();
         } else {
             $('#customer-type-wrapper').hide();
+            $('#tblvsppayment-customer_type').val('').trigger('change');
         }
     });
 ";

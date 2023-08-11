@@ -20,7 +20,7 @@ $this->title = $title;
             </div>
             <div class="clearfix"></div>
             <?php
-            echo $this->render('@app/modules/payment/views/tbl-vsp-payment/disburse_payment_grid', ['model' => $model, 'dataProvider' => $dataProvider]);
+                echo $this->render('_update_grid', ['searchParameter' => $model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
             ?>
         </div>
     </div>

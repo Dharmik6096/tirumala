@@ -22,6 +22,7 @@ class TblVspPaymentSearch extends TblVspPayment {
                 [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
                 [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
                 [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'number'],
+                [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
         ];
     }
 
@@ -95,6 +96,34 @@ class TblVspPaymentSearch extends TblVspPayment {
                 ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_recovery', $this->adjust_recovery])
                 ->andFilterWhere(['like', 'tbl_vsp_payment.recovery', $this->recovery]);
         //$query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
+
+        return $dataProvider;
+    }
+
+    public function unreleasePaymentSearch($params)
+    {
+        $query = TblVspPayment::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'union_code' => $this->union_code,
+            'plant_code' => $this->plant_code,
+            'mcc_plant_code' => $this->mcc_plant_code,
+            'bmc_code' => $this->bmc_code,
+            'customer_type' => $this->customer_type,
+            'release_date' => null,
+            'is_release' => 0,
+        ]);
 
         return $dataProvider;
     }
