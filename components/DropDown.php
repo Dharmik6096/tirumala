@@ -901,7 +901,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1693,6 +1693,11 @@ class DropDown extends Component {
                 'prompt' => FALSE,
                 'data' => ['0' => Yii::t('app', 'With Release'), '1' => Yii::t('app', 'W/O Release')],
             ],
+            'dcs_manual_collection_range_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Approved'), 3 => Yii::t('app', 'Reject'), 4 => Yii::t('app', 'Close')]
+            ],
         ];
         return $records[$l];
     }
@@ -1907,7 +1912,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
