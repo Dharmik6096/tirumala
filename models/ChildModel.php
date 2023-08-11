@@ -100,15 +100,29 @@ class ChildModel extends \yii\db\ActiveRecord {
     }
 
     public function convertAttributesToUppercase() {
-        $to_exclude_capital = [
-            'tbl_union_config_result' => ['config_key', 'config_result', 'originating_org_type'],
+        $to_include_capital = [
+            'tbl_unions' => ['union_name'],
+            'tbl_plant' => ['name'],
+            'tbl_cluster' => ['name'],
+            'tbl_mcc_plant' => ['name'],
+            'tbl_bmc' => ['bmc_name'],
+            'tbl_route_mapping' => ['route_name'],
+            'tbl_dcs' => ['dcs_name', 'dcs_short_name'],
+            'tbl_customer_master' => ['customer_name'],
+            'tbl_member' => ['member_name', 'father_name', 'surname', 'nominee_name'],
+            'tbl_member_provisional' => ['member_name'],
+            'tbl_transporter' => ['transporter_name'],
+            'tbl_vehicle_master' => ['driver_name'],
+            'tbl_product_group' => ['product_group_name'],
+            'tbl_product' => ['product_name'],
+            'tbl_bill_head' => ['bill_head_name'],
         ];
         $union_code = !empty($this->union_code) ? $this->union_code : Yii::$app->session->get('Unions');
         $capital_data_conversion = isset(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion']) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['capital_data_conversion'] : 0;
         if ($capital_data_conversion == 1) {
             $tableName = $this->tableName();
             foreach ($this->attributes as $attribute => $value) {
-                if (is_string($value) && (empty(($to_exclude_capital[$tableName])) || !in_array($attribute, $to_exclude_capital[$tableName]))) {
+                if (is_string($value) && (!empty($to_include_capital[$tableName])) && in_array($attribute, $to_include_capital[$tableName])) {
                     $this->$attribute = strtoupper($value);
                 }
             }
