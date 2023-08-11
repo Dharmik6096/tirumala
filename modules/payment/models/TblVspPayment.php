@@ -42,7 +42,7 @@ class TblVspPayment extends \app\models\ChildModel {
     public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc, $stop_payment_type;
     public $stop_payment_only = 0;
     public $payment_release_type;
-    public $payment_type;
+    public $payment_type, $payment_sumary_code;
 
     /**
      * @inheritdoc

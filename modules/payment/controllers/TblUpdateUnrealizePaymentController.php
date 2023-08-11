@@ -16,18 +16,17 @@ class TblUpdateUnrealizePaymentController extends \yii\web\Controller
     {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-        
+
         $data = Yii::$app->request->get('TblVspPayment');
 
         if (isset($data['payment_type']) && $data['payment_type'] == 'VENDOR') {
             $model->scenario = 'paymenttypevendor';
             $searchModel = new TblVspPaymentSearch();
             $dataProvider = $searchModel->unreleasePaymentSearch($data);
-            
-        } else{
+        } else {
             $model->scenario = 'unreleasepaymentsearch';
             $searchModel = new TblMemberPaymentSummarySearch();
-            $searchModel->attributes=$data;
+            $searchModel->attributes = $data;
             $dataProvider = $searchModel->unreleasePaymentSearch($data);
         }
 
@@ -41,10 +40,35 @@ class TblUpdateUnrealizePaymentController extends \yii\web\Controller
 
     public function actionUpdateUnreleasePayment()
     {
-        echo '<pre>'; 
-        print_r(Yii::$app->request->post());
-        echo '</pre>';
-        die();
-    }
+        $postData = Yii::$app->request->post();
+        $paymentType = $postData['payment_type'];
+        $selectedRecords = $postData['TblMemberPaymentSummary'];
 
+        if ($paymentType === 'MEMBER') {
+            foreach ($selectedRecords as $tblId => $record) {
+                $model = TblMemberPaymentSummary::findOne($tblId);
+                if ($model) {
+                    $model->hold_reason = $record['hold_reason'];
+                    $model->release_date = $record['release_date'];
+
+                    if ($model->validate()) {
+                        $model->save();
+                    }
+                }
+            }
+        } elseif ($paymentType === 'VENDOR') {
+            foreach ($selectedRecords as $tblId => $record) {
+                $model = TblVspPayment::findOne($tblId);
+                if ($model) {
+                    $model->hold_reason = $record['hold_reason'];
+                    $model->release_date = $record['release_date'];
+
+                    if ($model->validate()) {
+                        $model->save();
+                    }
+                }
+            }
+        }
+        return $this->redirect(['index']);
+    }
 }

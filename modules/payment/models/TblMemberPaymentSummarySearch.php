@@ -123,7 +123,6 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary
         ]);
 
         $this->load($params);
-        
 
         // grid filtering conditions
         $query->andWhere([

@@ -13,7 +13,7 @@ $form = ActiveForm::begin([
     'id' => 'update-unrelease-payment',
     'action' => Url::to(['update-unrelease-payment']),
 ]);
-
+echo Html::hiddenInput('payment_type', $searchParameter->payment_type);
 ?>
 
 <div class=" no-effect table_form">
@@ -25,8 +25,9 @@ $form = ActiveForm::begin([
             'class' => 'kartik\grid\CheckboxColumn',
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
-            'checkboxOptions' => function ($model) {
-                return ['class' => 'checkbox-collection', 'value' => $model->payment_sumary_code];
+            'checkboxOptions' => function ($model) use ($searchParameter) {
+                $values = $searchParameter->payment_type == 'VENDOR' ? $model->vsp_payment_code : $model->payment_sumary_code;
+                return ['class' => 'checkbox-collection', 'value' => $values];
             }
         ],
         [
@@ -35,7 +36,7 @@ $form = ActiveForm::begin([
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }, 'filter' => false
         ],
-        ['attribute' => 'member_count', 'filter' => FALSE],
+        ['attribute' => 'member_count', 'filter' => FALSE, 'visible' => ($searchParameter->payment_type == 'MEMBER') ? true : false],
         [
             'attribute' => $searchParameter->payment_type == 'VENDOR' ? 'final_pay' : 'final_amount',
             'filter' => FALSE,
@@ -44,9 +45,9 @@ $form = ActiveForm::begin([
         [
             'attribute' => 'payment_cycle_code',
             'value' => function ($model) {
-                $fromDatetime = Yii::$app->controls->view_datetime($model->from_datetime);
-                $toDatetime = Yii::$app->controls->view_datetime($model->to_datetime);
-                return "{$fromDatetime} - {$toDatetime}";
+                $fromDatetime = Yii::$app->controls->view_date($model->from_datetime);
+                $toDatetime = Yii::$app->controls->view_date($model->to_datetime);
+                return "{$fromDatetime} To {$toDatetime}";
             },
             'filter' => FALSE,
         ],
@@ -59,15 +60,17 @@ $form = ActiveForm::begin([
         [
             'attribute' => 'hold_reason',
             'format' => 'raw',
-            'value' => function ($model, $index) use ($form) {
-                return '<span class=\'hold_reason\'>' . Yii::$app->dropdown->dropdown('hold_reason', $model, $form, '', FALSE, FALSE, '[' .  $model->payment_sumary_code . ']hold_reason', FALSE, TRUE, $model->hold_reason) . '</span>';
+            'value' => function ($model, $index) use ($form, $searchParameter) {
+                $tblId = $searchParameter->payment_type == 'VENDOR' ? $model->vsp_payment_code : $model->payment_sumary_code;
+                return '<span class=\'hold_reason\'>' . Yii::$app->dropdown->dropdown('hold_reason', $model, $form, '', FALSE, FALSE, '[' .  $tblId . ']hold_reason', FALSE, TRUE, $model->hold_reason) . '</span>';
             },
         ],
         [
             'attribute' => 'release_date',
             'format' => 'raw',
-            'value' => function ($model, $index) use ($form) {
-                                return '<span class=\'date_change\'>' . $form->field($model, '[' . $model->payment_sumary_code . ']release_date')->textInput(['value' => $model->release_date, 'class' => 'form-control',])->label(FALSE) . '</span>';
+            'value' => function ($model, $index) use ($form, $searchParameter) {
+                $tblId = $searchParameter->payment_type == 'VENDOR' ? $model->vsp_payment_code : $model->payment_sumary_code;
+                return '<span class=\'date_change\'>' . $form->field($model, '[' . $tblId . ']release_date')->textInput(['value' => $model->release_date, 'class' => 'form-control',])->label(FALSE) . '</span>';
             },
             // 'filterType' => GridView::FILTER_DATE,
             // 'filterWidgetOptions' => [
@@ -104,18 +107,42 @@ $form = ActiveForm::begin([
 
 <?php
 $script = "
-    $('.kv-panel-before').hide();
-    $('.searchBtn').hide();
-    $('#update-selected').click(function(e) {
-        e.preventDefault();
-        
-        var checkBoxCount = $('.kv-row-checkbox:checked').length;
-        if(checkBoxCount > 0) {
+$('.kv-panel-before').hide();
+$('.searchBtn').hide();
+$('#update-selected').click(function(e) {
+    e.preventDefault();
+    
+    var checkBoxCount = $('.kv-row-checkbox:checked').length;
+    if (checkBoxCount > 0) {
+        var isValid = true;
+        $('.checkbox-collection:checked').each(function() {
+            var rowId = $(this).val();
+            var holdReason = $('#tblmemberpaymentsummary-' + rowId + '-hold_reason').val();
+            var releaseDate = $('#tblmemberpaymentsummary-' + rowId + '-release_date').val();
+            
+            // Apply validation only for selected rows
+            if (!holdReason && !releaseDate) {
+                isValid = false;
+                $('#tblmemberpaymentsummary-' + rowId + '-hold_reason').addClass('has-error');
+                $('#tblmemberpaymentsummary-' + rowId + '-release_date').addClass('has-error');
+            } else {
+                $('#tblmemberpaymentsummary-' + rowId + '-hold_reason').removeClass('has-error');
+                $('#tblmemberpaymentsummary-' + rowId + '-release_date').removeClass('has-error');
+            }
+        });
+
+        if (isValid) {
             $('#flag').val($(this).prop('name'));
+            var paymentType = $('[name=\"payment_type\"]').val();
+            $('#update-unrelease-payment').append('<input type=\"hidden\" name=\"payment_type\" value=\"' + paymentType + '\"/>'); // Add hidden input
             $('#update-unrelease-payment').submit();
         } else {
-            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select atleast one Record') . "</span>');
+            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Hold Reason and Release Date are required for selected records.') . "</span>');
         }
-    });
+    } else {
+        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>" . Yii::t('app', 'Please Select at least one Record') . "</span>');
+    }
+});
 ";
 $this->registerJs($script, View::POS_END, 'update-unrelease-payment');
+
