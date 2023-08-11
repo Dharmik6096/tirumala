@@ -17,7 +17,7 @@ class TblAttachmentSearch extends TblAttachment {
      */
     public function rules() {
         return [
-                [['mapping_id', 'attachment_code', 'doc_id', 'originating_type', 'module_code', 'module_name', 'attachment_type', 'remarks', 'file_name', 'attachment', 'lat_long', 'parent_code', 'device_id', 'thumbnail', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['attachment_code', 'doc_id', 'originating_type', 'module_code', 'module_name', 'attachment_type', 'remarks', 'file_name', 'attachment', 'lat_long', 'parent_code', 'device_id', 'thumbnail', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
@@ -52,15 +52,12 @@ class TblAttachmentSearch extends TblAttachment {
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith(['mappingId']);
-
         // grid filtering conditions
         $query->andFilterWhere([
             'attachment_code' => $this->attachment_code,
-            'tbl_document_master_info.doc_id' => $this->doc_id,
+            'doc_id' => $this->doc_id,
             'created_at' => $this->created_at,
             'originating_type' => $this->originating_type,
-            'tbl_document_mapping.mapping_id' => $this->mapping_id,
         ]);
 
         $query->andFilterWhere(['like', 'module_code', $this->module_code])

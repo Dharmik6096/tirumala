@@ -19,18 +19,17 @@ if ($master_type == 'member') {
     </ul>
 </div>
 <?php
-//$message_flage = true;
-//if (!empty($doc_model)) {
-//    $attachement_codes = array_column($attach_doc_mappings, 'doc_id');
-//    foreach ($doc_model as $doc) {
-//        if ($doc->is_mandate == 1 && $message_flage && !in_array($doc->doc_id, $attachement_codes)) {
-//            $message_flage = false;
-//            ?>
-            <!--<div class="alert alert-danger warning-single-box">* Mandate Document Upload Pending.</div>-->
+$message_flage = true;
+if (!empty($doc_model)) {
+    foreach ($doc_model as $doc) {
+        if ($doc->is_mandate == 1 && !isset($doc->attachment_code) && $message_flage) {
+            $message_flage = false;
+            ?>
+            <div class="alert alert-danger warning-single-box">* Mandate Document Upload Pending.</div>
             <?php
-//        }
-//    } 
-//}
+        }
+    }
+}
 ?>
 <div class="panel-body">
     <?php
@@ -106,11 +105,8 @@ if ($master_type == 'member') {
                                     <tr>
                                         <td width='60%'><?= $doc->doc_name; ?></td>
                                         <td width='40%' class="hide_help_block">
-                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']attachment_code'); ?>
-                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']mapping_id'); ?>
-                                            <?= Html::activeHiddenInput($doc, '[' . $key . ']doc_id'); ?>
                                             <?php
-                                            $accept = !empty($doc->doc_ext) ? $doc->doc_ext : 'application/pdf,image/jpeg,.docx';
+                                            $accept = !empty($doc->attachment_type) ? $doc->attachment_type : 'application/pdf,image/jpeg,.docx';
                                             echo $form->field($doc, '[' . $key . ']file_name')->fileInput(['accept' => $accept])->label(FALSE);
                                             ?>
 

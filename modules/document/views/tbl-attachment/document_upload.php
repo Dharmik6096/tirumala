@@ -11,7 +11,6 @@ use yii\web\View;
             'doc_model' => $doc_model,
             'type' => 'edit',
             'master_type' => $master_type,
-            'attach_doc_mappings' => $attach_doc_mappings
         ])
         ?>
         <?=

@@ -31,7 +31,7 @@ use app\modules\document\models\TblDocumentMapping;
  */
 class TblAttachment extends \app\models\ChildModel {
 
-    public $doc_name;
+    public $doc_name, $is_mandate;
 
     /**
      * @inheritdoc
@@ -45,7 +45,7 @@ class TblAttachment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
+                [['is_mandate', 'doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
         ];
     }
 
@@ -73,20 +73,11 @@ class TblAttachment extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'mapping_id' => Yii::t('app', 'Master Mapping'),
         ];
     }
 
     public function getDocId() {
         return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
-    }
-
-    public function getMappingId() {
-        return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id']);
-    }
-
-    public function getDocumentMappingCode() {
-        return $this->hasOne(TblDocumentMapping::className(), ['mapping_id' => 'mapping_id', 'doc_id' => 'doc_id']);
     }
 
 }

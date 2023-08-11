@@ -35,10 +35,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
     }
 
     public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name) {
-        $attach_doc_mappings = TblAttachment::find()->where(['module_code' => $module_code, 'module_name' => $module_name])->all();
-
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
-        $attachment = new TblAttachment();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
             $attachments = $doc->uploadedDocument($doc->doc_id, $id);
@@ -48,16 +45,13 @@ class TblAttachmentController extends \app\controllers\ChildController {
                 $attachments->module_code = $module_code;
                 $attachments->doc_id = $doc->doc_id;
             }
-            $attachments->mapping_id = $doc->mapping_id;
+            $attachments->is_mandate = $doc->is_mandate;
             $attachments->attachment_type = $master_doc->doc_ext;
             $attachments->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
             $doc_model[] = $attachments;
         }
         if (Yii::$app->request->post()) {
             $doc_path = Yii::$app->params['document_upload'] . $master_type;
-            if (!is_dir($doc_path)) {
-                Yii::$app->general->CreateDirectory($doc_path);
-            }
 
             if (Yii::$app->general->checkDirectory($doc_path)) {
                 $error_msg = '';
@@ -104,6 +98,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return Json::encode($record);
         }
+        $attachment = new TblAttachment();
         $dataProvider = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => $module_code]),
         ]);
@@ -113,7 +108,6 @@ class TblAttachmentController extends \app\controllers\ChildController {
                     'attachment' => $attachment,
                     'dataProvider' => $dataProvider,
                     'master_type' => $master_type,
-                    'attach_doc_mappings' => $attach_doc_mappings
         ]);
     }
 

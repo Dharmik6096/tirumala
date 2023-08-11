@@ -45,7 +45,7 @@ class TblAttachmentHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['remarks', 'device_id', 'parent_code', 'file_name', 'module_name', 'lat_long', 'attachment_code', 'operation_type', 'originating_org_code', 'originating_org_type', 'doc_id', 'originating_type', 'mapping_id', 'attachment', 'thumbnail', 'created_at', 'updated_at', 'history_created_at', 'module_code', 'attachment_type', 'created_by', 'updated_by', 'history_created_by'], 'safe'],
+                [['remarks', 'device_id', 'parent_code', 'file_name', 'module_name', 'lat_long', 'attachment_code', 'operation_type', 'originating_org_code', 'originating_org_type', 'doc_id', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'updated_at', 'history_created_at', 'module_code', 'attachment_type', 'created_by', 'updated_by', 'history_created_by'], 'safe'],
         ];
     }
 
