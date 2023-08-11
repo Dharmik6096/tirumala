@@ -1679,6 +1679,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
+            'dcs_manual_collection_range_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Approved'), 3 => Yii::t('app', 'Reject'), 4 => Yii::t('app', 'Close')],
+            ],
         ];
         return $records[$l];
     }
