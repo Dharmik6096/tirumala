@@ -155,7 +155,7 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
         var remark = $('#remark-input').val();
         var modelId = $('#status-popup-modal').data('model-id');
         $.ajax({
-            url: '" . Url::to(['/organisation/tbl-allow-dcs-manual-collection-range/update-status']) . "',
+            url: 'update-status',
             type: 'POST',
             data: {
                 id: modelId,
