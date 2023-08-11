@@ -109,7 +109,7 @@ class ChildModel extends \yii\db\ActiveRecord {
             'tbl_route_mapping' => ['route_name'],
             'tbl_dcs' => ['dcs_name', 'dcs_short_name'],
             'tbl_customer_master' => ['customer_name'],
-            'tbl_member' => ['member_name'],
+            'tbl_member' => ['member_name', 'father_name', 'surname', 'nominee_name'],
             'tbl_member_provisional' => ['member_name'],
             'tbl_transporter' => ['transporter_name'],
             'tbl_vehicle_master' => ['driver_name'],
@@ -122,7 +122,7 @@ class ChildModel extends \yii\db\ActiveRecord {
         if ($capital_data_conversion == 1) {
             $tableName = $this->tableName();
             foreach ($this->attributes as $attribute => $value) {
-                if (is_string($value) && isset($to_include_capital[$tableName]) && in_array($attribute, $to_include_capital[$tableName])) {
+                if (is_string($value) && (!empty($to_include_capital[$tableName])) && in_array($attribute, $to_include_capital[$tableName])) {
                     $this->$attribute = strtoupper($value);
                 }
             }
