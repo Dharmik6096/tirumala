@@ -54,7 +54,7 @@ class TblDocumentMasterInfo extends \app\models\ChildModel {
             'doc_group' => Yii::t('app', 'Doc Group'),
             'doc_name' => Yii::t('app', 'Document Name'),
             'doc_ext' => Yii::t('app', 'Doc Ext'),
-            'is_active' => Yii::t('app', 'Is Active'),
+            'is_active' => Yii::t('app', 'Status'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
