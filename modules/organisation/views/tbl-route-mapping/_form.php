@@ -57,7 +57,6 @@ $form = ActiveForm::begin([
                 </div>
             <?php } ?>
         <?php } ?>
-        <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'route_name')->textInput() ?>
         </div>
@@ -78,7 +77,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('vehicle_type_code', $model, $form, 'form-group col-sm-3', 'Vehicle'); ?>
         </div>
-        <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'route_length_kms')->textInput() ?>
         </div>
@@ -110,6 +108,9 @@ $form = ActiveForm::begin([
             $form->field($model, 'evening_end_time')->widget(\yii\widgets\MaskedInput::className(), [
                 'mask' => '99:99',])->label('Evening End Time (24 Hrs)');
             ?>
+        </div>
+        <div class="col-sm-2">  
+            <?= $form->field($model, 'sap_route_code')->textInput() ?>
         </div>
     </div>
 

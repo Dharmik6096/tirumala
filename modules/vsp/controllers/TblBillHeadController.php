@@ -16,6 +16,8 @@ use yii\web\Response;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\vsp\models\TblBillHeadReleaseApplicability;
+use app\modules\vsp\models\TblBillHeadReleaseApplicabilityHistory;
 
 /**
  * TblBillHeadController implements the CRUD actions for TblBillHead model.
@@ -338,9 +340,10 @@ class TblBillHeadController extends \app\controllers\ChildController {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
                     if ($historyModel->save()) {
-                        Yii::$app->db->createCommand("update tbl_bill_head_applicability set to_date = :to_date where bill_head_code = :bill_head_code")
+                        Yii::$app->db->createCommand("update tbl_bill_head_applicability set to_date = :to_date where bill_head_code = :bill_head_code and from_date <= :from_date")
                                 ->bindValue(':to_date', $model->to_date)
                                 ->bindValue(':bill_head_code', $model->bill_head_code)
+                                ->bindValue(':from_date', $model->to_date)
                                 ->execute();
                         $transaction->commit();
                         Yii::$app->display->message(true, 'Bill Head Applicability To Date', 'edit');
@@ -366,6 +369,119 @@ class TblBillHeadController extends \app\controllers\ChildController {
         return $this->render('update_to_date', [
                     'model' => $model,
         ]);
+    }
+
+    public function actionUpdateToDateApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblBillHeadApplicability();
+        $appModel->model->scenario = 'updateToDate';
+        $appModel->update_applicability = TRUE;
+        $appModel->check_wef_date = TRUE;
+        $appModel->model->to_date = date('Y-m-d');
+        $appModel->union_code = $model->union_code;
+        $appModel->field_name = 'bill_head_code';
+        $appModel->field_value = $id;
+        $appModel->options = ['tanker_rate'];
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->trans_label = Yii::t('app', 'bill head applicabilities');
+        $appModel->model->bill_head_for = $model->bill_head_for;
+        $appModel->header_title = ' To Date Upadte [Bill Head: ' . $model->bill_head_name . ', Type: ' . Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] . '] ';
+        $appModel->fields = ['from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->to_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                }],
+            'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsName, 'dcs_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->mainCustomerCode, 'customer_name');
+                    }
+                }],
+        ];
+        if ($model->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
+        $appModel->dcs_filters = $value;
+        return $appModel->createApp();
+    }
+
+    public function actionHoldReleaseApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblBillHeadReleaseApplicability();
+        $appModel->model->from_date = date('Y-m-d');
+        $appModel->union_code = $model->union_code;
+        $appModel->field_name = 'bill_head_code';
+        $appModel->field_value = $id;
+        $appModel->check_wef_date = TRUE;
+        $appModel->options = ['tanker_rate'];
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->trans_label = Yii::t('app', 'bill head release applicabilities');
+        $appModel->model->bill_head_for = $model->bill_head_for;
+        $appModel->header_title = ' Hold Release [Bill Head: ' . $model->bill_head_name . ', Type: ' . Yii::$app->dropdown->getRecords('calc_type')['data'][$model->bill_head_type] . '] ';
+        $appModel->fields = ['from_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+                }],
+            'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
+            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    } else if ($model->applicable_for == 'DCS') {
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->mainCustomerCode, 'customer_name');
+                    }
+                }],
+        ];
+        if ($model->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
+        $appModel->actions = ['delete' => ['option' => 'bill_head_release_applicabilty_code,bill_head_release_applicabilty_code,tbl-bill-head/delete-hold-release-applicability,deleteCheck()']];
+        $appModel->dcs_filters = $value;
+        return $appModel->createApp();
+    }
+
+    public function actionDeleteHoldReleaseApplicability() {
+        $model = TblBillHeadReleaseApplicability::find()->where(['bill_head_release_applicabilty_code' => Yii::$app->request->post('id')])->one();
+        $localHistory = new TblBillHeadReleaseApplicabilityHistory();
+        Yii::$app->operation->history($model, $localHistory, DELETE);
+        $record = $this->generalModel->deleteTransaction([$model, $localHistory]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

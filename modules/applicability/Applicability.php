@@ -78,6 +78,7 @@ class Applicability extends \yii\base\Module {
     public $login_type = '';
     public $is_bulk_notification = false;
     public $with_wef_date = true;
+    public $update_applicability = FALSE;
 
     /**
      * @inheritdoc
@@ -349,8 +350,13 @@ class Applicability extends \yii\base\Module {
                                     if ($appModel->hasAttribute('wef_date')) {
                                         $appModel->wef_date = $model->wef_date = $appModel->from_date;
                                     }
+                                } else if ($appModel->hasAttribute('from_date') && !empty($model->from_date)) {
+                                    $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
                                 }
-                                if ($appModel->hasAttribute('wef_date')) {
+                                if ($this->update_applicability) {
+                                    $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                                }
+                                if (!$this->update_applicability && $appModel->hasAttribute('wef_date')) {
                                     $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
                                     if ($model->hasAttribute('shift_code')) {
                                         $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
@@ -423,7 +429,19 @@ class Applicability extends \yii\base\Module {
                                     $appModel->setOrgDetail();
                                 }
 
-                                $saveModel[] = $appModel->save();
+                                if ($this->update_applicability) {
+                                    $editRecords = $appModel->getEditRecord();
+                                    foreach ($editRecords as $rec) {
+                                        $historyModel = new ReflectionClass($this->model->className() . 'History');
+                                        $historyModel = $historyModel->newInstanceArgs();
+                                        Yii::$app->operation->history($rec, $historyModel, 'UPDATE');
+                                        $rec->to_date = $appModel->to_date;
+                                        $saveModel[] = $historyModel->save();
+                                        $saveModel[] = $rec->save();
+                                    }
+                                } else {
+                                    $saveModel[] = $appModel->save();
+                                }
                             } catch (UserException $e) {
                                 $saveModel[] = false;
                                 $hasError = true;
@@ -440,7 +458,11 @@ class Applicability extends \yii\base\Module {
                     $this->selectedBmcCode = [];
                     $this->selectedRouteCode = [];
                     if (!in_array(FALSE, $saveModel)) {
-                        Yii::$app->display->message(true, $this->trans_label, 'create');
+                        if ($this->update_applicability) {
+                            Yii::$app->display->message(true, $this->trans_label, 'edit');
+                        } else {
+                            Yii::$app->display->message(true, $this->trans_label, 'create');
+                        }
                         if ($this->generateMail && !$this->isApproval && !$session) {
                             $this->GenerateMail($appModel, $toAssign);
                         }

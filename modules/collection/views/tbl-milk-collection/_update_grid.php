@@ -107,6 +107,12 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
+        ['attribute' => 'antibiotic',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\' antibiotic\'>' .Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', false, false, '[' . $index . ']antibiotic', false, false, true, true). '</span>';
+            },
+        ],
     ];
 
     $grid_option = [

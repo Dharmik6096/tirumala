@@ -79,6 +79,14 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Device Master'), 'url' => ['/globalmaster/tbl-device-master/index'], 'active' => ($cntrl == 'tbl-device-master')],
                 ['label' => Yii::t('app', 'Animal Inspector'), 'url' => ['/organisation/tbl-animal-inspector/index'], 'active' => ($cntrl == 'tbl-animal-inspector')],
                 ['label' => Yii::t('app', 'Animal Inspector Request'), 'url' => ['/organisation/tbl-animal-inspector-request/index'], 'active' => ($cntrl == 'tbl-animal-inspector-request')],
+                [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Document Detail<b class="caret"></b></a>',
+                    'items' => [
+                            ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
+                            ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
+                    ]
+                ],
             ],
         ],
         [

@@ -12,7 +12,7 @@ use app\modules\assetmanagement\models\TblAssetMaster;
 use app\modules\details\models\TblContactDetails;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\organisation\models\TblDcsBmc;
-use app\modules\general\models\TblAttachment;
+use app\modules\document\models\TblAttachment;
 use app\modules\complaint\models\TblComplainProblem;
 
 /**

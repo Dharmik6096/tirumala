@@ -64,6 +64,16 @@ $grid_option = [
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-bill-head/bill-head-applicability', 'id' => $model->bill_head_code], $options);
         },
+        'update_to_date_applicability' => function ($url, $model) {
+            $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update To Date Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-share"></i>', ['/vsp/tbl-bill-head/update-to-date-applicability', 'id' => $model->bill_head_code], $options);
+        },
+        'hold_release_applicability' => function ($url, $model) {
+            $disable = ($model->is_active == 1 && $model->is_hold == 1) ? '' : 'disabled';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Hold Release Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/vsp/tbl-bill-head/hold-release-applicability', 'id' => $model->bill_head_code], $options);
+        },
         'update_to_date' => function ($url, $model) {
             $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit To Date', 'class' => $disable];

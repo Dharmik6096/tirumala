@@ -71,6 +71,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public $payment_cycle;
     public $otp_code;
     public $net_amount, $old_recovery, $recovery_dcs, $shortage_amount, $shortage_head_code;
+    public $payment_release_type;
 
     /**
      * @inheritdoc
@@ -91,6 +92,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
+            [['payment_release_type'], 'safe']
         ];
     }
 
@@ -149,6 +151,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
             'hold_amount' => Yii::t('app', 'Hold Amount(-)'),
             'net_payable' => Yii::t('app', 'Final Pay'),
             'recovery_dcs' => Yii::t('app', 'DCS'),
+            'payment_release_type' => Yii::t('app', 'Disburse Type'),
         ];
     }
 

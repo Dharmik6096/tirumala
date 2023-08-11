@@ -51,13 +51,13 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync']],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync','androidsyncsplit']],
                 [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
-            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync']],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
+            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync','androidsyncsplit']],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync','androidsyncsplit']],
                 [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync','androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
                 [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
@@ -70,7 +70,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 'on' => ['saleProduct', 'SaleImport']],
                 [['data_lock'], 'default', 'value' => 0],
                 [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
-                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync']],
+                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync','androidsyncsplit']],
                 [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
@@ -175,6 +175,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     }
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
+        $scenario = $model->scenario;
+        $scenario .= 'split';
         $saleModel = new TblProductSale();
         $saleModel->x_col2 = $model->product_sale_code;
         $saleModelData = $saleModel->find()->where(['x_col2' => $saleModel->x_col2])->orderBy('created_at desc')->one();
@@ -276,6 +278,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                                 if ($stockManageIndex > 0) {
                                     $saleTxnModel = new TblProductSaleTransaction();
                                     $saleTxnModel->attributes = $model->attributes;
+                                    $saleTxnModel->scenario = $scenario;
                                     unset($saleTxnModel->created_at);
                                     unset($saleTxnModel->created_by);
                                     $saleTxnModel->quantity = $considerQty;
@@ -326,6 +329,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
 
                             if (!empty($existfromStock)) {
                                 $saleTxnModel = new TblProductSaleTransaction();
+                                $saleTxnModel->scenario = $scenario;
                                 $saleTxnModel->attributes = $model->attributes;
                                 $saleTxnModel->quantity = $qty;
                                 $saleTxnModel->sap_batch_no = NULL; //$stockData->sap_batch_no;

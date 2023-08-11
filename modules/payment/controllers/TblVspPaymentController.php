@@ -755,6 +755,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
             $param['applicable_for'] = 'BMC';
             $param['payment_cycle_code'] = $model->payment_cycle_code;
             $param['user_code'] = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+            $param['is_without_release'] = $model->payment_release_type;
             Yii::$app->ClientPaymentConfig->processPayment('vsp_payment_disburse', $param);
         }
 //        $save_model = [];

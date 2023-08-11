@@ -32,6 +32,11 @@ $grid_option = [
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-vsp-bill-head-criteria/vsp-bill-head-applicability', 'id' => $model->vsp_criteria_code], $options);
         },
+        'update_to_date_applicability' => function ($url, $model) {
+            $disable = '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update To Date Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-share"></i>', ['/vsp/tbl-vsp-bill-head-criteria/update-to-date-applicability', 'id' => $model->vsp_criteria_code], $options);
+        },
         'update' => function($url, $model) {
             $disable = !empty($model->isApplicability) ? 'link-disable' : '';
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => $disable];
