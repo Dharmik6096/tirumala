@@ -302,21 +302,23 @@ class CustomValidation extends Component {
                     ],
                 ],
                 'TblMember' => [
-                        [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
-                        [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
-                        [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
-                        [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification']],
-                        [['bank_account_no'], 'required', 'when' => function ($model) {
-                            return !empty($model->branch_code);
-                        }, 'whenClient' => "function (attribute, value) { 
+                    'default' => [
+                            [['address', 'hamlet_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
+                            [['district_code', 'sub_district_code', 'village_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals'], 'required', 'except' => ['importCsv', 'importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'verification']],
+                            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'required', 'on' => ['ApprovalMember']],
+                            [['gender_code', 'animal_type_code', 'caste_category_code', 'member_type_code'], 'required', 'except' => ['importLimitedCsv', 'deactivate', 'customImport', 'saveCreamyData', 'post_sap_data', 'androidsync', 'ApprovalMember', 'collection', 'verification']],
+                            [['bank_account_no'], 'required', 'when' => function ($model) {
+                                return !empty($model->branch_code);
+                            }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['importCsv']],
-                        ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
-                            return $model->is_active;
-                        }, 'except' => ['saveCreamyData', 'androidsync']],
+                            ['bank_account_no', 'unique', 'targetAttribute' => ['bank_account_no', 'ifsc', 'is_active', 'dcs_code'], 'message' => \Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function ($model) {
+                                return $model->is_active;
+                            }, 'except' => ['saveCreamyData', 'androidsync']],
 //                        [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
 //                            return $model->is_active;
 //                        }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'verification']],
+                    ],
                 ],
             ],
             'PRABHAT' => [
