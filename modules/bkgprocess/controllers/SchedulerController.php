@@ -329,10 +329,19 @@ class SchedulerController extends ChildController {
                 ]));
                 $config = importData::getLabels($flag);
                 $header = explode(',', $config['fields']);
+                $accept_old_template = (!empty($config['accept_old_template']) && $config['accept_old_template']) ? TRUE : FALSE;
                 $fileData = $importer->getData();
                 unset($fileData[0]);
                 foreach ($fileData as $line) {
                     $total_cnt++;
+                    if ($accept_old_template) {
+                        $key_count_diff = count($header) - count($line);
+                        $header_count = count($header);
+                        while ($key_count_diff > 0) {
+                            unset($header[$header_count - $key_count_diff]);
+                            $key_count_diff -= 1;
+                        }
+                    }
                     $data = array_combine($header, $line);
                     $model = new TblBulkDataImport();
                     $model->attributes = $data;

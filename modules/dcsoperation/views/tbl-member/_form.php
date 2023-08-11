@@ -131,7 +131,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">
-            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 12]) ?>   
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'sap_farmer_code')->textInput() ?>

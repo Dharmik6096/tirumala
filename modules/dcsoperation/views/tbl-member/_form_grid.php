@@ -132,6 +132,14 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
+        'document-upload' => function ($url, $model) {
+            $id = $model->member_code;
+            $name = $model->member_name;
+            $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
+            $url = ['/dcsoperation/tbl-member/member-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
     ]
 ];
 

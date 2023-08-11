@@ -72,12 +72,11 @@ class DefaultController extends \app\controllers\ChildController {
                 $data['update_key'] = FALSE;
             }
             $fields = explode(',', $fields);
-
+            $accept_old_template = (!empty($data['accept_old_template']) && $data['accept_old_template']) ? TRUE : FALSE;
             foreach ($fields as $i => $d) {
                 $config_value[$i]['attribute'] = $d;
-                $config_value[$i]['value'] = function($line)use ($i) {
-                    return $line[$i];
-                    //return isset($line[$i])?$line[$i]:0;
+                $config_value[$i]['value'] = function($line)use ($i, $accept_old_template) {
+                    return ($accept_old_template) ? (isset($line[$i]) ? $line[$i] : '') : $line[$i];
                 };
             }
 
@@ -186,7 +185,7 @@ class DefaultController extends \app\controllers\ChildController {
         $importer = new Importer([
             'filePath' => Yii::$app->basePath . '/web/import/' . trim($fileName),
             'standardModelsConfig' => [
-                [
+                    [
                     'className' => $className::className(),
                     'defalutValues' => $default_value,
                     'standardAttributesConfig' => $config_value

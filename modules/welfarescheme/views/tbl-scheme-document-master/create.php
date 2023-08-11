@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Scheme Document Master');
+$this->title = Yii::$app->label->title('create', 'Document Master');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
