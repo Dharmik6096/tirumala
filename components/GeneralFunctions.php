@@ -484,23 +484,23 @@ class GeneralFunctions extends Component {
 
     public function getAttachmentLink($ext, $src) {
         ?><li><span><?php
-        switch (1) {
-            case (in_array($ext, array('.gif', '.jpg', '.jpeg', '.png', '.bmp'))):
-                return Html::a(Html::img($src, ['class' => 'img-responsive']), $src, ['data-toggle' => 'modal', 'data-target' => '#attachedImg']);
-                break;
-            case $ext == '.pdf':
-                return Html::a('<i class="fa fa-file-pdf-o"></i>', $src);
-            case (in_array($ext, array('.doc', '.docx'))):
-                return Html::a('<i class="fa fa-file-o"></i>', $src);
-                break;
-            case $ext == '.xls':
-                return Html::a('<i class="fa fa-file-excel-o"></i>', $src);
-                break;
-            default:
-                return Html::a('<i class="fa fa-file-text-o"></i>', $src);
-                break;
-        }
-        ?></span></li><?php
+                switch (1) {
+                    case (in_array($ext, array('.gif', '.jpg', '.jpeg', '.png', '.bmp'))):
+                        return Html::a(Html::img($src, ['class' => 'img-responsive']), $src, ['data-toggle' => 'modal', 'data-target' => '#attachedImg']);
+                        break;
+                    case $ext == '.pdf':
+                        return Html::a('<i class="fa fa-file-pdf-o"></i>', $src);
+                    case (in_array($ext, array('.doc', '.docx'))):
+                        return Html::a('<i class="fa fa-file-o"></i>', $src);
+                        break;
+                    case $ext == '.xls':
+                        return Html::a('<i class="fa fa-file-excel-o"></i>', $src);
+                        break;
+                    default:
+                        return Html::a('<i class="fa fa-file-text-o"></i>', $src);
+                        break;
+                }
+                ?></span></li><?php
     }
 
     public function checkAccess($route, $superadmin = 'true') {
@@ -832,9 +832,9 @@ class GeneralFunctions extends Component {
         $tablename = $model->tableSchema->fullName;
         foreach ($fields as $fd) {
             if (!empty($model->{$fd}) || $model->{$fd} == 0) {
-                if (is_string($model->{$fd})&& preg_match('/^[0-9][0-9]*$/', $model->{$fd})) {
+                if (is_string($model->{$fd}) && preg_match('/^[0-9][0-9]*$/', $model->{$fd})) {
                     $query->andwhere([$fd => $model->{$fd}]);
-                } else { 
+                } else {
                     $query->andFilterWhere(['like', $fd, $model->{$fd}]);
                 }
             }
@@ -1595,7 +1595,7 @@ class GeneralFunctions extends Component {
 
     public function getUnionKeyPattern($union) {
         $PatternArray = [];
-        if (count($union) == 1) {
+        if (is_string($union) || count($union) == 1) {
             $model = new TblKeyPattern();
             $unionKeyPattern = $model->find()->where(['union_code' => $union])->all();
             foreach ($unionKeyPattern as $data) {
@@ -2337,11 +2337,10 @@ class GeneralFunctions extends Component {
         return $number;
     }
 
-    public static function getAttachmentUrl($module_name, $module_Code)
-    {
+    public static function getAttachmentUrl($module_name, $module_Code) {
         $attachment = \app\modules\general\models\TblAttachment::find()
-            ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
-            ->one();
+                ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+                ->one();
 
         if ($attachment) {
             return $attachment->attachment;

@@ -394,7 +394,7 @@ class SchedulerController extends ChildController {
                                 //    we want to set these values (default is A1)
                         );
                         $filePath = $path . 'error_' . $row->file_name;
-                        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                         $objWriter->save($filePath);
                         copy($row->file_path, $path . $row->file_name);
                         unlink($row->file_path);
@@ -421,7 +421,7 @@ class SchedulerController extends ChildController {
                                 //    we want to set these values (default is A1)
                         );
                         $successfilePath = $path . 'success_' . $row->file_name;
-                        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                         $objWriter->save($successfilePath);
 //                    copy($row->file_path, $path . $row->file_name);
 //                    unlink($row->file_path);
@@ -495,7 +495,7 @@ class SchedulerController extends ChildController {
                             //    we want to set these values (default is A1)
                     );
                     $filePath = $path . 'error_' . $row->file_name;
-                    $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                     $objWriter->save($filePath);
                     copy($row->file_path, $path . $row->file_name);
                     unlink($row->file_path);
@@ -523,7 +523,7 @@ class SchedulerController extends ChildController {
                             //    we want to set these values (default is A1)
                     );
                     $successfilePath = $path . 'success_' . $row->file_name;
-                    $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                    $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                     $objWriter->save($successfilePath);
 //                    copy($row->file_path, $path . $row->file_name);
 //                    unlink($row->file_path);
@@ -744,7 +744,7 @@ class SchedulerController extends ChildController {
                     //    we want to set these values (default is A1)
             );
             $filePath = $path . $fileName;
-            $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $folder . $fileName;
         }
