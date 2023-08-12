@@ -226,6 +226,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 }
             }
             if ($manageStock) {
+                $setTxnCode = $model->product_sale_transaction_code;
                 $config = Yii::$app->general->getUnionConfiguration($productSaleData->union_code, 'stock_check_on_sale', 'PORTAL');
                 $stock_config_on = ($config == '1') ? TRUE : FALSE;
                 if ($stock_config_on && date('Y-m-d', strtotime($productSaleData->invoice_date)) >= '2023-05-01') {
