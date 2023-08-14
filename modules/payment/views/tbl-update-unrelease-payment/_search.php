@@ -3,18 +3,17 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\web\View;
-
 ?>
 
 <div class="tbl-member-payment-search">
 
     <?php
     $form = ActiveForm::begin([
-        'method' => 'get',
-        'validateOnBlur' => false,
-        'validateOnChange' => FALSE,
-        'enableClientValidation' => true,
-        'validateOnSubmit' => true,
+                'method' => 'get',
+                'validateOnBlur' => false,
+                'validateOnChange' => FALSE,
+                'enableClientValidation' => true,
+                'validateOnSubmit' => true,
     ]);
     ?>
     <div class="col-sm-12 mt10 padding-left-0">
@@ -36,7 +35,7 @@ use yii\web\View;
         <div class="col-sm-2 cust-type" id="customer-type-wrapper">
             <?= Yii::$app->dropdown->customer_type($model, $form, 'tblvsppayment-bmc_code', 'customer_type', 'Customer Type *', FALSE); ?>
         </div>
-        <div class=" col-sm-3 form-group mt23">
+        <div class="col-sm-1 form-group mt23">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
@@ -48,15 +47,17 @@ use yii\web\View;
 <?php
 $script = " 
     $('.cust-type').css('display','none'); 
+    hideShowDiv();
     $('#tblvsppayment-payment_type').on('change', function() {
-        var payment_type = $(this).val();
+       hideShowDiv();
+    });
+    function hideShowDiv() {
+        $('#customer-type-wrapper').hide();
+         var payment_type = $('#tblvsppayment-payment_type').val();
         if (payment_type === 'VENDOR') {
             $('#customer-type-wrapper').show();
-        } else {
-            $('#customer-type-wrapper').hide();
-            $('#tblvsppayment-customer_type').val('').trigger('change');
         }
-    });
+    }
 ";
 $this->registerJs($script, View::POS_END, 'check-mcc-type');
 ?>

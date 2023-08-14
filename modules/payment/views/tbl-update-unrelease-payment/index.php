@@ -16,7 +16,7 @@ $this->title = $title;
             </div>
             <div class="clearfix"></div>
             <?php
-                echo $this->render('_update_grid', ['searchParameter' => $model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+            echo $this->render('_update_grid', ['searchParameter' => $model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
             ?>
         </div>
     </div>

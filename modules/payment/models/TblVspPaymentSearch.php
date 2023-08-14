@@ -10,29 +10,26 @@ use app\modules\payment\models\TblVspPayment;
 /**
  * TblVspPaymentSearch represents the model behind the search form about `app\modules\payment\models\TblVspPayment`.
  */
-class TblVspPaymentSearch extends TblVspPayment
-{
+class TblVspPaymentSearch extends TblVspPayment {
 
     public $from_date, $to_date;
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
-            [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
-            [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'number'],
-            [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
+                [['vsp_payment_code', 'payment_cycle_code', 'payment_cycle_applicabilty_code', 'payment_date', 'from_date', 'to_date', 'previous_hold', 'previous_due', 'hold_amount', 'adjust_recovery', 'recovery'], 'safe'],
+                [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
+                [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'number'],
+                [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -44,8 +41,7 @@ class TblVspPaymentSearch extends TblVspPayment
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblVspPayment::find();
 
         // add conditions that should always apply here
@@ -81,44 +77,39 @@ class TblVspPaymentSearch extends TblVspPayment
         // grid filtering conditions
 
         $query->andFilterWhere(['like', 'tbl_vsp_payment.kg_fat', $this->kg_fat])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.kg_snf', $this->kg_snf])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.total_qty', $this->total_qty])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.total_loss', $this->total_loss])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.amount', $this->amount])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.addition', $this->addition])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.deduction', $this->deduction])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.net_payable', $this->net_payable])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_amount', $this->adjust_amount])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.final_pay', $this->final_pay])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.previous_hold', $this->previous_hold])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.previous_due', $this->previous_due])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.hold_amount', $this->hold_amount])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_remark', $this->adjust_remark])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
-            ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.status', $this->status])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_recovery', $this->adjust_recovery])
-            ->andFilterWhere(['like', 'tbl_vsp_payment.recovery', $this->recovery]);
+                ->andFilterWhere(['like', 'tbl_vsp_payment.kg_snf', $this->kg_snf])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.total_qty', $this->total_qty])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.total_loss', $this->total_loss])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.amount', $this->amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.addition', $this->addition])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.deduction', $this->deduction])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.net_payable', $this->net_payable])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_amount', $this->adjust_amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.final_pay', $this->final_pay])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.previous_hold', $this->previous_hold])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.previous_due', $this->previous_due])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.hold_amount', $this->hold_amount])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_remark', $this->adjust_remark])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.adjust_recovery', $this->adjust_recovery])
+                ->andFilterWhere(['like', 'tbl_vsp_payment.recovery', $this->recovery]);
         //$query->orderBy(['tbl_vsp_payment.from_datetime' => SORT_DESC, 'tbl_customer_type.customer_desc' => SORT_ASC, 'tbl_vsp_payment.customer_code' => SORT_ASC]);
 
         return $dataProvider;
     }
 
-    public function unreleasePaymentSearch($params)
-    {
+    public function unreleasePaymentSearch($params) {
         $query = TblVspPayment::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => FALSE,
         ]);
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
         $query->andFilterWhere([
             'union_code' => $this->union_code,
             'plant_code' => $this->plant_code,
@@ -127,8 +118,9 @@ class TblVspPaymentSearch extends TblVspPayment
             'customer_type' => $this->customer_type,
             'release_date' => null,
             'is_release' => 0,
+            'status' => 'sent'
         ]);
-
+        $query->orderBy(['from_datetime' => SORT_ASC]);
         return $dataProvider;
     }
 

@@ -8,17 +8,16 @@ use app\modules\payment\models\TblVspPayment;
 use app\modules\payment\models\TblVspPaymentSearch;
 use app\modules\payment\models\TblMemberPaymentSummary;
 use app\modules\payment\models\TblMemberPaymentSummarySearch;
+use app\modules\payment\models\TblMemberPaymentSummaryHistory;
+use app\modules\payment\models\TblVspPaymentHistory;
 
-class TblUpdateUnreleasePaymentController extends Controller
-{
-    public function actionIndex()
-    {
+class TblUpdateUnreleasePaymentController extends \app\controllers\ChildController {
+
+    public function actionIndex() {
         $model = new TblVspPayment();
         $model->load(Yii::$app->request->get());
-
         $data = Yii::$app->request->get('TblVspPayment');
-
-        if (isset($data['payment_type']) && $data['payment_type'] == 'VENDOR') {
+        if ($model->payment_type == 'VENDOR') {
             $model->scenario = 'paymenttypevendor';
             $searchModel = new TblVspPaymentSearch();
             $dataProvider = $searchModel->unreleasePaymentSearch($data);
@@ -30,44 +29,58 @@ class TblUpdateUnreleasePaymentController extends Controller
         }
 
         return $this->render('index', [
-            'model' => $model,
-            'title' => 'Update Unrelease Payment',
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'model' => $model,
+                    'title' => 'Update Disburse W/O Release Payment',
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionUpdateUnreleasePayment()
-    {
+    public function actionUpdateUnreleasePayment() {
         $postData = Yii::$app->request->post();
         $paymentType = $postData['payment_type'];
-        $selectedRecords = $postData['TblMemberPaymentSummary'];
-
+        $selectedRecords = $postData['selection'];
+        $success = 0;
+        $error = 0;
         if ($paymentType === 'MEMBER') {
-            foreach ($selectedRecords as $tblId => $record) {
+            $data = $postData['TblMemberPaymentSummary'];
+            foreach ($selectedRecords as $tblId) {
                 $model = TblMemberPaymentSummary::findOne($tblId);
-                if ($model) {
-                    $model->hold_reason = $record['hold_reason'];
-                    $model->release_date = $record['release_date'];
-
-                    if ($model->validate()) {
-                        $model->save();
+                if (!empty($model)) {
+                    $historyModel = new TblMemberPaymentSummaryHistory();
+                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                    $model->hold_reason = $data[$tblId]['hold_reason'];
+                    $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
+                    if ($model->validate() && $historyModel->save() && $model->save()) {
+                        $success++;
+                    } else {
+                        $error++;
                     }
                 }
             }
         } elseif ($paymentType === 'VENDOR') {
-            foreach ($selectedRecords as $tblId => $record) {
+            $data = $postData['TblVspPayment'];
+            foreach ($selectedRecords as $tblId) {
                 $model = TblVspPayment::findOne($tblId);
-                if ($model) {
-                    $model->hold_reason = $record['hold_reason'];
-                    $model->release_date = $record['release_date'];
-
-                    if ($model->validate()) {
-                        $model->save();
+                if (!empty($model)) {
+                    $historyModel = new TblVspPaymentHistory();
+                    Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                    $model->hold_reason = $data[$tblId]['hold_reason'];
+                    $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
+                    if ($model->validate() && $historyModel->save() && $model->save()) {
+                        $success++;
+                    } else {
+                        $error++;
                     }
                 }
             }
         }
+        $msg = Yii::t('app', $paymentType . ' payment data updated.<br/>Success Count : ' . $success . '<br/>Error Count : ' . $error);
+        Yii::$app->getSession()->setFlash('success', [
+            'type' => 'success',
+            'message' => $msg,
+        ]);
         return $this->redirect(['index']);
     }
+
 }
