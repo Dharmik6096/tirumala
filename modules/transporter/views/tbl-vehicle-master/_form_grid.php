@@ -100,7 +100,14 @@ $grid_option = [
                 'data-post-url' => Url::to([$url, 'id' => $model->vehicle_code])
             ];
             return GhostHtml::a_alert('<i class="fa ' . $icon . '"></i>', [[$url, 'id' => $model->vehicle_code]], $options);
-        }
+        },
+        'document-upload' => function ($url, $model) {
+            $id = $model->vehicle_code;
+//            $name = $model->transporter_name;
+            $url = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->vehicle_code];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
     ]
 ];
 

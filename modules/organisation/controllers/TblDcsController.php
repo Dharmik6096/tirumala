@@ -46,6 +46,7 @@ use ReflectionClass;
 use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -54,7 +55,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list', 'dcs-document-upload'];
     public $showIsBMC;
 
     /**
@@ -1319,6 +1320,14 @@ class TblDcsController extends ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionDcsDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->dcs_code;
+        $module_name = 'tbl_dcs';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('dcs', $id, $model, $module_code, $module_name);
     }
 
 }

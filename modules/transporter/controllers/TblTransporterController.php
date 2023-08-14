@@ -16,6 +16,7 @@ use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 use yii\helpers\Url;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblTransporterController implements the CRUD actions for TblTransporter model.
@@ -24,6 +25,7 @@ class TblTransporterController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
+    public $freeAccessActions = ['transporter-document-upload'];
 
     /**
      * Lists all TblTransporter models.
@@ -247,6 +249,14 @@ class TblTransporterController extends \app\controllers\ChildController {
                 'message' => 'Could not Deactivated. Please try again.']);
         }
         return $this->redirect(['index']);
+    }
+
+    public function actionTransporterDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->transporter_code;
+        $module_name = 'tbl_transporter';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('transporter', $id, $model, $module_code, $module_name);
     }
 
 }

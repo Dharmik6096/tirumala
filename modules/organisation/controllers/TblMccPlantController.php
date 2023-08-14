@@ -22,6 +22,7 @@ use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblBmcSilosInfoSearch;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -29,7 +30,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 class TblMccPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list', 'places-list'];
+    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list', 'places-list', 'mcc-document-upload'];
 
     /**
      * Lists all TblMccPlant models.
@@ -412,6 +413,14 @@ class TblMccPlantController extends \app\controllers\ChildController {
             return;
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionMccDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->mcc_plant_code;
+        $module_name = 'tbl_mcc_plant';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('mcc', $id, $model, $module_code, $module_name);
     }
 
 }
