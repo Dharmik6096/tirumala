@@ -32,7 +32,7 @@ $this->title = Yii::t('app', 'Rate Chart') . ' (' . Yii::t('app', 'BMC') . ')';
                 </div>
             </div>
             <div class="col-sm-12">
-                <div id="fixed-table-container" class="table-responsive table-rate-chart fixed-table-container">
+                <div id="fixed-table-container" class="table-responsive table-rate-chart fixed-table-container fixed-table-fulllength">
                     <table class="table table-bordered table-striped table-input" id="table">
                         <?php
                         $cnt = 0;

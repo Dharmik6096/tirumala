@@ -342,7 +342,9 @@ class TblDcsPurchaseRateController extends \app\controllers\ChildController {
                             $HighestColumn = $worksheet->getHighestColumn();
                             $HighestcolumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($HighestColumn);
                             $HighestColumnplus = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($HighestcolumnIndex);
-                            for ($col = 'B'; $col != $HighestColumnplus; $col ++) {
+                            $HighestCol = $HighestColumnplus;
+                            $HighestCol++;
+                            for ($col = 'B'; $col != $HighestCol; $col ++) {
 // Column range missing validation
                                 $cell = $worksheet->getCell($col . $row)->getValue();
                                 $columnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($col);

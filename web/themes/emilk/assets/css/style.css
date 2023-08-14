@@ -4902,6 +4902,9 @@ table.dataTable thead .search_filter input[type="text"] {
     /*box-sizing: border-box;*/
     /*border: 1px solid #ccc;*/
 }
+.fixed-table-fulllength {
+    height: 100% !important;
+}
 .fixed-table-container table {
     /*border-collapse: collapse;*/
     width: 100%;
