@@ -855,7 +855,7 @@ class SiteController extends \app\controllers\ChildController {
         $plant_code = str_replace(',', '-', $plant_code);
         $mcc_code = str_replace(',', '-', $mcc_code);
         $bmc_code = str_replace(',', '-', $bmc_code);
-        $dcs_str = str_replace(',', '-', $dcs_str);
+        $dcs_str = !empty($dcs_str) ? str_replace(',', '-', $dcs_str) : '';
         $dcs_code = str_replace(',', '-', $dcs_code);
         $widget_type = '';
         $customer_type = '';

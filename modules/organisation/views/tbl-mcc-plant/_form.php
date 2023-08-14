@@ -116,6 +116,18 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'sap_vendor_code')->textInput() ?>
         </div>
         <?= Html::hiddenInput('from_plant', 0, ['id' => 'mcc']); ?>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_quality_manual'); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'recovery_validate'); ?>
+        </div>
     </div>
     <?php if ($type == 'create') { ?>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -130,18 +142,6 @@ $form = ActiveForm::begin([
         ?>
 
     <?php } ?>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_weight_manual'); ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_quality_manual'); ?>
-    </div>
-    <div class="col-sm-2 mt15">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'recovery_validate'); ?>
-    </div>
     <div class="clearfix"></div>
 </div>
 <div class="row">

@@ -112,7 +112,7 @@ if (!empty($rec_data) && $rtype == 'forced') {
         <?php if (!empty($rec_data)) { ?>
             <span class="btn_show">
                 <?php
-                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn btn-primary', 'id' => 'recalculation']);
+                echo Html::button(Yii::t('app', 'SAVE'), ['class' => 'btn-login btn btn-primary', 'id' => 'recalculation']);
                 ?>
             </span>
             <?= Yii::$app->controls->reset(); ?>

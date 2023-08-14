@@ -145,6 +145,9 @@ $form = ActiveForm::begin([
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'rate_calculate_on_merge'); ?>
         </div>
         <div class="col-sm-2 mt15">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_rented_bmc'); ?>
+        </div>
+        <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
         <div class="col-sm-2 mt15">

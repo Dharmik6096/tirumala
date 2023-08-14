@@ -184,7 +184,7 @@ class CommonImportStrategy extends ARImportStrategy {
 //            exit;
                 
         }
-        if ($count==count($data)-1) {
+        if($count == count($data) || $count == count($data) - 1){
             return ['total'=>count($importedPks),'status'=>'success','msg'=>'Among '.count($importedPks).' records,'.count($importedPks).' records have been processed.','pk'=>count($importedPks)/*,'error'=>$errors*/];              
         }
     }

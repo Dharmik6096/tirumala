@@ -78,7 +78,7 @@ class User extends \webvimark\modules\UserManagement\models\User
             ['email', 'email'],
             ['email', 'validateEmailConfirmedUnique'],
             ['bind_to_ip', 'validateBindToIp'],
-            [['federation', 'mobile_no', 'alert_recipient_group_id', 'user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department'], 'safe'],
+            [['federation', 'mobile_no', 'alert_recipient_group_id', 'designation_code','user_identity', 'union', 'dcs', 'organizations', 'user_type_id', 'role', 'created_by', 'deleted_by', 'updated_by', 'flg_sentbox_entry', 'sync_status', 'sync_timestamp', 'portal_type', 'device_id', 'allow_app_login', 'department'], 'safe'],
             ['bind_to_ip', 'trim'],
             [['bind_to_ip', 'user_code'], 'string', 'max' => 255],
             [['mobile_no'], function ($attribute, $params) {
@@ -129,7 +129,20 @@ class User extends \webvimark\modules\UserManagement\models\User
             'email_confirmed' => Yii::t('app', 'E-mail confirmed'),
             'email' => Yii::t('app', 'E-mail'),
             'portal_type' => Yii::t('app', 'Portal Type'),
+            'designation_code' => yii::t('app', 'Designation'),
         ];
+    }
+    
+    public function getDesignationCode() {
+        return $this->hasOne(\app\modules\globalmaster\models\TblDesignation::className(), ['designation_code' => 'designation_code']);
+    }
+    
+    public function getPrimaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'primary_parent']);
+    }
+    
+    public function getSecondaryParent() {
+        return $this->hasOne(User::className(), ['id' => 'secondary_parent']);
     }
 
     public function validateUniqueUsername()
