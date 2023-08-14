@@ -1,10 +1,6 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-use yii\web\View;
-use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
 
 Url::remember();
 $this->title = $title;

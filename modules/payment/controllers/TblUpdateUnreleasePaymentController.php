@@ -8,9 +8,8 @@ use app\modules\payment\models\TblVspPayment;
 use app\modules\payment\models\TblVspPaymentSearch;
 use app\modules\payment\models\TblMemberPaymentSummary;
 use app\modules\payment\models\TblMemberPaymentSummarySearch;
-use app\modules\payment\models\TblPaymentHoldReason;
 
-class TblUpdateUnrealizePaymentController extends \yii\web\Controller
+class TblUpdateUnreleasePaymentController extends Controller
 {
     public function actionIndex()
     {
