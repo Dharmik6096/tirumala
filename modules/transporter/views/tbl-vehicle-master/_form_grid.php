@@ -103,7 +103,6 @@ $grid_option = [
         },
         'document-upload' => function ($url, $model) {
             $id = $model->vehicle_code;
-//            $name = $model->transporter_name;
             $url = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->vehicle_code];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
