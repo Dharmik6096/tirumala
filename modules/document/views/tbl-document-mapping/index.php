@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Document Master'));
-$this->params['menu'][] = Yii::$app->controls->add('Document Master');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Document Mapping'));
+$this->params['menu'][] = Yii::$app->controls->add('Document Mapping', 'document-mapping');
 ?>
 <div class="tbl-banks-index">
     <div class="panel panel-default panel-grid panel-main">
@@ -17,4 +17,3 @@ $this->params['menu'][] = Yii::$app->controls->add('Document Master');
         </div>
     </div>
 </div>
-

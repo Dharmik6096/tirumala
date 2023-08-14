@@ -1,18 +1,17 @@
 <?php
 
-namespace app\modules\welfarescheme\models;
+namespace app\modules\document\models;
 
 use Yii;
 use app\modules\welfarescheme\models\TblDocumentMasterInfo;
-use app\modules\welfarescheme\models\TblSchemeMaster;
-use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
 use yii\helpers\ArrayHelper;
+use app\modules\organisation\models\TblUnions;
+use app\modules\document\models\TblAttachment;
 
 /**
- * This is the model class for table "tbl_scheme_document_mapping".
+ * This is the model class for table "tbl_document_mapping".
  *
  * @property integer $mapping_id
- * @property integer $scheme_id
  * @property integer $doc_id
  * @property integer $is_mandate
  * @property string $union_code
@@ -24,15 +23,13 @@ use yii\helpers\ArrayHelper;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMapping extends \app\models\ChildModel {
-
-    public $application_id;
+class TblDocumentMapping extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_scheme_document_mapping';
+        return 'tbl_document_mapping';
     }
 
     /**
@@ -40,11 +37,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['scheme_id', 'doc_id', 'is_mandate', 'originating_type'], 'integer'],
-                [['created_at', 'updated_at'], 'safe'],
-                [['union_code'], 'string', 'max' => 3],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['doc_id', 'is_mandate', 'originating_type', 'created_at', 'updated_at', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'master_type'], 'safe'],
         ];
     }
 
@@ -54,10 +47,9 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     public function attributeLabels() {
         return [
             'mapping_id' => Yii::t('app', 'Mapping ID'),
-            'scheme_id' => Yii::t('app', 'Scheme ID'),
-            'doc_id' => Yii::t('app', 'Doc ID'),
+            'doc_id' => Yii::t('app', 'Document Name'),
             'is_mandate' => Yii::t('app', 'Is Mandate ?'),
-            'union_code' => Yii::t('app', 'Union'),
+            'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -72,8 +64,8 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
         return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
-    public function getSchemeId() {
-        return $this->hasOne(TblSchemeMaster::className(), ['scheme_id' => 'scheme_id']);
+    public function getunionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
     public function getExistingMapping() {
@@ -89,7 +81,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
             }
             $query = $this->find()
                     ->where(['IN', 'doc_id', $codes])
-                    ->andWhere(['scheme_id' => $this->scheme_id])
+                    ->andWhere(['master_type' => $this->master_type])
                     ->all();
             return ArrayHelper::map($query, 'doc_id', 'doc_id');
         } else {
@@ -110,7 +102,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
             }
             $query = $this->find()
                     ->where(['IN', 'doc_id', $codes])
-                    ->andWhere(['scheme_id' => $this->scheme_id, 'is_mandate' => 1])
+                    ->andWhere(['master_type' => $this->master_type, 'is_mandate' => 1])
                     ->all();
             return ArrayHelper::map($query, 'doc_id', 'doc_id');
         } else {
@@ -120,16 +112,12 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
 
     public function getExistMappedControl() {
         return $this->find()
-                        ->where(['scheme_id' => $this->scheme_id, 'doc_id' => $this->doc_id])
+                        ->where(['doc_id' => $this->doc_id])
                         ->one();
     }
 
-    public function getApplicationDocument() {
-        return $this->hasOne(TblSchemeApplicationDocuments::className(), ['scheme_id' => 'scheme_id', 'doc_id' => 'doc_id'])->andOnCondition(['tbl_scheme_application_documents.application_id' => $this->application_id]);
-    }
-
-    public function getDocumentMaster() {
-        return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
+    public function uploadedDocument($doc_id, $module_code) {
+        return TblAttachment::find()->where(['doc_id' => $doc_id, 'module_code' => $module_code])->one();
     }
 
 }
