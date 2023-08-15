@@ -1886,7 +1886,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_dcs_master_register',
                 'scenario' => 'DcsMaster',
                 'title' => 'DCS Register',
-                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No', 'password', 'password'],
+                'to_decrypt' => ['phone_no', 'Phone No', 'pan_no', 'Pan No', 'upi_no', 'Upi No', 'password', 'password', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
