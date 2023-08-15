@@ -1081,7 +1081,8 @@ class ReportsController extends \app\controllers\ChildController {
                 for ($i = 0; $i < count($output); $i++) {
                     foreach ($dataToDecrypt as $decKey) {
                         if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
-                            $output[$i][$decKey] = Yii::$app->general->decryptData($output[$i][$decKey]) !== FALSE ? Yii::$app->general->decryptData($output[$i][$decKey]) : $output[$i][$decKey];
+                            $plain = Yii::$app->general->decryptData($output[$i][$decKey]);
+                            $output[$i][$decKey] =  $plain == null || $plain == false ? $output[$i][$decKey] : $plain;
                         }
                     }
                 }
@@ -1179,6 +1180,7 @@ class ReportsController extends \app\controllers\ChildController {
             }
             $this->label = $export_file_name;
         }
+        $this->output = $output;
         if ($model->output_type == 'DOWNLOAD') {
             if ($this->report == 'SapMilkCollectionData') {
                 $this->downloadDataExcel($model);
@@ -1894,7 +1896,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_member_master_register',
                 'scenario' => 'MemberMaster',
                 'title' => 'Member Register',
-                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no'],
+                'to_decrypt' => ['pan_no', 'Pan No', 'dob', 'Dob', 'adhar_no', 'aadhaar_no'],
                 'removeExportType' => ['CSV'],
                 'extention' => 'xlsx',
 //                'output_type' => FALSE
