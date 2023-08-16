@@ -50,7 +50,7 @@ $start_date = Yii::$app->controls->view_date($model->complaintCode->date);
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>   
     <div class="col-sm-2 mt10">
-        <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+        <?= $form->field($model, 'affects_data', ['checkHorizontalTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-12">

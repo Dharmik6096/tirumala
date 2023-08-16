@@ -43,12 +43,12 @@ $form = ActiveForm::begin([
 </div>
 <div class="row">
     <div class="col-sm-2 mt15">
-    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_serial_number'); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_serial_number', $class); ?>
     </div>
     <div class="col-sm-2 mt15">
         <?php
         if ($model->assetBom) {
-            echo Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_spare');
+            echo Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_spare', $class);
             // echo $form->field($model, 'is_spare', ['checkboxTemplate' => "<div class='checkbox " . $class . "'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox();
         } else {
             echo Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_spare');

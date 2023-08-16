@@ -54,7 +54,7 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
                     $historyModel = new UserHistory();
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
-                    $model->scenario = 'userUpdate';
+//                    $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
                     $master[] = $model;
 

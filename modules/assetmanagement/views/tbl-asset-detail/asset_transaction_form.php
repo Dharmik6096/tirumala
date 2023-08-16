@@ -71,7 +71,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'in_ward', ['checkboxTemplate' => "<div class='checkbox mt25'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'in_ward'); ?>
             </div> 
             <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>

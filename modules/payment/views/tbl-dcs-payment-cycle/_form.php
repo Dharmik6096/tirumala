@@ -40,7 +40,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'interval_value')->textInput() ?>
     </div>  
     <div class="col-sm-2 mt35">
-        <?= $form->field($model, 'check_month', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}',])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'check_month'); ?>
     </div>
 <!--    <div class="col-sm-2 mt35">
         <? = Yii::$app->controls->active($model, $form); ?>

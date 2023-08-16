@@ -85,7 +85,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('asset_detail_status', $model, $form, 'form-group', $model->getAttributeLabel('current_status'), false, 'current_status', false); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_verified', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_verified'); ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'verification_date', '', FALSE); ?>

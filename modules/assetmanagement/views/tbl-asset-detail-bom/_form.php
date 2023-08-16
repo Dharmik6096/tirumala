@@ -33,7 +33,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'serial_number')->textInput() ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_active'); ?>
     </div>
     <div class="col-sm-4 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">

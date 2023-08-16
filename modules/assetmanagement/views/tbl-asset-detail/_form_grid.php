@@ -87,7 +87,7 @@ $grid_option = [
         'asset-detail-bom' => function ($url, $model) {
             $class = $model->assetCode['is_spare'] == 0 ? '' : 'disabled';
             $options = ['data-code' => $model->asset_detail_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Asset Detail Bom', 'class' => $class,];
-            return GhostHtml::a('<i class="fa fa-money"></i>', ['/assetmanagement/tbl-asset-detail-bom/create', 'id' => $model->asset_detail_code], $options);
+            return GhostHtml::a('<i class="fa fa-money-bill"></i>', ['/assetmanagement/tbl-asset-detail-bom/create', 'id' => $model->asset_detail_code], $options);
         },
     ]
 ];

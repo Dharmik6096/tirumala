@@ -129,6 +129,7 @@ ul{
 .btn-sm, .fc-button{
     padding: 5px 20px;
     font-size: 12px;
+    margin: 3px;
 }
 .fc-button{
     background-image: none;

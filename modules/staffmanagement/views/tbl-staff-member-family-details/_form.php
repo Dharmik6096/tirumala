@@ -23,6 +23,6 @@ use yii\helpers\Html;
     <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', 'Gender'); ?>
 </div>
 <div class="col-sm-2 mt15">
-    <?= $form->field($model, 'is_nominee', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_nominee'); ?>
 </div>
 
