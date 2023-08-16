@@ -26,6 +26,7 @@ use app\modules\organisation\models\TblMccPlantGroupMappingSearch;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblBmcSilosInfoSearch;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblDcsBmcController implements the CRUD actions for TblDcsBmc model.
@@ -527,6 +528,14 @@ class TblDcsBmcController extends \app\controllers\ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionBmcDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->bmc_code;
+        $module_name = 'tbl_bmc';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('bmc', $id, $model, $module_code, $module_name);
     }
 
 }
