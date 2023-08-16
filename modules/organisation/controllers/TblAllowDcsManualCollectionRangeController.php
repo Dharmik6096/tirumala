@@ -135,10 +135,10 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
                 $model->remark = $remark;
 
                 if ($model->save()) {
-                    $msg = 'Update successful';
+                    $msg = 'Update status successfully';
                     $type = 'success';
                 } else {
-                    $msg = 'Update failed';
+                    $msg = 'Update status failed';
                 }
             } else {
                 $msg = 'Model not found';

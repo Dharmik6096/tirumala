@@ -6,6 +6,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
+
+$url = Url::to(['update-status']);
 ?>
 <?php
 $form = ActiveForm::begin();
@@ -141,7 +143,8 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<script>
+<?php
+$script = "
     function openStatusPopup(event, element) {
         event.preventDefault();
         var modelId = $(element).data('model-id');
@@ -155,7 +158,7 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
         var remark = $('#remark-input').val();
         var modelId = $('#status-popup-modal').data('model-id');
         $.ajax({
-            url: 'update-status',
+            url : '{$url}',        
             type: 'POST',
             data: {
                 id: modelId,
@@ -170,5 +173,5 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
                 console.error('Update failed:', error);
             }
         });
-    }
-</script>
+    }";
+$this->registerJs($script, View::POS_END, 'dcs-manual-collection-range');
