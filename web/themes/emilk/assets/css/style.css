@@ -226,7 +226,7 @@ ul{
     background-color: rgb(122, 35, 28);
 }
 .bg-info{
-    background-color: #7a231c;
+    background-color: #7a231c !important;
 }
 .bg-info-del{
     background-color: #7a231c;
@@ -3586,7 +3586,7 @@ input[type="checkbox"]:after{
 }
 
 .dash_block_value {
-    margin-top: 12px;
+    margin-top: 0px;
     color: #000
 }
 
@@ -3840,6 +3840,7 @@ td.fc-month-view.fc-year-monthly-td.fc-widget-content{
 
 .dash_block_description {
     color: #222 !important;
+    margin-bottom: 8px;
 }
 
 .dash_block_value  {

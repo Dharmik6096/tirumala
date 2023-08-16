@@ -48,7 +48,7 @@ class DefaultController extends Controller {
         $module->select_from_all = $select_from_all;
         $ratechart = Yii::$app->request->post('ratechart');
         $module->shift_type = Yii::$app->request->post('shift_type');
-        $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
+        $wef_date = !empty(Yii::$app->request->post('wef_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('wef_date'))) : '';
         $returnQuery = TRUE;
         $values = $module->getDcs($top_section, $wef_date, $returnQuery);
 
@@ -116,7 +116,7 @@ class DefaultController extends Controller {
         $field_code = Yii::$app->request->post('fcode');
         $login_type = Yii::$app->request->post('login_type');
         $model = new $model_name();
-        $wef_date = date('Y-m-d', strtotime(Yii::$app->request->post('wef_date')));
+        $wef_date = !empty(Yii::$app->request->post('wef_date')) ? date('Y-m-d', strtotime(Yii::$app->request->post('wef_date'))) : '';
         $isCheck = Yii::$app->request->post('checkdate');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
