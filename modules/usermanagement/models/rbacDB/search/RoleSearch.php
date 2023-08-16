@@ -2,6 +2,7 @@
 
 namespace app\modules\usermanagement\models\rbacDB\search;
 
+use yii;
 use app\modules\usermanagement\models\rbacDB\Role;
 use yii\data\ActiveDataProvider;
 
