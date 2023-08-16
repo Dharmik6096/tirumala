@@ -20,8 +20,6 @@ use app\modules\document\controllers\TblAttachmentController;
  */
 class TblVehicleMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['vehicle-document-upload'];
-
     /**
      * Lists all TblVehicleMaster models.
      * @return mixed

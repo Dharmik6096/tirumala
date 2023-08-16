@@ -55,7 +55,7 @@ class TblDcsController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list', 'dcs-document-upload'];
+    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
     public $showIsBMC;
 
     /**

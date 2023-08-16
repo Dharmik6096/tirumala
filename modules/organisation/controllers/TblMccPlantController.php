@@ -30,7 +30,7 @@ use app\modules\document\controllers\TblAttachmentController;
 class TblMccPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list', 'places-list', 'mcc-document-upload'];
+    public $freeAccessActions = ['mcc-list', 'get-plant-mcc', 'union-mcc-list', 'places-list'];
 
     /**
      * Lists all TblMccPlant models.

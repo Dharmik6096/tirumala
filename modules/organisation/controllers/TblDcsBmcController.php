@@ -35,7 +35,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc', 'union-bmc-list', 'bmc-document-upload'];
+    public $freeAccessActions = ['bmc-list', 'bmc-list-union', 'get-mcc-bmc', 'poured-bmc-list', 'channel-bmc-list', 'get-plant-bmc', 'union-bmc-list'];
 
     /**
      * Lists all TblDcsBmc models.

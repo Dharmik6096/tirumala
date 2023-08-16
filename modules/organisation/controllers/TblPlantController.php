@@ -23,7 +23,7 @@ use app\modules\document\controllers\TblAttachmentController;
 class TblPlantController extends \app\controllers\ChildController {
 
     public $contactDetails;
-    public $freeAccessActions = ['plant-list', 'get-union-plant', 'plant-document-upload'];
+    public $freeAccessActions = ['plant-list', 'get-union-plant'];
 
     /**
      * Lists all TblPlant models.

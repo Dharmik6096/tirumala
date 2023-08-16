@@ -25,7 +25,6 @@ class TblTransporterController extends \app\controllers\ChildController {
 
     public $bankDetails;
     public $contactDetails;
-    public $freeAccessActions = ['transporter-document-upload'];
 
     /**
      * Lists all TblTransporter models.
