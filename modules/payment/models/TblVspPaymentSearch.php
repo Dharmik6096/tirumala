@@ -23,6 +23,7 @@ class TblVspPaymentSearch extends TblVspPayment {
                 [['dcs_code', 'union_code', 'adjust_remark', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'customer_code', 'customer_type', 'customer_name', 'customer_ex_code'], 'safe'],
                 [['kg_fat', 'kg_snf', 'total_qty', 'total_loss', 'amount', 'addition', 'deduction', 'net_payable', 'adjust_amount', 'final_pay', 'adjust_recovery', 'recovery'], 'number'],
                 [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
+                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe']
         ];
     }
 
@@ -110,7 +111,7 @@ class TblVspPaymentSearch extends TblVspPayment {
 
         $this->load($params);
 
-        $query->andFilterWhere([
+        $query->where([
             'union_code' => $this->union_code,
             'plant_code' => $this->plant_code,
             'mcc_plant_code' => $this->mcc_plant_code,

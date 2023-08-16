@@ -48,7 +48,7 @@ use yii\web\View;
 $script = " 
     $('.cust-type').css('display','none'); 
     hideShowDiv();
-    $('#tblvsppayment-payment_type').on('change', function() {
+    $('#tblvsppayment-payment_type,#tblvsppayment-customer_type').on('change', function() {
        hideShowDiv();
     });
     function hideShowDiv() {

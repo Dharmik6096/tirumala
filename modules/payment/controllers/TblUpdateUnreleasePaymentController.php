@@ -20,6 +20,7 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
         if ($model->payment_type == 'VENDOR') {
             $model->scenario = 'paymenttypevendor';
             $searchModel = new TblVspPaymentSearch();
+            $searchModel->attributes = $data;
             $dataProvider = $searchModel->unreleasePaymentSearch($data);
         } else {
             $model->scenario = 'unreleasepaymentsearch';
@@ -51,6 +52,7 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
                     $model->hold_reason = $data[$tblId]['hold_reason'];
                     $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
+                    $model->is_release = 1;
                     if ($model->validate() && $historyModel->save() && $model->save()) {
                         $success++;
                     } else {
@@ -67,6 +69,7 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
                     $model->hold_reason = $data[$tblId]['hold_reason'];
                     $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
+                    $model->is_release = 1;
                     if ($model->validate() && $historyModel->save() && $model->save()) {
                         $success++;
                     } else {

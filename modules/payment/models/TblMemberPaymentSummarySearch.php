@@ -119,7 +119,7 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
 
         $this->load($params);
 
-        $query->andWhere([
+        $query->where([
             'union_code' => $this->union_code,
             'plant_code' => $this->plant_code,
             'mcc_plant_code' => $this->mcc_plant_code,
@@ -128,6 +128,8 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
             'is_release' => 0,
             'payment_status' => 'Disburse'
         ]);
+
+        $query->orderBy(['from_datetime' => SORT_ASC]);
 
         return $dataProvider;
     }
