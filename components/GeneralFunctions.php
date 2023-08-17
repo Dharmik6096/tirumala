@@ -299,6 +299,13 @@ class GeneralFunctions extends Component {
             }
         }
     }
+    
+    public function validateVotercard($model, $attribute, $params) {
+        if (!empty($model->$attribute))
+            if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
+                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+            }
+    }
 
 //    public function validateBranch($model,$attribute,$params) {
 //        if(!empty($model->$attribute)){
