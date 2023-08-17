@@ -10,8 +10,6 @@ use yii\widgets\ActiveForm;
 $url = Url::to(['update-status']);
 ?>
 <?php
-$form = ActiveForm::begin();
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
@@ -110,6 +108,7 @@ $grid_option = [
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
+$form = ActiveForm::begin();
 ?>
 <div class="modal fade" id="status-popup-modal" tabindex="-1" role="dialog" aria-labelledby="status-popup-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -175,3 +174,4 @@ $script = "
         });
     }";
 $this->registerJs($script, View::POS_END, 'dcs-manual-collection-range');
+?>
