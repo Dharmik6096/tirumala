@@ -139,11 +139,12 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
 
-    public function validateReleaseDate($release_date, $params)
+    public function validateReleaseDate($attribute, $params)
     {
         $disburseDate = date('Y-m-d', strtotime($this->disburse_date));
         $currentDate = date('Y-m-d');
-        if ($this->$release_date < $disburseDate || $this->$release_date > $currentDate) {
+        $release_date = $this->release_date;
+        if ($release_date < $disburseDate || $release_date > $currentDate) {
             $this->addError($release_date, 'Invalid release date.');
         }
     }
