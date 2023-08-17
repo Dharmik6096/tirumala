@@ -231,6 +231,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
                     ['label' => Yii::t('app', 'Bank Payment Log'), 'url' => ['/payment/tbl-bank-payment-log/index'], 'active' => ($cntrl == 'tbl-bank-payment-log')],
                     ['label' => Yii::t('app', 'Data Consider in VSP Payment'), 'url' => ['/payment/tbl-vsp-payment-data-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-data-config')],
+                    ['label' => Yii::t('app', 'Disburse W/O Release Payment'), 'url' => ['/payment/tbl-update-unrelease-payment/index'], 'active' => ($cntrl == 'tbl-update-unrelease-payment' && $action == 'index')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
