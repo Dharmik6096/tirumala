@@ -29,7 +29,7 @@ use app\modules\document\controllers\TblAttachmentController;
 class TblMemberController extends \app\controllers\ChildController {
 
     public $bankDetails;
-    public $freeAccessActions = ['import-file', 'member-document-upload'];
+    public $freeAccessActions = ['import-file'];
 
     /**
      * Lists all TblMember models.

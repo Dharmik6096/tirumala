@@ -164,7 +164,7 @@ class importData extends \yii\base\Module {
             'indent-master-other' => ['table_name' => 'tbl_indent_master', 'fields' => 'dcs_code,warehouse_code,indent_date,product_code,qty', 'scenario' => 'importCsvOther', 'increment' => 1, 'default_fields' => 'originating_type:1', 'save_child' => true],
             'asset-detail-bom' => ['table_name' => 'tbl_asset_detail_bom', 'fields' => 'asset_detail_code,spare_code,serial_number,qty,is_active', 'scenario' => 'importCsv'],
             'bmc-quality-test' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'union_code,bmc_code,doc_no,date_time_of_collection,shift_code,sample_no,fat,snf,route_arrival_time', 'scenario' => 'bmc_quality_test'],
-            'bmc-weight-collection' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'union_code,bmc_code,customer_type,customer_code,doc_no,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,route_arrival_time', 'scenario' => 'bmc_weight_collection'],
+            'bmc-weight-collection' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'union_code,bmc_code,customer_type,customer_code,doc_no,date_time_of_collection,shift_code,sample_no,milk_type_code,milk_quality_type_code,qty,route_arrival_time,bmc_silos_info_code', 'scenario' => 'bmc_weight_collection'],
             'member-payment-restrict' => ['table_name' => 'tbl_member_payment_restrict', 'fields' => 'dcs_code,wef_date', 'scenario' => 'importCsv'],
         ];
         return $label[$l];

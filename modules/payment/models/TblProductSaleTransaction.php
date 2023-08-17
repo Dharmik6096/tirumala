@@ -51,13 +51,13 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync','androidsyncsplit']],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit']],
                 [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
-            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync','androidsyncsplit']],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync','androidsyncsplit']],
+            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync', 'androidsyncsplit']],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
                 [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync','androidsyncsplit']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
                 [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
@@ -70,7 +70,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 'on' => ['saleProduct', 'SaleImport']],
                 [['data_lock'], 'default', 'value' => 0],
                 [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
-                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync','androidsyncsplit']],
+                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
                 [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
@@ -226,6 +226,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 }
             }
             if ($manageStock) {
+                $setTxnCode = $model->product_sale_transaction_code;
                 $config = Yii::$app->general->getUnionConfiguration($productSaleData->union_code, 'stock_check_on_sale', 'PORTAL');
                 $stock_config_on = ($config == '1') ? TRUE : FALSE;
                 if ($stock_config_on && date('Y-m-d', strtotime($productSaleData->invoice_date)) >= '2023-05-01') {
@@ -335,6 +336,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                                 $saleTxnModel->sap_batch_no = NULL; //$stockData->sap_batch_no;
                                 $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;
                                 $saleTxnModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code, $i);
+                                $setTxnCode = $saleTxnModel->product_sale_transaction_code;
                                 $childModel[] = $saleTxnModel;
                             }
 
@@ -349,7 +351,7 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                             $fstockTxnModel->final_value = $fstockModel->stock;
                             $fstockTxnModel->transaction_type = $txn_type;
                             $fstockTxnModel->transaction_date = date('Y-m-d');
-                            $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
+                            $fstockTxnModel->reference_code = $setTxnCode;
                             $childModel[] = $fstockModel;
                             $childModel[] = $fstockTxnModel;
                         }

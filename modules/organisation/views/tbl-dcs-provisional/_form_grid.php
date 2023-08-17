@@ -5,7 +5,7 @@
  */
 
 use yii\helpers\Html;
-use app\modules\usermanagement\components\GhostHtml;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\web\View;
@@ -259,37 +259,37 @@ $grid_option = [
         'update' => function ($url, $model) {
             $name = $model->dcs_name;
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         //'delete' => ['option' => 'dcs_name,dcs_code,tbl-dcs/delete'],
 //        'mapping' => function ($url, $model) {
-//            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code,'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Village Mapping'];
+//            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code,'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Village Mapping'];
 //            return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-dcs/map-villages', 'id' => $model->dcs_code], $options);
 //        },
         /* 'bmc_mapping' => function ($url, $model) {
-          $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Bmc List'];
+          $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Bmc List'];
           $subCenter = $model->getMainSubCenter();
           return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
           }, */
 //        'deactive' => function ($url, $model) {
 //            $name = $model->dcs_name;
 //            $class = ($model->is_active == 1) ? '' : 'link-disable';
-//            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
+//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
 //            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-//                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
+//                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
 //            else
 //                return false;
 //        },
         'bank-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Bank Details', 'class' => '' . $class];
+            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Bank Details', 'class' => '' . $class];
             return GhostHtml::a('<i class="fa fa-university"></i>', ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], $options);
         },
         'contact-details' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Contact Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="fa fas fa-user-circle"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
+            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], $options);
         },
         'dpu-inst' => function ($url, $model) {
             $inst_id = $model->getInstallationId();
@@ -302,13 +302,13 @@ $grid_option = [
                 $url = ['/organisation/tbl-dpu-installation/view', 'id' => $inst_id];
                 $icon = '<i class="fa fa-upload"></i>';
             }
-            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'DPU Installation', 'class' => '' . $class];
+            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'DPU Installation', 'class' => '' . $class];
             return GhostHtml::a($icon, $url, $options);
         },
         'election-list' => function ($url, $model) {
             $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Election Details', 'class' => '' . $class];
-            return GhostHtml::a('<i class="far fa-address-card"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
+            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Election Details', 'class' => '' . $class];
+            return GhostHtml::a('<i class="fa fa-address-card-o"></i>', ['/organisation/tbl-dcs-election/create', 'dcs_code' => $model->dcs_code], $options);
         },
         'society-status' => function ($url, $model) {
 
@@ -318,7 +318,7 @@ $grid_option = [
                 $icon_class = ($status_id == 1) ? 'fa-ban' : 'fa-flask';
                 $title = ($status_id == 1) ? 'Stop Collection' : 'Start Collection';
                 $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => 'society-status ' . $class, 'data-val' => $model->dcs_code . ',' . $status_id . ',' . $name, 'data-name' => $title . ' of "' . $name . '"'];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => 'society-status ' . $class, 'data-val' => $model->dcs_code . ',' . $status_id . ',' . $name, 'data-name' => $title . ' of "' . $name . '"'];
                 return GhostHtml::a('<i class="fa ' . $icon_class . '"></i>', ['/organisation/tbl-dcs/society-status', 'dcs_code' => $model->dcs_code, 'coll_status' => $status_id], $options);
             }
         },
@@ -327,7 +327,7 @@ $grid_option = [
                 $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-bar-chart text-danger' : 'fa-bar-chart text-success';
                 $title = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'Un-Block Rate Chart' : 'Block Rate Chart';
                 $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
-                $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => $class];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => $title, 'class' => $class];
                 return GhostHtml::a('<i class="fa ' . $icon_class . '""></i>', $url, $options);
             }
         },
@@ -336,8 +336,8 @@ $grid_option = [
             $type = 'DCS';
             $class = Yii::$app->general->getforeignkey($model->mainBankDetails, 'is_verified') == 1 ? 'link-disable disabled' : '';
             $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
-            return GhostHtml::a_alert('<i class="fa fa-cloud-upload-alt"></i>', $url, $options);
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
+            return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
         },
         'generate_sentbox' => function ($url, $model) {
             $existCount = 0;
@@ -355,18 +355,11 @@ $grid_option = [
             $type = 'DCS';
             $class = $model->dpu_type == 91 ? '' : 'link-disable disabled';
             $url = ['/organisation/tbl-dcs/upload-ftp-file', 'id' => $id];
-            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a('<i class="fa fa-upload"></i>', $url, $options);
         },
-        'document-upload' => function ($url, $model) {
-            $id = $model->dcs_code;
-            $name = $model->dcs_name;
-            $url = ['/organisation/tbl-dcs/dcs-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->dcs_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
-        },
     /* 'miscellaneous' => function ($url, $model) {
-      $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Miscellaneous List'];
+      $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
       return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
       } */
     ]

@@ -1419,7 +1419,21 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
-
+    
+    public function actionMilkCollectionHistory() {
+        $this->report = 'MilkCollectionHistory';
+        return $this->actionIndex();
+    }
+    
+    public function actionMemberHistory() {
+        $this->report = 'MemberHistory';
+        return $this->actionIndex();
+    }
+    
+    public function actionDcsHistory() {
+        $this->report = 'DcsHistory';
+        return $this->actionIndex();
+    }
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2901,6 +2915,24 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_mpg_payment_bill_statement',
                 'scenario' => 'MpgPaymentBillStatement',
                 'title' => 'MPG Payment Bill Statement',
+            ],
+            'MilkCollectionHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_history_tbl_milk_collection',
+                'scenario' => 'MilkColllectionHistory',
+                'title' => 'Milk Collection History',
+            ],
+            'MemberHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
+                'sp_name' => 'sp_mis_history_tbl_member_master',
+                'scenario' => 'MemberHistory',
+                'title' => 'Member History',
+            ],
+            'DcsHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'sp_name' => 'sp_mis_history_tbl_dcs_master',
+                'scenario' => 'DcsHistory',
+                'title' => 'Dcs History',
             ],
         ];
         return $label[$l];
