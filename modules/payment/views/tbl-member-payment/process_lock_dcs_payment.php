@@ -52,6 +52,13 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                 <?= Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
                 <?= Html::hiddenInput('process_lock_flag', 'Process', ['class' => 'process_lock_flag']); ?>
                 <?php
+                if (!empty($dataProvider->getModels())) {
+                    foreach ($dataProvider->getModels() as $data) {
+                        echo Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]);
+                    }
+                }
+                ?>
+                <?php
                 $attribute = [
                         ['class' => 'kartik\grid\CheckboxColumn',
                         'rowSelectedClass' => GridView::TYPE_SUCCESS,
@@ -108,9 +115,6 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                 ?>
                 <div class="col-md-12" >
                     <?php if (!empty($dataProvider->getModels())) { ?>
-                        <?php foreach ($dataProvider->getModels() as $data) { ?>
-                            <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
-                        <?php } ?>
                         <?= Html::button(Yii::t('app', 'Process'), ['class' => 'btn btn-primary ', 'id' => 'adjust']); ?>
                         <?php //Html::button(Yii::t('app', 'Confirm'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock']); ?>
                         <?php // Yii::$app->controls->save('Next', $model); ?>
