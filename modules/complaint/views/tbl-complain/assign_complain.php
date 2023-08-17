@@ -175,6 +175,9 @@ $url = Url::to(['/complaint/tbl-complain/index']);
                         <?php echo Html::hiddenInput('code', $code, ['id' => 'code']); ?>
                         <?= Yii::$app->dropdown->assign_list($model, $form, 'location_type,code', 'user_code', $model->getAttributeLabel('user_code'), false, false); ?>               
                     </div>
+                    <div class = "col-sm-3 pt15 pb15 pl8">
+                        <?= $form->field($model, 'remarks')->textarea() ?>
+                    </div>
 
                     <?= Html::activeHiddenInput($model, 'complain_code'); ?>
 
