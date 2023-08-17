@@ -13,6 +13,15 @@ use app\modules\dcsoperation\models\TblMemberProvisionalSearch;
 use app\modules\dcsoperation\models\TblMemberProvisionalHistory;
 use \app\modules\organisation\models\TblDcs;
 use yii\web\NotFoundHttpException;
+use app\modules\document\models\TblDocumentMapping;
+use app\modules\document\models\TblAttachment;
+use app\modules\document\models\TblAttachmentHistory;
+use yii\base\Model;
+use yii\web\UploadedFile;
+use yii\web\Response;
+use yii\helpers\Json;
+use yii\helpers\Url;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -38,16 +47,23 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id, $flag) {
         $this->model = $this->findModel($id);
         $searchModel = new TblProvisionalMilkCollectionSearch();
         $params = Yii::$app->request->queryParams;
         $searchModel->member_code = $this->model->dcs_code . $this->model->pro_ex_member_code;
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_member_provisional']),
+        ]);
         $dataProvider = $searchModel->search($params);
         return $this->render('view', [
                     'model' => $this->model,
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
+                    'flag' => $flag,
         ]);
     }
 
@@ -94,7 +110,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
+                    return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
                 }
                 return $this->render('create', ['model' => $this->model]);
             }
@@ -326,6 +342,92 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
         // $model = $searchModel->find()->where(['member_code' =>$_POST['member_code']])->one();
         return $this->renderAjax('provisional_milk_collection', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'model' => $model]);
+    }
+
+    public function actionDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_member'])->all();
+        $doc_model = [];
+        foreach ($doc_mapping as $doc) {
+            $attachments = $doc->uploadedDocument($doc->doc_id, $id, 'tbl_member_provisional');
+            $master_doc = $doc->docId;
+            if (empty($attachments)) {
+                $attachments = new TblAttachment();
+                $attachments->module_code = $model->provisional_member_code;
+                $attachments->doc_id = $doc->doc_id;
+            }
+            $attachments->is_mandate = $doc->is_mandate;
+            $attachments->attachment_type = $master_doc->doc_ext;
+            $attachments->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
+            $doc_model[] = $attachments;
+        }
+        if (Yii::$app->request->post()) {
+            $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
+
+            if (Yii::$app->general->checkDirectory($doc_path)) {
+                $error_msg = '';
+                $save_model = [];
+                Model::loadMultiple($doc_model, Yii::$app->request->post());
+
+                foreach ($doc_model as $key => $d) {
+                    $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
+                    if (!empty($d->file_name)) {
+                        $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
+                        if (!empty($attach)) {
+                            if ($d->file_name != $attach->file_name) {
+                                $historyModel = new TblAttachmentHistory();
+                                Yii::$app->operation->history($attach, $historyModel, UPDATE);
+                                $save_model[] = $historyModel;
+                            }
+                        }
+                        $file_name = 'provisional_member' . '_' . $id . '_' . $d->doc_id . '_' . time() . '.' . $d->file_name->extension;
+                        $d->attachment = $doc_path . '/' . $file_name;
+                        if (!$d->file_name->saveAs($d->attachment)) {
+                            $error_msg .= $d->doc_name . '<br/>';
+                        }
+                        $d->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $d->attachment;
+                        $d->module_name = 'tbl_member_provisional';
+                        $d->file_name = $file_name;
+                        $save_model[] = $d;
+                    } else if ($d->is_mandate == 1) {
+                        $error_msg .= $d->doc_name . '<br/>';
+                    }
+                }
+
+                if (empty($error_msg)) {
+                    $model->provisional_status = 'register';
+                    $save_model[] = $model;
+                    $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
+                    if ($transaction == 'customRedirect') {
+                        $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                    } else {
+                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                        $record = ['status' => 'error', 'msg' => $msg];
+                    }
+                } else {
+                    $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
+                }
+            } else {
+                $record = ['status' => 'error', 'msg' => 'Error while create directory.'];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+
+        return Yii::$app->controller->render('add_document', [
+                    'model' => $model,
+                    'doc_model' => $doc_model,
+        ]);
+    }
+
+    public function actionProvisionalMembersApprovals() {
+        $searchModel = new TblMemberProvisionalSearch();
+        $dataProvider = $searchModel->searchApprovalDatas(Yii::$app->request->queryParams);
+
+        return $this->render('_bulk_approval_grids', [
+                    'model' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
 }

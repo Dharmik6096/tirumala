@@ -151,8 +151,8 @@ $script = "
             this.checked = check;
         });
     });
+    $('#allowCashCheckAll').prop('checked', true);
     $('.allow-cash-checkbox').each(function () {
-        $('#allowCashCheckAll').prop('checked', true);
         if(this.checked == false){
             $('#allowCashCheckAll').prop('checked', false);
         }
