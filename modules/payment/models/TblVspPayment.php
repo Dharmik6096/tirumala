@@ -68,6 +68,7 @@ class TblVspPayment extends \app\models\ChildModel {
                 [['payment_release_type'], 'safe'],
                 [['payment_type'], 'required', 'on' => ['unreleasepaymentsearch', 'paymenttypevendor']],
                 [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
+                [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate']
         ];
     }
 
@@ -206,4 +207,12 @@ class TblVspPayment extends \app\models\ChildModel {
                         ->andWhere(['status' => $status])->count();
     }
 
+    public function validateReleaseDate($release_date, $params)
+    {
+        $disburseDate = date('Y-m-d', strtotime($this->disburse_date));
+        $currentDate = date('Y-m-d');
+        if ($this->$release_date < $disburseDate || $this->$release_date > $currentDate) {
+            $this->addError($release_date, 'Invalid release date.');
+        }
+    }
 }

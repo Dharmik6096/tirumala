@@ -50,6 +50,7 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
                 if (!empty($model)) {
                     $historyModel = new TblMemberPaymentSummaryHistory();
                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                    $model->scenario = 'unreleasePaymentUpdate'; 
                     $model->hold_reason = $data[$tblId]['hold_reason'];
                     $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
                     $model->is_release = 1;
@@ -67,6 +68,7 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
                 if (!empty($model)) {
                     $historyModel = new TblVspPaymentHistory();
                     Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                    $model->scenario = 'unreleasePaymentUpdate'; 
                     $model->hold_reason = $data[$tblId]['hold_reason'];
                     $model->release_date = date('Y-m-d', strtotime($data[$tblId]['release_date']));
                     $model->is_release = 1;
@@ -85,5 +87,4 @@ class TblUpdateUnreleasePaymentController extends \app\controllers\ChildControll
         ]);
         return $this->redirect(['index']);
     }
-
 }
