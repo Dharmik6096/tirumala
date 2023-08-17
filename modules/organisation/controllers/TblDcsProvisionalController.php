@@ -6,7 +6,8 @@ use Yii;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
 use app\modules\organisation\models\TblDcs;
-use app\modules\organisation\models\TblDcsSearch;
+use app\modules\organisation\models\TblDcsProvisional;
+use app\modules\organisation\models\TblDcsProvisionalSearch;
 use app\modules\organisation\models\TblDcsHistory;
 use app\modules\organisation\models\TblSocietyCodes;
 use app\modules\organisation\models\TblDcsVillageMapping;
@@ -46,12 +47,11 @@ use ReflectionClass;
 use app\models\ChildModel;
 use app\modules\bkgprocess\models\TblOrgFileCreator;
 use app\modules\bkgprocess\models\TblOrgFileLog;
-use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
  */
-class TblDcsController extends ChildController {
+class TblDcsProvisionalController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
@@ -63,8 +63,8 @@ class TblDcsController extends ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $model = new TblDcs();
-        $searchModel = new TblDcsSearch();
+        $model = new TblDcsProvisional();
+        $searchModel = new TblDcsProvisionalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -79,30 +79,30 @@ class TblDcsController extends ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
-        $dcsBmc = new TblDcsBmcSearch();
-
-        //$dcsBmc->dcs_code = $id;
-        $dataProvider = $dcsBmc->search(Yii::$app->request->queryParams);
-        $bsearchModel = new TblBankDetailsSearch();
-        $bsearchModel->module_name = 'society';
-        $bsearchModel->module_code = $id;
-        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
-        $csearchModel = new TblContactDetailsSearch();
-        $csearchModel->module_name = 'society';
-        $csearchModel->module_code = $id;
-        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
-        $dsearchModel = new TblDcsDeactiveSearch();
-        $dsearchModel->dcs_code = $id;
-        $ddataProvider = $dsearchModel->viewsearch(Yii::$app->request->queryParams);
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-                    'searchModel' => $dcsBmc, 'dataProvider' => $dataProvider,
-                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
-                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
-                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
-        ]);
-    }
+//    public function actionView($id) {
+//        $dcsBmc = new TblDcsBmcSearch();
+//
+//        //$dcsBmc->dcs_code = $id;
+//        $dataProvider = $dcsBmc->search(Yii::$app->request->queryParams);
+//        $bsearchModel = new TblBankDetailsSearch();
+//        $bsearchModel->module_name = 'society';
+//        $bsearchModel->module_code = $id;
+//        $bdataProvider = $bsearchModel->search(Yii::$app->request->queryParams);
+//        $csearchModel = new TblContactDetailsSearch();
+//        $csearchModel->module_name = 'society';
+//        $csearchModel->module_code = $id;
+//        $cdataProvider = $csearchModel->search(Yii::$app->request->queryParams);
+//        $dsearchModel = new TblDcsDeactiveSearch();
+//        $dsearchModel->dcs_code = $id;
+//        $ddataProvider = $dsearchModel->viewsearch(Yii::$app->request->queryParams);
+//        return $this->render('view', [
+//                    'model' => $this->findModel($id),
+//                    'searchModel' => $dcsBmc, 'dataProvider' => $dataProvider,
+//                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+//                    'cdataProvider' => $cdataProvider, 'csearchModel' => $csearchModel,
+//                    'dsearchModel' => $dsearchModel, 'ddataProvider' => $ddataProvider,
+//        ]);
+//    }
 
     /**
      * Creates a new TblDcs model.
@@ -110,15 +110,15 @@ class TblDcsController extends ChildController {
      * @return mixed
      */
     public function actionCreate($bmc_code = '', $is_bmc = 0) {
-        $this->model = new TblDcs();
+        $this->model = new TblDcsProvisional();
         $this->viewFile = 'create';
         $this->model->scenario = 'createDcs';
-        $this->bankDetails = new TblBankDetails();
-        $this->contactDetails = new TblContactDetails();
-        $this->contactDetails->form_validation_type = 'dcs-create';
+//        $this->bankDetails = new TblBankDetails();
+//        $this->contactDetails = new TblContactDetails();
+//        $this->contactDetails->form_validation_type = 'dcs-create';
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
-        $this->contactDetails->scenario = 'additional';
+//        $this->contactDetails->scenario = 'additional';
         $this->showIsBMC = $is_bmc == 1 ? true : false;
         $validate = 1;
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
@@ -547,8 +547,8 @@ class TblDcsController extends ChildController {
 
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
-                    'bankDetails' => $this->bankDetails,
-                    'contactDetails' => $this->contactDetails,
+//                    'bankDetails' => $this->bankDetails,
+//                    'contactDetails' => $this->contactDetails,
                     'showIsBMC' => $this->showIsBMC
         ]);
     }
@@ -1320,14 +1320,6 @@ class TblDcsController extends ChildController {
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);
-    }
-
-    public function actionDcsDocumentUpload($id) {
-        $model = $this->findModel($id);
-        $module_code = $model->dcs_code;
-        $module_name = 'tbl_dcs';
-        $val = new TblAttachmentController($this->id, $this->module);
-        return $val->actiondocumentUpload('dcs', $id, $model, $module_code, $module_name);
     }
 
 }

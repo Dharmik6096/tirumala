@@ -9,46 +9,46 @@ use app\modules\installation\models\TblAndroidInstallationDetails;
 <?php
 
 $attribute = [
-    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
-    ['attribute' => 'plant_code', 'value' => function($model) {
+        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'plant_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'mcc_plant_code', 'value' => 'tblMccPlant.name', 'visible' => true, 'filter' => true],
-    ['attribute' => 'bmc_code', 'value' => 'bmc_code'],
-    ['attribute' => 'bmc_code_ex'],
-    ['attribute' => 'ref_code'],
-    ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
-    ['attribute' => 'local_name', 'filter' => false],
-    ['attribute' => 'bmc_type_code', 'value' => 'tblBmcType.bmc_type_name'],
-    ['attribute' => 'x_col1', 'value' => function($model) {
+        ['attribute' => 'mcc_plant_code', 'value' => 'tblMccPlant.name', 'visible' => true, 'filter' => true],
+        ['attribute' => 'bmc_code', 'value' => 'bmc_code'],
+        ['attribute' => 'bmc_code_ex'],
+        ['attribute' => 'ref_code'],
+        ['attribute' => 'bmc_name', 'value' => 'bmc_name'],
+        ['attribute' => 'local_name', 'filter' => false],
+        ['attribute' => 'bmc_type_code', 'value' => 'tblBmcType.bmc_type_name'],
+        ['attribute' => 'x_col1', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->channelMaster, 'channel_desc');
         }, 'vAlign' => 'middle'],
-    ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => true],
-    ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => true],
-    ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => true],
-    ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => true],
-    ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => true],
-    ['attribute' => 'model', 'value' => 'model'],
-    ['attribute' => 'capacity', 'value' => 'capacity0.value'],
-    ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
-    ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
-    [
+        ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => true],
+        ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => true],
+        ['attribute' => 'sub_district_code', 'value' => 'subDistrictCode.sub_district_name', 'visible' => false, 'filter' => true],
+        ['attribute' => 'village_code', 'value' => 'villageCode.village_name', 'visible' => false, 'filter' => true],
+        ['attribute' => 'hamlet_code', 'value' => 'hamletCode.hamlet_name', 'visible' => false, 'filter' => true],
+        ['attribute' => 'model', 'value' => 'model'],
+        ['attribute' => 'capacity', 'value' => 'capacity0.value'],
+        ['attribute' => 'pan_no', 'visible' => false, 'filter' => false],
+        ['attribute' => 'gst_no', 'visible' => false, 'filter' => false],
+        [
         'attribute' => 'valid_from',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->valid_from);
         }, 'visible' => false, 'filter' => false],
-    ['attribute' => 'manufacturer_code', 'value' => 'manufacturerCode.manufacturer_name'],
-    ['attribute' => 'is_weight_manual',
+        ['attribute' => 'manufacturer_code', 'value' => 'manufacturerCode.manufacturer_name'],
+        ['attribute' => 'is_weight_manual',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_weight_manual'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_weight_manual] : '';
         },],
-    ['attribute' => 'is_quality_manual',
+        ['attribute' => 'is_quality_manual',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_quality_manual'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_quality_manual] : '';
         },],
-    ['attribute' => 'bmc_milk_type', 'value' => 'bmcMilkType.animal_type_name', 'visible' => false, 'filter' => false],
+        ['attribute' => 'bmc_milk_type', 'value' => 'bmcMilkType.animal_type_name', 'visible' => false, 'filter' => false],
 // Contact Detail
     ['label' => 'Contact Person', 'visible' => false, 'filter' => false,
         'value' => function($model) {
@@ -57,49 +57,49 @@ $attribute = [
             return $detail;
         }
     ],
-    ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
+        ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
             isset($detail->local_firstname) ? $detail = $detail->local_firstname . ' ' . $detail->local_lastname . ' ' . $detail->local_surname : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Email', 'visible' => false, 'filter' => false,
+        ['label' => 'Email', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
             isset($detail->email) ? $detail = $detail->email : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
+        ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
             isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Department', 'visible' => false, 'filter' => false,
+        ['label' => 'Department', 'visible' => false, 'filter' => false,
         'value' => function($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->bmc_code, 'bmc');
             isset($detail->department) ? $detail = $detail->department : $detail = '';
             return $detail;
         }
     ],
-    ['attribute' => 'rate_calculate_on_merge',
+        ['attribute' => 'rate_calculate_on_merge',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'rate_calculate_on_merge'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->rate_calculate_on_merge] : '';
         },],
-    ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
-    ['attribute' => 'password', 'visible' => false, 'filter' => false],
-    ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
-    ['attribute' => 'address', 'visible' => false, 'filter' => false],
-    ['attribute' => 'aadhaar_no'],
-    ['attribute' => 'antibiotic_check',
+        ['attribute' => 'sap_vendor_code', 'filter' => FALSE, 'visible' => FALSE],
+        ['attribute' => 'password', 'visible' => false, 'filter' => false],
+        ['attribute' => 'pincode', 'visible' => false, 'filter' => false],
+        ['attribute' => 'address', 'visible' => false, 'filter' => false],
+        ['attribute' => 'aadhaar_no'],
+        ['attribute' => 'antibiotic_check',
         'value' => function($model) {
             return $model->antibiotic_check == 1 ? 'Yes' : 'No';
         }, 'visible' => false, 'filter' => false],
-    ['attribute' => 'is_rented_bmc',
+        ['attribute' => 'is_rented_bmc',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_rented_bmc'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_rented_bmc]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_rented_bmc] : '';
@@ -146,7 +146,14 @@ $grid_option = [
             $class = $existCount > 0 ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
             return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/organisation/tbl-dcs-bmc/export-sentbox', 'id' => $model->bmc_code], $options);
-        }
+        },
+        'document-upload' => function ($url, $model) {
+            $id = $model->bmc_code;
+            $name = $model->bmc_name;
+            $url = ['/organisation/tbl-dcs-bmc/bmc-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->bmc_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
     ]
 ];
 

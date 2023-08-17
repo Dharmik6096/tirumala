@@ -1683,10 +1683,10 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
-            'master_type' => [
+            'master_types' => [
                 'name' => 'master_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member')],
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle')],
             ],
             'payment_release_type' => [
                 'name' => 'payment_release_type',
@@ -1696,7 +1696,12 @@ class DropDown extends Component {
             'dcs_manual_collection_range_status' => [
                 'name' => 'status',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => [1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Approved'), 3 => Yii::t('app', 'Reject'), 4 => Yii::t('app', 'Close')]
+                'data' => [1 => Yii::t('app', 'Pending'), 2 => Yii::t('app', 'Approved'), 3 => Yii::t('app', 'Reject'), 4 => Yii::t('app', 'Close')],
+            ],
+            'payment_type' => [
+                'name' => 'payment_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
             ],
         ];
         return $records[$l];
@@ -1826,6 +1831,7 @@ class DropDown extends Component {
             'task_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code'],
             'form_type' => ['name' => 'form_type_code', 'fields' => 'form_type_code,form_name,', 'prompt' => Yii::t('app', 'Select Form'), 'model' => 'TblFormType', 'depend' => 'task_type_code'],
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
+            'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
         ];
         return $label[$l];
     }

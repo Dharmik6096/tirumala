@@ -58,7 +58,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
 
                 [['qty'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','bmc_weight_collection']],
 
-                [['qty'], 'required','except' => ['bmc_quality_test']],
+//                [['qty'], 'required','except' => ['bmc_quality_test']],
 
                 [['union_code', 'doc_no'], 'required', 'on' => ['bmc_quality_test','bmc_weight_collection']],
                 [['route_arrival_time'], 'required', 'on' => ['bmc_quality_test']],

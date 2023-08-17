@@ -358,13 +358,6 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a('<i class="fa fa-upload"></i>', $url, $options);
         },
-        'document-upload' => function ($url, $model) {
-            $id = $model->dcs_code;
-            $name = $model->dcs_name;
-            $url = ['/organisation/tbl-dcs/dcs-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->dcs_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
-        },
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
       return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
