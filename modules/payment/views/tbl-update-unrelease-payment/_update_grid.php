@@ -65,11 +65,9 @@ $vendor_payment = ($searchParameter->payment_type == 'VENDOR') ? TRUE : FALSE;
             'attribute' => 'disburse_date',
             'value' => function ($model) use ($vendor_payment) {
                 $tblId = $vendor_payment ? $model->vsp_payment_code : $model->payment_sumary_code;
-
                 echo Html::hiddenInput('disburse_date', $model->disburse_date,
                     ['id' => $tblId . '-disburse-date']
                 );
-                
                 return Yii::$app->controls->view_date($model->disburse_date);
             }, 'filter' => FALSE
         ],
@@ -131,6 +129,9 @@ $('#update-selected').click(function(e) {
         var paymentType = $('[name=\"payment_type\"]').val();
         var isValid = true;
         var msg = '';
+        $('p.help-block').hide();
+        $('p.help-block').text('');
+        $('.hide_help_block div').removeClass('has-error');
         $('.checkbox-collection:checked').each(function() {
             var rowId = $(this).val();
             if(paymentType=='VENDOR'){
@@ -148,30 +149,34 @@ $('#update-selected').click(function(e) {
             var currentDate = new Date();
             var parts = releaseDate.split('-');
             var passedDateObj = new Date(parts[2], parts[1] - 1, parts[0]);
-            
-            if (!holdReason || !releaseDate) {
+            var tableClassManage = '';
+            if(paymentType=='VENDOR'){
+                tableClassManage = '.field-tblvsppayment-';               
+            } else {
+                tableClassManage = '.field-tblmemberpaymentsummary-';
+            }
+            $(tableClassManage + rowId + '-hold_reason').removeClass('has-error');
+            $(tableClassManage + rowId + '-release_date').removeClass('has-error');
+            if (!holdReason) {
                 isValid = false;
-                if(paymentType=='VENDOR'){
-                    $('#tblvsppayment-' + rowId + '-hold_reason').addClass('has-error');
-                    $('#tblvsppayment-' + rowId + '-release_date').addClass('has-error');
-                }else{
-                    $('#tblmemberpaymentsummary-' + rowId + '-hold_reason').addClass('has-error');
-                    $('#tblmemberpaymentsummary-' + rowId + '-release_date').addClass('has-error');
-            }   
+                $(tableClassManage + rowId + '-hold_reason').addClass('has-error');
+                $(tableClassManage + rowId + '-hold_reason p').text('Hold Reason Required');
+                $(tableClassManage + rowId + '-hold_reason p').show();
+            } else if(!releaseDate) {
+                $(tableClassManage + rowId + '-release_date').addClass('has-error');
+                $(tableClassManage + rowId + '-release_date p').text('Valid Release Date required');
+                $(tableClassManage + rowId + '-release_date p').show();
             } else {
                 if(passedDateObj > currentDate){
                     isValid = false;
                     msg = 'Release Date cannot be greater than Current Date';
+                    $(tableClassManage + rowId + '-release_date p').text('Release Date cannot be greater than Current Date');
+                    $(tableClassManage + rowId + '-release_date p').show();
                 }else if (passedDateObj < disburseDate) {
                     isValid = false;
                     msg = 'Release Date cannot be less than Disburse Date.';
-                }
-                if(paymentType=='VENDOR'){
-                    $('#tblvsppayment-' + rowId + '-hold_reason').removeClass('has-error');
-                    $('#tblvsppayment-' + rowId + '-release_date').removeClass('has-error');
-                }else{
-                    $('#tblmemberpaymentsummary-' + rowId + '-hold_reason').removeClass('has-error');
-                    $('#tblmemberpaymentsummary-' + rowId + '-release_date').removeClass('has-error');
+                    $(tableClassManage + rowId + '-release_date p').text('Release Date cannot be less than Disburse Date');
+                    $(tableClassManage + rowId + '-release_date p').show();
                 }
             }
         });
@@ -192,4 +197,3 @@ $('#update-selected').click(function(e) {
 });
 ";
 $this->registerJs($script, View::POS_END, 'update-unrelease-payment');
-
