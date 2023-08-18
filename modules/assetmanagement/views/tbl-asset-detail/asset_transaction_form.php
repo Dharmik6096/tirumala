@@ -18,7 +18,6 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
                         'field-class' => 'form-group col-sm-6'
                     ],
                     'validateOnBlur' => FALSE,
-                    
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
@@ -113,6 +112,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
                     <tr>
                         <th><?= $model->getAttributeLabel('asset_code') ?></th>
                         <th><?= $model->getAttributeLabel('asset_name') ?></th>
+                        <th><?= $model->getAttributeLabel('serial_number') ?></th>
                         <th><?= $model->getAttributeLabel('qty') ?></th>
                         <th><?= Yii::t('app', 'Action') ?></th>
                     </tr> 
@@ -232,6 +232,12 @@ $script = "
         var from_dest = $('#tblassettransaction-from_dest').val();
         var asset_code = $('#tblassettransaction-asset_code').val();
         var qty = $('#tblassettransaction-qty').val();
+        var check_box_id = $('.serial_no_checkbox:checked').attr('id');      
+        var serial_no = '';
+        if(check_box_id != undefined){
+            var serailNumber = check_box_id.split('===');
+            serial_no = serailNumber[0]
+        }
         if(asset_code != ''){
             var existData = $('.selected_'+asset_code).not('.edit_asset').text().length;
             if(parseInt(existData) > 0){
@@ -290,6 +296,7 @@ $script = "
                             add_row += '<tr class=\"selected_'+asset_code+'\">';
                             add_row += '<td>' + asset_code + '<input type=\"hidden\" class=\"added_selected_sr_no\" value=\''+selected_sr_no+'\' name=\"TblAssetTransaction[selected_sr_no]['+asset_code+'][serial_number]\" ><input type=\"hidden\" class=\"added_is_serial_number\" value=\"'+obj1.is_serial_number+'\" name=\"TblAssetTransaction[selected_sr_no]['+asset_code+'][is_serial_number]\" ><input type=\"hidden\" class=\"added_asset_code\" value=\"'+asset_code+'\" name=\"TblAssetTransaction[selected_sr_no]['+asset_code+'][asset_code]\" ></td>';
                             add_row += '<td class=\"asset_name\">' + assetName + '</td>';
+                            add_row += '<td class=\"serail_number\">' + serial_no + '</td>';                            
                             add_row += '<td>' + qty + '<input type=\"hidden\" class=\"added_qty\" value=\"'+qty+'\" name=\"TblAssetTransaction[selected_sr_no]['+asset_code+'][qty]\" ></td>';
                             add_row += '<td><a href=\'javascript:void(0)\' onClick=\'editTransaction(\"'+asset_code+'\")\' class=\'edit\' title=\'Edit\'><span class=\"fa fa-pencil-alt\"></span></a><a href=\'javascript:void(0)\' onClick=\'viewTransaction(\"'+asset_code+'\")\' class=\'view ml15 ' + add_class + '\' title=\'View\'><span class=\"fa fa-eye\"></span></a><a href=\'javascript:void(0)\' onClick=\'deleteTransaction(\"'+asset_code+'\")\' class=\'view ml15\' title=\'Delete\'><span class=\"fa fa-remove\"></span></a></td>';
                             add_row += '</tr>';
