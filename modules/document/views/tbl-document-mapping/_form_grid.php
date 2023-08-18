@@ -15,9 +15,9 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->docId, 'doc_name');
         }, 'visible' => true],
         ['attribute' => 'master_type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('master_type', $searchModel, 'master_type'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('master_types', $searchModel, 'master_type'),
         'value' => function ($model) {
-            return isset($model->master_type) ? Yii::$app->dropdown->getRecords('master_type')['data'][$model->master_type] : '';
+            return isset($model->master_type) ? Yii::$app->dropdown->getRecords('master_types')['data'][$model->master_type] : '';
         },],
         ['attribute' => 'is_mandate',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_mandate'),

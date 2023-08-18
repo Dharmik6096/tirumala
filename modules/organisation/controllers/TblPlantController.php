@@ -15,6 +15,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblPlantController implements the CRUD actions for TblPlant model.
@@ -298,6 +299,14 @@ class TblPlantController extends \app\controllers\ChildController {
             $plantList = $model->getPlantList($union, $RLS);
         }
         return Json::encode(['status' => 'success', 'data' => $plantList]);
+    }
+
+    public function actionPlantDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->plant_code;
+        $module_name = 'tbl_plant';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('plant', $id, $model, $module_code, $module_name);
     }
 
 }

@@ -38,7 +38,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
-            $attachments = $doc->uploadedDocument($doc->doc_id, $id);
+            $attachments = $doc->uploadedDocument($doc->doc_id, $id, $module_name);
             $master_doc = $doc->docId;
             if (empty($attachments)) {
                 $attachments = new TblAttachment();
@@ -100,7 +100,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         }
         $attachment = new TblAttachment();
         $dataProvider = new ActiveDataProvider([
-            'query' => $attachment->find()->where(['module_code' => $module_code]),
+            'query' => $attachment->find()->where(['module_code' => $module_code, 'module_name' => $module_name]),
         ]);
         return Yii::$app->controller->render('/../../document/views/tbl-attachment/document_upload', [
                     'model' => $model,

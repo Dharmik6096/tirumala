@@ -1,0 +1,23 @@
+<?php
+
+use yii\helpers\Url;
+
+Url::remember();
+$this->title = $title;
+?>
+<div class="tbl-vsp-payment-index">
+    <div class="panel panel-default panel-grid panel-main">
+        <div class="panel-heading">
+            <?= $this->title; ?>           
+        </div>
+        <div class="panel-body">
+            <div class="large-search hidden-print">
+                <?php echo $this->render('_search', ['model' => $model]); ?>
+            </div>
+            <div class="clearfix"></div>
+            <?php
+            echo $this->render('_update_grid', ['searchParameter' => $model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+            ?>
+        </div>
+    </div>
+</div>

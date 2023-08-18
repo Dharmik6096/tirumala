@@ -231,6 +231,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Payment Data[Thirumala]'), 'url' => ['/misreports/default/farmer-payment-report'], 'active' => ($cntrl == 'default' && $action == 'farmer-payment-report')],
                     ['label' => Yii::t('app', 'Bank Payment Log'), 'url' => ['/payment/tbl-bank-payment-log/index'], 'active' => ($cntrl == 'tbl-bank-payment-log')],
                     ['label' => Yii::t('app', 'Data Consider in VSP Payment'), 'url' => ['/payment/tbl-vsp-payment-data-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-data-config')],
+                    ['label' => Yii::t('app', 'Disburse W/O Release Payment'), 'url' => ['/payment/tbl-update-unrelease-payment/index'], 'active' => ($cntrl == 'tbl-update-unrelease-payment' && $action == 'index')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -637,6 +638,16 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Audit') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'Milk Collection History'), 'url' => ['/misreports/reports/milk-collection-history']],
+                                    ['label' => Yii::t('app', 'Member History'), 'url' => ['/misreports/reports/member-history']],
+                                    ['label' => Yii::t('app', 'DCS history'), 'url' => ['/misreports/reports/dcs-history']],
+                                    ['label' => Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
+                                ]
+                        ],
                             ['label' => Yii::t('app', 'All Reports - List'), 'url' => ['/dynamicreport/default/index'], 'active' => ($cntrl == 'default' && $action == 'index')],
                             ['label' => '901-' . Yii::t('app', 'Rate Applicability Details'), 'url' => ['/misreports/reports/rate-applicability-details']],
                             ['label' => '902-' . Yii::t('app', 'Rate Acknowledgement'), 'url' => ['/misreports/reports/rate-acknowledgement']],
