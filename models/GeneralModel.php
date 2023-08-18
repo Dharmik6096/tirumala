@@ -418,20 +418,18 @@ class GeneralModel {
             $model = Yii::$app->path->define($modelName[0]);
 
             $data = $model::find()->where([$fieldName => $fieldValue])->all();
-            if ($data) {
-                foreach ($data as $row) {
-                    $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
-                    Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
-                    $flag[] = $modelMappingHistory->save();
-                    $flag[] = $row->delete();
-                }
-                if (!in_array(FALSE, $flag)) {
-                    $transaction->commit();
-                    return $flag;
-                } else {
-                    $transaction->rollback();
-                    return $flag;
-                }
+            foreach ($data as $row) {
+                $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
+                Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
+                $flag[] = $modelMappingHistory->save();
+                $flag[] = $row->delete();
+            }
+            if (!in_array(FALSE, $flag)) {
+                $transaction->commit();
+                return $flag;
+            } else {
+                $transaction->rollback();
+                return $flag;
             }
         } catch (UserException $e) {
             $transaction->rollback();
