@@ -14,16 +14,16 @@ use yii\db\ActiveQuery;
  */
 class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
 
-    public $from_date, $to_date, $dcs_name, $ex_code;
+    public $from_date, $to_date, $dcs_name, $ex_code, $release_date, $is_release, $hold_reason;
 
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift'], 'safe'],
-            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
+                [['payment_sumary_code', 'member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'disburse_date', 'payment_date', 'payment_status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'from_date', 'to_date', 'dcs_name', 'originating_org_code', 'originating_org_type', 'originating_type', 'ex_code', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'release_date', 'is_release', 'hold_reason'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'additional_pay'], 'number'],
         ];
     }
 
@@ -107,6 +107,31 @@ class TblMemberPaymentSummarySearch extends TblMemberPaymentSummary {
                 ->andFilterWhere(['like', $tableName . '.final_amount', $this->final_amount])
                 ->andFilterWhere(['like', $tableName . '.payment_status', $this->payment_status])
                 ->andFilterWhere(['like', 'tbl_dcs.dcs_code_ex', $this->ex_code]);
+    }
+
+    public function unreleasePaymentSearch($params) {
+        $query = TblMemberPaymentSummary::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+
+        $this->load($params);
+
+        $query->where([
+            'union_code' => $this->union_code,
+            'plant_code' => $this->plant_code,
+            'mcc_plant_code' => $this->mcc_plant_code,
+            'bmc_code' => $this->bmc_code,
+            'release_date' => null,
+            'is_release' => 0,
+            'payment_status' => 'Disburse'
+        ]);
+
+        $query->orderBy(['from_datetime' => SORT_ASC]);
+
+        return $dataProvider;
     }
 
 }
