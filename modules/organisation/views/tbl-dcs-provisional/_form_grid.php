@@ -243,45 +243,21 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
-        'view' => TRUE,
-//        'update' => true,
+        'views' => function($url, $model) {
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+            return Html::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-provisional/view', 'id' => $model->dcs_provisional_code, 'flag' => 'view'], $options);
+        },
         'update' => function ($url, $model) {
             $name = $model->dcs_name;
             $class = ($model->is_active === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        //'delete' => ['option' => 'dcs_name,dcs_code,tbl-dcs/delete'],
-//        'mapping' => function ($url, $model) {
-//            $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code,'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Village Mapping'];
-//            return GhostHtml::a('<i class="fa fa-link"></i>', ['/organisation/tbl-dcs/map-villages', 'id' => $model->dcs_code], $options);
-//        },
-        /* 'bmc_mapping' => function ($url, $model) {
-          $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Bmc List'];
-          $subCenter = $model->getMainSubCenter();
-          return GhostHtml::a('<i class="fa fa-plus"></i>', ['/organisation/tbl-dcs-bmc/index', 'dcs' => $model->dcs_code, 'dcsname' => $model->dcs_name, 'subcenter' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_code : 0, 'subname' => isset($subCenter->sub_center_code) ? $subCenter->sub_center_name : '','type'=>'DCS'], $options);
-          }, */
-//        'deactive' => function ($url, $model) {
-//            $name = $model->dcs_name;
-//            $class = ($model->is_active == 1) ? '' : 'link-disable';
-//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-dcs ' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-//            if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/deactivate-user'))
-//                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/organisation/tbl-dcs/deactivate-user'], $options);
-//            else
-//                return false;
-//        },
-        'upload-photos' => function ($url, $model) {
-            $id = $model->dcs_code;
-            $type = 'DCS';
-            $class = '';
-            $url = ['/organisation/tbl-dcs/import-attachements', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
-            return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
+        'add-document' => function ($url, $model) {
+            $disable = ($model->status == 'pending') ? '' : 'disabled';
+            $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code], $options);
         },
-    /* 'miscellaneous' => function ($url, $model) {
-      $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-toggle' => 'tooltip' , 'data-placement' => 'top', 'data-original-title' => 'Miscellaneous List'];
-      return GhostHtml::a('<i class="fa fa-thumb-tack"></i>', ['/organisation/tbl-dcs-subcenter-misc/index', 'id' => $model->dcs_code, 'name' => $model->dcs_name, 'type' => 'dcs'], $options);
-      } */
     ]
 ];
 

@@ -4,17 +4,18 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 use webvimark\modules\UserManagement\components\GhostHtml;
+
 $this->title = Yii::$app->label->title('view', 'Provisional Society');
 //$this->params['menu'][] = Yii::$app->controls->update($model->dcs_code);
 
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
+//$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
+//$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
-        <?= Html::encode($this->title) ?>
+<?= Html::encode($this->title) ?>
     </div>
     <div class="panel-body">
         <div class="form-grid">
@@ -108,7 +109,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                            ],
 //                        ],
 //                    ],
-                        [
+                    [
                         'columns' => [
                                 [
                                 'attribute' => 'dcs_short_name',
@@ -200,7 +201,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
 //                            ],
 //                        ],
 //                    ],
-                        [
+                    [
                         'columns' => [
                                 [
                                 'attribute' => 'secretory_info',
@@ -582,6 +583,21 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                 ])
                 ?>
             </div>       
+        </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Document Upload</h4>
+                </div>
+                <div class="col-sm-12">
+                    <?=
+                    $this->render('_document_grid', [
+                        'dataProviderOther' => $dataProviderOther,
+                        'attachment' => $attachment,
+                    ])
+                    ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

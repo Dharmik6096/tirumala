@@ -49,6 +49,10 @@ use app\modules\bkgprocess\models\TblOrgFileLog;
 use app\modules\document\models\TblDocumentMapping;
 use app\modules\document\models\TblAttachment;
 use app\modules\organisation\models\TblDcsProvisionalHistory;
+use yii\web\UploadedFile;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\document\models\TblAttachmentHistory;
+use yii\data\ActiveDataProvider;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -179,7 +183,7 @@ class TblDcsProvisionalController extends ChildController {
                 $cutOffVal = $val . strtoupper($milkType);
                 $this->model->cutoff = substr($cutOffVal, -4);
             }
-            $this->model->milk_type = implode(',',$this->model->milk_type_code);
+            $this->model->milk_type = implode(',', $this->model->milk_type_code);
             $this->model->vendor_code = $this->model->vendor;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['society', 'create']);
 //                $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
@@ -220,7 +224,7 @@ class TblDcsProvisionalController extends ChildController {
         }
         return $this->customRender();
     }
-    
+
     /**
      * Updates an existing TblDcs model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -274,12 +278,12 @@ class TblDcsProvisionalController extends ChildController {
                 $cutOffVal = $val . strtoupper($milkType);
                 $this->model->cutoff = substr($cutOffVal, -4);
             }
-            $this->model->milk_type = implode(',',$this->model->milk_type_code);
+            $this->model->milk_type = implode(',', $this->model->milk_type_code);
             $this->model->vendor_code = $this->model->vendor;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
-            }            
+            }
         }
         return $this->customRender();
     }
@@ -289,14 +293,21 @@ class TblDcsProvisionalController extends ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id, $flag) {
         $searchModel = new TblDcsProvisionalSearch();
-        $searchModel->id = $id;
+        $searchModel->dcs_provisional_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $attachment = new TblAttachment();
+        $dataProviderOther = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_dcs_provisional']),
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
+                    'flag' => $flag
         ]);
     }
 
@@ -314,13 +325,14 @@ class TblDcsProvisionalController extends ChildController {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     public function actionDocumentUpload($id) {
         $model = $this->findModel($id);
+        $model->scenario = 'uploadDoc';
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_dcs'])->all();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
-            $attachments = $doc->uploadedDocument($doc->doc_id, $id, 'tbl_dcs_provisional');
+            $attachments = $doc->uploadedDocument($doc->doc_id, $id, 'provisional_dcs');
             $master_doc = $doc->docId;
             if (empty($attachments)) {
                 $attachments = new TblAttachment();
@@ -366,7 +378,9 @@ class TblDcsProvisionalController extends ChildController {
                 }
 
                 if (empty($error_msg)) {
-                    $model->status = 'register';
+                    $modelStages = new TblApprovalStagesDetail();
+                    $modelStages->setApprovalData($model->union_code, 'society', $model->dcs_provisional_code, $save_model, $approval_stages);
+                    $model->status = empty($approval_stages) ? 'Approve' : 'Register';
                     $save_model[] = $model;
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
                     if ($transaction == 'customRedirect') {
@@ -432,4 +446,14 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
     }
 
+    public function actionDcsProvisionalApproval() {
+        $searchModel = new TblDcsProvisionalSearch();
+        $searchModel->scenario = 'dcsApprove';
+        $dataProvider = $searchModel->dcsApproveSearch(Yii::$app->request->queryParams);
+
+        return $this->render('_bulk_approval_grids', [
+                    'model' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
 }

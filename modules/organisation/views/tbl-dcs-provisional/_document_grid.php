@@ -24,9 +24,8 @@ $grid_option = [
             $url = !empty($attachemnt) ? $attachemnt : '';
             return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
         },
-        'delete' => ['option' => 'attachment_code,attachment_code,/document/tbl-attachment/attachment-delete'],
     ]
 ];
 
-Yii::$app->grid->bind($dataProvider, $attachment, $grid_option, '', false);
+Yii::$app->grid->bind($dataProviderOther, $attachment, $grid_option, '', false);
 ?>
