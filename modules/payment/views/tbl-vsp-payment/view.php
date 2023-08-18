@@ -245,6 +245,10 @@ $recovery_from_other_vendor = (isset(Yii::$app->session->get('unionConfig')[Yii:
                             return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
                         },],
                         ['attribute' => 'amount'],
+                        ['attribute' => 'is_hold',
+                        'value' => function($model) {
+                            return $model->is_hold == 1 ? 'Yes' : 'No';
+                        },],
                 ];
                 $grid_option = [
                     'id' => 'bill-head-detail-list',

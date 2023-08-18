@@ -10,15 +10,25 @@ $society_name = !empty($dataProvider->getModels()) ?
         Yii::$app->general->getCustomer($searchModel->vspPaymentCode, $searchModel->vspPaymentCode->customer_type) . ' (' .
         Yii::$app->general->getCustomer($searchModel->vspPaymentCode, $searchModel->vspPaymentCode->customer_type, TRUE) . '-' .
         Yii::$app->general->getforeignkey($searchModel->vspPaymentCode->customerType, 'customer_desc') . ')' : '';
+$update_count = 0;
 ?>
 <div class="modal modal-default fade" id="BillHeadModal" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog width_100-50_per">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel"><?= Yii::t('app', 'Bill Head Detail of ') . $society_name ?></h4>
             </div>
             <div class="popup-header bg_white">
+                <?php
+                $form = ActiveForm::begin(['options' => [
+                                'class' => 'form-group popup-form',
+                                'id' => 'vendor-head-skip-form',
+                            ],
+                            'action' => Url::to(['/payment/tbl-vsp-payment/bill-head', 'code' => $model->vsp_payment_code])
+                ]);
+                ?>
+
                 <?php
                 $attribute = [
                         ['attribute' => 'bill_head_code', 'value' => function($model) {
@@ -30,6 +40,32 @@ $society_name = !empty($dataProvider->getModels()) ?
                             return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
                         },],
                         ['attribute' => 'amount'],
+                        ['attribute' => 'is_hold',
+                        'value' => function($model) {
+                            return $model->is_hold == 1 ? 'Yes' : 'No';
+                        },],
+                        ['attribute' => 'current_cycle',
+                        'value' => function($model) {
+                            return $model->is_skippable == 1 ? $model->payment_cycle_type : 'N/A';
+                        },],
+                        ['attribute' => 'payment_cycle_type',
+                        'format' => 'raw',
+                        'contentOptions' => ['class' => 'no_padding_input hide_help_block'],
+                        'value' => function ($model, $key, $index) use ($form, &$update_count) {
+                            if ($model->is_skippable == 1) {
+                                $update_count++;
+                                if ($model->payment_cycle_type == 'first') {
+                                    $items = ['first' => 'first', 'second' => 'second', 'third' => 'third', 'first-next' => 'first-NextMonth'];
+                                } else if ($model->payment_cycle_type == 'second') {
+                                    $items = ['second' => 'second', 'third' => 'third', 'first-next' => 'first-NextMonth'];
+                                } else if ($model->payment_cycle_type == 'third') {
+                                    $items = ['third' => 'third', 'first-next' => 'first-NextMonth'];
+                                } else {
+                                    $items = ['consecutive' => 'consecutive', 'consecutive-next' => 'consecutive-Next', 'first-next' => 'first-NextMonth'];
+                                }
+                                return Html::activeHiddenInput($model, '[' . $index . ']tbl_vsp_payment_transaction_code', ['value' => $model->tbl_vsp_payment_transaction_code]) . Html::activeHiddenInput($model, '[' . $index . ']current_cycle', ['value' => $model->payment_cycle_type]) . $form->field($model, '[' . $index . ']payment_cycle_type')->dropDownList($items, ['class' => ''])->label(FALSE);
+                            }
+                        },],
                 ];
                 $grid_option = [
                     'id' => 'bill-head-detail-list',
@@ -38,6 +74,7 @@ $society_name = !empty($dataProvider->getModels()) ?
                 ];
                 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], FALSE);
                 ?>
+                <?php ActiveForm::end(); ?>
             </div>
             <div class='row pad-10'>
                 <div class="col-md-12">
@@ -82,7 +119,7 @@ $society_name = !empty($dataProvider->getModels()) ?
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12 top-bottom-15 padding-50">
                             <?php
-                            if (!empty($idataProvider->getModels())) {
+                            if (!empty($idataProvider->getModels()) || $update_count > 0) {
                                 echo Html::button(Yii::t('app', 'Save'), ['class' => 'btn btn-primary add-installment', 'id' => 'add-installment']);
                             }
                             ?>
@@ -96,30 +133,6 @@ $society_name = !empty($dataProvider->getModels()) ?
     </div>
 </div>
 <?php
-$script = "$(document).on('click','#add-installment',function(e){
-        $('#error-summary').hide();
-        var paymentData = [];
-            $('#vendor-installment-form .checkbox-installment').each(function () {
-             if(this.checked){
-                    paymentData.push($(this).val()); 
-                }
-            });
-        $.ajax({
-                    type: 'post',
-                    url: '" . Url::to(['/payment/tbl-vsp-payment/bill-head', 'code' => $model->vsp_payment_code]) . "',
-                    data: 'paymentData='+paymentData,
-                    success: function(data) {
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                            location.reload();
-                        }else{
-                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.msg+'</span>');
-                        }
-                    }
-                });           
-    })";
-$this->registerJs($script, View::POS_END, 'vendor-installment-form-submit');
 $script = "$('.kv-panel-before').hide();$('.filters').hide();";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

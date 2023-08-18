@@ -15,6 +15,8 @@ use app\modules\vsp\models\TblBillHead;
  */
 class TblVspPaymentTransaction extends \app\models\ChildModel {
 
+    public $current_cycle;
+
     /**
      * @inheritdoc
      */
@@ -27,10 +29,11 @@ class TblVspPaymentTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vsp_payment_code', 'bill_head_code'], 'safe'],
-            [['vsp_payment_code'], 'safe'],
-            [['bill_head_code'], 'safe'],
-            [['amount', 'bill_head_type', 'general_formula'], 'safe'],
+                [['vsp_payment_code', 'bill_head_code'], 'safe'],
+                [['vsp_payment_code'], 'safe'],
+                [['bill_head_code'], 'safe'],
+                [['amount', 'bill_head_type', 'general_formula', 'is_hold', 'is_skippable', 'payment_cycle_type'], 'safe'],
+                [['current_amount', 'previous_amount', 'release_date', 'is_release'], 'safe'],
         ];
     }
 
@@ -44,6 +47,8 @@ class TblVspPaymentTransaction extends \app\models\ChildModel {
             'bill_head_code' => Yii::t('app', 'Bill Head'),
             'amount' => Yii::t('app', 'Amount'),
             'bill_head_type' => Yii::t('app', 'Type'),
+            'is_hold' => Yii::t('app', 'Is Hold ?'),
+            'payment_cycle_type' => Yii::t('app', 'New Cycle'),
         ];
     }
 

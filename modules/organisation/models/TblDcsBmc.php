@@ -51,7 +51,7 @@ use app\modules\organisation\models\TblChannelMaster;
 class TblDcsBmc extends \app\models\ChildModel {
 
     public $is_sentbox, $milk_type_code;
-    public $toEncrypt = ['password'];
+    public $toEncrypt = ['password', 'pan_no'];
     public $channel_type;
 
     /**
@@ -66,41 +66,62 @@ class TblDcsBmc extends \app\models\ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
-                [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
-                [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
-                [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
-                [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
-                [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type'], 'safe'],
-                [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
+            [['is_weight_manual', 'is_quality_manual'], 'default', 'value' => FALSE],
+            [['bmc_name', 'union_code', 'mcc_plant_code'], 'required'],
+            [['model', 'capacity', 'manufacturer_code'], 'required', 'except' => 'from_mcc'],
+            [['bmc_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
+            [['milk_type_code'], 'required', 'except' => ['from_mcc', 'importCsv']],
+            [['is_active', 'is_mcc', 'created_at', 'updated_at', 'valid_from', 'milk_type_code', 'sap_vendor_code', 'password', 'antibiotic_check', 'channel_type'], 'safe'],
+            [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['post_sap_data']],
 //            [['bmc_name'], 'unique'],
             [['bmc_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
+            [['bmc_milk_type', 'capacity', 'manufacturer_code', 'bmc_type_code'], 'integer'],
             //[['bmc_code', 'dcs_code'], 'string', 'max' => 9],
             [['model'], 'string', 'max' => 255],
-                [['created_by', 'updated_by'], 'string', 'max' => 14],
-                [['local_name'], function ($attribute, $params) {
+            [['created_by', 'updated_by'], 'string', 'max' => 14],
+            [['local_name'], function ($attribute, $params) {
                     Yii::$app->general->vaildateLocalField($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
 //            [['bmc_code'], 'integer', 'min' => 1],
 //            [['bmc_code'], 'string', 'max' => 5],
-            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type'], 'safe'],
-                [['mcc_plant_code'], 'setField'],
-                [['is_weight_manual', 'is_quality_manual'], 'boolean'],
+            [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'plant_code', 'is_weight_manual', 'is_quality_manual', 'ref_code', 'bmc_code_ex', 'rate_calculate_on_merge', 'billing_type', 'gst_no', 'pan_no', 'is_rented_bmc'], 'safe'],
+            [['mcc_plant_code'], 'setField'],
+            [['is_weight_manual', 'is_quality_manual'], 'boolean'],
 //            [['bmc_code'], 'unique'],
             ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                [['district_code', 'sub_district_code', 'village_code', 'hamlet_code'], 'safe'],
-                [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
-                [['bmc_code'], function ($attribute, $params) {
+            [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'address', 'aadhaar_no'], 'safe'],
+            [['data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'response_datetime'], 'safe'],
+            [['bmc_code'], function ($attribute, $params) {
                     $this->data_post_status = 0;
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data']],
-                [['rate_calculate_on_merge'], 'default', 'value' => 0],
-                [['password'], 'string', 'min' => 8, 'max' => 8],
-                [['antibiotic_check'], function ($attribute, $params) {
+            [['rate_calculate_on_merge'], 'default', 'value' => 0],
+            [['is_rented_bmc'], 'default', 'value' => 0],
+            [['password'], 'string', 'min' => 8, 'max' => 8],
+            [['antibiotic_check'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
                 }, 'on' => ['importCsv']],
+            [['pan_no'], 'trim'],
+            [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
+            [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+            [['gst_no'], 'unique', 'except' => ['post_sap_data', 'from_mcc']],
+            [['gst_no'], 'string', 'max' => 15],
+            [['gst_no'], function ($attribute, $params) {
+                    $this->validateGstNo($attribute, $params);
+                }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
+            [['address'], 'string', 'max' => 500],
+            [['aadhaar_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+            [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['importCsv']],
+            [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['post_sap_data', 'from_mcc']],
+            [
+                ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['post_sap_data', 'from_mcc']
+            ],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
@@ -142,6 +163,11 @@ class TblDcsBmc extends \app\models\ChildModel {
             'bmc_code_ex' => Yii::t('app', 'BMC Code Ex'),
             'ref_code' => Yii::t('app', 'Code'),
             'x_col1' => Yii::t('app', 'Channel Type'),
+            'pan_no' => Yii::t('app', 'PAN No'),
+            'gst_no' => Yii::t('app', 'GST No'),
+            'pincode' => Yii::t('app', 'Pincode'),
+            'address' => Yii::t('app', 'Address'),
+            'aadhaar_no' => Yii::t('app', 'Aadhaar No'),
         ];
     }
 
@@ -288,15 +314,15 @@ class TblDcsBmc extends \app\models\ChildModel {
         return $this->hasOne(TblDcs::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = []) {
-        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode);
+    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = []) {
+        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
         $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
                     return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
                 });
         return $value;
     }
 
-    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = []) {
+    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = [], $plant_bmc = []) {
         $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
         if (!empty($plantCode)) {
             $query->andWhere(['mcc_plant_code' => $plantCode]);
@@ -312,6 +338,9 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         if (Yii::$app->session->get('hasBMC') == 0) {
             $query->andFilterWhere(['is_mcc' => 1]);
+        }
+        if (!empty($plant_bmc)) {
+            $query->andWhere(['plant_code' => $plant_bmc]);
         }
         return $query->orderby('bmc_name asc')->all();
     }
@@ -492,6 +521,44 @@ class TblDcsBmc extends \app\models\ChildModel {
 
     public function getChannelMaster() {
         return $this->hasOne(TblChannelMaster::className(), ['channel_master_code' => 'x_col1']);
+    }
+
+    public function setPanNumber($attribute, $params) {
+        $this->pan_no = strtoupper($this->pan_no);
+    }
+
+    public function validateGstNo($attribute, $params) {
+
+        if (!empty($this->gst_no))
+            if (strlen($this->gst_no) != 15) {
+                $this->addError($attribute, Yii::t('app/validation', 'Gst no must contain 15 characters'));
+            }
+        return false;
+    }
+
+    public function getUnionBMCList($unionCode, $RLS = 'TRUE') {
+        $value = $this->getUnionBMC($unionCode, $RLS);
+        $value = ArrayHelper::map($value, 'bmc_code', function ($value) {
+                    return $value->bmc_name . ' - ' . $value->ref_code;
+                });
+        return $value;
+    }
+
+    public function getUnionBMC($unionCode = [], $RLS = 'TRUE') {
+        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1, 'union_code' => $unionCode]);
+        if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('MCC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
+        }
+        if (Yii::$app->session->get('Plant') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['plant_code' => explode(',', Yii::$app->session->get('Plant'))]);
+        }
+        if (Yii::$app->session->get('hasBMC') == 0) {
+            $query->andFilterWhere(['is_mcc' => 1]);
+        }
+        return $query->all();
     }
 
 }

@@ -37,8 +37,10 @@ $depend = 'tblbillhead';
         <?= Yii::$app->dropdown->customer_type($model, $form, $depend . '-bmc_code,tblbillhead-bill_head_for', 'customer_type', 'Customer Type'); ?>
     </div>
     <div class="col-sm-2">
-
-        <?= Yii::$app->dropdown->paymentCycle($model, $form, $depend . '-union_code,' . $depend . '-bmc_code,' . $depend . '-customer_type,applicable_for,data_lock_bmc', 'payment_cycle_code', 'Payment Cycle'); ?>
+        <?= Yii::$app->controls->date($model, $form, 'from_date', '', false); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->controls->date($model, $form, 'to_date', '', false); ?>
     </div>
     <div class="form-group padding_top_20">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

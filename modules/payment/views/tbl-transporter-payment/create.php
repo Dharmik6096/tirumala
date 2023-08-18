@@ -7,6 +7,7 @@ $this->title = 'Transporter Payment : Step 1';
         <?=
         $this->render('_form', [
             'model' => $model,
+            'transporter_type' => $transporter_type
         ])
         ?>
     </div>

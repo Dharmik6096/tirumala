@@ -161,7 +161,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
-            [['antibiotic_sms_sent'], 'safe'],
+            [['antibiotic_sms_sent','antibiotic'], 'safe'],
             [['antibiotic_sms_sent'], 'default', 'value' => 0],
         ];
     }
@@ -218,6 +218,7 @@ class TblMilkCollection extends \app\models\ChildModel {
             'device_long' => Yii::t('app', 'Device Longitude'),
             'mob_lat' => Yii::t('app', 'Application Latitude'),
             'mob_long' => Yii::t('app', 'Application Longitude'),
+            'antibiotic' => Yii::t('app', 'Antibiotic'),
         ];
     }
 

@@ -51,6 +51,12 @@ use app\modules\sms\models\TblAlertNotification;
 use app\modules\sms\models\TblAlertTemplate;
 use app\modules\payment\models\TblMemberPaymentRecovery;
 use app\modules\payment\models\TblMemberPaymentRecoveryHistory;
+use app\modules\payment\models\TblMemberPaymentHead;
+use app\modules\vsp\models\TblBillHeadInstallment;
+use app\modules\vsp\models\TblBillHeadInstallmentHistory;
+use app\modules\payment\models\TblMemberPaymentHeadSummary;
+use app\modules\payment\models\TblPaymentStop;
+use app\modules\payment\models\TblPaymentStopHistory;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -90,6 +96,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $disburseCount = $appModel->getStatusCount(['billing_lock_member' => 1]);
                 $lockedData = $model->getStatusLockedCount(['Lock']);
                 $generatedData = $model->getStatusLockedCount(['Generated', 'Process']);
+                $stopModel = new TblPaymentStop();
+                $stopModel->bmc_code = $model->bmc_code;
+                $stopModel->customer_type = 'DCS';
+                $stopModel->payment_type = 'MEMBER_PAYMENT';
+                $stopMsg = $stopModel->getStatusStop();
 
                 $msg = '';
                 $queryParam = [];
@@ -104,6 +115,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 } else if ($lockedData > 0) {
                     $result = 'displayPopup';
                     $msg = Yii::t('app', 'Payment is Locked for Selected Payment Cycle');
+                } else if (!empty($stopMsg)) {
+                    $result = 'displayPopup';
+                    $msg = Yii::t('app', $stopMsg);
                 } else if ($generatedData > 0) {
                     $result = 'displayConfirmPopup';
                     $msg = Yii::t('app', 'Payment is already generated for Selected Payment Cycle. Do You want to Regenerate?');
@@ -126,17 +140,72 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionCreateStopPayment() {
+        // Farmer Stop Payment Process : Step 1
+        $model = new TblMemberPaymentAlias();
+        $paymentcycleAppModel = new TblPaymentCycleApplicability();
+        if (Yii::$app->request->post()) {
+            $result = 'success';
+            $model->scenario = 'processpayment';
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $appModel = new TblPaymentCycleApplicability();
+                $appModel->payment_cycle_code = $model->payment_cycle_code;
+                $appModel->applicable_code = $model->bmc_code;
+                $appModel->applicable_for = 'BMC';
+                $appModel->applicable_type = 'DCS';
+                $stopModel = new TblPaymentStop();
+                $stopModel->bmc_code = $model->bmc_code;
+                $stopModel->customer_type = 'DCS';
+                $stopModel->payment_type = 'MEMBER_PAYMENT';
+                $stopMsg = $stopModel->getStatusStop();
+                $generatedData = $model->getStatusLockedCount(['Generated', 'Process']);
+
+                $msg = '';
+                $queryParam = [];
+                $queryParam[] = 'list-member-payment-summary';
+                $queryParamRegenerate = [];
+                $queryParam['TblMemberPaymentAlias'] = ['payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code];
+                $queryParamRegenerate = $queryParam;
+                $queryParamRegenerate['reGenerate'] = 0;
+                $queryParamRegenerate['stop_payment_only'] = 1;
+                $queryParam['stop_payment_only'] = 1;
+
+                if (empty($stopMsg)) {
+                    $result = 'displayPopup';
+                    $msg = Yii::t('app', 'Stop Payment data is not available');
+                } else if ($generatedData > 0) {
+                    $result = 'displayConfirmPopup';
+                    $msg = Yii::t('app', 'Payment is already generated for Selected Payment Cycle. Do You want to Regenerate?');
+                    $queryParamRegenerate['reGenerate'] = 1;
+                } else if ($generatedData == 0) {
+                    $queryParam['reGenerate'] = 1;
+                }
+                $url = Url::to($queryParam);
+                $url_regenerate = Url::to($queryParamRegenerate);
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                return ['status' => $result, 'url' => $url, 'url_regenerate' => $url_regenerate, 'msg' => $msg];
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+        }
+        return $this->render('create_payment', [
+                    'model' => $model, 'post_url' => Url::to(['create-stop-payment']), 'title' => Yii::t('app', 'Member Stop Payment Process : Step 1')
+        ]);
+    }
+
     public function actionListMemberPaymentSummary($reGenerate = 0) {
         // Farmer Payment Process : Step 2 (Display DCS Wise Data)
         if (Yii::$app->request->get()) {
+            $stop_payment_only = isset(Yii::$app->request->get()['stop_payment_only']) ? 1 : 0;
             $model = new TblMemberPaymentAlias();
             $model->load(Yii::$app->request->get());
             if ($reGenerate == 1) {
-                $query = $this->getMemberDcsSpData($model, $reGenerate);
+                $query = $this->getMemberDcsSpData($model, $reGenerate, $stop_payment_only);
             }
             $searchModel = new TblMemberPaymentSummaryAliasSearch();
             $searchModel->attributes = $model->attributes;
-            $dataProvider = $searchModel->search([]);
+            $dataProvider = $searchModel->search([], $stop_payment_only);
             $dataProvider->pagination = false;
             $negativeValCount = 0;
             $memberPaymentModel = new TblMemberPaymentAlias();
@@ -157,6 +226,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $postData = Yii::$app->request->post();
             $getParam = Yii::$app->request->post('TblMemberPaymentAlias');
             $getParam['dcs_code'] = json_decode($getParam['dcs_code']);
+            $stop_payment_dcs = !empty($postData['selection']) ? $postData['selection'] : [];
+            $stop_payment_reason = !empty($postData['TblMemberPaymentSummaryAlias']) ? $postData['TblMemberPaymentSummaryAlias'] : [];
 //            $adjust_id = Yii::$app->request->post('TblMemberPaymentAlias')['member_payment_alias_code'];
 //            $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
 //            $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
@@ -164,6 +235,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
 //            $reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['recovery'] : 0;
 //            $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : 0;
             $save_model = [];
+            $delete_model = [];
             $cnt = 0;
             $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
             //process_lock_flag
@@ -220,10 +292,10 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             foreach ($memberPaymentModelData as $memberPayment) {
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($memberPayment, $historyModel, UPDATE);
-                $memberPayment->payment_status = $processFlag;
+                $dcsCode = $memberPayment->dcs_code;
+                $memberPayment->payment_status = in_array($dcsCode, $stop_payment_dcs) ? 'Process' : $processFlag;
                 $save_model[] = $historyModel;
                 $save_model[] = $memberPayment;
-                $dcsCode = $memberPayment->dcs_code;
                 $holdAmount = !empty($memberPayment->hold_amount) ? $memberPayment->hold_amount : 0;
                 $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
                 $adjustAmount = !empty($memberPayment->additional_pay) ? $memberPayment->additional_pay : 0;
@@ -238,8 +310,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             foreach ($summaryModelData as $summaryData) {
                 $historyModel = new TblMemberPaymentSummaryAliasHistory();
                 Yii::$app->operation->history($summaryData, $historyModel, UPDATE);
-                $summaryData->payment_status = $processFlag;
                 $dcs = $summaryData->dcs_code;
+                $summaryData->payment_status = in_array($dcs, $stop_payment_dcs) ? 'Process' : $processFlag;
                 if (!empty($adjustmentSummary[$dcs])) {
                     $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                     $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
@@ -249,13 +321,45 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 }
                 $save_model[] = $historyModel;
                 $save_model[] = $summaryData;
+                if ($processFlag == 'Lock') {
+                    $old_stop_all = TblPaymentStop::find()
+                            ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'customer_code' => $dcs, 'customer_type' => 'DCS', 'payment_type' => 'MEMBER_PAYMENT', 'bmc_code' => $summaryData->bmc_code])
+                            ->all();
+                    if (!empty($old_stop_all)) {
+                        foreach ($old_stop_all as $old_stop) {
+                            $historyModel = new TblPaymentStopHistory();
+                            if (in_array($dcs, $stop_payment_dcs)) {
+                                Yii::$app->operation->history($old_stop, $historyModel, UPDATE);
+                                $old_stop->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                                $save_model[] = $old_stop;
+                            } else {
+                                Yii::$app->operation->history($old_stop, $historyModel, DELETE);
+                                $historyModel->lock_datetime = date('Y-m-d H:i:s');
+                                $delete_model[] = $old_stop;
+                            }
+                            $save_model[] = $historyModel;
+                        }
+                    } else {
+                        if (in_array($dcs, $stop_payment_dcs)) {
+                            $stop_pay = new TblPaymentStop();
+                            $stop_pay->attributes = $summaryData->attributes;
+                            $stop_pay->customer_type = 'DCS';
+                            $stop_pay->customer_code = $dcs;
+                            $stop_pay->payment_type = 'MEMBER_PAYMENT';
+                            $stop_pay->stop_reason = !empty($stop_payment_reason[$dcs]['stop_payment_type']) ? $stop_payment_reason[$dcs]['stop_payment_type'] : 'dispute';
+                            $stop_pay->originating_type = $stop_pay->originating_org_type = $stop_pay->originating_org_code = NULL;
+                            $stop_pay->created_at = $stop_pay->created_by = $stop_pay->updated_at = $stop_pay->updated_by = NULL;
+                            $save_model[] = $stop_pay;
+                        }
+                    }
+                }
             }
 
             $successMsg = 'Payment adjusted succesfully';
             if ($processFlag == 'Lock') {
                 $successMsg = Yii::t('app', 'Payment has been Locked Successfully');
             }
-            $transaction = $this->generalModel->saveTransaction($save_model, [$successMsg, 'info']);
+            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $delete_model, [$successMsg, 'info']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['index']);
             }
@@ -384,8 +488,11 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             $adjust_amt = Yii::$app->request->post('TblMemberPaymentAlias')['additional_pay'];
             $adjust_remark = Yii::$app->request->post('TblMemberPaymentAlias')['adjust_remark'];
             $hold_amt = Yii::$app->request->post('TblMemberPaymentAlias')['hold_amount'];
-            $reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['recovery'] : 0;
-            $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : 0;
+            $reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['recovery'] : [];
+            $adjust_reco = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery']) ? Yii::$app->request->post('TblMemberPaymentAlias')['adjust_recovery'] : [];
+            $shortage_amt = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_amount'] : [];
+            $shortage_head = !empty(Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code']) ? Yii::$app->request->post('TblMemberPaymentAlias')['shortage_head_code'] : [];
+
             $save_model = [];
             $cnt = 0;
             $processFlag = 'Process'; //!empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'Process';
@@ -399,6 +506,8 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             foreach ($adjust_id as $key => $value) {
                 $data = TblMemberPaymentAlias::findOne($adjust_id[$key]);
                 $oldData = $data->oldAttributes;
+                $shortage = 0;
+                $shortage_head_code = '';
                 $holdAmount = !empty($hold_amt[$key]) ? $hold_amt[$key] : 0;
                 $adjustAmount = !empty($adjust_amt[$key]) ? $adjust_amt[$key] : 0;
                 $recovery = !empty($reco[$key]) ? $reco[$key] : 0;
@@ -408,6 +517,36 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $dcsCode = $data->dcs_code;
                 $historyModel = new TblMemberPaymentAliasHistory();
                 Yii::$app->operation->history($data, $historyModel, UPDATE);
+
+                if (!empty($shortage_head[$key])) {
+                    $shortage_head_code = $shortage_head[$key];
+                    $shortage_amt[$key] = empty($shortage_amt[$key]) ? 0 : $shortage_amt[$key];
+                    $shortage = $shortage_amt[$key];
+                    $shortage_model = TblMemberPaymentHead::find()
+                                    ->where(['payment_cycle_code' => $data->payment_cycle_code, 'member_code' => $data->member_code, 'bill_head_code' => $shortage_head[$key], 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code])->one();
+                    $old_shortage = 0;
+                    if (!empty($shortage_model)) {
+                        $old_shortage = $shortage_model->amount;
+                        if ($shortage_model->amount != $shortage_amt[$key]) {
+                            $shortage_model->amount = $shortage_amt[$key];
+                            $save_model[] = $shortage_model;
+                        }
+                    } else if ($shortage > 0) {
+                        $shortage_model = new TblMemberPaymentHead();
+                        $shortage_model->member_code = $data->member_code;
+                        $shortage_model->bmc_code = $data->bmc_code;
+                        $shortage_model->dcs_code = $data->dcs_code;
+                        $shortage_model->payment_cycle_code = $data->payment_cycle_code;
+                        $shortage_model->bill_head_code = $shortage_head_code;
+                        $shortage_model->bill_head_type = 1;
+                        $shortage_model->amount = $shortage_amt[$key];
+                        $shortage_model->payment_cycle_type = 'consecutive';
+                        $shortage_model->is_hold = $shortage_model->is_skippable = $shortage_model->is_editable = 0;
+                        $save_model[] = $shortage_model;
+                    }
+                    $data->total_deduction = $data->total_deduction + $shortage - $old_shortage;
+                    $data->net_payable = $data->net_payable - $shortage + $old_shortage;
+                }
                 $data->additional_pay = $adjustAmount;
                 $data->adjust_remark = $adjust_remark[$key]; //!empty($adjust_remark[$key]) ? $adjust_remark[$key] : '';
                 $data->hold_amount = $holdAmount;
@@ -415,13 +554,15 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $data->payment_status = $processFlag;
                 $save_model[] = $historyModel;
                 $save_model[] = $data;
-                if ($oldData['additional_pay'] != $data->additional_pay) {
+                if ($oldData['final_amount'] != $data->final_amount) {
                     $cnt++;
                 }
                 $adjustmentSummary[$dcsCode]['adjustment'] = !empty($adjustmentSummary[$dcsCode]['adjustment']) ? $adjustmentSummary[$dcsCode]['adjustment'] + $adjustAmount : $adjustAmount;
                 $adjustmentSummary[$dcsCode]['hold'] = !empty($adjustmentSummary[$dcsCode]['hold']) ? $adjustmentSummary[$dcsCode]['hold'] + $holdAmount : $holdAmount;
                 $adjustmentSummary[$dcsCode]['recovery'] = !empty($adjustmentSummary[$dcsCode]['recovery']) ? $adjustmentSummary[$dcsCode]['recovery'] + $recovery : $recovery;
                 $adjustmentSummary[$dcsCode]['adjust_recovery'] = !empty($adjustmentSummary[$dcsCode]['adjust_recovery']) ? $adjustmentSummary[$dcsCode]['adjust_recovery'] + $adjust_recovery : $adjust_recovery;
+                $adjustmentSummary[$dcsCode]['shortage'] = !empty($adjustmentSummary[$dcsCode]['shortage']) ? $adjustmentSummary[$dcsCode]['shortage'] + $shortage : $shortage;
+                $adjustmentSummary[$dcsCode]['shortage_head_code'] = $shortage_head_code;
 
                 if ($processFlag == 'Lock') {
                     $installmentModel = new TblMemberPaymentInstallment();
@@ -460,14 +601,39 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $summaryData->payment_status = $processFlag;
                 $dcs = $summaryData->dcs_code;
                 if (!empty($adjustmentSummary[$dcs])) {
+                    if (!empty($adjustmentSummary[$dcs]['shortage_head_code'])) {
+                        $old_shortage = 0;
+                        $shortage_summary_model = TblMemberPaymentHeadSummary::find()
+                                        ->where(['payment_cycle_code' => $summaryData->payment_cycle_code, 'dcs_code' => $summaryData->dcs_code, 'bill_head_code' => $adjustmentSummary[$dcs]['shortage_head_code'], 'bmc_code' => $summaryData->bmc_code])->one();
+                        if (!empty($shortage_summary_model)) {
+                            $old_shortage = $shortage_summary_model->amount;
+                            if ($shortage_summary_model->amount != $adjustmentSummary[$dcs]['shortage']) {
+                                $shortage_summary_model->amount = $adjustmentSummary[$dcs]['shortage'];
+                                $save_model[] = $shortage_summary_model;
+                            }
+                        } else {
+                            $shortage_summary_model = new TblMemberPaymentHeadSummary();
+                            $shortage_summary_model->bmc_code = $summaryData->bmc_code;
+                            $shortage_summary_model->dcs_code = $summaryData->dcs_code;
+                            $shortage_summary_model->payment_cycle_code = $summaryData->payment_cycle_code;
+                            $shortage_summary_model->bill_head_code = $adjustmentSummary[$dcs]['shortage_head_code'];
+                            $shortage_summary_model->bill_head_type = 1;
+                            $shortage_summary_model->amount = $adjustmentSummary[$dcs]['shortage'];
+                            $shortage_summary_model->is_hold = 0;
+                            $save_model[] = $shortage_summary_model;
+                        }
+                        $summaryData->total_deduction = $summaryData->total_deduction + $adjustmentSummary[$dcs]['shortage'] - $old_shortage;
+                        $summaryData->net_payable = $summaryData->net_payable - $adjustmentSummary[$dcs]['shortage'] + $old_shortage;
+                    }
                     $summaryData->additional_pay = $adjustmentSummary[$dcs]['adjustment'];
                     $summaryData->hold_amount = $adjustmentSummary[$dcs]['hold'];
                     $summaryData->recovery = $adjustmentSummary[$dcs]['recovery'];
                     $summaryData->adjust_recovery = $adjustmentSummary[$dcs]['adjust_recovery'];
                     $summaryData->final_amount = $summaryData->net_payable + $adjustmentSummary[$dcs]['adjustment'] - $adjustmentSummary[$dcs]['hold'] + $adjustmentSummary[$dcs]['adjust_recovery'] - $adjustmentSummary[$dcs]['recovery'];
+
+                    $save_model[] = $historyModel;
+                    $save_model[] = $summaryData;
                 }
-                $save_model[] = $historyModel;
-                $save_model[] = $summaryData;
             }
 
             $successMsg = 'Payment of ' . $cnt . ' member adjusted succesfully';
@@ -542,15 +708,18 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         }
     }
 
-    private function getMemberDcsSpData($model, $reGenerate = 0) {
+    private function getMemberDcsSpData($model, $reGenerate = 0, $stop_payment_only = 0) {
         // use for generate or regenerate data for Member Payment
-
+        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
         $data = [];
         $data['from_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->from_date));
         $data['to_datetime'] = date('Y-m-d H:i:s', strtotime($model->paymentCycleCode->to_date));
         $data['union_code'] = $model->union_code;
         $data['bmc_code'] = $model->bmc_code;
         $data['payment_cycle_code'] = $model->payment_cycle_code;
+        $data['process_stop_payment'] = $stop_payment_only;
+        $data['user_code'] = $user;
+
         return Yii::$app->ClientPaymentConfig->processPayment('member_payment', $data);
 
         /*
@@ -580,6 +749,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $searchModel->attributes = $model->attributes;
         $searchModel->payment_status = 'Lock';
         $dataProvider = $searchModel->search([]);
+        //  $dataProvider->query->andWhere("(1=CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.bmc_code=tbl_member_payment_alias.bmc_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and payment_status != 'Lock' ) > 0 THEN 0 ELSE 1 END)");
 //        return $this->render('process_lock_dcs_payment', [
 //                    'model' => $model,
 //                    'searchModel' => $searchModel,
@@ -935,12 +1105,14 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $param['user_code'] = $user;
                         $param['org_code'] = $originating_org_code;
                         $param['org_type'] = 'PORTAL';
+                        $param['is_without_release'] = $model->payment_release_type;
                         Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
                         $param = [];
                         $param['from_datetime'] = $model->from_datetime;
                         $param['customer_type'] = 'MEMBER';
                         $param['bmc_code'] = $model->bmc_code;
+                        $param['user_code'] = $user;
                         Yii::$app->ClientPaymentConfig->processPayment('payment_installment_status', $param);
                         $msg_content = Yii::t('app', 'Member Payment Successfully Disbursed.');
                         Yii::$app->getSession()->setFlash('success', ['type' => 'success',
@@ -1166,6 +1338,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             return $this->renderAjax('member-bill-head-view', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $dataProvider,
+                        'allow_update' => !empty($_POST['allow_update']) ? TRUE : FALSE
             ]);
         }
     }
@@ -1439,6 +1612,78 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
             if (in_array($k, $setArrFields) && $modelCheck->hasAttribute($k)) {
                 $setArr[$k] = $v;
             }
+        }
+    }
+
+    public function actionSkipHead() {
+        if (Yii::$app->request->post() && !empty(Yii::$app->request->post()['TblMemberPaymentHead'])) {
+            $head_detail = Yii::$app->request->post()['TblMemberPaymentHead'];
+            $process = FALSE;
+            $total_addition = 0;
+            $total_deduction = 0;
+            $saveModel = [];
+            $deleteModel = [];
+            foreach ($head_detail as $head) {
+                if ($head['current_cycle'] != $head['payment_cycle_type']) {
+                    $new_payment_cycle_type = explode('-', $head['payment_cycle_type'])[0];
+                    $p_head = TblMemberPaymentHead::findOne($head['member_payment_head_code']);
+                    if (!empty($p_head)) {
+                        $process = TRUE;
+                        $member_code = $p_head->member_code;
+                        $dcs_code = $p_head->dcs_code;
+                        $payment_cycle_code = $p_head->payment_cycle_code;
+                        $from_date = date('Y-m-d', strtotime($p_head->paymentCycleCode->from_date));
+                        $bill_head_inst = TblBillHeadInstallment::find()->where(['installment_date' => $from_date, 'customer_type' => 'MEMBER', 'bill_head_for' => 'MEMBER', 'customer_code' => $p_head->member_code, 'bill_head_code' => $p_head->bill_head_code])->all();
+                        foreach ($bill_head_inst as $installment) {
+                            $insthistoryModel = new TblBillHeadInstallmentHistory();
+                            Yii::$app->operation->history($installment, $insthistoryModel, 'UPDATE');
+                            $installment->installment_status = 2;
+                            $installment->payment_cycle_type = $new_payment_cycle_type;
+                            $saveModel[] = $insthistoryModel;
+                            $saveModel[] = $installment;
+                        }
+                        if ($p_head->bill_head_type == 0) {
+                            $total_addition = $total_addition + $p_head->amount;
+                        } else {
+                            $total_deduction = $total_deduction + $p_head->amount;
+                        }
+                        $deleteModel[] = $p_head;
+
+                        $dcs_head = TblMemberPaymentHeadSummary::find()->where(['payment_cycle_code' => $p_head->payment_cycle_code, 'dcs_code' => $p_head->dcs_code, 'bill_head_code' => $p_head->bill_head_code])->one();
+                        $dcs_head->amount = $dcs_head->amount - $p_head->amount;
+                        $saveModel[] = $dcs_head;
+                    }
+                }
+            }
+            if ($process) {
+                $member_alias = TblMemberPaymentAlias::find()->where(['member_code' => $p_head->member_code, 'payment_cycle_code' => $p_head->payment_cycle_code])->one();
+                $member_alias->total_addition = $member_alias->total_addition - $total_addition;
+                $member_alias->total_deduction = $member_alias->total_deduction - $total_deduction;
+                $member_alias->net_payable = $member_alias->net_payable + $total_deduction - $total_addition;
+                $member_alias->final_amount = $member_alias->final_amount + $total_deduction - $total_addition;
+                $saveModel[] = $member_alias;
+
+                $dcs_summary = TblMemberPaymentSummaryAlias::find()->where(['payment_cycle_code' => $payment_cycle_code, 'dcs_code' => $dcs_code])->one();
+                $dcs_summary->total_addition = $dcs_summary->total_addition - $total_addition;
+                $dcs_summary->total_deduction = $dcs_summary->total_deduction - $total_deduction;
+                $dcs_summary->net_payable = $dcs_summary->net_payable + $total_deduction - $total_addition;
+                $dcs_summary->final_amount = $dcs_summary->final_amount + $total_deduction - $total_addition;
+                $saveModel[] = $dcs_summary;
+
+                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Member Payment Head', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::t('app', 'No Changes found in data.');
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
         }
     }
 

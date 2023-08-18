@@ -20,10 +20,12 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
      * @return mixed
      */
     public function actionIndex() {
+        $model = new TblAllowDcsManualCollectionRange;
         $searchModel = new TblAllowDcsManualCollectionRangeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+                    'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
@@ -54,7 +56,7 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
             $toShift = $this->model->to_shift == 1 ? ' 13:59:00.000' : ' 23:59:00.000';
             $this->model->from_date = Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) . $fromShift;
             $this->model->to_date = Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) . $toShift;
-
+            $this->model->status = '2';
             $transaction = $this->generalModel->saveTransaction([$this->model], ['DCS Manual Collection Range', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
@@ -116,6 +118,35 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionUpdateStatus() {
+        $msg = 'Invalid request';
+        $type = 'error';
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $id = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+            $remark = Yii::$app->request->post('remark');
+
+            $model = TblAllowDcsManualCollectionRange::findOne($id);
+
+            if ($model !== null) {
+                $model->status = $status;
+                $model->remark = $remark;
+
+                if ($model->save()) {
+                    $msg = 'Update status successfully';
+                    $type = 'success';
+                } else {
+                    $msg = 'Update status failed';
+                }
+            } else {
+                $msg = 'Model not found';
+            }
+        }
+        Yii::$app->getSession()->setFlash('success', ['type' => $type,
+            'message' => $msg]);
+        return;
     }
 
 }

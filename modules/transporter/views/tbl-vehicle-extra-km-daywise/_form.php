@@ -29,7 +29,7 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'date', '', false, false, $readonly); ?>
     </div>
-    <div class="col-sm-2 number-validate">
+    <div class="col-sm-2">
         <?= $form->field($model, 'extra_kms')->textInput() ?>
     </div>
     <div class="col-sm-2 number-validate">

@@ -38,34 +38,31 @@ use Yii;
  * @property string $operation_type
  * @property string $history_created_by
  */
-class TblVehicleTripDetailHistory extends \yii\db\ActiveRecord
-{
+class TblVehicleTripDetailHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_trip_detail_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
-            [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['is_last_destination', 'originating_type'], 'safe'],
-            [['travel_km'], 'safe'],
+                [['vehicle_trip_detail_code', 'vehicle_trip_code', 'vehicle_code', 'trip_code', 'challan_no', 'destination_code', 'destination_type', 'source_org_code', 'source_org_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'operation_type', 'history_created_by'], 'safe'],
+                [['transaction_datetime', 'arrival_time', 'departure_time', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['is_last_destination', 'originating_type'], 'safe'],
+                [['travel_km', 'is_active'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'vehicle_trip_detail_code' => Yii::t('app', 'Vehicle Trip Detail Code'),
@@ -99,4 +96,5 @@ class TblVehicleTripDetailHistory extends \yii\db\ActiveRecord
             'history_created_by' => Yii::t('app', 'History Created By'),
         ];
     }
+
 }

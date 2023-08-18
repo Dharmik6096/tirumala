@@ -18,6 +18,7 @@ use app\modules\vsp\models\TblVspBillHeadCriteriaApplicabilityHistory;
 use app\modules\vsp\models\TblCriteriaKeywordMapping;
 use app\modules\vsp\models\TblVspBillHeadCriteriaSlabsHistory;
 use app\modules\vsp\models\TblVspBillHeadCriteriaSlabsSearch;
+use app\modules\vsp\models\TblVspBillHeadCriteriaHistory;
 
 /**
  * TblBillHeadController implements the CRUD actions for TblBillHead model.
@@ -229,24 +230,27 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblVspBillHeadCriteriaApplicability();
-        $customerType = new TblCustomerType();
-        $customerType->union_code = $model->union_code;
-        $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
-        $appModel->model->wef_date = date('Y-m-d');
+        $appModel->model->wef_date = $appModel->model->from_date = date('Y-m-d');
+        $appModel->model->to_date = date('Y-m-d', strtotime('+ 1 year'));
+        $appModel->periodic_applicability = TRUE;
         $appModel->union_code = $model->union_code;
         $appModel->field_name = 'vsp_criteria_code';
         $appModel->field_value = $id;
         $appModel->trans_label = 'bill head criteria applicability';
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
+        $billHead = $model->billHead;
         $appModel->assignStaticData = [
-            'bill_head_for' => $model->billHead->bill_head_for,
+            'bill_head_for' => $billHead->bill_head_for,
             'bill_head_code' => $model->bill_head_code,
         ];
         $appModel->header_title = ' [Criteria: ' . $model->criteria_name . '] ';
         $appModel->fields = [
-            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
+            'from_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->to_date);
                 }],
             'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
                     return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
@@ -262,6 +266,13 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
                     return $model->getName($model->applicable_for);
                 }],
         ];
+        if ($billHead->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
         $appModel->dcs_filters = $value;
         $appModel->actions = ['delete' => ['option' => 'bill_head_criteria_applicability_code,bill_head_criteria_applicability_code,tbl-vsp-bill-head-criteria/delete-applicability']];
 
@@ -332,6 +343,102 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController 
         $data = !empty($existdata->to_val) ? $existdata->to_val + 0.01 : 0;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
+    }
+
+    public function actionUpdateToDate($id) {
+        $model = $this->findModel($id);
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblVspBillHeadCriteriaHistory();
+            Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+            $model->load(Yii::$app->request->post());
+            if (!empty($model->to_date)) {
+                $model->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                $historyModel->criteria_name = $historyModel->criteria_name . '-' . $model->to_date;
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if ($historyModel->save()) {
+                        Yii::$app->db->createCommand("update tbl_vsp_bill_head_criteria_applicability set to_date = :to_date where vsp_criteria_code = :vsp_criteria_code  and from_date <= :from_date")
+                                ->bindValue(':to_date', $model->to_date)
+                                ->bindValue(':vsp_criteria_code', $model->vsp_criteria_code)
+                                ->bindValue(':from_date', $model->to_date)
+                                ->execute();
+                        $transaction->commit();
+                        Yii::$app->display->message(true, 'Bill Head Criteria Applicability To Date', 'edit');
+                        return $this->customRedirect();
+                    } else {
+                        $transaction->rollback();
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => 'Your transaction is not saved successfully']);
+                    }
+                } catch (yii\base\UserException $e) {
+                    $transaction->rollback();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => $e->getMessage()]);
+                } catch (\yii\db\Exception $e) {
+                    $transaction->rollback();
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+                }
+            } else {
+                $model->addError('to_date', \Yii::t('app', 'To Date can not be blank'));
+            }
+        }
+        return $this->render('update_to_date', [
+                    'model' => $model,
+        ]);
+    }
+
+    public function actionUpdateToDateApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblVspBillHeadCriteriaApplicability();
+        $appModel->model->scenario = 'updateToDate';
+        $appModel->update_applicability = TRUE;
+        $appModel->check_wef_date = TRUE;
+        $appModel->model->to_date = date('Y-m-d');
+        $appModel->union_code = $model->union_code;
+        $appModel->field_name = 'vsp_criteria_code';
+        $appModel->field_value = $id;
+        $appModel->trans_label = 'bill head criteria applicability';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['tanker_rate'];
+        $billHead = $model->billHead;
+        $appModel->assignStaticData = [
+            'bill_head_for' => $billHead->bill_head_for,
+            'bill_head_code' => $model->bill_head_code,
+        ];
+        $appModel->header_title = ' To Date Upadte [Criteria: ' . $model->criteria_name . '] ';
+        $appModel->fields = [
+            'from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
+            'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->to_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => function($model) {
+                    return Yii::$app->general->getforeignkey($model->customerTypeFor, 'customer_desc');
+                }],
+            'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
+                }],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
+                }],
+            'name' => ['view' => ['grid'], 'value' => function($model) {
+                    return $model->getName($model->applicable_for);
+                }],
+        ];
+
+        if ($billHead->bill_head_for == 'MEMBER') {
+            $value = ['DCS' => Yii::t('app', 'DCS')];
+        } else {
+            $customerType = new TblCustomerType();
+            $customerType->union_code = $model->union_code;
+            $value = $customerType->getCustomerType(['tbl_customer_type.is_applicability' => 1]);
+        }
+        $appModel->dcs_filters = $value;
+        return $appModel->createApp();
     }
 
 }

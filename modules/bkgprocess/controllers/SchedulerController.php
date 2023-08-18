@@ -35,10 +35,11 @@ use webvimark\modules\UserManagement\models\User;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 use app\components\AMQPConnection;
+use app\modules\tms\models\TblTask;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -306,6 +307,12 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'bmc_collection_antibiotic') {
                 $flag = 'bmc-collection-bulk-antibiotic';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_weight_collection') {
+                $flag = 'bmc-weight-collection';
+                $sp_name = 'DB_JOB_PORTAL_WEIGHT_Collection';
+            } else if ($row->file_type == 'bmc_quality_test') {
+                $flag = 'bmc-quality-test';
+                $sp_name = 'DB_JOB_PORTAL_QUALITY_Collection';
             }
             if (!empty($flag)) {
                 $error_lines = [];
@@ -322,10 +329,19 @@ class SchedulerController extends ChildController {
                 ]));
                 $config = importData::getLabels($flag);
                 $header = explode(',', $config['fields']);
+                $accept_old_template = (!empty($config['accept_old_template']) && $config['accept_old_template']) ? TRUE : FALSE;
                 $fileData = $importer->getData();
                 unset($fileData[0]);
                 foreach ($fileData as $line) {
                     $total_cnt++;
+                    if ($accept_old_template) {
+                        $key_count_diff = count($header) - count($line);
+                        $header_count = count($header);
+                        while ($key_count_diff > 0) {
+                            unset($header[$header_count - $key_count_diff]);
+                            $key_count_diff -= 1;
+                        }
+                    }
                     $data = array_combine($header, $line);
                     $model = new TblBulkDataImport();
                     $model->attributes = $data;
@@ -1130,6 +1146,50 @@ class SchedulerController extends ChildController {
             } else {
                 $model->send_status = 0;
                 $model->updateRecordStatus($ids);
+            }
+        }
+    }
+
+    public function actionGenerateActivityAlert() {
+        $model = new TblTask();
+        $model->resp_status = 0;
+        $modelData = $model->getPickRecords();
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->task_code;
+            }, $modelData);
+            $model->updatePickStatus($ids);
+
+            foreach ($modelData as $row) {
+                try {
+                    $message = [];
+                    $header = [];
+                    $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $row->title];
+                    $messageJson = json_encode($message);
+                    $header['apiFor'] = 'default';
+                    $header['channel'] = 'default';
+                    $header['templateAlias'] = 'GENERAL_PUSH_NOTIFICATION';
+                    $header['templateFor'] = 'default';
+                    $headerJson = json_encode($header);
+                    $param = [];
+                    $param['user_code'] = $row->user_code;
+                    $param['union_code'] = $row->union_code;
+                    $param['message_json'] = $messageJson;
+                    $param['header_json'] = $headerJson;
+
+                    \Yii::$app->general->getSpData('portal_generate_activity_alert', $param, TRUE);
+                    $row->resp_status = 2;
+                    $row->is_notified = 1;
+                    $row->notified_datetime = date('Y-m-d H:i:s');
+                    $row->updateProcessStatus();
+                } catch (\yii\db\Exception $e) {
+                    $row->resp_status = 3;
+                    $row->updateProcessStatus();
+                } catch (\Throwable $e) {
+                    $row->resp_status = 3;
+                    $row->updateProcessStatus();
+                }
             }
         }
     }

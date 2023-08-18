@@ -16,8 +16,14 @@ $bmc_info = Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_code') 
         $fromDate . ' to ' . $toDate;
 $message = Yii::t('app', 'Payment data of  all society will be locked and considered as final for ' . Yii::$app->general->getforeignkey($aliasModel->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $config = (isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member']) && Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['recovery_from_other_member'] == 1) ? TRUE : FALSE;
-
+$milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member']) ? Yii::$app->session->get('unionConfig')[$aliasModel->union_code]['milk_short_recovery_member'] : 0;
 $urlForPost = ['member-payment-adjust', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code];
+
+$shortage_info = '';
+if ($milk_short_recovery_member == '1') {
+    $shortage_info = 'Shortage Amount :: ';
+    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
+}
 ?>
 <?php
 //$array = $dataProvider->getModels();
@@ -44,6 +50,8 @@ $tot_amt = array_sum(array_map(function($array) {
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×  </button>
                 <h4 class="modal-title" id="myModalLabel">
                     <?= $this->title . ' (' . $bmc_info . ')' ?> 
+                    <br/>
+                    <?= $shortage_info ?>
                     <div id="total-payment">
                         Total Payable :: <?= $tot_amt; ?>
                     </div>
@@ -72,6 +80,9 @@ $tot_amt = array_sum(array_map(function($array) {
                                 <th><?= Yii::t('app', 'Final Pay') ?></th>
                                 <th><?= Yii::t('app', 'Hold Amount(-)') ?></th>
                                 <th><?= Yii::t('app', 'Additional Pay(+)') ?></th>
+                                <?php if ($milk_short_recovery_member == '1') { ?>
+                                    <th><?= Yii::t('app', 'Shortage Recovery(-)') ?></th>
+                                <?php } ?>
                                 <th><?= Yii::t('app', 'Adjust Recovery') ?></th>
                                 <th><?= Yii::t('app', 'Recovery') ?></th>
                                 <th><?= Yii::t('app', 'Net Payable') ?></th>
@@ -129,6 +140,14 @@ $tot_amt = array_sum(array_map(function($array) {
                                         echo $form->field($model, 'additional_pay[' . $index . ']')->textInput(['value' => $m['additional_pay'], 'class' => 'adjust-amount form-control cal-amount number-validate',])->label(FALSE)
                                         ?>
                                     </td>
+                                    <?php if ($milk_short_recovery_member == '1') { ?>
+                                        <td class="no_padding_input hide_help_block">
+                                            <?php
+                                            echo $form->field($model, 'shortage_amount[' . $index . ']')->textInput(['value' => $m['shortage_amount'], 'class' => 'shortage-amount form-control cal-amount number-validate',])->label(FALSE);
+                                            echo Html::activeHiddenInput($model, 'shortage_head_code[' . $index . ']', ['class' => 'shortage_head', 'value' => $m['shortage_head_code']]);
+                                            ?>
+                                        </td>
+                                    <?php } ?>
                                     <td class="no_padding_input hide_help_block">
                                         <?php
                                         echo Html::activeHiddenInput($model, 'payment_cycle_code[' . $index . ']', ['class' => 'payment_cycle', 'value' => $m['payment_cycle_code']]);
@@ -188,6 +207,9 @@ $tot_amt = array_sum(array_map(function($array) {
                                     <td><?= $totalPrevHold ?></td>
                                     <td><?= $totalPrevDue ?></td>
                                     <td><?= $totalFinalPay ?></td>
+                                    <?php if ($milk_short_recovery_member == '1') { ?>
+                                        <td>&nbsp;</td>
+                                    <?php } ?>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
@@ -202,7 +224,7 @@ $tot_amt = array_sum(array_map(function($array) {
                 </div>
             </div>
             <div class="panel-footer" >
-                <?php //Yii::$app->controls->save('Confirm', $model);                ?>
+                <?php //Yii::$app->controls->save('Confirm', $model);                   ?>
                 <?php
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Save'),

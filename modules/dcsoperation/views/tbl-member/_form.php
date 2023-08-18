@@ -131,7 +131,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">
-            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 10]) ?>   
+            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 12]) ?>   
         </div>
         <div class="col-sm-4 number-validate">
             <?= $form->field($model, 'sap_farmer_code')->textInput() ?>
@@ -141,6 +141,9 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
                 <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class', false); ?>
             </div>
         <?php } ?>
+        <div class="col-sm-4 mt10">
+            <?= $form->field($model, 'is_dcs_member', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
     </div>
     <!-- <div class="clearfix"></div>
     <div class="col-sm-12">
@@ -183,16 +186,16 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', 'District'); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmember-union_code,tblmember-state_code', 'district_code', Yii::t('app', 'District')); ?>
         </div>
         <div class="col-sm-4">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmember-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District')); ?>
         </div>
         <div class="col-sm-4">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmember-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village')); ?>
         </div>
         <div class="col-sm-4">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmember-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
         </div>
         <div class="col-sm-4">
             <!--<? = $form->field($model, 'pincode')->textInput() ?>-->

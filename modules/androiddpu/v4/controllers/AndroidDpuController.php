@@ -344,8 +344,13 @@ class AndroidDpuController extends \app\modules\androiddpu\v3\controllers\Androi
 
     public function actionInitialization() {
         $db_file = 'everest_amcs_user_module.db';
+        $db_file_version = '';
         $res_data = [];
         $data = $this->post_data;
+        if (!empty($data['db_version'])) {
+            $db_file_version = 'everest_amcs_' . $data['db_version'] . '.db';
+            $db_file = file_exists(Yii::$app->basePath . '/installation-identity/' . $db_file_version) ? $db_file_version : $db_file;
+        }
         $model = new TblAndroidInstallationDetails();
         $id_model = $model->getActiveData($data);
         if (!empty($id_model)) {

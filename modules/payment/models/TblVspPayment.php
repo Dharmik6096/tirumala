@@ -39,7 +39,10 @@ use app\modules\organisation\models\TblUnions;
 class TblVspPayment extends \app\models\ChildModel {
 
     public $otp_code, $customer_ex_code, $old_recovery, $new_recovery, $total_recovery;
-    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc;
+    public $p_bmc_code, $p_customer_type, $p_payment_cycle_code, $multiple_bmc, $stop_payment_type;
+    public $stop_payment_only = 0;
+    public $payment_release_type;
+    public $payment_type, $payment_sumary_code;
 
     /**
      * @inheritdoc
@@ -61,7 +64,11 @@ class TblVspPayment extends \app\models\ChildModel {
                 [['bmc_code', 'customer_type'], 'required', 'on' => ['remuneration', 'processpayment']],
                 [['payment_cycle_code'], 'required', 'on' => ['processpayment']],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
-                [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name'], 'safe'],
+                [['route_code', 'avg_fat', 'avg_snf', 'std_qty', 'customer_name', 'beneficiary_name', 'payment_type'], 'safe'],
+                [['payment_release_type'], 'safe'],
+                [['payment_type'], 'required', 'on' => ['unreleasepaymentsearch', 'paymenttypevendor']],
+                [['customer_type'], 'required', 'on' => ['paymenttypevendor']],
+                [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate']
         ];
     }
 
@@ -107,6 +114,7 @@ class TblVspPayment extends \app\models\ChildModel {
             'p_bmc_code' => Yii::t('app', 'BMC'),
             'p_customer_type' => Yii::t('app', 'Type'),
             'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
+            'payment_release_type' => Yii::t('app', 'Disburse Type'),
         ];
     }
 
@@ -156,7 +164,7 @@ class TblVspPayment extends \app\models\ChildModel {
         return $this->find()->where(['union_code' => $this->union_code,
                     'payment_cycle_code' => $this->payment_cycle_code,
                     'bmc_code' => $this->bmc_code,
-                    'customer_type' => $this->customer_type, 'status' => 'processed'])->orderBy('net_payable');
+                    'customer_type' => $this->customer_type, 'status' => ['generated', 'processed']])->orderBy('net_payable');
     }
 
     public function getRemunerationRecords() {
@@ -164,13 +172,13 @@ class TblVspPayment extends \app\models\ChildModel {
                     'from_datetime' => $this->from_datetime,
                     'to_datetime' => $this->to_datetime,
                     'bmc_code' => $this->bmc_code,
-                    'billing_type' => 'remuneration', 'status' => 'processed']);
+                    'billing_type' => 'remuneration', 'status' => ['generated', 'processed']]);
     }
 
     public function CheckPendingDisburse($attribute, $params) {
         $data = $this->find()
                 ->select(['from_datetime', 'to_datetime'])
-                ->where(['status' => 'processed', 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
+                ->where(['status' => ['generated', 'processed', 'locked'], 'billing_type' => 'regular', 'bmc_code' => $this->bmc_code,
                     'customer_type' => $this->customer_type,
                 ])
                 ->andWhere(['NOT IN', 'payment_cycle_code', $this->payment_cycle_code])
@@ -189,9 +197,23 @@ class TblVspPayment extends \app\models\ChildModel {
                         ->where(['t.union_code' => $this->union_code,
                             't.payment_cycle_code' => $this->payment_cycle_code,
                             't.bmc_code' => $this->bmc_code,
-                            't.customer_type' => $this->customer_type, 't.status' => 'processed'])
+                            't.customer_type' => $this->customer_type, 't.status' => ['processed', 'generated']])
                         ->andWhere(['>', 't.net_payable', 0])
                         ->andWhere(['!=', 't.vsp_payment_code', $this->vsp_payment_code])->all();
     }
 
+    public function getStatusCount($status) {
+        return $this->find()->where(['union_code' => $this->union_code, 'payment_cycle_code' => $this->payment_cycle_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code])
+                        ->andWhere(['status' => $status])->count();
+    }
+
+    public function validateReleaseDate($attribute, $params)
+    {
+        $disburseDate = date('Y-m-d', strtotime($this->disburse_date));
+        $currentDate = date('Y-m-d');
+        $release_date = $this->release_date;
+        if ($release_date < $disburseDate || $release_date > $currentDate) {
+            $this->addError($release_date, 'Invalid release date.');
+        }
+    }
 }

@@ -4,6 +4,7 @@ namespace app\modules\vsp\models;
 
 use Yii;
 use app\modules\payment\models\TblPaymentCycle;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * This is the model class for table "tbl_bill_head_installment".
@@ -31,11 +32,12 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bill_head_detail_code'], 'integer'],
-            [['bill_head_code', 'dcs_code', 'installement_cycle', 'installment_amount'], 'safe'],
-            [['installment_date', 'payment_cycle_code'], 'safe'],
-            [['customer_type', 'customer_code', 'union_code', 'bill_head_for', 'installment_status'], 'safe'],
-            [['installment_status'], 'default', 'value' => 0]
+                [['bill_head_detail_code'], 'integer'],
+                [['bill_head_code', 'dcs_code', 'installement_cycle', 'installment_amount'], 'safe'],
+                [['installment_date', 'payment_cycle_code', 'payment_cycle_type'], 'safe'],
+                [['customer_type', 'customer_code', 'union_code', 'bill_head_for', 'installment_status'], 'safe'],
+                [['installment_status'], 'default', 'value' => 0],
+                [['bill_head_code'], 'setHeadDetail']
         ];
     }
 
@@ -51,6 +53,7 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
             'installement_cycle' => 'Installement Cycle',
             'installment_amount' => 'Installment Amount',
             'installment_date' => 'Installment Date',
+            'payment_cycle_type' => 'Payment Cycle Type',
         ];
     }
 
@@ -60,6 +63,17 @@ class TblBillHeadInstallment extends \app\models\ChildModel {
 
     public function getPaymentCycleCode() {
         return $this->hasOne(TblPaymentCycle::className(), ['payment_cycle_code' => 'payment_cycle_code']);
+    }
+
+    public function getBillHeadCode() {
+        return $this->hasOne(TblBillHead::className(), ['bill_head_code' => 'bill_head_code']);
+    }
+
+    public function setHeadDetail() {
+        $bill_head = $this->billHeadCode;
+        if (empty($this->payment_cycle_type) && !empty($bill_head)) {
+            $this->payment_cycle_type = $bill_head->payment_cycle_type;
+        }
     }
 
 }

@@ -13,6 +13,7 @@ use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\tankermovement\models\TblSampleBottleTesting;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblDcs;
+use app\modules\tankermovement\models\TblVehicleTripDetail;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry".
@@ -58,18 +59,19 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required'],
-            [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
-            [['gross_weight', 'tare_weight'], 'number'],
-            [['originating_type'], 'integer'],
-            [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
+                [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
+                [['gross_weight', 'tare_weight'], 'number'],
+                [['originating_type'], 'integer'],
+                [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
                     return $model->receipt_at == 'VENDOR';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblmilkvehicleentry-receipt_at').val() == 'VENDOR';
-          }"],
-            [['trip_code'], 'validateBottle'],
-            [['tare_weight_time'], 'validateTime'],
+          }", 'except' => ['androidsync', 'importCsv']],
+                [['trip_code'], 'validateBottle', 'except' => ['androidsync', 'importCsv']],
+                [['tare_weight_time'], 'validateTime', 'except' => ['androidsync', 'importCsv']],
+                [['plant_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
         ];
     }
 
@@ -80,10 +82,10 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return [
             'milk_vehicle_entry_code' => Yii::t('app', 'Milk Vehicle Entry Code'),
             'trip_code' => Yii::t('app', 'Trip Code'),
-            'grn_no' => Yii::t('app', 'Grn No'),
+            'grn_no' => Yii::t('app', 'Grn No.'),
             'receipt_at' => Yii::t('app', 'Receipt At'),
             'vehicle_entry_date' => Yii::t('app', 'Vehicle Entry Date'),
-            'vehicle_code' => Yii::t('app', 'Vehicle Code'),
+            'vehicle_code' => Yii::t('app', 'Vehicle'),
             'arrival_time' => Yii::t('app', 'Arrival Time'),
             'gross_weight' => Yii::t('app', 'Gross Weight'),
             'tare_weight' => Yii::t('app', 'Tare Weight'),
@@ -137,7 +139,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'receipt_sample_testing_count', 'PORTAL');
         $sampleBottle = TblSampleBottleTesting::find()->where(['trip_code' => $this->trip_code])->count();
         if ($sampleBottle < $bottleCount) {
-            $this->addError('trip_code', "Receipt Not Allow.");
+            $this->addError('trip_code', "Receipt Not Allow (Receipt Sample Testing Count mismatch).");
         }
     }
 
@@ -185,6 +187,32 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         $code1 = (int) $val[$primaryKey] + $autoInc;
         $value = $orgCode . $code1;
         return $value;
+    }
+
+    public function ValidateTripCode() {
+        $check_record = $this->find()->where(['grn_no' => $this->grn_no, 'vehicle_entry_date' => $this->vehicle_entry_date, 'plant_code' => $this->plant_code])->all();
+        if (count($check_record) == 1) {
+            $check_trip = TblVehicleTripDetail::find()
+                    ->select(['tbl_vehicle_trip.trip_code', 'tbl_vehicle_trip.vehicle_code'])
+                    ->distinct()
+                    ->joinWith(['tripCode'])
+                    ->where(['tbl_vehicle_trip.trip_code' => $this->trip_code]);
+            if ($check_record[0]->receipt_at == 'PLANT') {
+                $check_trip->andWhere(['tbl_vehicle_trip_detail.destination_type' => 'plant', 'tbl_vehicle_trip_detail.destination_code' => $this->plant_code]);
+            }
+            $check_trip = $check_trip->all();
+            if (count($check_trip) == 0) {
+                $this->addError('to_date', Yii::t('app/validation', 'Invalid Trip Code.'));
+            } else {
+                $this->vehicle_code = $check_trip[0]->vehicle_code;
+            }
+        } else {
+            $this->addError('to_date', Yii::t('app/validation', 'Invalid Combination of Plant Code/Vehicle Entry Date/Grn No.'));
+        }
+    }
+
+    public function getTripCodeAll() {
+        return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
 }

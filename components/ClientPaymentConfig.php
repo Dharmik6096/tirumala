@@ -62,7 +62,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_bmc_transit_loss',
                 ],
                 'payment_installment_status' => [
-                    'param' => 'bmc_code,from_datetime,customer_type',
+                    'param' => 'bmc_code,from_datetime,customer_type,user_code',
                     'sp_name' => 'sp_payment_installment_status_update',
                 ],
                 'primary_tpt_payment' => [
@@ -70,16 +70,24 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
-                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code',
+                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code,is_without_release',
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code',
-                    'sp_name' => 'sp_tpt_sec_payment_new',
+                    'sp_name' => 'sp_tpt_secondary_payment_cargill',
                 ],
                 'member_payment_disburse' => [
-                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
+                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type,is_without_release',
                     'sp_name' => 'member_payment_disburse',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment',
+                ],
+                'mcc_payment_disburse' => [
+                    'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_disburse_remuneration_payment',
                 ],
             ],
             'VARDDAN' => [
@@ -100,10 +108,80 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_vsp_payment_umang',
                 ],
             ],
+            'CARGILL' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code',
+                    'sp_name' => 'sp_member_payment_cargill',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
+                    'sp_name' => 'sp_vsp_payment_cargill',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'sp_name' => 'sp_remuneration_payment_cargill',
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_cargill',
+                ],
+                'secondary_tpt_payment' => [
+                    'param' => 'union_code,from_date,to_date,user_code,transporter_code,vehicle_code',
+                    'sp_name' => 'sp_tpt_secondary_payment_cargill',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_cargill',
+                ],
+                'mcc_payment_disburse' => [
+                    'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_disburse_remuneration_payment_cargill',
+                ],
+            ],
+            'KOTMALE' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code',
+                    'sp_name' => 'sp_member_payment_cargill',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
+                    'sp_name' => 'sp_vsp_payment_cargill',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head',
+                    'sp_name' => 'sp_remuneration_payment_cargill',
+                ],
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_cargill',
+                ],
+                'secondary_tpt_payment' => [
+                    'param' => 'union_code,from_date,to_date,user_code,transporter_code,vehicle_code',
+                    'sp_name' => 'sp_tpt_secondary_payment_cargill',
+                ],
+            ],
             'SNMILK' => [
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment_snmilk',
+                ],
+            ],
+            'ITC' => [
+                'primary_tpt_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_date,to_date,user_code,transporter_code',
+                    'sp_name' => 'sp_tpt_primary_payment_itc',
+                ],
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_itc',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_itc',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_itc',
                 ],
             ],
             'SAUMYA' => [
@@ -116,6 +194,20 @@ class ClientPaymentConfig extends Component {
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment_jgf',
+                ],
+            ],
+            'VRS_NEWASA' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
                 ],
             ],
         ];

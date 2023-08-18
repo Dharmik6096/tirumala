@@ -163,6 +163,10 @@ class TblCollectionDataAliasController extends \app\controllers\ChildController 
                                 }
 //                                $deleteModel[] = $existMainData;
                             }
+                            if ($existData->route_code != $existData->old_route_code && $existData->customer_type == 'DCS') {
+                                $collectionUpdate = new TblBmcCollection();
+                                $collectionUpdate->milkCollectionUpdate($existData);
+                            }
                         }
                         $historyModel = new TblCollectionDataAliasHistory();
                         Yii::$app->operation->history($existData, $historyModel, DELETE);

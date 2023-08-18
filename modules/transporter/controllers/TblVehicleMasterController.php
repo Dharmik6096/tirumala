@@ -13,6 +13,7 @@ use yii\helpers\Json;
 use yii\web\Response;
 use app\modules\transporter\models\TblTransporter;
 use app\modules\transporter\models\TblVehicleWiseQtyFlag;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblVehicleMasterController implements the CRUD actions for TblVehicleMaster model.
@@ -237,6 +238,14 @@ class TblVehicleMasterController extends \app\controllers\ChildController {
                 'message' => 'Could not Deactivated. Please try again.']);
         }
         return $this->redirect(['index']);
+    }
+
+    public function actionVehicleDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->vehicle_code;
+        $module_name = 'tbl_vehicle_master';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('vehicle', $id, $model, $module_code, $module_name);
     }
 
 }

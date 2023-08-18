@@ -90,20 +90,23 @@ $form = ActiveForm::begin([
             </div> -->
         <!--<div class="clearfix"></div>-->
         <div class="col-sm-2">
+            <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', 'District', FALSE); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsbmc-union_code,tbldcsbmc-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsbmc-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code'); ?>
         </div>
         <!--        <div class="clearfix"></div>-->
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsbmc-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsbmc-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
@@ -120,8 +123,23 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2 mt15">
+            <?= $form->field($model, 'is_rented_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->active($model, $form); ?>
@@ -137,6 +155,19 @@ $form = ActiveForm::begin([
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
             'form' => $form
+        ])
+        ?>
+
+        <div class="clearfix"></div>
+
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Bank Details</h4>
+        </div>
+        <?=
+        $this->render('../../../details/views/tbl-bank-details/_form', [
+            'model' => $bankDetails,
+            'form' => $form,
+            'dist_field' => 'tbldcsbmc-district_code'
         ])
         ?>
     <?php } ?>

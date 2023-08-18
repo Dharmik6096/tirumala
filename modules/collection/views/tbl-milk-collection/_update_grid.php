@@ -61,7 +61,7 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
         ],
             ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form, $detailModel) {
+            'value' => function ($model, $key, $index) use ($form, $detailModel, $config) {
                 if ($config) {
                     return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
                 } else {
@@ -105,6 +105,12 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+        ['attribute' => 'antibiotic',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return '<span class=\' antibiotic\'>' .Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', false, false, '[' . $index . ']antibiotic', false, false, true, true). '</span>';
             },
         ],
     ];

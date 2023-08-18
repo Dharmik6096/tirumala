@@ -120,8 +120,13 @@ class DefaultController extends Controller {
         $isCheck = Yii::$app->request->post('checkdate');
         $where = [];
         if ($isCheck == 1 || $isCheck == TRUE) {
-            $where = ['wef_date' => $wef_date];
+            if ($model->hasAttribute('wef_date')) {
+                $where = ['wef_date' => $wef_date];
+            } else {
+                $where = '0=1';
+            }
         }
+
         $modelQuery = $model->find()->select(['applicable_code'])->where([$field_name => $field_code, 'applicable_for' => $filter])->andWhere($where);
         $mccCodes = !empty(Yii::$app->request->post('selected_mcc')) ? json_decode(Yii::$app->request->post('selected_mcc')) : [];
         $bmcCodes = !empty(Yii::$app->request->post('selected_bmc')) ? json_decode(Yii::$app->request->post('selected_bmc')) : [];

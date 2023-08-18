@@ -1,6 +1,6 @@
 <?php
 
-return [
+$eipl_params = [
     'adminEmail' => 'admin@example.com',
 //    'eiplDirPath' => 'C:/ftp/eipl/',
     'eiplDirPath' => 'ftp/eipl/',
@@ -42,4 +42,14 @@ return [
     'attachment_server' => 'localhost',
     'data_exchange_un' => 'umang-admin',
     'data_exchange_pw' => 'P@1234',
+    'document_upload' => 'web/document_upload/',
 ];
+/* Application Server wise custom param file changes - asmita - 15/06/2023 */
+
+$custom_file = __DIR__ . '/env.php'; // returns an array same formate as params.php
+$custom_params = file_exists($custom_file) ? require($custom_file) : [];
+$all_params = array_merge($eipl_params, $custom_params);
+
+/* Application Server wise custom param file changes - asmita - 15/06/2023 */
+
+return $all_params;

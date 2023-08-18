@@ -35,11 +35,11 @@ class TblKmWiseRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['vehicle_code', 'wef_date', 'from_km', 'to_km', 'rate', 'union_code', 'transporter_code'], 'required', 'except' => 'importCsv'],
-            [['rate', 'from_km', 'to_km'], 'number', 'min' => 0],
-            [['wef_date', 'created_at', 'updated_at', 'union_code', 'transporter_code', 'vehicle_code', 'parsing_no'], 'safe'],
-            [['created_by', 'updated_by'], 'string'],
-            [['to_km'], 'kmValidate'],
+                [['vehicle_code', 'wef_date', 'from_km', 'to_km', 'rate', 'union_code', 'transporter_code'], 'required', 'except' => 'importCsv'],
+                [['rate', 'from_km', 'to_km'], 'number', 'min' => 0],
+                [['wef_date', 'created_at', 'updated_at', 'union_code', 'transporter_code', 'vehicle_code', 'parsing_no'], 'safe'],
+                [['created_by', 'updated_by'], 'string'],
+                [['to_km'], 'kmValidate'],
             //  [['wef_date'], 'wefValidate', 'on' => 'create'],
 //            [['wef_date', 'vehicle_code'], function ($attribute, $params) {
 //            Yii::$app->general->validateVehiclePayment($this);
@@ -48,10 +48,9 @@ class TblKmWiseRate extends \app\models\ChildModel {
             //[['from_km', 'to_km', 'rate'], 'number', 'min' => 1],
             //[['to_km'], 'kmValidate'],
             [['wef_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 2019-12-01'), 'on' => 'importCsv'],
-            [['wef_date'], 'setFieldImport', 'on' => 'importCsv'],
-            [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
-            [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
-            [['parsing_no', 'wef_date', 'from_km', 'to_km', 'rate', 'union_code', 'transporter_code', 'vehicle_code'], 'required', 'on' => 'importCsv'],
+                [['wef_date'], 'setFieldImport', 'on' => 'importCsv'],
+                [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
+                [['parsing_no', 'wef_date', 'from_km', 'to_km', 'rate', 'transporter_code'], 'required', 'on' => 'importCsv'],
         ];
     }
 
@@ -134,9 +133,11 @@ class TblKmWiseRate extends \app\models\ChildModel {
     }
 
     public function setFieldImport($attribute, $params) {
-        if (!empty($this->parsing_no)) {
-            $this->vehicle_code = Yii::$app->general->getforeignkey($this->parsingNo, 'vehicle_code');
-            $this->transporter_code = Yii::$app->general->getforeignkey($this->parsingNo, 'transporter_code');
+        $parsingNo = $this->parsingNo;
+        if (!empty($parsingNo)) {
+            $this->vehicle_code = $parsingNo->vehicle_code;
+            $this->transporter_code = $parsingNo->transporter_code;
+            $this->union_code = $parsingNo->union_code;
         }
     }
 

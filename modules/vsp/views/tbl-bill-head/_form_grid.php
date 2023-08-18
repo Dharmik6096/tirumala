@@ -38,10 +38,16 @@ $attribute = [
         },],
         ['attribute' => 'sequence_no'],
         ['attribute' => 'has_slab',
-//        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'has_slab'),
         'value' => function($model) {
             return $model->has_slab == 1 ? 'Yes' : 'No';
         },],
+        ['attribute' => 'is_hold',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_hold'),
+        'value' => function($model) {
+            return $model->is_hold == 1 ? 'Yes' : 'No';
+        },],
+        ['attribute' => 'payment_cycle_type'],
 ];
 $grid_option = [
     'id' => 'bill-head-list',
@@ -57,6 +63,21 @@ $grid_option = [
             $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-bill-head/bill-head-applicability', 'id' => $model->bill_head_code], $options);
+        },
+        'update_to_date_applicability' => function ($url, $model) {
+            $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update To Date Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-share"></i>', ['/vsp/tbl-bill-head/update-to-date-applicability', 'id' => $model->bill_head_code], $options);
+        },
+        'hold_release_applicability' => function ($url, $model) {
+            $disable = ($model->is_active == 1 && $model->is_hold == 1) ? '' : 'disabled';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Hold Release Applicability', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-money"></i>', ['/vsp/tbl-bill-head/hold-release-applicability', 'id' => $model->bill_head_code], $options);
+        },
+        'update_to_date' => function ($url, $model) {
+            $disable = ($model->is_active == 0 || $model->has_slab == 1) ? 'disabled' : '';
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit To Date', 'class' => $disable];
+            return GhostHtml::a('<i class="fa fa-pencil-square"></i>', ['/vsp/tbl-bill-head/update-to-date', 'id' => $model->bill_head_code], $options);
         },
     ]
 ];

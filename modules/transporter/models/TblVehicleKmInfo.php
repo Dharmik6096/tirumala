@@ -44,23 +44,23 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
     public function rules() {
         return [
 //            [['km_info_code'], 'required'],
-            [['shift_code'], function ($attribute, $params) {
+                [['shift_code'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalData($this, $attribute, 'shift');
                 }, 'on' => 'importCsv'],
-            [['shift_code'], 'integer', 'message' => Yii::t('app/validation', 'Please enter valid Shift Code.'), 'on' => ['importCsv']],
-            [['route_code', 'vehicle_code', 'wef_date', 'morning_kms', 'evening_kms', 'wef_date', 'shift_code', 'morning_arrival_time', 'evening_arrival_time', 'morning_grace_time', 'evening_grace_time'], 'required'],
-            [['transporter_code', 'route_code', 'vehicle_code',], 'required', 'except' => ['importCsv']],
-            [['union_code', 'total_kms'], 'required', 'except' => ['importCsv']],
-            [['route_ref_code', 'parsing_no'], 'required', 'on' => ['importCsv']],
-            [['data_lock'], 'default', 'value' => 0],
-            [['is_active'], 'default', 'value' => 1],
-            [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
-            [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock'], 'safe'],
-            [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'morning_grace_time', 'evening_grace_time'], 'number', 'min' => 0],
-            [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
-            [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
-            [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
-            [['wef_date'], 'convertDate', 'on' => ['importCsv']],
+                [['shift_code'], 'integer', 'message' => Yii::t('app/validation', 'Please enter valid Shift Code.'), 'on' => ['importCsv']],
+                [['route_code', 'vehicle_code', 'wef_date', 'morning_kms', 'evening_kms', 'wef_date', 'shift_code', 'morning_arrival_time', 'evening_arrival_time', 'morning_grace_time', 'evening_grace_time'], 'required'],
+                [['transporter_code', 'route_code', 'vehicle_code',], 'required', 'except' => ['importCsv']],
+                [['union_code', 'total_kms'], 'required', 'except' => ['importCsv']],
+                [['route_ref_code', 'parsing_no'], 'required', 'on' => ['importCsv']],
+                [['data_lock'], 'default', 'value' => 0],
+                [['is_active'], 'default', 'value' => 1],
+                [['vehicle_code', 'route_code', 'transporter_code', 'created_by', 'updated_by'], 'safe'],
+                [['wef_date', 'created_at', 'updated_at', 'shift_code', 'data_lock'], 'safe'],
+                [['morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'morning_grace_time', 'evening_grace_time'], 'number', 'min' => 0],
+                [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
+                [['wef_date'], 'convertDateDot', 'on' => ['importCsv']],
+                [['wef_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+                [['wef_date'], 'convertDate', 'on' => ['importCsv']],
 //            [['wef_date'], 'wefValidate', 'on' => 'create'],
 //            [['morning_kms'], 'routeValidate'],
 //            [['wef_date'], 'wefPaidValidate','on'=>'update'],
@@ -69,17 +69,17 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                         Yii::$app->general->validateVehiclePayment($this);
                     }
                 }, 'skipOnEmpty' => false],
-            [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
-            [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
-            [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
-            [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
-            [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
-            [['route_ref_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_ref_code' => 'ref_code'], 'on' => 'importCsv'],
-            [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
-            [['parsing_no'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'wef_date', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-            [['morning_arrival_time', 'morning_grace_time', 'evening_arrival_time', 'evening_grace_time'], 'safe'],
-            [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
+                [['vehicle_code'], 'importFieldSet', 'on' => ['importCsv']],
+                [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'on' => ['importCsv']],
+                [['vehicle_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['vehicle_code' => 'vehicle_code'], 'on' => ['importCsv']],
+                [['route_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_code' => 'route_code'], 'on' => ['importCsv']],
+                [['shift_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblShift::className(), 'targetAttribute' => ['shift_code' => 'id'], 'on' => ['importCsv']],
+                [['route_ref_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblRouteMapping::className(), 'targetAttribute' => ['route_ref_code' => 'ref_code'], 'on' => 'importCsv'],
+                [['parsing_no'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleMaster::className(), 'targetAttribute' => ['parsing_no' => 'parsing_no'], 'on' => 'importCsv'],
+                [['parsing_no'], 'importFieldSet', 'skipOnError' => true, 'on' => ['importCsv']],
+                [['route_code'], 'unique', 'targetAttribute' => ['route_code', 'wef_date', 'shift_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                [['morning_arrival_time', 'morning_grace_time', 'evening_arrival_time', 'evening_grace_time'], 'safe'],
+                [['morning_arrival_time', 'evening_arrival_time'], 'date', 'format' => 'php:H:i'],
         ];
     }
 
@@ -104,10 +104,10 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
             'is_active' => Yii::t('app', 'Is Active'),
             'shift_code' => Yii::t('app', 'Shift'),
             'union_code' => Yii::t('app', 'Union'),
-            'morning_arrival_time' => Yii::t('app', 'Arrival Time(M)'),
-            'evening_arrival_time' => Yii::t('app', 'Arrival Time(E)'),
-            'morning_grace_time' => Yii::t('app', 'Grace Time(M)'),
-            'evening_grace_time' => Yii::t('app', 'Grace Time(E)'),
+            'morning_arrival_time' => Yii::t('app', 'Arrival Time(M)(24:HR HH:MM)'),
+            'evening_arrival_time' => Yii::t('app', 'Arrival Time(E)(24:HR HH:MM)'),
+            'morning_grace_time' => Yii::t('app', 'Grace Time(M)(Min)'),
+            'evening_grace_time' => Yii::t('app', 'Grace Time(E)(Min)'),
             'parsing_no' => Yii::t('app', 'Parsing No.'),
             'route_ref_code' => Yii::t('app', 'Route Ref Code'),
         ];
@@ -259,6 +259,20 @@ class TblVehicleKmInfo extends \app\models\ChildModel {
                         ->andFilterWhere(['<=', 'wef_date', date('Y-m-d H:i:s', strtotime($datetime))])
                         ->orderBy('wef_date DESC')
                         ->one();
+    }
+
+    public function getRouteTransporterList($route_codes) {
+        $data = $this->find()
+                        ->select(['t.transporter_code', 'tbl_transporter.transporter_name', 'tbl_transporter.vendor_code'])
+                        ->distinct()
+                        ->alias('t')
+                        ->joinWith(['transporterCode'])
+                        ->where(['t.route_code' => $route_codes, 'tbl_transporter.is_active' => 1])
+                        ->asArray()->all();
+        $array = ArrayHelper::map($data, 'transporter_code', function($data) {
+                    return $data['transporter_name'] . '(' . $data['vendor_code'] . ')';
+                });
+        return $array;
     }
 
 }

@@ -46,16 +46,17 @@ class TblVspBillHeadCriteriaApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['applicable_code', 'wef_date'], 'required', 'except' => ['androidsync']],
-            [['applicable_code'], 'setBMCCode'],
-            [['wef_date', 'created_at', 'updated_at'], 'safe'],
-            [['originating_type'], 'safe'],
-            [['vsp_criteria_code', 'applicable_code', 'applicable_for', 'bill_head_for'], 'safe'],
-            [['bill_head_code'], 'safe'],
-            [['union_code'], 'safe'],
-            [['bmc_code'], 'safe'],
-            [['created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['applicable_code', 'from_date', 'to_date'], 'required', 'except' => ['androidsync', 'updateToDate']],
+                [['to_date'], 'required', 'on' => ['updateToDate']],
+                [['applicable_code'], 'setBMCCode', 'except' => ['updateToDate']],
+                [['from_date', 'to_date', 'wef_date', 'created_at', 'updated_at'], 'safe'],
+                [['originating_type'], 'safe'],
+                [['vsp_criteria_code', 'applicable_code', 'applicable_for', 'bill_head_for'], 'safe'],
+                [['bill_head_code'], 'safe'],
+                [['union_code'], 'safe'],
+                [['bmc_code'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
 //            [['applicable_code', 'applicable_for', 'bill_head_code', 'wef_date'], 'unique', 'targetAttribute' => ['applicable_code', 'applicable_for', 'bill_head_code', 'wef_date'], 'message' => 'The combination of Wef Date, Bill Head Code, Applicable Code and Applicable For has already been taken.'],
         ];
     }
@@ -124,6 +125,11 @@ class TblVspBillHeadCriteriaApplicability extends \app\models\ChildModel {
 
     public function setBMCCode($attribute, $params) {
         $this->bmc_code = Yii::$app->general->getCustomer($this, $this->applicable_for, FALSE, TRUE);
+    }
+
+    public function getEditRecord() {
+        return $this->find()->where(['vsp_criteria_code' => $this->vsp_criteria_code, 'applicable_code' => $this->applicable_code, 'applicable_for' => $this->applicable_for])
+                        ->andWhere(['<=', 'from_date', $this->to_date])->all();
     }
 
 }

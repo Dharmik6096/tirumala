@@ -9,6 +9,7 @@ $this->params['menu'][] = Yii::$app->controls->add('DCS Manual Collection Range'
     <div class="panel-body">
         <?=
         $this->render('_form_grid', [
+            'model' => $model,
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ])

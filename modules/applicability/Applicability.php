@@ -73,9 +73,11 @@ class Applicability extends \yii\base\Module {
     public $generateMail = false;
     public $attachment_folder = '/web/alert-data/';
     public $isApproval = false;
+    public $periodic_applicability = FALSE;
     public $login_type = '';
     public $is_bulk_notification = false;
     public $with_wef_date = true;
+    public $update_applicability = FALSE;
 
     /**
      * @inheritdoc
@@ -267,7 +269,6 @@ class Applicability extends \yii\base\Module {
                                 $aliasModel->setAttributes($this->assignStaticData);
                                 $aliasModel->{$main_field_name} = $value;
                                 $aliasModel->$field_name = $this->field_value;
-
                                 $aliasModel->union_code = $this->union_code;
                                 if ($aliasModel->hasAttribute('wef_date')) {
                                     $aliasModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
@@ -297,10 +298,10 @@ class Applicability extends \yii\base\Module {
                             }
                         }
                     } else {
-
                         foreach ($toRevoke as $value) {
                             if (!empty($value)) {
                                 try {
+//echo $value.'<br/>';
                                     $r = new ReflectionClass($this->model->className());
                                     $appModel = $r->newInstanceArgs();
                                     $appModel = $appModel->find()->where([$main_field_name => $value, $field_name => $this->field_value]);
@@ -340,17 +341,32 @@ class Applicability extends \yii\base\Module {
                                     $appModel->setOrgDetail();
                                 }
                                 $appModel->$field_name = $this->field_value;
-//$appModel->union_code = $this->union_code;  
-
                                 $appModel->union_code = $this->union_code;
-                                if ($appModel->hasAttribute('wef_date')) {
+
+                                if ($this->periodic_applicability) {
+                                    $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                                    $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                                    if ($appModel->hasAttribute('wef_date')) {
+                                        $appModel->wef_date = $model->wef_date = $appModel->from_date;
+                                    }
+                                } else if ($appModel->hasAttribute('from_date') && !empty($model->from_date)) {
+                                    $appModel->from_date = Yii::$app->formatter->asDate($model->from_date, DATE_FORMAT);
+                                }
+                                if ($this->update_applicability) {
+                                    $appModel->to_date = Yii::$app->formatter->asDate($model->to_date, DATE_FORMAT);
+                                }
+                                if (!$this->update_applicability && $appModel->hasAttribute('wef_date')) {
                                     $appModel->wef_date = Yii::$app->formatter->asDate($model->wef_date, DATE_FORMAT);
                                     if ($model->hasAttribute('shift_code')) {
                                         $appModel->wef_date = $appModel->wef_date . ' ' . Yii::$app->general->getshift($model->shift_code);
                                     }
                                     $check = $this->checkDuplicateCount($appModel);
                                     if ($check >= 1) {
-                                        $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                        if ($this->periodic_applicability) {
+                                            $model->addError('from_date', 'Date Range already taken by ' . $title . '.');
+                                        } else {
+                                            $model->addError('wef_date', $appModel->wef_date . ' date already taken by ' . $title . '.');
+                                        }
                                         return $this->customRender();
                                     }
                                 }
@@ -412,7 +428,19 @@ class Applicability extends \yii\base\Module {
                                     $appModel->setOrgDetail();
                                 }
 
-                                $saveModel[] = $appModel->save();
+                                if ($this->update_applicability) {
+                                    $editRecords = $appModel->getEditRecord();
+                                    foreach ($editRecords as $rec) {
+                                        $historyModel = new ReflectionClass($this->model->className() . 'History');
+                                        $historyModel = $historyModel->newInstanceArgs();
+                                        Yii::$app->operation->history($rec, $historyModel, 'UPDATE');
+                                        $rec->to_date = $appModel->to_date;
+                                        $saveModel[] = $historyModel->save();
+                                        $saveModel[] = $rec->save();
+                                    }
+                                } else {
+                                    $saveModel[] = $appModel->save();
+                                }
                             } catch (UserException $e) {
                                 $saveModel[] = false;
                                 $hasError = true;
@@ -429,7 +457,11 @@ class Applicability extends \yii\base\Module {
                     $this->selectedBmcCode = [];
                     $this->selectedRouteCode = [];
                     if (!in_array(FALSE, $saveModel)) {
-                        Yii::$app->display->message(true, $this->trans_label, 'create');
+                        if ($this->update_applicability) {
+                            Yii::$app->display->message(true, $this->trans_label, 'edit');
+                        } else {
+                            Yii::$app->display->message(true, $this->trans_label, 'create');
+                        }
                         if ($this->generateMail && !$this->isApproval && !$session) {
                             $this->GenerateMail($appModel, $toAssign);
                         }

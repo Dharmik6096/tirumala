@@ -32,9 +32,10 @@ class TblMemberPaymentHeadSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_code', 'dcs_code', 'bill_head_code'], 'string'],
-                [['payment_cycle_code', 'bill_head_type'], 'integer'],
-                [['amount'], 'number'],
+                [['bmc_code', 'dcs_code', 'bill_head_code', 'is_hold'], 'safe'],
+                [['payment_cycle_code', 'bill_head_type'], 'safe'],
+                [['amount'], 'safe'],
+                [['current_amount', 'previous_amount', 'release_date', 'is_release'], 'safe'],
         ];
     }
 
@@ -50,6 +51,7 @@ class TblMemberPaymentHeadSummary extends \app\models\ChildModel {
             'bill_head_code' => Yii::t('app', 'Bill Head'),
             'amount' => Yii::t('app', 'Amount'),
             'bill_head_type' => Yii::t('app', 'Type'),
+            'is_hold' => Yii::t('app', 'Is Hold ?'),
         ];
     }
 

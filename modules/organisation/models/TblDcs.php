@@ -301,7 +301,7 @@ class TblDcs extends ChildModel {
                 [['is_bmc'], 'unique', 'targetAttribute' => ['is_bmc', 'bmc_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function($model) {
                     return $model->is_bmc;
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
-                [['cutoff'], 'default', 'value' => 0],
+                [['cutoff', 'morning_kms', 'evening_kms'], 'default', 'value' => 0],
                 [['cutoff_val'], 'default', 'value' => 0.1],
                 [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv']],
                 [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) {
@@ -425,6 +425,8 @@ class TblDcs extends ChildModel {
             'x_col2' => Yii::t('app', 'Collection'),
             'auto_member_create' => Yii::t('app', 'Auto Member Create'),
             'rate_chart_member' => Yii::t('app', 'Rate Chart Member'),
+            'morning_kms' => Yii::t('app', 'Head Load KM(M)'),
+            'evening_kms' => Yii::t('app', 'Head Load KM(E)'),
         ];
     }
 

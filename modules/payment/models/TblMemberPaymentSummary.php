@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\payment\models\TblPaymentCycle;
+use app\modules\payment\models\TblMilkShortageRecovery;
 
 /**
  * This is the model class for table "tbl_member_payment_summary".
@@ -54,10 +55,11 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
-            [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
-            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'dcs_name'], 'safe'],
-            [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
+                [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'safe'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount', 'dcs_name', 'release_date', 'is_release', 'hold_reason'], 'safe'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery'], 'safe'],
+                [['release_date'], 'validateReleaseDate', 'on' => 'unreleasePaymentUpdate']
         ];
     }
 
@@ -129,4 +131,21 @@ class TblMemberPaymentSummary extends \app\models\ChildModel {
         return $this->find()->where(['payment_cycle_code' => $this->payment_cycle_code, 'bmc_code' => $this->bmc_code, 'dcs_code' => $this->dcs_code])->one();
     }
 
+    public function getShortageRecoveryOtherMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'other_member']);
+    }
+
+    public function getShortageRecoveryMpgMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
+    }
+
+    public function validateReleaseDate($attribute, $params)
+    {
+        $disburseDate = date('Y-m-d', strtotime($this->disburse_date));
+        $currentDate = date('Y-m-d');
+        $release_date = $this->release_date;
+        if ($release_date < $disburseDate || $release_date > $currentDate) {
+            $this->addError($release_date, 'Invalid release date.');
+        }
+    }
 }
