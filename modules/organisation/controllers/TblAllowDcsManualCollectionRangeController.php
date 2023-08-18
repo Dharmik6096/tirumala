@@ -131,6 +131,7 @@ class TblAllowDcsManualCollectionRangeController extends \app\controllers\ChildC
             $model = TblAllowDcsManualCollectionRange::findOne($id);
 
             if ($model !== null) {
+                $model->scenario = 'updateStatus';
                 $model->status = $status;
                 $model->remark = $remark;
 

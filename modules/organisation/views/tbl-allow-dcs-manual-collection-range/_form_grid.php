@@ -173,5 +173,5 @@ $script = "
             }
         });
     }";
-$this->registerJs($script, View::POS_END, 'dcs-manual-collection-range');
+$this->registerJs($script, View::POS_END, 'dcs-manual-collection-range-status-update');
 ?>

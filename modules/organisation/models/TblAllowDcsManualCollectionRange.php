@@ -56,7 +56,7 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'status'], 'required'],
+            [['manual_collection_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'except' => 'updateStatus'],
             [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
             [['from_date', 'to_date', 'from_shift', 'to_shift', 'created_at', 'updated_at'], 'safe'],
             [['is_weight_manual', 'is_quality_manual', 'originating_type', 'status'], 'integer'],
@@ -65,6 +65,7 @@ class TblAllowDcsManualCollectionRange extends \app\models\ChildModel {
             [['originating_org_code', 'originating_org_type', 'status', 'remark'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['from_date'], 'checkUnique', 'skipOnError' => true],
+            [['status', 'remark'], 'required', 'on' => 'updateStatus'],
         ];
     }
 
