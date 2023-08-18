@@ -22,6 +22,8 @@ use yii\web\Response;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
+use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -81,13 +83,13 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->model->scenario = Yii::$app->session['eiplCode'];
         }
         if ($this->model->load(Yii::$app->request->post())) {
-            if (Yii::$app->request->post('submitBtn') === 'approve') {
-                $this->model->is_approved = 1;
-                $this->model->approved_at = date('Y-m-d H:i:s');
-                $this->model->approved_by = Yii::$app->session['UserCode'];
-            } else {
-                $this->model->is_approved = 0;
-            }
+//            if (Yii::$app->request->post('submitBtn') === 'approve') {
+//                $this->model->is_approved = 1;
+//                $this->model->approved_at = date('Y-m-d H:i:s');
+//                $this->model->approved_by = Yii::$app->session['UserCode'];
+//            } else {
+            $this->model->is_approved = 0;
+//            }
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
             //var_dump($this->model->unionCode->federationCode);exit();
             $this->model->provisional_member_code = Yii::$app->general->getUuid();
@@ -102,12 +104,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $master_model = [];
                 $master_model[] = $this->model;
-                if ($this->model->is_approved == 1) {
-                    $tblMember = new TblMember();
-                    $tblMember->scenario = 'ApprovalMember';
-                    $tblMember->attributes = $this->model->attributes;
-                    $master_model[] = $tblMember;
-                }
+//                if ($this->model->is_approved == 1) {
+//                    $tblMember = new TblMember();
+//                    $tblMember->scenario = 'ApprovalMember';
+//                    $tblMember->attributes = $this->model->attributes;
+//                    $master_model[] = $tblMember;
+//                }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
@@ -395,8 +397,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 }
 
                 if (empty($error_msg)) {
-                    $model->provisional_status = 'register';
+                    $modelStages = new TblApprovalStagesDetail();
+                    $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
+                    $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
                     $save_model[] = $model;
+
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
                     if ($transaction == 'customRedirect') {
                         $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
@@ -422,12 +427,25 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
     public function actionProvisionalMembersApprovals() {
         $searchModel = new TblMemberProvisionalSearch();
-        $dataProvider = $searchModel->searchApprovalDatas(Yii::$app->request->queryParams);
-
+        $dataProvider = $searchModel->memberprovisionalapprovesearch(Yii::$app->request->queryParams);
         return $this->render('_bulk_approval_grids', [
                     'model' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
     }
 
+//    public function actionProvisionalMembersApprovals() {
+//        $searchModel = new TblMemberProvisionalSearch();
+//        $searchModel->scenario = 'memberProvisionalApprove';
+//        $backUrl[] = '/dcsoperation/tbl-member-provisional/provisional-members-approvals';
+//        $memberProvisional = new TblMemberProvisional();
+//        $dataProvider = $searchModel->memberprovisionalapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
+//
+//        return $this->render('_bulk_approval_grids', [
+//                    'model' => $searchModel,
+//                    'dataProvider' => $dataProvider,
+//                    'memberProvisional' => $memberProvisional,
+//                    'visibledata' => True,
+//        ]);
+//    }
 }

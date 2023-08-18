@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\dcsoperation\models\TblMemberProvisional;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblMemberProvisionalSearch represents the model behind the search form about `app\modules\dcsoperation\models\TblMember`.
@@ -103,23 +104,31 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         return $dataProvider;
     }
 
-    public function searchApprovalDatas($params) {
+    public function memberprovisionalapprovesearch($params) {
         $query = TblMemberProvisional::find();
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
         Yii::$app->general->filterByOrg($query, $this);
 
-        $query->andWhere(['tbl_member_provisional.provisional_status' => 'register']);
+        $levelQuery = TblProcessApproval::find()
+                ->select(['process_code', 'MIN(level_priority) AS level_priority'])
+                ->where(['status' => 0])
+                ->groupBy('process_code');
+
+        $subQuery = TblProcessApproval::find()
+                ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
+                ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
+                ->where(['tbl_process_approval.status' => 0])
+                ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
+
+        $query->innerJoin(['ap' => $subQuery], 'tbl_member_provisional.provisional_member_code = ap.process_code');
+        $query->addSelect(['tbl_member_provisional.*', 'ap.process_approval_code as process_approval_code']);
+        $provisional_status = ['Register', 'Inprogress'];
+        $query->where(['tbl_member_provisional.provisional_status' => $provisional_status]);
 
         return $dataProvider;
     }

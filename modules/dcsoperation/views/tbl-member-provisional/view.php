@@ -485,6 +485,7 @@ $this->title = Yii::$app->label->title('view', 'provisional member');
                     'validateOnChange' => FALSE,
                     'enableClientValidation' => true,
                     'validateOnSubmit' => true,
+                    'action' => ['provisional-members-approvals'],
         ]);
         ?>
         <?php echo $form->errorSummary($model); ?>

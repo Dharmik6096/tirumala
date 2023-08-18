@@ -198,7 +198,7 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
                 [['provisional_from'], 'default', 'value' => 'collection'],
                 [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
-                [['provisional_status'], 'default', 'value' => 'pending'],
+                [['provisional_status'], 'default', 'value' => 'Pending'],
         ];
     }
 

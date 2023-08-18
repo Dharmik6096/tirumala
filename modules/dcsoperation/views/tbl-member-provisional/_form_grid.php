@@ -101,7 +101,7 @@ $grid_option = [
             return GhostHtml::a_alert('<i class="fa fa-list"></i>', ['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list'], $options);
         },
         'document-upload' => function ($url, $model) {
-            $disable = ($model->provisional_status == 'pending') ? '' : 'disabled';
+            $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
         },
