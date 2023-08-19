@@ -326,7 +326,9 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                     $HisModel[] = $historyModel;
                     $check_data->status = 2;
                     $saveModel[] = $check_data;
-                    $sap_code = $check_data->sap_code;
+                    if (!empty($check_data->sap_code)) {
+                        $sap_code = $check_data->sap_code;
+                    }
                 }
             }
             foreach ($model->selected_sr_no as $asset_code => $asset_detail) {
@@ -369,7 +371,9 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $trn_model->status = 2;
                             $trn_model->put_to_use_date = $model->transaction_date;
                             $trn_model->remarks = $model->remarks;
-                            $trn_model->sap_code = $sap_code;
+                            if (!empty($sap_code)) {
+                                $trn_model->sap_code = $sap_code;
+                            }
                         }
                         $trn_model->transaction_date = $model->transaction_date;
                         $saveModel[] = $trn_model;
@@ -411,7 +415,9 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
                         } else {
                             $out_model->status = 2;
-                            $out_model->sap_code = $sap_code;
+                            if (!empty($sap_code)) {
+                                $out_model->sap_code = $sap_code;
+                            }
                         }
                         /* if ($out_model->status == 2) {
                           $out_model->remain_qty = 0;
