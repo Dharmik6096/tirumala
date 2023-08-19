@@ -545,8 +545,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $r);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
     }
 
@@ -569,8 +568,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $r);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
     }
 
@@ -585,8 +583,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $d['name']);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
     }
 
