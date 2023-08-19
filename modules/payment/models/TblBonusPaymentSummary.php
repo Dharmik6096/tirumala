@@ -38,57 +38,56 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblBonusPaymentSummary extends \app\models\ChildModel
-{
+class TblBonusPaymentSummary extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bonus_payment_summary';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
-            [['from_shift', 'to_shift', 'originating_type'], 'integer'],
-            [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'number'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'string', 'max' => 12],
-            [['customer_type', 'customer_code', 'payment_type'], 'string', 'max' => 20],
-            [['status'], 'string', 'max' => 50],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_datetime', 'to_datetime'], 'required', 'on' => 'process'],
+                [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
+                [['from_shift', 'to_shift', 'originating_type'], 'safe'],
+                [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'safe'],
+                [['union_code'], 'safe'],
+                [['plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code'], 'safe'],
+                [['customer_type', 'customer_code', 'payment_type'], 'safe'],
+                [['status'], 'safe'],
+                [['created_by', 'updated_by'], 'safe'],
+                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_datetime'], 'validateDate', 'on' => 'process'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bonus_payment_summary_code' => Yii::t('app', 'Bonus Payment Summary Code'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
-            'dcs_code' => Yii::t('app', 'Dcs Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
+            'dcs_code' => Yii::t('app', 'DCS'),
             'customer_type' => Yii::t('app', 'Customer Type'),
             'customer_code' => Yii::t('app', 'Customer Code'),
             'payment_type' => Yii::t('app', 'Payment Type'),
-            'from_datetime' => Yii::t('app', 'From Datetime'),
+            'from_datetime' => Yii::t('app', 'From Date'),
             'from_shift' => Yii::t('app', 'From Shift'),
-            'to_datetime' => Yii::t('app', 'To Datetime'),
+            'to_datetime' => Yii::t('app', 'To Date'),
             'to_shift' => Yii::t('app', 'To Shift'),
-            'kg_fat' => Yii::t('app', 'Kg Fat'),
-            'kg_snf' => Yii::t('app', 'Kg Snf'),
-            'avg_fat' => Yii::t('app', 'Avg Fat'),
-            'avg_snf' => Yii::t('app', 'Avg Snf'),
+            'kg_fat' => Yii::t('app', 'KgFat'),
+            'kg_snf' => Yii::t('app', 'KgSnf'),
+            'avg_fat' => Yii::t('app', 'AvgFat'),
+            'avg_snf' => Yii::t('app', 'AvgSnf'),
             'qty' => Yii::t('app', 'Qty'),
             'amount' => Yii::t('app', 'Amount'),
             'addition' => Yii::t('app', 'Addition'),
@@ -104,4 +103,22 @@ class TblBonusPaymentSummary extends \app\models\ChildModel
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
+    public function validateDate() {
+        if (strtotime($this->from_datetime) > strtotime($this->to_datetime)) {
+            $this->addError('from_datetime', 'From Date must not be grater than To Date.');
+        }
+    }
+
+    public function getRecords() {
+        return $this->find()->where(['union_code' => $this->union_code,
+                    'from_datetime' => $this->from_datetime,
+                    'to_datetime' => $this->to_datetime,
+                    'bmc_code' => $this->bmc_code,
+                    'payment_type' => $this->payment_type,
+                    'customer_type' => $this->customer_type,
+                    'status' => ['generated', 'processed']
+                ])->orderBy(['bmc_code' => SORT_ASC, 'customer_code' => SORT_ASC]);
+    }
+
 }

@@ -7,118 +7,121 @@ use app\modules\payment\models\TblBonusPayment;
 use app\modules\payment\models\TblBonusPaymentSearch;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+use app\modules\payment\models\TblBonusPaymentSummary;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
+use yii\data\ActiveDataProvider;
 
-/**
- * TblBonusPaymentController implements the CRUD actions for TblBonusPayment model.
- */
-class TblBonusPaymentController extends ChildController
-{
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
+class TblBonusPaymentController extends ChildController {
 
-    /**
-     * Lists all TblBonusPayment models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblBonusPaymentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Displays a single TblBonusPayment model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
-    /**
-     * Creates a new TblBonusPayment model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new TblBonusPayment();
+    public function actionCreate() {
+        // Farmer Bonus Payment Process : Step 1
+        $model = new TblBonusPaymentSummary();
+        $model->scenario = 'process';
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                $model->from_datetime = date('Y-m-d 06:00:00', strtotime($model->from_datetime));
+                $model->to_datetime = date('Y-m-d 18:00:00', strtotime($model->to_datetime));
+                // $is_valid = \Yii::$app->general->getSpData('sp_bonus_payment_validate', [$model->union_code, ',' . implode(',', $model->bmc_code) . ',', 'MEMBER', 'DCS', $model->from_datetime, $model->to_datetime]);
+                $is_valid[] = ['msg' => 'Payment is already generated for Selected Payment Cycle. Do You want to Regenerate?', 'allow_process' => 1];
+                $msg = $is_valid[0]['msg'];
+                $allow_process = $is_valid[0]['allow_process'];
+                $queryParam = [];
+                $queryParam[] = 'process-payment';
+                $queryParamRegenerate = [];
+                $queryParam['TblBonusPaymentSummary'] = ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code, 'payment_type' => 'MEMBER', 'customer_type' => 'DCS'];
+                $queryParamRegenerate = $queryParam;
+                $queryParamRegenerate['reGenerate'] = 0;
+                if ($allow_process) {
+                    if (!empty($msg)) {
+                        $result = 'displayConfirmPopup';
+                        $queryParamRegenerate['reGenerate'] = 1;
+                        $msg = Yii::t('app', $msg);
+                    } else {
+                        $result = 'success';
+                        $queryParam['reGenerate'] = 1;
+                    }
+                } else {
+                    $result = 'displayPopup';
+                    $msg = Yii::t('app', $msg);
+                }
+                $url = Url::to($queryParam);
+                $url_regenerate = Url::to($queryParamRegenerate);
+                Yii::$app->response->format = trim(Response::FORMAT_JSON);
+                return ['status' => $result, 'url' => $url, 'url_regenerate' => $url_regenerate, 'msg' => $msg];
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($model);
+            }
+        }
+        return $this->render('create', [
+                    'model' => $model,
+        ]);
+    }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bonus_payment_code]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+    public function actionProcessPayment($reGenerate = 0) {
+        if (Yii::$app->request->get()) {
+            $model = new TblBonusPaymentSummary();
+            $model->load(Yii::$app->request->get());
+            if ($reGenerate == 1) {
+                $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                $data = [];
+                $data['union_code'] = $model->union_code;
+                $data['bmc_code'] = ',' . implode(',', $model->bmc_code) . ',';
+                $data['payment_type'] = $model->payment_type;
+                $data['customer_type'] = $model->customer_type;
+                $data['from_datetime'] = $model->from_datetime;
+                $data['to_datetime'] = $model->to_datetime;
+                $data['user_code'] = $user;
+                return Yii::$app->ClientPaymentConfig->processPayment('bonus_payment', $data);
+            }
+            return $this->redirect(['payment-adjust', 'TblBonusPaymentSummary' => ['mcc_plant_code' => $model->mcc_plant_code, 'from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'payment_type' => $model->payment_type, 'union_code' => $model->union_code]]);
         }
     }
 
-    /**
-     * Updates an existing TblBonusPayment model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bonus_payment_code]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+    public function actionPaymentAdjust() {
+        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
+        $model = new TblBonusPaymentSummary();
+        $model->load(Yii::$app->request->get());
+        if (Yii::$app->request->post()) {
+            $postData = Yii::$app->request->post();
         }
+        $query = $model->getRecords();
+        $title = $model->payment_type . ' Payment Process : Step 2';
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => FALSE,
+        ]);
+        return $this->render('payment-adjust', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+                    'title' => $title,
+        ]);
     }
 
-    /**
-     * Deletes an existing TblBonusPayment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the TblBonusPayment model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return TblBonusPayment the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblBonusPayment::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }
