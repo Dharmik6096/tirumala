@@ -76,7 +76,7 @@ $tot_amt = array_sum(array_map(function($array) {
                 ];
 
                 $grid_option = [
-                    'id' => 'confirm-society',
+                    'id' => 'member-payment-process-second',
                     'attributes' => $attribute,
                     'active_column' => false,
                     'showPageSummary' => true,
