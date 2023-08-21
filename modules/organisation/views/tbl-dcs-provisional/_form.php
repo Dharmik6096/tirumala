@@ -113,7 +113,7 @@ $form = ActiveForm::begin([
 
         <div class="col-sm-2">
             <?php
-                $model->vendor = $model->vendor_code;
+            $model->vendor = $model->vendor_code;
             ?>
             <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor']); ?>
         </div>
@@ -288,11 +288,42 @@ $form = ActiveForm::begin([
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Contact Details</h4>
             </div>
-            <?=
-            $this->render('_contact_details_form', [
-                'model' => $model,
-                'form' => $form
-            ])
+            <div class="col-sm-2">
+                <?= $form->field($model, 'firstname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'lastname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'surname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'email')->textInput() ?>
+            </div>
+            <!--<div class="col-sm-2">
+                <? = $form->field($model, 'local_contact_person')->textInput() ?>
+            </div>-->
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_firstname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_lastname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_surname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
+                <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+            </div>
+            <?php
+//            $this->render('_contact_details_form', [
+//                'model' => $model,
+//                'form' => $form
+//            ])
             ?>
 
             <div class="clearfix"></div>
@@ -300,12 +331,34 @@ $form = ActiveForm::begin([
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Bank Details</h4>
             </div>
-            <?=
-            $this->render('_bank_details_form', [
-                'model' => $model,
-                'form' => $form,
-                'dist_field' => 'tbldcsprovisional-district_code'
-            ])
+            <?php if (!empty($dist)) { ?>
+                <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
+            <?php } ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'bank_account_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <!--<? = $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => !empty($model->ifsc) ? true : false]) ?>-->
+                <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+            </div>
+            <!--<div class="col-sm-2">
+            <?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+            </div>-->
+            <?php
+//            $this->render('_bank_details_form', [
+//                'model' => $model,
+//                'form' => $form,
+//                'dist_field' => 'tbldcsprovisional-district_code'
+//            ])
             ?>
         <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
@@ -546,4 +599,30 @@ $form = ActiveForm::begin([
 
     $script = "var delay=2000;";
     $this->registerJs($script, View::POS_HEAD, 'time-loader');
+    $script = "
+   $('#tbldcsprovisional-bank_code').on('change',function(){
+        $('#tbldcsprovisional-ifsc').val('');
+    });
+    
+    $('#tbldcsprovisional-branch_code').on('change',function(){
+            var id = $('#tbldcsprovisional-branch_code').val();
+            $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
+                        data: 'id='+id,
+                        success: function(data) {
+                                var obj1 = $.parseJSON(data);
+                                $('#tbldcsprovisional-ifsc').val(obj1.code);
+//                                if(obj1.code!='')
+//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
+//                                else
+//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
+                        },
+                        error:function(data){
+                                    //alert('Your data has not been submitted..Please try again');
+                                }
+            });
+    });
+";
+$this->registerJs($script, View::POS_END, 'bank-select');
     

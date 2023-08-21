@@ -47,7 +47,7 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $pending_approval = false) {
         $query = TblDcsProvisional::find();
 
         // add conditions that should always apply here
@@ -60,12 +60,54 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
         $query->joinWith(['stateCode', 'districtCode', 'defaultMobileNo']);
 
         $this->load($params);
-        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_provisional','tbl_dcs_provisional');
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
+        
+//        if ($pending_approval) {
+//            $levelQuery = TblProcessApproval::find()
+//                ->select(['process_code', 'MIN(level_priority) AS level_priority'])
+//                ->where(['status' => 0])
+//                ->groupBy('process_code');
+//
+//            $subQuery = TblProcessApproval::find()
+//                    ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
+//                    ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
+//                    ->where(['tbl_process_approval.statuss' => 0]);
+////                    ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
+//
+//            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_dcs_provisional.dcs_provisional_code) = convert(varchar(max),ap.process_code)');
+//            $query->addSelect(['tbl_dcs_provisional.*', 'ap.process_approval_code as process_approval_code']);
+//            $this->status = ['Register', 'Inprogress'];
+//            $query->where(['tbl_dcs_provisional.status' => $this->status]);
+//        }
+        
+        if ($pending_approval) {
+            $login_type = \Yii::$app->user->identity->login_type; 
+            $user_code = \Yii::$app->user->identity->user_code;
+                    
+            $levelQuery = TblProcessApproval::find()
+                ->select(['process_code', 'MIN(level_priority) AS level_priority', new \yii\db\Expression("CASE WHEN login_type = '' THEN user_code ELSE login_type END AS check_field")])
+                ->where(['status' => 0])
+                ->groupBy(['process_code','login_type','user_code']);
+
+            $subQuery = TblProcessApproval::find()
+                    ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
+                    ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
+                    ->where(['tbl_process_approval.status' => 0])
+                    ->andWhere(['check_field' => new \yii\db\Expression("CASE WHEN login_type = '' THEN '$user_code' ELSE '$login_type' END")]);
+//                    ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
+
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_dcs_provisional.dcs_provisional_code) = convert(varchar(max),ap.process_code)');
+            $query->addSelect(['tbl_dcs_provisional.*', 'ap.process_approval_code as process_approval_code']);
+            $this->status = ['Register', 'Inprogress'];
+            $query->where(['tbl_dcs_provisional.status' => $this->status]);
+        }
+        
+//        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_provisional','tbl_dcs_provisional'); 
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_provisional', 'tbl_dcs_provisional', 'tbl_dcs_provisional', 'tbl_dcs_provisional');
 
         // grid filtering conditions
         $query->andFilterWhere([

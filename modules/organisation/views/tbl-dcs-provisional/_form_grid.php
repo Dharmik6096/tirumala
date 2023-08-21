@@ -243,24 +243,37 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'actions' => [
-        'views' => function($url, $model) {
+        'views' => function($url, $model) use ($pending_approval) {
+            $icon = '<i class="fa fa-eye"></i>';
+            $flage = 'view';
+            $url = ['/organisation/tbl-dcs-provisional/view', 'id' => $model->dcs_provisional_code];
+            if($pending_approval){
+                $icon = '<i class="fa fa-check"></i>';
+                $flage = 'approve';
+                $url = ['/organisation/tbl-dcs-provisional/approve-dcs', 'id' => $model->process_approval_code];
+            }
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
-            return Html::a('<i class="fa fa-eye"></i>', ['/organisation/tbl-dcs-provisional/view', 'id' => $model->dcs_provisional_code, 'flag' => 'view'], $options);
+            return Html::a($icon, $url, $options);
         },
-        'update' => function ($url, $model) {
+        'update' => function ($url, $model) use ($pending_approval) {
+            if($pending_approval){
+                return false;
+            }
             $name = $model->dcs_name;
             $class = ($model->is_active === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
-        'add-document' => function ($url, $model) {
+        'add-document' => function ($url, $model) use ($pending_approval) {
+            if($pending_approval){
+                return false;
+            }
             $disable = ($model->status == 'pending') ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-file"></i>', ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code], $options);
         },
     ]
 ];
-
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
 <div id='ImportAttachements'></div>
@@ -336,5 +349,5 @@ $(document).ready(function(){
     });
     
 });";
-$this->registerJs($script, View::POS_END, 'dcs-index');
+$this->registerJs($script, View::POS_END, 'provisional-dcs-index');
 ?>

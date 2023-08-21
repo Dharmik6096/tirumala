@@ -65,5 +65,5 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Dcs Provisional Ap
         </div>
     </div>
 </div>
-<div id="approvalDetails"></div>
-<div id="milkCollectionDetails"></div>
+<!--<div id="approvalDetails"></div>
+<div id="milkCollectionDetails"></div>-->

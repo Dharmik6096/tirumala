@@ -53,6 +53,7 @@ use yii\web\UploadedFile;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\document\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -70,14 +71,13 @@ class TblDcsProvisionalController extends ChildController {
      * @return mixed
      */
     public function actionIndex() {
-        $model = new TblDcsProvisional();
         $searchModel = new TblDcsProvisionalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                    'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => FALSE
         ]);
     }
 
@@ -96,32 +96,6 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
-//            echo "<pre>";
-//            print_r(Yii::$app->request->post());
-//            die;
-//            if (!empty(Yii::$app->request->post()['TblContactDetails'])) {
-//                $contactDetails = Yii::$app->request->post()['TblContactDetails'];
-//                $this->model->firstname = $contactDetails['firstname'];
-//                $this->model->lastname = $contactDetails['lastname'];
-//                $this->model->surname = $contactDetails['surname'];
-//                $this->model->local_firstname = $contactDetails['local_firstname'];
-//                $this->model->local_lastname = $contactDetails['local_lastname'];
-//                $this->model->local_surname = $contactDetails['local_surname'];
-//                $this->model->mobile_no = $contactDetails['mobile_no'];
-//                $this->model->detail_code = $contactDetails['detail_code'];
-//                $this->model->department = $contactDetails['department'];
-//            }
-//
-//            if (!empty(Yii::$app->request->post()['TblBankDetails'])) {
-//                $bankDetails = Yii::$app->request->post()['TblBankDetails'];
-//                $this->model->bank_code = $bankDetails['bank_code'];
-//                $this->model->branch_code = $bankDetails['branch_code'];
-//                $this->model->bank_account_no = $bankDetails['bank_account_no'];
-//                $this->model->ifsc = $bankDetails['ifsc'];
-//                $this->model->beneficiary_name = $bankDetails['beneficiary_name'];
-//            }
-//            $this->model->dcs_code = $this->model->getCode();
-
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -130,51 +104,8 @@ class TblDcsProvisionalController extends ChildController {
                 $this->model->address = $this->model->street1;
             }
             $this->setModel();
-
-            //set mapping data
-//            $mapList = [];
-//            if (!empty($this->model->village_code)) {
-//                $modelMapping = new TblDcsVillageMapping();
-//                $this->setMapping($modelMapping);
-//                array_push($mapList, $modelMapping);
-//            }
-//            $modelCodes = new TblSocietyCodes();
-//            $modelCodes->dcs_code = $this->model->dcs_code;
-//            $modelCodes->bipl_code = $modelCodes->getBiplCode($this->model->village_code);
-//            $modelCodes->union_code = $this->model->union_code;
-//            $modelCodes->bmc_code = $this->model->bmc_code;
-//            array_push($mapList, $modelCodes);
-//            $this->bankDetails->load(Yii::$app->request->post());
-//            $bankValidate = 1;
-//            if (!empty($this->bankDetails->bank_code)) {
-//                $this->bankDetails->setModel('society', $this->model->dcs_code);
-//                $this->bankDetails->scenario = 'bank_selected';
-//                array_push($mapList, $this->bankDetails);
-//
-//                $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
-//            }
-//            $this->contactDetails->load(Yii::$app->request->post());
-//            if (!empty($this->contactDetails->mobile_no)) {
-//                $this->contactDetails->setModel('society', $this->model->dcs_code);
-//                array_push($mapList, $this->contactDetails);
-//            }
-            //set milk type data
             $modelMilkType = $this->setMilk();
             $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
-//            if (!empty($modelMilkType))
-//                $mapList = array_merge($mapList, $modelMilkType);
-//            if ($this->model->vendor != 'NA') {
-//                $vendorModel = new TblSocietyVendor();
-//                $vendorModel->dcs_code = $this->model->dcs_code;
-//                $vendorModel->vendor_code = $this->model->vendor;
-//                array_push($mapList, $vendorModel);
-//            }
-//            if ($bankValidate == 1 && $_POST['warning'] == 0) {
-//                $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
-//                $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
-//            }
-//            if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
-//                $this->model->setModelData($this->model, $mapList);
             $this->model->cutoff = '0000';
             if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
                 $val = str_replace('.', '', $this->model->cutoff_val);
@@ -186,41 +117,9 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->milk_type = implode(',', $this->model->milk_type_code);
             $this->model->vendor_code = $this->model->vendor;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['society', 'create']);
-//                $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
             if ($transaction == 'customRedirect') {
-//                    if ($transaction == 'customRedirect') {
-//                        if (!empty($vendorModel)) {
-//                            $orgMap = [];
-//                            $userModel = new User();
-//                            $users = $userModel->findByRole([$vendorModel->vendor_code]);
-//                            foreach ($users as $user) {
-//                                if (empty($user->user_type_id) || $user->user_type_id == 7) {
-//                                    //TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
-//                                    if (empty($user->user_type_id)) {
-//                                        $user->user_type_id = 7;
-//                                        array_push($orgMap, $user);
-//                                    }
-//                                    $modelNew = new TblUserOrganizationMapping();
-//                                    $modelNew->organization_code = $vendorModel->dcs_code;
-//                                    $modelNew->organization_type = 'DCS';
-//                                    $modelNew->user_id = $user->id;
-//                                    $modelNew->is_active = $user->is_active;
-//                                    Yii::$app->operation->defaults($modelNew, INSERT);
-//                                    array_push($orgMap, $modelNew);
-//                                }
-//                            }
-//                            if (strtolower($vendorModel->vendor_code) == 'eipl') {
-//                                $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
-//                                if (!file_exists($path) || !is_dir($path)) {
-//                                    FileHelper::createDirectory($path);
-//                                }
-//                            }
-//                            $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
-//                        }
-//                    }
                 return $this->{$transaction}();
             }
-//            }
         }
         return $this->customRender();
     }
@@ -293,7 +192,7 @@ class TblDcsProvisionalController extends ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id, $flag) {
+    public function actionView($id) {
         $searchModel = new TblDcsProvisionalSearch();
         $searchModel->dcs_provisional_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -306,8 +205,7 @@ class TblDcsProvisionalController extends ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'dataProviderOther' => $dataProviderOther,
-                    'attachment' => $attachment,
-                    'flag' => $flag
+                    'attachment' => $attachment
         ]);
     }
 
@@ -445,15 +343,71 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
         $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
     }
-
-    public function actionDcsProvisionalApproval() {
+    
+    public function actionPendingApproval() {
         $searchModel = new TblDcsProvisionalSearch();
-        $searchModel->scenario = 'dcsApprove';
-        $dataProvider = $searchModel->dcsApproveSearch(Yii::$app->request->queryParams);
-
-        return $this->render('_bulk_approval_grids', [
-                    'model' => $searchModel,
+//        echo "<pre>";
+//        print_r(\Yii::$app->user->identity);
+//        die;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => TRUE
+        ]);
+    }
+    
+    public function actionApproveDcs($id) {
+        $model = TblProcessApproval::findOne($id);
+        $model->scenario = 'approve';
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model_save = [];
+            $model->status_date = date('Y-m-d H:i:s');
+            $model->status_by = \Yii::$app->user->identity->user_code;
+            if ($model->approval_mode == 'flexi') {
+                $level_user = TblProcessApproval::find()
+                        ->where(['application_id' => $model->application_id, 'level' => $model->level])
+                        ->andWhere(['IS', 'application_status', NULL])
+                        ->all();
+                foreach ($level_user as $approval) {
+                    $approval->status_date = $model->status_date;
+                    $approval->status_by = $model->status_by;
+                    //  $approval->approved_value = $model->approved_value;
+                    $approval->application_status = $model->application_status;
+                    $approval->status_remarks = $model->status_remarks;
+                    $model_save[] = $approval;
+                }
+            } else {
+                $model->status_date = date('Y-m-d H:i:s');
+                $model->status_by = \Yii::$app->user->identity->user_code;
+                $model_save[] = $model;
+            }
+            if (!empty($model_save)) {
+                $next_count = TblSchemeApplicationApproval::find()
+                        ->where(['application_id' => $model->application_id, 'level' => $model->level + 1])
+                        ->count();
+                $status = ($next_count > 0 && $model->application_status == 'approved') ? 'inprocess' : $model->application_status;
+                $application = $this->findModel($model->application_id);
+                $historyModel = new TblSchemeApplicationHistory();
+                Yii::$app->operation->history($application, $historyModel, UPDATE);
+                $model_save[] = $historyModel;
+                $application->application_status = $status;
+                $application->status_date = $model->status_date;
+                $application->status_by = $model->status_by;
+                //  $application->approved_value = $model->approved_value;
+                $application->status_remarks = $model->status_remarks;
+                $model_save[] = $application;
+                $transaction = $this->generalModel->saveTransaction($model_save, ['Scheme Application Approval', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['pending-approval']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Application already approved by other user.']);
+            }
+        }
+        return $this->render('approve_dcs', [
+                    'model' => $model,
         ]);
     }
 }
