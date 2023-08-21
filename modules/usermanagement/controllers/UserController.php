@@ -30,13 +30,15 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $model->username = Yii::$app->general->getUserName($model->username);
         }
         if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
             //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
             $master = [];
             $delete = [];
             if ($model->validate()) {
                 if ($tableName == "{{%user}}") {
+                    $UsersModel = $this->findModel($id);
                     $historyModel = new UserHistory();
-                    Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    Yii::$app->operation->history($UsersModel, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
                     $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
