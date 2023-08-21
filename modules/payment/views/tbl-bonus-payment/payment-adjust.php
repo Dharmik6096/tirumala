@@ -37,6 +37,16 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
         ]);
         ?>
         <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
+        <?= Html::activeHiddenInput($model, 'from_datetime'); ?>
+        <?= Html::activeHiddenInput($model, 'to_datetime'); ?>
+        <?= Html::activeHiddenInput($model, 'union_code'); ?>
+        <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
+        <?php foreach ($model->bmc_code as $bmc_code) { ?>
+            <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+        <?php } ?>
+
+        <?= Html::activeHiddenInput($model, 'customer_type'); ?>
+        <?= Html::activeHiddenInput($model, 'payment_type'); ?>
         <?php
         $attribute = [
                 ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
@@ -105,7 +115,7 @@ $('#adjust').click(function() {
             
 });
 function postVspProcessData(){
-            var postVspProcessData = $('#payment-adjust').serializeArray();
+            var postVspProcessData = $('#bonus-payment-adjust').serializeArray();
             $.ajax({
                     type: 'post',
                     url: '" . Url::to(['payment-adjust']) . "',
@@ -127,7 +137,6 @@ function postVspProcessData(){
                     }
                 });
                 return false; 
-                $('#payment-adjust').submit();
 }
 ";
 $script .= "$(document).ready(function(){

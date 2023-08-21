@@ -32,7 +32,7 @@ $society_name = !empty($dataProvider->getModels()) ?
                     'attributes' => $attribute,
                     'active_column' => FALSE,
                 ];
-                Yii::$app->grid->bind($dataProvider, FALSE, $grid_option, ['#'], FALSE);
+                Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], FALSE);
                 ?>
             </div>
         </div>

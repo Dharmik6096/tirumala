@@ -3,6 +3,8 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use app\modules\dcsoperation\models\TblMember;
+use app\modules\globalmaster\models\TblCustomerType;
 
 /**
  * This is the model class for table "tbl_bonus_payment".
@@ -47,42 +49,39 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblBonusPayment extends \app\models\ChildModel
-{
+class TblBonusPayment extends \app\models\ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_bonus_payment';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bonus_payment_summary_code'], 'required'],
-            [['bonus_payment_summary_code', 'is_verified', 'originating_type'], 'integer'],
-            [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable', 'disburse_amount'], 'number'],
-            [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at'], 'safe'],
-            [['customer_type', 'customer_code'], 'string', 'max' => 20],
-            [['customer_name', 'bank_name', 'branch_name', 'beneficiary_name'], 'string', 'max' => 100],
-            [['status', 'utr_no', 'reference_no', 'bank_status', 'payment_transaction_code'], 'string', 'max' => 50],
-            [['bank_code'], 'string', 'max' => 4],
-            [['branch_code'], 'string', 'max' => 9],
-            [['ifsc', 'bank_account_no', 'reject_reason'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['bonus_payment_summary_code'], 'required'],
+                [['bonus_payment_summary_code', 'is_verified', 'originating_type'], 'integer'],
+                [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable', 'disburse_amount'], 'number'],
+                [['disburse_date', 'payment_date', 'process_date', 'created_at', 'updated_at'], 'safe'],
+                [['customer_type', 'customer_code'], 'string', 'max' => 20],
+                [['customer_name', 'bank_name', 'branch_name', 'beneficiary_name'], 'string', 'max' => 100],
+                [['status', 'utr_no', 'reference_no', 'bank_status', 'payment_transaction_code'], 'string', 'max' => 50],
+                [['bank_code'], 'string', 'max' => 4],
+                [['branch_code'], 'string', 'max' => 9],
+                [['ifsc', 'bank_account_no', 'reject_reason'], 'string', 'max' => 255],
+                [['created_by', 'updated_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'bonus_payment_code' => Yii::t('app', 'Bonus Payment Code'),
             'bonus_payment_summary_code' => Yii::t('app', 'Bonus Payment Summary Code'),
@@ -125,4 +124,17 @@ class TblBonusPayment extends \app\models\ChildModel
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
+    public function getBonusPaymentSummaryCode() {
+        return $this->hasOne(TblBonusPaymentSummary::className(), ['bonus_payment_summary_code' => 'bonus_payment_summary_code']);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
+    }
+
+    public function getMemberCode() {
+        return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
 }
