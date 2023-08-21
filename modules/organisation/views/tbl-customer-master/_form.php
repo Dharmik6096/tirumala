@@ -9,6 +9,7 @@ use yii\helpers\Url;
 $readonly = $type == 'create' ? FALSE : TRUE;
 $nameWarning = 0;
 $nameWarning = !empty($_POST['warning']) ? $_POST['warning'] : 0;
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -81,7 +82,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'local_name')->textInput() ?>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         <div class="col-sm-4">
@@ -92,6 +93,9 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
+        </div>
+        <div class="col-sm-4 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? '' : 'hidden-for-specific-client' ?>" >
+            <?= Yii::$app->dropdown->dropdownStatic('customer_category', $model, $form, '', $model->getAttributeLabel('customer_category'), false, 'customer_category', false); ?>    
         </div>
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_m')->textInput() ?>

@@ -22,6 +22,7 @@ if (!empty($_POST)) {
 }
 $disabled = ($model->is_mcc == 1) ? TRUE : FALSE;
 $milkType = $model->getMilkTypes();
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php
 $form = ActiveForm::begin([
@@ -126,7 +127,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
             <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">

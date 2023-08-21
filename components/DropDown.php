@@ -1534,7 +1534,12 @@ class DropDown extends Component {
                 'name' => 'reason',
                 'prompt' => Yii::t('app', 'Select Reason'),
                 'data' => ['consumed' => Yii::t('app', 'Consumed'), 'screaped' => Yii::t('app', 'Screaped'), 'lost' => Yii::t('app', 'Lost')],
-            ]
+            ],
+            'customer_category' => [
+                'name' => 'customer category',
+                'prompt' => Yii::t('app', 'Select Customer Category'),
+                'data' => ['small' => Yii::t('app', 'small'), 'medium' => Yii::t('app', 'medium'), 'large' => Yii::t('app', 'large')],
+            ],
         ];
         return $records[$l];
     }

@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php
 $attribute = [
@@ -34,7 +35,8 @@ $attribute = [
         ['attribute' => 'ref_code'],
         ['attribute' => 'customer_name'],
         ['attribute' => 'local_name', 'filter' => FALSE],
-        ['attribute' => 'gst_no',],
+        ['attribute' => 'gst_no', 'visible' => isset($eiplCode) && $eiplCode == 'CARGILL' || $eiplCode === 'KOTMALE' ? false : true],
+        ['attribute' => 'customer_category', 'visible' => isset($eiplCode) && $eiplCode == 'CARGILL' || $eiplCode === 'KOTMALE' ? true : false],
         ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,

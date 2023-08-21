@@ -13,6 +13,7 @@ if (!empty($_POST)) {
     $nameWarning = $_POST['warning'];
     $codeWarning = $_POST['code_warning'];
 }
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -104,13 +105,13 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-    <div class="col-sm-2">
+    <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
         <?= $form->field($model, 'gstin')->textInput() ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'tds_per')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>"> 
         <?= $form->field($model, 'pan_no')->textInput() ?>
     </div>
     <!--<div class="col-sm-2">-->

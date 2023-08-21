@@ -15,6 +15,7 @@ $class = 'disabled';
 //    $codeWarning = $_POST['code_warning'];
 //}
 $list = array('0' => 'No', '1' => 'Yes');
+$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -57,7 +58,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'registration_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
             <?= $form->field($model, 'applicable_rto')->textInput() ?>
         </div>
         <div class="col-sm-2">
