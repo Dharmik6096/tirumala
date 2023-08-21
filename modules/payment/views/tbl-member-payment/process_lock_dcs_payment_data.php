@@ -130,11 +130,11 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                             <?= Html::activeHiddenInput($model, 'dcs_code[]', ['value' => $data['dcs_code']]); ?>
                         <?php } ?>
                         <?php //Yii::$app->controls->save('Confirm', $model);                ?>
-                        <?= Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn btn-primary ', 'id' => 'adjustDcsData']); ?>
-                        <?= Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn btn-primary', 'id' => 'adjust-lock-dcs-data']); ?>
+                        <?= Html::button(Yii::t('app', 'Save as Draft'), ['class' => 'btn-login btn btn-primary ', 'id' => 'adjustDcsData']); ?>
+                        <?= Html::button(Yii::t('app', 'Finalize'), ['class' => 'btn-login btn btn-primary', 'id' => 'adjust-lock-dcs-data']); ?>
 
                     <?php } ?>
-                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment'); ?>        
+                    <?= Yii::$app->controls->custombutton('Cancel', 'create-payment','','btn-login'); ?>        
                 </div>
                 <?php ActiveForm::end(); ?>
 

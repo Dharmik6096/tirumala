@@ -44,7 +44,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', $title));
                 'actions' => [
                     'update-rate-status' => function ($url, $model) {
                         $name = $model->purchase_rate_code . '-' . $model->purchaseRateCode->description;
-                        $icon_class = ($model->is_active == 1) ? 'fa-close' : 'fa-check';
+                        $icon_class = ($model->is_active == 1) ? 'fa-times' : 'fa-check';
                         $title = ($model->is_active == 1) ? 'Block' : 'Un-Block';
                         $name = ($model->is_active == 1) ? 'Block ' . $name : 'Un-Block ' . $name;
                         $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => 'deact-rate', 'data-val' => $model->rate_app_code, 'data-name' => $name];

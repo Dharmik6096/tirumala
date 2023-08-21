@@ -32,7 +32,7 @@ $grid_option = [
         'active' => function ($url, $model) {
             $class = ($model->is_active == 1) ? '' : 'link-disable';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Active', 'class' => 'in-active ' . $class, 'data-app_login_id' => $model->app_login_id];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/webservice/eipl/tbl-eipl-app-login/in-active-app'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/webservice/eipl/tbl-eipl-app-login/in-active-app'], $options);
         },
     ]
 ];

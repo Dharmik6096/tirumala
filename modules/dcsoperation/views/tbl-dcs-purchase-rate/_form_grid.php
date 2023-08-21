@@ -102,7 +102,7 @@ $grid_option = [
         },
         'deactivate' => function ($url, $model) {
             $active = ($model->is_active == 0) ? FALSE : TRUE;
-            $icon_class = $active ? 'fa-close' : 'fa-check';
+            $icon_class = $active ? 'fa-times' : 'fa-check';
             $title = $active ? 'Deactivate' : 'Activate';
             $name = $active ? 'Deactivate' : 'Activate';
             $name .= '-' . $model->purchase_rate_code;
