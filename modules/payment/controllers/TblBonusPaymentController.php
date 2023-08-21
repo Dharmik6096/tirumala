@@ -12,11 +12,14 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
+use app\modules\payment\models\TblBonusPaymentSummarySearch;
+use app\modules\payment\models\TblBonusPaymentSummaryHead;
+use app\modules\payment\models\TblBonusPaymentHead;
 
 class TblBonusPaymentController extends ChildController {
 
     public function actionIndex() {
-        $searchModel = new TblBonusPaymentSearch();
+        $searchModel = new TblBonusPaymentSummarySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -26,8 +29,13 @@ class TblBonusPaymentController extends ChildController {
     }
 
     public function actionView($id) {
+        $searchModel = new TblBonusPaymentSearch();
+        $searchModel->bonus_payment_summary_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id),
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -46,7 +54,7 @@ class TblBonusPaymentController extends ChildController {
                 $queryParam = [];
                 $queryParam[] = 'process-payment';
                 $queryParamRegenerate = [];
-                $queryParam['TblBonusPaymentSummary'] = ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code, 'payment_type' => 'MEMBER', 'customer_type' => 'DCS'];
+                $queryParam['TblBonusPaymentSummary'] = ['from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'union_code' => $model->union_code, 'payment_type' => 'MEMBER', 'customer_type' => 'DCS', 'mcc_plant_code' => $model->mcc_plant_code];
                 $queryParamRegenerate = $queryParam;
                 $queryParamRegenerate['reGenerate'] = 0;
                 if ($allow_process) {
@@ -102,9 +110,11 @@ class TblBonusPaymentController extends ChildController {
         $model->load(Yii::$app->request->get());
         if (Yii::$app->request->post()) {
             $postData = Yii::$app->request->post();
+            var_dump($postData);
+            die;
         }
         $query = $model->getRecords();
-        $title = $model->payment_type . ' Payment Process : Step 2';
+        $title = $model->payment_type . ' Bonus Payment Process : Step 2';
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => FALSE,
@@ -116,8 +126,21 @@ class TblBonusPaymentController extends ChildController {
         ]);
     }
 
+    public function actionSummaryBillHead() {
+        $code = Yii::$app->request->get()['code'];
+        $model = $this->findModel($code);
+        $dataProvider = new ActiveDataProvider([
+            'query' => TblBonusPaymentSummaryHead::find()->where(['bonus_payment_summary_code' => $code]),
+            'pagination' => FALSE,
+        ]);
+        return $this->renderAjax('bill-head-view', [
+                    'dataProvider' => $dataProvider,
+                    'model' => $model
+        ]);
+    }
+
     protected function findModel($id) {
-        if (($model = TblBonusPayment::findOne($id)) !== null) {
+        if (($model = TblBonusPaymentSummary::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

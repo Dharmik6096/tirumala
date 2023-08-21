@@ -65,6 +65,12 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->bonus_payment_summary_code];
                     return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-bonus-payment/summary-bill-head', 'id' => $model->bonus_payment_summary_code], $options);
                 },
+                'member-detail' => function ($url, $model) {
+                    if ($model->payment_type == 'MEMBER') {
+                        $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Members', 'data-val' => $model->bonus_payment_summary_code];
+                        return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-bonus-payment/member-detail', 'id' => $model->bonus_payment_summary_code], $options);
+                    }
+                },
             ]
         ];
 
@@ -83,9 +89,9 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
 </div>
 <?php ActiveForm::end(); ?>
 <div id='bill_head_view'></div>
-<div id='add_recovery_data'></div>
 <?php
-$script = "$('#adjust-lock-dcs-data').click(function() {
+$script = "$('.kv-panel-before').hide();";
+$script .= "$('#adjust-lock-dcs-data').click(function() {
             $('.process_lock_flag').val('locked');
             $('#loadercontent').show();
             $('#pageloader').show();
@@ -118,68 +124,12 @@ function postVspProcessData(){
                         $('#loadercontent').hide();
                         $('#pageloader').hide();
                         return false;
-                            //alert('Your data has not been submitted..Please try again');
                     }
                 });
                 return false; 
                 $('#payment-adjust').submit();
 }
 ";
-$script .= " $('.cal-amount').on('blur',function(){     
-        var id = $(this).attr('id');
-        var parent = $(this).parents('tr');
-        var adjust = parseFloat(parent.find('.adjust-amount').val());
-        var final = parseFloat(parent.find('.final-amount').text());
-        var hold = parseFloat(parent.find('.hold-amount').val());
-        var adjust_recovery = parseFloat(parent.find('.adjust-recovery').text());
-        var recovery = parseFloat(parent.find('.recovery').text());
-
-
-        if(adjust == '' ||  isNaN(adjust)){
-        adjust=0;
-        }
-        if(hold == '' ||  isNaN(hold)){
-        hold=0;
-        }
-        if(adjust_recovery == '' ||  isNaN(adjust_recovery)){
-        adjust_recovery=0;
-        }
-        if(recovery == '' ||  isNaN(recovery)){
-        recovery=0;
-        }        
-
-        var net = final + adjust - hold + adjust_recovery - recovery;  
-         parent.find('.net-amount').val(net.toFixed(2));
-         SumAmount(); 
-//       if(net != '' && net < 0){
-//         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be Negative.</span>',function(){
-//                bootbox.hideAll();
-//                    $('#'+id).focus().select();
-//            });
-//            return false;
-//        } else {                   
-//          SumAmount();    
-//       }
-    });";
-$script .= " function SumAmount()
- {
- var total = parseFloat(0.00);
-      $('.adjust-amount').each(function() {
-      var adjust =  parseFloat($(this).val());
-  if(adjust != '' &&  !isNaN(adjust)){
-          total = total + adjust;  
-          }
-        }).get();
-   $('.hold-amount').each(function() {
-      var hold =  parseFloat($(this).val());
-  if(hold != '' &&  !isNaN(hold)){
-          total = total - hold;  
-          }
-        }).get();
-        total=$tot_amt+total;
- $('#total-payment').html('Total Payable :: '+total.toFixed(2));
- }      ";
-
 $script .= "$(document).ready(function(){
     $(document).on('click','.view-head',function(e){
     var id= $(this).attr('data-val');
@@ -189,7 +139,7 @@ $script .= "$(document).ready(function(){
         if(code != ''){         
         $.ajax({
                 type: 'get',
-                url: '" . Url::to(['/payment/tbl-vsp-payment/bill-head']) . "',
+                url: '" . Url::to(['/payment/tbl-bonus-payment/summary-bill-head']) . "',
                 data: {'code' : code},
                 beforeSend:function(data) {
                 $('#loadercontent').show();
@@ -209,86 +159,7 @@ $script .= "$(document).ready(function(){
         }
     }
 });";
-$script .= "$(document).ready(function(){
-    $(document).on('click','.add-recovery',function(e){
-    var id= $(this).attr('data-val');
-         AddRecoveryData(id);
-    });
-    function AddRecoveryData(code){
-        if(code != ''){         
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['/payment/tbl-vsp-payment/add-recovery']) . "',
-                data: {'code' : code},
-                beforeSend:function(data) {
-                $('#loadercontent').show();
-                $('#pageloader').show();
-                },
-                success: function(data) {
-                  $('#add_recovery_data').html(data);
-                   $('#RecoveryModal').modal('toggle');              
-                   $('#loadercontent').hide();
-                   $('#pageloader').hide();                                                                  
-                },
-                error: function(data) {  
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
-                }
-            });
-        }
-    }
-});";
-$script .= "$(document).on('blur','.cal-recovery',function(e){
-        var id = $(this).attr('id');
-        var parent = $(this).parents('tr');
-        var rec = parseFloat(parent.find('.recovery-amount').text());
-        var old_rec = parseFloat(parent.find('.old-recovery').text());
-        var new_rec = parseFloat(parent.find('.new-recovery').val());
-        var tot_rec = parseFloat(parent.find('.total-recovery').text());
-        if(rec == '' ||  isNaN(rec)){
-        rec=0;
-        }
-        if(new_rec == '' ||  isNaN(new_rec)){
-        new_rec=0;
-        }
-        if(old_rec == '' ||  isNaN(old_rec)){
-        old_rec=0;
-        }
-         tot_rec = rec + new_rec - old_rec;  
-         parent.find('.total-recovery').text(tot_rec.toFixed(2));       
-    });";
 
-$this->registerJs($script, View::POS_END, 'payment-adjust-script');
-?>
-<?php
-$script = "$('.kv-panel-before').hide();";
-$this->registerJs($script, View::POS_END, 'panel-before-hide');
+$this->registerJs($script, View::POS_END, 'bonus-payment-adjust-script');
 ?>
 
-<?php
-$script = "$(document).on('click','#add-installment',function(e){
-        $('#error-summary').hide();
-        var paymentData = [];
-            $('#vendor-installment-form .checkbox-installment').each(function () {
-             if(this.checked){
-                    paymentData.push($(this).val()); 
-                }
-            });
-       var skipHead=$('#vendor-head-skip-form').serialize();     
-        $.ajax({
-                    type: 'post',
-                    url: $('#vendor-head-skip-form').attr('action'),
-                    data: 'paymentData='+paymentData+'&'+skipHead,
-                    success: function(data) {
-                        var obj = $.parseJSON(data);
-                        if (obj.status == 'success')
-                        {
-                            location.reload();
-                        }else{
-                           bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>'+obj.msg+'</span>');
-                        }
-                    }
-                });           
-    })";
-$this->registerJs($script, View::POS_END, 'vendor-installment-form-submit');
-?>

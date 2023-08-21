@@ -3,6 +3,13 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use app\modules\organisation\models\TblDcs;
+use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblUnions;
 
 /**
  * This is the model class for table "tbl_bonus_payment_summary".
@@ -119,6 +126,34 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
                     'customer_type' => $this->customer_type,
                     'status' => ['generated', 'processed']
                 ])->orderBy(['bmc_code' => SORT_ASC, 'customer_code' => SORT_ASC]);
+    }
+
+    public function getCustomerType() {
+        return $this->hasOne(TblCustomerType::className(), ['customer_type' => 'customer_type', 'union_code' => 'union_code']);
+    }
+
+    public function getDcsCode() {
+        return $this->hasOne(TblDcs::className(), ['dcs_code' => 'customer_code']);
+    }
+
+    public function getCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
 }
