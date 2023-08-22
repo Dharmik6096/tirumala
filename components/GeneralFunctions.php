@@ -49,6 +49,8 @@ use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\general\models\TblProcessApproval;
+use yii\db\Expression;
 
 class GeneralFunctions extends Component {
 
@@ -2345,6 +2347,37 @@ class GeneralFunctions extends Component {
         }
 
         return null;
+    }
+    
+    public function getApproveLavel($process_name){
+        $subquery  = TblProcessApproval::find()
+            ->select([
+                'process_code',
+                'process_name',
+                new Expression('MIN(level_priority) AS level_priority'),
+                new Expression('MIN(level) AS level')
+            ])
+            ->where(['status' => 0,'process_name'=>$process_name])
+            ->groupBy(['process_code', 'process_name']);
+
+        $query = TblProcessApproval::find()
+            ->alias('app')
+            ->innerJoin(
+                    ['pnd' => $subquery], [
+                'pnd.process_code' => new Expression('app.process_code'),
+                'pnd.process_name' => new Expression('app.process_name'),
+                'pnd.level' => new Expression('app.level')
+                    ]
+            )
+            ->where([
+                'or',
+                    ['app.login_type' => \Yii::$app->user->identity->login_type],
+                    ['app.user_code' => \Yii::$app->user->identity->user_code]
+            ])
+            ->andWhere([
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END")
+            ]);
+            return $query;
     }
 
 }

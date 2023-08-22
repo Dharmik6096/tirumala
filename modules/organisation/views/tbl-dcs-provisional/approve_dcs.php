@@ -6,13 +6,10 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'Dcs Provisional Approval');
-$application = $model->dcsProvisional;
+$dcs_provisional = $model->dcsProvisional;
 
-//$documents = $application->dcsPrivisionalDocuments;
-//echo "<pre>";
-//print_r($application);
-//die;
-//$approval_detail = $application->applicationApproval;
+$documents = $dcs_provisional->dcsPrivisionalDocuments;
+$approval_detail = $dcs_provisional->dcsPrivisionalApproval;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">
@@ -26,11 +23,11 @@ $application = $model->dcsProvisional;
                     'columns' => [
                             [
                             'attribute' => 'union_code',
-                            'value' => Yii::$app->general->getforeignkey($application->unionCode, 'union_name'),
+                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             ['attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($application->bmcCode, 'bmc_name'),
+                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -43,7 +40,7 @@ $application = $model->dcsProvisional;
                         ],
 //                            [
 //                            'attribute' => 'dcs_code',
-//                            'value' => Yii::$app->general->getforeignkey($application->dcsProvisional, 'dcs_name'),
+//                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->dcsProvisional, 'dcs_name'),
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
                     ],
@@ -52,12 +49,12 @@ $application = $model->dcsProvisional;
 //                    'columns' => [
 //                            [
 //                            'attribute' => 'customer_type',
-//                            'value' => isset($application->customer_type) ? (strtolower($application->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($application->customerType, 'customer_desc') ) : '',
+//                            'value' => isset($dcs_provisional->customer_type) ? (strtolower($dcs_provisional->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($dcs_provisional->customerType, 'customer_desc') ) : '',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                            [
 //                            'attribute' => 'customer_name',
-//                            'value' => isset($application->customer_type) ? Yii::$app->general->getCustomer($application, $application->customer_type) : '',
+//                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type) : '',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                    ],
@@ -66,12 +63,12 @@ $application = $model->dcsProvisional;
                     'columns' => [
                             [
                             'attribute' => 'dcs_code_ex',
-                            'value' => isset($application->customer_type) ? Yii::$app->general->getCustomer($application, $application->customer_type, true) : '',
+                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, true) : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
 //                            [
 //                            'attribute' => 'customer_code',
-//                            'value' => isset($application->customer_type) ? Yii::$app->general->getCustomer($application, $application->customer_type, FALSE, FALSE, true) : '',
+//                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, FALSE, FALSE, true) : '',
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
                     ],
@@ -80,13 +77,13 @@ $application = $model->dcsProvisional;
                     'columns' => [
                             [
                             'attribute' => 'created_at',
-                            'value' => Yii::$app->controls->view_date($application->created_at),
+                            'value' => Yii::$app->controls->view_date($dcs_provisional->created_at),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
 //                            [
 //                            'attribute' => 'scheme_value',
 //                            'label' => Yii::t('app', 'Value(Scheme/Approved)'),
-//                            'value' => $application->scheme_value . '/' . $application->approved_value,
+//                            'value' => $dcs_provisional->scheme_value . '/' . $dcs_provisional->approved_value,
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
                     ],
@@ -96,14 +93,14 @@ $application = $model->dcsProvisional;
 //                            [
 //                            'attribute' => 'min_pouring_day',
 //                            'label' => Yii::t('app', 'Day(min/act)'),
-//                            'value' => $application->min_pouring_day . '/' . $application->actual_pouring_day,
+//                            'value' => $dcs_provisional->min_pouring_day . '/' . $dcs_provisional->actual_pouring_day,
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                            [
 //                            'attribute' => 'min_pouring_qty',
 //                            'label' => Yii::t('app', 'Qty(min/act)'),
 //                            'value' =>
-//                            $application->min_pouring_qty . '/' . $application->actual_pouring_qty,
+//                            $dcs_provisional->min_pouring_qty . '/' . $dcs_provisional->actual_pouring_qty,
 //                            'valueColOptions' => ['style' => 'width:30%']
 //                        ],
 //                    ],
@@ -118,7 +115,7 @@ $application = $model->dcsProvisional;
 //                ],
             ];
             echo DetailView::widget([
-                'model' => $application,
+                'model' => $dcs_provisional,
                 'attributes' => $attributes,
                 'mode' => 'view',
                 'bordered' => true,
@@ -185,7 +182,7 @@ $application = $model->dcsProvisional;
                                 <td><?= $approval->approval_mode; ?></td>
                                 <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
                                 <td><?= Yii::$app->general->getforeignkey($approval->statusBy, 'name') ?></td>
-                                <td><?= $approval->application_status; ?></td>
+                                <td><?= $approval->status; ?></td>
                                 <td><?= Yii::$app->controls->view_datetime($approval->status_date); ?></td>
                                 <td><?= $approval->approved_value; ?></td>
                                 <td><?= $approval->status_remarks; ?></td>

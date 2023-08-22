@@ -41,7 +41,7 @@ class TblProcessApproval extends \app\models\ChildModel {
         return [
 //                [['process_approval_code'], 'required'],
                 [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode'], 'safe'],
-                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type','remarks'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class TblProcessApproval extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'remarks' => Yii::t('app', 'Remarks'),
         ];
     }
 

@@ -22,6 +22,7 @@ use app\modules\general\models\TblSocietyVendor;
 use app\models\ChildModel;
 use app\modules\document\models\TblAttachment;
 use yii\db\Expression;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * This is the model class for table "tbl_dcs_provisional".
@@ -539,15 +540,18 @@ class TblDcsProvisional extends ChildModel {
     }
 
     public function getDcsPrivisionalDocuments() {
-        return $this->hasMany(TblAttachment::className(), [new Expression('CAST(module_code, varchar(max))') => new Expression('CAST(dcs_provisional_code, varchar(max)')]);
+        $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'dcs_provisional_code']);
     }
 
     public function getDcsPrivisionalApproval() {
-        return $this->hasMany(TblProcessApproval::className(), [new Expression('CAST(process_code AS varchar(max))') => new Expression('CAST(dcs_provisional_code AS varchar(max)')])->andOnCondition(['tbl_process_approval.status', 0])->orderBy('level ASC');
+        $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
     public function getDcsProvisional() {
-        return $this->hasOne(TblDcsProvisional::className(), [new Expression('CAST(dcs_provisional_code AS varchar(max))') => new Expression('CAST(process_code AS varchar(max)')]);
+        $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
+        return $this->hasOne(TblDcsProvisional::className(), ['dcs_provisional_code' => 'process_code']);
     }
 
     function validOneDigitDecimal($model, $attribute, $params) {

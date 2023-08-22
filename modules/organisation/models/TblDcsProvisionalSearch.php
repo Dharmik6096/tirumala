@@ -66,47 +66,14 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
             return $dataProvider;
         }
         
-//        if ($pending_approval) {
-//            $levelQuery = TblProcessApproval::find()
-//                ->select(['process_code', 'MIN(level_priority) AS level_priority'])
-//                ->where(['status' => 0])
-//                ->groupBy('process_code');
-//
-//            $subQuery = TblProcessApproval::find()
-//                    ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
-//                    ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
-//                    ->where(['tbl_process_approval.statuss' => 0]);
-////                    ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
-//
-//            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_dcs_provisional.dcs_provisional_code) = convert(varchar(max),ap.process_code)');
-//            $query->addSelect(['tbl_dcs_provisional.*', 'ap.process_approval_code as process_approval_code']);
-//            $this->status = ['Register', 'Inprogress'];
-//            $query->where(['tbl_dcs_provisional.status' => $this->status]);
-//        }
-        
         if ($pending_approval) {
-            $login_type = \Yii::$app->user->identity->login_type; 
-            $user_code = \Yii::$app->user->identity->user_code;
-                    
-            $levelQuery = TblProcessApproval::find()
-                ->select(['process_code', 'MIN(level_priority) AS level_priority', new \yii\db\Expression("CASE WHEN login_type = '' THEN user_code ELSE login_type END AS check_field")])
-                ->where(['status' => 0])
-                ->groupBy(['process_code','login_type','user_code']);
-
-            $subQuery = TblProcessApproval::find()
-                    ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
-                    ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
-                    ->where(['tbl_process_approval.status' => 0])
-                    ->andWhere(['check_field' => new \yii\db\Expression("CASE WHEN login_type = '' THEN '$user_code' ELSE '$login_type' END")]);
-//                    ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
-
+            $subQuery = Yii::$app->general->getApproveLavel('society');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_dcs_provisional.dcs_provisional_code) = convert(varchar(max),ap.process_code)');
             $query->addSelect(['tbl_dcs_provisional.*', 'ap.process_approval_code as process_approval_code']);
             $this->status = ['Register', 'Inprogress'];
-            $query->where(['tbl_dcs_provisional.status' => $this->status]);
+            $query->where(['tbl_dcs_provisional.status' => $this->status, 'tbl_dcs_provisional.is_active' => 1]);
         }
         
-//        Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_provisional','tbl_dcs_provisional'); 
         Yii::$app->general->filterByOrg($query, $this, 'tbl_dcs_provisional', 'tbl_dcs_provisional', 'tbl_dcs_provisional', 'tbl_dcs_provisional');
 
         // grid filtering conditions

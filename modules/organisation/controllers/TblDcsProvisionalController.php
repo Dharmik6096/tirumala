@@ -359,54 +359,21 @@ class TblDcsProvisionalController extends ChildController {
 
     public function actionApproveDcs($id) {
         $model = TblProcessApproval::findOne($id);
-        $model->scenario = 'approve';
+//        $model->scenario = 'approve';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save = [];
-//            if ($model->approval_mode == 'flexi') {
-////                $level_user = TblProcessApproval::find()
-////                        ->where(['process_code' => $model->dcs_provisional_code, 'level' => $model->level])
-////                        ->andWhere(['status' => 0])
-////                        ->all();
-////                foreach ($level_user as $approval) {
-////                    $approval->status = $model->status;
-////                    $approval->remarks = $model->remarks;
-////                    $model_save[] = $approval;
-////                }
-//                $level_user = TblProcessApproval::find()
-//                        ->where(['process_code' => $model->process_code, 'level_priority' => $model->level_priority])
-//                        ->andWhere(['status' => 0])
-//                        ->one();
-//                if(!empty($level_user)){
-//                    $level_user->status = $model->status;
-//                    $level_user->remarks = $model->remarks;
-//                    $model_save[] = $level_user;
-//                }
-//            } else {
-//                $model_save[] = $model;
-//            }
             $model_save[] = $model;
             if (!empty($model_save)) {
-                //master level check karvu padse
-//                $next_count = TblProcessApproval::find()
-//                        ->where(['process_code' => $model->dcs_provisional_code, 'level_priority' => $model->level_priority + 1])
-//                        ->count();
                 $next_count = TblProcessApproval::find()
-                        ->where(['process_code' => $model->process_code, 'level' => $model->level_priority + 1])
+                        ->where(['process_code' => $model->process_code, 'status' => 0])
+                        ->andWhere(['<>','process_approval_code', $model->process_approval_code])
                         ->count();
                 if ($model->status == '2') {
                     $status = 'Reject';
-                } else if ($model->status == '1') {
-                    if ($next_count > 0) {
-                        $status = 'Inprogress';
-                    } else {
-                        $status = 'Approve';
-                        $sub_next_count = TblProcessApproval::find()
-                                ->where(['process_code' => $model->process_code, 'level_priority' => $model->level_priority + 1])
-                                ->count();
-                        if($sub_next_count > 0){
-                            $status = 'Inprogress';
-                        }
-                    }
+                } else if ($model->status == '1' && $next_count > 0) {
+                    $status = 'Inprogress';
+                } else {
+                    $status = 'Approve';
                 }
                 if ($status == 'Approve' || $status == 'Reject') {
                     $dcsModel = $this->findModel($model->process_code);
@@ -435,20 +402,6 @@ class TblDcsProvisionalController extends ChildController {
     }
 
     public function createDcs($dcs_create_data, $model_save, $save_flage = false) {
-//        $this->model = new TblDcs();
-//        $this->viewFile = 'create';
-//        $this->model->scenario = 'createDcs';
-//        $this->bankDetails = new TblBankDetails();
-//        $this->contactDetails = new TblContactDetails();
-//        $this->contactDetails->form_validation_type = 'dcs-create';
-//        $this->model->district_code = Yii::$app->session->get('Districts');
-//        $this->model->valid_from = date('Y-m-d');
-//        $this->contactDetails->scenario = 'additional';
-//        $this->showIsBMC = $is_bmc == 1 ? true : false;
-//        $validate = 1;
-//        $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
-//        $this->model->is_bmc = $is_bmc;
-
         if (!empty($dcs_create_data)) {
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
@@ -458,22 +411,6 @@ class TblDcsProvisionalController extends ChildController {
             $validate = 1;
             $this->model->load($dcs_create_data);
             $this->model->dcs_code = $this->model->getCode();
-
-//            if ($this->model->street1 != '' && $this->model->street2 != '') {
-//                $this->model->address = $this->model->fullAddress();
-//            } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
-//                $this->model->address = $this->model->street2;
-//            } else {
-//                $this->model->address = $this->model->street1;
-//            }
-//            $this->setModel();
-
-            /* if ($this->model->is_bmc == 3 && $this->model->destination_code == '') {
-              $this->model->destination_code = 0;
-              $this->model->destination_type = 0;
-              } */
-
-
             //set mapping data
             $mapList = [];
             if (!empty($this->model->village_code)) {
@@ -487,11 +424,8 @@ class TblDcsProvisionalController extends ChildController {
             $modelCodes->bipl_code = $modelCodes->getBiplCode($this->model->village_code);
             $modelCodes->union_code = $this->model->union_code;
             $modelCodes->bmc_code = $this->model->bmc_code;
-            //$modelCodes->pooling_point_code = $modelCodes->getPpCode();
             array_push($mapList, $modelCodes);
-            //$mapList[0] = $modelMapping;
             $this->bankDetails->load($dcs_create_data);
-//            $this->bankDetails->load(Yii::$app->request->post());
             $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
                 $this->bankDetails->setModel('society', $this->model->dcs_code);
@@ -501,7 +435,6 @@ class TblDcsProvisionalController extends ChildController {
                 $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
             }
             $this->contactDetails->load($dcs_create_data);
-//            $this->contactDetails->load(Yii::$app->request->post());
             if (!empty($this->contactDetails->mobile_no)) {
                 $this->contactDetails->setModel('society', $this->model->dcs_code);
                 array_push($mapList, $this->contactDetails);
@@ -516,12 +449,6 @@ class TblDcsProvisionalController extends ChildController {
 //            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
-
-//               // $list = $this->model->setSubCenter('I');
-//
-//                if (!empty($list))
-//                    $mapList = array_merge($mapList, $list);
-            //var_dump($this->model);exit;
             //set vendor applicability
             if ($this->model->vendor != 'NA') {
                 $vendorModel = new TblSocietyVendor();
@@ -577,7 +504,6 @@ class TblDcsProvisionalController extends ChildController {
                             $save_flage = true;
                         }
                     }
-                    return $save_flage;
                 }
             }
         }
