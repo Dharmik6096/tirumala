@@ -5,13 +5,13 @@ use kartik\detail\DetailView;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
-$this->title = Yii::$app->label->title('view', 'Scheme Application Approval');
+$this->title = Yii::$app->label->title('view', 'Dcs Provisional Approval');
 $application = $model->dcsProvisional;
 
-$documents = $application->dcsPrivisionalDocuments;
-echo "<pre>";
-print_r($application);
-die;
+//$documents = $application->dcsPrivisionalDocuments;
+//echo "<pre>";
+//print_r($application);
+//die;
 //$approval_detail = $application->applicationApproval;
 ?>
 <div class="panel panel-default panel-grid panel-main">
@@ -215,13 +215,10 @@ die;
                     <?php echo $form->errorSummary($model); ?>
                     <div class="row">
                         <div class="col-sm-2">
-                            <?php //Yii::$app->dropdown->dropdownStatic('ws_approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
-                        </div>
-                        <div class="col-sm-2 number-validate">
-                            <?php //$form->field($model, 'approved_value')->textInput(['readOnly' => true]); ?>   
+                            <?= Yii::$app->dropdown->dropdownStatic('approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
                         </div>
                         <div class="col-sm-2">
-                            <?php //$form->field($model, 'status_remarks')->textarea(); ?>
+                            <?= $form->field($model, 'remarks')->textarea(); ?>
                         </div>
                         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">

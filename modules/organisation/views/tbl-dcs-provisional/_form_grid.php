@@ -245,11 +245,9 @@ $grid_option = [
     'actions' => [
         'views' => function($url, $model) use ($pending_approval) {
             $icon = '<i class="fa fa-eye"></i>';
-            $flage = 'view';
             $url = ['/organisation/tbl-dcs-provisional/view', 'id' => $model->dcs_provisional_code];
             if($pending_approval){
                 $icon = '<i class="fa fa-check"></i>';
-                $flage = 'approve';
                 $url = ['/organisation/tbl-dcs-provisional/approve-dcs', 'id' => $model->process_approval_code];
             }
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
