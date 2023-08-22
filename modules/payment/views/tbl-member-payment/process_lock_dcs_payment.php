@@ -87,7 +87,7 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$mode
                 ];
 
                 $grid_option = [
-                    'id' => 'confirm-society',
+                    'id' => 'member-payment-process-first',
                     'attributes' => $attribute,
                     'active_column' => false,
                     'showPageSummary' => true,

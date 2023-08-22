@@ -95,7 +95,7 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                 ];
 
                 $grid_option = [
-                    'id' => 'confirm-society',
+                    'id' => 'member-payment-process-second',
                     'attributes' => $attribute,
                     'active_column' => false,
                     'showPageSummary' => true,
