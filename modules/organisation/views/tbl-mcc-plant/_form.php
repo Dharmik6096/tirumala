@@ -14,7 +14,6 @@ if (!empty($_POST)) {
     $codeWarning = $_POST['code_warning'];
 }
 $disabled = ($model->is_plant == 1) ? TRUE : FALSE;
-$eiplCode = Yii::$app->session->get('eiplCode');
 $milkType = $model->getMilkTypes();
 ?>
 
@@ -89,7 +88,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
-        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">  
+        <div class="col-sm-2 hidden-for-specific-client">  
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         <div class="col-sm-2">

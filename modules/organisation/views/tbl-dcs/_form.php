@@ -47,7 +47,6 @@ if ($type == 'edit') {
     $vendorVal = Yii::$app->general->getforeignkey($model->societyVendors, 'vendor_code');
     $vendorDisable = !empty($vendorVal) ? TRUE : FALSE;
 }
-$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 
 <?php
@@ -249,7 +248,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
         </div>
-        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
         </div>
         <div class="col-sm-2">

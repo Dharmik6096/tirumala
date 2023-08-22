@@ -39,7 +39,6 @@ if ($model->isNewRecord) {
     $disabled = true;
 }
 $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty(Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'])) ? Yii::$app->session->get('unionConfig')[Yii::$app->session->get('Unions')]['member_with_class'] : 0;
-$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php echo $form->errorSummary($model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
@@ -250,13 +249,13 @@ $eiplCode = Yii::$app->session->get('eiplCode');
         <div class="col-sm-2">
             <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
-        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-2 <?= ($eiplCode === 'CARGILL' || $eiplCode === 'KOTMALE') ? 'hidden-for-specific-client' : '' ?>">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
         <div class="col-sm-2">
