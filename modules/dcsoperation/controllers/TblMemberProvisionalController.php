@@ -41,6 +41,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => FALSE
         ]);
     }
 
@@ -49,7 +50,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id, $flag) {
+    public function actionView($id) {
         $this->model = $this->findModel($id);
         $searchModel = new TblProvisionalMilkCollectionSearch();
         $params = Yii::$app->request->queryParams;
@@ -65,7 +66,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel,
                     'dataProviderOther' => $dataProviderOther,
                     'attachment' => $attachment,
-                    'flag' => $flag,
         ]);
     }
 
@@ -425,13 +425,91 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionProvisionalMembersApprovals() {
+    public function actionPendingApproval() {
         $searchModel = new TblMemberProvisionalSearch();
-        $dataProvider = $searchModel->memberprovisionalapprovesearch(Yii::$app->request->queryParams);
-        return $this->render('_bulk_approval_grids', [
-                    'model' => $searchModel,
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => TRUE
         ]);
+    }
+
+    public function actionApproveMember($id) {
+        $model = TblProcessApproval::findOne($id);
+        $model->scenario = 'approve';
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model_save = [];
+            $model_save[] = $model;
+            if (!empty($model_save)) {
+                $next_count = TblProcessApproval::find()
+                        ->where(['process_code' => $model->process_code, 'status' => 0])
+                        ->andWhere(['<>', 'process_approval_code' => $model->process_approval_code])
+                        ->count();
+                if ($model->status == '2') {
+                    $status = 'Reject';
+                } else if ($model->status == '1' && $next_count > 0) {
+                    $status = 'Inprogress';
+                } else {
+                    $status = 'Approve';
+                }
+                if ($status == 'Approve' || $status == 'Reject') {
+                    $memberModel = $this->findModel($model->process_code);
+                    $historyModel = new TblMemberProvisionalHistory();
+                    Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
+                    $model_save[] = $historyModel;
+                    $memberModel->provisional_status = $status;
+                    $memberModel->remarks = $model->remarks;
+                    $model_save[] = $memberModel;
+                    if ($memberModel->provisional_status == 'Approve') {
+                        $this->createmember($memberModel, $model_save);
+                    }
+                }
+                $transaction = $this->generalModel->saveTransaction($model_save, ['Member Provisional Approval', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['pending-approval']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Member provisional already approved by other user.']);
+            }
+        }
+        return $this->render('approve_member', [
+                    'model' => $model,
+        ]);
+    }
+
+    public function actionCreateMember($memberModel, $model_save) {
+        $memberModel->is_approved = 1;
+        $memberModel->approved_at = date('Y-m-d H:i:s');
+        $memberModel->approved_by = Yii::$app->session['UserCode'];
+        if ($this->model->is_approved = 1) {
+            $tblMember = new TblMember;
+            $tblMember->scenario = 'ApprovalMember';
+            $tblMember->attributes = $this->model->attributes;
+            $tblMember->member_code = $tblMember->getCode();
+            $historyModel = new TblMemberProvisionalHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $historyModel->provisional_member_code = $this->model->provisional_member_code;
+            $master[] = $tblMember;
+            $master[] = $this->model;
+            $master[] = $historyModel;
+            $milkCollectionData = new TblProvisionalMilkCollection();
+            $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code . $this->model->pro_ex_member_code);
+            if (!empty($milkCollectionData)) {
+                foreach ($milkCollectionData as $key => $value) {
+                    $deleteModel[] = $value;
+                    $tblMilkCollection = new TblMilkCollection();
+                    $tblMilkCollection->attributes = $value->attributes;
+                    $tblMilkCollection->member_code = $tblMember->member_code;
+                    $tblMilkCollection->is_provisional = 1;
+                    $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                    Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+                    $child_model[] = $tblMilkCollection;
+                    $child_model[] = $tblProvisionalMilkCollectionHistory;
+                }
+            }
+        }
     }
 
 //    public function actionProvisionalMembersApprovals() {

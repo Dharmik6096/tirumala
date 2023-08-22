@@ -65,7 +65,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         return $dataProvider;
     }
 
-    public function search($params) {
+    public function search($params, $pending_approval = false) {
         $query = TblMemberProvisional::find();
 
         $dataProvider = new ActiveDataProvider([
@@ -75,6 +75,16 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         $this->load($params);
 
         $query->joinWith(['memberTypeCode', 'dcsCode']);
+
+        if ($pending_approval) {
+            $subQuery = Yii::$app->general->getApproveLavel('member');
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_member_provisional.provisional_member_code) = convert(varchar(max),ap.process_code)');
+            $query->addSelect(['tbl_member_provisional.*', 'ap.process_approval_code as process_approval_code']);
+            $this->provisional_status = ['Register', 'Inprogress'];
+            $query->where(['tbl_member_provisional.provisional_status' => $this->provisional_status, 'tbl_member_provisional.is_active' => 1]);
+        }
+
+//        Yii::$app->general->filterByOrg($query, $this, 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional');
 
         Yii::$app->general->filterByOrg($query, $this);
 
@@ -100,35 +110,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
                 ->andFilterWhere(['like', 'tbl_member_provisional.mobile_no', $this->mobile_no])
                 ->andFilterWhere(['like', 'tbl_member_provisional.provisional_from', $this->provisional_from]);
 
-
-        return $dataProvider;
-    }
-
-    public function memberprovisionalapprovesearch($params) {
-        $query = TblMemberProvisional::find();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        $this->load($params);
-
-        Yii::$app->general->filterByOrg($query, $this);
-
-        $levelQuery = TblProcessApproval::find()
-                ->select(['process_code', 'MIN(level_priority) AS level_priority'])
-                ->where(['status' => 0])
-                ->groupBy('process_code');
-
-        $subQuery = TblProcessApproval::find()
-                ->select(['tbl_process_approval.process_code', 'tbl_process_approval.process_approval_code'])
-                ->innerJoin(['lq' => $levelQuery], 'tbl_process_approval.process_code = lq.process_code AND tbl_process_approval.level_priority = lq.level_priority')
-                ->where(['tbl_process_approval.status' => 0])
-                ->andWhere(['tbl_process_approval.user_code' => \Yii::$app->user->identity->user_code]);
-
-        $query->innerJoin(['ap' => $subQuery], 'tbl_member_provisional.provisional_member_code = ap.process_code');
-        $query->addSelect(['tbl_member_provisional.*', 'ap.process_approval_code as process_approval_code']);
-        $provisional_status = ['Register', 'Inprogress'];
-        $query->where(['tbl_member_provisional.provisional_status' => $provisional_status]);
 
         return $dataProvider;
     }

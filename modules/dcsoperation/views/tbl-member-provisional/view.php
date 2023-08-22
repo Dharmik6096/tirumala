@@ -477,33 +477,6 @@ $this->title = Yii::$app->label->title('view', 'provisional member');
         </div>
     </div>
     <br>
-    <?php if ($flag == 'approve') { ?>
-        <?php
-        $form = ActiveForm::begin([
-                    'options' => [],
-                    'validateOnBlur' => FALSE,
-                    'validateOnChange' => FALSE,
-                    'enableClientValidation' => true,
-                    'validateOnSubmit' => true,
-                    'action' => ['provisional-members-approvals'],
-        ]);
-        ?>
-        <?php echo $form->errorSummary($model); ?>
-
-        <div class="row">
-
-            <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                <div class="form-group">
-                    <?= Html::submitButton(Yii::t('app', 'Confirm'), ['class' => 'btn btn-danger']) ?>
-                    <?= Yii::$app->controls->custombutton('Cancle', '/dcsoperation/tbl-member-provisional/index'); ?>
-                </div>
-            </div>
-        </div>
-        <?php ActiveForm::end(); ?>
-    </div>
-
-    </div>
-<?php } ?>
 </div>
 <?php
 $script = "

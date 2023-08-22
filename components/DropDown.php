@@ -1698,6 +1698,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
             ],
+            'provisional_approval_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Approve'), '2' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }

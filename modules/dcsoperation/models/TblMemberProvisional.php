@@ -97,7 +97,7 @@ use app\modules\syncutility\models\TblSentbox;
  */
 class TblMemberProvisional extends ChildModel {
 
-    public $cnt, $reference_code, $society_code, $bmc_name;
+    public $cnt, $reference_code, $society_code, $bmc_name, $process_approval_code;
 
     /**
      * @inheritdoc
@@ -131,7 +131,7 @@ class TblMemberProvisional extends ChildModel {
                 [['email'], 'email', 'except' => ['androidsync']],
                 [['member_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'land_class', 'total_land', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'address', 'pan_no', 'adhar_no', 'village_code', 'created_by', 'updated_by', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'payment_mode', 'voter_id', 'approved_by',], 'string', 'except' => ['androidsync']],
                 [['qualification_code', 'caste_category_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'annual_income', 'is_active', 'animal_type_code', 'bloodgroup_code', 'gender_code', 'nominee_relation'], 'integer', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."10"'), 'except' => ['androidsync']],
-                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status'], 'safe'],
+                [['approved_at', 'created_at', 'updated_at', 'federation_code', 'bank_name', 'branch_name', 'upload', 'religion_code', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'is_approved', 'approved_at', 'provisional_status', 'process_approval_code'], 'safe'],
                 [['ifsc', 'pan_no'], 'trim', 'except' => ['androidsync']],
                 [['member_name', 'father_name', 'surname', 'nominee_name'], function ($attribute, $params) {
                     Yii::$app->general->validateDiscriptiveField($this, $attribute, $params);

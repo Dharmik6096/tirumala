@@ -84,26 +84,45 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'update' => function ($url, $model) {
-            $name = $model->member_name;
-            $class = ($model->is_approved == 1) ? 'link-disable' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+        'update' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $name = $model->member_name;
+                $class = ($model->is_approved == 1) ? 'link-disable' : '';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
+                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            }
         },
 //        'view' => true,
-        'views' => function($url, $model) {
+//        'views' => function ($url, $model) use ($pending_approval) {
+//            if ($pending_approval) {
+//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+//                return Html::a('<i class="fa fa-check"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code, 'flag' => 'approve'], $options);
+//            } else {
+//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View Member'];
+//                return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code, 'flag' => 'view'], $options);
+//            }
+//        },
+        'views' => function($url, $model) use ($pending_approval) {
+            $icon = '<i class="fa fa-eye"></i>';
+            $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+            if ($pending_approval) {
+                $icon = '<i class="fa fa-check"></i>';
+                $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+            }
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
-            return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code, 'flag' => 'view'], $options);
+            return Html::a($icon, $url, $options);
         },
         'milk_collection' => function ($url, $model) {
             $class = ($model->is_approved == 1 || strtolower($model->provisional_from) != 'collection') ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Milk Collection', 'class' => 'view_data ' . $class, 'data-dcs_code' => $model->dcs_code, 'data-pro_ex_mem_code' => $model->pro_ex_member_code, 'data-name' => $model->member_name];
             return GhostHtml::a_alert('<i class="fa fa-list"></i>', ['/dcsoperation/tbl-member-provisional/provisional-milk-collection-list'], $options);
         },
-        'document-upload' => function ($url, $model) {
-            $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
-            $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
+        'document-upload' => function ($url, $model) use ($pending_approval) {
+            if (!$pending_approval) {
+                $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
+                $options = ['title' => Yii::t('app', 'Add Document'), 'class' => $disable];
+                return GhostHtml::a('<i class="fa fa-file"></i>', ['/dcsoperation/tbl-member-provisional/document-upload', 'id' => $model->provisional_member_code], $options);
+            }
         },
     ]
 ];
