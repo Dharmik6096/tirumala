@@ -18,7 +18,7 @@ class TblBonusPaymentSearch extends TblBonusPayment
     public function rules()
     {
         return [
-            [['bonus_payment_code', 'bonus_payment_summary_code', 'is_verified', 'originating_type'], 'integer'],
+            [['bonus_payment_code', 'bonus_payment_summary_code', 'is_verified', 'originating_type'], 'safe'],
             [['customer_type', 'customer_code', 'customer_name', 'status', 'disburse_date', 'payment_date', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc', 'bank_account_no', 'beneficiary_name', 'utr_no', 'reference_no', 'process_date', 'reject_reason', 'bank_status', 'payment_transaction_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable', 'disburse_amount'], 'number'],
         ];

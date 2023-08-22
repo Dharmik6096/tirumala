@@ -3,20 +3,22 @@
 namespace app\modules\payment\controllers;
 
 use Yii;
-use app\modules\payment\models\TblBonusPayment;
-use app\modules\payment\models\TblBonusPaymentSearch;
 use app\controllers\ChildController;
 use yii\web\NotFoundHttpException;
-use app\modules\payment\models\TblBonusPaymentSummary;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
+use app\modules\payment\models\TblBonusPaymentSummary;
 use app\modules\payment\models\TblBonusPaymentSummarySearch;
 use app\modules\payment\models\TblBonusPaymentSummaryHead;
+use app\modules\payment\models\TblBonusPayment;
+use app\modules\payment\models\TblBonusPaymentSearch;
 use app\modules\payment\models\TblBonusPaymentHead;
 
 class TblBonusPaymentController extends ChildController {
+
+    public $freeAccessActions = ['bill-head', 'member-detail', 'payment-adjust', 'process-payment', 'summary-bill-head'];
 
     public function actionIndex() {
         $searchModel = new TblBonusPaymentSummarySearch();

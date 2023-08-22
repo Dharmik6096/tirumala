@@ -10,25 +10,25 @@ use app\modules\payment\models\TblBonusPaymentSummary;
 /**
  * TblBonusPaymentSummarySearch represents the model behind the search form about `app\modules\payment\models\TblBonusPaymentSummary`.
  */
-class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary
-{
+class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary {
+
+    public $from_date, $to_date, $customer_name, $customer_ex_code;
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bonus_payment_summary_code', 'from_shift', 'to_shift', 'originating_type'], 'integer'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'payment_type', 'from_datetime', 'to_datetime', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'number'],
+                [['bonus_payment_summary_code', 'from_shift', 'to_shift', 'originating_type', 'payment_date', 'customer_name', 'customer_ex_code'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'payment_type', 'from_datetime', 'to_datetime', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'number'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,59 +40,48 @@ class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblBonusPaymentSummary::find();
 
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
+        $query->joinWith(['dcsCode', 'customerCode', 'customerType']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bonus_payment_summary', 'tbl_bonus_payment_summary', 'tbl_bonus_payment_summary');
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_name', $this->customer_name], ['like', 'tbl_customer_master.customer_name', $this->customer_name]]);
+        $query->andFilterWhere(['or', ['like', 'tbl_dcs.dcs_code_ex', $this->customer_ex_code], ['like', 'tbl_customer_master.customer_code_ex', $this->customer_ex_code]]);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'CAST(tbl_bonus_payment_summary.from_datetime as date)', $from_date]);
+        }
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'CAST(tbl_bonus_payment_summary.to_datetime as date)', $to_date]);
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'bonus_payment_summary_code' => $this->bonus_payment_summary_code,
-            'from_datetime' => $this->from_datetime,
-            'from_shift' => $this->from_shift,
-            'to_datetime' => $this->to_datetime,
-            'to_shift' => $this->to_shift,
-            'kg_fat' => $this->kg_fat,
-            'kg_snf' => $this->kg_snf,
-            'avg_fat' => $this->avg_fat,
-            'avg_snf' => $this->avg_snf,
-            'qty' => $this->qty,
-            'amount' => $this->amount,
-            'addition' => $this->addition,
-            'deduction' => $this->deduction,
-            'net_payable' => $this->net_payable,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
-        ]);
 
-        $query->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'dcs_code', $this->dcs_code])
-            ->andFilterWhere(['like', 'customer_type', $this->customer_type])
-            ->andFilterWhere(['like', 'customer_code', $this->customer_code])
-            ->andFilterWhere(['like', 'payment_type', $this->payment_type])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+        $query->andFilterWhere(['=', 'CAST(tbl_bonus_payment_summary.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
+
+        $query->andFilterWhere(['like', 'tbl_bonus_payment_summary.payment_type', $this->payment_type])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.kg_fat', $this->kg_fat])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.kg_snf', $this->kg_snf])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.qty', $this->qty])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.amount', $this->amount])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.addition', $this->addition])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.deduction', $this->deduction])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.net_payable', $this->net_payable])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.customer_code', $this->customer_code])
+                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
+                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.status', $this->status]);
+
+        $query->orderBy(['tbl_bonus_payment_summary.from_datetime' => SORT_DESC]);
 
         return $dataProvider;
     }
+
 }
