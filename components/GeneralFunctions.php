@@ -2219,7 +2219,7 @@ class GeneralFunctions extends Component {
                 }
             }
             reset($objects);
-            // rmdir($dir);
+            rmdir($dir);
         }
     }
 
