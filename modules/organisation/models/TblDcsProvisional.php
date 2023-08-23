@@ -546,7 +546,8 @@ class TblDcsProvisional extends ChildModel {
 
     public function getDcsPrivisionalApproval() {
         $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
-        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->orderBy('level ASC');
+//        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
     public function getDcsProvisional() {

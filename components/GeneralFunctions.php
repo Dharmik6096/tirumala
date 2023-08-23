@@ -2375,7 +2375,8 @@ class GeneralFunctions extends Component {
                     ['app.user_code' => \Yii::$app->user->identity->user_code]
             ])
             ->andWhere([
-                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END")
+                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
+                'app.status' => 0
             ]);
             return $query;
     }

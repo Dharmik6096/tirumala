@@ -4,6 +4,7 @@ namespace app\modules\general\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcsProvisional;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -78,6 +79,14 @@ class TblProcessApproval extends \app\models\ChildModel {
     
     public function getDcsProvisional() {
         return $this->hasOne(TblDcsProvisional::className(), ['dcs_provisional_code' => 'process_code']);
+    }
+    
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getUpdatedBy() {
+        return $this->hasOne(User::className(), ['user_code' => 'updated_by']);
     }
 
 }
