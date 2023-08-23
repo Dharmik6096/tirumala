@@ -59,6 +59,12 @@ use webvimark\modules\UserManagement\components\GhostHtml;
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => FALSE],
             ['attribute' => 'sample_no', 'filter' => false],
+            ['attribute' => 'route_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
+            }, 'filter' => FALSE],
+            ['attribute' => 'old_route_code', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->oldRouteCode, 'route_name');
+            }, 'filter' => FALSE],
             ['attribute' => 'old_customer_code', 'filter' => false, 'visible' => (isset($is_dcs_editable) && $is_dcs_editable)],
             ['attribute' => 'old_milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->oldMilkTypeCode, 'animal_type_name');
@@ -82,6 +88,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'snf', 'filter' => false],
             ['attribute' => 'rtpl', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
+            ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
+            ['attribute' => 'antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
             ['attribute' => 'error_desc', 'filter' => false],
     ];
 
@@ -96,7 +104,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
     ?>
 </div>
 <div class="panel-footer" >
-<?php if (!empty($dataProvider->getModels())) { ?>
+    <?php if (!empty($dataProvider->getModels())) { ?>
         <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
         <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }

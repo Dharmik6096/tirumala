@@ -39,8 +39,8 @@ class TblBillHeadApplicability extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['created_at', 'updated_at', 'wef_date'], 'safe'],
-                [['wef_date', 'applicable_code'], 'required'],
+                [['created_at', 'updated_at', 'wef_date', 'from_date', 'to_date'], 'safe'],
+                [['from_date', 'to_date', 'applicable_code'], 'required'],
                 [['created_by', 'updated_by', 'dcs_code', 'bill_head_code', 'union_code'], 'safe'],
                 [['originating_org_code', 'originating_org_type', 'originating_type'], 'safe'],
                 [['applicable_code', 'applicable_for', 'bmc_code', 'bill_head_for'], 'safe'],

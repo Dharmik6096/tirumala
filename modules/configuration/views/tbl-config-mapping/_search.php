@@ -13,12 +13,11 @@ use yii\bootstrap\ActiveForm;
             <div class="">
                 <?php
                 $form = ActiveForm::begin(['options' => [
-                                'id' => 'report-form',
+                                'id' => 'control-form',
                                 'field-class' => 'form-group col-sm-6'
                             ],
                             'method' => 'get',
                             'validateOnBlur' => FALSE,
-                            
                             'validateOnChange' => FALSE,
                             'enableClientValidation' => true,
                             'validateOnSubmit' => true,

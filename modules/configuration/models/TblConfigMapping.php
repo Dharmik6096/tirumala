@@ -49,14 +49,19 @@ class TblConfigMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['config_code', 'originating_type'], 'integer'],
-            [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for'], 'safe'],
-            [['plant_code', 'mcc_plant_code', 'union_code'], 'required', 'except' => ['savemapping']],
-            [['bmc_code'], 'required', 'when' => function ($model) {
+                [['config_code', 'originating_type'], 'integer'],
+                [['config_result', 'org_type', 'org_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+                [['created_at', 'updated_at', 'plant_code', 'mcc_plant_code', 'bmc_code', 'process_name', 'config_for'], 'safe'],
+                [['plant_code', 'union_code'], 'required', 'except' => ['savemapping']],
+                [['bmc_code'], 'required', 'when' => function ($model) {
                     return $model->config_for == 'BMC';
                 }, 'whenClient' => "function (attribute, value) {
               return $('#tblconfigsearch-config_for').val() == 'BMC';
+          }"],
+                [['mcc_plant_code'], 'required', 'when' => function ($model) {
+                    return $model->config_for != 'PLANT';
+                }, 'whenClient' => "function (attribute, value) {
+              return $('#tblconfigsearch-config_for').val() != 'PLANT';
           }"],
         ];
     }
@@ -104,6 +109,7 @@ class TblConfigMapping extends \app\models\ChildModel {
             }
 
             $code = $this->org_type == 'BMC' ? $this->bmc_code : $this->mcc_plant_code;
+            $code = $this->org_type == 'PLANT' ? $this->plant_code : $code;
             $query = $this->find()
                     ->where(['IN', 'config_code', $codes])
                     ->andWhere(['org_type' => $this->org_type, 'org_code' => $code])

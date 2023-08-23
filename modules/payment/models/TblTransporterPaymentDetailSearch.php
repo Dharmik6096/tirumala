@@ -17,9 +17,9 @@ class TblTransporterPaymentDetailSearch extends TblTransporterPaymentDetail {
      */
     public function rules() {
         return [
-            [['payment_detail_code', 'transporter_payment_code'], 'integer'],
-            [['vehicle_code', 'parsing_no', 'from_type', 'from_dest', 'to_type', 'to_dest', 'dispatch_date', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
-            [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'avg_rate', 'morning_qty', 'evening_qty', 'qty', 'morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'km_rate', 'fuel_rate', 'fuel_consumption', 'amount', 'toll_amount', 'fastag_amount', 'fixed_amount', 'other_amount', 'total_amount'], 'number'],
+                [['payment_detail_code', 'transporter_payment_code'], 'integer'],
+                [['vehicle_code', 'parsing_no', 'from_type', 'from_dest', 'to_type', 'to_dest', 'dispatch_date', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'safe'],
+                [['coll_qty', 'coll_kg_fat', 'coll_kg_snf', 'disp_qty', 'disp_kg_fat', 'disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'cd_qty_diff', 'cd_kg_fat_diff', 'cd_kg_snf_diff', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'avg_rate', 'morning_qty', 'evening_qty', 'qty', 'morning_kms', 'evening_kms', 'extra_kms', 'total_kms', 'km_rate', 'fuel_rate', 'fuel_consumption', 'amount', 'toll_amount', 'fastag_amount', 'fixed_amount', 'other_amount', 'total_amount'], 'number'],
         ];
     }
 
@@ -105,7 +105,7 @@ class TblTransporterPaymentDetailSearch extends TblTransporterPaymentDetail {
                 ->andFilterWhere(['like', 'to_dest', $this->to_dest])
                 ->andFilterWhere(['like', 'created_by', $this->created_by])
                 ->andFilterWhere(['like', 'updated_by', $this->updated_by]);
-        $query->orderBy('vehicle_code,dispatch_date');
+        $query->orderBy('vehicle_code,dispatch_date,dispatch_datetime');
         return $dataProvider;
     }
 

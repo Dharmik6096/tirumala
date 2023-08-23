@@ -31,9 +31,9 @@ class TblEiplAppWidgetMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['widget_id'], 'integer'],
-            [['login_type', 'department', 'created_by', 'updated_by'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+                [['widget_id'], 'integer'],
+                [['login_type', 'department', 'created_by', 'updated_by'], 'string'],
+                [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -54,9 +54,9 @@ class TblEiplAppWidgetMapping extends \app\models\ChildModel {
     }
 
     public function getWidgets() {
-        if (!empty($this->login_type) && !empty($this->department)) {
+        if (!empty($this->login_type)) {
             $query = $this->find()
-                    ->where(['login_type' => $this->login_type, 'department' => $this->department])
+                    ->where(['login_type' => $this->login_type, "ISNULL(department,'')" => $this->department])
                     ->all();
             return ArrayHelper::map($query, 'widget_id', 'widget_id');
         } else {
@@ -66,7 +66,7 @@ class TblEiplAppWidgetMapping extends \app\models\ChildModel {
 
     public function getExistMappedWidgets() {
         return $this->find()
-                        ->where(['login_type' => $this->login_type, 'department' => $this->department, 'widget_id' => $this->widget_id])
+                        ->where(['login_type' => $this->login_type, 'widget_id' => $this->widget_id, "ISNULL(department,'')" => $this->department])
                         ->one();
     }
 

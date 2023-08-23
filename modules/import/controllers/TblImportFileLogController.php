@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TblImportFileLogController implements the CRUD actions for TblImportFileLog model.
  */
-class TblImportFileLogController extends Controller {
+class TblImportFileLogController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblImportFileLog models.

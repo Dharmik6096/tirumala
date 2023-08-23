@@ -88,12 +88,20 @@ class SqliteCreate extends Component {
                         while ($row = $results->fetchArray()) {
                             $tables_fields[] = $row['name'];
                         }
+                        if (in_array($tableName, ['tbl_product_stock'])) {
+                            $tables_fields = ['product_stock_code', 'product_code', 'stock', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at'];
+                        }
                         $tables_fields = implode(',', $tables_fields);
                         $fields = str_replace(',', ',' . $field['table_name'] . '.', $tables_fields);
                         if ($field['table_name'] == 'tbl_dcs_milk_dispatch_txn') {
                             $fields = str_replace('tbl_dcs_milk_dispatch_txn.amount', 'tbl_dcs_milk_dispatch_txn.total_amount', $fields);
                         }
                         $fields = $field['table_name'] . '.' . $fields;
+                        if (in_array($tableName, ['tbl_product_stock'])) {
+                            $fields = str_replace('tbl_product_stock.product_stock_code', "concat('MCC-', tbl_product_stock.mcc_plant_code, REPLACE(product_code, CONCAT('PORTAL-', tbl_product_stock.union_code), '')) as product_stock_code", $fields);
+                            $fields = str_replace('tbl_product_stock.stock', "sum(tbl_product_stock.stock) as stock", $fields);
+                            $fields = str_replace('tbl_product_stock.created_at', "getdate() as created_at", $fields);
+                        }
                         $sql = '';
                         if ($field['is_main'] == 1) {
                             if ($field['key_field'] == NULL) {
@@ -110,6 +118,9 @@ class SqliteCreate extends Component {
                                     } else if (strtolower($org_type) == 'vlc') {
                                         $sql .= " where $tableName.bmc_code   in ($whereBmcStock) and $tableName.dcs_code   in ($whereDcsStock) ";
                                     }
+                                    if (in_array($tableName, ['tbl_product_stock'])) {
+                                        $sql .= " group by tbl_product_stock.product_code, tbl_product_stock.union_code,tbl_product_stock.plant_code,tbl_product_stock.mcc_plant_code, tbl_product_stock.bmc_code,tbl_product_stock.dcs_code";
+                                    }
                                 }
                             } else {
                                 if ($field['table_name'] == 'tbl_payment_cycle_applicability') {
@@ -119,6 +130,9 @@ class SqliteCreate extends Component {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
                                     $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(to_type) = 'bmc')" . ' or (' . $field['key_field'] . " in ($whereMcc) and lower(to_type) = 'mcc'))";
+                                } else if ($field['key_field'] == 'source_org_code') {
+                                    $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
+                                    $sql = 'SELECT ' . $fields . ' FROM ' . $tableName . ' where (' . $field['key_field'] . ' is NULL or (' . $field['key_field'] . " in ($whereBmc) and lower(source_org_type) = 'bmc'))";
                                 } else if ($field['key_field'] == 'applicable_code') {
                                     $whereBmc = !empty($bmc_code) ? $bmc_code : '\'\'';
                                     $whereMcc = !empty($mcc_plant_code) ? $mcc_plant_code : '\'\'';
@@ -142,6 +156,20 @@ class SqliteCreate extends Component {
                                         if ($org_type == 'BMC') {
                                             $sql .= ' inner join tbl_dcs d on d.dcs_code = tbl_member.dcs_code and d.is_bmc = 1 ';
                                         }
+                                    } else if ($tableName == 'tbl_dcs') {
+                                        $currDate = date('Y-m-d');
+                                        if ($field['key_field'] == 'dcs_code') {
+                                            $whereKey = 'tbl_dcs.' . $field['key_field'];
+                                        }
+                                        $sql .= ' left join tbl_dcs_deactive dd on dd.dcs_code = tbl_dcs.dcs_code and (\'' . $currDate . '\' between CAST(dd.from_date as date) and CAST(ISNULL(dd.to_date, getdate()) as date)) ';
+                                        $sql = str_replace('tbl_dcs.is_active', ' CASE WHEN dd.from_date is null THEN tbl_dcs.is_active ELSE 0 END as is_active ', $sql);
+                                    } else if ($tableName == 'tbl_customer_master') {
+                                        $currDate = date('Y-m-d');
+                                        if ($field['key_field'] == 'bmc_code') {
+                                            $whereKey = 'tbl_customer_master.' . $field['key_field'];
+                                        }
+                                        $sql .= ' left join tbl_customer_deactive cd on cd.customer_code = tbl_customer_master.customer_code and (\'' . $currDate . '\' between CAST(cd.from_date as date) and CAST(ISNULL(cd.to_date, getdate()) as date)) ';
+                                        $sql = str_replace('tbl_customer_master.is_active', ' CASE WHEN cd.from_date is null THEN tbl_customer_master.is_active ELSE 0 END as is_active ', $sql);
                                     }
                                     $sql .= ' where ' . $whereKey . " in ($whereKeyField)";
                                     if ($tableName == 'tbl_member') {

@@ -283,7 +283,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
 
         $ackModel->hash_key = $hashKey;
         $ackModel->device_id = $devide_id;
-        $existAck = $ackModel->getExistDataAck($org_type);
+        $existAck = $ackModel->getExistDataAck($org_type, true);
         $role_data = [];
         $usr_data = [];
         $ackKey = [];
@@ -317,6 +317,16 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
         $ackKeys = $data['content']['ack_key'];
         $model = new TblUserDownloadAck();
         $model->updateAll(['download_date_time' => date('Y-m-d H:i:s'), 'download_pending' => 0], ['ack_id' => $ackKeys]);
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
+    public function actionProductStock() {
+        $data = $this->post_data;
+        $res_data = [];
+        if (!empty($data['organization_code']) && !empty($data['organization_type']) && in_array($data['organization_type'], ['VLC'])) {
+            $res_data = Yii::$app->general->getSpData('sp_app_amcs_v4_product_stock', [$data['organization_type'], $data['organization_code']]);
+        }
         $this->response['data'] = $res_data;
         return $this->response;
     }

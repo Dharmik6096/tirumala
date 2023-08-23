@@ -296,6 +296,26 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVlccTransactionDataReport() {
+        $this->report = 'VlccTransactionDataReport';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorMilkBillSnmilk() {
+        $this->report = 'VendorMilkBillSnmilk';
+        return $this->actionIndex();
+    }
+
+    public function actionMccDayBookDispatchHub() {
+        $this->report = 'MccDayBookDispatchHub';
+        return $this->actionIndex();
+    }
+
+    public function actionVendorMilkBillJgf() {
+        $this->report = 'VendorMilkBillJgf';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -709,7 +729,31 @@ class DefaultController extends \app\controllers\ChildController {
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift,p_language_code,p_report_name',
                 'path' => 'vsp/FarmerIncentive',
                 'scenario' => 'FarmerIncentive',
-                'title' => '111 - Farmer Incentive',
+                'title' => '110 - Farmer Incentive',
+            ],
+            'VendorMilkBillSnmilk' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillSNMilk',
+                'scenario' => 'VendorMilkBillSnmilk',
+                'title' => '616 - Milk Bill',
+            ],
+            'MccDayBookDispatchHub' => [
+                'param' => 'p_union_code,p_bmc_code:union_code,p_from_date:string,p_to_date:string',
+                'path' => 'TankerMovement/MCCDayBook',
+                'scenario' => 'MccDayBookDispatchHub',
+                'title' => 'MCC Day Book Dispatch Hub',
+            ],
+            'VendorMilkBillJgf' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VSPPaymentJGF',
+                'scenario' => 'VendorMilkBillJgf',
+                'title' => '616 - Milk Bill',
+            ],
+            'VlccTransactionDataReport' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'milkcollection/VLCCTransactionDataFTP',
+                'scenario' => 'VlccTransactionDataReport',
+                'title' => 'VLCC Transaction Data Report',
             ],
         ];
         return $label[$l];

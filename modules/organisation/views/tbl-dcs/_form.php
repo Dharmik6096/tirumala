@@ -69,7 +69,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2" id="union">
             <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
         </div>
-        <?= Html::activeHiddenInput($model, 'is_bmc') ?>
+        <?php if ($showIsBMC == 1) { ?>
+            <?= Html::activeTextInput($model, 'is_bmc') ?>
+        <?php } ?>
         <?= Html::activeHiddenInput($model, 'destination_type') ?>
         <?= Html::activeHiddenInput($model, 'destination_code') ?>
         <?= Html::activeHiddenInput($model, 'route_code') ?>
@@ -202,7 +204,11 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
             <?= $form->field($model, 'diff_milk_type', ['options' => ['class' => 'form-group col-sm-4'], 'checkboxTemplate' => '<div class="checkbox" >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
         </div>
-
+        <?php if ($showIsBMC == 0) { ?>
+            <div class="col-sm-2 mt15">
+                <?= $form->field($model, 'is_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+            </div>
+        <?php } ?>
     </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -231,22 +237,22 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2" id="district_section">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', 'District', FALSE); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
         </div>
         <!--    <div class="col-sm-3">
         <?php //Yii::$app->dropdown->district($model, $form, 'tbldcs-state_code', 'district_code', 'District');    ?>
             </div>-->
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Sub District', ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Village', ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
         </div>
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcs-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcs-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
         </div>
         <?php // }    ?>
         <div class="col-sm-2">
@@ -344,6 +350,12 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'cutoff_val')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'morning_kms')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'evening_kms')->textInput() ?>
         </div>
     </div>
 

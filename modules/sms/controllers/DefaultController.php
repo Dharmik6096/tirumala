@@ -9,6 +9,7 @@ use app\controllers\ChildController;
 use app\modules\sms\models\TblBulkNotification;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\models\GeneralModel;
+use app\modules\sms\models\TblBulkNotificationApplicability;
 
 /**
  * Default controller for the `sms` module
@@ -27,8 +28,9 @@ class DefaultController extends Controller {
                 if (!empty($row->content_id) && !empty($row->receiver_detail)) {
                     try {
                         $send = '';
+                        $status = 2;
                         if ($row->receiver_type == 'SMS') {
-                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message, $row->template_id);
+                            $send = Yii::$app->alertnotification->sendSms($row->content_id, $row->receiver_detail, $row->message, $row->template_id, $status);
                         } else if ($row->receiver_type == 'APP_NOTIFICATION') {
                             $server_key = Yii::$app->general->getforeignkey($row->apiMasterCode, 'token');
                             $url = Yii::$app->general->getforeignkey($row->apiMasterCode, 'url');
@@ -61,7 +63,7 @@ class DefaultController extends Controller {
                         }
                         $row->response_datetime = date('Y-m-d H:i:s');
                         $row->response_status = $send;
-                        $row->send_status = 2;
+                        $row->send_status = $status;
                         $row->save(FALSE);
                     } catch (\yii\db\Exception $e) {
                         $row->send_status = 3;
@@ -78,54 +80,48 @@ class DefaultController extends Controller {
     }
 
     public function actionBulkNotification() {
-        $model = new TblBulkNotification();
+        $model = new TblBulkNotificationApplicability();
         $model->status = 0;
         $modelData = $model->getPickRecords();
+
         if (!empty($modelData)) {
-            $ids = array_map(function($e) {
-                return $e->bulk_notification_id;
-            }, $modelData);
-            $update = $model->updateFileStatus($ids);
+            foreach ($modelData as $row) {
+                $row->updatePickStatus();
+            }
             foreach ($modelData as $row) {
                 try {
-                    $loginModel = new TblEiplAppLogin();
-                    $loginModelData = $loginModel->getLoginData($row);
-                    $row->response_datetime = date('Y-m-d H:i:s');
+                    $message = [];
+                    $header = [];
+                    $notification = $row->bulkNotification;
+                    $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $notification->message];
+                    $messageJson = json_encode($message);
+                    $header['apiFor'] = 'default';
+                    $header['channel'] = 'default';
+                    $header['templateAlias'] = 'GENERAL_PUSH_NOTIFICATION';
+                    $header['templateFor'] = 'default';
+                    $headerJson = json_encode($header);
+                    $param = [];
+                    $param['bulk_notification_id'] = $row->bulk_notification_id;
+                    $param['applicable_for'] = $row->applicable_for;
+                    $param['wef_date'] = date('Y-m-d H:i:s', strtotime($row->wef_date));
+                    $param['login_type'] = $notification->login_type;
+                    $param['message_json'] = $messageJson;
+                    $param['header_json'] = $headerJson;
+
+                    \Yii::$app->general->getSpData('sp_generate_bulk_notification', $param, TRUE);
                     $row->status = 2;
-                    if (!empty($loginModelData)) {
-                        $saveModel = [];
-                        foreach ($loginModelData as $detail) {
-                            $alertModel = new TblAlertNotification();
-                            $alertModel->attributes = $row->attributes;
-                            $alertModel->header_info = $row->title;
-                            $alertModel->module_type = $row->campaign_name;
-                            $alertModel->receiver_detail = $detail->device_id;
-                            $alertModel->refecence_code = $detail->master_code;
-                            $alertModel->entry_datetime = date('Y-m-d H:i:s');
-                            $alertModel->activity_type = 'BULK';
-                            $saveModel[] = $alertModel;
-                        }
-                        $generalModel = new GeneralModel();
-                        $transaction = $generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
-                        if ($transaction == 'customRedirect') {
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->status = 2;
-                        } else {
-                            $row->response_datetime = date('Y-m-d H:i:s');
-                            $row->status = 3;
-                        }
-                    }
-                    $row->save();
+                    $row->resp_desc = 'generated';
+                    $row->updateProcessStatus();
                 } catch (\Throwable $e) {
                     var_dump($e);
-                    $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 3;
-                    $row->save();
+                    $row->resp_desc = 'error';
+                    $row->updateProcessStatus();
                 } catch (\yii\db\Exception $e) {
                     var_dump($e);
-                    $row->response_datetime = date('Y-m-d H:i:s');
                     $row->status = 3;
-                    $row->save();
+                    $row->resp_desc = 'error';
+                    $row->updateProcessStatus();
                 }
             }
         }

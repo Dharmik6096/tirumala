@@ -50,11 +50,11 @@ class TblProductStockTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_stock_transaction_code'], 'required', 'on' => ['androidsync']],
-                [['product_stock_transaction_code', 'transaction_type', 'reference_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['old_value', 'new_value', 'final_value'], 'safe'],
-                [['transaction_date', 'created_at', 'updated_at'], 'safe'],
-                [['originating_type'], 'safe'],
+            [['product_stock_transaction_code'], 'required', 'on' => ['androidsync']],
+            [['product_stock_transaction_code', 'transaction_type', 'reference_code', 'product_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['old_value', 'new_value', 'final_value', 'sap_batch_no'], 'safe'],
+            [['transaction_date', 'created_at', 'updated_at'], 'safe'],
+            [['originating_type'], 'safe'],
         ];
     }
 
@@ -128,7 +128,6 @@ class TblProductStockTransaction extends \app\models\ChildModel {
 //            }
 //        }
 //    }
-
 //    private function sentboxModel($code, $type) {
 //        $sentbox = new TblSentbox();
 //        $sentbox->dest_org_id = $code;
@@ -136,7 +135,6 @@ class TblProductStockTransaction extends \app\models\ChildModel {
 //        $sentbox->dest_org_type = $type;
 //        return $sentbox;
 //    }
-
 //    public function afterDelete() {
 //        $sentboxArray = [];
 //        if (!empty($this->dcs_code)) {

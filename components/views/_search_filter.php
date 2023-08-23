@@ -275,6 +275,17 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
+                                    if (in_array($value, array('scheme_id'))) {
+                                        $depend_str = $field_class . '-f_union_code';
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?=
+                                            Yii::$app->dropdown->depend_dropdown('scheme_id', $model, $form, $depend_str, 'form-group col-sm-2 padding-right-5 padding-left-0', false, 'scheme_id');
+                                            ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
                                     if (in_array($value, array('transfer_type'))) {
                                         $f_cnt++
                                         ?>
@@ -292,11 +303,11 @@ if (!empty($filter_data)) {
                                         </div>
                                     <?php } ?>
                                     <?php
-                                    if (in_array($value, array('transfer_types'))) {
+                                    if (in_array($value, array('transfer_types', 'application_status'))) {
                                         $f_cnt++;
                                         ?>
                                         <div class="col-sm-3">
-                                            <?= Yii::$app->dropdown->dropdownStatic('transfer_type', $model, $form, 'form-group', false, false, 'transfer_types', false); ?>
+                                            <?= Yii::$app->dropdown->dropdownStatic(($value == 'transfer_types') ? 'transfer_type' : $value, $model, $form, 'form-group', false, false, $value, false); ?>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>

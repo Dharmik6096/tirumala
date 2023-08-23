@@ -9,6 +9,7 @@ use app\modules\globalmaster\models\TblAnimalType;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $client_code = \Yii::$app->session->get('eiplCode') == 'UMANG' ? TRUE : FALSE;
+$antibiotic = \Yii::$app->session->get('eiplCode') == 'PRABHAT' ? TRUE : FALSE;
 ?>
 <div class=""></div>
 <?php
@@ -21,24 +22,26 @@ $form = ActiveForm::begin([
 <div class=" no-effect table_form" >
     <?php
     $attribute = [
-        ['attribute' => 'customer_type', 'value' => function ($model, $key, $index) use ($form) {
+            ['attribute' => 'customer_type', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']milk_collection_code', ['value' => $model->milk_collection_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']union_code', ['value' => $model->union_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']dcs_code', ['value' => $model->dcs_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']customer_code', ['value' => $model->customer_code]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']customer_type', ['value' => $model->customer_type]);
                 echo Html::activeHiddenInput($model, '[' . $index . ']bmc_code', ['value' => $model->bmc_code]);
+                echo Html::activeHiddenInput($model, '[' . $index . ']plant_code', ['value' => $model->plant_code]);
+                echo Html::activeHiddenInput($model, '[' . $index . ']mcc_plant_code', ['value' => $model->mcc_plant_code]);
 
                 return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
             }, 'filter' => FALSE],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'SAP Vendor Code'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, FALSE, TRUE);
             }, 'filter' => FALSE, 'visible' => $client_code],
-        ['attribute' => 'customer_code', 'filter' => FALSE],
-        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_code', 'filter' => FALSE],
+            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
             }],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'),
+            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Name'),
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $is_dcs_editable) {
                 $customer_name = Yii::$app->general->getCustomer($model, $model->customer_type);
@@ -49,7 +52,7 @@ $form = ActiveForm::begin([
                 }
             }, 'filter' => false
         ],
-        ['label' => 'Date', 'attribute' => 'date_time_of_collection',
+            ['label' => 'Date', 'attribute' => 'date_time_of_collection',
             'filterType' => GridView::FILTER_DATE,
             'filterWidgetOptions' => [
                 'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -59,12 +62,12 @@ $form = ActiveForm::begin([
                 echo Html::activeHiddenInput($model, '[' . $index . ']date_time_of_collection', ['value' => Yii::$app->controls->view_date($model->date_time_of_collection, 'php:Y-m-d')]);
                 return Yii::$app->controls->view_date($model->date_time_of_collection);
             }, 'filter' => false],
-        ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
+            ['attribute' => 'shift_code', 'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']shift_code', ['value' => $model->shift_code]);
                 return Yii::$app->general->getforeignkey($model->shiftCode, 'shift');
             }, 'filter' => false],
-        ['attribute' => 'sample_no', 'filter' => false],
-        ['attribute' => 'ex_code', 'label' => Yii::t('app', 'New Code Ex.'),
+            ['attribute' => 'sample_no', 'filter' => false],
+            ['attribute' => 'ex_code', 'label' => Yii::t('app', 'New Code Ex.'),
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 $ex_code = Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
@@ -72,61 +75,73 @@ $form = ActiveForm::begin([
                 return '<span class=\'dcs_validate\'>' . $form->field($model, '[' . $index . ']ex_code')->textInput(['value' => $ex_code, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             }, 'visible' => $is_dcs_editable
         ],
-        ['attribute' => 'milk_type_code',
+            ['attribute' => 'route_code',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form, $detailModel) {
+                // return Yii::$app->dropdown->dropdown('route_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']route_code', FALSE, TRUE);
+                return Yii::$app->dropdown->all_routes($model, $form, 'tblbmccollection-' . $index . '-plant_code,tblbmccollection-' . $index . '-mcc_plant_code,tblbmccollection-' . $index . '-bmc_code', 'route_code', false, false, false, TRUE, '[' . $index . ']route_code');
+            },],
+            ['attribute' => 'milk_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
                 return '<span class=\'rtpl_validate milk_type\'>' . Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_type_code', FALSE, TRUE, $model->milk_type_code) . '</span>';
             },
         ],
-        ['attribute' => 'milk_quality_type_code',
+            ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form, $detailModel) {
                 return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
             },
         ],
-//        ['attribute' => 'milkqtype', 'filter' => false],
+        //        ['attribute' => 'milkqtype', 'filter' => false],
         ['attribute' => 'qty',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']qty')->textInput(['value' => $model->qty, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'fat',
+            ['attribute' => 'fat',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate fat_change\'>' . $form->field($model, '[' . $index . ']fat')->textInput(['value' => $model->fat, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'snf',
+            ['attribute' => 'snf',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return '<span class=\'rtpl_validate\'>' . $form->field($model, '[' . $index . ']snf')->textInput(['value' => $model->snf, 'class' => 'form-control number-validate',])->label(FALSE) . '</span>';
             },
         ],
-        ['attribute' => 'clr',
+            ['attribute' => 'clr',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'rtpl',
+            ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 echo Html::activeHiddenInput($model, '[' . $index . ']rate_code', ['value' => $model->rate_code]);
                 return '<span class=\'qty_change\'>' . $form->field($model, '[' . $index . ']rtpl')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'amount',
+            ['attribute' => 'amount',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'bmc_silos_info_code',
+            ['attribute' => 'bmc_silos_info_code',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
                 return $form->field($model, '[' . $index . ']bmc_silos_info_code')->textInput(['value' => Yii::$app->general->getforeignkey($model->silosCode, 'silo_no'), 'class' => 'form-control', 'disabled' => TRUE])->label(FALSE);
             },
+        ],
+        ['attribute' => 'antibiotic',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index) use ($form) {
+                        return '<span class=\'antibiotic_change\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', '', false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
+                }, 'visible' => $antibiotic
         ],
     ];
 

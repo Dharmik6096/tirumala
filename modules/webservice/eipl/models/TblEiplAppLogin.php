@@ -284,4 +284,13 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ])->andWhere(['master_code' => $user])->one();
     }
 
+    public function getAppDetail($data) {
+        $encryptedmobile = Yii::$app->general->encryptData($data->mobile_no);
+        return $query = $this->find()
+                        ->where(['or',
+                            ['mobile_no' => $encryptedmobile],
+                            ['mobile_no' => $data->mobile_no]
+                        ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->one();
+    }
+
 }

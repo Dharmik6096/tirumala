@@ -43,15 +43,10 @@ $attribute = [
         ['attribute' => 'member_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->memberCode, 'member_name');
         }, 'filter' => true],
-        ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
-        'value' => function($model) {
+        [
+        'label' => 'Collection Date', 'attribute' => 'date_time_of_collection', 'value' => function($model) {
             return Yii::$app->controls->view_date($model->date_time_of_collection);
-        }],
+        }, 'vAlign' => 'middle', 'filter' => false],
         ['attribute' => 'shift', 'value' => 'shiftCode.shift', 'filter' => false],
         ['attribute' => 'sample_no', 'vAlign' => 'middle'],
         ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],

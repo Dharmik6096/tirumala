@@ -44,6 +44,18 @@ class GeneralModel {
                 case 4 : return $this->saveDelete4($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
                 case 5 : return $this->saveDelete5($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
             }
+        } else if ($name == 'saveTransactionMultiAutoIncForeignKey') {
+            switch (count($arguments)) {
+                case 3 : return $this->save3MultiAutoIncForeignKey($arguments[0], $arguments[1], $arguments[2]);
+            }
+        } else if ($name == 'saveTransactionAutoIncForeignKey') {
+            switch (count($arguments)) {
+                case 3 : return $this->save3AutoIncForeignKey($arguments[0], $arguments[1], $arguments[2]);
+            }
+        } else if ($name == 'saveTransactionWithSp') {
+            switch (count($arguments)) {
+                case 3 : return $this->saveWithSp($arguments[0], $arguments[1], $arguments[2]);
+            }
         }
     }
 
@@ -408,11 +420,12 @@ class GeneralModel {
     }
 
     public function deleteMapping($modelName, $fieldName, $fieldValue) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        $flag = [];
+        try {
+            $model = Yii::$app->path->define($modelName[0]);
 
-        $model = Yii::$app->path->define($modelName[0]);
-
-        $data = $model::find()->where([$fieldName => $fieldValue])->all();
-        if ($data) {
+            $data = $model::find()->where([$fieldName => $fieldValue])->all();
             foreach ($data as $row) {
                 $modelMappingHistory = Yii::$app->path->getModel($modelName[1]);
                 Yii::$app->operation->history($row, $modelMappingHistory, 'DELETE');
@@ -421,26 +434,26 @@ class GeneralModel {
                   if (empty($modelMappingHistoryData)) {
                   $flag[] = $modelMappingHistory->save();
                   } */
-                // $flag[] = $modelMappingHistory->save();
-                //$row->is_delete = 1;
-                //$row->deleted_by = \Yii::$app->user->identity->user_code;
-                //$row->deleted_at = date('Y-m-d H:i:s');
                 $flag[] = $row->delete();
             }
+            if (!in_array(FALSE, $flag)) {
+                $transaction->commit();
+                return $flag;
+            } else {
+                $transaction->rollback();
+                return $flag;
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return $flag;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
             return $flag;
         }
-
-
-        /* if ($data) {
-          Yii::$app->operation->history($data, $modelMappingHistory, DELETE);
-          $flag[] = $modelMappingHistory->save();
-          $data->is_delete = 1;
-          $data->deleted_by = \Yii::$app->user->identity->user_code;
-          $data->deleted_at = date('Y-m-d H:i:s');
-          $flag[] = $data->save();
-          return $flag;
-          } */
-        return true;
     }
 
     public function deleteContacts($modelName, $code, $type) {
@@ -548,6 +561,130 @@ class GeneralModel {
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                 'message' => Yii::t('app', 'Your transaction is not saved successfully')]);
             return 'customRender';
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
+    public function save3MultiAutoIncForeignKey($model, $message, $auto_key_config) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($model as $i => $m) {
+                if (!empty($auto_key_config[$i])) {
+                    $setModelKey = $auto_key_config[$i]['self_key'];
+                    $parentModelKey = $auto_key_config[$i]['parent_key'];
+                    $parentModelIndex = $auto_key_config[$i]['parent_index'];
+                    $m->{$setModelKey} = $model[$parentModelIndex]->{$parentModelKey};
+                }
+                $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            } else {
+                $child = new ChildModel();
+                foreach ($model as $m) {
+                    $child->decryptModel($m);
+                }
+                $transaction->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Your transaction is not saved successfully']);
+                return 'customRender';
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
+    public function save3AutoIncForeignKey($model, $message, $auto_key_config) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($model as $m) {
+                $m_name = $m::className();
+                $m_name = explode("\\", $m_name);
+                $m_name = $m_name[count($m_name) - 1];
+                if (!empty($auto_key_config[$m_name])) {
+                    foreach ($auto_key_config[$m_name] as $key_config) {
+                        $m->{$key_config['self_key']} = $model[$key_config['parent_index']]->{$key_config['parent_key']};
+                    }
+                }
+                $master[] = $m->save();
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            } else {
+                $child = new ChildModel();
+                foreach ($model as $m) {
+                    $child->decryptModel($m);
+                }
+                $transaction->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Your transaction is not saved successfully']);
+                return 'customRender';
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => $e->getMessage()]);
+            return false;
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            return false;
+        }
+    }
+
+    public function saveWithSp($model, $spCall, $message) {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            foreach ($spCall as $sp) {
+                $result = \Yii::$app->general->getSpData($sp[0], $sp[1]);
+                foreach ($result as $res) {
+                    $master[] = $res['retuns_value'];
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                foreach ($model as $m) {
+                    $master[] = $m->save();
+                }
+            }
+            if (!in_array(FALSE, $master)) {
+                $transaction->commit();
+                Yii::$app->display->message(true, $message[0], $message[1]);
+                return 'customRedirect';
+            } else {
+                $child = new ChildModel();
+                foreach ($model as $m) {
+                    $child->decryptModel($m);
+                }
+                $transaction->rollback();
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Your transaction is not saved successfully']);
+                return 'customRender';
+            }
         } catch (UserException $e) {
             $transaction->rollback();
             Yii::$app->getSession()->setFlash('success', ['type' => 'error',

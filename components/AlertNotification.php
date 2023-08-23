@@ -12,7 +12,7 @@ use app\modules\sms\models\TblApiDetail;
 
 class AlertNotification {
 
-    public function sendSms($id, $mob_no, $msg, $temp_id = '') {
+    public function sendSms($id, $mob_no, $msg, $temp_id = '', &$status = 2) {
         $mob_no = (!empty($mob_no) && Yii::$app->general->decryptData($mob_no) !== FALSE) ? Yii::$app->general->decryptData($mob_no) : $mob_no;
         $api = (new TblApiDetail())->getApi($id); //get all api parameters to send sms
         if (!empty($api)) {
@@ -22,8 +22,13 @@ class AlertNotification {
                 //if {mobileno} found in value then replace it with actual no 
                 //if {msg} found in value then replace it with actual text message                
                 $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
+                $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
                 if (!empty($a['parent_tag'])) {
-                    $param[$a['parent_tag']] = [$a['parameter_key'] => $value]; //set parent key to key
+                    if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
+                        $param[$a['parent_tag']][$a['parameter_key']] = $value; //set parent key to key as single
+                    } else {
+                        $param[$a['parent_tag']][0][$a['parameter_key']] = $value; //set parent key to key as array
+                    }
                 } else {
                     $param[$a['parameter_key']] = $value;  //assign value to key and generate dynemic array
                 }
@@ -45,10 +50,15 @@ class AlertNotification {
                     $param[$k] = $checkP;
                 }
             }
-            $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
-            $data = $response->getBody(); //get response . guzzle return respone in stream object
-            $stream = Psr7\stream_for($data); //convert stream response to string
-            return json_encode($stream->getContents()); //getreponse in string format
+            try {
+                $response = $client->request($request_param['method'], $url, [$request_param['param'] => $param]);     //send request with method,url,request_param
+                $data = $response->getBody(); //get response . guzzle return respone in stream object
+                $stream = Psr7\stream_for($data); //convert stream response to string
+                return json_encode($stream->getContents()); //getreponse in string format
+            } catch (GuzzleHttp\Exception\RequestException $ex) {
+                $status = 3;
+                return json_encode($ex->getMessage());
+            }
         }
     }
 

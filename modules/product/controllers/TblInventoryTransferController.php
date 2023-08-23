@@ -74,7 +74,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         $modelSave = [];
         $message = 'Inventory Transfer';
         $type = 'create';
-
+        $this->model->transaction_date = date('d-m-Y');
         if (Yii::$app->request->post()) {
             $masterData = Yii::$app->request->post()['TblInventoryTransfer'];
             $txnData = Yii::$app->request->post()['TblInventoryTransferTxn'];
@@ -82,13 +82,13 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
             if (empty(Yii::$app->request->post()['TblInventoryTransfer']['inventory_transfer_code'])) {
                 $this->model->inventory_transfer_code = Yii::$app->general->getPrimaryCode($this->model, 1);
                 $this->model->inventory_transfer_date = !empty($this->model->inventory_transfer_date) ? date('Y-m-d', strtotime($this->model->inventory_transfer_date)) : '';
+                $this->model->transaction_date = !empty($this->model->transaction_date) ? date('Y-m-d', strtotime($this->model->transaction_date)) : NULL;
                 $modelSave[] = $this->model;
             }
             $txModel->setAttributes($txnData);
             $txModel->inventory_transfer_code = $this->model->inventory_transfer_code;
             $txModel->union_code = $this->model->union_code;
             $txModel->inventory_transfer_txn_code = Yii::$app->general->getTransactionCode($txModel, $txModel->inventory_transfer_code);
-
             if (empty($this->model->getErrors()) && empty($txModel->getErrors()) && $this->model->validate() && $txModel->validate()) {
                 $modelSave[] = $txModel;
                 //set from stock
@@ -96,11 +96,12 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                 $fstockModel->setCodes($this->model->from_type, $this->model->from_code);
                 $fstockModel->product_code = $txModel->product_code;
                 $fstockModel->union_code = $txModel->union_code;
-                $existfromStock = $fstockModel->getExistStock($this->model->from_type);
+                $batch = !empty($txModel->sap_batch_no) ? $txModel->sap_batch_no : '';
+                $existfromStock = $fstockModel->getExistStock($this->model->from_type, $batch);
 
                 $f_stock = 0;
                 $qty = $txModel->qty;
-
+                $stock_ai = 1;
                 if (!empty($existfromStock)) {
                     $historyModel = new TblProductStockHistory();
                     Yii::$app->operation->history($existfromStock, $historyModel, UPDATE);
@@ -109,9 +110,10 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existfromStock->stock = $f_stock - $qty;
                     $fstockModel = $existfromStock;
                 } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode();
+                    $fstockModel->product_stock_code = $fstockModel->getCode($stock_ai);
                     $fstockModel->stock = $f_stock - $qty;
                     $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                    $stock_ai++;
                 }
                 $modelSave[] = $fstockModel;
 
@@ -131,7 +133,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $receipt = new TblProductReceipt();
                 $receipt->product_receipt_code = Yii::$app->general->getUuid();
-                ;
                 $receipt->grn_no = '1234';
                 $receipt->grn_date = date('Y-m-d');
                 $receipt->vendor_type = $this->model->from_type;
@@ -163,11 +164,14 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $stockModel->product_code = $txModel->product_code;
                 $stockModel->union_code = $txModel->union_code;
-                $existtoStock = $stockModel->getExistStock($this->model->to_type);
+                $stockModel->sap_batch_no = $batch;
+                $existtoStock = $stockModel->getExistStock($this->model->to_type, $batch);
 
                 $t_stock = 0;
                 $valid_avl_stock = isset(Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock']) ? Yii::$app->session->get('unionConfig')[$this->model->union_code]['validate_available_stock'] : 0;
-                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0) {
+                $min_stock_config = Yii::$app->general->getforeignkey($txModel->productCode, 'min_stock');
+                $min_stock = !empty($min_stock_config) ? $min_stock_config : 0;
+                if ($valid_avl_stock == 1 && !empty($existtoStock) && $existtoStock->stock > 0 && $existtoStock->stock > $min_stock) {
                     $err['qty'] = Yii::t('app/validation', 'Stock Is Already Availble of Product ' . Yii::$app->general->getforeignkey($txModel->productCode, 'product_name'));
                     return Json::encode($err);
                 } else if (!empty($existtoStock)) {
@@ -178,7 +182,7 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
                     $existtoStock->stock = $t_stock + $qty;
                     $stockModel = $existtoStock;
                 } else {
-                    $stockModel->product_stock_code = $stockModel->getCode($i);
+                    $stockModel->product_stock_code = $stockModel->getCode($stock_ai);
                     $stockModel->stock = $t_stock + $qty;
                     $stockModel->x_col1 = Yii::$app->general->getUuid();
                 }
@@ -199,7 +203,6 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
 
                 $receiptTo = new TblProductReceipt();
                 $receiptTo->product_receipt_code = Yii::$app->general->getUuid();
-                ;
                 $receiptTo->grn_no = '1234';
                 $receiptTo->grn_date = date('Y-m-d');
                 $receiptTo->vendor_type = $this->model->to_type;
@@ -367,13 +370,14 @@ class TblInventoryTransferController extends \app\controllers\ChildController {
         $from_type = Yii::$app->request->post('from_type');
         $from_code = Yii::$app->request->post('from_code');
         $union_code = Yii::$app->request->post('union_code');
+        $batch_no = Yii::$app->request->post('batch_no');
 
         $stockModel = new TblProductStock();
         $stockModel->setCodes($from_type, $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
 
-        $existtoStock = $stockModel->getExistStock($from_type);
+        $existtoStock = $stockModel->getExistStock($from_type, $batch_no);
         if (!empty($existtoStock->stock)) {
             return Json::encode(['status' => 'success', 'stock' => $existtoStock->stock]);
         } else {

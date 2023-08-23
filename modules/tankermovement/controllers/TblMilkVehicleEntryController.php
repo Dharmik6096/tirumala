@@ -18,13 +18,19 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
 use app\modules\tankermovement\models\TblVehicleTripDetailHistory;
+use app\modules\tankermovement\models\TblMilkVehicleEntryHistory;
+use yii\data\ArrayDataProvider;
+use app\modules\configuration\models\TblConfig;
+use app\modules\tankermovement\models\TblConfigTxnResult;
+use app\modules\tankermovement\models\TblConfigTxnResultSearch;
+use yii\helpers\ArrayHelper;
 
 /**
  * TblMilkVehicleEntryController implements the CRUD actions for TblMilkVehicleEntry model.
  */
 class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['transaction-detail'];
+    public $freeAccessActions = ['transaction-detail', 'get-trip-code', 'change-trip-code', 'transaction-form', 'view-config'];
 
     /**
      * Lists all TblMilkVehicleEntry models.
@@ -55,6 +61,17 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         ]);
     }
 
+    public function actionViewConfig($id) {
+        $searchModel = new TblConfigTxnResultSearch();
+        $searchModel->ref_code = $id;
+        $searchModel->config_for = 'PLANT_RECEIPT';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->renderAjax('config-view', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Creates a new TblMilkVehicleEntry model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -76,9 +93,12 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
 
             $this->model->setAttributes($masterPost);
             $txn_model->setAttributes($trPost);
+            if (!empty($masterPost['milk_vehicle_entry_code'])) {
+                $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
+                $txn_model->entry_type = Yii::$app->request->post()['entry_type'];
+            }
             if ($this->model->validate() && $txn_model->validate()) {
                 if (!empty($masterPost['milk_vehicle_entry_code'])) {
-                    $this->model = $this->findModel($masterPost['milk_vehicle_entry_code']);
                     $this->model->load(Yii::$app->request->post());
                 } else {
                     $this->model->originating_org_code = $this->model->union_code;
@@ -88,20 +108,21 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $tripModel->trip_code = $this->model->trip_code;
                     $tripExist = $tripModel->getTripData();
                     $tripModel = $tripExist;
+                    $tripModel->scenario = 'closetrip';
                     $tripModel->grn_no = $this->model->grn_no;
                     $tripModel->trip_status = 'closed';
                     $modelSave[] = $tripModel;
-                    $tripDetailModel = new TblVehicleTripDetail();
-                    $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
-                    $trhistoryModel = new TblVehicleTripDetailHistory();
-                    Yii::$app->operation->history($last_trip, $trhistoryModel, UPDATE);
-                    $modelSave[] = $trhistoryModel;
-                    $tripDetailModel = $last_trip;
-                    $tripDetailModel->source_org_code = $last_trip->destination_code;
-                    $tripDetailModel->source_org_type = $last_trip->destination_type;
-                    $tripDetailModel->destination_code = !empty($this->model->customer_code) ? $this->model->customer_code : $this->model->plant_code;
-                    $tripDetailModel->destination_type = !empty($this->model->customer_type) ? $this->model->customer_type : 'PLANT';
-                    $modelSave[] = $tripDetailModel;
+                    /*  $tripDetailModel = new TblVehicleTripDetail();
+                      $last_trip = $tripDetailModel->getLastTrip($this->model->trip_code);
+                      $trhistoryModel = new TblVehicleTripDetailHistory();
+                      Yii::$app->operation->history($last_trip, $trhistoryModel, UPDATE);
+                      $modelSave[] = $trhistoryModel;
+                      $tripDetailModel = $last_trip;
+                      $tripDetailModel->source_org_code = $last_trip->destination_code;
+                      $tripDetailModel->source_org_type = $last_trip->destination_type;
+                      $tripDetailModel->destination_code = !empty($this->model->customer_code) ? $this->model->customer_code : $this->model->plant_code;
+                      $tripDetailModel->destination_type = !empty($this->model->customer_type) ? $this->model->customer_type : 'PLANT';
+                      $modelSave[] = $tripDetailModel; */
                 }
                 if (!empty($trPost['milk_vehicle_entry_transaction_code'])) {
                     $txnExist = TblMilkVehicleEntryTransaction::findOne($trPost['milk_vehicle_entry_transaction_code']);
@@ -111,11 +132,33 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     $modelSave[] = $historyModel;
                     $txn_model = $txnExist;
                     $txn_model->load(Yii::$app->request->post());
+                    $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+                    foreach ($config_data as $data) {
+                        $config_model = TblConfigTxnResult::find()->where(['ref_code' => $txn_model->milk_vehicle_entry_transaction_code, 'config_code' => $data['config_code'], 'config_for' => 'PLANT_RECEIPT'])->one();
+                        if (!empty($config_model)) {
+                            $config_model->config_result = $data['config_result'];
+                        }
+                        $modelSave[] = $config_model;
+                    }
                     $update = TRUE;
                 } else {
                     $txn_model->milk_vehicle_entry_transaction_code = Yii::$app->general->getTransactionCode($txn_model, $this->model->milk_vehicle_entry_code);
                     $txn_model->milk_vehicle_entry_code = $this->model->milk_vehicle_entry_code;
                     $txn_model->grn_no = $this->model->grn_no;
+                    $config_data = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+                    $cnt = 1;
+                    foreach ($config_data as $data) {
+                        $config_model = new TblConfigTxnResult();
+                        $config_model->attributes = $txn_model->attributes;
+                        $config_model->attributes = $data;
+                        $config_model->config_for = 'PLANT_RECEIPT';
+                        $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
+                        $config_model->ref_code = $txn_model->milk_vehicle_entry_transaction_code;
+                        $config_model->union_code = $this->model->union_code;
+                        $config_model->plant_code = $this->model->plant_code;
+                        $modelSave[] = $config_model;
+                        $cnt++;
+                    }
                 }
                 $this->model->vehicle_entry_date = !empty($this->model->vehicle_entry_date) ? date('Y-m-d', strtotime($this->model->vehicle_entry_date)) : '';
                 $modelSave[] = $this->model;
@@ -142,16 +185,10 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode(ActiveForm::validate($this->model, $txn_model));
             }
-        } else {
-            return $this->render('create', [
-                        'model' => $this->model, 'txn_model' => $txn_model,
-                        'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
-            ]);
         }
         return $this->render('create', [
-                    'model' => $this->model,
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+                    'model' => $this->model, 'txn_model' => $txn_model,
+                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -219,6 +256,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $data['status'] = 'error';
         $data['message'] = '';
         $modelData = [];
+        $config_data = [];
         $sourceName = '';
         $destName = '';
         if (!empty($_POST['milk_vehicle_entry_transaction_code'])) {
@@ -233,11 +271,13 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                         $destName = Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                     }
                 }
+                $config_data = TblConfigTxnResult::find()->select(['config_code', 'config_result'])->where(['ref_code' => $_POST['milk_vehicle_entry_transaction_code'], 'config_for' => 'PLANT_RECEIPT'])->asArray()->all();
+                $config_data = ArrayHelper::map($config_data, 'config_code', 'config_result');
                 $data['status'] = 'success';
             }
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return ['data' => $data, 'modelData' => $modelData, 'source' => $sourceName, 'dest' => $destName]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
+        return ['data' => $data, 'modelData' => $modelData, 'source' => $sourceName, 'dest' => $destName, 'configData' => $config_data]; //$this->renderAjax('_collection', ['model' => $model, 'modelData' => $modelData, 'type' => 'edit']);
     }
 
     public function actionVehicleDetail() {
@@ -270,6 +310,78 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return [$response['status'], 'data' => $data, 'source' => $sourceName, 'dest' => $destName];
+    }
+
+    public function actionEditTripDetail() {
+        $searchModel = new TblMilkVehicleEntrySearch();
+        $searchModel->scenario = 'changeTrip';
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $searchModel->searchEditTrip(Yii::$app->request->queryParams),
+            'pagination' => FALSE
+        ]);
+        return $this->render('edit_trip', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionGetTripCode() {
+        $id = \Yii::$app->request->post()['milk_vehicle_entry_code'];
+        $model = $this->findModel($id);
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            $trip = new TblVehicleTripDetail();
+            $data = $trip->getOpenTripList('receipt', '', $model->vehicle_entry_date, 'alltrip');
+            return ['status' => 'success', 'res' => $data];
+        }
+        return ['status' => 'error', 'res' => []];
+    }
+
+    public function actionChangeTripCode() {
+        $id = \Yii::$app->request->post()['milk_vehicle_entry_code'];
+        $trip_code = \Yii::$app->request->post()['trip_code'];
+        $model = $this->findModel($id);
+        $msg = '';
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if (!empty($model)) {
+            if ($model->trip_code != $trip_code) {
+                $historyModel = new TblMilkVehicleEntryHistory();
+                Yii::$app->operation->history($model, $historyModel, UPDATE);
+                $model->trip_code = $trip_code;
+                $trip_data = $model->tripCodeAll;
+                if (!empty($trip_data)) {
+                    $model->vehicle_code = $trip_data->vehicle_code;
+                    $transaction = $this->generalModel->saveTransaction([$historyModel, $model], ['Trip Code', 'edit']);
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    if ($transaction == 'customRedirect') {
+                        return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+                    }
+                } else {
+                    $msg = 'Invalid Trip Code.';
+                }
+            } else {
+                return ['status' => 'success', 'parsing_no' => $model->vehicleCode->parsing_no];
+            }
+        } else {
+            $msg = 'Receipt Detail Not Found.';
+        }
+        return ['status' => 'error', 'msg' => $msg];
+    }
+
+    public function actionTransactionForm() {
+        $union_code = Yii::$app->request->get('union_code');
+        $config = new TblConfig();
+        $config->config_for = 'PLANT';
+        $config->process_name = 'PLANT_RECEIPT';
+        $config->config_type = 'CONTROL';
+        $config_mapping = new TblConfigTxnResult();
+        $config_list = $config->getOrgConfigList($config->config_for, Yii::$app->request->get('plant_code'));
+        $txn_model = new TblMilkVehicleEntryTransaction();
+        return $this->renderAjax('_from_transaction', [
+                    'txn_model' => $txn_model,
+                    'config' => $config_mapping,
+                    'config_list' => $config_list,
+        ]);
     }
 
 }

@@ -51,16 +51,27 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync']],
+                [['product_sale_transaction_code', 'product_sale_code', 'product_code', 'quantity'], 'required', 'except' => ['saleProduct', 'androidsync', 'androidsyncsplit']],
                 [['product_sale_code', 'product_code', 'quantity', 'rate', 'unit_code', 'tax_code'], 'required', 'on' => ['saleProduct']],
 //            [['quantity'], 'integer', 'except' => ['androidsync']],
-            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync']],
-                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync']],
+            [['product_sale_rate_applicability_code', 'created_by', 'updated_by'], 'string', 'except' => ['androidsync', 'androidsyncsplit']],
+                [['rate', 'quantity', 'amount'], 'number', 'min' => 0, 'except' => ['androidsync', 'androidsyncsplit']],
                 [['created_at', 'updated_at', 'product_sale_rate_applicability_code', 'originating_org_code', 'originating_org_type', 'originating_type', 'product_sale_transaction_code', 'discount', 'unit_code', 'tax_code', 'tax_amount', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'product_code', 'product_sale_code', 'available_stock', 'remarks'], 'safe'],
-                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync']],
+                [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::className(), 'targetAttribute' => ['product_code' => 'product_code'], 'except' => ['androidsync', 'androidsyncsplit']],
 //            [['rate'], 'integer', 'min' => 1, 'on' => ['saleProduct']],
             [['quantity'], 'validateQty', 'on' => ['saleProduct']],
-                [['union_code'], 'safe']
+                [['union_code', 'sap_batch_no', 'data_lock', 'lock_date', 'reference_code'], 'safe'],
+                [
+                    ['sap_batch_no'], 'required', 'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    $product_type = Yii::$app->general->getforeignkey($model->productCode, 'x_col3');
+                    return ($batchNoWiseInventory == 1 && $product_type == 2);
+                },
+                'on' => ['saleProduct', 'SaleImport']],
+                [['data_lock'], 'default', 'value' => 0],
+                [['transaction_no', 'sales_order_no', 'delivery_no', 'billing_no'], 'safe'],
+                [['quantity'], 'integer', 'except' => ['locksale', 'androidsync', 'androidsyncsplit']],
+                [['product_sale_transaction_code'], 'validateDuplicate', 'on' => ['androidsync']],
         ];
     }
 
@@ -164,8 +175,8 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
     }
 
     public function setTransactionSaveDeleteData(&$model, $json, &$childModel, &$delete) {
-        $manageStock = TRUE;
-
+        $scenario = $model->scenario;
+        $scenario .= 'split';
         $saleModel = new TblProductSale();
         $saleModel->x_col2 = $model->product_sale_code;
         $saleModelData = $saleModel->find()->where(['x_col2' => $saleModel->x_col2])->orderBy('created_at desc')->one();
@@ -180,14 +191,17 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                 $model->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code);
             }
         }
-        if (!empty($model->product_code) && !empty($model->productCode->dpu_product_code) && $model->productCode->dpu_product_code == '994') {
-            $loanModel = new TblLoanProductSaleDetails();
-            $loanModel->attributes = $model->attributes;
-            $updateData = true;
-            if (!empty($model->productSaleCode)) {
-                $productSaleData = $model->productSaleCode;
+        $productSaleData = $model->productSaleCode;
+        if (!empty($productSaleData)) {
+            $product = $model->productCode;
+            $union = !empty($product) ? $product->unionCode : [];
+            $manageStock = (!empty($product) && $product->x_col3 == '2') ? TRUE : FALSE;
+            if (!empty($union) && $union->eipl_code == 'PRABHAT' && $product->dpu_product_code == '994') {
+                $loanModel = new TblLoanProductSaleDetails();
+                $loanModel->attributes = $model->attributes;
+                $updateData = FALSE;
                 if (!empty($productSaleData->union_code) && $productSaleData->union_code == '003') {
-                    $updateData = true;
+                    $updateData = TRUE;
                     $loanModel->union_code = $productSaleData->union_code;
                     $loanModel->dcs_code = $productSaleData->dcs_code;
                     $loanModel->sale_date_time = $productSaleData->invoice_date;
@@ -202,77 +216,147 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
                             $delete[] = $saleInstModelRecord;
                         }
                     }
-                } else {
-                    $updateData = false;
+                }
+                if ($updateData) {
+                    $loanModel->send_status = 0;
+                    $loanModel->entry_type = 2;
+                    $loanModel->created_by = 'CRON';
+                    $model = $loanModel;
+                    $manageStock = FALSE;
                 }
             }
-            if ($updateData) {
-                $loanModel->send_status = 0;
-                $loanModel->entry_type = 2;
-                $loanModel->created_by = 'CRON';
-                $model = $loanModel;
-                $manageStock = FALSE;
-            }
-        }
-        if ($manageStock) {
-            $qty = !empty($model->quantity) ? $model->quantity : 0;
-            if (!empty($qty) && !empty($model->productSaleCode->product_sale_code)) {
-                $productSaleData = $model->productSaleCode;
-                $fstockModel = new TblProductStock();
-                if ($model->originating_org_type != 'PORTAL') {
-                    $sale_type = $model->originating_org_type;
-                    $sale_code = $model->originating_org_code;
-                } else {
+            if ($manageStock) {
+                $setTxnCode = $model->product_sale_transaction_code;
+                $config = Yii::$app->general->getUnionConfiguration($productSaleData->union_code, 'stock_check_on_sale', 'PORTAL');
+                $stock_config_on = ($config == '1') ? TRUE : FALSE;
+                if ($stock_config_on && date('Y-m-d', strtotime($productSaleData->invoice_date)) >= '2023-05-01') {
+                    $qty = !empty($model->quantity) ? $model->quantity : 0;
+                    $stockManageIndex = 0;
+                    if (!empty($qty) && !empty($productSaleData->product_sale_code)) {
+                        $fstockModel = new TblProductStock();
+                        if ($model->originating_org_type != 'PORTAL') {
+                            $sale_type = $model->originating_org_type;
+                            $sale_code = $model->originating_org_code;
+                        } else {
 //                    $sale_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'DCS' : 'BMC';
-                    $sale_type = 'BMC';
-                    $sale_code = $productSaleData->bmc_code;
-                    if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
-                        if ($model->originating_org_type == 'DCS' || $model->originating_org_type == 'VLC') {
-                            $sale_type = 'DCS';
+                            $sale_type = 'BMC';
+                            $sale_code = $productSaleData->bmc_code;
+                            if (strtoupper($productSaleData->customer_type) == 'MEMBER') {
+                                if ($model->originating_org_type == 'DCS' || $model->originating_org_type == 'VLC') {
+                                    $sale_type = 'DCS';
 //                        $sale_code = !empty($productSaleData->memberCode) ? $productSaleData->memberCode->dcs_code : $sale_code;
-                            $sale_code = !empty($model->originating_org_code) ? $model->originating_org_code : $sale_code;
+                                    $sale_code = !empty($model->originating_org_code) ? $model->originating_org_code : $sale_code;
+                                }
+                            }
+                        }
+                        $fstockModel->setCodes($sale_type, $sale_code);
+                        $fstockModel->product_code = $model->product_code;
+                        $fstockModel->union_code = $productSaleData->union_code;
+                        $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
+                        $existfromStock = $fstockModel->getAvailableStock($sale_type);
+                        $considerQty = 0;
+                        $i = 2;
+                        $i_stock = 1;
+                        foreach ($existfromStock as $stockData) {
+                            if ($qty > 0) {
+                                $considerQty = $stockData->stock;
+                                if ($considerQty >= $qty) {
+                                    $considerQty = $qty;
+                                }
+                                $qty = $qty - $considerQty;
+
+                                $historyModel = new TblProductStockHistory();
+                                Yii::$app->operation->history($stockData, $historyModel, 'UPDATE');
+                                $childModel[] = $historyModel;
+
+                                $stockData->setCodes($sale_type, $sale_code);
+                                $stockData->product_code = $model->product_code;
+                                $stockData->union_code = $productSaleData->union_code;
+                                $f_stock = $stockData->stock;
+                                $stockData->stock = $f_stock - $considerQty;
+                                $setTxnCode = $model->product_sale_transaction_code;
+
+                                if ($stockManageIndex > 0) {
+                                    $saleTxnModel = new TblProductSaleTransaction();
+                                    $saleTxnModel->attributes = $model->attributes;
+                                    $saleTxnModel->scenario = $scenario;
+                                    unset($saleTxnModel->created_at);
+                                    unset($saleTxnModel->created_by);
+                                    $saleTxnModel->quantity = $considerQty;
+                                    $saleTxnModel->sap_batch_no = $stockData->sap_batch_no;
+                                    $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;
+                                    $saleTxnModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code, $i);
+                                    $setTxnCode = $saleTxnModel->product_sale_transaction_code;
+                                    $childModel[] = $saleTxnModel;
+                                } else {
+                                    $model->quantity = $considerQty;
+                                    $model->sap_batch_no = $stockData->sap_batch_no;
+                                    $model->amount = $model->quantity * $model->rate;
+                                }
+                                $stockManageIndex++;
+
+                                $loopStockTxnModel = new TblProductStockTransaction();
+                                $loopStockTxnModel->attributes = $stockData->attributes;
+                                unset($loopStockTxnModel->created_at);
+                                unset($loopStockTxnModel->created_by);
+                                $loopStockTxnModel->product_stock_transaction_code = $loopStockTxnModel->getCode($i_stock);
+                                $loopStockTxnModel->old_value = $f_stock;
+                                $loopStockTxnModel->new_value = $considerQty;
+                                $loopStockTxnModel->final_value = $stockData->stock;
+                                $loopStockTxnModel->transaction_type = $txn_type;
+                                $loopStockTxnModel->transaction_date = date('Y-m-d');
+                                $loopStockTxnModel->reference_code = $setTxnCode; //$model->product_sale_transaction_code;
+                                $childModel[] = $stockData;
+                                $childModel[] = $loopStockTxnModel;
+                                $i++;
+                                $i_stock++;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if ($qty > 0) {
+                            $exist_null_stock = $fstockModel->getExistStockDelete($sale_type);
+                            if (!empty($exist_null_stock)) {
+                                $fstockModel = $exist_null_stock;
+                                $historyModel = new TblProductStockHistory();
+                                Yii::$app->operation->history($fstockModel, $historyModel, 'UPDATE');
+                                $childModel[] = $historyModel;
+                            } else {
+                                $fstockModel->product_stock_code = $fstockModel->getCode();
+                                $fstockModel->stock = 0;
+                                $fstockModel->x_col1 = Yii::$app->general->getUuid();
+                            }
+
+                            if (!empty($existfromStock)) {
+                                $saleTxnModel = new TblProductSaleTransaction();
+                                $saleTxnModel->scenario = $scenario;
+                                $saleTxnModel->attributes = $model->attributes;
+                                $saleTxnModel->quantity = $qty;
+                                $saleTxnModel->sap_batch_no = NULL; //$stockData->sap_batch_no;
+                                $saleTxnModel->amount = $saleTxnModel->quantity * $saleTxnModel->rate;
+                                $saleTxnModel->product_sale_transaction_code = Yii::$app->general->getTransactionCode($model, $model->product_sale_code, $i);
+                                $setTxnCode = $saleTxnModel->product_sale_transaction_code;
+                                $childModel[] = $saleTxnModel;
+                            }
+
+                            $fstockTxnModel = new TblProductStockTransaction();
+                            $fstockTxnModel->attributes = $fstockModel->attributes;
+                            unset($fstockTxnModel->created_at);
+                            unset($fstockTxnModel->created_by);
+                            $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i_stock);
+                            $fstockTxnModel->old_value = $fstockModel->stock;
+                            $fstockTxnModel->new_value = $qty;
+                            $fstockModel->stock = $fstockModel->stock - $qty;
+                            $fstockTxnModel->final_value = $fstockModel->stock;
+                            $fstockTxnModel->transaction_type = $txn_type;
+                            $fstockTxnModel->transaction_date = date('Y-m-d');
+                            $fstockTxnModel->reference_code = $setTxnCode;
+                            $childModel[] = $fstockModel;
+                            $childModel[] = $fstockTxnModel;
                         }
                     }
                 }
-                $fstockModel->setCodes($sale_type, $sale_code);
-                $fstockModel->product_code = $model->product_code;
-                $fstockModel->union_code = $productSaleData->union_code;
-                $txn_type = strtoupper($productSaleData->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                $existfromStock = $fstockModel->getExistStock($sale_type);
-
-                $f_stock = 0;
-                $i = 1;
-//                $qty = $model->quantity;
-                if (!empty($existfromStock)) {
-                    $historyModel = new TblProductStockHistory();
-                    Yii::$app->operation->history($existfromStock, $historyModel, 'UPDATE');
-                    $childModel[] = $historyModel;
-                    $f_stock = $existfromStock->stock;
-                    $existfromStock->stock = $f_stock - $qty;
-                    $fstockModel = $existfromStock;
-//                    $child[] = $fstockModel;
-                } else {
-                    $fstockModel->product_stock_code = $fstockModel->getCode($i);
-                    $fstockModel->stock = $f_stock - $qty;
-                    $fstockModel->x_col1 = Yii::$app->general->getUuid();
-                }
-
-                $fstockTxnModel = new TblProductStockTransaction();
-                $fstockTxnModel->attributes = $fstockModel->attributes;
-                unset($fstockTxnModel->created_at);
-                unset($fstockTxnModel->created_by);
-                $fstockTxnModel->product_stock_transaction_code = $fstockTxnModel->getCode($i);
-                $fstockTxnModel->old_value = $f_stock;
-                $fstockTxnModel->new_value = $qty;
-                $fstockTxnModel->final_value = $fstockModel->stock;
-                $fstockTxnModel->transaction_type = $txn_type;
-                $fstockTxnModel->transaction_date = date('Y-m-d');
-                $fstockTxnModel->reference_code = $model->product_sale_transaction_code;
-
-
-                $childModel[] = $fstockModel;
-                $childModel[] = $fstockTxnModel;
-                $i++;
             }
         }
     }
@@ -314,6 +398,39 @@ class TblProductSaleTransaction extends \app\models\ChildModel {
         $sentbox->source_org_id = $this->productSaleCode->union_code;
         $sentbox->dest_org_type = $type;
         return $sentbox;
+    }
+
+    public function validateDuplicate($attribute, $param) {
+        $productSaleData = TblProductSale::find()->where(['x_col2' => $this->product_sale_code])->orderBy('created_at desc')->one();
+        if (empty($productSaleData)) {
+            $productSaleData = $this->productSaleCode;
+        }
+        if (!empty($productSaleData)) {
+            $productSaleData->invoice_date = date('Y-m-d H:i:s', strtotime($productSaleData->invoice_date)) . '.000000';
+            $product = $this->productCode;
+            $union = !empty($product) ? $product->unionCode : [];
+            if (!empty($union) && $union->eipl_code == 'PRABHAT' && $product->dpu_product_code == '994') {
+                $cnt = TblLoanProductSaleDetails::find()
+                        ->where(['sale_date_time' => $productSaleData->invoice_date, 'dcs_code' => $productSaleData->dcs_code])
+                        ->andWhere(["ISNULL(member_code,'')" => ($productSaleData->customer_type == 'MEMBER') ? $productSaleData->customer_code : ''])
+                        ->count();
+                if (!empty($cnt) && $cnt > 0) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found-Loan.'));
+                }
+            } else {
+                $cnt = $this->find()
+                        ->innerJoinWith(['productSaleCode'])
+                        ->where(['tbl_product_sale.invoice_date' => $productSaleData->invoice_date])
+                        ->andWhere(['tbl_product_sale.customer_code' => $productSaleData->customer_code, 'tbl_product_sale.customer_type' => $productSaleData->customer_type])
+                        ->andWhere(['tbl_product_sale_transaction.product_code' => $this->product_code])
+                        ->count();
+                if (!empty($cnt) && $cnt > 0) {
+                    $this->addError($attribute, Yii::t('app/validation', 'Duplplicate Record Found.'));
+                }
+            }
+        } else {
+            $this->addError($attribute, Yii::t('app/validation', 'Product Sale Record Not Found.'));
+        }
     }
 
 }

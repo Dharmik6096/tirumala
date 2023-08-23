@@ -4,6 +4,7 @@ namespace app\modules\bipl\models;
 
 use Yii;
 use app\modules\restservices\models\BiplModel;
+
 /**
  * This is the model class for table "bipl_change_acknowledgement".
  *
@@ -21,41 +22,38 @@ use app\modules\restservices\models\BiplModel;
  * @property string $time
  * @property string $file_name
  */
-class BiplChangeAcknowledgement extends \yii\db\ActiveRecord
-{
+class BiplChangeAcknowledgement extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'bipl_change_acknowledgement';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['svc', 'usr', 'pswd', 'census_code','cp_code','date','time','file_name'],'required'],
-            [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'file_name'], 'string'],
-            [['date', 'time'], 'safe'],
-            ['cp_code', 'string', 'length' => 8, 'skipOnEmpty'=>true],
-            [['census_code'],function ($attribute, $params) {
-                    $bipl=new BiplModel();
-                    $bipl->findCensus($this, $attribute,$params);
-                },'skipOnEmpty'=>true],
-            ['census_code', 'match', 'pattern' => '/^\d{12}$/i','message'=> Yii::t('app/validation','{attribute} must be numeric and length should be exactly 12'),'skipOnEmpty'=>true],
-            ['date', 'date','format'=>'php:d.m.Y','on'=>'checkDate'],
-            ['time', 'time','format'=>'php:H:i:s'],
+                [['svc', 'census_code', 'cp_code', 'date', 'time', 'file_name'], 'required'],
+                [['svc', 'usr', 'pswd', 'cp', 'imei', 'mcc', 'cp_code', 'census_code', 'vendor_id', 'file_name'], 'string'],
+                [['date', 'time'], 'safe'],
+                ['cp_code', 'string', 'length' => 8, 'skipOnEmpty' => true],
+            /*    [['census_code'], function ($attribute, $params) {
+              $bipl = new BiplModel();
+              $bipl->findCensus($this, $attribute, $params);
+              }, 'skipOnEmpty' => true],
+              ['census_code', 'match', 'pattern' => '/^\d{12}$/i','message'=> Yii::t('app/validation','{attribute} must be numeric and length should be exactly 12'),'skipOnEmpty'=>true], */
+                ['date', 'date', 'format' => 'php:d.m.Y', 'on' => 'checkDate'],
+                ['time', 'time', 'format' => 'php:H:i:s'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'svc' => Yii::t('app', 'Svc'),
@@ -77,8 +75,8 @@ class BiplChangeAcknowledgement extends \yii\db\ActiveRecord
      * @inheritdoc
      * @return BiplChangeAcknowledgementQuery the active query used by this AR class.
      */
-    public static function find()
-    {
+    public static function find() {
         return new BiplChangeAcknowledgementQuery(get_called_class());
     }
+
 }

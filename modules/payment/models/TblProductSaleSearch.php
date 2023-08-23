@@ -20,9 +20,9 @@ class TblProductSaleSearch extends TblProductSale {
      */
     public function rules() {
         return [
-            [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
-            [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
-            [['is_installment', 'no_of_installment'], 'integer'],
+                [['product_sale_code', 'dcs_code', 'union_code', 'member_code', 'invoice_date', 'created_at', 'created_by', 'updated_at', 'updated_by', 'bmc_code', 'customer_type', 'customer_code', 'customer_type', 'customer_name', 'payment_mode', 'customer_name', 'from_date', 'to_date'], 'safe'],
+                [['amount', 'other_amount', 'discount', 'paid_amount', 'amount_due'], 'number'],
+                [['is_installment', 'no_of_installment'], 'integer'],
         ];
     }
 
@@ -76,6 +76,9 @@ class TblProductSaleSearch extends TblProductSale {
         if (!empty($this->to_date)) {
             $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
             $query->andFilterWhere(['<=', 'cast(tbl_product_sale.invoice_date as date)', $to_date]);
+        }
+        if (!empty($this->created_at)) {
+            $query->andFilterWhere(['like', 'cast(tbl_product_sale.created_at as date)', date('Y-m-d', strtotime($this->created_at))]);
         }
         $query->andFilterWhere([
             'tbl_product_sale.amount' => $this->amount,

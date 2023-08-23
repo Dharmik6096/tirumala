@@ -17,6 +17,9 @@ use app\components\WebApi;
 use app\modules\vsp\models\TblVspTransitRecovery;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use app\modules\collection\models\TblMccShiftLockStagingHistory;
+use app\modules\sms\models\TblAlertTemplate;
+use app\modules\sms\models\TblAlertNotification;
+use app\modules\sms\models\TblApiMaster;
 
 /**
  * TblMccShiftLockController implements the CRUD actions for TblMccShiftLock model.
@@ -49,10 +52,19 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $searchModel = new TblMccShiftLockSearch();
         $searchModel->shift_lock_code = $model->shift_lock_code;
         $dataProvider = $searchModel->viewsearch(Yii::$app->request->queryParams);
+
+        $bmcsearchModel = new TblBmcCollectionSearch();
+        $bmcsearchModel->mcc_plant_code = $model->mcc_plant_code;
+        $bmcsearchModel->date_time_of_collection = $model->date_time_of_collection;
+        $bmcsearchModel->shift_code = $model->shift_code;
+        $bmcdataProvider = $bmcsearchModel->bmcwisesearch(Yii::$app->request->queryParams);
+
         return $this->render('view', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'bmcdataProvider' => $bmcdataProvider,
+                    'bmcsearchModel' => $bmcsearchModel,
         ]);
     }
 
@@ -379,6 +391,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         $model->{$updateField} = $val;
         $modelData = $model->getExistData();
         $Recovery = FALSE;
+        $SendSms = TRUE;
         $mccFlag = Yii::$app->general->getforeignkey($model->mccPlantCode, 'recovery_validate');
         if ($setErp && Yii::$app->session->get('eiplCode') == 'MMD') {
             $recoveryModel = new TblVspTransitRecovery();
@@ -387,6 +400,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
         }
         $title = $model->{$updateField} == 1 ? $lockMessage : $unlockMessage;
         if (!empty($modelData)) {
+            $SendSms = FALSE;
             $historyModel = new TblMccShiftLockHistory();
             Yii::$app->operation->history($modelData, $historyModel, UPDATE);
             $modelData->qty = $qty;
@@ -448,6 +462,20 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
                 return $this->redirect([$url]);
             }
         }
+        if (Yii::$app->session->get('eiplCode') == 'UMANG' && $updateField == 'bmc_lock' && $val == 1) {
+            if ($SendSms) {
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('shift_lock_sms', 'SMS', $model->union_code);
+                $apiMasterModel = new TblApiMaster;
+                $apiMasterModel->receiver_type = 'SMS';
+                $apiMasterModel->union_code = $model->union_code;
+                $masterData = $apiMasterModel->getAPI();
+                if (!empty($masterData) && !empty($templateData)) {
+                    $this->setAlertNotification($mcc, $date, $shift, $templateData, $saveModel, $masterData);
+                }
+            }
+        }
+
         $transaction = $this->generalModel->saveTransaction($saveModel, [$title, 'edit']);
         if ($transaction == 'customRedirect') {
             if ($callErp && Yii::$app->session->get('eiplCode') == 'MMD') {
@@ -466,7 +494,7 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
     }
 
     public function actionBmcDataLock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
-        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA') {
+        if (Yii::$app->session->get('eiplCode') == 'PRABHAT' || Yii::$app->session->get('eiplCode') == 'THIRUMALA' || Yii::$app->session->get('eiplCode') == 'ANIK') {
             $this->generateFTPFile($mcc, $date, $shift, 'TblBmcCollection_collection');
         }
         if (Yii::$app->session->get('eiplCode') == 'DODLA') {
@@ -537,7 +565,9 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->amount = $amount;
             $existData = $this->model->getExistData();
             $old_bmc_lock = 0;
+            $SendSms = TRUE;
             if (!empty($existData)) {
+                $SendSms = FALSE;
                 $this->model = $this->findModel($existData->shift_lock_code);
                 $historyModel = new TblMccShiftLockHistory();
                 Yii::$app->operation->history($this->model, $historyModel, UPDATE);
@@ -552,6 +582,17 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
             $this->model->product_sale_lock = 1;
             $this->model->vm_data_lock = 1;
             $saveModel[] = $this->model;
+            if ($SendSms && Yii::$app->session->get('eiplCode') == 'UMANG') {
+                $templateModel = new TblAlertTemplate();
+                $templateData = $templateModel->getTemplateData('shift_lock_sms', 'SMS', $this->model->union_code);
+                $apiMasterModel = new TblApiMaster;
+                $apiMasterModel->receiver_type = 'SMS';
+                $apiMasterModel->union_code = $this->model->union_code;
+                $masterData = $apiMasterModel->getAPI();
+                if (!empty($masterData) && !empty($templateData)) {
+                    $this->setAlertNotification($mcc, $date, $shift, $templateData, $saveModel, $masterData);
+                }
+            }
             $transaction = $this->generalModel->saveTransaction($saveModel, ['Shift Lock', 'edit']);
             if ($transaction == 'customRedirect') {
                 $record = ['status' => 'success', 'msg' => 'DATA LOCK Successfully.'];
@@ -828,6 +869,45 @@ class TblMccShiftLockController extends \app\controllers\ChildController {
 
     public function actionVmDataUnlock($mcc, $date, $shift, $qty, $fat, $snf, $amount, $url = 'index-other', $fqty = '', $ffat = '', $fsnf = '', $famnt = '') {
         $this->updateRecords($mcc, $date, $shift, $qty, $fat, $snf, $amount, 'vm_data_lock', 0, 'Data Lock - VM', 'Data Unlock - VM', $url, $fqty, $ffat, $fsnf, $famnt);
+    }
+
+    public function setAlertNotification($mcc, $date, $shift, $templateData, &$saveModel, $masterData) {
+        $sp_param = [];
+        $sp_name = 'portal_send_sms_shift_lock_bmc_collection_data';
+        $sp_param[] = $mcc;
+        $sp_param[] = $date;
+        $sp_param[] = $shift;
+        $results = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+        foreach ($results as $collection) {
+            $code = $collection['ref_code'];
+            $collectiondate = $collection['date_of_collection'];
+            $shift = $collection['shift'];
+            $qty = $collection['qty'];
+            $fat = $collection['fat'];
+            $snf = $collection['snf'];
+            $mobile_no = $collection['mobile_no'];
+            $arrFrom = array("{refcode}", "{date}", "{shift}", "{qty}", "{fat}", "{snf}");
+            $arrTo = array($code, $collectiondate, $shift, $qty, $fat, $snf);
+            $word = $templateData->message;
+            $message = str_replace($arrFrom, $arrTo, $word);
+
+            $notificationmodel = new TblAlertNotification();
+            $datetime = date('Y-m-d H:i:s');
+            $notificationmodel->module_type = 'shift_lock_sms';
+            $notificationmodel->content_id = $masterData->api_master_id;
+            $notificationmodel->receiver_detail = $mobile_no;
+            $notificationmodel->receiver_type = 'SMS';
+            $notificationmodel->message = $message;
+            $notificationmodel->send_status = '0';
+            $notificationmodel->entry_datetime = $datetime;
+            $notificationmodel->pick_datetime = NULL;
+            $notificationmodel->response_datetime = NULL;
+            $notificationmodel->response_status = 0;
+            $notificationmodel->template_id = $templateData->header_info;
+
+            array_push($saveModel, $notificationmodel);
+        }
     }
 
 }

@@ -65,6 +65,7 @@ class TblUserOrganizationMapping extends ChildModel {
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['updated_by' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
+            [['federation'], 'validateOnLoginType'],
         ];
     }
 
@@ -477,6 +478,51 @@ class TblUserOrganizationMapping extends ChildModel {
             }
         }
         return ['data' => $data, 'selectedArray' => $selected];
+    }
+
+    public function getUserMaster() {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function validateOnLoginType($attribute, $params) {
+        if (!empty($this->user_id)) {
+            $login_type = Yii::$app->general->getforeignkey($this->userMaster, 'login_type');
+            if (!empty($login_type)) {
+                if ($login_type == 'vsp') {
+                    if ((empty($this->dcs)) || count($this->dcs) != 1) {
+                        $msg = empty($this->dcs) ? Yii::t('app', 'DCS') . ' cannot be blank.' : 'Allow to Map single ' . Yii::t('app', 'DCS');
+                        $this->addError('dcs', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                } else if ($login_type == 'mcc_incharge') {
+                    if ((empty($this->mcc))) {
+                        $msg = Yii::t('app', 'MCC') . ' cannot be blank.';
+                        $this->addError('mcc', Yii::t('app/validation', $msg));
+                        return false;
+                    } elseif (!empty($this->dcs)) {
+                        $mccArray = [];
+                        foreach ($this->dcs as $dcs) {
+                            $data = explode(':', $dcs);
+                            $key = $data[1];
+                            if (!in_array($key, $mccArray)) {
+                                $mccArray[] = $key;
+                            }
+                        }
+                        if (count($mccArray) > 1) {
+                            $msg = 'Allow to select ' . Yii::t('app', 'DCS') . ' of any single ' . Yii::t('app', 'MCC');
+                            $this->addError('dcs', Yii::t('app/validation', $msg));
+                            return false;
+                        }
+                    }
+                } else if ($login_type == 'route_supervisor') {
+                    if ((empty($this->mcc))) {
+                        $msg = Yii::t('app', 'MCC') . ' cannot be blank.';
+                        $this->addError('mcc', Yii::t('app/validation', $msg));
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
 }

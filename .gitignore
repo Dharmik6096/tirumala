@@ -43,3 +43,5 @@ web/collection-data/**
 web/sap_data_files/**
 web/sapFiles/**
 eipldpu-files/**
+web/welfarescheme/**
+config/env.php

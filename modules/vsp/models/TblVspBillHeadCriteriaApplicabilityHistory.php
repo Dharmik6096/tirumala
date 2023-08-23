@@ -28,38 +28,35 @@ use Yii;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblVspBillHeadCriteriaApplicabilityHistory extends \yii\db\ActiveRecord
-{
+class TblVspBillHeadCriteriaApplicabilityHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vsp_bill_head_criteria_applicability_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bill_head_criteria_applicability_code', 'originating_type'], 'integer'],
-            [['wef_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['vsp_criteria_code', 'applicable_code', 'applicable_for', 'bill_head_for'], 'string', 'max' => 20],
-            [['bill_head_code', 'operation_type'], 'string', 'max' => 10],
-            [['union_code'], 'string', 'max' => 3],
-            [['bmc_code'], 'string', 'max' => 12],
-            [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
+                [['bill_head_criteria_applicability_code', 'originating_type'], 'integer'],
+                [['wef_date', 'created_at', 'updated_at', 'history_created_at', 'from_date', 'to_date'], 'safe'],
+                [['vsp_criteria_code', 'applicable_code', 'applicable_for', 'bill_head_for'], 'string', 'max' => 20],
+                [['bill_head_code', 'operation_type'], 'string', 'max' => 10],
+                [['union_code'], 'string', 'max' => 3],
+                [['bmc_code'], 'string', 'max' => 12],
+                [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
+                [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'bill_head_criteria_applicability_code' => Yii::t('app', 'Bill Head Criteria Applicability Code'),
@@ -83,4 +80,5 @@ class TblVspBillHeadCriteriaApplicabilityHistory extends \yii\db\ActiveRecord
             'originating_type' => Yii::t('app', 'Originating Type'),
         ];
     }
+
 }

@@ -4,6 +4,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !index.php
 RewriteRule ^.*$ index.php
 RedirectMatch 404 ^(.*/)?\.git+
-php_value max_input_vars 10000
+php_value max_input_vars 50000
 php_value upload_max_filesize 800M
 php_value post_max_size 800M

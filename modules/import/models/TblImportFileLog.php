@@ -42,11 +42,11 @@ class TblImportFileLog extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['file_type', 'file_name', 'file_path', 'union_code', 'created_by', 'updated_by', 'response_msg', 'error_file_path', 'cron_pick_datetime'], 'safe'],
-            [['total_count', 'success_count', 'error_count', 'status', 'process_type', 'success_file_path'], 'safe'],
-            [['created_at', 'updated_at', 'pick_datetime', 'response_datetime'], 'safe'],
-            [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'product_sale', 'product_sale_member', 'sale_rate_applicability', 'product_master', 'product_sale_rate', 'member_rateclass']],
-            [['process_type'], 'default', 'value' => 'SP', 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_bmc_can']],
+                [['file_type', 'file_name', 'file_path', 'union_code', 'created_by', 'updated_by', 'response_msg', 'error_file_path', 'cron_pick_datetime'], 'safe'],
+                [['total_count', 'success_count', 'error_count', 'status', 'process_type', 'success_file_path'], 'safe'],
+                [['created_at', 'updated_at', 'pick_datetime', 'response_datetime'], 'safe'],
+                [['process_type'], 'default', 'value' => 'background', 'on' => ['member', 'rateapplicability', 'product_sale', 'product_sale_member', 'sale_rate_applicability', 'product_master', 'product_sale_rate', 'member_rateclass', 'product_sale_batch', 'product_sale_member_batch', 'product_sale_rate_gyan']],
+                [['process_type'], 'default', 'value' => 'SP', 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_bmc_can', 'bmc_collection_antibiotic']],
         ];
     }
 

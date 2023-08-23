@@ -11,11 +11,17 @@ use app\modules\tankermovement\models\TblVehicleTripDetailSearch;
 use app\modules\tankermovement\models\TblBmcMilkDispatchTxnSearch;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidated;
 use app\modules\tankermovement\models\TblBmcDispatchConsolidatedTxn;
+use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblVehicleTripHistory;
+use yii\helpers\Json;
+use yii\web\Response;
 
 /**
  * TblVehicleTripController implements the CRUD actions for TblVehicleTrip model.
  */
 class TblVehicleTripController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['open-trip-list'];
 
     /**
      * Lists all TblVehicleTrip models.
@@ -55,24 +61,82 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $this->model = new TblVehicleTrip();
         $this->model->transaction_date = date('Y-m-d');
         $this->viewFile = 'create';
-
-        if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
+        $bmc_array = [];
+        if ($this->model->load(Yii::$app->request->post())) {
+            if (isset(Yii::$app->request->post()['selected_bmc_seq'])) {
+                $bmc_string = Yii::$app->request->post()['selected_bmc_seq'];
+                $bmc_detail = explode(':::', $bmc_string);
+                unset($bmc_detail[count($bmc_detail) - 1]);
+                foreach ($bmc_detail as $k => $v) {
+                    $bmc_index = explode('~~~', $v);
+                    $bmc_array[$bmc_index[0]] = $bmc_index[1];
+                }
+                ksort($bmc_array);
+                $bmc_array_sort = [];
+                foreach ($bmc_array as $a) {
+                    $bmc_array_sort[] = $a;
+                }
+                $this->model->bmc_code = $bmc_array_sort;
+            } else {
+                $this->model->bmc_code = NULL;
+            }
+            $bmc_array = $this->model->bmc_code;
+            if (!empty($bmc_array)) {
+                $this->model->bmc_code = $bmc_array[0];
+                $this->model->mcc_plant_code = $this->model->bmcCode->bmc_code;
+            }
             $this->model->trip_mode = 'offline';
-            $result = $this->model->setModel();
-            if ($result[0]) {
-                $transaction = $this->generalModel->saveTransaction($result[1], ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
-                if ($transaction == 'customRedirect') {
-                    if ($result[2]['inspection_require']) {
-                        return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
-                                    'trip_code' => $result[2]['trip_code'],
-                                    'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
-                        ]);
-                    } else {
-                        return $this->{$transaction}();
+            if ($this->model->validate()) {
+                $result = $this->model->setModel();
+                if ($result[0]) {
+                    $validate = TRUE;
+                    $save_model = $result[1];
+                    foreach ($bmc_array as $key => $bmc) {
+                        $trip_detai = new TblVehicleTripDetail();
+                        if ($key == count($bmc_array) - 1) {
+                            $trip_detai->source_org_code = $bmc;
+                            $trip_detai->source_org_type = 'bmc';
+                            $trip_detai->destination_code = $this->model->dest_plant_code;
+                            $trip_detai->destination_type = 'plant';
+                        } else {
+                            $trip_detai->source_org_code = $bmc;
+                            $trip_detai->source_org_type = 'bmc';
+                            $trip_detai->destination_code = $bmc_array[$key + 1];
+                            $trip_detai->destination_type = 'bmc';
+                        }
+                        $trip_detai->originating_org_code = $this->model->union_code;
+                        $trip_detai->vehicle_trip_code = $this->model->vehicle_trip_code;
+                        $trip_detai->vehicle_code = $this->model->vehicle_code;
+                        $trip_detai->transaction_datetime = date('Y-m-d H:i:s');
+                        $trip_detai->trip_code = $this->model->trip_code;
+                        $trip_detai->arrival_time = date('Y-m-d H:i:s');
+                        $trip_detai->vehicle_trip_detail_code = $trip_detai->vehicle_trip_code . 'T' . ($key + 2);
+                        if (!$trip_detai->validate()) {
+                            $validate = FALSE;
+                            $errors = $trip_detai->getErrors();
+                            if (isset($errors['destination_code'])) {
+                                $this->model->addError('bmc_code', $errors['destination_code'][0]);
+                            }
+                        }
+                        $save_model[] = $trip_detai;
+                    }
+                    if ($validate) {
+                        $transaction = $this->generalModel->saveTransaction($save_model, ['Vehicle Trip with Trip No. ' . $result[2]['trip_code'], 'create']);
+                        if ($transaction == 'customRedirect') {
+                            if ($result[2]['inspection_require']) {
+                                return $this->redirect(['/tankermovement/tbl-bmc-dispatch-inspection/create',
+                                            'trip_code' => $result[2]['trip_code'],
+                                            'vehicle_trip_detail_code' => $result[2]['vehicle_trip_detail_code']
+                                ]);
+                            } else {
+                                return $this->{$transaction}();
+                            }
+                        }
                     }
                 }
             }
         }
+        $this->model->bmc_code = $bmc_array;
         return $this->customRender();
     }
 
@@ -91,7 +155,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                     $dispact_consolidate->bmc_dispatch_consolidated_code = Yii::$app->general->getPrimaryCode($dispact_consolidate);
                     $dispact_consolidate->attributes = $model->attributes;
                     $dispact_consolidate->kg_fat = $model->kg_fat;
-                    $dispact_consolidate->kf_snf = $model->kg_snf;
+                    $dispact_consolidate->kg_snf = $model->kg_snf;
                     $dispact_consolidate->total_qty = $model->total_qty;
                     $dispact_consolidate->rejection_count = $model->rejected_count;
                     $saveModel[] = $dispact_consolidate;
@@ -107,6 +171,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
                         $saveModel[] = $dispact_txn;
                         $cnt++;
                     }
+                    $model->scenario = 'closetrip';
                     $model->trip_status = 'tankerfull';
                     $saveModel[] = $model;
                     $transaction = $this->generalModel->saveTransaction($saveModel, ['Consolidate Challan with Challan No. ' . $dispact_consolidate->bmc_dispatch_consolidated_code, 'create']);
@@ -147,6 +212,66 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCloseTrip($id) {
+        $tripModel = $this->findModel($id);
+        $historyModel = new TblVehicleTripHistory();
+        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+        $tripModel->scenario = 'closetrip';
+        $tripModel->trip_status = 'closed';
+        $transaction = $this->generalModel->saveTransaction([$tripModel, $historyModel], ['Vehicle Trip Status', 'edit']);
+        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionInactiveTrip($id) {
+        $saveModel = [];
+        $tripModel = $this->findModel($id);
+        $historyModel = new TblVehicleTripHistory();
+        Yii::$app->operation->history($tripModel, $historyModel, UPDATE);
+        $tripModel->scenario = 'closetrip';
+        $tripModel->trip_status = 'closed';
+        $tripModel->is_active = 0;
+        $saveModel[] = $historyModel;
+        $saveModel[] = $tripModel;
+        $tripDetail = TblVehicleTripDetail::find()->where(['vehicle_trip_code' => $id])->all();
+        foreach ($tripDetail as $detail) {
+            $detail->is_active = 0;
+            $saveModel[] = $detail;
+        }
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Vehicle Trip In-Active', 'edit']);
+        $msg = Yii::$app->getSession()->getFlash('success')['message'];
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => $msg];
+        } else {
+            $record = ['status' => 'error', 'msg' => $msg];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionOpenTripList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+                $tripCode = isset($parents[3]) ? $parents[3] : '';
+                $trip = new TblVehicleTripDetail();
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

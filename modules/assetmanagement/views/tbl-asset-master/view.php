@@ -23,19 +23,6 @@ $this->title = Yii::$app->label->title('view', 'Asset Master');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'cmpl_product_code',
-                            'value' => Yii::$app->general->getforeignkey($model->assetType, 'cmpl_product_name'),
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                [
-                    'columns' => [
-                        [
-                            'attribute' => 'asset_code',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                        [
                             'attribute' => 'asset_name',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],

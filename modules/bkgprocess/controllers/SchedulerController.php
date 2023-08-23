@@ -31,10 +31,17 @@ use app\modules\eipldpu\controllers\PendriveImportController;
 use app\modules\collection\models\TblMccShiftLockStaging;
 use app\modules\configuration\models\TblGenerateReportParam;
 use app\modules\collection\models\TblMilkCollectionSummary;
+use app\models\GeneralModel;
+use app\models\UserHistory;
+use webvimark\modules\UserManagement\models\User;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
+use app\components\AMQPConnection;
+use app\modules\tms\models\TblTask;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-bulk-eipl-files', 'process-import-files', 'process-import-files-background', 'sap-file-upload'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'process-bulk-eipl-files', 'alert-queue-post', 'generate-activity-alert'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -298,6 +305,9 @@ class SchedulerController extends ChildController {
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             } else if ($row->file_type == 'bmc_collection_bmc_route_can') {
                 $flag = 'bmc-collection-bulk-bmc-route-can';
+                $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
+            } else if ($row->file_type == 'bmc_collection_antibiotic') {
+                $flag = 'bmc-collection-bulk-antibiotic';
                 $sp_name = 'DB_JOB_PORTAL_BMC_Collection';
             }
             if (!empty($flag)) {
@@ -1059,6 +1069,139 @@ class SchedulerController extends ChildController {
                 $ftp_model = new TblFtpTxnLog();
                 $ftp_model->exportData($data_array, $title = '', $output);
                 $update = $model->updateFileUploadStatus($row->milk_collection_summary_code);
+            }
+        }
+    }
+
+    public function actionUserDeactiveWefDateWise() {
+        $model = new User();
+        $modelData = $model->getPickRecords(10);
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->id;
+            }, $modelData);
+//            $update = $model->updateFileStatus($ids);
+            $saveModel = [];
+
+            foreach ($modelData as $row) {
+                $historyModel = new UserHistory();
+                Yii::$app->operation->history($row, $historyModel, UPDATE);
+                $saveModel[] = $historyModel;
+                $row->is_active = 0;
+                $saveModel[] = $row;
+
+                $appmodel = new TblEiplAppLogin();
+                $appData = $appmodel->getAppDetail($row);
+                if (!empty($appData)) {
+                    $appHistoryModel = new TblEiplAppLoginHistory();
+                    Yii::$app->operation->history($appData, $appHistoryModel, UPDATE);
+                    $saveModel[] = $appHistoryModel;
+                    $appData->is_active = 0;
+                    $saveModel[] = $appData;
+                }
+                $generalModel = new GeneralModel();
+                $transaction = $generalModel->saveTransaction($saveModel, [], ['User Deactivated', 'edit']);
+            }
+        }
+    }
+
+    public function actionAlertQueuePost() {
+        $model = new TblAlertNotification();
+        $model->send_status = 0;
+        $modelData = $model->getPickRecords();
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->alert_notification_id;
+            }, $modelData);
+            $model->send_status = 1;
+            $pick_datetime = date('Y-m-d H:i:s');
+            $model->updateRecordStatus($ids);
+            $amqp_connection = new AMQPConnection();
+            if ($amqp_connection->ConnectServer()) {
+                $i = 0;
+                foreach ($modelData as $row) {
+                    try {
+                        $array = [];
+                        $array['clientId'] = $row->eipl_code;
+                        $array['type'] = $row->receiver_type;
+                        $array = array_merge($array, (array) json_decode($row->header_info));
+                        $array['recipient'] = $row->receiver_detail;
+                        $array['placeholders'] = (array) json_decode($row->message);
+                        $amqp_connection->queueName = $row->queue_name;
+                        $amqp_connection->queueData = json_encode($array);
+                        $declare_queue = TRUE;
+                        if (!isset($modelData[$i - 1]) || ($modelData[$i - 1]->queue_name != $row->queue_name)) {
+                            $declare_queue = $amqp_connection->DeclareQueue();
+                        }
+                        if ($declare_queue) {
+                            $result = $amqp_connection->PublishToQueue();
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            if ($result) {
+                                $row->send_status = 2;
+                            } else {
+                                $row->send_status = 3;
+                            }
+                        } else {
+                            $row->response_datetime = date('Y-m-d H:i:s');
+                            $row->send_status = 3;
+                        }
+                        $row->save(FALSE);
+                    } catch (\Throwable $ex) {
+                        $row->response_datetime = date('Y-m-d H:i:s');
+                        $row->send_status = 3;
+                        $row->save(FALSE);
+                    }
+                    $i++;
+                }
+                $amqp_connection->CloseConnection();
+            } else {
+                $model->send_status = 0;
+                $model->updateRecordStatus($ids);
+            }
+        }
+    }
+
+    public function actionGenerateActivityAlert() {
+        $model = new TblTask();
+        $model->resp_status = 0;
+        $modelData = $model->getPickRecords();
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->task_code;
+            }, $modelData);
+            $model->updatePickStatus($ids);
+
+            foreach ($modelData as $row) {
+                try {
+                    $message = [];
+                    $header = [];
+                    $message[] = ['attributeAlias' => 'MESSAGE', 'attributeValue' => $row->title];
+                    $messageJson = json_encode($message);
+                    $header['apiFor'] = 'default';
+                    $header['channel'] = 'default';
+                    $header['templateAlias'] = 'GENERAL_PUSH_NOTIFICATION';
+                    $header['templateFor'] = 'default';
+                    $headerJson = json_encode($header);
+                    $param = [];
+                    $param['user_code'] = $row->user_code;
+                    $param['union_code'] = $row->union_code;
+                    $param['message_json'] = $messageJson;
+                    $param['header_json'] = $headerJson;
+
+                    \Yii::$app->general->getSpData('portal_generate_activity_alert', $param, TRUE);
+                    $row->resp_status = 2;
+                    $row->is_notified = 1;
+                    $row->notified_datetime = date('Y-m-d H:i:s');
+                    $row->updateProcessStatus();
+                } catch (\yii\db\Exception $e) {
+                    $row->resp_status = 3;
+                    $row->updateProcessStatus();
+                } catch (\Throwable $e) {
+                    $row->resp_status = 3;
+                    $row->updateProcessStatus();
+                }
             }
         }
     }

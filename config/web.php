@@ -2,10 +2,6 @@
 
 ini_set("memory_limit", "-1");
 set_time_limit(3600);
-/* test commit */
-$params = require(__DIR__ . '/params.php');
-
-//echo Yii::$app->session['LanguageCode'];exit
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -17,27 +13,8 @@ $config = [
         '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
-        // 'session' => ['name' => 'tirumala'],
-        'session' => [
-            'cookieParams' => [
-                'httpOnly' => true,
-                'secure' => false
-            ]
-        ],
-        'cookies' => [
-            'class' => 'yii\web\Cookie',
-            'httpOnly' => true,
-            'secure' => true
-        ],
-        // 'cache' => ['class' => 'yii\caching\FileCache'],
-        'cache' => [
-            'class' => 'yii\redis\Cache',
-            'redis' => [
-                'hostname' => '10.1.0.13',
-                'port' => 6379,
-                'database' => 1,
-            ]
-        ],
+        'session' => ['name' => 'eiplportal'],
+        'cache' => ['class' => 'yii\caching\FileCache'],
         'general' => ['class' => 'app\components\GeneralFunctions'],
         'dropdown' => ['class' => 'app\components\DropDown'],
         'label' => ['class' => 'app\components\GeneralLabels'],
@@ -58,6 +35,7 @@ $config = [
         'EIPLPacketConfig' => ['class' => 'app\components\EIPLPacketConfig'],
         'ClientPaymentConfig' => ['class' => 'app\components\ClientPaymentConfig'],
         'pdf' => ['class' => 'app\components\PDF'],
+        'DayHelper' => ['class' => 'app\components\DayHelper'],
         'urlManager' => [
             'class' => 'app\components\UrlManager',
             'showScriptName' => false,
@@ -270,10 +248,32 @@ $config = [
         'assetmanagement' => ['class' => 'app\modules\assetmanagement\assetmanagement',],
         'dynamicreport' => ['class' => 'app\modules\dynamicreport\Dynamicreport',],
         'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
+        'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
+        'tms' => ['class' => 'app\modules\tms\Tms',],
     ],
-    'params' => $params,
+    'params' => require(__DIR__ . '/params.php'),
 ];
-
+$params = $config['params'];
+if (!empty($params ['mailer'])) {
+    $config['components']['mailer'] = $params ['mailer'];
+}
+if (!empty($params['redis'])) {
+    $config['components']['session'] = [
+        'cookieParams' => [
+            'httpOnly' => true,
+            'secure' => false
+        ]
+    ];
+    $config['components']['cookies'] = [
+        'class' => 'yii\web\Cookie',
+        'httpOnly' => true,
+        'secure' => true
+    ];
+    $config['components']['cache'] = [
+        'class' => 'yii\redis\Cache',
+        'redis' => $params ['redis']
+    ];
+}
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
@@ -287,5 +287,4 @@ if (YII_ENV_DEV) {
         'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
-
 return $config;

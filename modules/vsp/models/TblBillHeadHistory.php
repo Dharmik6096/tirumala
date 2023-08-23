@@ -44,10 +44,10 @@ class TblBillHeadHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code', 'operation_type', 'history_created_by', 'general_formula_comma', 'originating_org_code', 'originating_org_type'], 'string'],
-            [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'default_bill_head_code', 'sequence_no', 'originating_type'], 'integer'],
-            [['created_at', 'updated_at', 'history_created_at'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'calculation_based_on', 'sap_seq_no'], 'safe']
+                [['bill_head_code', 'bill_head_name', 'created_by', 'updated_by', 'union_code', 'general_formula_code', 'operation_type', 'history_created_by', 'general_formula_comma', 'originating_org_code', 'originating_org_type'], 'string'],
+                [['is_default', 'is_active', 'is_disburse_allowed', 'bill_head_type', 'default_bill_head_code', 'sequence_no', 'originating_type'], 'integer'],
+                [['created_at', 'updated_at', 'history_created_at'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'bill_head_for', 'calculation_based_on', 'is_hold', 'payment_cycle_type', 'sap_seq_no'], 'safe']
         ];
     }
 

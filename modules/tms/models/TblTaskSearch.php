@@ -1,0 +1,78 @@
+<?php
+
+namespace app\modules\tms\models;
+
+use Yii;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use app\modules\tms\models\TblTask;
+
+/**
+ * TblTaskSearch represents the model behind the search form about `app\modules\tms\models\TblTask`.
+ */
+class TblTaskSearch extends TblTask {
+
+    public $from_date, $to_date;
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+                [['task_code', 'task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
+                [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['from_date', 'to_date'], 'safe']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios() {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
+    }
+
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function search($params) {
+        $query = TblTask::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        $query->joinWith(['userCode', 'taskTypeCode', 'formTypeCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_task', 'tbl_task', 'tbl_task');
+
+        $from_date = (!empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d')) . ' 00:00:00';
+        $to_date = (!empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d')) . ' 00:00:00';
+
+        $query->andFilterWhere(['>=', 'tbl_task.task_datetime', $from_date]);
+        $query->andFilterWhere(['<=', 'tbl_task.task_datetime', $to_date]);
+
+        $query->andFilterWhere([
+            'is_cancel' => $this->is_cancel,
+            'is_notified' => $this->is_notified,
+        ]);
+
+        $query->andFilterWhere(['like', 'tbl_task.task_performed_for', $this->task_performed_for])
+                ->andFilterWhere(['like', 'tbl_task.title', $this->title])
+                ->andFilterWhere(['like', 'tbl_task.description', $this->description])
+                ->andFilterWhere(['like', 'tbl_task.status', $this->status])
+                ->andFilterWhere(['like', 'tbl_task_type.task_type', $this->task_type_code])
+                ->andFilterWhere(['like', 'tbl_form_type.form_name', $this->form_type_code])
+                ->andFilterWhere(['like', '[user].name', $this->user_code]);
+
+        $query->orderBy(['tbl_task.task_datetime' => SORT_DESC, '[user].name' => SORT_ASC]);
+        return $dataProvider;
+    }
+
+}

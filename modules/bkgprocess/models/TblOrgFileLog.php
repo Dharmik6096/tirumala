@@ -94,9 +94,10 @@ class TblOrgFileLog extends \app\models\ChildModel {
 
     public function generateBiplFiles($org_code, $file_type, $rate_id = '') {
         $cp_code = $this->dcsCode->ref_code;
+        $eiplCode = Yii::$app->general->getmultiforeignkey($this->dcsCode, ['unionCode'], 'eipl_code');
         $crnt_dir = getcwd();
         $ftp_conn_code = $this->dcsCode->mcc_plant_code;
-        $path = Yii::$app->params['biplDirPath'] . $cp_code . '/' . 'MASFILES';
+        $path = \Yii::getAlias('@webroot') . Yii::$app->params['biplDirPath'] . $cp_code . '/' . 'MASFILES';
         if (Yii::$app->general->checkDirectory($path)) {
             if ($file_type == 'MEMBER') {
                 $utility_path = \Yii::getAlias('@webroot') . '/' . Yii::$app->params['biplMemberUtilityPath'];
@@ -135,7 +136,20 @@ class TblOrgFileLog extends \app\models\ChildModel {
                     $command = 'cd ' . $utility_path . ' && ./rfgB-32 ' . $ratefile . ' ' . $path;
                     exec($command);
                     chdir($crnt_dir);
-                    $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');
+                    if (strtolower($eiplCode) == 'dodla') {
+                        $appendDate = date('dmy');
+                        if (strstr($ratefile, 'cow')) {
+                            $fileName = 'CM' . $appendDate . '.RC1';
+                        } else if (strstr($ratefile, 'mix')) {
+                            $fileName = 'MM' . $appendDate . '.RM1';
+                        } else {
+                            $fileName = 'BM' . $appendDate . '.RB1';
+                        }
+                        $enc_file = $fileName;
+                    } else {
+                        $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');
+                    }
+//                    $enc_file = (strstr($ratefile, 'cow')) ? 'v1.RC1' : (strstr($ratefile, 'mix') ? 'v1.RM1' : 'v1.RB1');
                     $enc_path = $path . '/' . $enc_file;
                     $this->saveLog($org_code, 'TblDcs', $cp_code, $ftp_conn_code, $enc_path, $file_type, $ratefile);
                 }
@@ -152,6 +166,8 @@ class TblOrgFileLog extends \app\models\ChildModel {
             foreach ($upfiles as $file) {
                 $org_files = new TblOrgFileLog();
                 $org_files->attributes = $ftpData->attributes;
+                $org_files->created_at = NULL;
+                $org_files->created_by = NULL;
                 $org_files->file_type = $file_type;
                 $org_files->module_name = $module_name;
                 $org_files->module_code = (string) $module_code;

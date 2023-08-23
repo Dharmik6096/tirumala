@@ -129,7 +129,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code])->andWhere(['=', 'ISNULL(dcs_code,\'\')', '']);
         } elseif ($org_type == 'VLC') {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code]);
+            $query->andWhere(['dcs_code' => $data->dcs_code]);
         }
         if (!empty($notIn)) {
             $query->andWhere(['!=', 'user_code', $notIn]);
@@ -287,7 +287,7 @@ class TblUserAndroid extends \yii\db\ActiveRecord {
         } elseif ($org_type == 'BMC') {
             $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code]);
         } elseif ($org_type == 'VLC') {
-            $query->andWhere(['plant_code' => $data->plant_code, 'mcc_plant_code' => $data->mcc_plant_code, 'bmc_code' => $data->bmc_code, 'dcs_code' => $data->dcs_code]);
+            $query->andWhere(['dcs_code' => $data->dcs_code]);
         }
         $user = $query->all();
         return $user;

@@ -64,7 +64,7 @@ class DropDown extends Component {
     public function uniondistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
 
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', 'Select District', $multiple, $model->$name, $readonly);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', Yii::t('app', 'Select District'), $multiple, $model->$name, $readonly);
     }
 
     public function unionpaymentcycle($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
@@ -150,6 +150,16 @@ class DropDown extends Component {
         }
     }
 
+    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start, $end) {
+        $yearStart = date('Y') - $start;
+        $yearEnd = date('Y') + $end;
+        $years = [];
+        for ($yearStart; $yearStart <= $yearEnd; $yearStart++) {
+            $years[] = $yearStart;
+        }
+        echo $form->field($model, $name)->dropDownList($years, ['prompt' => 'Select Year', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
+    }
+
     private function setClass($form, $name) {
         if (array_key_exists($name, $form->options))
             $this->class = $form->options[$name];
@@ -206,7 +216,9 @@ class DropDown extends Component {
 
     public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false) {
 //$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
-        if ($multiselect) {
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), $multiple, '', $readonly, '', true, TRUE);
+        } else if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs/route-dcs-list');
         } else {
             return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), '', '', $readonly);
@@ -367,9 +379,15 @@ class DropDown extends Component {
         }
     }
 
-    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
+    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
-        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        if ($is_return) {
+            return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
+        } else if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, '', $readonly, '', true, TRUE);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
@@ -449,9 +467,23 @@ class DropDown extends Component {
         }
     }
 
+    public function union_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/union-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/union-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
+        }
+    }
+
     public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
+    }
+
+    public function mccRemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-mcc-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
     public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
@@ -514,6 +546,90 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-bmc-dcs-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
+    public function mccBillHead($model, $form, $depends, $name = 'mcc_bill_head_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-mcc-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
+    }
+
+    public function welfareScheme($model, $form, $depends, $name = 'scheme_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/scheme-list', Yii::t('app', 'Select Scheme'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/scheme-list', Yii::t('app', 'Select Scheme'), $multiple, $extra_param, $readonly);
+        }
+    }
+
+    public function welfareSchemeApplication($model, $form, $depends, $name = 'application_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/application-list', Yii::t('app', 'Select Application'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/application-list', Yii::t('app', 'Select Application'), $multiple, $extra_param, $readonly);
+        }
+    }
+
+    public function all_route_transporter($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $model->$name, $readonly);
+    }
+
+    public function vehicleOpenTrip($model, $form, $depends, $name = 'trip_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly, '', true, $autoClose);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly);
+        }
+    }
+
+    public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $extra_param, $readOnly, '', $searchable);
+    }
+
+    public function approval_level($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-approval-stages/level-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
+    public function indent_product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-indent-product/product-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
+    public function bom_code($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/bom-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
+    public function complain_problem($model, $form, $depends, $name = 'complain_problem', $islable = false, $multiple = false, $readonly = false) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/problem-list', Yii::t('app', 'Select Problem'), $multiple, '', $readonly);
+    }
+
+    public function asset_list($model, $form, $depends, $name = 'asset_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-master/asset-lists', Yii::t('app', 'Select Asset'), $multiple, '', $readOnly);
+    }
+
+    public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
+    }
+
+    public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom-list', 'Select', $multiple, $model->$name, $readonly);
+    }
+
+    public function old_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail-bom/old-sr-no', 'Select', $multiple, $model->$name, $readonly);
+    }
+
+    public function new_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail/new-sr-no', 'Select', $multiple, $model->$name, $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -543,7 +659,7 @@ class DropDown extends Component {
         ]]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '') {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -566,23 +682,43 @@ class DropDown extends Component {
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
 //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
-        echo $form->field($model, $name)
-                ->widget(DepDrop::classname(), [
-                    'type' => $dropDownType,
-                    'data' => [$model->{$name} => $model->{$name}],
-                    'name' => $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
-                    'options' => ['multiple' => $multiple],
-                    'pluginOptions' => [
-                        'depends' => $depends,
-                        'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
-                        'allParam' => ["'" . $extraParam . "'"],
-                        'initialize' => true,
-                        'allowClear' => true,
-                    ],
-                    'options' => $options
-                ])->label($islable);
+        if ($is_return) {
+            return $form->field($model, !empty($input_name) ? $input_name : $name)
+                            ->widget(DepDrop::classname(), [
+                                'type' => $dropDownType,
+                                'data' => [$model->{$name} => $model->{$name}],
+                                'name' => !empty($input_name) ? $input_name : $name,
+                                'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
+                                'options' => ['multiple' => $multiple],
+                                'pluginOptions' => [
+                                    'depends' => $depends,
+                                    'placeholder' => $placeholder,
+                                    'url' => Url::to([$url]),
+                                    'allParam' => ["'" . $extraParam . "'"],
+                                    'initialize' => true,
+                                    'allowClear' => true,
+                                ],
+                                'options' => $options
+                            ])->label($islable);
+        } else {
+            echo $form->field($model, $name)
+                    ->widget(DepDrop::classname(), [
+                        'type' => $dropDownType,
+                        'data' => [$model->{$name} => $model->{$name}],
+                        'name' => $name,
+                        'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
+                        'options' => ['multiple' => $multiple],
+                        'pluginOptions' => [
+                            'depends' => $depends,
+                            'placeholder' => $placeholder,
+                            'url' => Url::to([$url]),
+                            'allParam' => ["'" . $extraParam . "'"],
+                            'initialize' => true,
+                            'allowClear' => true,
+                        ],
+                        'options' => $options
+                    ])->label($islable);
+        }
 
         if (!empty($selected)) {
             $script = "$(document).ready(function() {
@@ -950,7 +1086,7 @@ class DropDown extends Component {
             'dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 91 => Yii::t('app', 'BIPL'), 1 => Yii::t('app', 'Mobile AMCS')],
             ],
             'file_type' => [
                 'name' => 'source_type',
@@ -992,6 +1128,7 @@ class DropDown extends Component {
                 'name' => 'payment_mode',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => [0 => Yii::t('app', 'Cash'), 1 => Yii::t('app', 'Credit')],
+                'remove_key' => ['0'],
             ],
             'sap_file_status' => [
                 'name' => 'sap_file_status',
@@ -1136,7 +1273,7 @@ class DropDown extends Component {
             'EIPL_dpu_type' => [
                 'name' => 'dpu_type',
                 'prompt' => Yii::t('app', 'Select DPU Type'),
-                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS')],
+                'data' => [8 => Yii::t('app', '8 - Bit'), 32 => Yii::t('app', '32 - Bit'), 0 => Yii::t('app', 'Android AMCS'), 1 => Yii::t('app', 'Mobile AMCS')],
             ],
             'BIPL_dpu_type' => [
                 'name' => 'dpu_type',
@@ -1192,7 +1329,7 @@ class DropDown extends Component {
             'billing_method' => [
                 'name' => 'billing_method',
                 'prompt' => Yii::t('app', 'Billing Type'),
-                'data' => ['fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Engine Oil')],
+                'data' => ['fix_rent_daily' => Yii::t('app', 'Fix Rent Daily'), 'km_wise_rate' => Yii::t('app', 'Km Wise Rate'), 'qty_wise_rate' => Yii::t('app', 'Qty Wise Rate'), 'fix_rent_daily_fuel_consumption' => Yii::t('app', 'Fix Rent Daily Fuel Consumption'), 'fix_rent_monthly_diesel_engine_oile' => Yii::t('app', 'Fix Rent Monthly Engine Oil'), 'fix_rent_daily_diesel_engine_oile' => Yii::t('app', 'Fix Rent Daily Engine Oil')],
             ],
             'default_milk_type' => [
                 'name' => 'default_milk_type',
@@ -1374,10 +1511,173 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['0' => Yii::t('app', 'WQ'), '1' => Yii::t('app', 'VM')],
             ],
+            'payment_cycle_type' => [
+                'name' => 'payment_cycle_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['first' => Yii::t('app', 'First'), 'second' => Yii::t('app', 'Second'), 'third' => Yii::t('app', 'Third'), 'consecutive' => Yii::t('app', 'Consecutive')],
+            ],
             'approved_status' => [
                 'name' => 'approved_status',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Approved')],
+            ],
+            'doc_group' => [
+                'name' => 'doc_group',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['address_proof' => Yii::t('app', 'Address Proof'), 'application_form' => Yii::t('app', 'Application Form'), 'other' => Yii::t('app', 'Other'), 'bank_related' => Yii::t('app', 'Bank Related')],
+            ],
+            'doc_ext' => [
+                'name' => 'doc_ext',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['.docx' => Yii::t('app', 'Word'), '.pdf' => Yii::t('app', 'Pdf'), 'image/jpeg' => Yii::t('app', 'JPG/JPEG')],
+            ],
+            'approval_level' => [
+                'name' => 'level',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [1 => Yii::t('app', 'Level 1'), 2 => Yii::t('app', 'Level 2'), 3 => Yii::t('app', 'Level 3'), 4 => Yii::t('app', 'Level 4'), 5 => Yii::t('app', 'Level 5'), 6 => Yii::t('app', 'Level 6')],
+            ],
+            'approval_mode' => [
+                'name' => 'approval_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
+            ],
+            'ws_payment_mode' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['online' => Yii::t('app', 'Online'), 'cheque' => Yii::t('app', 'Cheque')],
+            ],
+            'ws_approval_status' => [
+                'name' => 'application_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['approved' => Yii::t('app', 'Approve'), 'rejected' => Yii::t('app', 'Reject')],
+            ],
+            'application_status' => [
+                'name' => 'application_status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['pending' => Yii::t('app', 'Pending'), 'registered' => Yii::t('app', 'Registered'), 'inprocess' => Yii::t('app', 'Inprocess'), 'approved' => Yii::t('app', 'Approved'), 'rejected' => Yii::t('app', 'Rejected'), 'disbursed' => Yii::t('app', 'Disbursed')],
+            ],
+            'applicable_for' => [
+                'name' => 'applicable_for',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['self' => Yii::t('app', 'SELF'), 'other' => Yii::t('app', 'OTHER')],
+            ],
+            'plant_register_type' => [
+                'name' => 'entry_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['CONSOLIDATED' => Yii::t('app', 'Consolidated'), 'INDIVIDUAL' => Yii::t('app', 'Individual')],
+            ],
+            'user_login_type' => [
+                'name' => 'login_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer')],
+                'remove_key' => ['all']
+            ],
+            'receiver_type' => [
+                'name' => 'receiver_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['APP NOTIFICATION' => Yii::t('app', 'APP NOTIFICATION')],
+            ],
+            'notification_type' => [
+                'name' => 'notification_type',
+                'prompt' => Yii::t('app', 'Select Notification Type'),
+                'data' => [1 => Yii::t('app', 'Alert'), 2 => Yii::t('app', 'Priptra'), 3 => Yii::t('app', 'Special Message'), 4 => Yii::t('app', 'Milk Bill'), 5 => Yii::t('app', 'Bacteria Test')],
+                'remove_key' => ['2', '3', '5']
+            ],
+            'month' => [
+                'name' => 'month',
+                'prompt' => Yii::t('app', 'Select Month'),
+                'data' => ['01' => Yii::t('app', 'Jan'), '02' => Yii::t('app', 'Feb'), '03' => Yii::t('app', 'Mar'), '04' => Yii::t('app', 'Apr'), '05' => Yii::t('app', 'May'), '06' => Yii::t('app', 'Jun'), '07' => Yii::t('app', 'Jul'), '08' => Yii::t('app', 'Aug'), '09' => Yii::t('app', 'Sep'), '10' => Yii::t('app', 'Oct'), '11' => Yii::t('app', 'Nov'), '12' => Yii::t('app', 'Dec')],
+            ],
+            'cash_payment' => [
+                'name' => 'payment_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => [0 => Yii::t('app', 'Cash')],
+            ],
+            'stop_payment_type' => [
+                'name' => 'stop_reason',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['data_missing' => Yii::t('app', 'Data Missing'), 'dispute' => Yii::t('app', 'Dispute'), 'recovery_issue' => Yii::t('app', 'Recovery Issue')],
+            ],
+            'approval_mode' => [
+                'name' => 'approval_mode',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['flexi' => Yii::t('app', 'Flexible'), 'strict' => Yii::t('app', 'Strict')],
+            ],
+            'approval_type' => [
+                'name' => 'approval_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'User'), '2' => Yii::t('app', 'Login Type')],
+            ],
+            'indent_approval_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'Partially Approved'), '2' => Yii::t('app', 'Approved'), '3' => Yii::t('app', 'Reject'), '4' => Yii::t('app', 'Cancelled'), '5' => Yii::t('app', 'Dispatch'), '6' => 'Accepted'],
+            ],
+            'indent_type' => [
+                'name' => 'type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['mcc' => Yii::t('app', 'MCC Wise'), 'warehouse' => Yii::t('app', 'Warehouse Wise')],
+            ],
+            'animal_req_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['0' => Yii::t('app', 'Pending'), '1' => Yii::t('app', 'InProgress'), '2' => Yii::t('app', 'Complete')],
+            ],
+            'product_stock_issue_reason' => [
+                'name' => 'reason',
+                'prompt' => Yii::t('app', 'Select Reason'),
+                'data' => ['consumed' => Yii::t('app', 'Consumed'), 'screaped' => Yii::t('app', 'Screaped'), 'lost' => Yii::t('app', 'Lost')],
+            ],
+            'login_type_ho_flutter' => [
+                'name' => 'login_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
+                'remove_key' => ['all']
+            ],
+            'asset_detail_status' => [
+                'name' => 'current_status',
+                'prompt' => Yii::t('app', 'Select Asset Detail Status'),
+                'data' => ['0' => Yii::t('app', 'New'), '1' => Yii::t('app', 'Repaired'), '2' => Yii::t('app', 'Faulty'), '3' => Yii::t('app', 'Scrapped')],
+            ],
+            'complain_for' => [
+                'name' => 'complain_for',
+                'prompt' => Yii::t('app', 'Select Complain For'),
+                'data' => ['general_complain' => Yii::t('app', 'General Complain Type'), 'asset_complain' => Yii::t('app', 'Asset Complain Type')],
+            ],
+            'location_type' => [
+                'name' => 'location_type',
+                'prompt' => Yii::t('app', 'Select Location Type'),
+                'data' => ['1' => Yii::t('app', 'Plant'), '2' => Yii::t('app', 'BMC'), '3' => Yii::t('app', 'DCS')],
+            ],
+            'complain_status' => [
+                'name' => 'complain_status',
+                'prompt' => Yii::t('app', 'Select Complain Status'),
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSE' => Yii::t('app', 'CLOSE'), 'RESOLVED' => Yii::t('app', 'RESOLVED')],
+            ],
+            'resolved_status' => [
+                'name' => 'resolved_status',
+                'prompt' => Yii::t('app', 'Select Status'),
+                'data' => ['other' => Yii::t('app', 'Other'), 'service' => Yii::t('app', 'Service'), 'repair' => Yii::t('app', 'Repair'), 'replace' => Yii::t('app', 'Replace')],
+            ],
+            'activity_type' => [
+                'name' => 'activity_type',
+                'prompt' => Yii::t('app', 'Select Activity Status'),
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'ASSIGN' => Yii::t('app', 'ASSIGN'), 'RE-ASSIGN' => Yii::t('app', 'RE-ASSIGN'), 'SERVICE' => Yii::t('app', 'SERVICE')],
+            ],
+            'old_spare_status' => [
+                'name' => 'old_spare_status',
+                'prompt' => Yii::t('app', 'Select Activity Status'),
+                'data' => ['0' => Yii::t('app', 'Faulty'), '1' => Yii::t('app', 'Scrapped')],
+            ],
+            'task_performed_for' => [
+                'name' => 'task_performed_for',
+                'prompt' => Yii::t('app', 'Select Location Type'),
+                'data' => ['PLANT' => Yii::t('app', 'PLANT'), 'BMC' => Yii::t('app', 'BMC'), 'DCS' => Yii::t('app', 'DCS')],
+            ],
+            'task_repeat_interval' => [
+                'name' => 'task_repeat_interval',
+                'prompt' => Yii::t('app', 'Select Repeat Interval'),
+                'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
         ];
         return $records[$l];
@@ -1400,12 +1700,12 @@ class DropDown extends Component {
             'land_unit' => ['name' => 'land_unit', 'fields' => 'land_unit_code,land_unit_name,local_name', 'prompt' => 'Select Data', 'model' => 'TblLandUnit'],
             'unit_code' => ['name' => 'unit_code', 'fields' => 'unit_code,unit_name,local_name', 'prompt' => 'Select Unit', 'model' => 'TblUnits', 'local_model' => 'TblUnitsLocal'],
             'state_code' => ['name' => 'state_code', 'fields' => 'state_code,state_name,local_name', 'prompt' => 'Select State', 'model' => 'TblStates', 'local_model' => 'TblStatesLocal'],
-            'district_code' => ['name' => 'district_code', 'fields' => 'district_code,district_name,local_name', 'prompt' => 'Select District', 'model' => 'TblDistricts', 'local_model' => 'TblDistrictsLocal', 'depend' => 'state_code'],
-            'sub_district_code' => ['name' => 'sub_district_code', 'fields' => 'sub_district_code,sub_district_name,local_name', 'prompt' => 'Select Sub District', 'model' => 'TblSubDistricts', 'local_model' => 'TblSubDistrictsLocal', 'depend' => 'district_code'],
-            'village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
+            'district_code' => ['name' => 'district_code', 'fields' => 'district_code,district_name,local_name', 'prompt' => Yii::t('app', 'Select District'), 'model' => 'TblDistricts', 'local_model' => 'TblDistrictsLocal', 'depend' => 'state_code'],
+            'sub_district_code' => ['name' => 'sub_district_code', 'fields' => 'sub_district_code,sub_district_name,local_name', 'prompt' => Yii::t('app', 'Select Sub District'), 'model' => 'TblSubDistricts', 'local_model' => 'TblSubDistrictsLocal', 'depend' => 'district_code'],
+            'village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => Yii::t('app', 'Select Village'), 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
             'block_code' => ['name' => 'block_code', 'fields' => 'block_code,block_name,local_name', 'prompt' => 'Select Block', 'model' => 'TblBlocks', 'depend' => 'sub_district_code'],
             //'dcs_village_code' => ['name' => 'village_code', 'fields' => 'village_code,village_name,local_name', 'prompt' => 'Select Village', 'model' => 'TblVillages', 'local_model' => 'TblVillagesLocal', 'depend' => 'sub_district_code'],
-            'hamlet_code' => ['name' => 'hamlet_code', 'fields' => 'hamlet_code,hamlet_name,local_name', 'prompt' => 'Select Hamlet', 'model' => 'TblHamlets', 'local_model' => 'TblHamletsLocal', 'depend' => 'village_code'],
+            'hamlet_code' => ['name' => 'hamlet_code', 'fields' => 'hamlet_code,hamlet_name,local_name', 'prompt' => Yii::t('app', 'Select Hamlet'), 'model' => 'TblHamlets', 'local_model' => 'TblHamletsLocal', 'depend' => 'village_code'],
             //'animal_type_code'=>['name'=>'animal_type_code','fields'=>'animal_type_code,animal_type_name','prompt'=>'Select Animal Type','model'=>'TblAnimalType'],
             'vehicle_type_code' => ['name' => 'vehicle_type_code', 'fields' => 'vehicle_type_code,vehicle_type_name,local_name', 'prompt' => 'Select Vehicle Type', 'model' => 'TblVehicleType'],
             'milk_quality_type_code' => ['name' => 'milk_quality_type_code', 'fields' => 'milk_quality_type_code,milk_quality_type_name,local_name', 'prompt' => 'Select Milk Quality Type', 'model' => 'TblMilkQualityType'],
@@ -1421,7 +1721,7 @@ class DropDown extends Component {
             'quality_param' => ['name' => 'quality_param', 'fields' => 'code,type', 'prompt' => 'Select Quality Param', 'model' => 'TblMilkType'],
             'criteria_type_code' => ['name' => 'criteria_type_code', 'fields' => 'code,criteria_name', 'prompt' => 'Select Criteria', 'model' => 'TblHeadLoadCriteria'],
             'product_group_code' => ['name' => 'product_group_code', 'fields' => 'product_group_code,product_group_name', 'prompt' => 'Select Product Group', 'model' => 'TblProductGroup'],
-            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code'],
+            'product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['x_col3']],
             'member_classification_type_code' => ['name' => 'member_classification_type_code', 'fields' => 'member_classification_type_code,member_classification_type', 'prompt' => 'Select Member Classification Type', 'model' => 'TblMemberClassificationType'],
             'member-type' => ['name' => 'member_type_code', 'fields' => 'member_type_code,member_type_name', 'prompt' => Yii::t('app', 'Select Member Type'), 'model' => 'TblMemberTypes'],
             'blood-group' => ['name' => 'bloodgroup_code', 'fields' => 'blood_group_code,blood_group', 'prompt' => 'Select Blood Group', 'model' => 'TblBloodgroup'],
@@ -1487,7 +1787,26 @@ class DropDown extends Component {
 //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
+            'mcc_default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblMccBillHeadDefault'],
+            'mcc_general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblMccGeneralFormula', 'depend' => 'union_code'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
+            'application_id' => ['name' => 'application_id', 'fields' => 'application_id,application_id,', 'prompt' => Yii::t('app', 'Select Application'), 'model' => 'TblSchemeApplication', 'depend' => 'scheme_id', 'dependArray' => ['application_status']],
+            'scheme_id' => ['name' => 'scheme_id', 'fields' => 'scheme_id,scheme_name,', 'prompt' => Yii::t('app', 'Select Scheme'), 'model' => 'TblSchemeMaster', 'depend' => 'union_code'],
+            'trip_code' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code', 'prompt' => 'Select Trip', 'model' => 'TblMilkVehicleEntry'],
+            'grn_no' => ['name' => 'grn_no', 'fields' => 'grn_no,grn_no', 'prompt' => 'Select GRN No', 'model' => 'TblMilkVehicleEntry'],
+            'user' => ['name' => 'id', 'fields' => 'id,name', 'prompt' => Yii::t('app', 'Select Parent'), 'model' => 'User'],
+            'ref_no' => ['name' => 'ref_no', 'fields' => 'document_no,document_no,', 'prompt' => Yii::t('app', 'Select Ref No.'), 'model' => 'TblPlantDispatch', 'depend' => 'plant_code', 'dependArray' => ['mcc_plant_code', 'status']],
+            'approval_process' => ['name' => 'process_name', 'fields' => 'process_name,process_desc,', 'prompt' => Yii::t('app', 'Select Process'), 'model' => 'TblApprovalStagesProcess', 'depend' => 'union_code'],
+            'indent-product' => ['name' => 'product_code', 'fields' => 'product_code,product_name,local_name', 'prompt' => 'Select Product', 'model' => 'TblProduct', 'depend' => 'union_code', 'dependArray' => ['is_indent']],
+            'spare_code' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster', 'whereCondition' => ['is_spare' => 1]],
+            'spare_code_detail_bom' => ['name' => 'spare_code', 'fields' => 'asset_code,asset_name', 'prompt' => 'Select Head', 'model' => 'TblAssetMaster'],
+            'asset_bom_code' => ['name' => 'spare_code', 'fields' => 'spare_code,spare_code,', 'prompt' => Yii::t('app', 'Select Spare'), 'model' => 'TblAssetBom', 'depend' => 'asset_code'],
+            'complain_escalation_name' => ['name' => 'complain_escalation_code', 'fields' => 'complain_escalation_code,escalation_name', 'prompt' => 'Select Complain  Escalation Name', 'model' => 'TblComplainEscalation'],
+            'complain_type' => ['name' => 'complain_type_code', 'fields' => 'complain_type_code,complain_type', 'prompt' => 'Select Complain Type', 'model' => 'TblComplainType'],
+            'contact_detail_complain_user' => ['name' => 'user_code', 'fields' => 'detail_code,firstname,mobile_no', 'prompt' => 'Select', 'model' => 'TblContactDetails'],
+            'task_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code'],
+            'form_type' => ['name' => 'form_type_code', 'fields' => 'form_type_code,form_name,', 'prompt' => Yii::t('app', 'Select Form'), 'model' => 'TblFormType', 'depend' => 'task_type_code'],
+            'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
         ];
         return $label[$l];
     }
@@ -1703,6 +2022,21 @@ class DropDown extends Component {
     public function DpuRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/dpu-chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
+    }
+
+    public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function productBatchLstSixMonth($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list-last-six-month', Yii::t('app', 'Select Batch'), $multiple);
+    }
+
+    public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
 }

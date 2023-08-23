@@ -12,6 +12,9 @@ use app\modules\sms\models\TblApiMaster;
 use app\modules\sms\models\TblBulkNotificationHistory;
 use yii\web\Response;
 use yii\helpers\Json;
+use app\modules\sms\models\TblBulkNotificationApplicability;
+use app\modules\sms\models\TblBulkNotificationApplicabilityHistory;
+use yii\widgets\ActiveForm;
 
 /**
  * TblBulkNotificationController implements the CRUD actions for TblBulkNotification model.
@@ -53,17 +56,109 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $this->model->app_type = 1;
         $this->model->login_type = 'MEMBER';
-        if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->receiver_type = 'APP_NOTIFICATION';
-            $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
-            $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
-            $this->model->entry_datetime = date('Y-m-d H:i:s');
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Bulk Notification', 'create']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
+        $saveModel = [];
+        if (Yii::$app->request->post()) {
+            if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
+                $postData = Yii::$app->request->post();
+                $files = !empty($postData['TblFtpTxnLog']['file_name']) ? $postData['TblFtpTxnLog']['file_name'] : '';
+                $dcsCodes = $this->model->getBMCDCS();
+                $this->model->wef_date = Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT);
+                $this->model->entry_datetime = date('Y-m-d H:i:s');
+                $this->model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+                $this->model->union_code = !empty(Yii::$app->session->get('Unions') && count(explode(',', Yii::$app->session->get('Unions'))) == 1) ? Yii::$app->session->get('Unions') : NULL;
+
+                if ($this->model->notification_type == 4) {
+                    $this->model->filename = $files;
+                    $filesArray = explode('.', $files);
+                    $filename = $filesArray[0];
+                    $old_directory = \Yii::getAlias('@webroot') . '/web/upload/images/';
+                    $new_directory = \Yii::getAlias('@webroot') . '/web/upload/' . $this->model->bmc_code . $filename . '/';
+                    if (Yii::$app->general->checkDirectory($new_directory)) {
+                        rename($old_directory . $this->model->filename, $new_directory . $this->model->filename);
+                    }
+                    $file_path = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/upload/' . $this->model->bmc_code . $filename . '/';
+                    $command = 'java -jar pdf-splitter-1.0.jar ' . $new_directory . $this->model->filename;
+                    $utility_path = \Yii::getAlias('@webroot') . '/web/utility/pdf-splitter/';
+                    $crnt_dir = getcwd();
+                    chdir($utility_path);
+                    exec($command);
+                    chdir($crnt_dir);
+                    $i = 1;
+                    $auto_key_config = [];
+                    $from_date = "";
+                    $to_date = "";
+                    if (isset($this->model->payment_cycle_code) && $this->model->payment_cycle_code != '') {
+                        $paymentCycle = \app\modules\payment\models\TblPaymentCycle::find()->where(['payment_cycle_code' => $this->model->payment_cycle_code])->one();
+
+                        $from_date = $paymentCycle->from_date;
+                        $to_date = $paymentCycle->to_date;
+                    }
+                    foreach ($dcsCodes as $k => $dcs_data) {
+                        $model = new TblBulkNotification();
+                        $model->union_code = $dcs_data['union_code'];
+                        $model->plant_code = $dcs_data['plant_code'];
+                        $model->mcc_plant_code = $dcs_data['mcc_plant_code'];
+                        $model->bmc_code = $dcs_data['bmc_code'];
+                        $model->dcs_code = $dcs_data['dcs_code'];
+                        $model->notification_type = $this->model->notification_type;
+                        $model->payment_cycle_code = $this->model->payment_cycle_code;
+                        $model->from_date = $from_date;
+                        $model->to_date = $to_date;
+                        $model->login_type = $this->model->login_type;
+                        if ($model->notification_type == 4) {
+                            $model->filename = ((int) $dcs_data['ref_code']) . '.pdf';
+                            $model->file_path = $file_path . $model->filename;
+                        }
+                        $model->campaign_name = $this->model->campaign_name;
+                        $model->title = $this->model->title;
+                        $model->message = $this->model->message;
+                        $model->receiver_type = 'APP_NOTIFICATION';
+                        $model->content_id = Yii::$app->general->getforeignkey($this->model->apiMaster, 'api_master_id');
+                        $model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
+                        $model->entry_datetime = date('Y-m-d H:i:s');
+                        $saveModel[$i] = $model;
+                        $i++;
+                        $appModel = new TblBulkNotificationApplicability();
+                        $appModel->attributes = $model->attributes;
+                        $appModel->applicable_for = 'DCS';
+                        $appModel->applicable_code = $model->dcs_code;
+                        $appModel->scenario = 'milkBillApplicability';
+                        $saveModel[$i] = $appModel;
+                        $auto_key_config[$i] = ['self_key' => 'bulk_notification_id', 'parent_key' => 'bulk_notification_id', 'parent_index' => $i - 1];
+                        $i++;
+                    }
+                    $transaction = $this->generalModel->saveTransactionMultiAutoIncForeignKey($saveModel, ['Bulk Notification', 'create'], $auto_key_config);
+                } else {
+                    $saveModel[] = $this->model;
+                    $transaction = $this->generalModel->saveTransaction($saveModel, ['Bulk Notification', 'create']);
+                }
+                if ($transaction == 'customRedirect') {
+                    if ($this->model->login_type == 'all') {
+                        $appModel = new TblBulkNotificationApplicability();
+                        $appModel->attributes = $this->model->attributes;
+                        $appModel->applicable_for = 'all';
+                        $appModel->applicable_code = '0';
+                        $appModel->save();
+                    }
+                    return $this->{$transaction}();
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
+        } else {
+            return $this->render('create', [
+                        'model' => $this->model,
+            ]);
         }
-        return $this->customRender();
+        return $this->render('create', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -81,12 +176,14 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             $this->model->load(Yii::$app->request->post());
             $this->model->wef_date = !empty($this->model->wef_date) ? date('Y-m-d', strtotime($this->model->wef_date)) : '';
             $this->model->entry_datetime = !empty($this->model->entry_datetime) ? date('Y-m-d', strtotime($this->model->entry_datetime)) : '';
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Customer Master', 'edit']);
-            if ($transaction !== FALSE) {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Bulk Notification', 'edit']);
+            if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
         }
-        return $this->customRender();
+        return $this->render('update', [
+                    'model' => $this->model,
+        ]);
     }
 
     /**
@@ -97,9 +194,19 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
      */
     public function actionDelete() {
         $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $deleteModel = [];
+        $saveModel = [];
         $historyModel = new TblBulkNotificationHistory();
-        Yii::$app->operation->history($this->model, $historyModel, 'DELETE');
-        $record = $this->generalModel->deleteTransaction([$this->model, $historyModel]);
+        Yii::$app->operation->history($this->model, $historyModel, DELETE);
+        $deleteModel[] = $this->model;
+        $saveModel[] = $historyModel;
+        $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, ['Bulk Notification', 'delete']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Record is successfully deleted.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+        }
+
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
@@ -116,6 +223,109 @@ class TblBulkNotificationController extends \app\controllers\ChildController {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionBulkNotificationApplicability($id) {
+        $model = $this->findModel($id);
+        $appModel = Yii::$app->getModule('applicability');
+        $appModel->model = new TblBulkNotificationApplicability();
+        $value = [];
+        if (in_array(strtolower($model->login_type), ['farmer', 'vsp', 'route_supervisor'])) {
+            $value['DCS'] = 'VLCC';
+        } elseif (in_array(strtolower($model->login_type), ['mcc_incharge'])) {
+            $value['MCC'] = 'MCC';
+        } elseif (in_array(strtolower($model->login_type), ['procurement_staff'])) {
+            $value['USER'] = 'USER';
+        } else {
+            $value['USER'] = 'USER';
+        }
+        $appModel->model->wef_date = $model->wef_date;
+        $appModel->model->union_code = $model->union_code;
+        $appModel->is_union = false;
+        $appModel->union_code = $model->union_code;
+        $appModel->field_name = 'bulk_notification_id';
+        $appModel->field_value = $id;
+        $appModel->trans_label = 'Bulk Notification Applicability';
+        $appModel->mcc_field_name = 'applicable_code';
+        $appModel->options = ['dcs_mcc_user'];
+        $appModel->header_title = ' (' . $model->login_type . ':' . $model->message . ')';
+        $appModel->dcs_filters = $value;
+        $appModel->login_type = $model->login_type;
+        $appModel->is_bulk_notification = true;
+
+        $appModel->fields = [
+            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function($model) {
+                    return Yii::$app->controls->view_date($model->wef_date);
+                }, 'filter' => FALSE],
+            'applicable_for' => ['view' => ['grid'], 'value' => 'applicable_for'],
+            'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
+            'applicable_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Applicable Name'), 'value' => function($model) {
+                    if (strtolower($model->applicable_for) == 'dcs') {
+                        return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+                    } else if (strtolower($model->applicable_for) == 'mcc') {
+                        return Yii::$app->general->getforeignkey($model->mccCode, 'name');
+                    } else {
+                        return Yii::$app->general->getforeignkey($model->userCode, 'name');
+                    }
+                }],
+            'status' => ['view' => ['grid'], 'value' => 'status', 'value' => function($model) {
+                    return isset(Yii::$app->dropdown->getRecords('file_status')['data'][$model->status]) ? Yii::$app->dropdown->getRecords('file_status')['data'][$model->status] : '';
+                }, 'filter' => FALSE],
+        ];
+        $appModel->actions = [
+            'delete' => ['option' => 'applicable_code,bulk_notification_app_code,tbl-bulk-notification/delete-mapping'],
+        ];
+
+
+        return $appModel->createApp();
+    }
+
+    public function actionDeleteMapping() {
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            $master = [];
+            $detailHistory = new TblBulkNotificationApplicabilityHistory();
+            $record = TblBulkNotificationApplicability::find()->where(['bulk_notification_app_code' => Yii::$app->request->post('id')])->one();
+            Yii::$app->operation->history($record, $detailHistory, DELETE);
+            $master[] = $detailHistory->save(FALSE);
+            $master[] = $record->delete();
+            if (in_array(FALSE, $master)) {
+                $transaction->rollback();
+                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
+            } else {
+                $transaction->commit();
+                $record = ['status' => 'success', 'msg' => 'Record is successfuly deleted.'];
+            }
+        } catch (UserException $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => $e->getMessage()];
+        } catch (\yii\db\Exception $e) {
+            $transaction->rollback();
+            $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
+        }
+
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
+    }
+
+    public function actionImportFile() {
+        $path = Yii::$app->basePath . '/web/upload/images/';
+        Yii::$app->general->checkDirectory($path, '0777');
+        try {
+            $file = \yii\web\UploadedFile::getInstanceByName('file');
+            $name = date('YmdHis') . rand(1000, 9999) . str_replace(' ', '_', $file->name);
+            if ($file->saveAs($path . $name)) {
+                $record = ['status' => 'success', 'filename' => $name, 'msg' => $name];
+            } else {
+                $record = ['status' => 'error', 'filename' => $name, 'msg' => 'File Not Uploaded Due to Error'];
+            }
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
+        } catch (\Exception $e) {
+            $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
+            Yii::$app->response->format = trim(Response::FORMAT_JSON);
+            return Json::encode($record);
         }
     }
 

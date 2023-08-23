@@ -346,6 +346,7 @@ class TblRouteMapping extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
+        $this->to_type = trim($this->to_type);
         if ($this->to_type == 'bmc') {
             $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $this->to_dest);
         } else if ($this->to_type == 'mcc') {
@@ -392,7 +393,7 @@ class TblRouteMapping extends \app\models\ChildModel {
                 ->where(['to_dest' => $plant_code, 'to_type' => 'plant']);
         !empty($mcc_code) ? $data = $data->orWhere(['to_dest' => $mcc_code, 'to_type' => 'mcc']) : '';
         !empty($bmc_code) ? $data = $data->orWhere(['to_dest' => $bmc_code, 'to_type' => 'bmc']) : '';
-
+        $data = $data->andWhere(['is_active' => 1]);
         $data = $data->all();
         $array = \yii\helpers\ArrayHelper::map($data, 'route_code', function ($value) use($concateRef, $showName, $showSap) {
                     return ($showName) ? $value['route_name'] : (($concateRef) ? (($showSap) ? $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code'] . ' - ' . $value['sap_route_code'] : $value['route_name'] . ' - ' . strtoupper($value['to_type']) . ' - ' . $value['ref_code']) : $value['ref_code'] . ' - ' . $value['route_name'] . ' - ' . strtoupper($value['to_type']));

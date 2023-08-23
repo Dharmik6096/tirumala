@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblPaymentCycle;
+use app\modules\payment\models\TblMilkShortageRecovery;
 
 /**
  * This is the model class for table "tbl_member_payment_summary_alias".
@@ -42,6 +43,8 @@ use app\modules\payment\models\TblPaymentCycle;
  */
 class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
 
+    public $stop_payment_type;
+
     /**
      * @inheritdoc
      */
@@ -54,10 +57,10 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
-            [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
-            [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'number'],
-            [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery','dcs_name'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'payment_status', 'created_by', 'updated_by'], 'string'],
+                [['member_count', 'payment_cycle_code', 'payment_cycle_applicabilty_code'], 'integer'],
+                [['qty', 'avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'final_amount', 'disburse_amount'], 'number'],
+                [['disburse_date', 'payment_date', 'created_at', 'updated_at', 'total_addition', 'previous_hold', 'previous_due', 'hold_amount', 'net_payable', 'originating_org_code', 'originating_org_type', 'originating_type', 'additional_pay', 'from_datetime', 'to_datetime', 'from_shift', 'to_shift', 'adjust_recovery', 'recovery', 'dcs_name'], 'safe'],
         ];
     }
 
@@ -142,6 +145,14 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
         return $this->find()
                         ->where(['bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code, 'payment_cycle_code' => $model->payment_cycle_code])
                         ->one();
+    }
+
+    public function getShortageRecoveryOtherMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'other_member']);
+    }
+
+    public function getShortageRecoveryMpgMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
 
 }

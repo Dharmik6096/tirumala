@@ -23,8 +23,9 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 [['customer_code', 'customer_name', 'address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'local_name', 'local_address', 'gst_no', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_type', 'sap_code', 'refference_code', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'originating_org_code', 'originating_org_type', 'customer_code_ex', 'route_code', 'ref_code', 'aadhaar_no', 'master_type'], 'safe'],
                 [['is_active', 'originating_type'], 'integer'],
                 [['bmc_code', 'mcc_plant_code', 'plant_code', 'ts_code_m', 'ts_code_e'], 'safe'],
-                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['verification']]
+                [['customer_type', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['deleteMapRoute']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'on' => ['verification']],
+                [['union_code', 'plant_code', 'master_type'], 'required', 'on' => ['mmd-verification']]
         ];
     }
 
@@ -122,7 +123,16 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 'master_type' => ''];
             $sp = 'portal_master_data_verification';
             $sp_params = array_merge($sp_params, $params['TblCustomerMasterSearch']);
-            if (!empty($sp_params['bmc_code'])) {
+
+            if (empty($this->mcc_plant_code)) {
+                $this->mcc_plant_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            if (empty($this->bmc_code)) {
+                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+            }
+            $sp_params['mcc_plant_code'] = $this->mcc_plant_code;
+            $sp_params['bmc_code'] = $this->bmc_code;
+            if ($this->validate()) {
                 $output = \Yii::$app->general->getSpData($sp, $sp_params);
             }
         }
@@ -160,7 +170,15 @@ class TblCustomerMasterSearch extends TblCustomerMaster {
                 'master_type' => ''];
             $sp = 'portal_contact_data_verification';
             $sp_params = array_merge($sp_params, $params['TblCustomerMasterSearch']);
-            if (!empty($sp_params['bmc_code'])) {
+            if (empty($this->mcc_plant_code)) {
+                $this->mcc_plant_code = !empty(Yii::$app->session->get('MCC')) ? ',' . Yii::$app->session->get('MCC') . ',' : 0;
+            }
+            if (empty($this->bmc_code)) {
+                $this->bmc_code = !empty(Yii::$app->session->get('BMC')) ? ',' . Yii::$app->session->get('BMC') . ',' : 0;
+            }
+            $sp_params['mcc_plant_code'] = $this->mcc_plant_code;
+            $sp_params['bmc_code'] = $this->bmc_code;
+            if ($this->validate()) {
                 $output = \Yii::$app->general->getSpData($sp, $sp_params);
             }
         }

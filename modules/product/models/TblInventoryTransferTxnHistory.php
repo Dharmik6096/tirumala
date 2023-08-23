@@ -44,7 +44,7 @@ class TblInventoryTransferTxnHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['inventory_transfer_txn_code', 'union_code'], 'safe'],
+            [['inventory_transfer_txn_code', 'union_code', 'sap_batch_no'], 'safe'],
             [['available_stock', 'qty'], 'safe'],
             [['unit_code', 'originating_type'], 'safe'],
             [['created_at', 'updated_at', 'history_created_at'], 'safe'],

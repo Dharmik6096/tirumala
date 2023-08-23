@@ -24,6 +24,7 @@ use yii\helpers\Json;
 use PHPExcel;
 use app\modules\organisation\models\TblDcs;
 use app\modules\dcsoperation\models\TblDcsPurchaseRate;
+use app\modules\dcsoperation\models\TblPurchaseRateHistory;
 
 /**
  * TblPurchaseRateController implements the CRUD actions for TblPurchaseRate model.
@@ -543,8 +544,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $r);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
     }
 
@@ -567,8 +567,7 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $r);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
     }
 
@@ -583,9 +582,29 @@ class TblPurchaseRateController extends \app\controllers\ChildController {
                         'name' => $d['name']);
                 }
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
         }
+    }
+
+    public function actionActiveDeactivate($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblPurchaseRateHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $saveModel[] = $historyModel;
+        if ($this->model->is_active == 1) {
+            $this->model->is_active = 0;
+        } else {
+            $this->model->is_active = 1;
+        }
+        $saveModel[] = $this->model;
+        $transaction = $this->generalModel->saveTransaction($saveModel, ['Purchase Rate', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Purchase Rate ' . (($this->model->is_active == 0) ? 'Dectivated' : 'Activated') . ' Successfully'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Purchase Rate Not Updated.'];
+        }
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

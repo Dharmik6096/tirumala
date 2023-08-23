@@ -181,12 +181,12 @@ class TblMemberProvisional extends ChildModel {
                 [['dob'], function ($attribute, $params) {
                     Yii::$app->general->validateAge($this, $attribute, $params);
                 }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync']],
-                [['ex_member_code'], 'integer', 'min' => 1, 'max' => 1500, 'except' => ['androidsync']],
+                [['ex_member_code'], 'integer', 'min' => 1, 'max' => 9999, 'except' => ['androidsync']],
                 [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
                 [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync']],
                 [['member_code'], 'validateCreamyData', 'on' => ['saveCreamyData', 'androidsync']],
                 [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by',], 'safe'],
+                [['member_code', 'federation_code', 'dcs_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'ex_member_code', 'member_name', 'father_name', 'surname', 'nominee_name', 'dob', 'bloodgroup_code', 'gender_code', 'qualification_code', 'caste_category_code', 'land_class', 'total_land', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'member_type_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'mobile_no', 'email', 'address', 'pincode', 'pan_no', 'adhar_no', 'annual_income', 'village_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_active', 'payment_mode', 'animal_type_code', 'hamlet_code', 'sub_district_code', 'district_code', 'state_code', 'union_code', 'bank_name', 'branch_name', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'download_date_time', 'is_download', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'is_approved', 'approved_at', 'approved_by', 'provisional_from'], 'safe'],
                 [['mobile_no'], 'unique', 'targetAttribute' => ['mobile_no', 'is_active'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'when' => function() {
                     return $this->is_active;
                 }, 'except' => ['deactivate', 'saveCreamyData', 'post_sap_data', 'androidsync', 'bank_selected', 'updateProvisionalMember']],
@@ -196,6 +196,8 @@ class TblMemberProvisional extends ChildModel {
                 [['dcs_code'], 'setAddressDetail', 'on' => ['importCsv']],
                 [['ex_member_code'], 'setProExMemberCode', 'on' => ['importCsv']],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
+                [['provisional_from'], 'default', 'value' => 'collection'],
+                [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
         ];
     }
 

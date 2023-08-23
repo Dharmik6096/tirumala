@@ -19,7 +19,8 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      */
     public function rules() {
         return [
-            [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode'], 'safe'],
+                [['vehicle_trip_code', 'vehicle_code', 'trip_code', 'grn_no', 'transaction_date', 'trip_status', 'trip_for', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'trip_mode', 'is_active'], 'safe'],
+                [['is_active'], 'integer'],
         ];
     }
 
@@ -39,7 +40,7 @@ class TblVehicleTripSearch extends TblVehicleTrip {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblVehicleTrip::find()->alias('t')->select(['t.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
+        $query = TblVehicleTrip::find()->alias('t')->select(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code',
             'challan_no' => "STUFF((
           SELECT ',' + d.challan_no
@@ -74,12 +75,14 @@ class TblVehicleTripSearch extends TblVehicleTrip {
             $query->andFilterWhere(['<=', 't.transaction_date', $to_date]);
         }
         $query->andFilterWhere(['=', 't.transaction_date', !empty($this->transaction_date) ? date('Y-m-d', strtotime($this->transaction_date)) : NULL]);
-
+        $query->andFilterWhere([
+            't.is_active' => $this->is_active,
+        ]);
         $query->andFilterWhere(['like', 't.trip_code', $this->trip_code])
                 ->andFilterWhere(['like', 't.grn_no', $this->grn_no])
                 ->andFilterWhere(['like', 't.trip_status', $this->trip_status])
                 ->andFilterWhere(['like', 't.trip_mode', $this->trip_mode]);
-        $query->groupBy(['t.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
+        $query->groupBy(['t.is_active', 't.vehicle_trip_code', 't.vehicle_code', 't.trip_code', 't.transaction_date', 't.grn_no', 't.trip_status',
             't.trip_mode', 't.union_code', 't.plant_code', 't.mcc_plant_code', 't.bmc_code']);
         $query->orderBy(['transaction_date' => SORT_DESC, 'vehicle_trip_code' => SORT_ASC]);
         return $dataProvider;

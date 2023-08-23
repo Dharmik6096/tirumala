@@ -11,7 +11,9 @@ use yii\helpers\Url;
 $client_code = \Yii::$app->session->get('eiplCode');
 $client_code = !empty($client_code) ? $client_code : '';
 $client_code = strtolower($client_code);
-$imageIconPath = $this->theme->getUrl('/assets/images/dashboard/');
+$imageIconPathClient = $this->theme->getUrl('/assets/' . $client_code . '/images/dashboard/');
+$imageIconPathEipl = $this->theme->getUrl('/assets/images/dashboard/');
+$imageIconPath = is_dir(\Yii::$app->basePath . '/../' . $imageIconPathClient) ? $imageIconPathClient : $imageIconPathEipl;
 
 $chart_url = Url::to(['load-chart']);
 $table_url = Url::to(['load-table']);
@@ -157,7 +159,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                     ]);
                     ?>
                     <span class="searchFilterArea col-sm-12 dashboardWidgetHeader">
-                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
+                        <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
                         <div class="col-sm-2 searchFilterHeader">
                             <?= Yii::$app->controls->date($model, $form, 'date', '', true, false, false, false); ?>
                         </div>
@@ -265,7 +267,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
                         ?>
                         <div class="col-sm-8 padding_left_right_0">
                             <span class="col-sm-12 background_shadow float_right dashboardWidgetHeader">
-                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')         ?>: </span> -->
+                            <!-- <span class="searchFilterHeader"><?php //Yii::t('app', 'Date')                                 ?>: </span> -->
                                 <div class="col-sm-6 searchFilterHeader">
                                     <?= Yii::$app->controls->date($model, $form, 'dup_search_date', '', true, false, false, false); ?>
                                 </div>
@@ -344,7 +346,7 @@ $model->dpu_shift = !empty($model->dpu_shift) ? $model->dpu_shift : 1;
         if (!empty($selected_widgets)) {
             foreach ($selected_widgets as $key => $value) {
                 if (in_array($value, $all_widgets)) {
-                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url]);
+                    echo $this->render('widget_dashboard_' . $value, ['model' => $model, 'union' => $unionCode, 'date' => $date, 'table_url' => $table_url, 'container_url' => $container_url, 'class_cols' => $class_cols, 'display' => $display, 'display_rmrd' => $display_rmrd, 'chart_url' => $chart_url, 'dashboard_society_status_pie_chart' => $dashboard_society_status_pie_chart]);
                 }
             }
         }
@@ -451,10 +453,11 @@ $('.dpu_data_icon').click(function(){
                     'dashboard_blocks',
                     'piechart_member_app',
                     'calender',
+                    'dashboard_society_status_pie_chart',
                     'dashboard_farmer_rmrd_blocks',
                     'today_vs_yesterday_collection',
                     'dashboard_farmer_status',
-                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical'].indexOf(value) == -1) 
+                    'dashboard_farmer_rmrd_avg','BmcWiseCrossTab','tbl_hits_counts','tbl_collc_count_summary','month_calendar','milk_analysis_grid','milk_analysis_vertical','milk_collection_summary'].indexOf(value) == -1) 
                     {
                         setChartWidgets(value);
                     }
@@ -836,7 +839,65 @@ $('.dpu_data_icon').click(function(){
                         }
                     });
                 }
-
+                //pie chart 
+                 else if(['dashboard_society_status_pie_chart'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'dashboard_society_status_pie_chart';
+                    var union= '" . $unionCode . "';
+                    var mcc= '" . $mccCode . "';
+                       $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-pie-chart']) . "',
+                        data: blockDataString+'&sp='+id+'&union='+union+'&mcc='+mcc,
+                        success: function(data) {
+                            var obj1 = data;
+                           // console.log(obj1);
+                            if (obj1.status == 'success')
+                            {
+                                drawPieChart(+obj1.res.onlineDcs,+obj1.res.offlineDcs);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted..Please try again');
+                        }
+                    });
+                }
+                //milk collection summary code
+                else if(['milk_collection_summary'].indexOf(value) == 0){
+                    var blockDataString = $('#collapse1 form').serialize();
+                    var id= 'milk_collection_summary';
+                   
+                    var widget_type= $('#hidden_widget_type').val();
+                    $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/site/load-dashboard-milk-collection-summary']) . "',
+                        data: blockDataString+'&sp='+id+'&widget_type='+widget_type,
+                        success: function(data) {
+                            var obj1 = data;
+                            if (obj1.status == 'success')
+                            {
+                                for (var key in obj1.res){
+                                    if(obj1.res[key] == null){
+                                        obj1.res[key] = 0;
+                                    }
+                                }
+                                console.log(obj1.res);
+                                $('#today_milk_collection_llpd').text(obj1.res.today_llpd_milk_collection);
+                                $('#cumulative_milk_collection_llpd').text(obj1.res.cumulative_llpd_milk_collection);
+                                $('#today_fat_quality').text(obj1.res.today_fat_quality);
+                                $('#cumulative_fat_quality').text(obj1.res.cumulative_fat_quality);
+                                $('#today_snf_quality').text(obj1.res.today_snf_quality);
+                                $('#cumulative_snf_quality').text(obj1.res.cumulative_snf_quality);
+                                $('#today_tons_feed_supply').text(obj1.res.today_tons_feed_supply);
+                                $('#cumulative_tons_feed_supply').text(obj1.res.cumulative_tons_feed_supply);
+                            }
+                        },
+                        error:function(data){
+                            //alert('Your data has not been submitted.Please try again');
+                        }
+                    });
+                }
+                //milk collection summary code complete
                 else if(['milk_analysis_vertical'].indexOf(value) == 0 || ['milk_analysis_grid'].indexOf(value) == 0){
                     var blockDataString = $('#collapse1 form').serialize();
                     var union= '" . $unionCode . "';
@@ -885,136 +946,15 @@ $('.dpu_data_icon').click(function(){
 
     function setChartWidgets(set_widget_id){
         drawChart(set_widget_id,set_widget_id+'_container','{$chart_url}','column');   
-        // console.log(set_widget_id);
+       // console.log(set_widget_id);
         // console.log(set_widget_id+'_container');
     }
-//new code
-    barChart('bmc_dispatch_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Dispatch',[],[]);
-    barChart('milk_coll_widget_container','" . Yii::$app->controls->view_date($date) . " Milk Collection (Top 5)',[],[]);
-    barChart('bmc_coll_widget_container','" . Yii::$app->controls->view_date($date) . " BMC Collection',[],[]);
-    barChart('reconciliation_chart_widget_container','" . Yii::$app->controls->view_date($date) . " Reconciliation Chart',[],[]);
-    // barChart('collection_farmer_container','',[],[]);
-    function barChart(cont,text,xdata,ydata){
-        var bar_chart = $('#'+cont);
-            if (bar_chart.length) {
-                Highcharts.chart(cont, {
-                    chart: {
-                        zoomType: 'xy'
-                    },
-                    title: {
-                        text:text
-                    },
-                    xAxis: [{
-                            categories: xdata,
-                            crosshair: true
-                        }],
-                    yAxis: [{// Primary yAxis
-                            labels: {
-                                format: '{value}',
-                                style: {
-                                    color: Highcharts.getOptions().colors[1]
-                                }
-                            },
-                            title: {
-                                text: '',
-                                style: {
-                                    color: Highcharts.getOptions().colors[1]
-                                }
-                            }
-                        }, {// Secondary yAxis
-                            title: {
-                                text: '',
-                                style: {
-                                    color: Highcharts.getOptions().colors[0]
-                                }
-                            },
-                            opposite: false,
-                        }
-                    ],
-                    tooltip: {
-                        shared: true
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'left',
-                        x: 120,
-                        verticalAlign: 'top',
-                        y: 100,
-                        floating: true,
-                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
-                    },
-                    series: [{
-                                name: 'QTY(ltr)',
-                            type: 'column',
-                            color: '#790000',
-                            yAxis: 1,
-                                data: ydata,
-                            tooltip: {
-                                valueSuffix: ' lt'
-                            }
-    
-                        }]
-                });
-            }
-         }
-         
-          function drawChart(id,cntr,url,type)
-          {
-            if(['bmc_union_comparison','union_datewise','bmc_union_datewise','union_comparison'].indexOf(id) == -1){
-                var datastring = $('#collapse1 form').serialize();
-            }else{
-                var datastring = $('#'+id).serialize();
-            }
-            var union= '" . $unionCode . "';
-//            var union= $('#dashboard-union_code').val();
-            var mcc= '" . $mccCode . "';
-//            var mcc= $('#dashboard-mcc_code').val();
-            $.ajax({
-                         type: 'post',
-                         url: url,
-                         data: datastring+'&sp='+id+'&union='+union+'&mcc='+mcc,
-                         success: function(data) {
-                        
-                            var index=$('#'+cntr).data('highcharts-chart');
-                            var chart=Highcharts.charts[index];
-                            var vals=[];
-                            var color='790000';
-                            var suf='';
-                            // console.log(chart +'--'+id);
-                            while( chart.series.length > 0 ) {
-                                chart.series[0].remove( false );
-                            }
-                            $.each(data.res, function (key, val) {
-                            vals = val.map(function (x) { 
-                                return parseFloat(x, 10); 
-                            });
-                            if(key.toLowerCase()==='qty')
-                            {
-                                suf='(ltr)';
-                            }
-                            else
-                            {
-                                suf='';
-                            }
-                            
-                            chart.addSeries({  
-                                type: type,
-                                name: key.toUpperCase()+suf,
-                                data: vals,
-                                yAxis:1,
-                                color:'#'+color,
-                            }, false);
-                            color=parseInt(color)+003333;
-                           
-                            });
-                            chart.xAxis[0].setCategories(data.lbl[0]);
-                             chart.redraw();
-                         },
-                         error:function(data){
-                                     //alert('Your data has not been submitted..Please try again');
-                                }
-            });
-          }
+    //new code
+    barChart('bmc_dispatch_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Dispatch', [], []);
+    barChart('milk_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " Milk Collection (Top 5)', [], []);
+    barChart('bmc_coll_widget_container', '" . Yii::$app->controls->view_date($date) . " BMC Collection', [], []);
+    barChart('reconciliation_chart_widget_container', '" . Yii::$app->controls->view_date($date) . " Reconciliation Chart', [], []);
+
        //completed new code
 //calender functions
 var cal_data=" . $cal_data . ";

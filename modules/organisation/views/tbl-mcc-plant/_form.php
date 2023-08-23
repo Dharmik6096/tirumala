@@ -38,7 +38,8 @@ $form = ActiveForm::begin([
         </div>
         <?= Html::activeHiddenInput($model, 'is_plant') ?>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmccplant-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $readonly); ?>
+            <!--Yii::$app->dropdown->depend_dropdown('plant', $model, $form, 'tblmccplant-union_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Plant', '', $readonly); ?>-->
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_mcc_plant');
@@ -100,16 +101,16 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmccplant-union_code,tblmccplant-state_code', 'district_code', 'District', FALSE); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tblmccplant-union_code,tblmccplant-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', 'Sub District', 'sub_district_code'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tblmccplant-district_code', 'form-group col-sm-4', Yii::t('app', 'Sub District'), 'sub_district_code'); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', 'Village', ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tblmccplant-sub_district_code', 'form-group col-sm-4', Yii::t('app', 'Village'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', 'Hamlet'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmccplant-village_code', 'form-group col-sm-4', Yii::t('app', 'Hamlet')); ?>
         </div>
         <div class="col-sm-2">  
             <?= $form->field($model, 'sap_vendor_code')->textInput() ?>

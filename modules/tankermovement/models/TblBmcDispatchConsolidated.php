@@ -11,7 +11,7 @@ use Yii;
  * @property string $trip_code
  * @property string $total_qty
  * @property string $kg_fat
- * @property string $kf_snf
+ * @property string $kg_snf
  * @property integer $rejection_count
  * @property string $union_code
  * @property string $created_at
@@ -41,10 +41,10 @@ class TblBmcDispatchConsolidated extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bmc_dispatch_consolidated_code', 'trip_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['total_qty', 'kg_fat', 'kf_snf'], 'safe'],
-            [['rejection_count', 'originating_type'], 'safe'],
-            [['created_at', 'updated_at'], 'safe'],
+                [['bmc_dispatch_consolidated_code', 'trip_code', 'union_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['total_qty', 'kg_fat', 'kg_snf'], 'safe'],
+                [['rejection_count', 'originating_type'], 'safe'],
+                [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -57,7 +57,7 @@ class TblBmcDispatchConsolidated extends \app\models\ChildModel {
             'trip_code' => Yii::t('app', 'Trip Code'),
             'total_qty' => Yii::t('app', 'Total Qty'),
             'kg_fat' => Yii::t('app', 'Kg Fat'),
-            'kf_snf' => Yii::t('app', 'Kf Snf'),
+            'kg_snf' => Yii::t('app', 'Kf Snf'),
             'rejection_count' => Yii::t('app', 'Rejection Count'),
             'union_code' => Yii::t('app', 'Union Code'),
             'created_at' => Yii::t('app', 'Created At'),

@@ -33,7 +33,7 @@ class TblCustomerType extends \yii\db\ActiveRecord {
         return [
             [['customer_type', 'customer_desc', 'code_prefix', 'union_code'], 'string'],
             [['code_length', 'is_organisation', 'is_active'], 'integer'],
-            [['is_applicability', 'is_product_sale', 'is_product_req', 'is_bmc_dispatch', 'is_collection', 'is_routemapping'], 'safe'],
+            [['is_applicability', 'is_product_sale', 'is_product_req', 'is_bmc_dispatch', 'is_collection', 'is_routemapping', 'is_cash_sale'], 'safe'],
         ];
     }
 

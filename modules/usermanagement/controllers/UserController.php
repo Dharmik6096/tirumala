@@ -9,6 +9,9 @@ use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\webservice\eipl\models\TblEiplAppLoginTemp;
 use app\modules\webservice\eipl\models\TblAppOrganizationMapping;
 use app\models\TblUserOrganizationMapping;
+use yii\web\Response;
+use yii\helpers\Json;
+use yii\widgets\ActiveForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -27,14 +30,17 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             $model->username = Yii::$app->general->getUserName($model->username);
         }
         if (Yii::$app->request->post()) {
+            $model->load(Yii::$app->request->post());
             //if ($model->load(Yii::$app->request->post()) AND $model->save()) {
             $master = [];
             $delete = [];
             if ($model->validate()) {
                 if ($tableName == "{{%user}}") {
+                    $UsersModel = $this->findModel($id);
                     $historyModel = new UserHistory();
-                    Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    Yii::$app->operation->history($UsersModel, $historyModel, UPDATE);
                     $model->load(Yii::$app->request->post());
+                    $model->scenario = 'userUpdate';
                     $model->username = $oldUsername;
                     $master[] = $model;
 
@@ -224,6 +230,62 @@ class UserController extends \webvimark\modules\UserManagement\controllers\UserC
             ]);
         }
         return $this->renderIsAjax('update', compact('model', 'dataProvider', 'searchModel'));
+    }
+
+    public function actionDeactiveUser() {
+        $model = $this->findModel(Yii::$app->request->get()['id']);
+        if (Yii::$app->request->post()) {
+
+            $historyModel = new UserHistory();
+            Yii::$app->operation->history($model, $historyModel, UPDATE);
+            $saveModel[] = $historyModel;
+            $model->load(Yii::$app->request->post());
+            $model->scenario = 'DeactiveUser';
+            if ($model->validate()) {
+//                $model->is_active = 0;
+                $model->wef_date = !empty(Yii::$app->request->post()['User']['wef_date']) ? Yii::$app->formatter->asDate(Yii::$app->request->post()['User']['wef_date'], DATE_FORMAT) : '';
+                $saveModel[] = $model;
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['User Deactivated', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'error', 'msg' => $msg];
+                }
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'error', 'msg' => $msg];
+
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($model));
+            }
+
+
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+        return $this->renderAjax('deactive_user', [
+                    'model' => $model,
+        ]);
+    }
+
+    public function actionActivateUser($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new UserHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+//        $this->model->scenario = 'deactivate';
+        $this->model->is_active = 1;
+        $this->model->wef_date = NULL;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['User', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'User Activated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'User Not Activated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }

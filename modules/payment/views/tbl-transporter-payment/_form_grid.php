@@ -19,11 +19,16 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'filter' => FALSE, 'visible' => FALSE
     ],
+        ['attribute' => 'transporter_type',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('transporter_type', $searchModel, 'transporter_type'),
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('transporter_type', $model, 'transporter_type');
+        }
+    ],
         ['attribute' => 'bmc_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
         }
     ],
-        ['attribute' => 'bill_no'],
         ['attribute' => 'route_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->routeCode, 'ref_code');
         }, 'label' => Yii::t('app', 'Route Code')],
@@ -31,33 +36,25 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->routeCode, 'route_name');
         }
     ],
-        ['attribute' => 'transporter_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name');
-        }],
-        ['attribute' => 'vehicle_code',
-        'value' => function ($model) {
-            return Yii::$app->general->getforeignkey($model->vehicleCode, 'parsing_no');
-        },
-    ],
+        ['attribute' => 'transporter_name'],
+        ['attribute' => 'parsing_no'],
+        ['attribute' => 'bill_no'],
         [
         'label' => 'Period',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date) . ' To ' . Yii::$app->controls->view_date($model->to_date);
         }],
         ['attribute' => 'billing_method', 'visible' => FALSE],
         ['attribute' => 'no_of_days'],
         ['attribute' => 'total_kms'],
+        ['attribute' => 'avg_rate'],
         ['attribute' => 'total_qty'],
         ['attribute' => 'rec_kg_fat'],
         ['attribute' => 'rec_kg_snf'],
+        ['attribute' => 'qty_amount'],
         ['attribute' => 'fixed_rent'],
-        ['attribute' => 'fuel_consumption'],
         ['attribute' => 'vehicle_average'],
+        ['attribute' => 'fuel_consumption'],
         ['attribute' => 'fuel_rate'],
         ['attribute' => 'total_amount'],
         ['attribute' => 'fixed_amount'],
@@ -91,7 +88,7 @@ $grid_option = [
             $icon = ($model->status == 'processed') ? '<i class="fa fa-unlock"></i>' : '<i class="fa fa-lock"></i>';
             $class = ($model->status == 'processed') ? '' : 'disabled';
             $url = Url::to(['lock-bill']);
-            $name = Yii::$app->general->getforeignkey($model->transporterCode, 'transporter_name') . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
+            $name = $model->transporter_name  . '(' . Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) . ')';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'Lock Bill'), 'class' => 'lock-bill ' . $class, 'data-val' => $model->transporter_payment_code, 'data-name' => $name, 'data-url' => $url];
             return GhostHtml::a_alert($icon, ['/payment/tbl-transporter-payment/lock-bill'], $options);
         },

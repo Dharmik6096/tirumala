@@ -7,12 +7,15 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\globalmaster\models\TblAnimalType;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\ArrayHelper;
 ?>
 <div class=""></div>
 <?php
 $form = ActiveForm::begin([
             'id' => 'update-milk-collection',
         ]);
+$collCodes = ArrayHelper::map($detailModel, 'milk_collection_code', 'milk_collection_code');
+echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'collectionCodes']);
 ?>
 
 <div class=" no-effect table_form" >
@@ -58,7 +61,7 @@ $form = ActiveForm::begin([
         ],
             ['attribute' => 'milk_quality_type_code',
             'format' => 'raw',
-            'value' => function ($model, $key, $index) use ($form, $detailModel) {
+            'value' => function ($model, $key, $index) use ($form, $detailModel, $config) {
                 if ($config) {
                     return '<span class=\'rtpl_validate\'>' . Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', FALSE, FALSE, '[' . $index . ']milk_quality_type_code', FALSE, TRUE, $model->milk_quality_type_code) . '</span>';
                 } else {

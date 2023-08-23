@@ -74,13 +74,15 @@ $adjust_recovery = abs($model->net_payable);
                     <div class="modal-footer mt10 col-sm-12">
                         <div class="col-md-12 top-bottom-15 padding-50">
                             <?php
-                            AjaxSubmitButton::begin([
-                                'label' => Yii::t('app', 'Save'),
-                                'id' => 'recoveryBtn',
-                                'ajaxOptions' => [
-                                    'type' => 'POST',
-                                    'url' => Url::to(['/payment/tbl-vsp-payment/add-recovery', 'code' => $model->vsp_payment_code]),
-                                    'success' => new JsExpression('function(data){
+                            if (!empty($recoveryData)) {
+
+                                AjaxSubmitButton::begin([
+                                    'label' => Yii::t('app', 'Save'),
+                                    'id' => 'recoveryBtn',
+                                    'ajaxOptions' => [
+                                        'type' => 'POST',
+                                        'url' => Url::to(['/payment/tbl-vsp-payment/add-recovery', 'code' => $model->vsp_payment_code]),
+                                        'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 if (data.status == "success"){ 
                                                                     bootbox.alert("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-info\"><i class=\"fa fa-info\"></i></div><span>"+data.msg+" </span></div></div>", function(){
@@ -99,11 +101,12 @@ $adjust_recovery = abs($model->net_payable);
                                                                    
                                                                 }
                                                  }'),
-                                ],
-                                'options' => ['class' => 'btn btn-default btn-raised',
-                                    'type' => 'submit'],
-                            ]);
-                            AjaxSubmitButton::end();
+                                    ],
+                                    'options' => ['class' => 'btn btn-default btn-raised',
+                                        'type' => 'submit'],
+                                ]);
+                                AjaxSubmitButton::end();
+                            }
                             ?>
                         </div>
                     </div>

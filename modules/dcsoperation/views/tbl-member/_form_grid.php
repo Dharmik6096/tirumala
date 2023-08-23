@@ -91,6 +91,12 @@ $attribute = [
         ['attribute' => 'bank_remarks', 'filter' => false],
         ['attribute' => 'contact_remarks', 'filter' => false],
         ['attribute' => 'sap_farmer_code', 'filter' => FALSE, 'visible' => FALSE],
+        [
+        'attribute' => 'is_dcs_member', 'filter' => FALSE, 'visible' => false,
+        'value' => function($model) {
+            return $model->is_dcs_member == '1' ? 'Yes' : 'No';
+        },
+    ],
 ];
 
 $grid_option = [

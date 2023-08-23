@@ -55,6 +55,7 @@ class TblDcsController extends ChildController {
     public $bankDetails;
     public $contactDetails;
     public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
+    public $showIsBMC;
 
     /**
      * Lists all TblDcs models.
@@ -117,9 +118,11 @@ class TblDcsController extends ChildController {
         $this->model->district_code = Yii::$app->session->get('Districts');
         $this->model->valid_from = date('Y-m-d');
         $this->contactDetails->scenario = 'additional';
+        $this->showIsBMC = $is_bmc == 1 ? true : false;
         $validate = 1;
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
+
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->dcs_code = $this->model->getCode();
 
@@ -225,7 +228,7 @@ class TblDcsController extends ChildController {
                                 }
                             }
                             if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                                $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                                $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
                                 if (!file_exists($path) || !is_dir($path)) {
                                     FileHelper::createDirectory($path);
                                 }
@@ -256,7 +259,7 @@ class TblDcsController extends ChildController {
         $oldVillage = $this->model->village_code;
         $validate = 1;
         $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-
+        $this->showIsBMC = FALSE;
         $address = explode(',', $this->model->address);
         if (isset($address)) {
             if (isset($address[0]))
@@ -393,7 +396,7 @@ class TblDcsController extends ChildController {
                         }
                     }
                     if (strtolower($vendorModel->vendor_code) == 'eipl') {
-                        $path = Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
+                        $path = Yii::$app->basePath . '/' . Yii::$app->params['eiplDirPath'] . $vendorModel->dcs_code . '/';
                         if (!file_exists($path) || !is_dir($path)) {
                             FileHelper::createDirectory($path);
                         }
@@ -544,7 +547,8 @@ class TblDcsController extends ChildController {
     protected function customRender() {
         return $this->render($this->viewFile, ['model' => $this->model,
                     'bankDetails' => $this->bankDetails,
-                    'contactDetails' => $this->contactDetails
+                    'contactDetails' => $this->contactDetails,
+                    'showIsBMC' => $this->showIsBMC
         ]);
     }
 
@@ -809,10 +813,10 @@ class TblDcsController extends ChildController {
                 $out[] = array('id' => $key,
                     'name' => $r);
             }
-            echo \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-            return;
+            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
+//            return;
         }
-        echo \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
+        return \yii\helpers\Json::encode(['output' => '', 'selected' => '']);
     }
 
     public function actionSocietyStatus($dcs_code, $coll_status) {
@@ -960,7 +964,8 @@ class TblDcsController extends ChildController {
 
     public function actionMasterVerification() {
         $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
-        $searchModel->scenario = 'verification';
+        $eiplCode = \Yii::$app->session->get('eiplCode');
+        $searchModel->scenario = $eiplCode == 'MMD' ? 'mmd-verification' : 'verification';
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -1029,7 +1034,8 @@ class TblDcsController extends ChildController {
 
     public function actionContactVerification() {
         $searchModel = new \app\modules\organisation\models\TblCustomerMasterSearch();
-        $searchModel->scenario = 'verification';
+        $eiplCode = \Yii::$app->session->get('eiplCode');
+        $searchModel->scenario = $eiplCode == 'MMD' ? 'mmd-verification' : 'verification';
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $saveModel = [];
@@ -1167,6 +1173,12 @@ class TblDcsController extends ChildController {
                         $memberModel->gender_code = 1;
                         $memberModel->caste_category_code = 1;
                         $memberModel->member_type_code = 1;
+                        $memberModel->bank_code = NULL;
+                        $memberModel->branch_code = NULL;
+                        $memberModel->bank_account_no = NULL;
+                        $memberModel->ifsc = NULL;
+                        $memberModel->beneficiary_name = NULL;
+                        $memberModel->adhar_no = NULL;
                         $master[] = $memberModel->save();
                     }
                 }
