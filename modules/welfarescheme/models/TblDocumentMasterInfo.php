@@ -6,7 +6,7 @@ use Yii;
 use app\modules\organisation\models\TblUnions;
 
 /**
- * This is the model class for table "tbl_scheme_document_master".
+ * This is the model class for table "tbl_document_master_info".
  *
  * @property integer $doc_id
  * @property string $doc_group
@@ -22,13 +22,15 @@ use app\modules\organisation\models\TblUnions;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMaster extends \app\models\ChildModel {
+class TblDocumentMasterInfo extends \app\models\ChildModel {
+
+    public $is_mandate;
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_scheme_document_master';
+        return 'tbl_document_master_info';
     }
 
     /**
@@ -37,7 +39,7 @@ class TblSchemeDocumentMaster extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['is_active', 'originating_type'], 'integer'],
-                [['created_by', 'updated_by', 'union_code', 'doc_ext', 'doc_name', 'created_at', 'is_active', 'originating_type', 'updated_at', 'doc_group', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['is_mandate', 'created_by', 'updated_by', 'union_code', 'doc_ext', 'doc_name', 'created_at', 'is_active', 'originating_type', 'updated_at', 'doc_group', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['is_active'], 'default', 'value' => 1],
                 [['doc_name', 'doc_group', 'union_code'], 'required'],
         ];
@@ -52,7 +54,7 @@ class TblSchemeDocumentMaster extends \app\models\ChildModel {
             'doc_group' => Yii::t('app', 'Doc Group'),
             'doc_name' => Yii::t('app', 'Document Name'),
             'doc_ext' => Yii::t('app', 'Doc Ext'),
-            'is_active' => Yii::t('app', 'Is Active'),
+            'is_active' => Yii::t('app', 'Status'),
             'union_code' => Yii::t('app', 'Union'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),

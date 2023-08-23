@@ -35,6 +35,7 @@ class TblMemberPaymentHeadSummary extends \app\models\ChildModel {
                 [['bmc_code', 'dcs_code', 'bill_head_code', 'is_hold'], 'safe'],
                 [['payment_cycle_code', 'bill_head_type'], 'safe'],
                 [['amount'], 'safe'],
+                [['current_amount', 'previous_amount', 'release_date', 'is_release'], 'safe'],
         ];
     }
 

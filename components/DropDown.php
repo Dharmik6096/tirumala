@@ -839,7 +839,7 @@ class DropDown extends Component {
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
 
-        if (!in_array($flag, array('p_type'))) {
+        if (!in_array($flag, array('p_type', 'payment_release_type'))) {
             asort($records, SORT_NATURAL | SORT_FLAG_CASE);
         }
 
@@ -861,7 +861,11 @@ class DropDown extends Component {
                 'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
             )->label($label);
         } else {
-            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable])->label(Yii::t('app', $label));
+            $options = ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable];
+            if ($data['prompt'] === FALSE) {
+                unset($options['prompt']);
+            }
+            echo $form->field($model, $control_name, ['options' => ['class' => $class]])->dropDownList($records, $options)->label(Yii::t('app', $label));
         }
     }
 
@@ -1679,6 +1683,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
+            'master_types' => [
+                'name' => 'master_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle')],
+            ],
+            'payment_release_type' => [
+                'name' => 'payment_release_type',
+                'prompt' => FALSE,
+                'data' => ['0' => Yii::t('app', 'With Release'), '1' => Yii::t('app', 'W/O Release')],
+            ],
+            'payment_type' => [
+                'name' => 'payment_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
+            ],
         ];
         return $records[$l];
     }
@@ -1807,6 +1826,7 @@ class DropDown extends Component {
             'task_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code'],
             'form_type' => ['name' => 'form_type_code', 'fields' => 'form_type_code,form_name,', 'prompt' => Yii::t('app', 'Select Form'), 'model' => 'TblFormType', 'depend' => 'task_type_code'],
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
+            'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
         ];
         return $label[$l];
     }

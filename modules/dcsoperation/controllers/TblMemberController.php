@@ -21,6 +21,7 @@ use yii\imagine\Image;
 use yii\web\UploadedFile;
 use app\modules\general\models\TblAttachment;
 use app\modules\dcsoperation\models\TblMemberDeactiveSearch;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblMemberController implements the CRUD actions for TblMember model.
@@ -346,6 +347,14 @@ class TblMemberController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
         }
+    }
+
+    public function actionMemberDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->member_code;
+        $module_name = 'tbl_member';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('member', $id, $model, $module_code, $module_name);
     }
 
 }

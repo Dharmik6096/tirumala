@@ -5,12 +5,12 @@ namespace app\modules\welfarescheme\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 
 /**
- * TblSchemeDocumentMasterSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblSchemeDocumentMaster`.
+ * TblDocumentMasterInfoSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblDocumentMasterInfo`.
  */
-class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
+class TblDocumentMasterInfoSearch extends TblDocumentMasterInfo {
 
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblSchemeDocumentMaster::find();
+        $query = TblDocumentMasterInfo::find();
 
         // add conditions that should always apply here
 
@@ -58,7 +58,7 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
         // grid filtering conditions
         $query->andFilterWhere([
             'doc_id' => $this->doc_id,
-            'tbl_scheme_document_master.is_active' => $this->is_active,
+            'tbl_document_master_info.is_active' => $this->is_active,
         ]);
 
         $query->andFilterWhere(['like', 'doc_group', $this->doc_group])
@@ -69,7 +69,7 @@ class TblSchemeDocumentMasterSearch extends TblSchemeDocumentMaster {
     }
 
     public function mappingsearch($params) {
-        $query = TblSchemeDocumentMaster::find();
+        $query = TblDocumentMasterInfo::find();
 
         // add conditions that should always apply here
 

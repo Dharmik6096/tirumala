@@ -82,7 +82,7 @@ class CustomValidation extends Component {
                             }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblmember-bank_code').val() != ''; 
                         }", 'on' => ['member']],
-                        [['rate_wharehouse'], 'required', 'on' => ['product_sale_rate_gyan']],
+                            [['rate_wharehouse'], 'required', 'on' => ['product_sale_rate_gyan']],
                     ],
                 ],
                 'TblBankDetails' => [
@@ -92,7 +92,7 @@ class CustomValidation extends Component {
                 ],
                 'TblProductSaleRate' => [
                     'default' => [
-                        [['rate_wharehouse'], 'required'],
+                            [['rate_wharehouse'], 'required'],
                     ],
                 ],
             ],
@@ -289,6 +289,7 @@ class CustomValidation extends Component {
                     'dcs-import' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
 //                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'plant-create' => [
@@ -424,6 +425,20 @@ class CustomValidation extends Component {
                             [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
 //                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    ],
+                ],
+            ],
+            'VRS_NEWASA' => [
+                'TblMember' => [
+                    'default' => [
+                            [['adhar_no'], 'required'],
+                    ],
+                ],
+            ],
+            'VRS_GLT' => [
+                'TblMember' => [
+                    'default' => [
+                            [['adhar_no'], 'required'],
                     ],
                 ],
             ],

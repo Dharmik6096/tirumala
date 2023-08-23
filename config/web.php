@@ -250,6 +250,7 @@ $config = [
         'dataexchange' => ['class' => 'app\modules\webservice\dataexchange\Dataexchange',],
         'welfarescheme' => ['class' => 'app\modules\welfarescheme\welfarescheme',],
         'tms' => ['class' => 'app\modules\tms\Tms',],
+        'document' => ['class' => 'app\modules\document\Document',],
     ],
     'params' => require(__DIR__ . '/params.php'),
 ];

@@ -46,6 +46,7 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
                 [['wef_date', 'created_at', 'updated_at'], 'safe'],
                 [['originating_type'], 'integer'],
                 [['dcs_code'], 'validateData'],
+                [['dcs_code'], 'setFieldImport', 'on' => ['importCsv']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'wef_date'], 'required', 'on' => ['searchModel']],
         ];
     }
@@ -110,4 +111,22 @@ class TblMemberPaymentRestrict extends \app\models\ChildModel {
         }
     }
 
+    public function setFieldImport($attribute, $params) {
+        if (empty($this->getErrors()) && !empty($this->dcs_code)) {            
+            $dcs = $this->dcsCode;    
+            if (empty($dcs)) {
+                $dcs = TblDcs::findOne(['ref_code' => $this->dcs_code]);
+            }    
+            if (!empty($dcs)) {
+                $this->dcs_code = $dcs->dcs_code;
+                $this->union_code = $dcs->union_code;
+                $this->plant_code = $dcs->plant_code;
+                $this->mcc_plant_code = $dcs->mcc_plant_code;
+                $this->bmc_code = $dcs->bmc_code;
+            } else {
+                $this->addError('dcs_code', Yii::t('app/validation', 'Invalid dcs code or ref code.'));
+                return false;                
+            }
+        }
+    }
 }

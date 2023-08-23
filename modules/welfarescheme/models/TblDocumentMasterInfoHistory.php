@@ -5,7 +5,7 @@ namespace app\modules\welfarescheme\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_scheme_document_master_history".
+ * This is the model class for table "tbl_document_master_info_history".
  *
  * @property integer $id
  * @property string $operation_type
@@ -25,13 +25,13 @@ use Yii;
  * @property string $originating_org_code
  * @property string $originating_org_type
  */
-class TblSchemeDocumentMasterHistory extends \yii\db\ActiveRecord {
+class TblDocumentMasterInfoHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_scheme_document_master_history';
+        return 'tbl_document_master_info_history';
     }
 
     /**

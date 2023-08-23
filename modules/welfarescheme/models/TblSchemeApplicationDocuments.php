@@ -4,7 +4,7 @@ namespace app\modules\welfarescheme\models;
 
 use Yii;
 use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 
 /**
  * This is the model class for table "tbl_scheme_application_documents".
@@ -73,7 +73,7 @@ class TblSchemeApplicationDocuments extends \app\models\ChildModel {
     }
 
     public function getDocumentMasterCode() {
-        return $this->hasOne(TblSchemeDocumentMaster::className(), ['doc_id' => 'doc_id']);
+        return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
 }

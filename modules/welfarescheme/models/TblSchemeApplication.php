@@ -12,7 +12,7 @@ use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\welfarescheme\models\TblSchemeMaster;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use app\modules\usermanagement\models\User;
 use yii\helpers\ArrayHelper;
 
