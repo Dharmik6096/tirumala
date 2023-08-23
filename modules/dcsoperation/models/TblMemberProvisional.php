@@ -23,6 +23,8 @@ use app\modules\general\models\TblRelationship;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
+use app\modules\document\models\TblAttachment;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * This is the model class for table "tbl_member_provisional".
@@ -602,6 +604,15 @@ class TblMemberProvisional extends ChildModel {
 
     public function setPanNumber($attribute, $params) {
         $this->pan_no = strtoupper($this->pan_no);
+    }
+
+    public function getMemberPrivisionalDocuments() {
+        return $this->hasMany(TblAttachment::className(), ['module_code' => 'provisional_member_code']);
+    }
+
+    public function getMemberPrivisionalApproval() {
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'provisional_member_code'])->orderBy('level ASC');
+//        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
     }
 
 }

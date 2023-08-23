@@ -24,6 +24,7 @@ use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblMemberProvisionalController implements the CRUD actions for TblMemberProvisional model.
@@ -438,13 +439,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     public function actionApproveMember($id) {
         $model = TblProcessApproval::findOne($id);
         $model->scenario = 'approve';
+        $model_save = [];
+        $approvalHistoryModel = new TblProcessApprovalHistory();
+        Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
+        $model_save[] = $approvalHistoryModel;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model_save = [];
             $model_save[] = $model;
             if (!empty($model_save)) {
                 $next_count = TblProcessApproval::find()
                         ->where(['process_code' => $model->process_code, 'status' => 0])
-                        ->andWhere(['<>', 'process_approval_code' => $model->process_approval_code])
+                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
                         ->count();
                 if ($model->status == '2') {
                     $status = 'Reject';
@@ -459,10 +463,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
                     $model_save[] = $historyModel;
                     $memberModel->provisional_status = $status;
-                    $memberModel->remarks = $model->remarks;
+//                    $memberModel->remarks = $model->remarks;
                     $model_save[] = $memberModel;
                     if ($memberModel->provisional_status == 'Approve') {
-                        $this->createmember($memberModel, $model_save);
+                        $this->createMember($memberModel, $model_save);
                     }
                 }
                 $transaction = $this->generalModel->saveTransaction($model_save, ['Member Provisional Approval', 'edit']);
@@ -479,23 +483,23 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionCreateMember($memberModel, $model_save) {
+    public function CreateMember($memberModel, $model_save) {
         $memberModel->is_approved = 1;
         $memberModel->approved_at = date('Y-m-d H:i:s');
         $memberModel->approved_by = Yii::$app->session['UserCode'];
-        if ($this->model->is_approved = 1) {
-            $tblMember = new TblMember;
+        if ($memberModel->is_approved = 1) {
+            $tblMember = new TblMember();
             $tblMember->scenario = 'ApprovalMember';
-            $tblMember->attributes = $this->model->attributes;
+            $tblMember->attributes = $memberModel->attributes;
             $tblMember->member_code = $tblMember->getCode();
             $historyModel = new TblMemberProvisionalHistory();
-            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $historyModel->provisional_member_code = $this->model->provisional_member_code;
+            Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
+            $historyModel->provisional_member_code = $memberModel->provisional_member_code;
             $master[] = $tblMember;
-            $master[] = $this->model;
+            $master[] = $memberModel;
             $master[] = $historyModel;
             $milkCollectionData = new TblProvisionalMilkCollection();
-            $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code . $this->model->pro_ex_member_code);
+            $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
             if (!empty($milkCollectionData)) {
                 foreach ($milkCollectionData as $key => $value) {
                     $deleteModel[] = $value;
