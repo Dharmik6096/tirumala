@@ -169,7 +169,7 @@ class TblDcsProvisional extends ChildModel {
 //    public $department, $middle_name, $surname, $local_middlename, $local_surname, $milk_type_auto, $auto_member_create, $route, $beneficiary_name;
     public $operation, $verifie_for, $file_name, $is_default;
     public $process_approval_code;
-    public $toEncrypt = ['password', 'pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob'];
+    public $toEncrypt = ['password', 'pan_no', 'contact_person_mobile_no', 'contact_person_pan_no', 'contact_person_phone_no', 'phone_no', 'birth_date', 'upi_no', 'adhar_no', 'aadhaar_no', 'dob', 'voter_id'];
 
     /**
      * @inheritdoc
@@ -313,17 +313,17 @@ class TblDcsProvisional extends ChildModel {
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['cutoff', 'morning_kms', 'evening_kms'], 'default', 'value' => 0],
                 [['cutoff_val'], 'default', 'value' => 0.1],
-                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
+//                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
                 [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) {
                     return $model->cutoff == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']
             ],
-                [['cutoff_val'], function ($attribute, $params) {
-                    if (!empty($this->cutoff) && $this->cutoff != '0000') {
-                        $this->validOneDigitDecimal($this, $attribute, $params);
-                    }
-                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
+//                [['cutoff_val'], function ($attribute, $params) {
+//                    if (!empty($this->cutoff) && $this->cutoff != '0000') {
+//                        $this->validOneDigitDecimal($this, $attribute, $params);
+//                    }
+//                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
         ];
 //        $client_rules = Yii::$app->customvalidation->getRules('tbldcsprovisional', $this->form_validation_type);
         $client_rules = [];
@@ -548,11 +548,6 @@ class TblDcsProvisional extends ChildModel {
         $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->orderBy('level ASC');
 //        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'dcs_provisional_code'])->andOnCondition(['tbl_process_approval.status' => 0])->orderBy('level ASC');
-    }
-
-    public function getDcsProvisional() {
-        $this->dcs_provisional_code = (string) $this->dcs_provisional_code;
-        return $this->hasOne(TblDcsProvisional::className(), ['dcs_provisional_code' => 'process_code']);
     }
 
     function validOneDigitDecimal($model, $attribute, $params) {

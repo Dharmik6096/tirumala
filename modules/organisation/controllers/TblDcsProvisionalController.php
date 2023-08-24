@@ -54,6 +54,8 @@ use app\modules\general\models\TblApprovalStagesDetail;
 use app\modules\document\models\TblAttachmentHistory;
 use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblProcessApproval;
+use app\modules\organisation\models\TblDcs;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -96,6 +98,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
+//            $this->model->cutoff_val = (double) $this->model->cutoff_val;
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -346,9 +349,6 @@ class TblDcsProvisionalController extends ChildController {
 
     public function actionPendingApproval() {
         $searchModel = new TblDcsProvisionalSearch();
-//        echo "<pre>";
-//        print_r(\Yii::$app->user->identity);
-//        die;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
         return $this->render('index', [
                     'searchModel' => $searchModel,
@@ -360,13 +360,15 @@ class TblDcsProvisionalController extends ChildController {
     public function actionApproveDcs($id) {
         $model = TblProcessApproval::findOne($id);
 //        $model->scenario = 'approve';
+        $historyApproval = new TblProcessApprovalHistory();
+        Yii::$app->operation->history($model, $historyApproval, UPDATE);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save = [];
             $model_save[] = $model;
             if (!empty($model_save)) {
                 $next_count = TblProcessApproval::find()
                         ->where(['process_code' => $model->process_code, 'status' => 0])
-                        ->andWhere(['<>','process_approval_code', $model->process_approval_code])
+                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
                         ->count();
                 if ($model->status == '2') {
                     $status = 'Reject';
@@ -384,10 +386,14 @@ class TblDcsProvisionalController extends ChildController {
                     $dcsModel->remarks = $model->remarks;
                     $model_save[] = $dcsModel;
                     if ($dcsModel->status == 'Approve') {
-                        $dcsReturnData = $this->createDcs($dcsModel, $model_save);
+                        $transaction = $this->createDcs($dcsModel, $model_save);
                     }
+                } else {
+                    echo "<pre>";
+                    print_r($model_save);
+                    die;
+                    $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
-                $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['pending-approval']);
                 }
@@ -401,21 +407,32 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcs_create_data, $model_save, $save_flage = false) {
-        if (!empty($dcs_create_data)) {
+    public function createDcs($dcsProvisional, $model_save) {
+        if (!empty($dcsProvisional)) {
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
             $this->bankDetails = new TblBankDetails();
             $this->contactDetails = new TblContactDetails();
             $this->contactDetails->form_validation_type = 'dcs-create';
             $validate = 1;
-            $this->model->load($dcs_create_data);
+            $dcsProvisional->vendor = $dcsProvisional->vendor_code;
+            $dcsProvisional->milk_type_code = !empty($dcsProvisional->milk_type) ? explode(',', $dcsProvisional->milk_type) : [];
+            $dcsProvisional->created_at = '';
+            $dcsProvisional->created_by = '';
+            $dcsProvisional->updated_at = '';
+            $dcsProvisional->updated_by = '';
+            $dcsProvisional->remarks = '';
+            $this->model->attributes = $dcsProvisional->attributes;
+            $this->model->vendor = $dcsProvisional->vendor;
+            $this->model->milk_type_code = $dcsProvisional->milk_type_code;
+            
+//            $this->model->load($dcsProvisional->attributes);
             $this->model->dcs_code = $this->model->getCode();
             //set mapping data
             $mapList = [];
             if (!empty($this->model->village_code)) {
                 $modelMapping = new TblDcsVillageMapping();
-                $this->model->setMapping($modelMapping);
+                $this->setMapping($modelMapping);
                 array_push($mapList, $modelMapping);
             }
 
@@ -425,26 +442,26 @@ class TblDcsProvisionalController extends ChildController {
             $modelCodes->union_code = $this->model->union_code;
             $modelCodes->bmc_code = $this->model->bmc_code;
             array_push($mapList, $modelCodes);
-            $this->bankDetails->load($dcs_create_data);
+//            $this->bankDetails->load($dcsProvisional);
+            $this->bankDetails->attributes = $dcsProvisional->attributes;
             $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
                 $this->bankDetails->setModel('society', $this->model->dcs_code);
                 $this->bankDetails->scenario = 'bank_selected';
                 array_push($mapList, $this->bankDetails);
-
                 $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
             }
-            $this->contactDetails->load($dcs_create_data);
+//            $this->contactDetails->load($dcsProvisional);
+            $this->contactDetails->attributes = $dcsProvisional->attributes;
             if (!empty($this->contactDetails->mobile_no)) {
                 $this->contactDetails->setModel('society', $this->model->dcs_code);
                 array_push($mapList, $this->contactDetails);
             }
-
             //set milk type data
             if ($this->model->default_milk_type == 8) {
                 $this->model->milk_type_auto = 1;
             }
-            $this->model->milk_type_code = !empty($dcs_create_data['milk_type']) ? explode(',', $dcs_create_data['milk_type']) : [];
+//            $this->model->milk_type_code = !empty($dcsProvisional['milk_type']) ? explode(',', $dcsProvisional['milk_type']) : [];
             $modelMilkType = $this->setMilk();
 //            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
@@ -453,7 +470,8 @@ class TblDcsProvisionalController extends ChildController {
             if ($this->model->vendor != 'NA') {
                 $vendorModel = new TblSocietyVendor();
                 $vendorModel->dcs_code = $this->model->dcs_code;
-                $vendorModel->vendor_code = $this->model->vendor;
+//                $vendorModel->vendor_code = $this->model->vendor;
+                $vendorModel->vendor_code = $this->model->vendor_code;
                 array_push($mapList, $vendorModel);
             }
             if ($bankValidate == 1) {
@@ -471,7 +489,7 @@ class TblDcsProvisionalController extends ChildController {
                     $cutOffVal = $val . strtoupper($milkType);
                     $this->model->cutoff = substr($cutOffVal, -4);
                 }
-                $transaction = $this->saveDcs($this->model, $mapList, ['society', 'create']);
+                $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {
                         if (!empty($vendorModel)) {
@@ -501,16 +519,21 @@ class TblDcsProvisionalController extends ChildController {
                                 }
                             }
                             $this->generalModel->saveTransaction($orgMap, ['society', 'create']);
-                            $save_flage = true;
                         }
                     }
                 }
+                return $transaction;
             }
         }
-        return $save_flage;
+    }
+    
+    private function setMapping(&$modelMapping) {
+        $modelMapping->dcs_code = $this->model->dcs_code;
+        $modelMapping->village_code = $this->model->village_code;
+        $modelMapping->is_active = $this->model->is_active;
     }
 
-    public function saveDcs($model, $childModel, $message) {
+    public function saveDcs($model, $childModel, $provisionalModel, $message) {
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             $master = [];
@@ -521,10 +544,11 @@ class TblDcsProvisionalController extends ChildController {
                         $master[] = $m->delete();
                     } else {
                         $name = (new ReflectionClass($m))->getShortName();
-                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails')
+                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails'){
                             $master[] = $m->save();
-                        else
+                        } else {
                             $master[] = $m->save(FALSE);
+                        }
                     }
                 }
             }
@@ -555,7 +579,12 @@ class TblDcsProvisionalController extends ChildController {
                     }
                 }
             }
-
+            if (!in_array(FALSE, $master)) {
+                foreach ($provisionalModel as $m) {
+                    $master[] = $m->save();
+                    //var_dump($m->getErrors());
+                }
+            }
             if (!in_array(FALSE, $master)) {
                 $transaction->commit();
                 Yii::$app->display->message(true, $message[0], $message[1]);
