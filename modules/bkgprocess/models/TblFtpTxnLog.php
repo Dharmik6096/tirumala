@@ -458,4 +458,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
+    public function UserMatchingRecords($user)
+    {
+        return $this->find()->Where(['created_by' => $user, 'status' => 0])->count();
+    }
 }
