@@ -319,12 +319,6 @@ $form = ActiveForm::begin([
                 <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
                 <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
             </div>
-            <?php
-//            $this->render('_contact_details_form', [
-//                'model' => $model,
-//                'form' => $form
-//            ])
-            ?>
 
             <div class="clearfix"></div>
 
@@ -353,13 +347,6 @@ $form = ActiveForm::begin([
             <!--<div class="col-sm-2">
             <?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
             </div>-->
-            <?php
-//            $this->render('_bank_details_form', [
-//                'model' => $model,
-//                'form' => $form,
-//                'dist_field' => 'tbldcsprovisional-district_code'
-//            ])
-            ?>
         <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->

@@ -263,6 +263,7 @@ class TblDcs extends ChildModel {
                 ['ref_code', 'unique', 'targetAttribute' => ['ref_code', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                 [['credit_sale_allow', 'is_chiller'], 'default', 'value' => 0],
                 [['district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'password'], 'safe'],
+                [['cheque_number', 'cheque_amount', 'is_security_cheque'], 'safe'],
                 [['dcs_code'], function ($attribute, $params) {
                     ($this->vendor == 'BIPL') ? Yii::$app->general->generateFTPDir($this, $attribute, $params, $this->mcc_plant_code, $this->ref_code) : '';
                 }, 'skipOnEmpty' => false, 'on' => ['createDcs', 'importCsv']],

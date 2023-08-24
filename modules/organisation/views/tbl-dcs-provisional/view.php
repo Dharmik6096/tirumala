@@ -4,10 +4,11 @@ use yii\helpers\Html;
 use app\components\GeneralFunctions;
 use kartik\detail\DetailView;
 use webvimark\modules\UserManagement\components\GhostHtml;
+use kartik\grid\GridView;
+use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'Provisional Society');
 //$this->params['menu'][] = Yii::$app->controls->update($model->dcs_code);
-
 //$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
 //$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
 ?>
@@ -15,7 +16,7 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
         <?= Yii::$app->controls->cancel($model); ?>
-<?= Html::encode($this->title) ?>
+        <?= Html::encode($this->title) ?>
     </div>
     <div class="panel-body">
         <div class="form-grid">
@@ -560,12 +561,25 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                 <h4 class="theme-box-heading">Bank Details</h4>
             </div>
             <div class="form-grid">
-                <?=
-                $this->render('_bank_details', [
-                    'model' => $model,
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
-                ])
+                <?php
+                $attribute = [
+                        ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'filter' => false],
+                        ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'filter' => false],
+                        ['attribute' => 'bank_account_no', 'filter' => false],
+                        ['attribute' => 'ifsc', 'filter' => false],
+                        ['attribute' => 'beneficiary_name', 'filter' => false],
+                        ['attribute' => 'is_default', 'value' => function($model) {
+                            return $model->is_default == 1 ? 'Yes' : 'No';
+                        }, 'filter' => false],
+                ];
+
+                $grid_option = [
+                    'id' => 'bank-list',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                ];
+
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
                 ?>
             </div>
         </div>
@@ -575,12 +589,27 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                 <h4 class="theme-box-heading">Contact Details</h4>
             </div>
             <div class="form-grid">
-                <?=
-                $this->render('_contact_details', [
-                    'model' => $model,
-                    'dataProvider' => $dataProvider,
-                    'searchModel' => $searchModel,
-                ])
+                <?php
+                $contact_person_lable = Yii::t('app', 'Society Secretory');
+                $local_contact_person_lable = Yii::t('app', 'Society Secretory Hindi Name');
+                $attribute = [
+                        ['label' => $contact_person_lable, 'value' => 'firstname', 'filter' => false],
+                        ['label' => $local_contact_person_lable, 'value' => 'local_firstname', 'filter' => false],
+                        ['attribute' => 'email', 'filter' => false],
+                        ['attribute' => 'mobile_no', 'filter' => false],
+                        ['attribute' => 'department', 'filter' => false],
+                        ['attribute' => 'is_default', 'value' => function($model) {
+                            return $model->is_default == 1 ? 'Yes' : 'No';
+                        }, 'filter' => false],
+                ];
+
+                $grid_option = [
+                    'id' => 'contact-list',
+                    'attributes' => $attribute,
+                    'active_column' => false,
+                ];
+
+                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
                 ?>
             </div>       
         </div>
@@ -590,11 +619,25 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                     <h4 class="theme-box-heading">Document Upload</h4>
                 </div>
                 <div class="col-sm-12">
-                    <?=
-                    $this->render('_document_grid', [
-                        'dataProviderOther' => $dataProviderOther,
-                        'attachment' => $attachment,
-                    ])
+                    <?php
+                    $attribute = [
+                            ['attribute' => 'doc_id', 'value' => function($model) {
+                                return Yii::$app->general->getforeignkey($model->docId, 'doc_name');
+                            }],
+                    ];
+                    $grid_option = [
+                        'id' => 'document',
+                        'attributes' => $attribute,
+                        'active_column' => false,
+                        'actions' => [
+                            'view-attachment' => function ($url, $model) {
+                                $attachemnt = $model->attachment;
+                                $url = !empty($attachemnt) ? $attachemnt : '';
+                                return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
+                            },
+                        ]
+                    ];
+                    Yii::$app->grid->bind($dataProviderOther, $attachment, $grid_option, '', false);
                     ?>
                 </div>
             </div>

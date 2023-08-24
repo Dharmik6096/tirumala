@@ -166,18 +166,6 @@ $attribute = [
             return isset($model->is_dispatch_mandate) ? Yii::$app->dropdown->getRecords('is_dispatch_mandate')['data'][$model->is_dispatch_mandate] : '';
         }, 'visible' => true
     ],
-//    [
-//        'attribute' => 'is_weight_manual', 'filter' => false,
-//        'value' => function($model) {
-//            return ($model->is_weight_manual == 1) ? 'Yes' : 'No';
-//        }, 'visible' => FALSE
-//    ],
-//    [
-//        'attribute' => 'is_quality_manual', 'filter' => false,
-//        'value' => function($model) {
-//            return ($model->is_quality_manual == 1) ? 'Yes' : 'No';
-//        }, 'visible' => FALSE
-//    ],
     [
         'attribute' => 'is_bmc', 'filter' => false,
         'value' => function($model) {

@@ -118,11 +118,8 @@ class TblDcsProvisionalController extends ChildController {
                 $cutOffVal = $val . strtoupper($milkType);
                 $this->model->cutoff = substr($cutOffVal, -4);
             }
-            $this->model->milk_type = implode(',', $this->model->milk_type_code);
+            $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
             $this->model->vendor_code = $this->model->vendor;
-//            echo "<pre>";
-//            print_r($this->model);
-//            die;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['society', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
@@ -165,8 +162,6 @@ class TblDcsProvisionalController extends ChildController {
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
             $this->setModel();
-            $this->model->street1 = $_POST['TblDcsProvisional']['street1'];
-            $this->model->street2 = $_POST['TblDcsProvisional']['street2'];
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -184,7 +179,7 @@ class TblDcsProvisionalController extends ChildController {
                 $cutOffVal = $val . strtoupper($milkType);
                 $this->model->cutoff = substr($cutOffVal, -4);
             }
-            $this->model->milk_type = implode(',', $this->model->milk_type_code);
+            $this->model->milk_type = !empty($this->model->milk_type_code) ? implode(',', $this->model->milk_type_code) : '';
             $this->model->vendor_code = $this->model->vendor;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
             if ($transaction == 'customRedirect') {
@@ -393,9 +388,6 @@ class TblDcsProvisionalController extends ChildController {
                         $transaction = $this->createDcs($dcsModel, $model_save);
                     }
                 } else {
-                    echo "<pre>";
-                    print_r($model_save);
-                    die;
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
                 if ($transaction == 'customRedirect') {
@@ -502,7 +494,6 @@ class TblDcsProvisionalController extends ChildController {
                             $users = $userModel->findByRole([$vendorModel->vendor_code]);
                             foreach ($users as $user) {
                                 if (empty($user->user_type_id) || $user->user_type_id == 7) {
-                                    //TblUserOrganizationMapping::deleteAll(['user_id' => $user->id]);
                                     if (empty($user->user_type_id)) {
                                         $user->user_type_id = 7;
                                         array_push($orgMap, $user);

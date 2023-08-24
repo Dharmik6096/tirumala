@@ -38,81 +38,26 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                             'attribute' => 'dcs_provisional_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-//                            [
-//                            'attribute' => 'dcs_code',
-//                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->dcsProvisional, 'dcs_name'),
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-                    ],
-                ],
-//                    [
-//                    'columns' => [
-//                            [
-//                            'attribute' => 'customer_type',
-//                            'value' => isset($dcs_provisional->customer_type) ? (strtolower($dcs_provisional->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($dcs_provisional->customerType, 'customer_desc') ) : '',
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                            [
-//                            'attribute' => 'customer_name',
-//                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type) : '',
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                    ],
-//                ],
-                [
-                    'columns' => [
                             [
                             'attribute' => 'dcs_code_ex',
                             'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, true) : '',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-//                            [
-//                            'attribute' => 'customer_code',
-//                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, FALSE, FALSE, true) : '',
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
                     ],
                 ],
                     [
                     'columns' => [
                             [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'created_at',
                             'value' => Yii::$app->controls->view_date($dcs_provisional->created_at),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-//                            [
-//                            'attribute' => 'scheme_value',
-//                            'label' => Yii::t('app', 'Value(Scheme/Approved)'),
-//                            'value' => $dcs_provisional->scheme_value . '/' . $dcs_provisional->approved_value,
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
                     ],
                 ],
-//                    [
-//                    'columns' => [
-//                            [
-//                            'attribute' => 'min_pouring_day',
-//                            'label' => Yii::t('app', 'Day(min/act)'),
-//                            'value' => $dcs_provisional->min_pouring_day . '/' . $dcs_provisional->actual_pouring_day,
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                            [
-//                            'attribute' => 'min_pouring_qty',
-//                            'label' => Yii::t('app', 'Qty(min/act)'),
-//                            'value' =>
-//                            $dcs_provisional->min_pouring_qty . '/' . $dcs_provisional->actual_pouring_qty,
-//                            'valueColOptions' => ['style' => 'width:30%']
-//                        ],
-//                    ],
-//                ],
-//                    [
-//                    'columns' => [
-//                            [
-//                            'attribute' => 'remarks',
-//                            'valueColOptions' => ['style' => 'width:80%']
-//                        ],
-//                    ],
-//                ],
             ];
             echo DetailView::widget([
                 'model' => $dcs_provisional,
@@ -196,7 +141,7 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                                 <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
                                 <td><?= $approval->remarks; ?></td>
                             </tr>
-<?php } ?>
+                        <?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -218,23 +163,23 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                                 'fieldConfig' => [
                     ]]);
                     ?>
-<?php echo $form->errorSummary($model); ?>
+                    <?php echo $form->errorSummary($model); ?>
                     <div class="row">
                         <div class="col-sm-2">
-<?= Yii::$app->dropdown->dropdownStatic('approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
+                            <?= Yii::$app->dropdown->dropdownStatic('approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
                         </div>
                         <div class="col-sm-2">
-<?= $form->field($model, 'remarks')->textarea(); ?>
+                            <?= $form->field($model, 'remarks')->textarea(); ?>
                         </div>
                         <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">
                                 <?= Yii::$app->controls->save('save', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
-<?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
                             </div>  
                         </div>
                     </div>
-<?php ActiveForm::end(); ?>
+                    <?php ActiveForm::end(); ?>
                 </div>
             </div>
         </div>
