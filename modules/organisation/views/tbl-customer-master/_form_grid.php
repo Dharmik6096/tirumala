@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
-$eiplCode = Yii::$app->session->get('eiplCode');
 ?>
 <?php
 $attribute = [
