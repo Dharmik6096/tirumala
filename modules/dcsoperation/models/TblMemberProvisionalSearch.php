@@ -20,7 +20,7 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
      */
     public function rules() {
         return [
-                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status'], 'safe'],
+                [['member_code', 'is_active', 'payment_mode', 'caste_category_code', 'member_type_code', 'bank_account_no', 'mobile_no', 'created_at', 'gender_code', 'milk_quality_type_code', 'ifsc', 'animal_type_code', 'member_name', 'nominee_name', 'pincode', 'updated_at', 'bank_code', 'branch_code', 'created_by', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'updated_by', 'village_code', 'email', 'is_download', 'download_date_time', 'reference_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'provisional_from', 'provisional_status', 'remarks'], 'safe'],
         ];
     }
 
@@ -101,8 +101,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         $query->andFilterWhere([
             'tbl_member_provisional.is_active' => $this->is_active,
         ]);
-
-
 
         $query->andFilterWhere(['like', 'tbl_member_provisional.member_code', $this->member_code])
                 ->andFilterWhere(['like', 'tbl_member_provisional.dcs_code', $this->dcs_code])
