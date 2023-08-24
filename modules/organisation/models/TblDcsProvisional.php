@@ -313,17 +313,17 @@ class TblDcsProvisional extends ChildModel {
                 }, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 [['cutoff', 'morning_kms', 'evening_kms'], 'default', 'value' => 0],
                 [['cutoff_val'], 'default', 'value' => 0.1],
-//                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
+                [['cutoff_val'], 'number', 'min' => 0.1, 'max' => 99.9, 'skipOnEmpty' => true, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
                 [['lower_milk_type', 'cutoff_val'], 'required', 'when' => function ($model) {
                     return $model->cutoff == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tbldcsprovisional-cutoff').is(':checked') }", 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']
             ],
-//                [['cutoff_val'], function ($attribute, $params) {
-//                    if (!empty($this->cutoff) && $this->cutoff != '0000') {
-//                        $this->validOneDigitDecimal($this, $attribute, $params);
-//                    }
-//                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
+                [['cutoff_val'], function ($attribute, $params) {
+                    if (!empty($this->cutoff) && $this->cutoff != '0000') {
+                        $this->validOneDigitDecimal($this, $attribute, $params);
+                    }
+                }, 'except' => ['routeMapping', 'deactivate', 'saveCreamyData', 'customImport', 'customImportUpdate', 'importCsv', 'uploadDoc']],
         ];
 //        $client_rules = Yii::$app->customvalidation->getRules('tbldcsprovisional', $this->form_validation_type);
         $client_rules = [];
@@ -461,6 +461,10 @@ class TblDcsProvisional extends ChildModel {
             'x_col5' => Yii::t('app', 'X Col5'),
             'status' => Yii::t('app', 'Status'),
         ];
+    }
+    
+    public function getCode() {
+        return Yii::$app->general->setKeyPattern($this, 'tbl_dcs', 'dcs_code_ex', 9);
     }
 
     /**

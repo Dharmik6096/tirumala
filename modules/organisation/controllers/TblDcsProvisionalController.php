@@ -98,6 +98,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->bmc_code = !empty($bmc_code) ? $bmc_code : $this->model->bmc_code;
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->getCode();
 //            $this->model->cutoff_val = (double) $this->model->cutoff_val;
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
@@ -119,6 +120,9 @@ class TblDcsProvisionalController extends ChildController {
             }
             $this->model->milk_type = implode(',', $this->model->milk_type_code);
             $this->model->vendor_code = $this->model->vendor;
+//            echo "<pre>";
+//            print_r($this->model);
+//            die;
             $transaction = $this->generalModel->saveTransaction([$this->model], ['society', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
