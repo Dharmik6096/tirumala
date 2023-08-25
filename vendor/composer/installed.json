@@ -7716,6 +7716,55 @@
             "install-path": "../softark/yii2-dual-listbox"
         },
         {
+            "name": "spanjeta/yii2-backup",
+            "version": "v2.2",
+            "version_normalized": "2.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spanjeta/yii2-backup.git",
+                "reference": "97443cb2b2d147d0c9df24d9ba8e797bfdba28dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spanjeta/yii2-backup/zipball/97443cb2b2d147d0c9df24d9ba8e797bfdba28dc",
+                "reference": "97443cb2b2d147d0c9df24d9ba8e797bfdba28dc",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "time": "2017-08-23T09:34:17+00:00",
+            "type": "yii2-extension",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "spanjeta\\modules\\backup\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Shiv Charan Panjeta",
+                    "email": "shivcharan.panjeta@gmail.com"
+                }
+            ],
+            "description": "Database Backup and Restore functionality",
+            "keywords": [
+                "backup",
+                "database",
+                "restore",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/spanjeta/yii2-backup/issues",
+                "source": "https://github.com/spanjeta/yii2-backup/tree/master"
+            },
+            "install-path": "../spanjeta/yii2-backup"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.3.0",
             "version_normalized": "6.3.0.0",
