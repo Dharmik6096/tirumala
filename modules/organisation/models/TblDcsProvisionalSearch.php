@@ -67,7 +67,8 @@ class TblDcsProvisionalSearch extends TblDcsProvisional {
         }
         
         if ($pending_approval) {
-            $subQuery = Yii::$app->general->getApproveLavel('society');
+            $approvalModel = new TblProcessApproval();
+            $subQuery = $approvalModel->getApproveLavel('society');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_dcs_provisional.dcs_provisional_code) = convert(varchar(max),ap.process_code)');
             $query->addSelect(['tbl_dcs_provisional.*', 'ap.process_approval_code as process_approval_code']);
             $this->status = ['Register', 'Inprogress'];

@@ -358,11 +358,11 @@ class TblDcsProvisionalController extends ChildController {
 
     public function actionApproveDcs($id) {
         $model = TblProcessApproval::findOne($id);
-//        $model->scenario = 'approve';
         $historyApproval = new TblProcessApprovalHistory();
         Yii::$app->operation->history($model, $historyApproval, UPDATE);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save = [];
+            $model_save[] = $historyApproval;
             $model_save[] = $model;
             if (!empty($model_save)) {
                 $next_count = TblProcessApproval::find()

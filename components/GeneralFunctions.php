@@ -252,7 +252,7 @@ class GeneralFunctions extends Component {
     public function validateAadharcard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
-                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' card number can only contain exactly 12 digits.'));
             }
     }
 
@@ -300,13 +300,6 @@ class GeneralFunctions extends Component {
                 $model->addError($attribute, Yii::t('app/validation', 'Please enter valid ' . $model->getAttributeLabel($attribute) . ' Formate. e.g "01:00"'));
             }
         }
-    }
-    
-    public function validateVotercard($model, $attribute, $params) {
-        if (!empty($model->$attribute))
-            if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
-                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
-            }
     }
 
 //    public function validateBranch($model,$attribute,$params) {
@@ -2336,11 +2329,10 @@ class GeneralFunctions extends Component {
         return $number;
     }
 
-    public static function getAttachmentUrl($module_name, $module_Code)
-    {
+    public static function getAttachmentUrl($module_name, $module_Code) {
         $attachment = \app\modules\general\models\TblAttachment::find()
-            ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
-            ->one();
+                ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+                ->one();
 
         if ($attachment) {
             return $attachment->attachment;
@@ -2348,37 +2340,4 @@ class GeneralFunctions extends Component {
 
         return null;
     }
-    
-    public function getApproveLavel($process_name){
-        $subquery  = TblProcessApproval::find()
-            ->select([
-                'process_code',
-                'process_name',
-                new Expression('MIN(level_priority) AS level_priority'),
-                new Expression('MIN(level) AS level')
-            ])
-            ->where(['status' => 0,'process_name'=>$process_name])
-            ->groupBy(['process_code', 'process_name']);
-
-        $query = TblProcessApproval::find()
-            ->alias('app')
-            ->innerJoin(
-                    ['pnd' => $subquery], [
-                'pnd.process_code' => new Expression('app.process_code'),
-                'pnd.process_name' => new Expression('app.process_name'),
-                'pnd.level' => new Expression('app.level')
-                    ]
-            )
-            ->where([
-                'or',
-                    ['app.login_type' => \Yii::$app->user->identity->login_type],
-                    ['app.user_code' => \Yii::$app->user->identity->user_code]
-            ])
-            ->andWhere([
-                'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
-                'app.status' => 0
-            ]);
-            return $query;
-    }
-
 }

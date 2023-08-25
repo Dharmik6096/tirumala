@@ -241,12 +241,12 @@ $grid_option = [
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
             return Html::a($icon, $url, $options);
         },
-        'update' => function ($url, $model) use ($pending_approval) {
-            if($pending_approval){
-                return false;
+        'update' => function ($url, $model) use ($pending_approval){
+            $class = '';
+            if(!$pending_approval){
+                $class = ($model->is_active === 0 || $model->status != 'Pending') ? 'link-disable' : '';
             }
             $name = $model->dcs_name;
-            $class = ($model->is_active === 0) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
