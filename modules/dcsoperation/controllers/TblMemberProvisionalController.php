@@ -127,87 +127,103 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
+//    public function actionUpdate($id) {
+//        $this->model = $this->findModel($id);
+//        $this->viewFile = 'update';
+//        $validate = 1;
+//        $this->setModel();
+//        $this->model->scenario = 'update_provisional_member';
+//        $tblMember = new TblMember();
+//        if ($this->model->provisional_from == 'mobile_app') {
+//            $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code);
+//        }
+//        $searchModel = new TblProvisionalMilkCollectionSearch();
+//        $params = Yii::$app->request->queryParams;
+//        $searchModel->member_code = $this->model->dcs_code . $this->model->pro_ex_member_code;
+//        $dataProvider = $searchModel->search($params);
+//        if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
+//            $this->model->scenario = Yii::$app->session['eiplCode'];
+//        }
+//        if (Yii::$app->request->post()) {
+//            $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
+//            if (Yii::$app->request->post('submitBtn') === 'approve') {
+//                $this->model->is_approved = 1;
+//                $this->model->approved_at = date('Y-m-d H:i:s');
+//                $this->model->approved_by = Yii::$app->session['UserCode'];
+//            } else {
+//                $this->model->is_approved = 0;
+//            }
+//            $historyModel = new TblMemberProvisionalHistory();
+//            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+//            $historyModel->provisional_member_code = $this->model->provisional_member_code;
+//            $this->model->load(Yii::$app->request->post());
+////            $this->setModel();
+//            $this->model->member_code = $this->model->getCode();
+//            if ($_POST['warning'] == 0)
+//                $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
+//            if ($validate == 1 && $this->model->validate()) {
+//                $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
+//                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
+//                $master_model = [];
+//                $child_model = [];
+//                $deleteModel = [];
+//                $master_model[] = $this->model;
+//                if ($this->model->is_approved == 1) {
+//                    $tblMember = new TblMember();
+//                    $tblMember->scenario = 'ApprovalMember';
+//                    $tblMember->attributes = $this->model->attributes;
+//                    $tblMember->member_code = $tblMember->getCode();
+//                    $master_model[] = $tblMember;
+//                    if (strtolower($this->model->provisional_from) == 'collection') {
+//                        $milkCollectionData = new TblProvisionalMilkCollection();
+//                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code . $this->model->pro_ex_member_code);
+//                        if (!empty($milkCollectionData)) {
+//                            foreach ($milkCollectionData as $key => $value) {
+//                                $deleteModel[] = $value;
+//                                $tblMilkCollection = new TblMilkCollection();
+//                                $tblMilkCollection->attributes = $value->attributes;
+//                                $tblMilkCollection->member_code = $tblMember->member_code;
+//                                $tblMilkCollection->is_provisional = 1;
+//                                $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+//                                Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+//                                $child_model[] = $tblMilkCollection;
+//                                $child_model[] = $tblProvisionalMilkCollectionHistory;
+//                            }
+//                        }
+//                    }
+//                }
+//                $master_model[] = $historyModel;
+//                $transaction = $this->generalModel->saveDeleteTransaction($master_model, $child_model, $deleteModel, ['Member Provisional', 'edit']);
+//                if ($transaction == 'customRedirect') {
+//                    return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
+//                } else {
+//                    $ex_error = $this->model->getErrors();
+//                    if (empty($ex_error)) {
+//                        $main_error = $tblMember->getErrors();
+//                        foreach ($main_error as $att => $err) {
+//                            $this->model->addError($att, $err[0]);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return $this->render('update', ['model' => $this->model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+//    }
+
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        $validate = 1;
-        $this->setModel();
-        $this->model->scenario = 'update_provisional_member';
-        $tblMember = new TblMember();
-        if ($this->model->provisional_from == 'mobile_app') {
-            $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code);
-        }
-        $searchModel = new TblProvisionalMilkCollectionSearch();
-        $params = Yii::$app->request->queryParams;
-        $searchModel->member_code = $this->model->dcs_code . $this->model->pro_ex_member_code;
-        $dataProvider = $searchModel->search($params);
-        if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
-            $this->model->scenario = Yii::$app->session['eiplCode'];
-        }
+
         if (Yii::$app->request->post()) {
-            $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-            if (Yii::$app->request->post('submitBtn') === 'approve') {
-                $this->model->is_approved = 1;
-                $this->model->approved_at = date('Y-m-d H:i:s');
-                $this->model->approved_by = Yii::$app->session['UserCode'];
-            } else {
-                $this->model->is_approved = 0;
-            }
             $historyModel = new TblMemberProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            $historyModel->provisional_member_code = $this->model->provisional_member_code;
             $this->model->load(Yii::$app->request->post());
-//            $this->setModel();
-            $this->model->member_code = $this->model->getCode();
-            if ($_POST['warning'] == 0)
-                $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
-            if ($validate == 1 && $this->model->validate()) {
-                $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
-                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
-                $master_model = [];
-                $child_model = [];
-                $deleteModel = [];
-                $master_model[] = $this->model;
-                if ($this->model->is_approved == 1) {
-                    $tblMember = new TblMember();
-                    $tblMember->scenario = 'ApprovalMember';
-                    $tblMember->attributes = $this->model->attributes;
-                    $tblMember->member_code = $tblMember->getCode();
-                    $master_model[] = $tblMember;
-                    if (strtolower($this->model->provisional_from) == 'collection') {
-                        $milkCollectionData = new TblProvisionalMilkCollection();
-                        $milkCollectionData = $milkCollectionData->getMilkCollectionData($this->model->dcs_code . $this->model->pro_ex_member_code);
-                        if (!empty($milkCollectionData)) {
-                            foreach ($milkCollectionData as $key => $value) {
-                                $deleteModel[] = $value;
-                                $tblMilkCollection = new TblMilkCollection();
-                                $tblMilkCollection->attributes = $value->attributes;
-                                $tblMilkCollection->member_code = $tblMember->member_code;
-                                $tblMilkCollection->is_provisional = 1;
-                                $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                                Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
-                                $child_model[] = $tblMilkCollection;
-                                $child_model[] = $tblProvisionalMilkCollectionHistory;
-                            }
-                        }
-                    }
-                }
-                $master_model[] = $historyModel;
-                $transaction = $this->generalModel->saveDeleteTransaction($master_model, $child_model, $deleteModel, ['Member Provisional', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
-                } else {
-                    $ex_error = $this->model->getErrors();
-                    if (empty($ex_error)) {
-                        $main_error = $tblMember->getErrors();
-                        foreach ($main_error as $att => $err) {
-                            $this->model->addError($att, $err[0]);
-                        }
-                    }
-                }
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
             }
         }
-        return $this->render('update', ['model' => $this->model, 'searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
+        return $this->render('update', ['model' => $this->model]);
     }
 
     public function actionProvisionalMembersApproval() {
@@ -467,10 +483,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     $memberModel->remarks = $model->remarks;
                     $model_save[] = $memberModel;
                     if ($memberModel->provisional_status == 'Approve') {
-//                        $this->createMember($memberModel, $model_save);
-//                        $historyModel = new TblMemberProvisionalHistory();
-//                        Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
-//                        $model_save[] = $historyModel;
                         $memberModel->is_approved = 1;
                         $memberModel->approved_at = date('Y-m-d H:i:s');
                         $memberModel->approved_by = Yii::$app->session['UserCode'];
@@ -479,12 +491,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $tblMember->scenario = 'ApprovalMember';
                             $tblMember->attributes = $memberModel->attributes;
                             $tblMember->member_code = $tblMember->getCode();
-//                            $historyModel = new TblMemberProvisionalHistory();
-//                            Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
-//                            $historyModel->provisional_member_code = $memberModel->provisional_member_code;
                             $model_save[] = $tblMember;
                             $model_save[] = $memberModel;
-//                            $model_save[] = $historyModel;
                             $milkCollectionData = new TblProvisionalMilkCollection();
                             $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
                             if (!empty($milkCollectionData)) {
@@ -503,8 +511,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                     }
                 }
-
-                $transaction = $this->generalModel->saveDeleteTransaction($model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
+                $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['index']);
                 }
@@ -518,50 +525,4 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-//    public function CreateMember($memberModel, $model_save) {
-//        $memberModel->is_approved = 1;
-//        $memberModel->approved_at = date('Y-m-d H:i:s');
-//        $memberModel->approved_by = Yii::$app->session['UserCode'];
-//        if ($memberModel->is_approved = 1) {
-//            $tblMember = new TblMember();
-//            $tblMember->scenario = 'ApprovalMember';
-//            $tblMember->attributes = $memberModel->attributes;
-//            $tblMember->member_code = $tblMember->getCode();
-//            $historyModel = new TblMemberProvisionalHistory();
-//            Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
-//            $historyModel->provisional_member_code = $memberModel->provisional_member_code;
-//            $master[] = $tblMember;
-//            $master[] = $memberModel;
-//            $master[] = $historyModel;
-//            $milkCollectionData = new TblProvisionalMilkCollection();
-//            $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
-//            if (!empty($milkCollectionData)) {
-//                foreach ($milkCollectionData as $key => $value) {
-//                    $deleteModel[] = $value;
-//                    $tblMilkCollection = new TblMilkCollection();
-//                    $tblMilkCollection->attributes = $value->attributes;
-//                    $tblMilkCollection->member_code = $tblMember->member_code;
-//                    $tblMilkCollection->is_provisional = 1;
-//                    $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-//                    Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
-//                    $child_model[] = $tblMilkCollection;
-//                    $child_model[] = $tblProvisionalMilkCollectionHistory;
-//                }
-//            }
-//        }
-//    }
-//    public function actionProvisionalMembersApprovals() {
-//        $searchModel = new TblMemberProvisionalSearch();
-//        $searchModel->scenario = 'memberProvisionalApprove';
-//        $backUrl[] = '/dcsoperation/tbl-member-provisional/provisional-members-approvals';
-//        $memberProvisional = new TblMemberProvisional();
-//        $dataProvider = $searchModel->memberprovisionalapprovesearch(Yii::$app->request->queryParams, 'portal_sp_pending_indent_approval_other');
-//
-//        return $this->render('_bulk_approval_grids', [
-//                    'model' => $searchModel,
-//                    'dataProvider' => $dataProvider,
-//                    'memberProvisional' => $memberProvisional,
-//                    'visibledata' => True,
-//        ]);
-//    }
 }
