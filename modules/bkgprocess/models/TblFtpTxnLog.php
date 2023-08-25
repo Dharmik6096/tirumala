@@ -460,6 +460,6 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 
     public function UserMatchingRecords($user)
     {
-        return $this->find()->Where(['created_by' => $user, 'status' => 0])->count();
+        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => 'BIPL', 'module_name' => 'TblMilkCollection' ])->count();
     }
 }
