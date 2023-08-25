@@ -103,11 +103,13 @@ $this->title = 'BIPL Files Process';
                                     $("#loadercontent").hide();
                                     var obj1 = $.parseJSON(data);
                                     if (obj1.status == "success"){
-                                        $("#upload-btn").remove();
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
                                         Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                        var redirectUrl = "' . Url::to(['/bkgprocess/tbl-ftp-txn-log/list']) . '";
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>", function() {
+                                            window.location = redirectUrl;
+                                        });
                                     }else{
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
