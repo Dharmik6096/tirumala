@@ -59,8 +59,9 @@ class TblStoreLocationSearch extends TblStoreLocation {
         $query->andFilterWhere(['like', 'sloc_code', $this->sloc_code])
                 ->andFilterWhere(['like', 'reference_code', $this->reference_code])
                 ->andFilterWhere(['like', 'store_location_name', $this->store_location_name])
-                ->andFilterWhere(['like', 'tbl_store_location_type.slt_name', $this->store_location_type]);
-              
+                ->andFilterWhere(['like', 'tbl_store_location_type.slt_name', $this->store_location_type])
+                ->andFilterWhere(['like', 'store_location_code', $this->store_location_code]);
+
 
         return $dataProvider;
     }
