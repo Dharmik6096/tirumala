@@ -1679,6 +1679,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Repeat Interval'),
                 'data' => ['0' => Yii::t('app', 'DO not Repeat'), '1' => Yii::t('app', 'Daily'), '2' => Yii::t('app', 'Weekly')],
             ],
+            'customer_category' => [
+                'name' => 'customer category',
+                'prompt' => Yii::t('app', 'Select Customer Category'),
+                'data' => ['small' => Yii::t('app', 'small'), 'medium' => Yii::t('app', 'medium'), 'large' => Yii::t('app', 'large')],
+            ],
         ];
         return $records[$l];
     }

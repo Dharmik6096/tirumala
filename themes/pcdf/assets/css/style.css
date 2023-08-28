@@ -5030,3 +5030,6 @@ tr.highlightRow {
 .pl8 {
     padding-left: 8px;
 }
+.d-none-for-specific-client {
+    display: none;
+}
