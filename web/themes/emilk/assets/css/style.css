@@ -2888,7 +2888,7 @@ td.action-cell{
 
 .panel-main .panel-body .grid-search .btn {
     padding: 3px 15px;
-    float: right;
+    float: left;
 }
 
 .dropdown-menu{
