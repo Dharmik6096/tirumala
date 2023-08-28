@@ -4,27 +4,28 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use app\modules\complaint\models\TblComplainActivity;
 ?>
 
 <?php
 
 $attribute = [
-        ['attribute' => 'union_code', 'value' => function ($model) {
+    ['attribute' => 'complain_code', 'visible' => true, 'filter' => true],
+    ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'plant_code', 'value' => function ($model) {
+    ['attribute' => 'plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->plantCode, 'name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
+    ['attribute' => 'mcc_plant_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'dcs_code', 'value' => function ($model) {
+    ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'complain_code', 'visible' => true, 'filter' => false],
-        ['attribute' => 'contact_person'],
-        ['attribute' => 'mobile_no'],
-        ['attribute' => 'complain_datetime',
+    ['attribute' => 'contact_person'],
+    ['attribute' => 'mobile_no'],
+    ['attribute' => 'complain_datetime',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
@@ -33,26 +34,26 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->complain_datetime);
         }],
-        ['attribute' => 'complain_type_code', 'value' => 'complainFors.complain_type', 'filter' => false, 'visible' => false],
-        ['attribute' => 'affects_data', 'filter' => array('1' => 'Yes', '0' => 'No'), 'visible' => false,
+    ['attribute' => 'complain_type_code', 'value' => 'complainFors.complain_type', 'filter' => false, 'visible' => false],
+    ['attribute' => 'affects_data', 'filter' => array('1' => 'Yes', '0' => 'No'), 'visible' => false,
         'value' => function($model) {
             return $model->affects_data == 1 ? 'Yes' : 'No';
         }],
-        ['attribute' => 'physical_damage', 'filter' => array('1' => 'Yes', '0' => 'No'), 'visible' => false,
+    ['attribute' => 'physical_damage', 'filter' => array('1' => 'Yes', '0' => 'No'), 'visible' => false,
         'value' => function($model) {
             return $model->physical_damage == 1 ? 'Yes' : 'No';
         }],
-        ['attribute' => 'asset_code', 'value' => function ($model) {
+    ['attribute' => 'asset_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->asset, 'asset_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'serial_number', 'visible' => true, 'filter' => false],
-        [
+    ['attribute' => 'serial_number', 'visible' => true, 'filter' => false],
+    [
         'attribute' => 'complain_status',
         'filter' => Yii::$app->dropdown->dropdownfilterStatic('complain_status', $searchModel, 'complain_status'),
         'value' => function($model) {
             return isset(Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status]) ? Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status] : '';
         }],
-        ['attribute' => 'user_code', 'value' => function ($model) {
+    ['attribute' => 'user_code', 'value' => function ($model) {
             return !empty($model->contactDetailsCodes) ? $model->contactDetailsCodes->name . '(' . $model->contactDetailsCodes->mobile_no . ')' : '';
         }, 'visible' => true, 'filter' => false],
 ];
@@ -62,6 +63,12 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
+        'complain-status' => function ($url, $model) {
+            $count = TblComplainActivity::getComplainStatusCount($model->complain_code);
+            return $count > 0 ? GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Complain Activity',]) :
+                    GhostHtml::a('', '', ['class' => 'hidden-button', 'style' => 'pointer-events: none; margin-right: 15px;',
+            ]);
+        },
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);
