@@ -17,7 +17,7 @@ class TblStoreLocationSearch extends TblStoreLocation {
      */
     public function rules() {
         return [
-            [['store_location_code', 'store_location_name', 'store_location_type', 'reference_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name','sloc_code'], 'safe'],
+            [['store_location_code', 'store_location_name', 'store_location_type', 'reference_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'local_name', 'sloc_code'], 'safe'],
             [['is_active'], 'integer'],
         ];
     }
