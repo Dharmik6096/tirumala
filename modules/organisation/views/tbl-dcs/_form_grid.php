@@ -362,7 +362,7 @@ $grid_option = [
             $id = $model->dcs_code;
             $name = $model->dcs_name;
             $url = ['/organisation/tbl-dcs/dcs-document-upload', 'id' => $id];
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->dcs_code, 'data-name' => $name];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->dcs_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     /* 'miscellaneous' => function ($url, $model) {
