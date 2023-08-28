@@ -14,12 +14,11 @@ $this->title = 'BIPL Files Process';
     <div class="panel-body">
         <?php
         $form = ActiveForm::begin(['options' => [
-                        'validateOnBlur' => true,
-                        'class' => 'popup-form',
-                        'id' => 'import-pendrive-packet',
-                        'enableAjaxValidation' => false,
-                    ], 'fieldConfig' => [
-        ]]);
+            'validateOnBlur' => true,
+            'class' => 'popup-form',
+            'id' => 'import-pendrive-packet',
+            'enableAjaxValidation' => false,
+        ], 'fieldConfig' => []]);
         ?>
         <div class="modal-body">
             <div class="row">
@@ -27,9 +26,6 @@ $this->title = 'BIPL Files Process';
                 <?php echo Html::hiddenInput('TblFtpTxnLog[date_file_name]', '', ['id' => 'date_file_name']); ?>
                 <div class="col-sm-3">
                     <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code'); ?>
-                </div>
-                <div class="col-sm-2">
-                    <?= Yii::$app->controls->date($model, $form, 'txn_datetime', '', date('Y-m-d'), false, false, false); ?>
                 </div>
                 <div class="col-sm-12">
                     <?=
@@ -40,9 +36,9 @@ $this->title = 'BIPL Files Process';
                             'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/import-file']),
                             'addRemoveLinks' => true,
                             'autoDiscover' => false,
-                            'maxFiles' => 20,
+                            'maxFiles' => 50,
                             'maxFilesize' => 2,
-                        //  'maxTotalSize' => 0.0009,
+                            //  'maxTotalSize' => 0.0009,
                         ],
                         'clientEvents' => [
                             'success' => "function( file, response ){
@@ -80,76 +76,63 @@ $this->title = 'BIPL Files Process';
         </div>
         <div class="modal-footer">
             <?php
-            AjaxSubmitButton::begin([
-                'label' => Yii::t('app', 'Upload'),
-                'ajaxOptions' => [
-                    'type' => 'POST',
-                    'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']),
-                    'beforeSend' => new \yii\web\JsExpression('function(data){
-                                            var date = $("#tblftptxnlog-txn_datetime").val();
-                                            var file = $("#date_file_name").val();
-                                           
-                                            if(file == ""){
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select File</span></div></div>", function(result){
-                                                });
-                                                return false;
-                                            }
-                                            if(date == ""){
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Date Cannot be blank</span></div></div>", function(result){
-                                                });
-                                                return false;
-                                            }else{
-                                                var newdate = date.split("-").reverse().join("");
-                                                finalDate = newdate.substring(2, 8);    
-                                            }
-                                            var allowSave = true;
-                                            var fileArray = file.split(",");
-                                              $.each(fileArray, function(index, value) {
-                                                finalFile = value.substring(0, 6);
-                                                    if(allowSave && finalFile != "" && finalFile != undefined && finalFile != finalDate){
-                                                       bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>File Must be of selected Date</span></div></div>", function(result){
-                                                       });
-                                                       allowSave = false;
-                                                    }
-                                            }); 
-                                            if(!allowSave) {
-                                                return false;
-                                            } else {
-                                                $("#loadercontent").show();
-                                                $("#pageloader").show();
-                                            }
-                                    }'),
-                    'success' => new \yii\web\JsExpression('function(data){                                   
-                                            $("#pageloader").hide();
-                                            $("#loadercontent").hide();
-                                            var obj1 = $.parseJSON(data);
-                                            if (obj1.status == "success"){
-                                                $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }else{
-                                                $("#importModal").modal("toggle");
-                                                $("#import-pendrive-packet")[0].reset();
-                                                Dropzone.forElement("#mainDrop").removeAllFiles(true);
-                                                bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
-                                            }
-                             }'),
-                    'error' => new \yii\web\JsExpression('function(){
+            if ($matchingRecordsExist <= 0) {
+                AjaxSubmitButton::begin([
+                    'label' => Yii::t('app', 'Upload'),
+                    'ajaxOptions' => [
+                        'type' => 'POST',
+                        'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']),
+                        'beforeSend' => new \yii\web\JsExpression('function(data){
+                                    var file = $("#date_file_name").val(); 
+                                
+                                    if(file == ""){
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Please select File</span></div></div>", function(result){
+                                        });
+                                        return false;
+                                    }
+                                    var allowSave = true;
+                                    if(!allowSave) {
+                                        return false;
+                                    } else {
+                                        $("#loadercontent").show();
+                                        $("#pageloader").show();
+                                    }
+                                }'),
+                        'success' => new \yii\web\JsExpression('function(data){                                   
+                                    $("#pageloader").hide();
+                                    $("#loadercontent").hide();
+                                    var obj1 = $.parseJSON(data);
+                                    if (obj1.status == "success"){
+                                        $("#importModal").modal("toggle");
+                                        $("#import-pendrive-packet")[0].reset();
+                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        var redirectUrl = "' . Url::to(['/bkgprocess/tbl-ftp-txn-log/list']) . '";
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>", function() {
+                                            window.location = redirectUrl;
+                                        });
+                                    }else{
+                                        $("#importModal").modal("toggle");
+                                        $("#import-pendrive-packet")[0].reset();
+                                        Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                        bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
+                                    }
+                                }'),
+                        'error' => new \yii\web\JsExpression('function(){
                                     $("#pageloader").hide();
                                     $("#loadercontent").hide();
                                     if($("#file_name").val()==""){
-                                     bootbox.alert("Please select file.");
+                                    bootbox.alert("Please select file.");
                                     }else{
                                         $("#importModal").modal("toggle");
                                         $("#import-pendrive-packet")[0].reset();
                                         Dropzone.forElement("#mainDrop").removeAllFiles(true);
                                     }
-                             }'),
-                ],
-                'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true,],
-            ]);
-            AjaxSubmitButton::end();
+                                }'),
+                    ],
+                    'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit', 'disabled' => true],
+                ]);
+                AjaxSubmitButton::end();
+            }
             ?>
         </div>
         <?php ActiveForm::end(); ?>
