@@ -19,9 +19,9 @@ class TblTaskSearch extends TblTask {
      */
     public function rules() {
         return [
-                [['task_code', 'task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
-                [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-                [['from_date', 'to_date'], 'safe']
+            [['task_code', 'task_type_code', 'form_type_code', 'is_cancel', 'is_notified', 'originating_type'], 'integer'],
+            [['task_performed_for', 'title', 'description', 'status', 'user_code', 'bmc_code', 'mcc_plant_code', 'plant_code', 'union_code', 'notified_datetime', 'pick_datetime', 'response_datetime', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['from_date', 'to_date'], 'safe']
         ];
     }
 
@@ -69,7 +69,8 @@ class TblTaskSearch extends TblTask {
                 ->andFilterWhere(['like', 'tbl_task.status', $this->status])
                 ->andFilterWhere(['like', 'tbl_task_type.task_type', $this->task_type_code])
                 ->andFilterWhere(['like', 'tbl_form_type.form_name', $this->form_type_code])
-                ->andFilterWhere(['like', '[user].name', $this->user_code]);
+                ->andFilterWhere(['like', '[user].name', $this->user_code])
+                ->andFilterWhere(['like', 'tbl_task.task_code', $this->task_code]);
 
         $query->orderBy(['tbl_task.task_datetime' => SORT_DESC, '[user].name' => SORT_ASC]);
         return $dataProvider;
