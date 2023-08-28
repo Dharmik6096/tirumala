@@ -6,6 +6,7 @@ use yii\helpers\Html;
 <?php
 
 $attribute = [
+    ['attribute' => 'store_location_code', 'filter' => true],
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true],

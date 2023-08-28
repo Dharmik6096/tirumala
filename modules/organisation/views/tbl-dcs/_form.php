@@ -248,7 +248,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
         </div>
         <div class="col-sm-2">
@@ -262,7 +262,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
+            <?= $form->field($model, 'aadhaar_no')->textInput()->label(Yii::t('app', 'aadhaar_no'))?>
         </div>
     </div>
     <div class="col-md-12 padding_10_0 theme-box theme_border_top">
