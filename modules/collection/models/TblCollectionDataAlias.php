@@ -145,7 +145,6 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['BmcCollection']],
             [['bmc_code'], 'setNoOfCan'],
             [['is_antibiotic'], 'safe'],
-            [['antibiotic'], 'validateAntibiotic'],
         ];
     }
 
@@ -373,14 +372,6 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
 
     public function getOldRouteCode() {
         return $this->hasOne(TblRouteMapping::className(), ['route_code' => 'old_route_code']);
-    }
-
-    public function validateAntibiotic($attribute, $params) {
-        if ($this->$attribute === 'AB+') {
-            $this->is_antibiotic = 1;
-        } else {
-            $this->is_antibiotic = 0;
-        }
     }
 
 }
