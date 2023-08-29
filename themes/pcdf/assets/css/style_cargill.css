@@ -4981,3 +4981,7 @@ tr.highlightRow {
 .float_right{
     float:right;
 }
+
+.hidden-for-specific-client {
+    display: none !important;
+}
