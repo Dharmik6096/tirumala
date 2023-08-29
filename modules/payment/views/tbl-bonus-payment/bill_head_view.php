@@ -39,6 +39,6 @@ $society_name = !empty($dataProvider->getModels()) ?
     </div>
 </div>
 <?php
-$script = "$('.kv-panel-before').hide();$('.filters').hide();";
+$script = "$('#BillHeadModal .kv-panel-before').hide();$('#BillHeadModal .filters').hide();";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>

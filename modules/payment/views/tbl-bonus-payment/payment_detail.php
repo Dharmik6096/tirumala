@@ -4,7 +4,7 @@ use yii\helpers\Url;
 use yii\web\View;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = !empty($title) ? $title : Yii::t('app', 'Member Detail');
+$this->title = !empty($title) ? $title : Yii::t('app', 'Payment Detail');
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
@@ -44,6 +44,7 @@ $this->title = !empty($title) ? $title : Yii::t('app', 'Member Detail');
             'attributes' => $attribute,
             'active_column' => false,
             'showPageSummary' => true,
+            'default_sorting' => FALSE,
             'actions' => [
                 'member-bill-head' => function ($url, $model) {
                     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-bonus_payment_code' => $model->bonus_payment_code];
@@ -52,7 +53,7 @@ $this->title = !empty($title) ? $title : Yii::t('app', 'Member Detail');
             ]
         ];
 
-        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['index'], false);
+        Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
         ?>
         <div class="clearfix"></div>
     </div>

@@ -56,8 +56,8 @@ class TblBonusPaymentController extends ChildController {
             if ($model->validate()) {
                 $model->from_datetime = date('Y-m-d 06:00:00', strtotime($model->from_datetime));
                 $model->to_datetime = date('Y-m-d 18:00:00', strtotime($model->to_datetime));
-                // $is_valid = \Yii::$app->general->getSpData('sp_bonus_payment_validate', [$model->union_code, ',' . implode(',', $model->bmc_code) . ',', 'MEMBER', 'DCS', $model->from_datetime, $model->to_datetime]);
-                $is_valid[] = ['msg' => 'Payment is already generated for Selected Payment Cycle. Do You want to Regenerate?', 'allow_process' => 1];
+                $is_valid = \Yii::$app->general->getSpData('sp_bonus_payment_validate', [$model->union_code, ',' . implode(',', $model->bmc_code) . ',', 'MEMBER', 'DCS', $model->from_datetime, $model->to_datetime]);
+                //   $is_valid[] = ['msg' => 'Payment is already generated for Selected Payment Cycle. Do You want to Regenerate?', 'allow_process' => 1];
                 $msg = $is_valid[0]['msg'];
                 $allow_process = $is_valid[0]['allow_process'];
                 $queryParam = [];
@@ -109,7 +109,7 @@ class TblBonusPaymentController extends ChildController {
                 $data['user_code'] = $user;
                 Yii::$app->ClientPaymentConfig->processPayment('bonus_payment', $data);
             }
-            return $this->redirect(['payment_adjust', 'TblBonusPaymentSummary' => ['mcc_plant_code' => $model->mcc_plant_code, 'from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'payment_type' => $model->payment_type, 'union_code' => $model->union_code]]);
+            return $this->redirect(['payment-adjust', 'TblBonusPaymentSummary' => ['mcc_plant_code' => $model->mcc_plant_code, 'from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'payment_type' => $model->payment_type, 'union_code' => $model->union_code]]);
         }
     }
 
