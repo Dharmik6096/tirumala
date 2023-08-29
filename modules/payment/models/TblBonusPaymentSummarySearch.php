@@ -12,7 +12,7 @@ use app\modules\payment\models\TblBonusPaymentSummary;
  */
 class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary {
 
-    public $from_date, $to_date, $customer_name, $customer_ex_code;
+    public $from_date, $to_date;
 
     /**
      * @inheritdoc

@@ -47,6 +47,8 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblBonusPaymentSummary extends \app\models\ChildModel {
 
+    public $customer_name, $customer_ex_code;
+
     /**
      * @inheritdoc
      */

@@ -14,10 +14,17 @@ $this->title = !empty($title) ? $title : Yii::t('app', 'Member Detail');
     <div class="panel-body">
         <?php
         $attribute = [
-                ['attribute' => 'customer_code', 'value' => function($model) {
-                    return substr($model->customer_code, -4);
-                }, 'label' => Yii::t('app', 'Member Code')],
-                ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Member Name')],
+                ['attribute' => 'customer_type', 'value' => function($model) {
+                    return (strtolower($model->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'));
+                }],
+                ['attribute' => 'customer_code'],
+                ['label' => Yii::t('app', 'Code'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, true);
+                }],
+                ['label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+                    return Yii::$app->general->getCustomer($model, $model->customer_type, true);
+                }],
+                ['attribute' => 'customer_name'],
                 ['attribute' => 'kg_fat'],
                 ['attribute' => 'kg_snf'],
                 ['attribute' => 'qty'],
@@ -25,6 +32,11 @@ $this->title = !empty($title) ? $title : Yii::t('app', 'Member Detail');
                 ['attribute' => 'addition'],
                 ['attribute' => 'deduction'],
                 ['attribute' => 'net_payable'],
+                ['attribute' => 'bank_name'],
+                ['attribute' => 'branch_name'],
+                ['attribute' => 'ifsc'],
+                ['attribute' => 'bank_account_no'],
+                ['attribute' => 'beneficiary_name'],
         ];
 
         $grid_option = [

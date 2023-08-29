@@ -18,7 +18,7 @@ use app\modules\payment\models\TblBonusPaymentHead;
 
 class TblBonusPaymentController extends ChildController {
 
-    public $freeAccessActions = ['bill-head', 'member-detail', 'payment-adjust', 'process-payment', 'summary-bill-head'];
+    public $freeAccessActions = ['bill-head', 'payment-detail', 'payment-adjust', 'process-payment', 'summary-bill-head'];
 
     public function actionIndex() {
         $searchModel = new TblBonusPaymentSummarySearch();
@@ -33,11 +33,18 @@ class TblBonusPaymentController extends ChildController {
     public function actionView($id) {
         $searchModel = new TblBonusPaymentSearch();
         $searchModel->bonus_payment_summary_code = $id;
+        $searchModel->grid_filter = FALSE;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $headDataProvider = new ActiveDataProvider([
+            'query' => TblBonusPaymentSummaryHead::find()->where(['bonus_payment_summary_code' => $id]),
+            'pagination' => FALSE,
+        ]);
+
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'headDataProvider' => $headDataProvider
         ]);
     }
 
@@ -100,9 +107,9 @@ class TblBonusPaymentController extends ChildController {
                 $data['from_datetime'] = $model->from_datetime;
                 $data['to_datetime'] = $model->to_datetime;
                 $data['user_code'] = $user;
-                return Yii::$app->ClientPaymentConfig->processPayment('bonus_payment', $data);
+                Yii::$app->ClientPaymentConfig->processPayment('bonus_payment', $data);
             }
-            return $this->redirect(['payment-adjust', 'TblBonusPaymentSummary' => ['mcc_plant_code' => $model->mcc_plant_code, 'from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'payment_type' => $model->payment_type, 'union_code' => $model->union_code]]);
+            return $this->redirect(['payment_adjust', 'TblBonusPaymentSummary' => ['mcc_plant_code' => $model->mcc_plant_code, 'from_datetime' => $model->from_datetime, 'to_datetime' => $model->to_datetime, 'bmc_code' => $model->bmc_code, 'customer_type' => $model->customer_type, 'payment_type' => $model->payment_type, 'union_code' => $model->union_code]]);
         }
     }
 
@@ -163,7 +170,7 @@ class TblBonusPaymentController extends ChildController {
             'query' => $query,
             'pagination' => FALSE,
         ]);
-        return $this->render('payment-adjust', [
+        return $this->render('payment_adjust', [
                     'model' => $model,
                     'dataProvider' => $dataProvider,
                     'title' => $title,
@@ -178,22 +185,22 @@ class TblBonusPaymentController extends ChildController {
             'query' => TblBonusPaymentSummaryHead::find()->where(['bonus_payment_summary_code' => $code]),
             'pagination' => FALSE,
         ]);
-        return $this->renderAjax('bill-head-view', [
+        return $this->renderAjax('bill_head_view', [
                     'dataProvider' => $dataProvider,
                     'model' => $model
         ]);
     }
 
-    public function actionMemberDetail($id) {
+    public function actionPaymentDetail($id) {
         $searchModel = new TblBonusPaymentSearch();
         $searchModel->bonus_payment_summary_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $summary_data = $searchModel->bonusPaymentSummaryCode;
         $dcs_data = $summary_data->dcsCode;
-        $title = $dcs_data->ref_code . ' > ' . $dcs_data->dcs_name . ' > ';
+        $title = $summary_data->payment_type . ' Payment (' . $dcs_data->ref_code . ' > ' . $dcs_data->dcs_name . ' > ';
         $title .= Yii::$app->general->getforeignkey($summary_data->customerType, 'customer_desc') . ' > ' .
-                (Yii::$app->controls->view_date($summary_data->from_datetime) . ' to ' . Yii::$app->controls->view_date($summary_data->to_datetime) );
-        return $this->render('member_detail', [
+                (Yii::$app->controls->view_date($summary_data->from_datetime) . ' to ' . Yii::$app->controls->view_date($summary_data->to_datetime) ) . ')';
+        return $this->render('payment_detail', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'title' => $title
@@ -208,10 +215,14 @@ class TblBonusPaymentController extends ChildController {
             'query' => TblBonusPaymentHead::find()->where(['bonus_payment_code' => $code]),
             'pagination' => FALSE,
         ]);
-        return $this->renderAjax('bill-head-view', [
+        return $this->renderAjax('bill_head_view', [
                     'dataProvider' => $dataProvider,
                     'model' => $model
         ]);
+    }
+
+    public function actionPaymentDisburse() {
+        
     }
 
     protected function findModel($id) {
