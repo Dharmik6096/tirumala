@@ -181,7 +181,7 @@ class DefaultController extends \app\controllers\ChildController {
         $header = [
             'mime' => 'application/ms-excel',
             'extension' => $extention,
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLSX,
         ];
 
         $labelArray = !empty($this->output) ? array_keys($this->output[0]) : [];

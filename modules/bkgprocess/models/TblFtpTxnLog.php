@@ -218,7 +218,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                         //    we want to set these values (default is A1)
                 );
                 $successfilePath = $filePath . $fileName;
-                $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
                 $objWriter->save($successfilePath);
             } else {
                 $header = array_keys($output[0]);

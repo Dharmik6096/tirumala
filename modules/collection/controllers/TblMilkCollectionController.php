@@ -1300,7 +1300,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
@@ -1325,7 +1325,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         fopen($fileName, "w+");
         $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
-        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
         $objWriter->save($fileName);
     }
 

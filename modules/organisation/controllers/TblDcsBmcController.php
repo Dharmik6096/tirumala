@@ -464,7 +464,7 @@ class TblDcsBmcController extends \app\controllers\ChildController {
         $header = [
             'mime' => 'text/plain',
             'extension' => $extention,
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLSX,
         ];
 
         $labelT = $id . '-' . date('Ymdhis');

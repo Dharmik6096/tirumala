@@ -86,7 +86,7 @@ class SiteController extends \app\controllers\ChildController {
                 'class' => AccessControl::className(),
                 'only' => ['rail-login,rail-logout'],
                 'rules' => [
-                        [
+                    [
                         'actions' => ['rail-login,rail-logout'],
                         'allow' => true,
                         'roles' => ['@'],
@@ -472,13 +472,13 @@ class SiteController extends \app\controllers\ChildController {
 
         switch ($ext) {
             case 'xls':
-                $format = 'Excel5';
+                $format = IOFactory::READER_XLS;
                 break;
             case 'xlsx':
-                $format = 'Excel2007';
+                $format = IOFactory::READER_XLSX;
                 break;
             case 'xml':
-                $format = 'Excel2003XML';
+                $format = IOFactory::READER_XML;
                 break;
         }
 
@@ -487,7 +487,7 @@ class SiteController extends \app\controllers\ChildController {
         $excel = $reader->load($path);
 
         $savePath = Yii::$app->basePath . '/web/data.csv';
-        $writer = IOFactory::createWriter($spreadsheet, "CSV");
+        $writer = IOFactory::createWriter($spreadsheet, IOFactory::WRITER_CSV);
         $writer->save($savePath);
 
         chmod($savePath, 0777);

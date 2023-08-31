@@ -1138,7 +1138,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
         $header = [
             'mime' => 'application/ms-excel',
             'extension' => $extention,
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLSX,
         ];
 
         $fileName = "payment_disburse." . $header['extension'] .

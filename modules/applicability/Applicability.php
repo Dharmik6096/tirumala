@@ -1074,7 +1074,7 @@ class Applicability extends \yii\base\Module {
                     //    we want to set these values (default is A1)
             );
             $filePath = $path . $fileName;
-            $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
             $objWriter->save($filePath);
             return $absoluteBaseUrl . $this->attachment_folder . $fileName;
         }

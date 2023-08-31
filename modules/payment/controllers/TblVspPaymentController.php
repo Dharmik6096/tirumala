@@ -641,7 +641,7 @@ where payment_cycle_code = :payment_cycle_code and bmc_code=:bmc_code and custom
         $header = [
             'mime' => 'application/ms-excel',
             'extension' => $extention,
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLSX,
         ];
 
         $fileName = "payment_disburse_vsp." . $header['extension'] .
