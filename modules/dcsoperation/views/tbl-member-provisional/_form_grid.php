@@ -94,15 +94,13 @@ $grid_option = [
 //        },
 //        'view' => true,
         'update' => function ($url, $model) use ($pending_approval) {
+            $class = '';
             if (!$pending_approval) {
-                $disable = ($model->provisional_status == 'Pending') ? '' : 'disabled';
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $disable, 'data-val' => $model->provisional_member_code];
-                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-            } else {
-                $disable = ($model->provisional_status == 'Register') ? '' : 'disabled';
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $disable, 'data-val' => $model->provisional_member_code];
-                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+                $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
             }
+            $name = $model->member_name;
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'views' => function($url, $model) use ($pending_approval) {
             $icon = '<i class="fa fa-eye"></i>';
