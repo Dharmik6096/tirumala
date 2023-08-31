@@ -5,6 +5,7 @@ namespace app\modules\complaint\models;
 use Yii;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\complaint\models\TblComplain;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tbl_complain_activity".
@@ -38,7 +39,7 @@ class TblComplainActivity extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['complain_code', 'user_code', 'location_details', 'remarks', 'originating_type', 'created_at', 'updated_at', 'activity_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['complain_code', 'user_code', 'location_details', 'remarks', 'originating_type', 'created_at', 'updated_at', 'activity_type', 'entry_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
@@ -70,6 +71,16 @@ class TblComplainActivity extends \app\models\ChildModel {
 
     public function getComplainActivity() {
         return $this->hasOne(TblComplain::className(), ['complain_code' => 'complain_code']);
+    }
+
+    public static function getComplainStatusCount($id) {
+        // Calculate the date and time 24 hours ago from the current time
+        $twentyFourHoursAgo = new Expression("DATEADD(HOUR, -24, GETDATE())");
+        $count = self::find()
+                ->where(['complain_code' => $id])
+                ->andWhere(['>=', 'created_at', $twentyFourHoursAgo])
+                ->count();
+        return $count;
     }
 
 }
