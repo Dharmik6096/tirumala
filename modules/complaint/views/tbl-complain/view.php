@@ -101,7 +101,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                                 [
                                 'attribute' => 'complain_status',
-                                'value' => Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status],
+                                'value' => function($model){
+                                    return !empty($model->complain_status) ? Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status] : '';
+                                },
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
