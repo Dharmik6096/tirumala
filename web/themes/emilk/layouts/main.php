@@ -63,7 +63,7 @@ AppAsset::register($this);
                 </div>
             </div>
             <?php if ($menuItem) { ?>
-                <div class="btn-group btn btn-default actionButtons" data-bs-toggle="collapse" data-bs-target="#menu_buttons"><i class="fas fa-plus"></i></div>
+                <div class="btn-group btn btn-default actionButtons" data-bs-toggle="collapse" data-bs-target="#menu_buttons" id="plus-icon"><i class="fas fa-plus"></i></div>
                 <?php
             }
         }
@@ -93,6 +93,11 @@ AppAsset::register($this);
     $.each(JSON.parse(SearchArray), function (index, value) {
         if (typeof value !== 'object' && index !== 'q') {
             SearchParam[index] = value;
+        }
+    });
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('#plus-icon, #menu_buttons').length) {
+            $('#menu_buttons').collapse('hide');
         }
     });
 </script>
