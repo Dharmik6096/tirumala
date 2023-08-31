@@ -8,6 +8,7 @@ use app\modules\dynamicreport\Dynamicreport;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Json;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Default controller for the `dynamicreport` module

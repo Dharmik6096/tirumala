@@ -208,13 +208,13 @@ if (!empty($doc_model)) {
                                                                 }
                                                  }'),
                                 ],
-                                'options' => ['class' => 'btn btn-default btn-raised',
+                                'options' => ['class' => 'btn-login btn btn-default btn-raised',
                                     'type' => 'submit'],
                             ]);
                             AjaxSubmitButton::end();
                             ?>
                             <?= Yii::$app->controls->reset(); ?>
-                            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                            <?= Yii::$app->controls->custombutton('cancel', 'index','','btn-login'); ?>
                         </div>  
                     </div>
                 </div>

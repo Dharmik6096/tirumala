@@ -3201,6 +3201,7 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .row {
     margin-right: 0px;
     margin-left: 0px;
+    display: block;
 }
 
 .bootbox-alert .bootbox-body .row, .bootbox-confirm .bootbox-body .row{
