@@ -19,7 +19,7 @@ class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary {
      */
     public function rules() {
         return [
-                [['bonus_payment_summary_code', 'from_shift', 'to_shift', 'originating_type', 'payment_date', 'customer_name', 'customer_ex_code'], 'safe'],
+                [['bonus_payment_summary_code', 'from_shift', 'to_shift', 'originating_type', 'payment_date', 'customer_name', 'customer_ex_code', 'from_date', 'to_date'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'customer_type', 'customer_code', 'payment_type', 'from_datetime', 'to_datetime', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'number'],
         ];

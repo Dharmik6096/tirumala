@@ -18,6 +18,7 @@ $mcc_data = $model->mccPlantCode;
 $bmc_info = $mcc_data->mcc_plant_code . ' > ' . $mcc_data->name . ' > ';
 $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_desc') . ' > ' .
         (Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime) );
+$message = Yii::t('app', 'Payment data will be Locked for (' . $bmc_info . '). Are you sure ?');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">      
@@ -101,9 +102,27 @@ $bmc_info .= Yii::$app->general->getforeignkey($model->customerType, 'customer_d
 $script = "$('.kv-panel-before').hide();";
 $script .= "$('#adjust-lock-dcs-data').click(function() {
             $('.process_lock_flag').val('locked');
-            $('#loadercontent').show();
-            $('#pageloader').show();
-            postProcessData();                           
+            var message = '" . $message . "';
+             bootbox.confirm({
+                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+                    buttons: {
+                        confirm: {
+                            label: '" . Yii::t('app', 'Yes') . " ',
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: '" . Yii::t('app', 'No') . "' ,
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if(result){                           
+                                 $('#loadercontent').show();
+                                 $('#pageloader').show();
+                                 postProcessData(); 
+                        }
+                    }
+                });                          
 });
 $('#adjust').click(function() {
             $('.process_lock_flag').val('processed');

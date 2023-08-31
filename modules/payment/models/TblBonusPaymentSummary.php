@@ -88,7 +88,7 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
             'mcc_plant_code' => Yii::t('app', 'MCC'),
             'bmc_code' => Yii::t('app', 'BMC'),
             'dcs_code' => Yii::t('app', 'DCS'),
-            'customer_type' => Yii::t('app', 'Customer Type'),
+            'customer_type' => Yii::t('app', 'Type'),
             'customer_code' => Yii::t('app', 'Customer Code'),
             'payment_type' => Yii::t('app', 'Payment Type'),
             'from_datetime' => Yii::t('app', 'From Date'),

@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 
 Url::remember();
-$this->title = Yii::t('app', 'Bonus Payment Disburse');
+$this->title = $title;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

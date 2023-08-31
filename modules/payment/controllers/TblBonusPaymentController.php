@@ -244,7 +244,7 @@ class TblBonusPaymentController extends ChildController {
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
-                    'title' => 'Member Bonus Payment Disburse : Step 1',
+                    'title' => 'Member Bonus Payment Disburse',
         ]);
     }
 
@@ -327,7 +327,7 @@ class TblBonusPaymentController extends ChildController {
         echo "<td>" . Yii::t('app', 'KgFAT') . "</td>";
         echo "<td>" . Yii::t('app', 'KgSNF') . "</td>";
         echo "<td>" . Yii::t('app', 'Total Qty') . "</td>";
-        echo "<td>" . Yii::t('app', 'Milk Amount(+)') . "</td>";
+        echo "<td>" . Yii::t('app', 'Milk Amount') . "</td>";
         echo "<td>" . Yii::t('app', 'Addition(+)') . "</td>";
         echo "<td>" . Yii::t('app', 'Deduction(-)') . "</td>";
         echo "<td>" . Yii::t('app', 'Net Payable') . "</td>";
