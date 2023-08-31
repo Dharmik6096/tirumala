@@ -47,7 +47,7 @@ use app\modules\organisation\models\TblUnions;
  */
 class TblBonusPaymentSummary extends \app\models\ChildModel {
 
-    public $customer_name, $customer_ex_code;
+    public $customer_name, $customer_ex_code, $payment_cycle_code;
 
     /**
      * @inheritdoc
@@ -62,6 +62,7 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_datetime', 'to_datetime'], 'required', 'on' => 'process'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'payment_cycle_code'], 'required', 'on' => 'disburse'],
                 [['from_datetime', 'to_datetime', 'created_at', 'updated_at'], 'safe'],
                 [['from_shift', 'to_shift', 'originating_type'], 'safe'],
                 [['kg_fat', 'kg_snf', 'avg_fat', 'avg_snf', 'qty', 'amount', 'addition', 'deduction', 'net_payable'], 'safe'],
@@ -110,6 +111,7 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
         ];
     }
 

@@ -18,7 +18,7 @@ use app\modules\payment\models\TblBonusPaymentHead;
 
 class TblBonusPaymentController extends ChildController {
 
-    public $freeAccessActions = ['bill-head', 'payment-detail', 'payment-adjust', 'process-payment', 'summary-bill-head'];
+    public $freeAccessActions = ['bill-head', 'payment-detail', 'payment-adjust', 'process-payment', 'summary-bill-head', 'process-payment-disburse'];
 
     public function actionIndex() {
         $searchModel = new TblBonusPaymentSummarySearch();
@@ -222,7 +222,52 @@ class TblBonusPaymentController extends ChildController {
     }
 
     public function actionPaymentDisburse() {
-        
+        //Member Bonus Payment Disburse : Step 1
+        $model = new TblBonusPaymentSummary();
+        $model->load(Yii::$app->request->get());
+        $model->payment_type = 'MEMBER';
+        $model->customer_type = 'DCS';
+        $query = [];
+        $searchModel = new TblBonusPaymentSummarySearch();
+        $searchModel->attributes = $model->attributes;
+        $searchModel->status = 'locked';
+        $dataProvider = $searchModel->disbursesearch();
+
+        return $this->render('payment_disburse', [
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'title' => 'Member Bonus Payment Disburse : Step 1',
+        ]);
+    }
+
+    public function actionProcessPaymentDisburse() {
+        if (Yii::$app->request->post()) {
+            $model = new TblBonusPaymentSummary();
+            $model->load(Yii::$app->request->post());
+            if (!empty($model->payment_cycle_code)) {
+                if (Yii::$app->request->post('flag') == 'disburse') {
+                    $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                    $data = [];
+                    $data['union_code'] = $model->union_code;
+                    $data['bmc_code'] = ',' . implode(',', $model->bmc_code) . ',';
+                    $data['payment_type'] = $model->payment_type;
+                    $data['customer_type'] = $model->customer_type;
+                    $data['from_datetime'] = $model->from_datetime;
+                    $data['to_datetime'] = $model->to_datetime;
+                    $data['user_code'] = $user;
+                    Yii::$app->ClientPaymentConfig->processPayment('bonus_payment_disburse', $data);
+                    $msg_content = Yii::t('app', 'Bonus Payment Successfully Disbursed.');
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                        'message' => $msg_content]);
+                    $this->redirect(['index']);
+                } else {
+                    if ($this->exportBonusCSV($model)) {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    }
+                }
+            }
+        }
     }
 
     protected function findModel($id) {
@@ -230,6 +275,79 @@ class TblBonusPaymentController extends ChildController {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function exportBonusCSV($model) {
+        //Export bonus File from Disburse Screen
+        $newModel = new TblBonusPayment();
+        $query = $newModel->find()->where(['from_datetime' => $model->from_datetime,
+                    'to_datetime' => $model->to_datetime,
+                    'status' => ['locked'],
+                    'bmc_code' => $model->bmc_code])
+                ->all();
+        $extention = 'xls';
+        $header = [
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
+        ];
+
+        $fileName = "bounus_payment_disburse." . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        echo "<table border='1'>";
+        echo "<tr>";
+        echo "<td>" . Yii::t('app', 'Society Code') . "</td>";
+        echo "<td>" . Yii::t('app', 'Code Ex.') . "</td>";
+        echo "<td>" . Yii::t('app', 'Society') . "</td>";
+        echo "<td>" . Yii::t('app', 'Member Code') . "</td>";
+        echo "<td>" . Yii::t('app', 'Member Code Ex') . "</td>";
+        echo "<td>" . Yii::t('app', 'Member Name') . "</td>";
+        echo "<td>" . Yii::t('app', 'Account No') . "</td>";
+        echo "<td>" . Yii::t('app', 'Bank') . "</td>";
+        echo "<td>" . Yii::t('app', 'Branch') . "</td>";
+        echo "<td>" . Yii::t('app', 'IFSC') . "</td>";
+        echo "<td>" . Yii::t('app', 'KgFAT') . "</td>";
+        echo "<td>" . Yii::t('app', 'KgSNF') . "</td>";
+        echo "<td>" . Yii::t('app', 'Total Qty') . "</td>";
+        echo "<td>" . Yii::t('app', 'Milk Amount(+)') . "</td>";
+        echo "<td>" . Yii::t('app', 'Addition(+)') . "</td>";
+        echo "<td>" . Yii::t('app', 'Deduction(-)') . "</td>";
+        echo "<td>" . Yii::t('app', 'Net Payable') . "</td>";
+        echo "</tr>";
+
+        foreach ($query as $row) {
+            echo "<tr>";
+            $this->setVal($row->dcs_code);
+            $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
+            $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
+            $this->setVal($row->customer_code);
+            $this->setVal(Yii::$app->general->getforeignkey($row->memberCode, 'ex_member_code'));
+            $this->setVal($row->customer_name);
+            $this->setVal($row->bank_account_no);
+            $this->setVal($row->bank_name);
+            $this->setVal($row->branch_name);
+            $this->setVal($row->ifsc);
+            $this->setVal($row->kg_fat);
+            $this->setVal($row->kg_snf);
+            $this->setVal($row->qty);
+            $this->setVal($row->total_amount);
+            $this->setVal($row->total_addition);
+            $this->setVal($row->total_deduction);
+            $this->setVal($row->net_payable);
+            echo "</tr>";
+        }
+        echo "</table>";
+        exit();
+    }
+
+    public function setVal($value) {
+        if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+            echo "<td>" . $value . "</td>";
+        } else {
+            echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
     }
 

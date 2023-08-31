@@ -103,21 +103,21 @@ $script .= "$('#adjust-lock-dcs-data').click(function() {
             $('.process_lock_flag').val('locked');
             $('#loadercontent').show();
             $('#pageloader').show();
-            postVspProcessData();                           
+            postProcessData();                           
 });
 $('#adjust').click(function() {
             $('.process_lock_flag').val('processed');
             $('#loadercontent').show();
             $('#pageloader').show();            
-            postVspProcessData();               
+            postProcessData();               
             
 });
-function postVspProcessData(){
-            var postVspProcessData = $('#bonus-payment-adjust').serializeArray();
+function postProcessData(){
+            var postProcessData = $('#bonus-payment-adjust').serializeArray();
             $.ajax({
                     type: 'post',
                     url: '" . Url::to(['payment-adjust']) . "',
-                    data: postVspProcessData,
+                    data: postProcessData,
                     dataType: 'json',
                     success: function(data) {
                         if (data.status == 'success') {  
