@@ -4,6 +4,7 @@ namespace app\modules\usermanagement\models\rbacDB\search;
 
 use app\modules\usermanagement\models\rbacDB\Permission;
 use yii\data\ActiveDataProvider;
+use yii;
 
 class PermissionSearch extends \webvimark\modules\UserManagement\models\rbacDB\search\PermissionSearch {
 

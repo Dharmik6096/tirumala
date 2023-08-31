@@ -129,6 +129,7 @@ ul{
 .btn-sm, .fc-button{
     padding: 5px 20px;
     font-size: 12px;
+    margin: 3px;
 }
 .fc-button{
     background-image: none;
@@ -2887,7 +2888,7 @@ td.action-cell{
 
 .panel-main .panel-body .grid-search .btn {
     padding: 3px 15px;
-    float: right;
+    float: left;
 }
 
 .dropdown-menu{

@@ -36,7 +36,7 @@ $grid_option = [
             $name = $model->complain_type;
             if ($model->is_active == 1) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-complain-type', 'data-val' => $model->complain_type_code, 'data-name' => $name];
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/complaint/tbl-complain-type/deactivate-type'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/complaint/tbl-complain-type/deactivate-type'], $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-complain-type', 'data-val' => $model->complain_type_code, 'data-name' => $name];
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/complaint/tbl-complain-type/activate-type'], $options);

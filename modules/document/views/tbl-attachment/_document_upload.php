@@ -1,7 +1,7 @@
 <?php
 $this->title = 'Upload Documents';
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
@@ -10,6 +10,18 @@ use yii\helpers\Url;
 $urls = '';
 if ($master_type == 'member') {
     $urls = ['/dcsoperation/tbl-member/member-document-upload', 'id' => $model->member_code];
+} else if ($master_type == 'dcs') {
+    $urls = ['/organisation/tbl-dcs/dcs-document-upload', 'id' => $model->dcs_code];
+} else if ($master_type == 'bmc') {
+    $urls = ['/organisation/tbl-dcs-bmc/bmc-document-upload', 'id' => $model->bmc_code];
+} else if ($master_type == 'mcc') {
+    $urls = ['/organisation/tbl-mcc-plant/mcc-document-upload', 'id' => $model->mcc_plant_code];
+} else if ($master_type == 'transporter') {
+    $urls = ['/transporter/tbl-transporter/transporter-document-upload', 'id' => $model->transporter_code];
+} else if ($master_type == 'vehicle') {
+    $urls = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $model->vehicle_code];
+} else {
+    $urls = ['/organisation/tbl-plant/plant-document-upload', 'id' => $model->plant_code];
 }
 ?>
 
@@ -48,6 +60,19 @@ if (!empty($doc_model)) {
         $ex_code = $model['bmc_code_ex'];
         $ref_code = $model['ref_code'];
         $name = $model['bmc_name'];
+    } else if ($master_type == 'mcc') {
+        $code = $model['mcc_plant_code'];
+        $ex_code = $model['mcc_plant_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['name'];
+    } else if ($master_type == 'transporter') {
+        $code = $model['transporter_code'];
+        $name = $model['transporter_name'];
+    } else if ($master_type == 'vehicle') {
+        $code = $model['vehicle_code'];
+        $wef_date = $model['wef_date'];
+        $billing_method = $model['billing_method'];
+        $parsing_no = $model['parsing_no'];
     } else {
         $code = $model['plant_code'];
         $ex_code = $model['plant_code_ex'];
@@ -58,16 +83,52 @@ if (!empty($doc_model)) {
     <table class="table table-bordered table-striped table-language">
         <thead>
             <tr>
-                <th><?= Yii::t('app', 'Code') ?></th>
-                <td><?= $code; ?></td>
-                <th><?= Yii::t('app', 'Ex Code') ?></th>
-                <td><?= $ex_code; ?></td>
+                <?php if (isset($code)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Code') ?></th>
+                    <td><?= $code; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($name)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Name') ?></th>
+                    <td><?= $name; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($parsing_no)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Parsing No.') ?></th>
+                    <td><?= $parsing_no; ?></td>
+                <?php }
+                ?>
             </tr>
             <tr>
-                <th><?= Yii::t('app', 'Ref Code') ?></th>
-                <td><?= $ref_code; ?></td>
-                <th><?= Yii::t('app', 'Name') ?></th>
-                <td><?= $name; ?></td>
+                <?php if (isset($ex_code)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Ex Code') ?></th>
+                    <td><?= $ex_code; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($ref_code)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Ref Code') ?></th>
+                    <td><?= $ref_code; ?></td>
+                <?php }
+                ?>
+            </tr>
+            <tr>
+                <?php if (isset($wef_date)) {
+                    ?>
+                    <th><?= Yii::t('app', 'WEF Date') ?></th>
+                    <td><?= $wef_date; ?></td>
+                <?php }
+                ?>
+                <?php if (isset($billing_method)) {
+                    ?>
+                    <th><?= Yii::t('app', 'Billing Method') ?></th>
+                    <td><?= $billing_method; ?></td>
+                <?php }
+                ?>
             </tr>
         </thead>
         <tbody>

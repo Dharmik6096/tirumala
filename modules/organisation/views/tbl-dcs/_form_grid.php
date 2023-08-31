@@ -324,7 +324,7 @@ $grid_option = [
         },
         'rate-list' => function ($url, $model) {
             if (!empty($model->tblPurchaseRateApplicabilityUnblock) || !empty($model->tblPurchaseRateApplicabilityBlock)) {
-                $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-bar-chart text-danger' : 'fa-bar-chart text-success';
+                $icon_class = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'fa-chart-bar text-danger' : 'fa-chart-bar text-success';
                 $title = (!empty($model->tblPurchaseRateApplicabilityBlock)) ? 'Un-Block Rate Chart' : 'Block Rate Chart';
                 $class = (Yii::$app->general->getforeignkey($model->activeStatus, 'is_active') === 0) ? 'link-disable' : '';
                 $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => $title, 'class' => $class];
@@ -357,6 +357,13 @@ $grid_option = [
             $url = ['/organisation/tbl-dcs/upload-ftp-file', 'id' => $id];
             $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Upload Rate/Name Files', 'class' => '' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a('<i class="fa fa-upload"></i>', $url, $options);
+        },
+        'document-upload' => function ($url, $model) {
+            $id = $model->dcs_code;
+            $name = $model->dcs_name;
+            $url = ['/organisation/tbl-dcs/dcs-document-upload', 'id' => $id];
+            $options = ['data-bs-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Document Upload', 'data-val' => $model->dcs_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     /* 'miscellaneous' => function ($url, $model) {
       $options = ['data-name' => $model->dcs_name, 'data-val' => $model->dcs_code, 'data-bs-toggle' => 'tooltip' , 'data-placement' => 'top', 'title' => 'Miscellaneous List'];

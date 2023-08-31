@@ -4,6 +4,7 @@ namespace app\modules\usermanagement\models\rbacDB;
 
 use Yii;
 use yii\helpers\Inflector;
+use webvimark\modules\UserManagement\components\AbstractItemEvent;
 
 trait AbstractItemTrait {
 
@@ -57,6 +58,11 @@ trait AbstractItemTrait {
         $this->type = static::ITEM_TYPE;
         (Yii::$app->session->get('organizations_type') == 'UNION') ? $this->entry_type = 2 : $this->entry_type = 1;
         return parent::beforeSave($insert);
+    }
+
+    public static function beforeRemoveChildren($parentName, $childrenNames, $throwException = false) {
+        $event = new AbstractItemEvent(compact('parentName', 'childrenNames', 'throwException'));
+        $event->trigger(get_called_class(), self::EVENT_BEFORE_REMOVE_CHILDREN, $event);
     }
 
 }

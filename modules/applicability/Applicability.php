@@ -247,7 +247,9 @@ class Applicability extends \yii\base\Module {
                     $saveModel = [];
                     $dataold = $this->model->find()->where([$this->field_name => $this->field_value]);
                     if ($this->model->hasAttribute('wef_date')) {
-                        $dataold->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                        if (!empty($model->wef_date)) {
+                            $dataold->andWhere(['wef_date' => date('Y-m-d', strtotime($model->wef_date))]);
+                        }
                     }
                     $dataold->all();
                     $returnedArray = \yii\helpers\ArrayHelper::getColumn($dataold, $main_field_name);

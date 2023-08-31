@@ -24,7 +24,7 @@ $grid_option = [
             $name = $model->escalation_name;
             if ($model->is_active == 1) {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-escalation', 'data-val' => $model->complain_escalation_code, 'data-name' => $name];
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/complaint/tbl-complain-escalation/deactivate-escalation'], $options);
+                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/complaint/tbl-complain-escalation/deactivate-escalation'], $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-escalation', 'data-val' => $model->complain_escalation_code, 'data-name' => $name];
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/complaint/tbl-complain-escalation/activate-escalation'], $options);

@@ -25,6 +25,7 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create']);
         echo $form->errorSummary($model);
         ?>
         <div class="row">
+            <div class="col-sm-12">
             <div class="col-sm-3" id="union">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union'); ?>
             </div>
@@ -129,6 +130,7 @@ $post_url = isset($post_url) ? $post_url : Url::to(['create']);
                     ?>
                     <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?> 
                 </div>
+            </div>            
             </div>
         </div>
         <?php ActiveForm::end(); ?>

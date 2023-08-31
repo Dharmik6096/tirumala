@@ -116,8 +116,8 @@ class TblDocumentMapping extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function uploadedDocument($doc_id, $module_code) {
-        return TblAttachment::find()->where(['doc_id' => $doc_id, 'module_code' => $module_code])->one();
+    public function uploadedDocument($doc_id, $module_code, $module_name) {
+        return TblAttachment::find()->where(['doc_id' => $doc_id, 'module_code' => $module_code, 'module_name' => $module_name])->one();
     }
 
 }

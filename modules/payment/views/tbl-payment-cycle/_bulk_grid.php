@@ -92,10 +92,10 @@ $check_for = !empty($searchModel->check_for) ? $searchModel->check_for : '';
         <div class="panel-footer">
             <?php
             if (!empty($dataProvider->getModels())) {
-                echo Html::button(Yii::t('app', $button), ['class' => 'btn btn-primary', 'id' => 'delete']);
+                echo Html::button(Yii::t('app', $button), ['class' => 'btn-login btn btn-primary', 'id' => 'delete']);
             }
             ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'bulk-data-lock-unlock'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'bulk-data-lock-unlock','','btn-login'); ?> 
         </div>
         <?php ActiveForm::end(); ?>
     </div>

@@ -66,7 +66,7 @@ class DefaultController extends \app\controllers\ChildController {
         echo (Json::encode($result));
     }
 
-    public function importCsv($fileName, $className, $data, $mappingFlag = 0, $flag, $required, $type) {
+    public function importCsv($fileName, $className, $data, $flag, $required, $type, $mappingFlag = 0) {
 
         try {
 

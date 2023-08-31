@@ -77,7 +77,7 @@ class MasterServiceController extends ActiveController {
         return $data;
     }
 
-    public function manipulation($model_data, $arrayKey = 'dcs_create', $apiData) {
+    public function manipulation($model_data, $arrayKey = 'dcs_create', $apiData = '') {
         $master_array = V1::setParam($arrayKey);
         $master_model = [];
         $valid = [];

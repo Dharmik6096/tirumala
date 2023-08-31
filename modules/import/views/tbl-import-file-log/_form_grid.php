@@ -85,8 +85,8 @@ $attribute = [
         'value' => function($model) {
             if (!empty($model->error_file_path)) {
                 $absoluteBaseUrl = Url::base(true);
-                $absoluteBaseUrl = str_replace("/web", "", $absoluteBaseUrl);
-                return Html::a('<i class="fa fa-download"><i/>', $absoluteBaseUrl . $model->error_file_path, ['target' => '_blank']);
+                $absoluteBaseUrl = str_replace("/web", "", $absoluteBaseUrl . $model->error_file_path);
+                return Html::a('<i class="fa fa-download"><i/>', $absoluteBaseUrl , ['target' => '_blank']);
             }
         }],
     [
@@ -95,8 +95,8 @@ $attribute = [
         'value' => function($model) {
             if (!empty($model->success_file_path)) {
                 $absoluteBaseUrl = Url::base(true);
-                $absoluteBaseUrl = str_replace("/web", "", $absoluteBaseUrl);
-                return Html::a('<i class="fa fa-download"><i/>', $absoluteBaseUrl . $model->success_file_path, ['target' => '_blank']);
+                $absoluteBaseUrl = str_replace("/web", "", $absoluteBaseUrl . $model->success_file_path);
+                return Html::a('<i class="fa fa-download"><i/>', $absoluteBaseUrl, ['target' => '_blank']);
             }
         }],
 ];

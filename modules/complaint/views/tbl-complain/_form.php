@@ -91,10 +91,10 @@ $form = ActiveForm::begin([
         </div>
 
         <div class="col-sm-2 mt10 disp_none">
-            <?= $form->field($model, 'affects_data', ['checkboxTemplate' => "<div class='checkbox mb0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'affects_data'); ?>
         </div>
         <div class="col-sm-2 mt20 disp_none">
-            <?= $form->field($model, 'physical_damage', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'physical_damage'); ?>
         </div>
     <?php }
     ?>
@@ -106,7 +106,7 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdownStatic('resolved_status', $model, $form, 'form-group', $model->getAttributeLabel('resolved_status')); ?>
         </div>
         <div class = "col-sm-2 mt20 default_hide">
-            <?= $form->field($model, 'spare_required', ['checkboxTemplate' => "<div class='checkbox mt0'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(['uncheck' => 0, 'value' => 1]); ?>
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'spare_required'); ?>
         </div>
         <div class = "col-sm-2 default_hide">
             <?= $form->field($model, 'new_serial_no', ['options' => ['class' => 'form-group']])->dropDownList($dropdownSerialNo, ['prompt' => Yii::t('app', 'Select New Serial Number')])->label($model->getAttributeLabel('new_serial_no')); ?>

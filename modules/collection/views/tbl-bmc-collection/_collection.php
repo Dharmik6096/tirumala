@@ -199,7 +199,7 @@ $form = ActiveForm::begin([
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-raised',
+                    'options' => ['class' => 'btn-login btn btn-default btn-raised',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();

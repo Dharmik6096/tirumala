@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
 
@@ -40,10 +40,10 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'qty')->textInput(['value' => 1]) ?>
     </div>
     <div class="col-sm-2 mt15 disp_none">
-        <?= $form->field($model, 'is_serial_number', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_serial_number'); ?>
     </div>
     <div class="col-sm-2 mt15">
-        <?= $form->field($model, 'is_active', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_active'); ?>
     </div>
 </div>
 <div class="row">

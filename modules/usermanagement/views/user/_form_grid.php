@@ -146,7 +146,7 @@ $grid_option = [
             if ($model->is_active == 1) {
                 $disable = ($model->checkNotSelf() && (empty($date))) ? '' : 'link-disable';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deactive-user ' . $disable, 'data-val' => $model->id];
-                return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/user-management/user/deactivate-user', 'id' => $model->id], $options);
+                return GhostHtml::a_alert('<i class="fa fa-times"></i>', ['/user-management/user/deactivate-user', 'id' => $model->id], $options);
             } else {
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Activate', 'class' => 'react-user', 'data-val' => $model->id, 'data-name' => $model->name];
                 return GhostHtml::a_alert('<i class="fa fa-check"></i>', ['/user-management/user/activate-user', 'id' => $model->id], $options);

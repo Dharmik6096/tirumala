@@ -105,8 +105,8 @@ use app\modules\usermanagement\components\GhostHtml;
 </div>
 <div class="panel-footer" >
     <?php if (!empty($dataProvider->getModels())) { ?>
-        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
-        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
+        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
+        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
     <?= Yii::$app->controls->custombutton('Cancel', $url,'','btn-login'); ?> 

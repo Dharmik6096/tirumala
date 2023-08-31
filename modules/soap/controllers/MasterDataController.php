@@ -53,7 +53,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
         }
     }
 
-    protected function soapCall($config, $key, $params = [], $union_code) {
+    protected function soapCall($config, $key, $params = [], $union_code = '') {
         try {
             $client = new SoapClient(Yii::$app->params['soap_api_url'], ['trace' => true, 'cache_wsdl' => WSDL_CACHE_MEMORY]);
             $result = $client->{$key}($params);
@@ -273,7 +273,7 @@ class MasterDataController extends \app\modules\soap\controllers\DefaultControll
                         Yii::$app->db->createCommand("INSERT INTO dpu_station_detail (station_code, flag_key, flag_value, other_value, vendor_code, company_code, created_at, created_by, ref_code) select right('000000000000' + d.ref_code, 15), 'RATE', 1, tp.purchase_rate_code, 'EIPL32', tp.union_code, tp.created_at, 'PORTAL', tp.dcs_code from tbl_purchase_rate_applicability_pending tp inner join tbl_dcs d on d.dcs_code = tp.dcs_code and d.dpu_type = 32 where tp.purchase_rate_code  = :purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();
-						
+
                         Yii::$app->db->createCommand("update d set d.rate_flag=1 from tbl_dcs d inner join tbl_purchase_rate p on p.reference_code=d.rate_chart_code where p.purchase_rate_code=:purchase_rate_code")
                                 ->bindValue(':purchase_rate_code', $model_data->purchase_rate_code)
                                 ->execute();
