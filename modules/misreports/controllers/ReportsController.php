@@ -1082,7 +1082,7 @@ class ReportsController extends \app\controllers\ChildController {
                     foreach ($dataToDecrypt as $decKey) {
                         if (!empty($output[$i]) && !empty($output[$i][$decKey])) {
                             $plain = Yii::$app->general->decryptData($output[$i][$decKey]);
-                            $output[$i][$decKey] =  $plain == null || $plain == false ? $output[$i][$decKey] : $plain;
+                            $output[$i][$decKey] = $plain == null || $plain == false ? $output[$i][$decKey] : $plain;
                         }
                     }
                 }
@@ -2997,7 +2997,7 @@ class ReportsController extends \app\controllers\ChildController {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
@@ -3041,7 +3041,7 @@ class ReportsController extends \app\controllers\ChildController {
         $header = [
             'mime' => 'application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $labelT = !empty($this->label) ? $this->label : $this->data['title'] . '-' . date('Ymdhis');
         $fileName = $labelT . '.' . $header['extension'];
@@ -3147,7 +3147,7 @@ class ReportsController extends \app\controllers\ChildController {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
@@ -3172,7 +3172,7 @@ class ReportsController extends \app\controllers\ChildController {
         fopen($fileName, "w+");
         $objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
         $objPHPExcel->getActiveSheet()->getProtection()->setPassword('password');
-        $objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter = IOFactory::createWriter($objPHPExcel, IOFactory::WRITER_XLS);
         $objWriter->save($fileName);
     }
 

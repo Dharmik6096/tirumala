@@ -157,7 +157,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();
@@ -201,7 +201,7 @@ class TblProductSaleLockingController extends \app\controllers\ChildController {
         $header = [
             'mime' => '	application/vnd.ms-excel',
             'extension' => 'xls',
-            'writer' => 'Excel2007',
+            'writer' => IOFactory::WRITER_XLS,
         ];
         $objPHPExcel = new Spreadsheet();
         $sheet = $objPHPExcel->getActiveSheet();

@@ -219,13 +219,13 @@ class DefaultController extends \app\controllers\ChildController {
                 if ($file->extension != 'csv') {
                     switch ($file->extension) {
                         case 'xls':
-                            $format = 'Excel5';
+                            $format = IOFactory::READER_XLS;
                             break;
                         case 'xlsx':
-                            $format = 'Excel2007';
+                            $format = IOFactory::READER_XLSX;
                             break;
                         case 'xml':
-                            $format = 'Excel2003XML';
+                            $format = IOFactory::READER_XML;
                             break;
                     }
 
@@ -234,7 +234,7 @@ class DefaultController extends \app\controllers\ChildController {
                     $excel = $reader->load($path . $name);
                     $name = (pathinfo($name, PATHINFO_FILENAME)) . '.csv';
                     $savePath = Yii::$app->basePath . '/web/import/' . $name;
-                    $writer = IOFactory::createWriter($excel, 'CSV');
+                    $writer = IOFactory::createWriter($excel, IOFactory::WRITER_CSV);
                     $writer->setDelimiter(';');
                     $writer->save($savePath);
                 }
