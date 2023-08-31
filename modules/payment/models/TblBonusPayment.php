@@ -5,6 +5,7 @@ namespace app\modules\payment\models;
 use Yii;
 use app\modules\dcsoperation\models\TblMember;
 use app\modules\globalmaster\models\TblCustomerType;
+use app\modules\organisation\models\TblCustomerMaster;
 
 /**
  * This is the model class for table "tbl_bonus_payment".
@@ -135,6 +136,10 @@ class TblBonusPayment extends \app\models\ChildModel {
 
     public function getMemberCode() {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
+    }
+
+    public function getMainCustomerCode() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'customer_code']);
     }
 
 }
