@@ -5,12 +5,11 @@ use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use webvimark\modules\UserManagement\components\GhostHtml;
-use kartik\grid\GridView;
 
 $this->title = 'Bonus Payment Disburse';
 $action = Url::to(['process-payment-disburse']);
-$fromDate = Yii::$app->controls->view_date('from_datetime');
-$toDate = Yii::$app->controls->view_date('to_datetime');
+$fromDate = Yii::$app->controls->view_date($model->from_datetime);
+$toDate = Yii::$app->controls->view_date($model->to_datetime);
 $message = Yii::t('app', 'Payment data will be Disbursed for ' . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) ? TRUE : FALSE;
 ?>
@@ -27,61 +26,43 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
         <?= Html::activeHiddenInput($model, 'plant_code'); ?>
         <?= Html::activeHiddenInput($model, 'mcc_plant_code'); ?>
-        <?php foreach ($model->bmc_code as $bmc_code) { ?>
-            <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
-        <?php } ?>
+        <?php
+        if (!empty($model->bmc_code)) {
+            foreach ($model->bmc_code as $bmc_code) {
+                ?>
+                <?= Html::activeHiddenInput($model, 'bmc_code[]', ['value' => $bmc_code]); ?>
+                <?php
+            }
+        }
+        ?>
         <?= Html::activeHiddenInput($model, 'payment_type'); ?>
         <?= Html::activeHiddenInput($model, 'customer_type'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
     <?php
     $attribute = [
+            ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
+                return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
+            },],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-            ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'customer_ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
-            }, 'filter' => false],
+            }],
             ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-                return !empty($model->customer_name) ? $model->customer_name : Yii::$app->general->getCustomer($model, $model->customer_type);
+                return Yii::$app->general->getCustomer($model, $model->customer_type);
             }],
-            ['attribute' => 'amount', 'pageSummary' => true, 'value' => 'amount',
-            'label' => Yii::t('app', 'Milk Amount(+)'),
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
-        ],
-            ['attribute' => 'addition', 'pageSummary' => true, 'value' => 'addition',
-            'label' => Yii::t('app', 'Addition(+)'),
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
-        ],
-            ['attribute' => 'deduction', 'pageSummary' => true, 'value' => 'deduction',
-            'label' => Yii::t('app', 'Deduction(-)'),
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
-        ],
-            ['attribute' => 'final_pay', 'pageSummary' => true, 'value' => 'final_pay',
-            'hAlign' => Yii::$app->general->ColoumnAlign(),
-            'format' => Yii::$app->general->CurrencyFormat(),
-        ],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
-            }],
-            ['attribute' => 'dcs_code', 'value' => function($model) {
-                return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-            }],
-            ['attribute' => 'member_count'],
+            ['attribute' => 'from_datetime', 'label' => Yii::t('app', 'Period'),
+            'value' => function($model) {
+                return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
+            }, 'filter' => false],
+            ['attribute' => 'payment_count'],
             ['attribute' => 'kg_fat'],
             ['attribute' => 'kg_snf'],
             ['attribute' => 'qty', 'pageSummary' => true],
-            ['attribute' => 'total_amount', 'pageSummary' => true],
-            ['attribute' => 'total_addition', 'pageSummary' => true],
-            ['attribute' => 'total_deduction', 'pageSummary' => true],
-            ['attribute' => 'previous_hold', 'pageSummary' => true],
-            ['attribute' => 'previous_due', 'pageSummary' => true],
-            ['attribute' => 'net_payable', 'pageSummary' => true,],
-            ['attribute' => 'hold_amount', 'pageSummary' => true,],
-            ['attribute' => 'additional_pay', 'pageSummary' => true,],
-            ['attribute' => 'final_amount', 'pageSummary' => true,],
+            ['attribute' => 'amount', 'pageSummary' => true],
+            ['attribute' => 'addition', 'pageSummary' => true],
+            ['attribute' => 'deduction', 'pageSummary' => true],
+            ['attribute' => 'net_payable', 'pageSummary' => true],
     ];
 
     $grid_option = [
@@ -91,12 +72,12 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
         'showPageSummary' => true,
         'actions' => [
             'bill-head' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-payment_cycle_code' => $model->payment_cycle_code, 'data-bmc_code' => $model->bmc_code, 'data-dcs_code' => $model->dcs_code];
-                return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-member-payment/bill-head', 'payment_cycle_code' => $model->payment_cycle_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code], $options);
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->bonus_payment_summary_code];
+                return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-bonus-payment/summary-bill-head', 'id' => $model->bonus_payment_summary_code], $options);
             },
             'payment-detail' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'target' => '_blank', 'data-placement' => 'top', 'data-original-title' => 'View Members'];
-                return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-member-payment/payment-members-list', 'cycle' => $model['payment_cycle_code'], 'dcs_code' => $model['dcs_code']], $options);
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Detail', 'data-val' => $model->bonus_payment_summary_code];
+                return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-bonus-payment/payment-detail', 'id' => $model->bonus_payment_summary_code], $options);
             },
         ]
     ];

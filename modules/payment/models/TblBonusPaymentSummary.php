@@ -10,6 +10,7 @@ use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_bonus_payment_summary".
@@ -71,7 +72,7 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
                 [['customer_type', 'customer_code', 'payment_type'], 'safe'],
                 [['status'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'payment_cycle_code'], 'safe'],
                 [['from_datetime'], 'validateDate', 'on' => 'process'],
         ];
     }
@@ -158,6 +159,18 @@ class TblBonusPaymentSummary extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function PaymentCycleList($union_code, $bmc_code) {
+        $data = $this->find()->select(['from_datetime', 'to_datetime'])
+                        ->where(['union_code' => $union_code, 'bmc_code' => $bmc_code])
+                        ->andWhere(['in', 'status', ['locked']])->asArray()->all();
+
+        return ArrayHelper::map($data, function($data) {
+                    return $data['from_datetime'] . '#' . $data['to_datetime'];
+                }, function($data) {
+                    return date('d-m-Y', strtotime($data['from_datetime'])) . ' To ' . date('d-m-Y', strtotime($data['to_datetime']));
+                });
     }
 
 }

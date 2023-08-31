@@ -84,21 +84,18 @@ class TblBonusPaymentSummarySearch extends TblBonusPaymentSummary {
         return $dataProvider;
     }
 
-    public function disbursesearch($params) {
+    public function disbursesearch() {
         $query = TblBonusPaymentSummary::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!empty($this->payment_cycle_code)) {
-            if (!empty($this->from_datetime)) {
-                $from_date = date('Y-m-d', strtotime($this->from_datetime));
-                $query->andWhere(['=', 'CAST(tbl_bonus_payment_summary.from_datetime as date)', $from_date]);
-            }
-            if (!empty($this->to_datetime)) {
-                $to_date = date('Y-m-d', strtotime($this->to_datetime));
-                $query->andWhere(['=', 'CAST(tbl_bonus_payment_summary.to_datetime as date)', $to_date]);
-            }
-            $query->andFilterWhere(['like', 'tbl_bonus_payment_summary.payment_type', $this->payment_type]);
+            $query->Where(['tbl_bonus_payment_summary.from_datetime' => $this->from_datetime]);
+            $query->andWhere(['tbl_bonus_payment_summary.to_datetime' => $this->to_datetime]);
+            $query->andWhere(['tbl_bonus_payment_summary.bmc_code' => $this->bmc_code]);
+            $query->andWhere(['tbl_bonus_payment_summary.payment_type' => $this->payment_type]);
+            $query->andWhere(['tbl_bonus_payment_summary.customer_type' => $this->customer_type]);
+            $query->andWhere(['tbl_bonus_payment_summary.status' => $this->status]);
             $query->orderBy(['tbl_bonus_payment_summary.bmc_code' => SORT_ASC]);
         } else {
             $query->where('0=1');

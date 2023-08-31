@@ -15,10 +15,11 @@ use app\modules\payment\models\TblBonusPaymentSummaryHead;
 use app\modules\payment\models\TblBonusPayment;
 use app\modules\payment\models\TblBonusPaymentSearch;
 use app\modules\payment\models\TblBonusPaymentHead;
+use yii\helpers\Json;
 
 class TblBonusPaymentController extends ChildController {
 
-    public $freeAccessActions = ['bill-head', 'payment-detail', 'payment-adjust', 'process-payment', 'summary-bill-head', 'process-payment-disburse'];
+    public $freeAccessActions = ['bill-head', 'payment-detail', 'payment-adjust', 'process-payment', 'summary-bill-head', 'process-payment-disburse', 'payment-cycle-list'];
 
     public function actionIndex() {
         $searchModel = new TblBonusPaymentSummarySearch();
@@ -224,12 +225,18 @@ class TblBonusPaymentController extends ChildController {
     public function actionPaymentDisburse() {
         //Member Bonus Payment Disburse : Step 1
         $model = new TblBonusPaymentSummary();
+        $model->scenario = 'disburse';
         $model->load(Yii::$app->request->get());
         $model->payment_type = 'MEMBER';
         $model->customer_type = 'DCS';
-        $query = [];
+        if (!empty($model->payment_cycle_code)) {
+            $date_time = explode('#', $model->payment_cycle_code);
+            $model->from_datetime = $date_time[0];
+            $model->to_datetime = $date_time[1];
+        }
         $searchModel = new TblBonusPaymentSummarySearch();
         $searchModel->attributes = $model->attributes;
+        $searchModel->payment_cycle_code = $model->payment_cycle_code;
         $searchModel->status = 'locked';
         $dataProvider = $searchModel->disbursesearch();
 
@@ -246,6 +253,9 @@ class TblBonusPaymentController extends ChildController {
             $model = new TblBonusPaymentSummary();
             $model->load(Yii::$app->request->post());
             if (!empty($model->payment_cycle_code)) {
+                $date_time = explode('#', $model->payment_cycle_code);
+                $model->from_datetime = $date_time[0];
+                $model->to_datetime = $date_time[1];
                 if (Yii::$app->request->post('flag') == 'disburse') {
                     $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                     $data = [];
@@ -281,11 +291,16 @@ class TblBonusPaymentController extends ChildController {
     protected function exportBonusCSV($model) {
         //Export bonus File from Disburse Screen
         $newModel = new TblBonusPayment();
-        $query = $newModel->find()->where(['from_datetime' => $model->from_datetime,
-                    'to_datetime' => $model->to_datetime,
-                    'status' => ['locked'],
-                    'bmc_code' => $model->bmc_code])
-                ->all();
+        $query = $newModel->find()
+                        ->joinWith(['bonusPaymentSummaryCode'])
+                        ->where(['tbl_bonus_payment_summary.from_datetime' => $model->from_datetime,
+                            'tbl_bonus_payment_summary.to_datetime' => $model->to_datetime,
+                            'tbl_bonus_payment_summary.bmc_code' => $model->bmc_code,
+                            'tbl_bonus_payment_summary.status' => ['locked'],
+                            'tbl_bonus_payment_summary.payment_type' => $model->payment_type,
+                            'tbl_bonus_payment_summary.customer_type' => $model->customer_type
+                        ])->orderBy(['tbl_bonus_payment_summary.bmc_code' => SORT_ASC])->all();
+
         $extention = 'xls';
         $header = [
             'mime' => 'application/ms-excel',
@@ -320,9 +335,10 @@ class TblBonusPaymentController extends ChildController {
 
         foreach ($query as $row) {
             echo "<tr>";
-            $this->setVal($row->dcs_code);
-            $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_code_ex'));
-            $this->setVal(Yii::$app->general->getforeignkey($row->dcsCode, 'dcs_name'));
+            $dcs_detail = $row->bonusPaymentSummaryCode;
+            $this->setVal($dcs_detail->dcs_code);
+            $this->setVal(Yii::$app->general->getforeignkey($dcs_detail->dcsCode, 'dcs_code_ex'));
+            $this->setVal(Yii::$app->general->getforeignkey($dcs_detail->dcsCode, 'dcs_name'));
             $this->setVal($row->customer_code);
             $this->setVal(Yii::$app->general->getforeignkey($row->memberCode, 'ex_member_code'));
             $this->setVal($row->customer_name);
@@ -333,9 +349,9 @@ class TblBonusPaymentController extends ChildController {
             $this->setVal($row->kg_fat);
             $this->setVal($row->kg_snf);
             $this->setVal($row->qty);
-            $this->setVal($row->total_amount);
-            $this->setVal($row->total_addition);
-            $this->setVal($row->total_deduction);
+            $this->setVal($row->amount);
+            $this->setVal($row->addition);
+            $this->setVal($row->deduction);
             $this->setVal($row->net_payable);
             echo "</tr>";
         }
@@ -349,6 +365,23 @@ class TblBonusPaymentController extends ChildController {
         } else {
             echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
+    }
+
+    public function actionPaymentCycleList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $bmc_array = !empty($parents[1]) ? $parents[1] : [];
+                $model = new TblBonusPaymentSummary();
+                $data = $model->PaymentCycleList($parents[0], $bmc_array);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

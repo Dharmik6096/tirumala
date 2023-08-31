@@ -24,7 +24,7 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbonuspaymentsummary-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), TRUE); ?>
 </div>
 <div class="col-sm-2">
-    <?= Yii::$app->dropdown->RemunerationPaymentCycle($model, $form, 'tblbonuspaymentsummary-union_code,tblbonuspaymentsummary-bmc_code', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code')); ?>
+    <?= Yii::$app->dropdown->BonusPaymentCycle($model, $form, 'tblbonuspaymentsummary-union_code,tblbonuspaymentsummary-bmc_code', 'payment_cycle_code', $model->getAttributeLabel('payment_cycle_code')); ?>
 </div>
 
 <div class="form-group padding_top_20">
