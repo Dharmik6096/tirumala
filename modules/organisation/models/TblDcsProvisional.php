@@ -204,9 +204,9 @@ class TblDcsProvisional extends ChildModel {
                     ['milk_type_code'], 'required', 'when' => function ($model) {
                     return empty($model->milk_type_auto);
                 },
-                'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc']
+                'whenClient' => "function (attribute, value) { return !$('#tbldcsprovisional-milk_type_auto').is(':checked') }", 'except' => ['uploadDoc','approveDcs']
             ],
-                [['vendor'], 'required', 'except' => ['uploadDoc']],
+                [['vendor'], 'required', 'except' => ['uploadDoc','approveDcs']],
                 [['vendor'], function ($attribute, $params) {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'vendor_type');
                 }, 'except' => ['updateDcs', 'uploadDoc']],
@@ -214,7 +214,7 @@ class TblDcsProvisional extends ChildModel {
                     if (empty($this->getErrors())) {
                         Yii::$app->general->validateGlobalStatic($this, $attribute, $this->vendor . '_dpu_type');
                     }
-                }, 'except' => ['uploadDoc']],
+                }, 'except' => ['uploadDoc','approveDcs']],
 //                [['same_milk_type'], function ($attribute, $params) {
 //                    Yii::$app->general->validateGlobalStatic($this, $attribute, 'is_type');
 //                }, 'on' => ['importCsv']],

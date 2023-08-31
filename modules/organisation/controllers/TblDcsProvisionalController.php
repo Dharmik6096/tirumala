@@ -376,17 +376,16 @@ class TblDcsProvisionalController extends ChildController {
                 } else {
                     $status = 'Approve';
                 }
-                if ($status == 'Approve' || $status == 'Reject') {
-                    $dcsModel = $this->findModel($model->process_code);
-                    $historyModel = new TblDcsProvisionalHistory();
-                    Yii::$app->operation->history($dcsModel, $historyModel, UPDATE);
-                    $model_save[] = $historyModel;
-                    $dcsModel->status = $status;
-                    $dcsModel->remarks = $model->remarks;
-                    $model_save[] = $dcsModel;
-                    if ($dcsModel->status == 'Approve') {
-                        $transaction = $this->createDcs($dcsModel, $model_save);
-                    }
+                $dcsModel = $this->findModel($model->process_code);
+                $historyModel = new TblDcsProvisionalHistory();
+                Yii::$app->operation->history($dcsModel, $historyModel, UPDATE);
+                $model_save[] = $historyModel;
+                $dcsModel->status = $status;
+                $dcsModel->remarks = $model->remarks;
+                $dcsModel->scenario = 'approveDcs';
+                $model_save[] = $dcsModel;
+                if ($status == 'Approve') {
+                    $transaction = $this->createDcs($dcsModel, $model_save);
                 } else {
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
@@ -519,6 +518,7 @@ class TblDcsProvisionalController extends ChildController {
                 }
                 return $transaction;
             }
+            return 'customRender';
         }
     }
     
