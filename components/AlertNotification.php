@@ -22,8 +22,13 @@ class AlertNotification {
                 //if {mobileno} found in value then replace it with actual no 
                 //if {msg} found in value then replace it with actual text message                
                 $value = ($a['key_value'] == '{mobileno}') ? $mob_no : (($a['key_value'] == '{msg}') ? $msg : (($a['key_value'] == '{templateid}') ? $temp_id : $a['key_value']));
+                $value = ($a['key_value'] == '{timeStamp}') ? date('dmYHms') : $value;
                 if (!empty($a['parent_tag'])) {
-                    $param[$a['parent_tag']] = [$a['parameter_key'] => $value]; //set parent key to key
+                    if (!empty($a['parent_type']) && $a['parent_type'] == 'string') {
+                        $param[$a['parent_tag']][$a['parameter_key']] = $value; //set parent key to key as single
+                    } else {
+                        $param[$a['parent_tag']][0][$a['parameter_key']] = $value; //set parent key to key as array
+                    }
                 } else {
                     $param[$a['parameter_key']] = $value;  //assign value to key and generate dynemic array
                 }

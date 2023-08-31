@@ -5035,3 +5035,6 @@ tr.highlightRow {
     margin-bottom: 0px;
     padding: 4px 15px;
 }
+.d-none-for-specific-client {
+    display: none;
+}
