@@ -158,7 +158,7 @@ if (!empty($doc_model)) {
                 ?>
                 <?= $form->errorSummary($doc_model) ?>
 
-                <div class="row">
+            <div class="row d-block">
                     <div class="col-sm-12">
                         <table class="table table-bordered table-striped table-main table-language table-rate">
                             <tbody>

@@ -3201,7 +3201,6 @@ table.table.table-bordered.table-hover.kv-grid-table.kv-table-wrap {
 .row {
     margin-right: 0px;
     margin-left: 0px;
-    display: block;
 }
 
 .bootbox-alert .bootbox-body .row, .bootbox-confirm .bootbox-body .row{
@@ -3999,6 +3998,9 @@ td.dashboardWidgetDetailPortion:nth-child(even), td.dashboardWidgetDetailPortion
 }
 .mr-85 {
     margin-right: -85px !important
+}
+.mr-2{
+    margin-right: 2px;
 }
 
 .widget_table_setting_btn{
