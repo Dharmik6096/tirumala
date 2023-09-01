@@ -47,6 +47,8 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
 
     public function actionBiplPendriveCollection() {
         $model = new TblFtpTxnLog();
+        $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+        $matchingRecordsExist = $model->UserMatchingRecords($user);
         if ($model->load(Yii::$app->request->post())) {
             $error_file = [];
             $path = Yii::$app->basePath . '/web/import/collection/';
@@ -96,9 +98,13 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                 $msg = 'Error While Save data';
             }
             $result = ['status' => $status, 'data' => $msg];
-            echo (Json::encode($result));
+            return (Json::encode($result));
         } else {
-            return $this->render('bipl-pendrive-collection', ['model' => $model]);
+            if ($matchingRecordsExist > 0) {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => Yii::t('app', 'Your previous uploaded file is in processing try after some time.')]);
+            }
+            return $this->render('bipl-pendrive-collection', ['model' => $model, 'matchingRecordsExist' => $matchingRecordsExist]);
         }
     }
 
@@ -164,5 +170,4 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
-
 }
