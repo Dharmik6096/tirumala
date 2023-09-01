@@ -271,7 +271,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['firstname'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'route-create' => [
                             [['firstname', 'mobile_no'], 'required'],
@@ -295,7 +295,7 @@ class CustomValidation extends Component {
                     'plant-create' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'mcc-create' => [
                             [['firstname', 'mobile_no'], 'required'],
@@ -305,7 +305,7 @@ class CustomValidation extends Component {
                     'bmc-create' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                 ],
                 'TblMember' => [
