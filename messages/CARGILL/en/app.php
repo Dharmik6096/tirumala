@@ -153,4 +153,7 @@ return [
     'Challan Date' => 'Document Date',
     'Pollution Certificate' => 'Emission Test Certificate',
     'Reports - New' => 'Reports',
+    'Aadhaar No' => 'NIC Number',
+    'aadhaar_no' => 'NIC Number',
+    'Aadhar No' => 'NIC Number',
 ];

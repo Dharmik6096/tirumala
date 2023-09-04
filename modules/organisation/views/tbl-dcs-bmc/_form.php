@@ -126,7 +126,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
