@@ -161,7 +161,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                         Yii::$app->general->shiftLock($this, 'date_time_of_collection', 'mcc_plant_code', 'qty', 'member_lock');
                     }
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
-            [['antibiotic_sms_sent','antibiotic'], 'safe'],
+            [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
             [['antibiotic_sms_sent'], 'default', 'value' => 0],
         ];
     }
@@ -541,11 +541,18 @@ class TblMilkCollection extends \app\models\ChildModel {
         $model->sample_no = $model->getSampleNo();
     }
 
-    public function milkTypeWiseUnique($model, $modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
+    public function milkTypeWiseUnique($model, &$modelData, $approval = false, $update = false, $approvalUpdate = false, $importUpdate = false) {
+        if ($modelData->antibiotic === 'AB+') {
+            $modelData->is_antibiotic = 1;
+        } else {
+            $modelData->is_antibiotic = 0;
+        }
         $flag = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'collection_approval', 'PORTAL');
         $sameMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_same_milk', 'VLC');
         $diffMilkType = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'multi_entry_other_milk', 'VLC');
+        $uniqueCheckAntibiotic = Yii::$app->general->getUnionConfiguration($modelData->union_code, 'unique_check_with_antibiotic', 'VLC');
         $oldMilktype = !empty($model->oldAttributes['milk_type_code']) ? $model->oldAttributes['milk_type_code'] : '';
+        $is_antibiotic = $modelData->is_antibiotic;
         if ($approvalUpdate) {
             $oldMilktype = $modelData->old_milk_type_code;
         }
@@ -554,6 +561,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'member_code' => $modelData->member_code,
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'shift_code' => $modelData->shift_code]);
+            if ($uniqueCheckAntibiotic == 1) {
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+            }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
             }
@@ -577,6 +587,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'shift_code' => $modelData->shift_code,
                 'milk_type_code' => $modelData->milk_type_code]);
+            if ($uniqueCheckAntibiotic == 1) {
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+            }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
             }
@@ -594,6 +607,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                         'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                         'shift_code' => $modelData->shift_code])
                     ->andWhere(['!=', 'milk_type_code', $modelData->milk_type_code]);
+            if ($uniqueCheckAntibiotic == 1) {
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+            }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
             }
@@ -610,6 +626,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                     'shift_code' => $modelData->shift_code,
                     'milk_type_code' => $modelData->milk_type_code,
                     'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                if ($uniqueCheckAntibiotic == 1) {
+                    $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+                }
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
                 }
@@ -625,6 +644,9 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'milk_type_code' => $modelData->milk_type_code,
                 'shift_code' => $modelData->shift_code,
                 'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+            if ($uniqueCheckAntibiotic == 1) {
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+            }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
             }
