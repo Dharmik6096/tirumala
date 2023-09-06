@@ -560,7 +560,8 @@ class TblMilkCollection extends \app\models\ChildModel {
             $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
                 'member_code' => $modelData->member_code,
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
-                'shift_code' => $modelData->shift_code]);
+                'shift_code' => $modelData->shift_code,
+                'antibiotic' => $modelData->antibiotic]);
             if ($uniqueCheckAntibiotic == 1) {
                 $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
             }
@@ -586,7 +587,8 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'member_code' => $modelData->member_code,
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'shift_code' => $modelData->shift_code,
-                'milk_type_code' => $modelData->milk_type_code]);
+                'milk_type_code' => $modelData->milk_type_code,
+                'antibiotic' => $modelData->antibiotic]);
             if ($uniqueCheckAntibiotic == 1) {
                 $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
             }
@@ -625,7 +627,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                     'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                     'shift_code' => $modelData->shift_code,
                     'milk_type_code' => $modelData->milk_type_code,
-                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf, 'antibiotic' => $modelData->antibiotic]);
                 if ($uniqueCheckAntibiotic == 1) {
                     $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
                 }
@@ -643,7 +645,8 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'milk_type_code' => $modelData->milk_type_code,
                 'shift_code' => $modelData->shift_code,
-                'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
+                'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf,
+                'antibiotic' => $modelData->antibiotic]);
             if ($uniqueCheckAntibiotic == 1) {
                 $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
             }
