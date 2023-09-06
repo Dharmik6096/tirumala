@@ -48,7 +48,9 @@ class TblDistrictsSearch extends TblDistricts {
         ]);
         $this->load($params);
         //$query->andwhere(['state_code' => explode(',', Yii::$app->session->get('States'))]);
-        $query->andwhere(['tbl_districts.state_code' => $this->state_code]);
+        if (isset($this->state_code)) {
+            $query->andwhere(['tbl_districts.state_code' => $this->state_code]);
+        }
         if (Yii::$app->session->get('Districts') != '') {
             $array = explode(',', Yii::$app->session->get('Districts'));
             $query->andwhere(['tbl_districts.district_code' => $array]);

@@ -57,9 +57,11 @@ class TblSubDistrictsSearch extends TblSubDistricts
         }
 
         $query->joinWith(['districtCode','districtCode.stateCode']);
-
-        $query->andwhere(['tbl_states.state_code' => $this->state]);
-
+        
+        if(isset($this->state)){
+            $query->andwhere(['tbl_states.state_code' => $this->state]);
+        }
+        
         $query->andFilterWhere([
             'tbl_sub_districts.is_active' => $this->is_active,
 

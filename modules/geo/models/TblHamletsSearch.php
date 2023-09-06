@@ -55,21 +55,20 @@ class TblHamletsSearch extends TblHamlets
         if (isset($_GET['TblHamletsSearch']) && ! $this->validate()) {
             return $dataProvider;
         }
-
-       $query->andwhere(['tbl_states.state_code' => $this->state]);
-
-
+        if(isset($this->state)){
+            $query->andwhere(['tbl_states.state_code' => $this->state]);
+        }
 
         if (!$this->validate()) {
             return $dataProvider;
         }
 
-        if(\Yii::$app->session->get('Districts')!==''){
+        if(\Yii::$app->session->get('Districts')!=='' && isset($this->district)){
 //                $query->andWhere(['tbl_districts.district_code'=> explode(',', \Yii::$app->session->get('Districts'))]);
             $query->andWhere(['tbl_districts.district_code'=> $this->district]);
-        }else
+        }elseif (isset($this->district)) {
                 $query->andFilterWhere(['like', 'tbl_districts.district_code', $this->district]);
-
+        }
         // grid filtering conditions
         $query->andFilterWhere([
             'tbl_hamlets.is_active' => $this->is_active,

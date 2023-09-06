@@ -59,14 +59,15 @@ class TblBlocksSearch extends TblBlocks
         }
 
         $query->joinWith([ 'subDistrictCode', 'subDistrictCode.districtCode', 'subDistrictCode.districtCode.stateCode']);
-        $query->andwhere(['tbl_states.state_code' => $this->state]);
-
-        if(\Yii::$app->session->get('Districts')!==''){
+        if(isset($this->state)){
+            $query->andwhere(['tbl_states.state_code' => $this->state]);
+        }
+        if(\Yii::$app->session->get('Districts')!=='' && isset($this->district)){
 //                $query->andWhere(['tbl_districts.district_code'=> explode(',', \Yii::$app->session->get('Districts'))]);
                 $query->andWhere(['tbl_districts.district_code'=> $this->district]);
-        }else
+        }elseif (isset($this->district)) {
                 $query->andFilterWhere(['like','tbl_districts.district_code', $this->district]);
-
+        }
         $query->andFilterWhere([
             'tbl_blocks.is_active' => $this->is_active,
         ]);
