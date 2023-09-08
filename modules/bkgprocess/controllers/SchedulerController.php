@@ -39,7 +39,7 @@ use app\modules\tms\models\TblTask;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -1191,6 +1191,16 @@ class SchedulerController extends ChildController {
                     $row->updateProcessStatus();
                 }
             }
+        }
+    }
+
+    public function actionAutoComplainAssign() {
+        $model = new \app\modules\complaint\models\TblComplainEscalationTxnDetail();
+        $model->cron_status = 0;
+        $modelData = $model->getPickRecords();
+        foreach ($modelData as $row) {
+//            $escalationModel = new \app\modules\complaint\models\TblComplainEscalationTxn();
+//            $escalationData = $escalationModel->getRecords($row);
         }
     }
 

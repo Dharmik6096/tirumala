@@ -6,6 +6,9 @@ use Yii;
 use app\modules\complaint\models\TblComplainEscalationTxnDetail;
 use app\modules\complaint\models\TblComplainType;
 use app\modules\usermanagement\models\User;
+use app\modules\complaint\models\TblComplain;
+use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\complaint\models\TblComplainEscalation;
 
 /**
  * This is the model class for table "tbl_complain_escalation_txn".
@@ -88,9 +91,21 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
             $stage_model->user_code = $userMapp['user_id'];
             $stage_model->union_code = $unionCode;
             $stage_model->status = 'pending';
+            $stage_model->cron_status = '-1';
             if ($key == 0) {
                 $user_code = $userMapp['user_id'];
-                $stage_model->status = 'open';
+                $stage_model->status = 'Allocated';
+                $stage_model->cron_status = '0';
+            }
+            $appLoginModel = new TblEiplAppLogin();
+            $appLoginModel->module_code = $stage_model->user_code;
+            $appLoginModel->module_type = 'TblContactDetails';
+            $appLoginModel->app_type = 1;
+            $contactDetail = $user->getContactCode($userMapp['user_id']);
+            $appLoginModel->mobile_no = !empty($contactDetail) && $contactDetail['mobile_no'] != 'N/A' ? $contactDetail['mobile_no'] : '';
+            $appLoginModelData = $appLoginModel->getLoginDetails();
+            if (!empty($appLoginModelData->device_id)) {
+                $stage_model->device_id = $appLoginModelData->device_id;
             }
             unset($stage_model->created_at);
             unset($stage_model->created_by);
@@ -99,4 +114,17 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
         }
     }
 
+//    public function getEscalationCode() {
+//        return $this->hasOne(TblComplainEscalation::className(), ['complain_escalation_code' => 'complain_escalation_code']);
+//    }
+//
+//    public function getRecords($row) {
+//        $query = $this->find()->select(['complain_escalation_txn_code', 'complain_escalation_code', 'escalation_time'])
+//                ->joinWith(['escalationCode'])
+//                ->where(['complain_escalation_code' => $row->complain_escalation_code])
+//                ->orderBy(['level' => SORT_ASC]);
+//
+//        $list = $query->asArray()->all();
+//        $data = ArrayHelper::map($list, 'complain_escalation_txn_code', 'escalation_time');
+//    }
 }

@@ -39,4 +39,8 @@ class User extends \webvimark\modules\UserManagement\models\User {
                         ->one();
     }
 
+    public function getContactCode($user_code) {
+        return $this->find()->where(['user_code' => $user_code])->one();
+    }
+
 }

@@ -29,6 +29,8 @@ use app\modules\assetmanagement\models\TblAssetBom;
 use app\modules\complaint\models\TblComplainSpare;
 use yii\widgets\ActiveForm;
 use app\modules\webservice\eipl\models\TblEiplAppLogin;
+use app\modules\complaint\models\TblComplainEscalationTxnDetail;
+use app\modules\complaint\models\TblComplainEscalationTxn;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -122,7 +124,7 @@ class TblComplainController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                $modelStages = new \app\modules\complaint\models\TblComplainEscalationTxn();
+                $modelStages = new TblComplainEscalationTxn();
                 $code = '';
                 if (!empty($this->model->bmc_code && $this->model->location_type == 2)) {
                     $code = $this->model->bmc_code;
@@ -153,12 +155,28 @@ class TblComplainController extends \app\controllers\ChildController {
                         $sp_param[] = NULL;
                         $sp_param[] = $user_code;
                         $sp_param[] = NULL;
-                        $task = \Yii::$app->general->getSpData($sp_name, $sp_param);
+                        $result = \Yii::$app->general->getSpData($sp_name, $sp_param);
+                        foreach ($result as $res) {
+                            if ($res['retuns_value'] == 1 || $res['retuns_value'] == true) {
+                                if (!empty($res['task_activity_code'])) {
+                                    $txnDetail = TblComplainEscalationTxnDetail::find()->where(['complain_code' => $LastInsertedId, 'status' => 'Allocated'])->one();
+                                    if (!empty($txnDetail)) {
+                                        $txnDetail->task_activity_code = $res['task_activity_code'];
+                                        $txnDetail->save();
+                                    }
+                                }
+                                $notificationSent = true;
+                                $this->setNotification($notificationSent, $this->model->complain_code);
+                                if (!$notificationSent) {
+                                    Yii::$app->getSession()->setFlash('success', [
+                                        'type' => 'success',
+                                        'message' => Yii::t('app', 'Complain successfully created and notification is not generated.'),
+                                    ]);
+                                }
+                            }
+                        }
                     }
-                    $appLoginModel = new TblEiplAppLogin();
-                    $notificationSent = true;
-                    $master = [];
-                    $this->setNotification($appLoginModel, $master, $notificationSent);
+
                     return $this->{$transaction}();
                 }
             } else {
@@ -362,12 +380,10 @@ class TblComplainController extends \app\controllers\ChildController {
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->scenario = 'assign_complain';
-        $appLoginModel = new TblEiplAppLogin();
         $notificationSent = true;
         $complianUser = $this->model->user_code;
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
-            $master = [];
-            $this->setNotification($appLoginModel, $master, $notificationSent);
+            $this->setNotification($notificationSent, $this->model->complain_code);
             $complaint_activity_model = new TblComplainActivity();
             $this->setModel($this->model);
             $activityModel = TblComplainActivity::find()->where(['complain_code' => $this->model->complain_code, 'activity_type' => 'ASSIGN'])->orderBy('complain_activity_code', 'desc')->one();
@@ -411,18 +427,12 @@ class TblComplainController extends \app\controllers\ChildController {
         }
         return $this->render('assign_complain', [
                     'model' => $this->model,
-                    'appLoginModel' => $appLoginModel
         ]);
     }
 
-    public function setNotification($appLoginModel, &$master, &$notificationSent) {
-        $appLoginModel->module_code = $this->model->user_code;
-        $appLoginModel->module_type = 'TblContactDetails';
-        $appLoginModel->app_type = 1;
-        $mobileNo = Yii::$app->general->getforeignkey($this->model->contactDetailsCode, 'mobile_no');
-        $appLoginModel->mobile_no = !empty($mobileNo) && $mobileNo != 'N/A' ? $mobileNo : '';
-        $appLoginModelData = $appLoginModel->getLoginDetails();
-        if (!empty($appLoginModelData)) {
+    public function setNotification(&$notificationSent, $complain_code) {
+        $txnDetail = TblComplainEscalationTxnDetail::find()->where(['complain_code' => $complain_code, 'status' => 'Allocated'])->one();
+        if (!empty($txnDetail->device_id)) {
             $recType = 'APP_NOTIFICATION';
             $moduleType = 'Complain';
             $apiMaster = new TblApiMaster();
@@ -435,7 +445,9 @@ class TblComplainController extends \app\controllers\ChildController {
                 $alertTemplateData = $alertTemplate->getRecord();
                 if (!empty($alertTemplateData)) {
                     $alertNotification = new TblAlertNotification();
-                    $alertNotification->receiver_detail = $appLoginModelData->device_id;
+                    if (!empty($txnDetail)) {
+                        $alertNotification->receiver_detail = $txnDetail->device_id;
+                    }
                     $alertNotification->receiver_type = $recType;
                     $alertNotification->message = str_replace('{complain_no}', $this->model->complain_code, $alertTemplateData->message);
                     $alertNotification->message = str_replace('{complain_status}', $this->model->complain_status, $alertNotification->message);
@@ -445,7 +457,7 @@ class TblComplainController extends \app\controllers\ChildController {
                     $alertNotification->refecence_code = $this->model->complain_code;
                     $alertNotification->module_type = $moduleType;
                     $alertNotification->entry_datetime = date('Y-m-d H:i:s');
-                    $master[] = $alertNotification;
+                    $alertNotification->save();
                 } else {
                     $notificationSent = false;
                 }
