@@ -3,9 +3,6 @@
 namespace app\modules\complaint\models;
 
 use Yii;
-use app\modules\complaint\models\TblComplainEscalationTxnDetail;
-use app\modules\complaint\models\TblComplainType;
-use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_complain_escalation_txn".
@@ -73,29 +70,6 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
         $result = $this->find()->where($where)->one();
         if (!empty($result)) {
             $this->addError($attribute, Yii::t('app/validation', 'Already exist'));
-        }
-    }
-
-    public function setApprovalData($complain_type_code, $unionCode, $code, &$modelSave, &$user_code) {
-        $complainType = new TblComplainType();
-        $approval_stages = $complainType->levelStages($complain_type_code);
-        $i = 1;
-        foreach ($approval_stages as $key => $stage) {
-            $stage_model = new TblComplainEscalationTxnDetail();
-            $stage_model->setAttributes($stage);
-            $user = new User();
-            $userMapp = $user->getUser($stage_model->user_type, $code);
-            $stage_model->user_code = $userMapp['user_id'];
-            $stage_model->union_code = $unionCode;
-            $stage_model->status = 'pending';
-            if ($key == 0) {
-                $user_code = $userMapp['user_id'];
-                $stage_model->status = 'open';
-            }
-            unset($stage_model->created_at);
-            unset($stage_model->created_by);
-            $modelSave[] = $stage_model;
-            $i++;
         }
     }
 

@@ -69,15 +69,4 @@ class TblComplainType extends \app\models\ChildModel {
         return $this->hasOne(TblComplainEscalation::className(), ['complain_escalation_code' => 'complain_escalation_code']);
     }
 
-    public function levelStages($complain_type_code) {
-        return $this->find()
-                        ->select(['tbl_complain_escalation_txn.*'])
-                        ->innerJoin('tbl_complain_escalation', 'tbl_complain_escalation.complain_escalation_code = tbl_complain_type.complain_escalation_code')
-                        ->innerJoin('tbl_complain_escalation_txn', 'tbl_complain_escalation_txn.complain_escalation_code = tbl_complain_escalation.complain_escalation_code')
-                        ->where(['tbl_complain_type.complain_type_code' => $complain_type_code])
-                        ->orderBy('tbl_complain_escalation_txn.level asc')
-                        ->asArray()
-                        ->all();
-    }
-
 }

@@ -41,7 +41,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Complain Escalation Transaction</h4>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type', false, true); ?>
+            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $txnModel, $form, 'form-group', $txnModel->getAttributeLabel('user_type'), false, 'user_type', false); ?>
         </div>
         <div class="col-sm-2 number-validate">
             <?= $form->field($txnModel, 'escalation_time')->textInput() ?>

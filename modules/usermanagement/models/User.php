@@ -29,14 +29,4 @@ class User extends \webvimark\modules\UserManagement\models\User {
         return $user;
     }
 
-    public function getUser($department, $code) {
-        return $this->find()->alias('u')
-                        ->select(['tbl_user_organization_mapping.*'])
-                        ->innerJoin('tbl_user_organization_mapping', 'tbl_user_organization_mapping.user_id = u.user_code')
-                        ->where(['u.department' => $department, 'tbl_user_organization_mapping.organization_code' => $code])
-                        ->orderBy('u.id asc')
-                        ->asArray()
-                        ->one();
-    }
-
 }
