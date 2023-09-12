@@ -1198,10 +1198,34 @@ class SchedulerController extends ChildController {
         $model = new \app\modules\complaint\models\TblComplainEscalationTxnDetail();
         $model->cron_status = 0;
         $modelData = $model->getPickRecords();
-        foreach ($modelData as $row) {
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->complain_escalation_txn_detail_code;
+            }, $modelData);
+            $update = $model->updateStatus($ids);
+        }
+//        $currentTime = time();
+//        foreach ($modelData as $row) {
+////            $timeDiffeenceMinute = floor(($currentTime - strtotime($row->created_at)) / 60);
+//            $timeDiffeenceMinute = floor(($currentTime - strtotime($row->created_at + $row->escaltion_time)) / 60);
+//            if ($timeDiffeenceMinute >= $row->escalation_time) {
+//                $row->status = 'Alloocated';
+//                $row->save();
+//            }
+//        }
+//
+//        $query = TblComplainEscalationTxnDetail::find()
+//                ->where(['status' => 'Allocated'])
+//                ->andWhere(['<', 'created_at', date('Y:m:d H:i:s'), strtotime('-120 minutes')])
+//                ->all();
+//        foreach ($query as $row) {
+//            $next = $query->level + 1;
+//        }
+//        foreach ($modelData as $row) {
 //            $escalationModel = new \app\modules\complaint\models\TblComplainEscalationTxn();
 //            $escalationData = $escalationModel->getRecords($row);
-        }
+//        }
     }
 
 }

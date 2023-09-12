@@ -96,6 +96,7 @@ class TblComplainEscalationTxn extends \app\models\ChildModel {
                 $user_code = $userMapp['user_id'];
                 $stage_model->status = 'Allocated';
                 $stage_model->cron_status = '0';
+                $stage_model->assign_date = date('Y-m-d H:i:s');
             }
             $appLoginModel = new TblEiplAppLogin();
             $appLoginModel->module_code = $stage_model->user_code;
