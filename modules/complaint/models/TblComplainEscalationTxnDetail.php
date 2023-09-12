@@ -40,7 +40,7 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'process_type', 'cron_status'], 'safe'],
+                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
         ];
     }
 
@@ -68,17 +68,6 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
         ];
-    }
-
-    public function getPickRecords() {
-        $subquery = $this->find()->select(['complain_code'])->distinct();
-        $query = $this->find()
-                ->where(['status' => 'Allocated', 'cron_status' => '0'])
-                ->andWhere(['in', 'complain_code', $subquery])
-                ->orderBy(['level' => SORT_ASC])
-                ->all();
-        return $this->find()
-                        ->where(['in', 'complain_code', $query->complain_code]);
     }
 
 }
