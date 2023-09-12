@@ -612,6 +612,10 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         } else { //no file exists with this name
             if (!is_dir($path)) {
@@ -619,14 +623,15 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         }
 
 
-        if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
-            $command = 'chmod 777 -R ' . $path;
-            exec($command);
-        }
+
         return true;
     }
 
