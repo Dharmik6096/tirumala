@@ -10,24 +10,22 @@ use app\modules\general\models\TblProcessApproval;
 /**
  * TblProcessApprovalSearch represents the model behind the search form about `app\modules\general\models\TblProcessApproval`.
  */
-class TblProcessApprovalSearch extends TblProcessApproval
-{
+class TblProcessApprovalSearch extends TblProcessApproval {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['process_approval_code', 'level', 'status', 'originating_type'], 'integer'],
-            [['process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['process_approval_code', 'level', 'status', 'originating_type'], 'integer'],
+                [['process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'remarks'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -39,8 +37,7 @@ class TblProcessApprovalSearch extends TblProcessApproval
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblProcessApproval::find();
 
         // add conditions that should always apply here
@@ -68,16 +65,17 @@ class TblProcessApprovalSearch extends TblProcessApproval
         ]);
 
         $query->andFilterWhere(['like', 'process_code', $this->process_code])
-            ->andFilterWhere(['like', 'process_name', $this->process_name])
-            ->andFilterWhere(['like', 'approval_mode', $this->approval_mode])
-            ->andFilterWhere(['like', 'level_priority', $this->level_priority])
-            ->andFilterWhere(['like', 'login_type', $this->login_type])
-            ->andFilterWhere(['like', 'user_code', $this->user_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
+                ->andFilterWhere(['like', 'process_name', $this->process_name])
+                ->andFilterWhere(['like', 'approval_mode', $this->approval_mode])
+                ->andFilterWhere(['like', 'level_priority', $this->level_priority])
+                ->andFilterWhere(['like', 'login_type', $this->login_type])
+                ->andFilterWhere(['like', 'user_code', $this->user_code])
+                ->andFilterWhere(['like', 'created_by', $this->created_by])
+                ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+                ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
+                ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type]);
 
         return $dataProvider;
     }
+
 }

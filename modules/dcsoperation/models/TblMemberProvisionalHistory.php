@@ -84,13 +84,12 @@ class TblMemberProvisionalHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['is_active', 'payment_mode', 'animal_type_code', 'caste_category_code', 'gender_code', 'member_type_code', 'bloodgroup_code', 'qualification_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'annual_income', 'account_no', 'created_by', 'ifsc', 'member_code', 'member_img', 'member_name', 'nominee_name', 'operation_type', 'pincode', 'updated_by', 'bank_code', 'branch_code', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'village_code', 'ex_member_code', 'father_name', 'surname', 'dob', 'land_class', 'total_land', 'bank_account_no', 'mobile_no', 'address', 'pan_no', 'adhar_no', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'created_at', 'history_created_at', 'updated_at', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['provisional_member_code', 'is_active', 'payment_mode', 'animal_type_code', 'caste_category_code', 'gender_code', 'member_type_code', 'bloodgroup_code', 'qualification_code', 'no_of_buffalo', 'no_of_cow_cross', 'no_of_cow_ind', 'total_animals', 'annual_income', 'account_no', 'created_by', 'ifsc', 'member_code', 'member_img', 'member_name', 'nominee_name', 'operation_type', 'pincode', 'updated_by', 'bank_code', 'branch_code', 'dcs_code', 'district_code', 'federation_code', 'hamlet_code', 'state_code', 'sub_center_code', 'sub_district_code', 'union_code', 'village_code', 'ex_member_code', 'father_name', 'surname', 'dob', 'land_class', 'total_land', 'bank_account_no', 'mobile_no', 'address', 'pan_no', 'adhar_no', 'local_name', 'local_father_name', 'local_surname', 'local_nominee_name', 'local_address', 'created_at', 'history_created_at', 'updated_at', 'nominee_relation', 'voter_id', 'religion_code', 'upload', 'is_download', 'download_date_time', 'member_class', 'registration_date', 'ref_code', 'data_post_id', 'data_post_status', 'picked_datetime', 'resp_status', 'resp_desc', 'provisional_status', 'remarks', 'bmc_code', 'email', 'mcc_plant_code', 'plant_code', 'bank_name', 'branch_name'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-
 }

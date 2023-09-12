@@ -63,7 +63,7 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                     $model = new TblDocumentMapping();
                     $model->doc_id = $revoke_doc;
                     $model->union_code = $model->docId->union_code;
-                    $record = $model->getExistMappedControl();
+                    $record = $model->getExistMappedControl($postMasterArray);
                     $historyModel = new TblDocumentMappingHistory();
                     Yii::$app->operation->history($record, $historyModel, 'DELETE');
                     $master[] = $historyModel;
@@ -89,7 +89,7 @@ class TblDocumentMappingController extends \app\controllers\ChildController {
                     $model = new TblDocumentMapping();
                     $model->doc_id = $update_doc;
                     $model->is_mandate = !empty($postMendateArray) && in_array($update_doc, $postMendateArray) ? 1 : 0;
-                    $record = $model->getExistMappedControl();
+                    $record = $model->getExistMappedControl($postMasterArray);
                     if (!empty($record) && ($model->is_mandate != $record->is_mandate)) {
                         $historyModel = new TblDocumentMappingHistory();
                         Yii::$app->operation->history($record, $historyModel, 'UPDATE');

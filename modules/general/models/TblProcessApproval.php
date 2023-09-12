@@ -3,6 +3,7 @@
 namespace app\modules\general\models;
 
 use Yii;
+use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\organisation\models\TblDcsProvisional;
 use app\modules\usermanagement\models\User;
 use yii\db\Expression;
@@ -42,8 +43,9 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function rules() {
         return [
 //                [['process_approval_code'], 'required'],
-                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode'], 'safe'],
-                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'remarks'], 'safe'],
+            [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
+            [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['status'], 'required', 'on' => 'approve'],
         ];
     }
 
@@ -82,6 +84,10 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->hasOne(TblDcsProvisional::className(), ['dcs_provisional_code' => 'process_code']);
     }
 
+    public function getMemberProvisional() {
+        return $this->hasOne(TblMemberProvisional::className(), ['provisional_member_code' => 'process_code']);
+    }
+
     public function getUserCode() {
         return $this->hasOne(User::className(), ['user_code' => 'user_code']);
     }
@@ -116,8 +122,8 @@ class TblProcessApproval extends \app\models\ChildModel {
                 )
                 ->where([
                     'or',
-                        ['app.login_type' => $login_type],
-                        ['app.user_code' => \Yii::$app->user->identity->user_code]
+                    ['app.login_type' => $login_type],
+                    ['app.user_code' => \Yii::$app->user->identity->user_code]
                 ])
                 ->andWhere([
             'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
@@ -125,5 +131,4 @@ class TblProcessApproval extends \app\models\ChildModel {
         ]);
         return $query;
     }
-
 }

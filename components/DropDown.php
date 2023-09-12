@@ -1691,7 +1691,7 @@ class DropDown extends Component {
             'master_types' => [
                 'name' => 'master_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle')],
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle'), 'provisional_member' => Yii::t('app', 'Provisional Member'), 'provisional_dcs' => Yii::t('app', 'Provisional DCS')],
             ],
             'payment_release_type' => [
                 'name' => 'payment_release_type',
@@ -1702,6 +1702,11 @@ class DropDown extends Component {
                 'name' => 'payment_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
+            ],
+            'provisional_approval_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Approve'), '2' => Yii::t('app', 'Reject')],
             ],
             'customer_category' => [
                 'name' => 'customer category',

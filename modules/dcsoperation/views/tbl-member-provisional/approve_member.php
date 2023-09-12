@@ -5,11 +5,10 @@ use kartik\detail\DetailView;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
-$this->title = Yii::$app->label->title('view', 'Dcs Provisional Approval');
-$dcs_provisional = $model->dcsProvisional;
-
-$documents = $dcs_provisional->dcsPrivisionalDocuments;
-$approval_detail = $dcs_provisional->dcsPrivisionalApproval;
+$this->title = Yii::$app->label->title('view', 'Member Provisional Approval');
+$member_provisional = $model->memberProvisional;
+$documents = $member_provisional->memberPrivisionalDocuments;
+$approval_detail = $member_provisional->memberPrivisionalApproval;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">
@@ -23,11 +22,11 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                     'columns' => [
                             [
                             'attribute' => 'union_code',
-                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->unionCode, 'union_name'),
+                            'value' => Yii::$app->general->getforeignkey($member_provisional->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             ['attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->bmcCode, 'bmc_name'),
+                            'value' => Yii::$app->general->getforeignkey($member_provisional->tblDcsBmc, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -35,12 +34,13 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                     [
                     'columns' => [
                             [
-                            'attribute' => 'dcs_provisional_code',
+                            'attribute' => 'member_code',
+                            'value' => $member_provisional->member_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'dcs_code_ex',
-                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, true) : '',
+                            'attribute' => 'reference_code',
+                            'value' => Yii::$app->general->getforeignkey($member_provisional->dcsCode, 'dcs_code_ex') . $member_provisional->ex_member_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -48,19 +48,32 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                     [
                     'columns' => [
                             [
-                            'attribute' => 'remarks',
+                            'attribute' => 'pro_ex_member_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                        [
+                            [
+                            'attribute' => 'ex_member_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
                             'attribute' => 'created_at',
-                            'value' => Yii::$app->controls->view_date($dcs_provisional->created_at),
+                            'value' => Yii::$app->controls->view_date($member_provisional->created_at),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'provisional_member_code',
+                            'value' => $member_provisional->provisional_member_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
             ];
             echo DetailView::widget([
-                'model' => $dcs_provisional,
+                'model' => $member_provisional,
                 'attributes' => $attributes,
                 'mode' => 'view',
                 'bordered' => true,
@@ -92,7 +105,7 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                         <?php foreach ($documents as $doc) { ?>
                             <tr>
                                 <td width='60%'><?= Yii::$app->general->getforeignkey($doc->docId, 'doc_name'); ?></td>
-                                <td width='40%'><?= Html::a('<i class="fa fa-eye"></i>', Url::to('web/welfarescheme/' . $doc->file_name), ['target' => '_blank']) ?></td>
+                                <td width='40%'><?= Html::a('<i class="fa fa-eye"></i>', Url::to(!empty($doc->attachment) ? $doc->attachment : ''), ['target' => '_blank']) ?></td>
                             </tr>
                         <?php } ?>
                         </tbody>
