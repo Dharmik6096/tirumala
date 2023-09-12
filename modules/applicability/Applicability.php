@@ -78,6 +78,7 @@ class Applicability extends \yii\base\Module {
     public $is_bulk_notification = false;
     public $with_wef_date = true;
     public $update_applicability = FALSE;
+    public $rateMccCode = [];
 
     /**
      * @inheritdoc
@@ -139,7 +140,8 @@ class Applicability extends \yii\base\Module {
                 $title = Yii::t('app', 'Societies');
         }
 
-        $mccList = $this->loadUnionMcc($this->union_code);
+//        $mccList = $this->loadUnionMcc($this->union_code);
+        $mccList = $this->loadUnionMcc($this->union_code, '', $this->rateMccCode);
         $searchModel = $this->searchModel;
         $searchModel->$field_name = $this->field_value;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -839,9 +841,11 @@ class Applicability extends \yii\base\Module {
         return $selected;
     }
 
-    public function loadUnionMcc($union_code) {
+//    public function loadUnionMcc($union_code) {
+    public function loadUnionMcc($union_code, $field = '', $in = []) {
         $mccModel = new TblMccPlant();
-        $mccList = $mccModel->getMccs($union_code, [], true);
+//        $mccList = $mccModel->getMccs($union_code, [], true);
+        $mccList = $mccModel->getMccs($union_code, [], true, $in);
         return $mccList;
     }
 
