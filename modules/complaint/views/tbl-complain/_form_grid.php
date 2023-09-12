@@ -23,7 +23,6 @@ $attribute = [
         ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'complain_code', 'visible' => true, 'filter' => false],
         ['attribute' => 'contact_person'],
         ['attribute' => 'mobile_no'],
         ['attribute' => 'complain_datetime',

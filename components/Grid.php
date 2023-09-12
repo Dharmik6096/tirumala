@@ -31,6 +31,7 @@ class Grid extends Widget {
     }
 
     public function bind($dataProvider, $searchModel, $grid_option, $refresh_action = ['index'], $filter = true, $removeExportType = [], $exportEvents = [], $fixed_header = true, $rowOptions = []) {
+        $table_name = '';
         if (!isset($searchModel->grid_filter) || $searchModel->grid_filter) {
             echo $this->render('@app/components/views/_search_filter', ['model' => $searchModel]);
             if (isset($searchModel->tableSchema->fullName)) {
