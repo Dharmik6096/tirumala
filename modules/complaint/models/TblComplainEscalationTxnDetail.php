@@ -40,7 +40,7 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'process_type', 'cron_status', 'assign_date'], 'safe'],
+                [['union_code', 'user_type', 'status', 'complain_escalation_txn_code', 'device_id', 'complain_code', 'task_activity_code', 'escalation_time', 'level', 'originating_type', 'created_at', 'updated_at', 'user_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'process_type', 'cron_status'], 'safe'],
         ];
     }
 
@@ -74,26 +74,11 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
         $subquery = $this->find()->select(['complain_code'])->distinct();
         $query = $this->find()
                 ->where(['status' => 'Allocated', 'cron_status' => '0'])
-                ->andWhere(['>=', 'GETDATE()', new \yii\db\Expression("DATEADD(MINUTE, escalation_time, assign_date)")])
                 ->andWhere(['in', 'complain_code', $subquery])
                 ->orderBy(['level' => SORT_ASC])
                 ->all();
-        return $query;
-
-//        $complainCodes = [];
-//        foreach ($query as $record) {
-//            $complainCodes[] = $record['complain_code'];
-//        }
-//        $anotherQuery = $this->find()
-//                ->select(['complain_code', 'level'])
-//                ->where(['in', 'complain_code', $complainCodes]);
-//
-//        $result = $anotherQuery->all();
-//        return $result;
-    }
-
-    public function updateStatus($ids) {
-        return $this->updateAll(['status' => 1, 'pick_datetime' => date('Y-m-d H:i:s')], ['complain_escalation_txn_detail_code' => $ids]);
+        return $this->find()
+                        ->where(['in', 'complain_code', $query->complain_code]);
     }
 
 }
