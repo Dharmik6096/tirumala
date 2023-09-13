@@ -3,6 +3,8 @@
 namespace app\modules\general\models;
 
 use Yii;
+use app\modules\dcsoperation\models\TblMemberProvisional;
+use app\modules\usermanagement\models\User;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -39,8 +41,9 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function rules() {
         return [
 //                [['process_approval_code'], 'required'],
-                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode'], 'safe'],
+                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
                 [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['status'], 'required', 'on' => 'approve'],
         ];
     }
 
@@ -72,6 +75,18 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->find()
                         ->where(['process_code' => $this->process_code, 'process_name' => $this->process_name])
                         ->all();
+    }
+
+    public function getMemberProvisional() {
+        return $this->hasOne(TblMemberProvisional::className(), ['provisional_member_code' => 'process_code']);
+    }
+
+    public function getUserCode() {
+        return $this->hasOne(User::className(), ['user_code' => 'user_code']);
+    }
+
+    public function getUpdatedBy() {
+        return $this->hasOne(User::className(), ['user_code' => 'updated_by']);
     }
 
 }
