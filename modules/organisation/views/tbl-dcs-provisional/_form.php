@@ -6,7 +6,8 @@ use yii\web\View;
 use yii\helpers\Url;
 
 $milkType = $model->getMilkTypes();
-if (!empty($model->milk_type_code)) {
+if (!empty($model->milk_type)) {
+    $model->milk_type_code = explode(',', $model->milk_type);
     foreach ($model['milk_type_code'] as $key => $row) {
         $selected[$row] = ['selected' => 'selected'];
     }
@@ -32,7 +33,6 @@ $bmcDisable = $model->is_bmc == 1 ? 'disabled' : '';
 $model->destination_code = 0;
 //$model->route_code = 0;
 $summary_model = $type == 'create' ? [$model] : $model;
-//$summary_model = $type == 'create' ? [$model, $bankDetails, $contactDetails] : $model;
 $address = explode(",", $model->address);
 $model->street1 = $address[0];
 if (isset($address[1])) {
@@ -78,7 +78,7 @@ $form = ActiveForm::begin([
         <?= Html::activeHiddenInput($model, 'route_code') ?>
 
         <div class="col-sm-2 <?= $bmcDisable ?>">
-            <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcs-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $readonly); ?>
+            <?= Yii::$app->dropdown->bmcDropdown($model, $form, 'tbldcsprovisional-union_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, $readonly); ?>
         </div>
         <?php
         $keyPattern = Yii::$app->general->getKeyPattern('tbl_dcs');
@@ -112,6 +112,9 @@ $form = ActiveForm::begin([
         </div>
 
         <div class="col-sm-2">
+            <?php
+            $model->vendor = $model->vendor_code;
+            ?>
             <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor']); ?>
         </div>
         <!--<div class="col-sm-2">-->
@@ -119,7 +122,7 @@ $form = ActiveForm::begin([
         <!--</div>-->
         <?php if ($type == 'create') { ?>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcs-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
+                <?= Yii::$app->dropdown->memberRateChart($model, $form, 'tbldcsprovisional-union_code', 'rate_chart_member', $model->getAttributeLabel('rate_chart_member')); ?>
             </div>
         <?php } ?>
 
@@ -138,7 +141,7 @@ $form = ActiveForm::begin([
           'options' => ['class' => 'form-control',]
           ]); */
         ?>
-        <?php //Yii::$app->dropdown->depend_dropdown('route_code',$model, $form, 'tbldcs-union_code','form-group col-sm-2 padding-right-5 padding-left-0','Route');  ?>
+        <?php //Yii::$app->dropdown->depend_dropdown('route_code',$model, $form, 'tbldcsprovisional-union_code','form-group col-sm-2 padding-right-5 padding-left-0','Route');  ?>
         <!--    <div class="col-sm-2">
         <?php //$form->field($model, 'tin_no')->textInput(['maxlength' => true])   ?>
             </div>
@@ -171,10 +174,19 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'pan_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
+            <?= $form->field($model, 'voter_id')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
             <?= $form->field($model, 'gst_no')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'gender')->textInput() ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
@@ -238,22 +250,22 @@ $form = ActiveForm::begin([
             <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
         </div>
         <div class="col-sm-2" id="district_section">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcs-union_code,tbldcs-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
+            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsprovisional-union_code,tbldcsprovisional-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
         </div>
         <!--    <div class="col-sm-3">
-        <?php //Yii::$app->dropdown->district($model, $form, 'tbldcs-state_code', 'district_code', 'District');    ?>
+        <?php //Yii::$app->dropdown->district($model, $form, 'tbldcsprovisional-state_code', 'district_code', 'District');    ?>
             </div>-->
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcs-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District'), ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsprovisional-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcs-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
         </div>
         <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcs-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
+            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
         </div>
         <?php // }    ?>
         <div class="col-sm-2">
@@ -276,25 +288,65 @@ $form = ActiveForm::begin([
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Contact Details</h4>
             </div>
-            <?=
-            $this->render('../../../details/views/tbl-contact-details/_form', [
-                'model' => $model,
-                'form' => $form
-            ])
-            ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'firstname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'lastname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'surname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'email')->textInput() ?>
+            </div>
+            <!--<div class="col-sm-2">
+                <? = $form->field($model, 'local_contact_person')->textInput() ?>
+            </div>-->
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_firstname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_lastname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'local_surname')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
+                <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+            </div>
 
             <div class="clearfix"></div>
 
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
                 <h4 class="theme-box-heading">Bank Details</h4>
             </div>
-            <?=
-            $this->render('../../../details/views/tbl-bank-details/_form', [
-                'model' => $model,
-                'form' => $form,
-                'dist_field' => 'tbldcs-district_code'
-            ])
-            ?>
+            <?php if (!empty($dist)) { ?>
+                <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
+            <?php } ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'bank_account_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <!--<? = $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => !empty($model->ifsc) ? true : false]) ?>-->
+                <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+            </div>
+            <!--<div class="col-sm-2">
+            <?= $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+            </div>-->
         <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
@@ -359,17 +411,24 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'evening_kms')->textInput() ?>
         </div>
     </div>
-
-    <?php // if ($type == 'create') {  ?>
-    <!--        <div class="col-sm-3">
-    <?= Yii::$app->controls->active($model, $form); ?>
-            </div>-->
-    <?php // }    ?>
+    <div class="col-sm-2 mt10">
+        <?= $form->field($model, 'is_security_cheque', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+    </div>
+    <div class="col-sm-2 mt10 security_cheque">
+        <?= $form->field($model, 'cheque_number')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10 number-validate security_cheque">
+        <?= $form->field($model, 'cheque_amount')->textInput() ?>   
+    </div>
+    <div class="col-sm-2 mt10">
+        <?= Yii::$app->controls->active($model, $form); ?>
+    </div>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
-                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                <?php //Yii::$app->controls->save(Yii::$app->label->button($btn_name), $model); ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
@@ -380,32 +439,37 @@ $form = ActiveForm::begin([
     <?php
     $script = "
     //$('#district_section').hide();
-    $('#tbldcs-bank_code').on('change',function(){
-    $('#tbldcs-branch_code,#tblbankdetails-bank_account_no,#tblbankdetails-ifsc').trigger('change');
+//    $('#tbldcsprovisional-bank_code').on('change',function(){
+//    $('#tbldcs-branch_code,#tbldcsprovisional-bank_account_no,#tbldcsprovisional-ifsc').trigger('change');
+//    });
+
+    securityCheque($('#tbldcsprovisional-is_security_cheque').prop('checked'));	
+    $('#tbldcsprovisional-is_security_cheque').on('change', function() {
+        securityCheque($(this).prop('checked'));
     });
     
-    $('#tblbankdetails-bank_account_no').on('change', function(){
+    $('#tbldcsprovisional-bank_account_no').on('change', function(){
         $('#bank_ac_warning').val(0);
     });
-    $('#tblbankdetails-branch_code').on('change', function(){
+    $('#tbldcsprovisional-branch_code').on('change', function(){
         $('#bank_ac_warning').val(0);
     });
-    $('#tblbankdetails-ifsc').on('change', function(){
+    $('#tbldcsprovisional-ifsc').on('change', function(){
         $('#bank_ac_warning').val(0);
     });
-   $('#tbldcs-branch_code').on('change',function(){
-            var id = $('#tbldcs-branch_code').val();
+   $('#tbldcsprovisional-branch_code').on('change',function(){
+            var id = $('#tbldcsprovisional-branch_code').val();
             $.ajax({
                         type: 'post',
                         url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
                         data: 'id='+id,
                         success: function(data) {
                                 var obj1 = $.parseJSON(data);
-                                $('#tbldcs-ifsc').val(obj1.code);
+                                $('#tbldcsprovisional-ifsc').val(obj1.code);
                                 if(obj1.code!='')
-                                    $('#tbldcs-ifsc').prop('readonly', true);
+                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
                                 else
-                                    $('#tbldcs-ifsc').prop('readonly', false);
+                                    $('#tbldcsprovisional-ifsc').prop('readonly', false);
                         },
                         error:function(data){
                                     //alert('Your data has not been submitted..Please try again');
@@ -413,45 +477,52 @@ $form = ActiveForm::begin([
             });
     });
     milktypedisabled();
-    $('#tbldcs-milk_type_auto').click(function(){
+    $('#tbldcsprovisional-milk_type_auto').click(function(){
         milktypedisabled();
     });
-    
+
+    function securityCheque(check_value) {
+        $('.security_cheque').hide();
+        if(check_value == true){
+            $('.security_cheque').show();
+        }
+    }
+
     function milktypedisabled(){
-        if($('#tbldcs-milk_type_auto').is(':checked')) {
-            $('#tbldcs-milk_type_code').parent('div').addClass('disabled');
-            $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
-            $('#tbldcs-cutoff').prop('checked',false);
-            $('#tbldcs-lower_milk_type').val('');
-            $('#tbldcs-lower_milk_type').trigger('change');
-            $('#tbldcs-lower_milk_type').trigger('select2:select');
-            $('#tbldcs-cutoff_val').val('');
+        if($('#tbldcsprovisional-milk_type_auto').is(':checked')) {
+            $('#tbldcsprovisional-milk_type_code').parent('div').addClass('disabled');
+            $('#tbldcsprovisional-cutoff').parent('div').addClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff').prop('checked',false);
+            $('#tbldcsprovisional-lower_milk_type').val('');
+            $('#tbldcsprovisional-lower_milk_type').trigger('change');
+            $('#tbldcsprovisional-lower_milk_type').trigger('select2:select');
+            $('#tbldcsprovisional-cutoff_val').val('');
         } else {
-            $('#tbldcs-milk_type_code').parent('div').removeClass('disabled');
+            $('#tbldcsprovisional-milk_type_code').parent('div').removeClass('disabled');
             cutoffdisabled();
         }
     }
-    $('#tbldcs-pan_no').on('input', function(evt) {
+    $('#tbldcsprovisional-pan_no').on('input', function(evt) {
         $(this).val(function(_, val) {
         return val.toUpperCase();
     });
    });
    
-    $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
-    $('#tbldcs-lower_milk_type').parent('div').addClass('disabledDiv');
-    $('#tbldcs-cutoff_val').parent('div').addClass('disabledDiv');
+    $('#tbldcsprovisional-cutoff').parent('div').addClass('disabledDiv');
+    $('#tbldcsprovisional-lower_milk_type').parent('div').addClass('disabledDiv');
+    $('#tbldcsprovisional-cutoff_val').parent('div').addClass('disabledDiv');
     
     cutoffdisabled();
     cutoffValDisabled();
 
-    $('#tbldcs-milk_type_code').click(function(){
+    $('#tbldcsprovisional-milk_type_code').click(function(){
         cutoffdisabled();  
         lowerMilkTypeVal();  
     });
     
     function lowerMilkTypeVal(){
-        $('#tbldcs-lower_milk_type option').removeAttr('disabled'); 
-        var milktype = $('#tbldcs-milk_type_code').val();
+        $('#tbldcsprovisional-lower_milk_type option').removeAttr('disabled'); 
+        var milktype = $('#tbldcsprovisional-milk_type_code').val();
 //        console.log(typeof milktype);
 //        console.log(typeof Object.values(milktype));
 //        console.log(Object.values(milktype).includes('2'));
@@ -468,46 +539,46 @@ $form = ActiveForm::begin([
 //            console.log(milktype.indexOf('3'));
 //            console.log(milktype.indexOf(3));
 //            console.log(remove);
-            $('#tbldcs-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
-            var select2Instance = $('#tbldcs-lower_milk_type').data('select2');
+            $('#tbldcsprovisional-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
+            var select2Instance = $('#tbldcsprovisional-lower_milk_type').data('select2');
             var resetOptions = select2Instance.options.options;
-            $('#tbldcs-lower_milk_type').select2('destroy').select2(resetOptions);
-//            $('#tbldcs-lower_milk_type').trigger('select2:select');
+            $('#tbldcsprovisional-lower_milk_type').select2('destroy').select2(resetOptions);
+//            $('#tbldcsprovisional-lower_milk_type').trigger('select2:select');
         }
     }
     function cutoffdisabled(){
-        var lenCheck = $('#tbldcs-milk_type_code').val();
+        var lenCheck = $('#tbldcsprovisional-milk_type_code').val();
         var len = 0;
         if(lenCheck != null && lenCheck != undefined){
             len = lenCheck.length;
         }
         if(len == 2){
-            $('#tbldcs-cutoff').parent('div').removeClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff').parent('div').removeClass('disabledDiv');
         }else{
-            $('#tbldcs-cutoff').parent('div').addClass('disabledDiv');
-            $('#tbldcs-cutoff').prop('checked',false);
-            $('#tbldcs-lower_milk_type').val('');
-            $('#tbldcs-lower_milk_type').trigger('change');
-            $('#tbldcs-lower_milk_type').trigger('select2:select');
-            $('#tbldcs-cutoff_val').val('');
+            $('#tbldcsprovisional-cutoff').parent('div').addClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff').prop('checked',false);
+            $('#tbldcsprovisional-lower_milk_type').val('');
+            $('#tbldcsprovisional-lower_milk_type').trigger('change');
+            $('#tbldcsprovisional-lower_milk_type').trigger('select2:select');
+            $('#tbldcsprovisional-cutoff_val').val('');
         }
     }
 
-    $('#tbldcs-cutoff').click(function(){
+    $('#tbldcsprovisional-cutoff').click(function(){
         cutoffValDisabled();  
         lowerMilkTypeVal();  
     });
 
     function cutoffValDisabled(){
-        if($('#tbldcs-cutoff').is(':checked')) {
-            $('#tbldcs-lower_milk_type').parent('div').removeClass('disabledDiv');
-            $('#tbldcs-cutoff_val').parent('div').removeClass('disabledDiv');
+        if($('#tbldcsprovisional-cutoff').is(':checked')) {
+            $('#tbldcsprovisional-lower_milk_type').parent('div').removeClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff_val').parent('div').removeClass('disabledDiv');
         } else {
-            $('#tbldcs-cutoff_val').val('');
-            $('#tbldcs-lower_milk_type').val('');
-            $('#tbldcs-lower_milk_type').trigger('select2:select');
-            $('#tbldcs-lower_milk_type').parent('div').addClass('disabledDiv');
-            $('#tbldcs-cutoff_val').parent('div').addClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff_val').val('');
+            $('#tbldcsprovisional-lower_milk_type').val('');
+            $('#tbldcsprovisional-lower_milk_type').trigger('select2:select');
+            $('#tbldcsprovisional-lower_milk_type').parent('div').addClass('disabledDiv');
+            $('#tbldcsprovisional-cutoff_val').parent('div').addClass('disabledDiv');
         }
     }
 ";
@@ -515,4 +586,30 @@ $form = ActiveForm::begin([
 
     $script = "var delay=2000;";
     $this->registerJs($script, View::POS_HEAD, 'time-loader');
+    $script = "
+   $('#tbldcsprovisional-bank_code').on('change',function(){
+        $('#tbldcsprovisional-ifsc').val('');
+    });
+    
+    $('#tbldcsprovisional-branch_code').on('change',function(){
+            var id = $('#tbldcsprovisional-branch_code').val();
+            $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
+                        data: 'id='+id,
+                        success: function(data) {
+                                var obj1 = $.parseJSON(data);
+                                $('#tbldcsprovisional-ifsc').val(obj1.code);
+//                                if(obj1.code!='')
+//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
+//                                else
+//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
+                        },
+                        error:function(data){
+                                    //alert('Your data has not been submitted..Please try again');
+                                }
+            });
+    });
+";
+$this->registerJs($script, View::POS_END, 'bank-select');
     
