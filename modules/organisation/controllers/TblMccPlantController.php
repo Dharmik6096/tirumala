@@ -422,5 +422,16 @@ class TblMccPlantController extends \app\controllers\ChildController {
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('mcc', $id, $model, $module_code, $module_name);
     }
+    
+    public function actionGetUnionMcc() {
+        $mccList = [];
+        if (!empty($_POST['union'])) {
+            $union = $_POST['union'];
+            $RLS = $_POST['RLS'];
+            $mccs = new TblMccPlant();
+            $mccList = $mccs->getUnionMCCList($union, $RLS);
+        }
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
+    }
 
 }

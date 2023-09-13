@@ -49,6 +49,8 @@ use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\general\models\TblProcessApproval;
+use yii\db\Expression;
 
 class GeneralFunctions extends Component {
 
@@ -250,7 +252,7 @@ class GeneralFunctions extends Component {
     public function validateAadharcard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
-                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' card number can only contain exactly 12 digits.'));
             }
     }
 
@@ -610,6 +612,10 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         } else { //no file exists with this name
             if (!is_dir($path)) {
@@ -617,14 +623,15 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         }
 
 
-        if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
-            $command = 'chmod 777 -R ' . $path;
-            exec($command);
-        }
+
         return true;
     }
 
@@ -2327,11 +2334,10 @@ class GeneralFunctions extends Component {
         return $number;
     }
 
-    public static function getAttachmentUrl($module_name, $module_Code)
-    {
+    public static function getAttachmentUrl($module_name, $module_Code) {
         $attachment = \app\modules\general\models\TblAttachment::find()
-            ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
-            ->one();
+                ->where(['module_name' => $module_name, 'module_Code' => $module_Code])
+                ->one();
 
         if ($attachment) {
             return $attachment->attachment;
@@ -2339,5 +2345,4 @@ class GeneralFunctions extends Component {
 
         return null;
     }
-
 }

@@ -442,6 +442,78 @@ class CustomValidation extends Component {
                     ],
                 ],
             ],
+            'CARGILL' => [
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'plant-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'mcc-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'bmc-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                ],
+            ],
+            'KOTMALE' => [
+                'TblContactDetails' => [
+                    'default' => [
+                            [['firstname'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-import' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'plant-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'mcc-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'bmc-create' => [
+                            [['firstname', 'mobile_no'], 'required'],
+                            [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                ],
+            ],
         ];
     }
 
