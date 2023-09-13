@@ -302,8 +302,10 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
 
     public function validateMilkCollection($attribute, $params) {
         $MainModel = new TblMilkCollection();
-        if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->antibiotic != $this->old_antibiotic)) {
+        if (($this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code)) {
             $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, FALSE, TRUE);
+        } else if ($this->action_perform == 'UPDATE' && $this->antibiotic != $this->old_antibiotic) {
+            
         } else {
             $MainModel->milkTypeWiseUnique($MainModel, $this);
         }

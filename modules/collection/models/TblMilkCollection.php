@@ -560,10 +560,10 @@ class TblMilkCollection extends \app\models\ChildModel {
             $returnModel = $model->find()->where(['dcs_code' => $modelData->dcs_code,
                 'member_code' => $modelData->member_code,
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
-                'shift_code' => $modelData->shift_code,
-                'antibiotic' => $modelData->antibiotic]);
+                'shift_code' => $modelData->shift_code]);
             if ($uniqueCheckAntibiotic == 1) {
-                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic])
+                        ->andWhere(['antibiotic' => $modelData->antibiotic]);
             }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
@@ -587,10 +587,10 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'member_code' => $modelData->member_code,
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'shift_code' => $modelData->shift_code,
-                'milk_type_code' => $modelData->milk_type_code,
-                'antibiotic' => $modelData->antibiotic]);
+                'milk_type_code' => $modelData->milk_type_code]);
             if ($uniqueCheckAntibiotic == 1) {
-                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic])
+                        ->andWhere(['antibiotic' => $modelData->antibiotic]);
             }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
@@ -610,7 +610,8 @@ class TblMilkCollection extends \app\models\ChildModel {
                         'shift_code' => $modelData->shift_code])
                     ->andWhere(['!=', 'milk_type_code', $modelData->milk_type_code]);
             if ($uniqueCheckAntibiotic == 1) {
-                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic])
+                        ->andWhere(['antibiotic' => $modelData->antibiotic]);
             }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
@@ -627,10 +628,11 @@ class TblMilkCollection extends \app\models\ChildModel {
                     'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                     'shift_code' => $modelData->shift_code,
                     'milk_type_code' => $modelData->milk_type_code,
-                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf, 'antibiotic' => $modelData->antibiotic]);
+                    'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
                 if ($uniqueCheckAntibiotic == 1) {
-                    $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
-                }
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic])
+                        ->andWhere(['antibiotic' => $modelData->antibiotic]);
+            }
                 if ($approval) {
                     $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
                 }
@@ -645,10 +647,10 @@ class TblMilkCollection extends \app\models\ChildModel {
                 'cast(date_time_of_collection as date)' => date('Y-m-d', strtotime($modelData->date_time_of_collection)),
                 'milk_type_code' => $modelData->milk_type_code,
                 'shift_code' => $modelData->shift_code,
-                'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf,
-                'antibiotic' => $modelData->antibiotic]);
+                'qty' => $modelData->qty, 'fat' => $modelData->fat, 'snf' => $modelData->snf]);
             if ($uniqueCheckAntibiotic == 1) {
-                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic]);
+                $returnModel->andWhere(['=', 'is_antibiotic', $is_antibiotic])
+                        ->andWhere(['antibiotic' => $modelData->antibiotic]);
             }
             if ($approval) {
                 $returnModel->andWhere(['table_name' => 'tbl_milk_collection']);
