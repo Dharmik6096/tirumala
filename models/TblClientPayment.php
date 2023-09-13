@@ -57,7 +57,7 @@ class TblClientPayment extends ChildModel {
         $dataCount = $this->find()
                 ->where(['<', 'allow_till_date', $date])
                 ->andWhere(['or', ['payment_done' => 0], ['is', 'payment_done', NULL]])
-                ->andWhere(['in','union_code',$union_list])
+                ->andFilterWhere(['in', 'union_code', $union_list])
                 ->orderBy('allow_till_date desc')
                 ->one();
         return $dataCount;
@@ -68,7 +68,7 @@ class TblClientPayment extends ChildModel {
         $dataCount = $this->find()
                 ->where(['<=', 'payment_due_date', $date])
                 ->andWhere(['or', ['payment_done' => 0], ['is', 'payment_done', NULL]])
-                 ->andWhere(['in','union_code',$union_list])
+                ->andFilterWhere(['in', 'union_code', $union_list])
                 ->orderBy('payment_due_date desc')
                 ->one();
         return $dataCount;

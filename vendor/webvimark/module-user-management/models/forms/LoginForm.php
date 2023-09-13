@@ -38,14 +38,14 @@ class LoginForm extends Model {
      */
     public function rules() {
         return [
-            [['username', 'password'], 'required'],
-            [['type'], 'required', 'on' => 'non_national'],
-            [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
-            ['rememberMe', 'boolean'],
-            [['organization', 'type', 'state'], 'safe'],
-            ['password', 'validatePassword'],
-            [['db'], 'safe'],
-            ['username', 'validateIP'],
+                [['username', 'password'], 'required'],
+                [['type'], 'required', 'on' => 'non_national'],
+                [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
+                ['rememberMe', 'boolean'],
+                [['organization', 'type', 'state'], 'safe'],
+                ['password', 'validatePassword'],
+                [['db'], 'safe'],
+                ['username', 'validateIP'],
         ];
     }
 
@@ -117,31 +117,7 @@ class LoginForm extends Model {
             return false;
         }
         $list = \app\models\TblUserOrganizationMapping::find()->select(['organization_code', 'organization_type'])->where(['is_active' => 1, 'user_id' => $user->user_code])->asArray()->all();
-        $union_list = array_unique($this->getParentOrganization($list));
 
-        try {
-            $model = new \app\models\TblClientPayment();
-            $overDuePayment = $model->getOverDuePayment($union_list);
-            if (!empty($overDuePayment)) {
-                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
-                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
-                    'message' => 'Dear Customer, Your payment for the Solution Services are due, services are terminated on ' . $overDueDate]);
-                return false;
-            } else {
-                $pendingPayment = $model->getPendingPaymentCount($union_list);
-                if (!empty($pendingPayment)) {
-                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
-                }
-            }
-        } catch (UserException $e) {
-            
-        } catch (\yii\db\Exception $e) {
-            
-        } catch (Exception $ex) {
-            
-        }
         if (!empty($list)) {
             $user_organisation = ArrayHelper::getColumn($list, 'organization_code');
 //            if (!empty($_POST['LoginForm']['organization']))
@@ -271,7 +247,30 @@ class LoginForm extends Model {
                 }
                 break;
         }
-
+        $union_list = !empty($union) ? explode(',', $union) : NULL;
+        try {
+            $model = new \app\models\TblClientPayment();
+            $overDuePayment = $model->getOverDuePayment($union_list);
+            if (!empty($overDuePayment)) {
+                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
+                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
+                    'message' => 'Dear Customer, Your payment for the Solution Services are due, services are terminated on ' . $overDueDate]);
+                return false;
+            } else {
+                $pendingPayment = $model->getPendingPaymentCount($union_list);
+                if (!empty($pendingPayment)) {
+                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
+                }
+            }
+        } catch (UserException $e) {
+            return false;
+        } catch (\yii\db\Exception $e) {
+            return false;
+        } catch (Exception $ex) {
+            return false;
+        }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
         Yii::$app->session->set('Unions', $union);
@@ -297,44 +296,6 @@ class LoginForm extends Model {
         Yii::$app->session->set('financialYear', $finacialYear);
         Yii::$app->session->set('ViewHistory', $ViewHistory);
         return true;
-    }
-
-    private function getParentOrganization($list) {
-        $union = [];
-        foreach ($list as $key => $value) {
-            $user_organisation = $value['organization_code'];
-            switch ($value['organization_type']) {
-
-                case 'UNION' :
-                    $union[] = $this->getUnion($user_organisation, 0, 0, 0);
-                    break;
-                case 'PLANT' :
-                    $plant = $this->getPlant($user_organisation, 0, 0);
-                    $union[] = $this->getUnion(0, 0, 0, $plant);
-                    break;
-                case 'MCC' :
-                    $mcc = $this->getMCC($user_organisation, 0, 0);
-                    $plant = $this->getPlant(0, 0, $mcc);
-                    $union[] = $this->getUnion(0, 0, 0, $plant);
-                    break;
-                case 'BMC' :
-                    $bmc = $this->getBMC($user_organisation, 0, 0);
-                    $mcc = $this->getMcc(0, 0, $bmc);
-                    $plant = $this->getPlant(0, 0, $mcc);
-                    $union[] = $this->getUnion(0, 0, 0, $plant);
-                    break;
-                case 'DCS' :
-                    $dcs = $this->getDcs($user_organisation, 0);
-                    $bmc = $this->getBMC(0, 0, $dcs);
-                    $mcc = $this->getMCC(0, 0, $bmc);
-                    $plant = $this->getPlant(0, 0, $mcc);
-                    $union[] = $this->getUnion(0, 0, 0, $plant);
-                    break;
-                default :
-                    break;
-            }
-        }
-        return $union;
     }
 
     private function getFederation($code, $identity_code, $union_code) {
@@ -552,4 +513,5 @@ class LoginForm extends Model {
             return 0;
         }
     }
+
 }
