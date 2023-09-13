@@ -1433,7 +1433,7 @@ class DropDown extends Component {
             'antibiotic' => [
                 'name' => 'antibiotic',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-'), 'Not Tested' => Yii::t('app', 'Not Tested')],
+                'data' => ['AB+' => Yii::t('app', 'AB+'), 'AB-' => Yii::t('app', 'AB-')],
             ],
             'collection' => [
                 'name' => 'collection',
