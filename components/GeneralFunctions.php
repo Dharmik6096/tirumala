@@ -2326,9 +2326,18 @@ class GeneralFunctions extends Component {
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
                 ->from($tableName)
                 ->where(['dcs_code' => $dcs_code])
+                ->andWhere(['<>', 'ISNULL(is_dcs_member, 0)', 1])
                 ->one();
         $number = (int) $val[$field] + $auto_inc;
 
+        $query = (new \yii\db\Query)
+                ->select('ex_member_code')
+                ->from($tableName)
+                ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
+                ->one();
+        if (!empty($query)) {
+            $number = (int) $number + $auto_inc;
+        }
         return $number;
     }
 
