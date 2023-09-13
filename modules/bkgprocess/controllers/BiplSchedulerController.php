@@ -132,10 +132,10 @@ class BiplSchedulerController extends ChildController {
                                                         $ftp_txn_model->file_status = 1;
                                                         $ftp_txn_model->status = 0;
                                                         $ftp_txn_model->save();
-                                                        if (strstr($path, 'EKOMILK')) {
-                                                            $command = 'chmod 777 -R ' . $local_path . $file;
-                                                            exec($command);
-                                                        }
+                                                        /* if (strstr($path, 'EKOMILK')) {
+                                                          $command = 'chmod 777 -R ' . $local_path . $file;
+                                                          exec($command);
+                                                          } */
                                                         $process_count++;
                                                     }
                                                 }

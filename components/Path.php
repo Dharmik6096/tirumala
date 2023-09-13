@@ -37,7 +37,7 @@ class Path extends Component {
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason', 'TblRejectionResponsibility',
-            'TblDeviceMaster', 'TblDeviceMasterMapping'
+            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass',
         ],
         '\\app\modules\organisation\models\\' =>
             ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
@@ -65,7 +65,7 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
             ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
-            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias'],
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias', 'TblSchemeRate', 'TblSchemeRateApplicability', 'TblSchemeRateMcc', 'TblSchemeRateApplicabilityAlias'],
         '\\app\modules\product\models\\' =>
             ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', 'TblProductReceiptTaxCalculatedHistory', 'TblProductDispatch', 'TblProductDispatchHistory', 'TblProductDispatchTransaction', 'TblProductDispatchTransactionHistory', 'TblProductSaleRate', 'TblProductSaleRateHistory', 'TblProductPurchaseRate', 'TblProductPurchaseRateApplicability', 'TblProductSaleRateApplicability', 'TblProductSaleRateApplicabilityHistory', 'TblProductStock', 'TblProductStockHistory', 'TblProductStockTransaction', 'TblProductStockTransactionHistory', 'TblVendorMaster', 'TblInventoryTransfer', 'TblInventoryTransferTxn',
             'TblGrn', 'TblGrnTxn', 'TblPlantDispatch', 'TblPlantDispatchTxn', 'TblIndentMaster', 'TblIndentDispatch', 'TblIndentDispatchTransaction', 'TblIndentProduct'],

@@ -110,9 +110,10 @@ class TblDocumentMapping extends \app\models\ChildModel {
         }
     }
 
-    public function getExistMappedControl() {
+    public function getExistMappedControl($postMaster) {
         return $this->find()
                         ->where(['doc_id' => $this->doc_id])
+                        ->andWhere(['master_type' => $postMaster])
                         ->one();
     }
 

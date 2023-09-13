@@ -1691,7 +1691,7 @@ class DropDown extends Component {
             'master_types' => [
                 'name' => 'master_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle')],
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle'), 'provisional_member' => Yii::t('app', 'Provisional Member'), 'provisional_dcs' => Yii::t('app', 'Provisional DCS')],
             ],
             'payment_release_type' => [
                 'name' => 'payment_release_type',
@@ -1707,6 +1707,11 @@ class DropDown extends Component {
                 'name' => 'payment_type',
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['MEMBER' => Yii::t('app', 'MEMBER'), 'VENDOR' => Yii::t('app', 'VENDOR')],
+            ],
+            'provisional_approval_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['1' => Yii::t('app', 'Approve'), '2' => Yii::t('app', 'Reject')],
             ],
             'customer_category' => [
                 'name' => 'customer category',
@@ -1842,6 +1847,7 @@ class DropDown extends Component {
             'form_type' => ['name' => 'form_type_code', 'fields' => 'form_type_code,form_name,', 'prompt' => Yii::t('app', 'Select Form'), 'model' => 'TblFormType', 'depend' => 'task_type_code'],
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
             'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
+            'rate_class' => ['name' => 'rate_class', 'fields' => 'rate_class_code,rate_class', 'prompt' => 'Select Rate Class', 'model' => 'TblRateClass'],
         ];
         return $label[$l];
     }
