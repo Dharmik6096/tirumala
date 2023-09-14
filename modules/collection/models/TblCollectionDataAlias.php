@@ -319,7 +319,7 @@ class TblCollectionDataAlias extends \app\models\ChildModel {
 
     public function validateBmcCollection($attribute, $params) {
         $MainModel = new TblBmcCollection();
-        if (($this->customer_code != $this->old_customer_code || $this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code || $this->route_code != $this->old_route_code || $this->antibiotic != $this->old_antibiotic)) {
+        if (($this->customer_code != $this->old_customer_code || $this->fat != $this->old_fat || $this->snf != $this->old_snf || $this->qty != $this->old_qty || $this->milk_type_code != $this->old_milk_type_code || $this->milk_quality_type_code != $this->old_milk_quality_type_code || $this->route_code != $this->old_route_code)) {
             $MainModel->milkTypeWiseUnique($MainModel, $this, FALSE, FALSE, TRUE);
         } else if ($this->action_perform == 'UPDATE' && $this->antibiotic != $this->old_antibiotic) {
             
