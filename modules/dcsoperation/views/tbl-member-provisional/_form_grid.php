@@ -100,25 +100,6 @@ $grid_option = [
                 return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
             }
         },
-//        'view' => true,
-//        'update' => function ($url, $model) use ($pending_approval) {
-//            if (!$pending_approval) {
-//                $name = $model->member_name;
-//                $class = ($model->is_approved == 1) ? 'link-disable' : '';
-//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
-//                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-//            }
-//        },
-//        'view' => true,
-//        'update' => function ($url, $model) use ($pending_approval) {
-//            $class = '';
-//            if (!$pending_approval) {
-//                $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
-//            }
-//            $name = $model->member_name;
-//            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-//            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-//        },
         'views' => function($url, $model) use ($pending_approval) {
             if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
                 $icon = '<i class="fa fa-eye"></i>';
