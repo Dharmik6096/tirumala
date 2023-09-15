@@ -1,4 +1,4 @@
-<table class="table table-bordered">
+<table class="table table-bordered" id="purchase_detail_tabel">
     <thead>
         <tr>
             <th>Type</th>
@@ -17,7 +17,7 @@
                 <td><?= $data['milk_quality_type_name'] ?></td>
                 <td><?= $data['silo_no'] ?></td>              
                 <td id="purchase_qty"><?= $data['purchase_qty'] ?></td>
-                <td><?= $data['previous_qty'] ?></td>                
+                <td id="previous_qty"><?= $data['previous_qty'] ?></td>                
             </tr>
         <?php } ?>
     </tbody>

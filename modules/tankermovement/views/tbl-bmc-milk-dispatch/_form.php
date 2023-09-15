@@ -137,7 +137,7 @@ $form = ActiveForm::begin([
         </div>
 
         <div class="col-sm-1 number-validate"> 
-            <?= $form->field($txn_model, 'balance_qty')->textInput(['readonly' => 'readonly']) ?>
+            <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
         </div>
         <div class="col-sm-1 number-validate"> 
             <?= $form->field($txn_model, 'fat')->textInput() ?>
@@ -229,16 +229,21 @@ $(document).ready(function(){
 
 
     $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-qty_diff', function() {
-        var purchase_qty=$('#purchase_qty').text(); 
-        var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
-        var qty_diff=$('#tblbmcmilkdispatchtxn-qty_diff').val();
-        if(qty_diff == ''){
-            qty_diff = 0;
-        }
-        if(dispatch_qty == ''){
-            dispatch_qty = 0;
-        }
-        var balance_qty = parseFloat(purchase_qty) - (parseFloat(dispatch_qty) + parseFloat(qty_diff));
+        var rows = $('#purchase_detail_tabel tbody tr');    
+        var totalQty = 0;
+        var totalBalanceQty = 0;
+
+        rows.each(function() {
+            var purchaseQty = parseFloat($(this).find('#purchase_qty').text()) || 0;
+            var previousQty = parseFloat($(this).find('#previous_qty').text()) || 0;
+            var rowTotalQty = purchaseQty + previousQty;
+            totalQty += rowTotalQty;
+        });        
+
+        var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
+        var qty_diff = parseFloat($('#tblbmcmilkdispatchtxn-qty_diff').val()) || 0;
+        var balance_qty = parseFloat(totalQty) - (dispatch_qty + qty_diff);
+
         if (!isNaN(balance_qty)) {
             balance_qty = Math.max(0, balance_qty);
         } else {
