@@ -386,12 +386,11 @@ $script = "$(document).ready(function () {
         if(bmc_code_val != ''){
             setTimeout(function () {
                  $('#tblbmcmilkdispatch-bmc_code').trigger('change');
-            }, 7000);
+            }, 10000);
         }
     $('#tblbmcmilkdispatch-bmc_code').change(function () {
         $('#tblbmcmilkdispatch-from_date').val('');
         var selectedBmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
-         console.log('Selected BMC Code:', selectedBmcCode); // Debug statement
         $.ajax({
             type: 'GET',
             url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/fetch-from-date']) . "',
