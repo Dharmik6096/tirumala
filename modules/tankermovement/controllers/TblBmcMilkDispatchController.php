@@ -83,6 +83,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             $model->scenario = 'create';
         }
+        $this->setCode($model);
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
@@ -185,6 +186,15 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     'model' => $model,
                     'txn_model' => $txn_model,
         ]);
+    }
+
+    public function setCode($model) {
+        $plants = explode(',', $_SESSION['Plant']);
+        $mccs = explode(',', $_SESSION['MCC']);
+        $bmcs = explode(',', $_SESSION['BMC']);
+        count($plants) == 1 ? $model->plant_code = $plants[0] : '';
+        count($mccs) == 1 ? $model->mcc_plant_code = $mccs[0] : '';
+        count($bmcs) == 1 ? $model->bmc_code = $bmcs[0] : '';
     }
 
     /**
@@ -356,6 +366,18 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $msg = 'Dispatch Detail Not Found.';
         }
         return ['status' => 'error', 'msg' => $msg];
+    }
+
+    public function actionFetchFromDate() {
+        $stock_date = TblBmcDispatchStock::find()
+                ->where(['bmc_code' => $_GET['bmc_code']])
+                ->orderBy(['to_date' => SORT_DESC])
+                ->one();
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!empty($stock_date->to_date)) {
+            $dispatch_date = Yii::$app->formatter->asDate($stock_date->to_date, 'dd-MM-Y');
+            return ['dispatch_date' => $dispatch_date];
+        }
     }
 
 }

@@ -27,6 +27,18 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
         </div>
         <div class="col-md-8 micro_form <?= $disabled ?> padding-bottom-20">
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
+            </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
@@ -38,20 +50,6 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
-            <div class="clearfix"></div>
-
-            <div class="col-sm-2 filldata">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata"> 
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
@@ -381,4 +379,66 @@ $script = "$(document).ready(function(){
     }
 });";
 $this->registerJs($script, View::POS_END, 'bmc-config-popup');
+?>
+<?php
+$script = "$(document).ready(function () {
+    var bmc_code_val = $('#tblbmcmilkdispatch-bmc_code').val();    
+        if(bmc_code_val != ''){
+            setTimeout(function () {
+                 $('#tblbmcmilkdispatch-bmc_code').trigger('change');
+            }, 7000);
+        }
+    $('#tblbmcmilkdispatch-bmc_code').change(function () {
+        $('#tblbmcmilkdispatch-from_date').val('');
+        var selectedBmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
+         console.log('Selected BMC Code:', selectedBmcCode); // Debug statement
+        $.ajax({
+            type: 'GET',
+            url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/fetch-from-date']) . "',
+            data: { bmc_code: selectedBmcCode },
+            success: function (response) {
+               if (response && response.dispatch_date) {
+                    var fromDate = response.dispatch_date.trim();
+                    $('#tblbmcmilkdispatch-from_date').val(fromDate);
+                    $('#tblbmcmilkdispatch-from_date').prop('readonly', true);
+                    $('#tblbmcmilkdispatch-from_date, .field-tblbmcmilkdispatch-from_date').addClass('no_pointer');
+               } else {
+                    $('#tblbmcmilkdispatch-from_date').val('');
+                    $('#tblbmcmilkdispatch-from_date').prop('readonly', false);
+                    $('#tblbmcmilkdispatch-from_date, .field-tblbmcmilkdispatch-from_date').removeClass('no_pointer');
+               }
+            },
+            error: function (error) {
+                console.error('Error fetching from_date:', error);
+            }
+        });
+    });
+});";
+$this->registerJs($script, View::POS_END, 'dispatch-date');
+?>
+<?php
+$script = "
+    $(document).ready(function(){
+        var from_date = $('#tblbmcmilkdispatch-from_date').val();
+        var to_date = $('#tblbmcmilkdispatch-to_date').val();
+
+        if (from_date !== '' && to_date !== '') {
+            $('#tblbmcmilkdispatch-to_date').trigger('change');
+        }
+
+        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
+            var from_date = $('#tblbmcmilkdispatch-from_date').val();
+            var to_date = $('#tblbmcmilkdispatch-to_date').val();
+            if (to_date < from_date) {
+                var errorMessage = 'must not be less than from date.';
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; \">' + errorMessage + '</div>';
+                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+            } else {
+                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+            }
+        });
+    });
+";
+$this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>
