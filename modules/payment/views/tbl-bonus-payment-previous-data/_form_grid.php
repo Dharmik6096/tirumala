@@ -40,6 +40,7 @@ $attribute = [
             return Yii::$app->controls->view_date($model->transaction_date);
         }],
         ['attribute' => 'amount'],
+        ['attribute' => 'remarks'],
 ];
 $grid_option = [
     'id' => 'bonus-payment-previous-data',

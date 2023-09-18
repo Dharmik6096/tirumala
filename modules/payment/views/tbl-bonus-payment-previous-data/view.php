@@ -67,22 +67,8 @@ $this->title = Yii::$app->label->title('view', 'Bill Head');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                                 [
-                                'attribute' => 'bill_head_code',
-                                'value' => Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name'),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                        ],
-                    ],
-                        [
-                        'columns' => [
-                                [
                                 'attribute' => 'transaction_date',
                                 'value' => Yii::$app->controls->view_date($model->transaction_date),
-                                'valueColOptions' => ['style' => 'width:30%']
-                            ],
-                                [
-                                'attribute' => 'bill_head_code',
-                                'value' => Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -91,7 +77,11 @@ $this->title = Yii::$app->label->title('view', 'Bill Head');
                         'columns' => [
                                 [
                                 'attribute' => 'amount',
-                                'valueColOptions' => ['style' => 'width:100%']
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'remarks',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
