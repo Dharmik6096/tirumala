@@ -1373,5 +1373,4 @@ class TblDcs extends ChildModel {
 
         return $query->all();
     }
-
 }
