@@ -20,6 +20,7 @@ use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\installation\models\TblAndroidInstallation;
 use app\modules\organisation\models\TblChannelMaster;
+use app\modules\globalmaster\models\TblMasterType;
 
 /**
  * This is the model class for table "tbl_dcs_bmc".
@@ -559,6 +560,10 @@ class TblDcsBmc extends \app\models\ChildModel {
             $query->andFilterWhere(['is_mcc' => 1]);
         }
         return $query->all();
+    }
+    
+    public function getMasterType() {
+        return $this->hasOne(TblMasterType::className(), ['master_type_code' => 'type']);
     }
 
 }

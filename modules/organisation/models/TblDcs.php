@@ -41,6 +41,7 @@ use app\modules\organisation\models\TblRouteMappingSources;
 use app\modules\organisation\models\TblDcsDeactive;
 use app\modules\organisation\models\TblDcsVendorStatus;
 use app\modules\installation\models\TblAndroidInstallation;
+use app\modules\globalmaster\models\TblMasterType;
 
 //use app\modules\payment\models\TblDcsPaymentCycleApplicability;
 //use app\modules\vsp\models\TblBillHeadApplicability;
@@ -1372,6 +1373,10 @@ class TblDcs extends ChildModel {
             $query->andWhere(['dcs_code' => explode(',', Yii::$app->session->get('Dcs'))]);
 
         return $query->all();
+    }
+    
+    public function getMasterType() {
+        return $this->hasOne(TblMasterType::className(), ['master_type_code' => 'type']);
     }
 
 }

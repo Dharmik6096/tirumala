@@ -183,7 +183,7 @@ echo GhostMenu::widget([
                 ['label' => 'Scheme Rate', 'url' => ['/dcsoperation/tbl-scheme-rate/index'], 'active' => ($cntrl == 'tbl-scheme-rate' && $action == 'index')],
                 ['label' => 'Milk Cost Param', 'url' => ['/collection/tbl-milkcost-param/index'], 'active' => ($cntrl == 'tbl-milkcost-param')],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => !$rateAppApproval,
+                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => $rateAppApproval,
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Rate Applicability Approval<b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],

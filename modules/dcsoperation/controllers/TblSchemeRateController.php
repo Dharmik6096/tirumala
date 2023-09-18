@@ -231,7 +231,6 @@ class TblSchemeRateController extends \app\controllers\ChildController {
             $transaction->rollback();
             $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
         }
-
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
