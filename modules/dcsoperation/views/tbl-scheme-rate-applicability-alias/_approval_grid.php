@@ -30,7 +30,7 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
                 return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
             }, 'filter' => false],
             ['attribute' => 'bmc_name', 'label' => Yii::t('app', 'Parent Name'), 'value' => function($model) {
-                return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, FALSE, FALSE) . '(' . Yii::$app->general->getmultiforeignkey($model->dcsCode, ['bmcCode', 'masterType'], 'master_type') . ')';
+                return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, FALSE, FALSE);
             }, 'filter' => false],
             ['attribute' => 'from_date', 'value' => function($model) {
                 return Yii::$app->controls->view_date($model->from_date);
@@ -43,9 +43,6 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
             }, 'filter' => false],
             ['attribute' => 'to_shift', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->toShift, 'shift');
-            }, 'filter' => false],
-            ['attribute' => 'applicable_for', 'label' => Yii::t('app', 'Applicable For'), 'value' => function($model) {
-                return Yii::$app->general->getmultiforeignkey($model->dcsCode, ['masterType'], 'master_type');
             }, 'filter' => false],
             ['attribute' => 'applicable_code', 'filter' => false],
             ['attribute' => 'dcs_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
