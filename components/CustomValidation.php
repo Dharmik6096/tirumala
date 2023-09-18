@@ -271,7 +271,7 @@ class CustomValidation extends Component {
                     'default' => [
                             [['firstname'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'route-create' => [
                             [['firstname', 'mobile_no'], 'required'],
@@ -294,17 +294,17 @@ class CustomValidation extends Component {
                     'plant-create' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'mcc-create' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                     'bmc-create' => [
                             [['firstname', 'mobile_no'], 'required'],
                             [['mobile_no'], 'required', 'on' => 'additional'],
-                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
+//                            [['mobile_no'], 'CheckDuplicate', 'except' => 'verification'],
                     ],
                 ],
                 'TblMember' => [
@@ -424,6 +424,78 @@ class CustomValidation extends Component {
                             [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
 //                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'plant_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    ],
+                ],
+            ],
+            'CARGILL' => [
+                'TblContactDetails' => [
+                    'default' => [
+                        [['firstname'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-import' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-import' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'plant-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'mcc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'bmc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                ],
+            ],
+            'KOTMALE' => [
+               'TblContactDetails' => [
+                    'default' => [
+                        [['firstname'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'route-import' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'dcs-import' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'plant-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'mcc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
+                    ],
+                    'bmc-create' => [
+                        [['firstname', 'mobile_no'], 'required'],
+                        [['mobile_no'], 'required', 'on' => 'additional'],
                     ],
                 ],
             ],
