@@ -64,13 +64,13 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
             <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'qty')->textInput() ?>
-            </div>
-            <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'gross_weight')->textInput() ?>
             </div>
             <div class="col-sm-2 number-validate"> 
                 <?= $form->field($model, 'tare_weight')->textInput() ?>
+            </div>
+            <div class="col-sm-2 number-validate"> 
+                <?= $form->field($model, 'qty')->textInput(['readonly' => 'readonly']) ?>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'tare_weight_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -432,6 +432,18 @@ $script = "
             }
     };
     
+    $(document).on('change','#tblmilkvehicleentry-gross_weight,#tblmilkvehicleentry-tare_weight', function() {
+        var gross_weight=$('#tblmilkvehicleentry-gross_weight').val() || 0;
+        var tare_weight=$('#tblmilkvehicleentry-tare_weight').val() || 0;
+
+        var qty = parseFloat(gross_weight) - parseFloat(tare_weight);
+        if (!isNaN(qty)) {
+            qty = Math.max(0, qty);
+        } else {
+            qty = 0;
+        }
+        $('#tblmilkvehicleentry-qty').val((qty).toFixed(2));
+    });
 
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');

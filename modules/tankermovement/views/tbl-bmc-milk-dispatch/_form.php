@@ -220,20 +220,57 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php
-$script = "$(document).ready(function(){
-var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
- if(bmc_milk_dispatch_code!=''){
-$('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
-}
+$script = "
+$(document).ready(function(){
+    var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
+    if(bmc_milk_dispatch_code!=''){
+        $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
+    }
+
+
+    $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-qty_diff', function() {
+        var rows = $('#purchase_detail_tabel tbody tr');    
+        var totalQty = 0;
+        var totalBalanceQty = 0;
+
+        rows.each(function() {
+            var purchaseQty = parseFloat($(this).find('#purchase_qty').text()) || 0;
+            var previousQty = parseFloat($(this).find('#previous_qty').text()) || 0;
+            var rowTotalQty = purchaseQty + previousQty;
+            totalQty += rowTotalQty;
+        });        
+
+        var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
+        var qty_diff = parseFloat($('#tblbmcmilkdispatchtxn-qty_diff').val()) || 0;
+        var balance_qty = parseFloat(totalQty) - (dispatch_qty + qty_diff);
+
+        if (!isNaN(balance_qty)) {
+            balance_qty = Math.max(0, balance_qty);
+        } else {
+            balance_qty = 0;
+        }
+        $('#tblbmcmilkdispatchtxn-balance_qty').val((balance_qty).toFixed(2));
+    });
 });
 
+$(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
+    var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
+    var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
+    if(rtpl !='' && dispatch_qty!=''){
+        $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
+    } 
+});
 
- $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
- var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
- var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
- if(rtpl !='' && dispatch_qty!=''){
-  $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
- } 
+$(document).on('change','#tblbmcmilkdispatchtxn-qty_diff_type_code', function() {
+    var qtyDiffTypeCode = $(this).val();
+    
+    if (qtyDiffTypeCode === '1') {
+        $('#tblbmcmilkdispatchtxn-qty_diff').prop('readonly', true);
+        $('#tblbmcmilkdispatchtxn-qty_diff').val('0');
+    } else {
+        $('#tblbmcmilkdispatchtxn-qty_diff').prop('readonly', false);
+        $('#tblbmcmilkdispatchtxn-qty_diff').val('');
+    }
 });
 
 ";
