@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 
-$this->title = Yii::$app->label->title('view', 'Bill Head');
+$this->title = Yii::$app->label->title('view', 'Bonus Payment - Previous Data');
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
