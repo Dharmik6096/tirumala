@@ -1431,6 +1431,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'DcsHistory';
         return $this->actionIndex();
     }
+    
+    public function actionRmrdDataExport() {
+        $this->report = 'RmrdDataExport';
+        return $this->actionIndex();
+    }
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2930,6 +2935,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_history_tbl_dcs_master',
                 'scenario' => 'DcsHistory',
                 'title' => 'Dcs History',
+            ],
+            'RmrdDataExport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
+                'scenario' => 'RMRDDataExport',
+                'title' => 'RMRD Data Export',
             ],
         ];
         return $label[$l];
