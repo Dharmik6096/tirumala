@@ -386,7 +386,7 @@ $script = "$(document).ready(function () {
         if(bmc_code_val != ''){
             setTimeout(function () {
                  $('#tblbmcmilkdispatch-bmc_code').trigger('change');
-            }, 10000);
+            }, 8000);
         }
     $('#tblbmcmilkdispatch-bmc_code').change(function () {
         $('#tblbmcmilkdispatch-from_date').val('');
@@ -416,28 +416,33 @@ $script = "$(document).ready(function () {
 $this->registerJs($script, View::POS_END, 'dispatch-date');
 ?>
 <?php
-$script = "
-    $(document).ready(function(){
+$script = "$(document).ready(function(){
+    $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
         var to_date = $('#tblbmcmilkdispatch-to_date').val();
-
+        
         if (from_date !== '' && to_date !== '') {
-            $('#tblbmcmilkdispatch-to_date').trigger('change');
-        }
+            // Split date strings and format them as yyyy-mm-dd
+            var from_date_parts = from_date.split('-');
+            var to_date_parts = to_date.split('-');
+            var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
+            var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+            
+            var fromDateObj = new Date(formatted_from_date);
+            var toDateObj = new Date(formatted_to_date);
 
-        $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
-            var from_date = $('#tblbmcmilkdispatch-from_date').val();
-            var to_date = $('#tblbmcmilkdispatch-to_date').val();
-            if (to_date < from_date) {
+            if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                 var errorMessage = 'must not be less than from date.';
-                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; \">' + errorMessage + '</div>';
-                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
+                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
                 $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
             } else {
                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
             }
-        });
+        } else {
+            $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+        }
     });
-";
+});";
 $this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>
