@@ -331,18 +331,9 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                     return $this->redirect(['index']);
                 }
             } else {
-                /*  $model = new TblMemberPaymentAlias();
-                  $model->load(Yii::$app->request->post());
-                  $data = Yii::$app->request->post();
-                  $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
-                  $dcs_ai = 0;
-                  $member_ai = 0;
-                  return $this->redirect(['list-member-payment-summary-data', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code]); */
-
                 $model = new TblMemberPaymentAlias();
                 $model->load(Yii::$app->request->post());
                 $data = Yii::$app->request->post();
-                $model->dcs_code = json_decode($model->dcs_code);
                 $model->dcs_code = !empty($data['selection']) ? $data['selection'] : $model->dcs_code;
                 $searchModel = new TblMemberPaymentSummaryAliasSearch();
                 $searchModel->attributes = $model->attributes;
@@ -365,7 +356,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 ]);
             }
         }
-        return $this->redirect(\yii\helpers\Url::previous());
     }
 
     public function actionMemberPaymentAdjust() {

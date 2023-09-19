@@ -38,14 +38,14 @@ class LoginForm extends Model {
      */
     public function rules() {
         return [
-            [['username', 'password'], 'required'],
-            [['type'], 'required', 'on' => 'non_national'],
-            [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
-            ['rememberMe', 'boolean'],
-            [['organization', 'type', 'state'], 'safe'],
-            ['password', 'validatePassword'],
-            [['db'], 'safe'],
-            ['username', 'validateIP'],
+                [['username', 'password'], 'required'],
+                [['type'], 'required', 'on' => 'non_national'],
+                [['organization'], 'required', 'on' => 'non_national', 'message' => 'Organization cannot be blank.'],
+                ['rememberMe', 'boolean'],
+                [['organization', 'type', 'state'], 'safe'],
+                ['password', 'validatePassword'],
+                [['db'], 'safe'],
+                ['username', 'validateIP'],
         ];
     }
 
@@ -110,31 +110,8 @@ class LoginForm extends Model {
     }
 
     public function setSession() {
-        try {
-            $model = new \app\models\TblClientPayment();
-            $overDuePayment = $model->getOverDuePayment();
-            if (!empty($overDuePayment)) {
-                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
-                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
-                    'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $overDueDate]);
-                return false;
-            } else {
-                $pendingPayment = $model->getPendingPaymentCount();
-                if (!empty($pendingPayment)) {
-                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
-                }
-            }
-        } catch (UserException $e) {
-            
-        } catch (\yii\db\Exception $e) {
-            
-        } catch (Exception $ex) {
-            
-        }
-        $user = User::find()->where(['username' => $this->username, 'is_active' => 1])->one();
 
+        $user = User::find()->where(['username' => $this->username, 'is_active' => 1])->one();
         if (!isset($user->user_code)) {
             $this->addError('useranme', UserManagementModule::t('front', 'Insufficiant data'));
             return false;
@@ -152,6 +129,7 @@ class LoginForm extends Model {
             $this->addError('useranme', UserManagementModule::t('front', 'No oraganisation has assigned'));
             return FALSE;
         }
+
         $organisation_type = $list[0]['organization_type'];
         $main_org_type = ($organisation_type == 'FEDERATION') ? 'PCDF' : 'UNION';
         $district = '';
@@ -165,6 +143,7 @@ class LoginForm extends Model {
             $maker_checker = 0;
         }
         $organization_logo = '';
+        $federation = '';
         $union = '';
         $plant = '';
         $mcc = '';
@@ -261,12 +240,36 @@ class LoginForm extends Model {
                 if (count($name) == 1) {
                     $tableName = TblViewHistoryTableList::find()->where(['union_code' => explode(',', $union)])->all();
                     if (count($tableName) > 0) {
-                        $ViewHistory = implode(',', array_map(function($tableName) {
+                        $ViewHistory = implode(',', array_map(function ($tableName) {
                                     return $tableName->table_name;
                                 }, $tableName));
                     }
                 }
                 break;
+        }
+        $union_list = !empty($union) ? explode(',', $union) : NULL;
+        try {
+            $model = new \app\models\TblClientPayment();
+            $overDuePayment = $model->getOverDuePayment($union_list);
+            if (!empty($overDuePayment)) {
+                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
+                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
+                    'message' => 'Dear Customer, Your payment for the Solution Services are due, services are terminated on ' . $overDueDate]);
+                return false;
+            } else {
+                $pendingPayment = $model->getPendingPaymentCount($union_list);
+                if (!empty($pendingPayment)) {
+                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
+                }
+            }
+        } catch (UserException $e) {
+            return false;
+        } catch (\yii\db\Exception $e) {
+            return false;
+        } catch (Exception $ex) {
+            return false;
         }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
@@ -312,7 +315,7 @@ class LoginForm extends Model {
 
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['federation_code'];
                     }, $list));
         else
@@ -335,7 +338,7 @@ class LoginForm extends Model {
         }
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['union_code'];
                     }, $list));
         else
@@ -356,7 +359,7 @@ class LoginForm extends Model {
         }
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['plant_code'];
                     }, $list));
         else
@@ -377,7 +380,7 @@ class LoginForm extends Model {
         }
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['mcc_plant_code'];
                     }, $list));
         else
@@ -398,7 +401,7 @@ class LoginForm extends Model {
         }
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['bmc_code'];
                     }, $list));
         else
@@ -415,7 +418,7 @@ class LoginForm extends Model {
             $query->andWhere(['bmc_code' => explode(',', $bmc)]);
         $list = $query->asArray()->all();
         if (count($list) > 0)
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['dcs_code'];
                     }, $list));
         else
@@ -474,7 +477,7 @@ class LoginForm extends Model {
 
         $model = new models\TblUnionsDistrictMapping();
         $districts = $model->getUnionDistrict($unionCode, explode(',', $stateCode));
-        return implode(',', array_map(function($a) {
+        return implode(',', array_map(function ($a) {
                     return $a['district_code'];
                 }, $districts));
     }
@@ -485,7 +488,7 @@ class LoginForm extends Model {
         $query->where(['federation_code' => $fed_code, 'is_active' => 1]);
         $list = $query->asArray()->all();
         if (count($list) > 0) {
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['state_code'];
                     }, $list));
         } else {
@@ -503,7 +506,7 @@ class LoginForm extends Model {
             $state_query->select(['distinct(state_code)']);
             $state_query->where(['district_code' => $list, 'is_active' => 1]);
             $state_list = $state_query->asArray()->all();
-            return implode(',', array_map(function($a) {
+            return implode(',', array_map(function ($a) {
                         return $a['state_code'];
                     }, $state_list));
         } else {
