@@ -47,9 +47,6 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => FALSE,
     'default_sorting' => FALSE,
-    'actions' => [
-        'view' => true,
-    ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>

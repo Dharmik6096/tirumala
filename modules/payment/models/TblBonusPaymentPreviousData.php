@@ -53,35 +53,28 @@ class TblBonusPaymentPreviousData extends ChildModel {
      */
     public function rules() {
         return [
-            [['transaction_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
-            [['amount'], 'number'],
-            [['originating_type'], 'integer'],
-            [['union_code'], 'string', 'max' => 3],
-            [['plant_code', 'mcc_plant_code', 'bmc_code', 'bill_head_code'], 'string', 'max' => 10],
-            [['dcs_code'], 'string', 'max' => 12],
-            [['customer_type', 'customer_code', 'bill_head_for'], 'string', 'max' => 20],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['dcs_code'], 'required', 'on' => ['memberBillHead', 'importDetailCsv']],
-            [['member_code'], 'required', 'on' => ['importDetailCsv']],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'customer_type'], 'required', 'except' => ['importCsv', 'importDetailCsv']],
-            [['transaction_date'], 'required', 'on' => ['importCsv', 'importDetailCsv']],
+            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'bill_head_code', 'originating_type', 'customer_type', 'bill_head_for', 'transaction_date', 'created_at', 'updated_at', 'originating_org_code', 'originating_org_type', 'amount', 'remarks'], 'safe'],
             [['amount'], 'number', 'min' => 0],
+            [['customer_code'], 'checkUnique', 'on' => 'importCsv'],
+            [['union_code'], 'string', 'max' => 3],
+            [['bmc_code', 'bill_head_code'], 'string', 'max' => 10],
+            [['dcs_code'], 'string', 'max' => 12],
+            [['dcs_code', 'member_code', 'transaction_date'], 'required', 'on' => ['importCsv']],
             [['bmc_code'], function ($attribute, $params) {
                     Yii::$app->general->validateBMC($this, $attribute, 'bmc_code');
-                }, 'on' => ['importCsv', 'importDetailCsv']],
-            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv', 'importDetailCsv']],
+                }, 'on' => ['importCsv']],
+            [['bmc_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblDcsBmc::className(), 'targetAttribute' => ['bmc_code' => 'bmc_code'], 'on' => ['importCsv']],
             [['bill_head_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBillHead::className(), 'targetAttribute' => ['bill_head_code' => 'bill_head_code'], 'on' => ['importCsv']],
             [['customer_type'], function ($attribute, $params) {
                     $this->union_code = Yii::$app->general->getforeignkey($this->bmcCode, 'union_code');
                     Yii::$app->general->validateGlobalData($this, $attribute, 'customer_type', FALSE, TRUE, ['union_code' => $this->union_code]);
                 }, 'on' => ['importCsv']],
             [['customer_type'], 'exist', 'skipOnError' => true, 'targetClass' => TblCustomerType::className(), 'targetAttribute' => ['customer_type' => 'customer_type'], 'on' => ['importCsv']],
-            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv', 'importDetailCsv']],
-            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv', 'importDetailCsv']],
-            [['transaction_date'], 'convertDate', 'on' => ['importCsv', 'importDetailCsv']],
-            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv', 'importDetailCsv']],
-            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv', 'importDetailCsv']],
+            [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
+            [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
+            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv']],
             [['customer_code'], 'required', 'on' => ['importCsv']],
             [['customer_code'], function ($attribute, $params) {
                     if (empty($this->getErrors())) {
@@ -89,8 +82,8 @@ class TblBonusPaymentPreviousData extends ChildModel {
                         $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
                         Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
                     }
-                }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv', 'importDetailCsv']],
-            [['bmc_code'], 'setAutoData', 'skipOnError' => true, 'on' => ['create', 'default', 'memberBillHead', 'importCsv', 'importDetailCsv']],
+                }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv']],
+            [['bmc_code'], 'setAutoData', 'skipOnError' => true, 'on' => ['importCsv']],
         ];
     }
 
@@ -217,6 +210,16 @@ class TblBonusPaymentPreviousData extends ChildModel {
         if (empty($this->getErrors())) {
             $billHead = $this->billHeadCode;
             $this->bill_head_for = $billHead->bill_head_for;
+        }
+    }
+
+    public function checkUnique($attribute) {
+        $data = 0;
+        $data = $this->find()->where(['customer_code' => $this->customer_code, 'transaction_date' => $this->transaction_date, 'bill_head_code' => $this->bill_head_code])
+                ->count();
+
+        if ($data > 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Member Code, Transaction Date, and Bill Head Code must be unique.'));
         }
     }
 
