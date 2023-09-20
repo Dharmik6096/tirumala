@@ -33,7 +33,7 @@ $tot_amt = array_sum(array_map(function($array) {
         }, $array));
 ?>
 <div class="modal modal-default fade" id="MemberPaymentAdjustmentModel" role="dialog">
-    <div class="modal-dialog width_100-50">
+    <div class="modal-dialog width_100-50 modal-xl">
 
         <?php
         $form = ActiveForm::begin([
