@@ -560,5 +560,4 @@ class TblDcsBmc extends \app\models\ChildModel {
         }
         return $query->all();
     }
-
 }

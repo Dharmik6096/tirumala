@@ -18,6 +18,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use webvimark\modules\UserManagement\models\User;
 use app\modules\dcsoperation\models\TblSchemeRateApplicabilitySearch;
+use app\modules\dcsoperation\models\TblSchemeRateApplicabilityAlias;
 
 /**
  * TblSchemeRateController implements the CRUD actions for TblSchemeRate model.
@@ -124,30 +125,36 @@ class TblSchemeRateController extends \app\controllers\ChildController {
         $appModel->trans_label = 'scheme rate applicability';
         $appModel->mcc_field_name = 'applicable_code';
         $appModel->options = ['tanker_rate'];
-        $fromDate = Yii::$app->controls->view_date($model->from_date);
-        $toDate = Yii::$app->controls->view_date($model->to_date);
-        $fromShift = $model->from_shift == 1 ? 'M' : 'E';
-        $toShift = $model->to_shift == 1 ? 'M' : 'E';
+        $appModel->model->from_date = $model->from_date;
+        $appModel->model->to_date = $model->to_date;
+        $appModel->model->from_shift = $model->from_shift;
+        $appModel->model->to_shift = $model->to_shift;
+        $appModel->model->rtpl = $model->rtpl;
+        $appModel->model->rate_class = $model->rate_class;
+        $fromDate = $model->from_date;
+        $toDate = $model->to_date;
+        $fromShift = $model->from_shift;
+        $toShift = $model->to_shift;
         $rate = $model->rtpl;
         $appModel->header_title = ' - ' . $id . '(Rate : ' . $rate . ', ' . $fromDate . ':' . $fromShift . ' To ' . $toDate . ':' . $toShift . ') ';
         $rateMccModel = new TblSchemeRateMcc();
         $rateMcc = $rateMccModel->getRateMcc($id);
 
         $appModel->fields = [
-            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Parent Code'), 'value' => function($model) {
+            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Parent Code'), 'value' => function ($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, TRUE, FALSE);
                 }],
-            'bmc_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Parent Name'), 'value' => function($model) {
+            'bmc_name' => ['view' => ['grid'], 'label' => Yii::t('app', 'Parent Name'), 'value' => function ($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, FALSE, FALSE, FALSE);
                 }],
             'applicable_code' => ['view' => ['grid'], 'value' => 'applicable_code'],
-            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function($model) {
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function ($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, false, FALSE, TRUE);
                 }],
-            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
                     return Yii::$app->general->getCustomer($model, $model->applicable_for, true);
                 }],
-            'mcc_name' => ['view' => ['grid'], 'value' => function($model) {
+            'mcc_name' => ['view' => ['grid'], 'value' => function ($model) {
                     if ($model->applicable_for == 'PLANT') {
                         return Yii::$app->general->getforeignkey($model->plantCode, 'name');
                     } else if ($model->applicable_for == 'MCC') {
@@ -224,7 +231,6 @@ class TblSchemeRateController extends \app\controllers\ChildController {
             $transaction->rollback();
             $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
         }
-
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
     }
@@ -320,5 +326,4 @@ class TblSchemeRateController extends \app\controllers\ChildController {
                     'dataProvider' => $dataProvider,
         ]);
     }
-
 }
