@@ -80,4 +80,7 @@ class TblAttachment extends \app\models\ChildModel {
         return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
+//    public function getAttachment($pro_member_code) {
+//        return $this->find()->where(['module_code' => $pro_member_code])->all();
+//    }
 }

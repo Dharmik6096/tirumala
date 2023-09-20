@@ -87,15 +87,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $this->model->scenario = Yii::$app->session['eiplCode'];
         }
         if ($this->model->load(Yii::$app->request->post())) {
-            if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-                if (Yii::$app->request->post('submitBtn') === 'approve') {
-                    $this->model->is_approved = 1;
-                    $this->model->approved_at = date('Y-m-d H:i:s');
-                    $this->model->approved_by = Yii::$app->session['UserCode'];
-                } else {
-                    $this->model->is_approved = 0;
-                }
-            }
             $this->model->is_approved = 0;
             $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
 //var_dump($this->model->unionCode->federationCode);exit();
@@ -111,14 +102,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $master_model = [];
                 $master_model[] = $this->model;
-                if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-                    if ($this->model->is_approved == 1) {
-                        $tblMember = new TblMember();
-                        $tblMember->scenario = 'ApprovalMember';
-                        $tblMember->attributes = $this->model->attributes;
-                        $master_model[] = $tblMember;
-                    }
-                }
                 $transaction = $this->generalModel->saveTransaction($master_model, ['member provisional', 'create']);
                 if ($transaction == 'customRedirect') {
                     return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
@@ -210,16 +193,16 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                     }
                     $master_model[] = $historyModel;
-                }
-                $transaction = $this->generalModel->saveDeleteTransaction($master_model, $child_model, $deleteModel, ['Member Provisional', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
-                } else {
-                    $ex_error = $this->model->getErrors();
-                    if (empty($ex_error)) {
-                        $main_error = $tblMember->getErrors();
-                        foreach ($main_error as $att => $err) {
-                            $this->model->addError($att, $err[0]);
+                    $transaction = $this->generalModel->saveDeleteTransaction($master_model, $child_model, $deleteModel, ['Member Provisional', 'edit']);
+                    if ($transaction == 'customRedirect') {
+                        return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
+                    } else {
+                        $ex_error = $this->model->getErrors();
+                        if (empty($ex_error)) {
+                            $main_error = $tblMember->getErrors();
+                            foreach ($main_error as $att => $err) {
+                                $this->model->addError($att, $err[0]);
+                            }
                         }
                     }
                 }
@@ -242,24 +225,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         }
     }
 
-//    public function actionUpdate($id) {
-//        $this->model = $this->findModel($id);
-//        $this->viewFile = 'update';
-//
-//        if (Yii::$app->request->post()) {
-//            $historyModel = new TblMemberProvisionalHistory();
-//            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-//            $this->model->load(Yii::$app->request->post());
-//            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
-//            if ($transaction !== FALSE) {
-//                return $this->{$transaction}();
-//            }
-//        }
-//        return $this->render('update', [
-//                    'model' => $this->model
-//        ]);
-//    }
-
     public function actionProvisionalMembersApproval() {
         $searchModel = new TblMemberProvisionalSearch();
         $dataProvider = $searchModel->searchApprovalData(Yii::$app->request->queryParams);
@@ -278,6 +243,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model = $this->findModel($value);
                 if ($this->model->is_approved != 1) {
                     $this->model->is_approved = 1;
+                    $this->model->provisional_status = 'Approve';
                     $this->model->approved_at = date('Y-m-d H:i:s');
                     $this->model->approved_by = Yii::$app->session['UserCode'];
                     if ($this->model->validate()) {
@@ -306,6 +272,22 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $child_model[] = $tblProvisionalMilkCollectionHistory;
                             }
                         }
+
+//                        $tblAttachment = new TblAttachment();
+//                        $tblAttachment = $tblAttachment->getAttachment($this->model->provisional_member_code);
+//                        if (!empty($tblAttachment)) {
+//                            foreach ($tblAttachment as $key => $value) {
+//                                $deleteModel[] = $value;
+//                                $tblAttachments = new TblAttachment();
+//                                $tblAttachments->attributes = $value->attributes;
+//                                $tblAttachments->module_name = 'tbl_member';
+//                                $tblAttachments->module_code = $this->model->member_code;
+//                                $tblAttachmentHistory = new TblAttachmentHistory();
+//                                Yii::$app->operation->history($value, $tblAttachmentHistory, DELETE);
+//                                $master[] = $tblAttachments;
+//                                $master[] = $tblAttachmentHistory;
+//                            }
+//                        }
                         $i++;
                     } else {
                         $errors .= $this->model->member_code . ',';
@@ -447,13 +429,55 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     }
                 }
 
-                if (empty($error_msg)) {
-                    $modelStages = new TblApprovalStagesDetail();
-                    $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
-                    $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
+                    if (Yii::$app->request->post('request_button') === 'approve') {
+                        $model->is_approved = 1;
+                        $model->approved_at = date('Y-m-d H:i:s');
+                        $model->approved_by = Yii::$app->session['UserCode'];
+                        $model->provisional_status = 'Approve';
+                    } else {
+                        $model->is_approved = 0;
+                        $model->provisional_status = 'Register';
+                    }
                     $save_model[] = $model;
+                }
 
+                if (empty($error_msg)) {
+                    if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 1) {
+                        $modelStages = new TblApprovalStagesDetail();
+                        $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
+                        $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
+                        $save_model[] = $model;
+                    }
+                    if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
+                        if ($model->is_approved == 1) {
+                            $tblMember = new TblMember();
+                            $tblMember->scenario = 'ApprovalMember';
+                            $tblMember->attributes = $model->attributes;
+                            $save_model[] = $tblMember;
+                            $deleteModel = [];
+//                            $tblAttachment = new TblAttachment();
+//                            $tblAttachment = $tblAttachment->getAttachment($model->provisional_member_code);
+//                            if (!empty($tblAttachment)) {
+//                                foreach ($tblAttachment as $key => $value) {
+//                                    $deleteModel[] = $value;
+//                                    $tblAttachments = new TblAttachment();
+//                                    $tblAttachments->attributes = $value->attributes;
+//                                    $tblAttachments->module_name = 'tbl_member';
+//                                    $tblAttachments->module_code = $model->member_code;
+//                                    $tblAttachmentHistory = new TblAttachmentHistory();
+//                                    Yii::$app->operation->history($value, $tblAttachmentHistory, DELETE);
+//                                    $save_model[] = $tblAttachments;
+//                                    $save_model[] = $tblAttachmentHistory;
+//                                }
+//                            }
+//                            $transaction = $this->generalModel->saveDeleteTransaction([], $save_model, $deleteModel, ['Document Upload', 'create']);
+//                        } else {
+                            $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
+                        }
+                    }
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
+
                     if ($transaction == 'customRedirect') {
                         $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
                     } else {
@@ -542,6 +566,21 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $model_save[] = $tblProvisionalMilkCollectionHistory;
                             }
                         }
+//                        $tblAttachment = new TblAttachment();
+//                        $tblAttachment = $tblAttachment->getAttachment($memberModel->provisional_member_code);
+//                        if (!empty($tblAttachment)) {
+//                            foreach ($tblAttachment as $key => $value) {
+//                                $deleteModel[] = $value;
+//                                $tblAttachments = new TblAttachment();
+//                                $tblAttachments->attributes = $value->attributes;
+//                                $tblAttachments->module_name = 'tbl_member';
+//                                $tblAttachments->module_code = $tblMember->member_code;
+//                                $tblAttachmentHistory = new TblAttachmentHistory();
+//                                Yii::$app->operation->history($value, $tblAttachmentHistory, DELETE);
+//                                $model_save[] = $tblAttachments;
+//                                $model_save[] = $tblAttachmentHistory;
+//                            }
+//                        }
                     }
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);

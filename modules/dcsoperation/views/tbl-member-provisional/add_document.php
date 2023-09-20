@@ -7,6 +7,7 @@ use kartik\detail\DetailView;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+use yii\web\View;
 ?>
 
 <div class="panel panel-default panel-main hide-grid-settings">
@@ -114,8 +115,12 @@ use yii\helpers\Url;
                         <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                             <div class="form-group">
                                 <?php
+                                echo Html::hiddenInput('request_button', 'save', ['id' => 'request_button']);
+                                $configValue = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
+
                                 AjaxSubmitButton::begin([
                                     'label' => Yii::t('app', 'Save'),
+                                    'id' => 'request_approve',
                                     'useWithActiveForm' => 'create-document-form',
                                     'ajaxOptions' => [
                                         'type' => 'POST',
@@ -146,6 +151,9 @@ use yii\helpers\Url;
                                         'type' => 'submit'],
                                 ]);
                                 AjaxSubmitButton::end();
+                                if ($configValue == 0) {
+                                    echo Html::button(Yii::t('app', 'Save & Approve'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'approve', 'id' => 'approve']);
+                                }
                                 ?>
                                 <?= Yii::$app->controls->reset(); ?>
                                 <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
@@ -161,3 +169,11 @@ use yii\helpers\Url;
     </div>
 </div>
 
+<?php
+$script = "
+$('#approve').click(function() {
+    $('#request_button').val('approve');
+    $('#request_approve').trigger('click');
+});
+";
+$this->registerJs($script, View::POS_END, 'document');
