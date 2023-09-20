@@ -1416,7 +1416,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionCpliabilityReport() {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
