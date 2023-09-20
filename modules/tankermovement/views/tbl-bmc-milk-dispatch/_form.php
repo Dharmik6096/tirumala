@@ -381,41 +381,6 @@ $script = "$(document).ready(function(){
 $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 ?>
 <?php
-$script = "$(document).ready(function () {
-    var bmc_code_val = $('#tblbmcmilkdispatch-bmc_code').val();    
-        if(bmc_code_val != ''){
-            setTimeout(function () {
-                 $('#tblbmcmilkdispatch-bmc_code').trigger('change');
-            }, 8000);
-        }
-    $('#tblbmcmilkdispatch-bmc_code').change(function () {
-        $('#tblbmcmilkdispatch-from_date').val('');
-        var selectedBmcCode = $('#tblbmcmilkdispatch-bmc_code').val();
-        $.ajax({
-            type: 'GET',
-            url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/fetch-from-date']) . "',
-            data: { bmc_code: selectedBmcCode },
-            success: function (response) {
-               if (response && response.dispatch_date) {
-                    var fromDate = response.dispatch_date.trim();
-                    $('#tblbmcmilkdispatch-from_date').val(fromDate);
-                    $('#tblbmcmilkdispatch-from_date').prop('readonly', true);
-                    $('#tblbmcmilkdispatch-from_date, .field-tblbmcmilkdispatch-from_date').addClass('no_pointer');
-               } else {
-                    $('#tblbmcmilkdispatch-from_date').val('');
-                    $('#tblbmcmilkdispatch-from_date').prop('readonly', false);
-                    $('#tblbmcmilkdispatch-from_date, .field-tblbmcmilkdispatch-from_date').removeClass('no_pointer');
-               }
-            },
-            error: function (error) {
-                console.error('Error fetching from_date:', error);
-            }
-        });
-    });
-});";
-$this->registerJs($script, View::POS_END, 'dispatch-date');
-?>
-<?php
 $script = "$(document).ready(function(){
     $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
