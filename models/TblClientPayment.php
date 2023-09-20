@@ -52,23 +52,21 @@ class TblClientPayment extends ChildModel {
         ];
     }
 
-    public function getOverDuePayment($union_list) {
+    public function getOverDuePayment() {
         $date = date('Y-m-d');
         $dataCount = $this->find()
                 ->where(['<', 'allow_till_date', $date])
                 ->andWhere(['or', ['payment_done' => 0], ['is', 'payment_done', NULL]])
-                ->andFilterWhere(['in', 'union_code', $union_list])
                 ->orderBy('allow_till_date desc')
                 ->one();
         return $dataCount;
     }
 
-    public function getPendingPaymentCount($union_list) {
+    public function getPendingPaymentCount() {
         $date = date('Y-m-d');
         $dataCount = $this->find()
                 ->where(['<=', 'payment_due_date', $date])
                 ->andWhere(['or', ['payment_done' => 0], ['is', 'payment_done', NULL]])
-                ->andFilterWhere(['in', 'union_code', $union_list])
                 ->orderBy('payment_due_date desc')
                 ->one();
         return $dataCount;
