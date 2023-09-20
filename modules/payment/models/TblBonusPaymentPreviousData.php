@@ -74,15 +74,7 @@ class TblBonusPaymentPreviousData extends ChildModel {
             [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['transaction_date'], 'convertDate', 'on' => ['importCsv']],
             [['bmc_code'], 'importData', 'skipOnError' => true, 'on' => ['importCsv']],
-            [['customer_code'], 'required', 'message' => Yii::t('app/validation', 'Name Cannot be blank'), 'except' => ['importCsv']],
             [['customer_code'], 'required', 'on' => ['importCsv']],
-            [['customer_code'], function ($attribute, $params) {
-                    if (empty($this->getErrors())) {
-                        $customer_type = !empty($this->dcs_code) ? 'DCS' : $this->customer_type;
-                        $flag = !empty($this->dcs_code) ? ['data_lock_member', 'billing_lock_member'] : ['data_lock_bmc', 'billing_lock_bmc'];
-                        Yii::$app->general->paymentCycleLock($this, 'transaction_date', 'bmc_code', 'BMC', $customer_type, $flag);
-                    }
-                }, 'skipOnEmpty' => TRUE, 'except' => ['importCsv']],
             [['bmc_code'], 'setAutoData', 'skipOnError' => true, 'on' => ['importCsv']],
         ];
     }
