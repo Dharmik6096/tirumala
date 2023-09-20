@@ -74,7 +74,6 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Transporter'), 'url' => ['/transporter/tbl-transporter/index'], 'active' => ($cntrl == 'tbl-transporter')],
                     ['label' => Yii::t('app', 'Vehicle Master'), 'url' => ['/transporter/tbl-vehicle-master/index'], 'active' => ($cntrl == 'tbl-vehicle-master')],
                     ['label' => Yii::t('app', 'Km Wise Rate'), 'url' => ['/transporter/tbl-km-wise-rate/index'], 'active' => ($cntrl == 'tbl-km-wise-rate')],
-                    ['label' => Yii::t('app', 'Qty Wise Rate'), 'url' => ['/transporter/tbl-qty-wise-rate/index'], 'active' => ($cntrl == 'tbl-qty-wise-rate')],
                     ['label' => Yii::t('app', 'Fuel Rate'), 'url' => ['/transporter/tbl-fuel-rate-master/index'], 'active' => ($cntrl == 'tbl-fuel-rate-master')],
                     ['label' => Yii::t('app', 'Vehicle Km Information (Primary)'), 'url' => ['/transporter/tbl-vehicle-km-info/index'], 'active' => ($cntrl == 'tbl-vehicle-km-info')],
                     ['label' => Yii::t('app', 'Gate Entry'), 'url' => ['/transporter/tbl-gate-entry/index'], 'active' => ($cntrl == 'tbl-gate-entry')],
@@ -85,7 +84,6 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Time Wise Penalty (Primary)'), 'url' => ['/transporter/tbl-transporter-time-wise-penalty/index'], 'active' => ($cntrl == 'tbl-transporter-time-wise-penalty')],
                     ['label' => Yii::t('app', 'Primary Transportation Cost'), 'url' => ['/transporter/tbl-mcc-wise-transportation-cost/index'], 'active' => ($cntrl == 'tbl-mcc-wise-transportation-cost')],
                     ['label' => Yii::t('app', 'Vehicle Extra Km'), 'url' => ['/transporter/tbl-vehicle-extra-km-daywise/index'], 'active' => ($cntrl == 'tbl-vehicle-extra-km-daywise')],
-                    ['label' => Yii::t('app', 'Vehicle Extra Qty'), 'url' => ['/transporter/tbl-vehicle-extra-qty-daywise/index'], 'active' => ($cntrl == 'tbl-vehicle-extra-qty-daywise')],
 //                ['label' => Yii::t('app', 'Mobile Oil Rate'), 'url' => ['/transporter/tbl-mobile-oil-rate-master/index'], 'active' => ($cntrl == 'tbl-mobile-oil-rate-master')],
                 ['label' => Yii::t('app', 'Transporter Payment Head'), 'url' => ['/transporter/tbl-transporter-payment-head/index'], 'active' => ($cntrl == 'tbl-transporter-payment-head')],
                     ['label' => Yii::t('app', 'Vehicle Transporter Payment Head'), 'url' => ['/transporter/tbl-vehicle-transporter-head-mapping/index'], 'active' => ($cntrl == 'tbl-vehicle-transporter-payment-head')],
@@ -128,8 +126,8 @@ echo GhostMenu::widget([
                     ['label' => 'Shift Lock ', 'url' => ['/collection/tbl-mcc-shift-lock/index'], 'active' => ($cntrl == 'tbl-mcc-shift-lock'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index']) ? (($eiplCode == 'MMD') ? TRUE : FALSE) : FALSE],
                     ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index-other']) ? ($eiplCode == 'MMD' ? FALSE : TRUE) : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
-                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index')],
+                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index')],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -193,18 +191,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
                     ]
                 ],
-                    [
-                    'options' => ['class' => 'dropdown-submenu toggle_left'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Indent <b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'Indent Product'), 'url' => ['/product/tbl-indent-product/index'], 'active' => ($cntrl == 'tbl-indent-product')],
-                            ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
-                            ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index-other'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
-                            ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
-                            ['label' => Yii::t('app', 'Indent Dispatch'), 'url' => ['/product/tbl-indent-dispatch/index-other'], 'active' => ($cntrl == 'tbl-indent-dispatch'), 'visible' => ($eiplCode == 'DODLA') ? FALSE : TRUE],
-                            ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
-                    ]
-                ],
             ],
         ],
             [
@@ -245,7 +231,6 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Formula Master'), 'url' => ['/vsp/tbl-general-formula/index'], 'active' => ($cntrl == 'tbl-general-formula')],
                     ['label' => Yii::t('app', 'Bill Head Master'), 'url' => ['/vsp/tbl-bill-head/index'], 'active' => ($cntrl == 'tbl-bill-head')],
                     ['label' => Yii::t('app', 'Bill Head Transaction'), 'url' => ['/vsp/tbl-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-bill-head-detail')],
-                    ['label' => Yii::t('app', 'Bill Head Transaction - New'), 'url' => ['/vsp/tbl-bill-head-transaction/index'], 'active' => ($cntrl == 'tbl-bill-head-transaction')],
                     ['label' => Yii::t('app', 'Head Load'), 'url' => ['/vsp/tbl-head-load/index'], 'active' => ($cntrl == 'tbl-head-load')],
                     ['label' => Yii::t('app', 'Rejection Resp. Mapping'), 'url' => ['/collection/tbl-milk-reject/responsibility-mapping'], 'active' => ($cntrl == 'tbl-milk-reject')],
                     ['label' => Yii::t('app', 'Transit Loss'), 'url' => ['/vsp/tbl-bmc-transit-loss/index'], 'active' => ($cntrl == 'tbl-bmc-transit-loss')],
@@ -253,16 +238,6 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'VSP Outstanding'), 'url' => ['/payment/tbl-vsp-outstanding/index'], 'active' => ($cntrl == 'tbl-vsp-outstanding')],
                     ['label' => Yii::t('app', 'Bill Head Criteria'), 'url' => ['/vsp/tbl-vsp-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-vsp-bill-head-criteria')],
                     ['label' => Yii::t('app', 'DCS Bill Head'), 'url' => ['/vsp/tbl-bill-head/dcs-wise-bill-head'], 'active' => ($cntrl == 'tbl-bill-head' && $action == 'dcs-wise-bill-head')],
-                    [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MCC Billing<b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
-                            ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
-                            ['label' => Yii::t('app', 'MCC Bill Head Transaction'), 'url' => ['/vsp/tbl-mcc-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-detail')],
-                            ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
-                    ]
-                ],
             ],
         ],
 //            [
@@ -444,7 +419,7 @@ echo GhostMenu::widget([
 //        ],
         [
             'options' => ['class' => 'dropdown'],
-            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t("app", "Reports - New") . ' <b class="caret"></b></a>',
+            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >Reports - New <b class="caret"></b></a>',
             'items' => [
                     [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -479,14 +454,7 @@ echo GhostMenu::widget([
                                     ['label' => '107 -' . Yii::t('app', 'Society Manual Milk Entry'), 'url' => ['/misreports/reports/manual-milk-entry-society-date-shift-wise']],
                                     ['label' => '108 -' . Yii::t('app', 'Milk Collection Data'), 'url' => ['/misreports/reports/milk-collection-data']],
                                     ['label' => '109 -' . Yii::t('app', 'Milk Collection Not Exists'), 'url' => ['/misreports/reports/milk-collection-not-exists']],
-                                // ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
-                                ['label' => '110 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
-                                    ['label' => '111 -' . Yii::t('app', 'Member Collection Report For SAP'), 'url' => ['/misreports/reports/member-collection-report-for-sap']],
-                                    ['label' => '113 -' . Yii::t('app', 'VLCs comparison summary'), 'url' => ['/misreports/reports/milk-collection-proc']],
-                                    ['label' => '114 -' . Yii::t('app', 'VLCs comparison details'), 'url' => ['/misreports/reports/milk-collection-proc-detail']],
-                                    ['label' => '115 -' . Yii::t('app', 'Absent Pouring VLCs'), 'url' => ['/misreports/reports/milk-collection-absent']],
-                                    ['label' => '116 -' . Yii::t('app', 'VLC Left Pourers'), 'url' => ['/misreports/reports/left-pourer']],
-                                    ['label' => '117 -' . Yii::t('app', 'Negative Growth VLCs'), 'url' => ['/misreports/reports/milk-collection-negative-groth']],
+                                    ['label' => '110 -' . Yii::t('app', 'New Member Pouring Milk'), 'url' => ['/misreports/reports/new-member-pouring-milk']],
                                     ['label' => '111 -' . Yii::t('app', 'Farmer Incentive'), 'url' => ['/jasperreports/default/farmer-incentive']],
                                     ['label' => '112 -' . Yii::t('app', 'Member Collection Report For SAP'), 'url' => ['/misreports/reports/member-collection-report-for-sap']],
                                     ['label' => '113 -' . Yii::t('app', 'Farmer Wise Milk Bill'), 'url' => ['/misreports/reports/member-milk-bill']],
@@ -554,6 +522,7 @@ echo GhostMenu::widget([
                             ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
+                            ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
                     ]
                 ],
                     [
@@ -687,18 +656,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Wise Stock'), 'url' => ['/misreports/reports/stock-register-mcc-to-sap'], 'visible' => User::canRoute(['/misreports/reports/stock-register-mcc-to-sap']) ? (($eiplCode == 'PRABHAT') ? TRUE : FALSE) : FALSE],
                     ]
                 ],
-                    [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' Tanker Moment') . '<b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
-                            ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
-                            ['label' => Yii::t('app', 'Tanker Receipt Report'), 'url' => ['/misreports/reports/tanker-receipt-note']],
-                            ['label' => Yii::t('app', 'Trip Wise Detail'), 'url' => ['/misreports/reports/mcc-receipt-vs-bmc-dispatch']],
-                            ['label' => Yii::t('app', 'MCC Day Book (MIS)'), 'url' => ['/misreports/reports/mcc-day-book-dispatch-hub-horizontal']],
-                            ['label' => Yii::t('app', 'MCC Day Book'), 'url' => ['/jasperreports/default/mcc-day-book-dispatch-hub']],
-                    ]
-                ],
                     ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
             ],
         ],
@@ -750,17 +707,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Asset SAP Code'), 'url' => ['/assetmanagement/tbl-asset-set/index'], 'active' => ($cntrl == 'tbl-asset-set/index')],
                             ['label' => Yii::t('app', 'Asset Detail'), 'url' => ['/assetmanagement/tbl-asset-detail/index'], 'active' => ($cntrl == 'tbl-asset-detail/index')],
                     ],
-                ],
-                    [
-                    'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Welfare Scheme<b class="caret"></b></a>',
-                    'items' => [
-                            ['label' => Yii::t('app', 'Scheme Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
-                            ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
-                            ['label' => Yii::t('app', 'Scheme Application'), 'url' => ['/welfarescheme/tbl-scheme-application/index'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'index')],
-                            ['label' => Yii::t('app', 'Pending Approval'), 'url' => ['/welfarescheme/tbl-scheme-application/pending-approval'], 'active' => ($cntrl == 'tbl-scheme-application' && $action == 'pending-approval')],
-                            ['label' => Yii::t('app', 'Scheme Application Disbursement'), 'url' => ['/welfarescheme/tbl-scheme-application-disbursement/index'], 'active' => ($cntrl == 'tbl_scheme_application_disbursement')],
-                    ]
                 ],
                     [
                     'options' => ['class' => 'dropdown-submenu'],
@@ -849,7 +795,6 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Device SMS Count'), 'url' => ['/dcsoperation/tbl-send-sms-count/index'], 'active' => ($cntrl == 'tbl-send-sms-count')],
                             ['label' => Yii::t('app', 'Device SMS Fail Log'), 'url' => ['/sms/tbl-sms-fail-log/index'], 'active' => ($cntrl == 'tbl-sms-fail-log')],
                             ['label' => Yii::t('app', 'BMC Collection Tranfer'), 'url' => ['/collection/tbl-bmc-collection-transfer/index'], 'active' => ($cntrl == 'tbl-bmc-collection-transfer')],
-                            ['label' => Yii::t('app', 'App Login Detail'), 'url' => ['/webservice/eipl/tbl-eipl-app-login/index'], 'active' => ($cntrl == 'tbl-eipl-app-login')],
                     ]
                 ],
                     [
