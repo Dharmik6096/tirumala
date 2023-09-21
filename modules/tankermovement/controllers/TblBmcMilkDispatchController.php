@@ -83,6 +83,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         } else {
             $model->scenario = 'create';
         }
+        $this->setCode($model);
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
@@ -185,6 +186,29 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     'model' => $model,
                     'txn_model' => $txn_model,
         ]);
+    }
+
+    public function setCode($model) {
+        $plants = explode(',', $_SESSION['Plant']);
+        $mccs = explode(',', $_SESSION['MCC']);
+        $bmcs = explode(',', $_SESSION['BMC']);
+        count($plants) == 1 ? $model->plant_code = $plants[0] : '';
+        count($mccs) == 1 ? $model->mcc_plant_code = $mccs[0] : '';
+        if (count($bmcs) == 1) {
+            $model->bmc_code = $bmcs[0];
+            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
+            if (!empty($stock_date)) {
+                $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+                $dispatch_date .= '.000000';
+                $converted_time = date("H:i:s", strtotime($dispatch_date));
+                if ($converted_time == "06:00:00") {
+                    $model->from_shift_code = 1;
+                } elseif ($converted_time == "18:00:00") {
+                    $model->from_shift_code = 2;
+                }
+                $model->from_date = $dispatch_date;
+            }
+        }
     }
 
     /**
