@@ -1347,7 +1347,7 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionCpliabilityReport() {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
@@ -2749,7 +2749,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'MPG Payment Bill Statement',
             ],
             'CpliabilityReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_cp_wise_liability_wdpl',
                 'scenario' => 'CpliabilityReport',
                 'title' => 'CP liability Report',
