@@ -113,7 +113,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
             <?= Yii::$app->dropdown->dropdown('qualification', $model, $form, '', 'Qualification'); ?>
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
+            <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', Yii::t('app', 'Caste/Category')); ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('religion', $model, $form, '', 'Religion'); ?>

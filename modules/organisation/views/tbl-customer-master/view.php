@@ -171,6 +171,19 @@ $this->title = Yii::$app->label->title('view', 'Customer Master');
                         ],
                     ],
                 ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'animal_type_code',
+                            'value' => !empty($model->animalTypeCode) ? $model->animalTypeCode->animal_type_name : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'distance_from_mcc',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
             ];
 
             // View file rendering the widget

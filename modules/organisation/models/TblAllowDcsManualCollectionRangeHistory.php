@@ -56,7 +56,7 @@ class TblAllowDcsManualCollectionRangeHistory extends \yii\db\ActiveRecord {
             [['is_weight_manual', 'is_quality_manual', 'originating_type'], 'integer'],
             [['manual_collection_code'], 'safe'],
             [['created_by', 'updated_by'], 'safe'],
-            [['originating_org_code', 'originating_org_type', 'history_created_at', 'history_created_by', 'operation_type'], 'safe'],
+            [['originating_org_code', 'originating_org_type', 'history_created_at', 'history_created_by', 'operation_type', 'status', 'remark'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
         ];
     }
