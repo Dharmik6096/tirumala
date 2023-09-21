@@ -1733,7 +1733,7 @@ class DropDown extends Component {
             'religion' => ['name' => 'religion_code', 'fields' => 'religion_code,religion', 'prompt' => 'Select Religion', 'model' => 'TblReligion'],
             'gender' => ['name' => 'gender_code', 'fields' => 'gender_code,gender', 'prompt' => 'Select Gender', 'model' => 'TblGender'],
             'qualification' => ['name' => 'qualification_code', 'fields' => 'qualification_code,qualification_name', 'prompt' => 'Select Qualification', 'model' => 'TblQualification'],
-            'caste-category' => ['name' => 'caste_category_code', 'fields' => 'caste_category_code,caste_category_name,local_name', 'prompt' => 'Select Caste/Category', 'model' => 'TblCasteCategory'],
+            'caste-category' => ['name' => 'caste_category_code', 'fields' => 'caste_category_code,caste_category_name,local_name', 'prompt' => Yii::t('app', 'Select Caste/Category'), 'model' => 'TblCasteCategory'],
             'capacity' => ['name' => 'capacity_code', 'fields' => 'capacity_code,value', 'prompt' => 'Select Capacity', 'model' => 'TblCapacity'],
             'bmc_type' => ['name' => 'bmc_type_code', 'fields' => 'bmc_type_code,bmc_type_name', 'prompt' => 'Select BMC Type', 'model' => 'TblBmcType'],
             'device_manufacturer' => ['name' => 'device_manufacturer_id', 'fields' => 'id,manufacturer', 'prompt' => 'Select Device Manufacturer', 'model' => 'TblDeviceManufacturer'],
