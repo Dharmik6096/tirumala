@@ -163,6 +163,7 @@ class TblMilkCollection extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => TRUE, 'on' => ['create', 'update', 'androidsync_coll']],
             [['antibiotic_sms_sent', 'antibiotic', 'is_antibiotic'], 'safe'],
             [['antibiotic_sms_sent'], 'default', 'value' => 0],
+            [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
@@ -219,6 +220,9 @@ class TblMilkCollection extends \app\models\ChildModel {
             'mob_lat' => Yii::t('app', 'Application Latitude'),
             'mob_long' => Yii::t('app', 'Application Longitude'),
             'antibiotic' => Yii::t('app', 'Antibiotic'),
+            'scheme_rate' => Yii::t('app', 'Scheme Rate'),
+            'scheme_rate_code' => Yii::t('app', 'Scheme Rate'),
+            'actual_rate' => Yii::t('app', 'Actual Rate'),
         ];
     }
 

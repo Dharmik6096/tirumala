@@ -1416,26 +1416,32 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'BmcWiseAutoManualSummary';
         return $this->actionIndex();
     }
-    
+
     public function actionMilkCollectionHistory() {
         $this->report = 'MilkCollectionHistory';
         return $this->actionIndex();
     }
-    
+
     public function actionMemberHistory() {
         $this->report = 'MemberHistory';
         return $this->actionIndex();
     }
-    
+
     public function actionDcsHistory() {
         $this->report = 'DcsHistory';
         return $this->actionIndex();
     }
-    
+
     public function actionRmrdDataExport() {
         $this->report = 'RmrdDataExport';
         return $this->actionIndex();
     }
+
+    public function actionCpliabilityReport() {
+        $this->report = 'CpliabilityReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2941,6 +2947,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
                 'scenario' => 'RMRDDataExport',
                 'title' => 'RMRD Data Export',
+            ],
+            'CpliabilityReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_cp_wise_liability_wdpl',
+                'scenario' => 'CpliabilityReport',
+                'title' => 'CP liability Report',
             ],
         ];
         return $label[$l];

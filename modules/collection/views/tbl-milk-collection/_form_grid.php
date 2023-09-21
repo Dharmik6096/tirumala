@@ -76,6 +76,8 @@ $attribute = [
     // ['attribute' => 'snf', 'filter' => Html::activeDropDownList($searchModel, 'snf', $snf,['class'=>'form-control','prompt'=>'Select SNF'])],
     //['attribute' => 'qty', 'value' => 'qty', 'filter' => Html::activeDropDownList($searchModel, 'qty', $qty,['class'=>'form-control','prompt'=>'Select Qty'])],
     ['attribute' => 'rtpl', 'filter' => true],
+    ['attribute' => 'scheme_rate', 'filter' => false, 'visible' => false],
+    ['attribute' => 'actual_rate', 'filter' => false, 'visible' => false],
     ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
     //['attribute' => 'amount', 'filter' => Html::activeDropDownList($searchModel, 'amount', $amount,['class'=>'form-control','prompt'=>'Select Amount'])],
 //    ['label' => 'Collection Date', 'attribute' => 'date_time_of_collection', 'value' => function($model) {

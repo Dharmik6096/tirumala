@@ -188,6 +188,7 @@ echo GhostMenu::widget([
                     'items' => [
                         ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
                         ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
+                        ['label' => Yii::t('app', 'Scheme Rate'), 'url' => ['/dcsoperation/tbl-scheme-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-scheme-rate-applicability-alias' && $action == 'applicabilty-approve')],
                     ]
                 ],
             ],
@@ -585,6 +586,7 @@ echo GhostMenu::widget([
                         ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                         ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                         ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
+                        ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
                     ]
                 ],
                 [
