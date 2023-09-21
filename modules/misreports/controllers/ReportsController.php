@@ -2938,7 +2938,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Dcs History',
             ],
             'CpliabilityReport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_cp_wise_liability_wdpl',
                 'scenario' => 'CpliabilityReport',
                 'title' => 'CP liability Report',
