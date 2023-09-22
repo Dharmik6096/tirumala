@@ -8,7 +8,6 @@ if ($pending_approval) {
     if (Yii::$app->general->checkAccess('/organisation/tbl-dcs/update')) {
         $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Society'));
         $this->params['menu'][] = Yii::$app->controls->add('Provisional Society');
-        $this->params['menu'][] = Yii::$app->controls->custombutton('<i class="fa fa-check"></i> ' . Yii::t('app', 'Society Provisional Approvals'), ['/organisation/tbl-dcs-provisional/pending-approval'], true);
     }
 }
 ?>

@@ -461,7 +461,7 @@ class TblDcsProvisional extends ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
-            'status' => Yii::t('app', 'Status'),
+            'status' => Yii::t('app', 'Provisional Status'),
         ];
     }
     
