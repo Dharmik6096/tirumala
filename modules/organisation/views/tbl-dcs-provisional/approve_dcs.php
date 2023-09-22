@@ -92,7 +92,7 @@ $approval_detail = $dcs_provisional->dcsPrivisionalApproval;
                         <?php foreach ($documents as $doc) { ?>
                             <tr>
                                 <td width='60%'><?= Yii::$app->general->getforeignkey($doc->docId, 'doc_name'); ?></td>
-                                <td width='40%'><?= Html::a('<i class="fa fa-eye"></i>', Url::to('web/welfarescheme/' . $doc->file_name), ['target' => '_blank']) ?></td>
+                                <td width='40%'><?= Html::a('<i class="fa fa-eye"></i>',  Url::to(!empty($doc->attachment) ? $doc->attachment : ''), ['target' => '_blank']) ?></td>
                             </tr>
                         <?php } ?>
                         </tbody>
