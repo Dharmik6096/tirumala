@@ -463,27 +463,21 @@ if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_requ
             </div>
         </div>
     </div>
-    <?php
-    if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 1) {
-        ?>
-        <div class="row">
-            <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
-                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                    <h4 class="theme-box-heading">Document Upload</h4>
-                </div>
-                <div class="col-sm-12">
-                    <?=
-                    $this->render('_document_grid', [
-                        'dataProviderOther' => $dataProviderOther,
-                        'attachment' => $attachment,
-                    ])
-                    ?>
-                </div>
+    <div class="row">
+        <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Document Upload</h4>
+            </div>
+            <div class="col-sm-12">
+                <?=
+                $this->render('_document_grid', [
+                    'dataProviderOther' => $dataProviderOther,
+                    'attachment' => $attachment,
+                ])
+                ?>
             </div>
         </div>
-        <?php
-    }
-    ?>
+    </div>
     <br>
 </div>
 <?php
