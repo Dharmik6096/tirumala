@@ -154,5 +154,9 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
+    
+    public function getShortageRecoveredMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
+    }
 
 }

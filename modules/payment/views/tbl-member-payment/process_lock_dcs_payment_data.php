@@ -83,6 +83,11 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                         'value' => function($model) {
                             return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
+//                        ['attribute' => 'shortage_amount',
+//                        'label' => Yii::t('app', 'Shortage Amount'),
+//                        'value' => function($model) {
+//                            return Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
+//                        }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
                         ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
                         ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
                         ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
@@ -382,17 +387,17 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         }
         var net = final + adjust - hold + adjustRec - rec - shortage; 
         if((adjust !=0  || hold !=0) && net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
+            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
-                    $('#'+id).focus().select();
+                $('#'+id).focus().select();
             });
             return false;
         } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
+            if(net != '' &&  !isNaN(net)){
+                parent.find('.net-amount').val(net.toFixed(2));
+                SumAmount();
+            }
         }
-       }
     });
 
 

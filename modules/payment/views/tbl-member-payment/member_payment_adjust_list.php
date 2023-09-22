@@ -20,15 +20,21 @@ $milk_short_recovery_member = isset(Yii::$app->session->get('unionConfig')[$alia
 $urlForPost = ['member-payment-adjust', 'union_code' => $model->union_code, 'payment_cycle_code' => $model->payment_cycle_code, 'plant_code' => $model->plant_code, 'mcc_plant_code' => $model->mcc_plant_code, 'bmc_code' => $model->bmc_code, 'dcs_code' => $model->dcs_code];
 
 $shortage_info = '';
+$shortage_pending_info = '';
+$shortage_amount = 0;
+
 if ($milk_short_recovery_member == '1') {
+    $shortage_amount = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
     $shortage_info = 'Shortage Amount :: ';
-    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
+//    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
+    $shortage_info .= $shortage_amount;
+    $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
 }
 ?>
 <?php
 //$array = $dataProvider->getModels();
 $array = $dataProvider; //->getModels();
-$tot_amt = array_sum(array_map(function($array) {
+$tot_amt = array_sum(array_map(function ($array) {
             return $array['final_amount'];
         }, $array));
 ?>
@@ -52,6 +58,7 @@ $tot_amt = array_sum(array_map(function($array) {
                     <?= $this->title . ' (' . $bmc_info . ')' ?> 
                     <br/>
                     <?= $shortage_info ?>
+                    <?= $shortage_pending_info ?>
                     <div id="total-payment">
                         Total Payable :: <?= $tot_amt; ?>
                     </div>
@@ -315,37 +322,68 @@ $tot_amt = array_sum(array_map(function($array) {
 
 
 <?php
-$script = " 
+$script = "
+var milk_short_recovery_member = $milk_short_recovery_member;
 function SumAmount()
  {
     var total = parseFloat(0.00);
     $('.adjust-amount').each(function() {
-    var adjust =  parseFloat($(this).val());
-  if(adjust != '' &&  !isNaN(adjust)){
-          total = total + adjust;  
-          }
-        }).get();
-   $('.hold-amount').each(function() {
-      var hold =  parseFloat($(this).val());
-  if(hold != '' &&  !isNaN(hold)){
-          total = total - hold;  
-          }
-        }).get();
-        total=$tot_amt+total;
- $('#total-payment').html('Total Payable :: '+total.toFixed(2));
- }     
+        var adjust =  parseFloat($(this).val());
+        if(adjust != '' &&  !isNaN(adjust)){
+            total = total + adjust;  
+        }
+    }).get();
+    $('.hold-amount').each(function() {
+        var hold =  parseFloat($(this).val());
+        if(hold != '' &&  !isNaN(hold)){
+            total = total - hold;  
+        }
+    }).get();
+    if(milk_short_recovery_member == 1){
+        shortageRecovery();
+    }
+    total=$tot_amt+total;
+    $('#total-payment').html('Total Payable :: '+total.toFixed(2));
+}
+
+//$('.btn-raised').click(function(){
+//    shortageRecovery();
+//})
+
+$('form').submit(function (e) {
+    e.preventDefault();
+    if(milk_short_recovery_member == 1){
+        shortageRecovery();
+    }
+});
+
+function shortageRecovery(){
+    var pending_shortage = parseFloat(0.00);
+    $('.shortage-amount').each(function() {
+            var shortage =  parseFloat($(this).val());
+            if(shortage != '' &&  !isNaN(shortage)){
+                pending_shortage = pending_shortage - shortage;  
+            }
+    }).get();
+    pending_shortage=$shortage_amount+pending_shortage;
+    if(pending_shortage < 0){
+        bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Shortage amount should not be gretter than total shortage amount.</span>');
+        return false;
+    }
+    $('#total-shortage-amount').html('Pending Shortage Amount :: '+pending_shortage.toFixed(2));
+}
 function SumAmountold()
- {
- var total = parseFloat(0.00);
-      $('.adjust-amount').each(function() {
-      var adjust =  parseFloat($(this).val());
-  if(adjust != '' &&  !isNaN(adjust)){
-          total = total + adjust;  
-          }
-        }).get();
-        total=$tot_amt+total;
- $('#total-payment').html('Total Payable :: '+total.toFixed(2));
- } 
+{
+    var total = parseFloat(0.00);
+    $('.adjust-amount').each(function() {
+        var adjust =  parseFloat($(this).val());
+        if(adjust != '' &&  !isNaN(adjust)){
+            total = total + adjust;  
+        }
+    }).get();
+    total=$tot_amt+total;
+    $('#total-payment').html('Total Payable :: '+total.toFixed(2));
+} 
 // $('.kv-panel-before').hide();
  
 
