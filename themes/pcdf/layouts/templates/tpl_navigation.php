@@ -554,6 +554,7 @@ echo GhostMenu::widget([
                             ['label' => '405-' . Yii::t('app', 'SAP Data Export(HATSUN)'), 'url' => ['/misreports/reports/sap-milk-collection-data']],
                             ['label' => '406-' . Yii::t('app', 'Daily/Weekly Data Export(UMANG)'), 'url' => ['/misreports/reports/umang-sap-report']],
                             ['label' => '407-' . Yii::t('app', 'SD File summary'), 'url' => ['/misreports/reports/sd-file-summary']],
+                            ['label' => '408-' . Yii::t('app', 'CP liability Report'), 'url' => ['/misreports/reports/cpliability-report']],
                     ]
                 ],
                     [
@@ -590,9 +591,10 @@ echo GhostMenu::widget([
                             ['label' => '613-' . Yii::t('app', 'Payment Abstract'), 'url' => ['/misreports/reports/payment-abstract']],
                             ['label' => '614-' . Yii::t('app', 'CC Incharge Remuneration'), 'url' => ['/jasperreports/default/incharge-remuneration']],
                             ['label' => '615-' . Yii::t('app', 'Member Bill Abstract'), 'url' => ['/jasperreports/default/member-bill-abstract']],
-                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK' || $eiplCode == 'JGF') ? FALSE : TRUE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-varddan'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-varddan']) ? (($eiplCode == 'SNMILK' || $eiplCode == 'JGF' || $eiplCode == 'ANIG') ? FALSE : TRUE) : FALSE],
                             ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-snmilk'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-snmilk']) ? (($eiplCode == 'SNMILK') ? TRUE : FALSE) : FALSE],
                             ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-jgf'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-jgf']) ? (($eiplCode == 'JGF') ? TRUE : FALSE) : FALSE],
+                            ['label' => '616-' . Yii::t('app', 'Milk Bill'), 'url' => ['/jasperreports/default/vendor-milk-bill-anig'], 'visible' => User::canRoute(['/jasperreports/default/vendor-milk-bill-anig']) ? (($eiplCode == 'ANIG') ? TRUE : FALSE) : FALSE],
                             ['label' => '617-' . Yii::t('app', 'CC Milk Payment'), 'url' => ['/misreports/reports/cc-milk-payment']],
                             ['label' => '618-' . Yii::t('app', 'Farmer And Farm Payment'), 'url' => ['/misreports/reports/farmer-farm-payment']],
                             ['label' => '619-' . Yii::t('app', 'Recover From Other Member'), 'url' => ['/misreports/reports/recovery-from-other-member']],
