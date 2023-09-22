@@ -102,6 +102,12 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_e')->textInput() ?>
         </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+        </div>
+        <div class="col-sm-4">  
+            <?= $form->field($model, 'distance_from_mcc')->textInput() ?>
+        </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
             <?= $form->field($model, 'same_milk_type', ['options' => ['class' => 'form-group col-sm-4 padding-left-0'], 'checkboxTemplate' => "<div class='checkbox' >{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
