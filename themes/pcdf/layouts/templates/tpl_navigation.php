@@ -760,6 +760,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'Village'), 'url' => ['/geo/tbl-villages/index'], 'active' => ($cntrl == 'tbl-villages' || $cntrl == 'tbl-village-miscellaneous')],
                             ['label' => Yii::t('app', 'Hamlet'), 'url' => ['/geo/tbl-hamlets/index'], 'active' => ($cntrl == 'tbl-hamlets')],
                             ['label' => Yii::t('app', 'Blocks'), 'url' => ['/geo/tbl-blocks/index'], 'active' => ($cntrl == 'tbl-blocks')],
+                            ['label' => Yii::t('app', 'Region Master'), 'url' => ['/geo/tbl-region/index'], 'active' => ($cntrl == 'tbl-region')],
+                            ['label' => Yii::t('app', 'Area Master'), 'url' => ['/geo/tbl-area/index'], 'active' => ($cntrl == 'tbl-area')],
                     ],
                 ],
                     [
