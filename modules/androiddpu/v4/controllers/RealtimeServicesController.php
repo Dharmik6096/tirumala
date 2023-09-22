@@ -331,4 +331,14 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
         return $this->response;
     }
 
+    public function actionDpuProductStock() {
+        $data = $this->post_data;
+        $res_data = [];
+        if (!empty($data['organization_code']) && !empty($data['organization_type']) && in_array($data['organization_type'], ['DPU'])) {
+            $res_data = Yii::$app->general->getSpData('sp_app_amcs_v4_product_stock', [$data['organization_type'], $data['organization_code']]);
+        }
+        $this->response['data'] = $res_data;
+        return $this->response;
+    }
+
 }
