@@ -243,10 +243,11 @@ class TblPurchaseRateApplicability extends \app\models\ChildModel {
         $purchaseDetail = new TblPurchaseRateDetails();
         $purchaseDetail->milk_type_code = $milk_type;
         $purchaseDetail->purchase_rate_code = $id;
-        $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('fat')->all();
+        $milk_quality_type_code = '1';
+        $fat = $purchaseDetail->find()->select(['fat'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $milk_quality_type_code])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('fat')->all();
         if (!empty($fat)) {
-            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('snf')->all();
-            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf', 'code'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type])->andWhere(['<=', 'snf', 12])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
+            $snf = $purchaseDetail->find()->select(['snf'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $milk_quality_type_code])->andWhere(['<=', 'snf', 12])->distinct()->orderBy('snf')->all();
+            $rate = $purchaseDetail->find()->select(['rtpl', 'fat', 'snf', 'code'])->where(['purchase_rate_code' => $id, 'milk_type_code' => $milk_type, 'milk_quality_type_code' => $milk_quality_type_code])->andWhere(['<=', 'snf', 12])->orderBy(['fat' => SORT_ASC, 'snf' => SORT_ASC])->all();
 
             $fileName = 'v1'; //date('ddmmyy');
 
