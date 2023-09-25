@@ -199,6 +199,7 @@ class TblDcsProvisionalController extends ChildController {
         $searchModel->dcs_provisional_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $attachment = new TblAttachment();
+        $id = (string) $id;
         $dataProviderOther = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_dcs_provisional']),
         ]);
@@ -254,6 +255,7 @@ class TblDcsProvisionalController extends ChildController {
 
                 foreach ($doc_model as $key => $d) {
                     $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
+                    $id = (string) $id;
                     if (!empty($d->file_name)) {
                         $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
                         if (!empty($attach)) {
@@ -421,7 +423,7 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->attributes = $dcsProvisional->attributes;
             $this->model->vendor = $dcsProvisional->vendor;
             $this->model->milk_type_code = $dcsProvisional->milk_type_code;
-            
+
 //            $this->model->load($dcsProvisional->attributes);
             $this->model->dcs_code = $this->model->getCode();
             //set mapping data
@@ -522,7 +524,7 @@ class TblDcsProvisionalController extends ChildController {
             return 'customRender';
         }
     }
-    
+
     private function setMapping(&$modelMapping) {
         $modelMapping->dcs_code = $this->model->dcs_code;
         $modelMapping->village_code = $this->model->village_code;
@@ -540,7 +542,7 @@ class TblDcsProvisionalController extends ChildController {
                         $master[] = $m->delete();
                     } else {
                         $name = (new ReflectionClass($m))->getShortName();
-                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails'){
+                        if ($name == 'TblContactDetails' || $name == 'TblBankDetails') {
                             $master[] = $m->save();
                         } else {
                             $master[] = $m->save(FALSE);
