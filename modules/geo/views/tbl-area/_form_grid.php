@@ -14,8 +14,9 @@ use kartik\grid\GridView;
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-    ['attribute' => 'state_code', 'value' => 'stateCode.state_name'],
-    ['attribute' => 'region_name'],
+    ['label' => 'Region Name', 'attribute' => 'region_name', 'value' => 'regionCode.region_name'],
+    ['label' => 'State Name', 'attribute' => 'state_code', 'value' => 'stateCode.state_name'],
+    ['attribute' => 'area_name'],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'description', 'visible' => false, 'filter' => false],
     ['attribute' => 'address', 'visible' => true, 'filter' => false],
@@ -23,35 +24,35 @@ $attribute = [
 // Contact Detail
     ['label' => 'Contact Person', 'visible' => false, 'filter' => false,
         'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->region_code, 'mccPlant');
+            $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'mccPlant');
             isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
             return $detail;
         }
     ],
     ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
         'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->region_code, 'region');
+            $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->local_firstname) ? $detail = $detail->local_firstname . ' ' . $detail->local_lastname . ' ' . $detail->local_surname : $detail = '';
             return $detail;
         }
     ],
     ['label' => 'Email', 'visible' => false, 'filter' => false,
         'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->region_code, 'region');
+            $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->email) ? $detail = $detail->email : $detail = '';
             return $detail;
         }
     ],
     ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
         'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->region_code, 'region');
+            $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
             return $detail;
         }
     ],
     ['label' => 'Department', 'visible' => false, 'filter' => false,
         'value' => function($model) {
-            $detail = Yii::$app->general->getDefaultContactDetail($model->region_code, 'region');
+            $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->department) ? $detail = $detail->department : $detail = '';
             return $detail;
         }
@@ -59,16 +60,16 @@ $attribute = [
 ];
 
 $grid_option = [
-    'id' => 'region-list',
+    'id' => 'area-list',
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
         'view' => TRUE,
         'update' => true,
-        'delete' => ['option' => 'region_name,region_code,tbl-region/delete'],
+        'delete' => ['option' => 'area_name,area_code,tbl-area/delete'],
         'contact-details' => function ($url, $model) {
-    $options = ['data-name' => $model->region_name, 'data-val' => $model->region_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-    return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/geo/tbl-region/contact-details', 'id' => $model->region_code], $options);
+    $options = ['data-name' => $model->area_name, 'data-val' => $model->area_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+    return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/geo/tbl-area/contact-details', 'id' => $model->area_code], $options);
 },
     ]
 ];

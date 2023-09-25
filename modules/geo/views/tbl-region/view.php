@@ -22,7 +22,8 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'state_code',                                
+                                'attribute' => 'state_code',
+                                'label' => 'State Name',                                
                                 'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],

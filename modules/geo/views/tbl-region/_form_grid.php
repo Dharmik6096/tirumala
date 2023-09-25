@@ -14,8 +14,8 @@ use kartik\grid\GridView;
 <?php
 $attribute = [
     ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'visible' => true, 'filter' => false],
-    ['attribute' => 'state_code', 'value' => 'stateCode.state_name'],
     ['attribute' => 'region_name'],
+    ['label' => 'State Name', 'attribute' => 'state_code', 'value' => 'stateCode.state_name'],
     ['attribute' => 'local_name', 'filter' => false],
     ['attribute' => 'description', 'visible' => false, 'filter' => false],
     ['attribute' => 'address', 'visible' => true, 'filter' => false],

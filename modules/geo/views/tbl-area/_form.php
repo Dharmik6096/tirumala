@@ -4,8 +4,8 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
 
-$summary_model=$type=='create'?[$model,$contactDetails]:$model;
-$readonly=$type=='create'?FALSE:TRUE;
+$summary_model = $type == 'create' ? [$model, $contactDetails] : $model;
+$readonly = $type == 'create' ? FALSE : TRUE;
 $nameWarning = 0;
 $codeWarning = 0;
 if (!empty($_POST)) {
@@ -18,7 +18,6 @@ $disabled = $type == 'create' ? FALSE : TRUE;
 <?php
 $form = ActiveForm::begin([
             'validateOnBlur' => FALSE,
-            
             'validateOnChange' => FALSE,
             'enableClientValidation' => true,
             'validateOnSubmit' => true,
@@ -27,40 +26,43 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($summary_model); ?>
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-<div class="col-md-12 padding_10_0 theme-box ">
-    <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-        <h4 class="theme-box-heading">Area Details</h4>
+    <div class="col-md-12 padding_10_0 theme-box ">
+        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+            <h4 class="theme-box-heading">Area Details</h4>
+        </div>
+        <div class="col-sm-2" id="union">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'tblarea-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'area_name')->textInput() ?>
+        </div>
+
+        <div class="col-sm-2">
+            <?= Yii::$app->controls->local($model, $form); ?>
+        </div>
+
+        <div class="col-sm-2">
+            <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'local_address')->textarea(['maxlength' => true]) ?>
+        </div>
     </div>
-    <div class="col-sm-2" id="union">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
-    </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdown('region_code', $model, $form, '', $model->getAttributeLabel('region_code')); ?>
-    </div>
-    <div class="col-sm-2">
-        <?php Yii::$app->dropdown->depend_dropdown('state_code', $model, $form, 'tblarea-region_code', 'form-group col-sm-12', 'State Code', 'state_code'); ?>
-    </div>
-    
-    <div class="col-sm-2">
-        <?= Yii::$app->controls->local($model, $form); ?>
-    </div>
-    
-    <div class="col-sm-2">
-        <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'address')->textarea(['maxlength' => true]) ?>
-    </div>
-    <div class="col-sm-2">
-        <?= $form->field($model, 'local_address')->textarea(['maxlength' => true]) ?>
-    </div>
-</div>
     <div class="clearfix"></div>
-    <?php if($type=='create') { ?>
+    <?php if ($type == 'create') { ?>
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Contact Details</h4>
         </div>
-      <?=
+        <?=
         $this->render('../../../details/views/tbl-contact-details/_form', [
             'model' => $contactDetails,
             'form' => $form

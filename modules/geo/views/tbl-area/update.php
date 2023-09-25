@@ -1,5 +1,5 @@
 <?php
-$this->title = Yii::$app->label->title('edit', 'Region');
+$this->title = Yii::$app->label->title('edit', 'Area');
 
 use yii\web\View;
 ?>

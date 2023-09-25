@@ -1,6 +1,6 @@
 <?php
-$this->title = Yii::t('app', Yii::$app->label->title('list', 'Region'));
-$this->params['menu'][] = Yii::$app->controls->add('Region');
+$this->title = Yii::t('app', Yii::$app->label->title('list', 'Area'));
+$this->params['menu'][] = Yii::$app->controls->add('Area');
 ?>
 <div class="tbl-branch-index">
     <div class="panel panel-default panel-grid panel-main">

@@ -5,9 +5,9 @@ use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
-$this->title = Yii::$app->label->title('view', 'Region');
-$this->params['menu'][] = Yii::$app->controls->update($model->region_code);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/geo/tbl-region/contact-details', 'id' => $model->region_code], ['class' => 'btn btn-danger btn-block']);
+$this->title = Yii::$app->label->title('view', 'Area');
+$this->params['menu'][] = Yii::$app->controls->update($model->area_code);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/geo/tbl-area/contact-details', 'id' => $model->area_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -22,12 +22,13 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'state_code',                                
+                                'attribute' => 'state_code',  
+                                'label' => 'State Name',                              
                                 'value' => isset($model->stateCode) ? $model->stateCode->state_name : '',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'region_code',
+                                'attribute' => 'area_code',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -35,7 +36,7 @@ $this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circl
                     [
                         'columns' => [
                             [
-                                'attribute' => 'region_name',
+                                'attribute' => 'area_name',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [

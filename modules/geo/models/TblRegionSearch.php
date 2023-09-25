@@ -50,6 +50,8 @@ class TblRegionSearch extends TblRegion {
             return $dataProvider;
         }
 
+        $query->joinWith(['stateCode']);
+
         if (Yii::$app->session->get('Unions') !== '')
             $query->andFilterWhere([ 'tbl_region.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
 
@@ -60,6 +62,7 @@ class TblRegionSearch extends TblRegion {
 
         $query->andFilterWhere(['like', 'region_code', $this->region_code])
                 ->andFilterWhere(['like', 'tbl_region.region_name', $this->region_name])
+                ->andFilterWhere(['like', 'tbl_states.state_name', $this->state_code])
                 ->andFilterWhere(['like', 'local_name', $this->local_name])
                 ->andFilterWhere(['like', 'address', $this->address])
                 ->andFilterWhere(['like', 'local_address', $this->local_address])

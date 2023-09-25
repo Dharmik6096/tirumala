@@ -79,4 +79,8 @@ class TblArea extends \app\models\ChildModel {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
     }
 
+    public function getRegionCode() {
+        return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
+    }
+
 }
