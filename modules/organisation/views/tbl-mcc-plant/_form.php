@@ -88,7 +88,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->valid_date($model, $form, 'valid_from'); ?>
         </div>
-        <div class="col-sm-2">  
+        <div class="col-sm-2 hidden-for-specific-client">  
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         <div class="col-sm-2">

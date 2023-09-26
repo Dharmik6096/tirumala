@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\web\View;
 
 $attribute = [
+        ['attribute' => 'task_code', 'filter' => true],
     'task_performed_for',
         ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');

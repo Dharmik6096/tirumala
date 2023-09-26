@@ -57,7 +57,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'registration_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'applicable_rto')->textInput() ?>
         </div>
         <div class="col-sm-2">

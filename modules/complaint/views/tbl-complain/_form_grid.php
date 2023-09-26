@@ -4,11 +4,13 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use app\modules\complaint\models\TblComplainActivity;
 ?>
 
 <?php
 
 $attribute = [
+        ['attribute' => 'complain_code', 'visible' => true, 'filter' => true],
         ['attribute' => 'union_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false],
@@ -21,7 +23,6 @@ $attribute = [
         ['attribute' => 'dcs_code', 'value' => function ($model) {
             return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
         }, 'visible' => true, 'filter' => false],
-        ['attribute' => 'complain_code', 'visible' => true, 'filter' => false],
         ['attribute' => 'contact_person'],
         ['attribute' => 'mobile_no'],
         ['attribute' => 'complain_datetime',
@@ -62,6 +63,12 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
+        'complain-status' => function ($url, $model) {
+            $count = TblComplainActivity::getComplainStatusCount($model->complain_code);
+            return $count > 0 ? GhostHtml::a('<i class="fa fa-circle" style="color: #07a309 !important;"></i>', '', ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Complain Activity',]) :
+                    GhostHtml::a('', '', ['class' => 'hidden-button', 'style' => 'pointer-events: none; margin-right: 15px;',
+            ]);
+        },
         'view' => TRUE,
         'edit' => function ($url, $model) {
             $url = Url::to(['tbl-complain/update', 'id' => $model->complain_code]);

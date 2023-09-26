@@ -155,6 +155,18 @@ $this->title = Yii::$app->label->title('view', 'Milk Collection');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
+                            'attribute' => 'scheme_rate',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'actual_rate',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
                             'attribute' => 'amount',
                             'format' => Yii::$app->general->CurrencyFormat(),
                             'valueColOptions' => ['style' => 'width:30%']

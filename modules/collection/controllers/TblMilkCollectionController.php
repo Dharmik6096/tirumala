@@ -98,8 +98,8 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
             $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
             $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
-            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : floatval($this->model->qty) * floatval($conversion_const);
-
+            $conversion_const = empty($conversion_const) ? 1 : $conversion_const;
+            $this->model->converted_qty = $this->model->qty_mode == 1 ? $this->model->qty / $conversion_const : $this->model->qty * $conversion_const;
             if ($this->model->validate()) {
                 if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_approval', 'PORTAL') == 1) {
                     $approvalModel = new TblCollectionDataAlias();
@@ -345,8 +345,10 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         (float) $fat = Yii::$app->request->post('fat');
         (float) $snf = Yii::$app->request->post('snf');
         $union = Yii::$app->request->post('union_code');
-        (float) $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
-        (float) $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        $lr1 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant1', 'BMC');
+        $lr2 = Yii::$app->general->getUnionConfiguration($union, 'clr_constant2', 'BMC');
+        (float) $lr1 = empty($lr1) ? 1 : $lr1;
+        (float) $lr2 = empty($lr2) ? 0 : $lr2;
         $clr = ($snf - ($fat * $lr1) - $lr2) * 4;
         $response['data'] = $clr;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);

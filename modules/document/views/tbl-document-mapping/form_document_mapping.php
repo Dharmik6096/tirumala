@@ -142,17 +142,14 @@ $defaultToggle = true;
 $script = "
   
   $('.kv-panel-before').hide();
-    $('#mapping-document').click(function() {
-        $('#document-mapping-form').submit();
-    });
     $('#allowCashCheckAll').click(function () {
         var check =this.checked;
         $('.allow-cash-checkbox').each(function () {
             this.checked = check;
         });
     });
+    $('#allowCashCheckAll').prop('checked', true);
     $('.allow-cash-checkbox').each(function () {
-        $('#allowCashCheckAll').prop('checked', true);
         if(this.checked == false){
             $('#allowCashCheckAll').prop('checked', false);
         }

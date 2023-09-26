@@ -34,7 +34,14 @@ $attribute = [
         ['attribute' => 'ref_code'],
         ['attribute' => 'customer_name'],
         ['attribute' => 'local_name', 'filter' => FALSE],
-        ['attribute' => 'gst_no',],
+        [
+            'attribute' => 'gst_no',
+            'headerOptions' => ['class' => 'hidden-for-specific-client'],
+        ],
+        [
+            'attribute' => 'customer_category',
+            'headerOptions' => ['class' => 'd-none-for-specific-client'],
+        ],
         ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,

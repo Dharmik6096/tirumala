@@ -104,13 +104,13 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-    <div class="col-sm-2">
+    <div class="col-sm-2 hidden-for-specific-client">
         <?= $form->field($model, 'gstin')->textInput() ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'tds_per')->textInput() ?>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-2 hidden-for-specific-client"> 
         <?= $form->field($model, 'pan_no')->textInput() ?>
     </div>
     <!--<div class="col-sm-2">-->

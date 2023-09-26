@@ -167,6 +167,7 @@ class TblVehicleMaster extends \app\models\ChildModel {
             'billing_type_code' => Yii::t('app', 'Billing Type'),
             'vehicle_use_type' => Yii::t('app', 'Used for'),
             'billing_with_capacity' => Yii::t('app', 'Billing With Capacity ?'),
+            'parsing_no' => Yii::t('app', 'Parsing No'),
         ];
     }
 

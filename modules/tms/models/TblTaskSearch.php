@@ -69,7 +69,8 @@ class TblTaskSearch extends TblTask {
                 ->andFilterWhere(['like', 'tbl_task.status', $this->status])
                 ->andFilterWhere(['like', 'tbl_task_type.task_type', $this->task_type_code])
                 ->andFilterWhere(['like', 'tbl_form_type.form_name', $this->form_type_code])
-                ->andFilterWhere(['like', '[user].name', $this->user_code]);
+                ->andFilterWhere(['like', '[user].name', $this->user_code])
+                ->andFilterWhere(['like', 'tbl_task.task_code', $this->task_code]);
 
         $query->orderBy(['tbl_task.task_datetime' => SORT_DESC, '[user].name' => SORT_ASC]);
         return $dataProvider;

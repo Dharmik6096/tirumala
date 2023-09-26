@@ -16,9 +16,9 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Provisional Member
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-        <div class="pt5 large-search">
-            <?php echo $this->render('_search', ['model' => $model]); ?>
-        </div>
+            <div class="pt5 large-search">
+                <?php echo $this->render('_search', ['model' => $model]); ?>
+            </div>
             <div id="provisional-member">
             <?php
             $action = Url::to(['provisional-members-approval']);

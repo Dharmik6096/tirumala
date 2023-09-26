@@ -82,7 +82,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'local_name')->textInput() ?>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 hidden-for-specific-client">
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
         </div>
@@ -95,13 +95,21 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-4 d-none-for-specific-client">
+            <?= Yii::$app->dropdown->dropdownStatic('customer_category', $model, $form, '', $model->getAttributeLabel('customer_category'), false, 'customer_category', false); ?>    
+        </div>
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_m')->textInput() ?>
         </div>
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_e')->textInput() ?>
         </div>       
+        </div>
+        <div class="col-sm-4">
+            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
+        </div>
+        <div class="col-sm-4">  
+            <?= $form->field($model, 'distance_from_mcc')->textInput() ?>
         </div>
         <div class='pull-left col-sm-8'>
             <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>

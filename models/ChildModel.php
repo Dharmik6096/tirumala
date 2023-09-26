@@ -174,7 +174,7 @@ class ChildModel extends \yii\db\ActiveRecord {
             foreach ($attributeNames as $attribute) {
                 $attributeValue = $this->$attribute;
                 if (is_string($attributeValue)) {
-                    if (!empty($attributeValue) && !preg_match('/^\S((?!.*  ).*\S)?$/', $attributeValue)) {
+                    if (!empty($attributeValue) && !preg_match('/^\S(?!.*  )(?:(?!  ).)*\S?$/', $attributeValue)) {
                         $label = $this->getAttributeLabel($attribute);
                         $this->addError($attribute, $label . ' must contain a single space.');
                         return FALSE;

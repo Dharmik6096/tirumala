@@ -114,11 +114,11 @@ $script = "
     $(document).on('change', '#tblbmccollection-shift_code', function() {  
         gridChange();
     });
-    $(document).on('change', '#tblbmccollection-antibiotic', function() {  
-        if(eiplCode =='PRABHAT'){
-            gridChange();
-        }
-    });
+//    $(document).on('change', '#tblbmccollection-antibiotic', function() {  
+//        if(eiplCode =='PRABHAT'){
+//            gridChange();
+//        }
+//    });
     function gridChange(){
        $('.add-collection').prop('disabled',true);
        $('#bmc-coll-form .reset_field input').val('');
@@ -128,16 +128,16 @@ $script = "
         var mcc = $('#tblbmccollection-mcc_plant_code').val();
         var date = $('#tblbmccollection-date_time_of_collection').val();
         var shift = $('#tblbmccollection-shift_code').val();
-        var antibiotic = $('#tblbmccollection-antibiotic').val();
-         if(eiplCode =='PRABHAT'){
-            if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift) && setData(antibiotic)){
-                $('.add-collection').removeAttr('disabled');
-            } 
-        } else{
+//        var antibiotic = $('#tblbmccollection-antibiotic').val();
+//         if(eiplCode =='PRABHAT'){
+//            if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift) && setData(antibiotic)){
+//                $('.add-collection').removeAttr('disabled');
+//            } 
+//        } else{
             if(setData(plant) && setData(mcc) && setData(bmc) && setData(date) && setData(shift)){
                 $('.add-collection').removeAttr('disabled');
             } 
-        }
+//        }
         
     }
     function setData(field = ''){

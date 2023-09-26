@@ -1,0 +1,187 @@
+<?php
+
+use yii\helpers\Html;
+use kartik\detail\DetailView;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
+
+$this->title = Yii::$app->label->title('view', 'Dcs Provisional Approval');
+$dcs_provisional = $model->dcsProvisional;
+
+$documents = $dcs_provisional->dcsPrivisionalDocuments;
+$approval_detail = $dcs_provisional->dcsPrivisionalApproval;
+?>
+<div class="panel panel-default panel-grid panel-main">
+    <div class="panel-body">
+        <div class="panel-heading">
+            <?= Html::encode($this->title) ?>
+        </div>
+        <div class="table-responsive">
+            <?php
+            $attributes = [
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'union_code',
+                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->unionCode, 'union_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            ['attribute' => 'bmc_code',
+                            'value' => Yii::$app->general->getforeignkey($dcs_provisional->bmcCode, 'bmc_name'),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'dcs_provisional_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'dcs_code_ex',
+                            'value' => isset($dcs_provisional->customer_type) ? Yii::$app->general->getCustomer($dcs_provisional, $dcs_provisional->customer_type, true) : '',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'remarks',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'created_at',
+                            'value' => Yii::$app->controls->view_date($dcs_provisional->created_at),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+            ];
+            echo DetailView::widget([
+                'model' => $dcs_provisional,
+                'attributes' => $attributes,
+                'mode' => 'view',
+                'bordered' => true,
+                'striped' => false,
+                'responsive' => true,
+                'hAlign' => 'left',
+                'vAlign' => 'top',
+                'deleteOptions' => [// your ajax delete parameters
+                    'params' => ['id' => 1000, 'kvdelete' => true],
+                ],
+                'container' => ['id' => 'kv-demo'],
+            ]);
+            ?>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box mt10">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Document Detail') ?></h4>
+            </div>
+            <div class="form-grid">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                        <tbody>
+                        <thead>
+                            <tr>
+                                <th width='60%'><?= Yii::t('app', 'Document Name') ?></th>
+                                <th width='40%'><?= Yii::t('app', '') ?></th>
+                            </tr>
+                        </thead>
+                        <?php foreach ($documents as $doc) { ?>
+                            <tr>
+                                <td width='60%'><?= Yii::$app->general->getforeignkey($doc->docId, 'doc_name'); ?></td>
+                                <td width='40%'><?= Html::a('<i class="fa fa-eye"></i>',  Url::to(!empty($doc->attachment) ? $doc->attachment : ''), ['target' => '_blank']) ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>       
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box mt10">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Previous Approval Detail') ?></h4>
+            </div>
+            <div class="form-grid">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped table-main table-language table-rate">
+                        <tbody>
+                        <thead>
+                            <tr>
+                                <th><?= Yii::t('app', 'Level') ?></th>
+                                <th><?= Yii::t('app', 'Mode') ?></th>
+                                <th><?= Yii::t('app', 'User') ?></th>
+                                <th><?= Yii::t('app', 'Status By') ?></th>
+                                <th><?= Yii::t('app', 'Status') ?></th>
+                                <th><?= Yii::t('app', 'Date') ?></th>
+                                <th><?= Yii::t('app', 'Remarks') ?></th>
+
+                            </tr>
+                        </thead>
+                        <?php foreach ($approval_detail as $approval) { ?>
+                            <tr>
+                                <td><?= $approval->level; ?></td>
+                                <td><?= $approval->approval_mode; ?></td>
+                                <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
+                                <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
+                                <td>
+                                    <?php
+                                    if ($approval->status == '1') {
+                                        $approval->status = 'Approve';
+                                    } else if ($approval->status == '2') {
+                                        $approval->status = 'Reject';
+                                    } else {
+                                        $approval->status = 'Pending';
+                                    }
+                                    echo $approval->status;
+                                    ?>
+                                </td>
+                                <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                <td><?= $approval->remarks; ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>       
+        </div>
+
+        <div class="col-md-12 padding_10_0 theme-box mt10">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Add Approval Detail') ?></h4>
+            </div>
+            <div class="form-grid">
+                <div class="col-sm-12">
+                    <?php
+                    $form = ActiveForm::begin([
+                                'validateOnBlur' => false,
+                                'validateOnChange' => FALSE,
+                                'enableClientValidation' => true,
+                                'validateOnSubmit' => true,
+                                'fieldConfig' => [
+                    ]]);
+                    ?>
+                    <?php echo $form->errorSummary($model); ?>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <?= Yii::$app->dropdown->dropdownStatic('provisional_approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
+                        </div>
+                        <div class="col-sm-2">
+                            <?= $form->field($model, 'remarks')->textarea(); ?>
+                        </div>
+                        <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                            <div class="form-group">
+                                <?= Yii::$app->controls->save('save', $model); ?>
+                                <?= Yii::$app->controls->reset(); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
+                            </div>  
+                        </div>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

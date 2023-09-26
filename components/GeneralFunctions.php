@@ -50,6 +50,8 @@ use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use Exception;
+use app\modules\general\models\TblProcessApproval;
+use yii\db\Expression;
 
 class GeneralFunctions extends Component {
 
@@ -251,7 +253,7 @@ class GeneralFunctions extends Component {
     public function validateAadharcard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
-                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' card number can only contain exactly 12 digits.'));
             }
     }
 
@@ -610,6 +612,10 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         } else { //no file exists with this name
             if (!is_dir($path)) {
@@ -617,14 +623,15 @@ class GeneralFunctions extends Component {
                     die('Failed to create folders...' . $path);
                     return false;
                 }
+                if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
+                    $command = 'chmod 777 -R ' . $path;
+                    exec($command);
+                }
             }
         }
 
 
-        if (strstr($path, 'EKOMILK') || strstr($path, 'LOCALBIPL')) {
-            $command = 'chmod 777 -R ' . $path;
-            exec($command);
-        }
+
         return true;
     }
 
@@ -2331,9 +2338,18 @@ class GeneralFunctions extends Component {
                 ->select("MAX(convert(int,LTRIM(RTRIM(" . $field . ")))) as " . $field)
                 ->from($tableName)
                 ->where(['dcs_code' => $dcs_code])
+                ->andWhere(['<>', 'ISNULL(is_dcs_member, 0)', 1])
                 ->one();
         $number = (int) $val[$field] + $auto_inc;
 
+        $query = (new \yii\db\Query)
+                ->select('ex_member_code')
+                ->from($tableName)
+                ->where(['dcs_code' => $dcs_code, 'ex_member_code' => $number])
+                ->one();
+        if (!empty($query)) {
+            $number = (int) $number + $auto_inc;
+        }
         return $number;
     }
 
@@ -2348,5 +2364,4 @@ class GeneralFunctions extends Component {
 
         return null;
     }
-
 }

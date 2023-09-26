@@ -119,7 +119,7 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         </div>        
         </div>
         <div class="col-sm-4">
-            <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', 'Caste/Category'); ?>
+            <?= Yii::$app->dropdown->dropdown('caste-category', $model, $form, '', Yii::t('app', 'Caste/Category')); ?>
         </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('religion', $model, $form, '', 'Religion'); ?>
@@ -259,14 +259,14 @@ $config = (count(explode(',', Yii::$app->session->get('Unions'))) == 1 && !empty
         <div class="col-sm-2">
             <?= $form->field($model, 'beneficiary_name')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'pan_no')->textInput() ?>
         </div>
         <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'adhar_no')->textInput() ?>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 hidden-for-specific-client">
             <?= $form->field($model, 'voter_id')->textInput() ?>
         </div>
         <div class="col-sm-2">
