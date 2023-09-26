@@ -2078,7 +2078,8 @@ class DropDown extends Component
             'data' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [''],
             'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
             'multiSelectOptions' => [
-                'id' => $id, 'options' =>
+                'id' => $id, 
+                'options' =>
                 [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
