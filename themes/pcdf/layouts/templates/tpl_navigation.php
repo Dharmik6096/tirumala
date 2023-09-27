@@ -861,6 +861,7 @@ echo GhostMenu::widget([
                             'items' => [
                                 ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
                                 ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
+                                ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
                             ]
                         ],
                         [
@@ -877,7 +878,6 @@ echo GhostMenu::widget([
                             'items' => [
                                 ['label' => Yii::t('app', 'Milk Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-milk-collection/index-allow'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                                 ['label' => Yii::t('app', 'BMC Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-bmc-collection/index-allow'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index-allow')],
-                                ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
                             ]
                         ],
                         ['label' => Yii::t('app', 'Help Manual'), 'url' => ['/site/help-manual'], 'visible' => User::canRoute(['/site/help-manual']) ? (($eiplCode == 'GYAN') ? TRUE : FALSE) : FALSE],
