@@ -25,10 +25,11 @@ $shortage_amount = 0;
 
 if ($milk_short_recovery_member == '1') {
     $shortage_amount = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
-    $shortage_info = 'Shortage Amount :: ';
+    $shortage_info = 'Shortage Amount :: '.$shortage_amount;
 //    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
-    $shortage_info .= $shortage_amount;
+//    $shortage_info .= $shortage_amount;
     $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
+    echo Html::hiddenInput('pending_shortage_amount', $shortage_amount, ['class' => 'pending_shortage_amount', 'id' => 'pending_shortage_amount']);
 }
 ?>
 <?php
@@ -253,15 +254,29 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                         negativeVal = "Yes";
                                                     }
                                                 }
-                                           });
-                                           var message = "' . $message . '";
-                                           var negativeCount = ' . $negativeValCount . ';
-                                               
-                                            $("#loadercontent").show();
-                                            $("#pageloader").show(); 
+                                            });
+                                            var message = "' . $message . '";
+                                            var negativeCount = ' . $negativeValCount . ';
+                                            var dispMessage = "";
                                             if(negativeCount > 0 || negativeVal == "Yes") {
-                                                var dispMessage = "' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+                                                dispMessage = dispMessage+"' . Yii::t('app', 'Net Payable must be Positive for each Member.') . '";
+                                            }
+                                            if(milk_short_recovery_member == 1){
+                                                var pending_shortage = parseFloat(0.00);
+                                                $(".shortage-amount").each(function() {
+                                                        var shortage =  parseFloat($(this).val());
+                                                        if(shortage != "" &&  !isNaN(shortage)){
+                                                            pending_shortage = pending_shortage - shortage;  
+                                                        }
+                                                }).get();
+                                                pending_shortage = parseFloat($("#pending_shortage_amount").val()) + parseFloat(pending_shortage);
+                                                if(pending_shortage < 0){
+                                                    dispMessage = dispMessage+"<br>Shortage amount should not be gretter than total shortage amount.";
+                                                }
+                                            }
+                                            if(dispMessage != ""){
                                                 bootbox.alert("<div class=\"bg-danger\"><i class=\"fa fa-times-circle\"></i></div><span>"+dispMessage+"</span>");
+                                                return false;
                                             } else {
                                                var totalRec=0;
                                                var totaladjRec=0;
@@ -291,6 +306,8 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                // }
 //                                                return false;
                                             }
+                                            $("#loadercontent").show();
+                                            $("#pageloader").show();
                                         }'),
                         'success' => new JsExpression('function(data){
                                                                 var obj=$.parseJSON(data);
@@ -346,16 +363,6 @@ function SumAmount()
     $('#total-payment').html('Total Payable :: '+total.toFixed(2));
 }
 
-//$('.btn-raised').click(function(){
-//    shortageRecovery();
-//})
-
-$('form').submit(function (e) {
-    e.preventDefault();
-    if(milk_short_recovery_member == 1){
-        shortageRecovery();
-    }
-});
 
 function shortageRecovery(){
     var pending_shortage = parseFloat(0.00);
@@ -365,7 +372,7 @@ function shortageRecovery(){
                 pending_shortage = pending_shortage - shortage;  
             }
     }).get();
-    pending_shortage=$shortage_amount+pending_shortage;
+    pending_shortage = parseFloat($('#pending_shortage_amount').val())+pending_shortage;
     if(pending_shortage < 0){
         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Shortage amount should not be gretter than total shortage amount.</span>');
         return false;

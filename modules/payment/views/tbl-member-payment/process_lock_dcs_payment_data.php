@@ -80,14 +80,18 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                         ['attribute' => 'qty', 'pageSummary' => true],
                         ['attribute' => 'shortage_amount',
                         'label' => Yii::t('app', 'Shortage Amount'),
-                        'value' => function($model) {
+                        'value' => function($model, $key, $index) {
+                            $amount = Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount') - Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
+                            $options = ['class' => 'shortage-recovery-amount'];
+                            echo Html::hiddenInput('shortage-recovery-amount', $amount,$options);
                             return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
-//                        ['attribute' => 'shortage_amount',
-//                        'label' => Yii::t('app', 'Shortage Amount'),
+//                        ['attribute' => 'dcs_code',
+//                        'label' => Yii::t('app', 'Shortage Recovery Amount'),
+//                        'contentOptions' => ['class' => 'shortage-recovery-amount'],
 //                        'value' => function($model) {
-//                            return Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
-//                        }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
+//                            return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount') - Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
+//                        }, 'visible' => false, 'pageSummary' => true],
                         ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
                         ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
                         ['attribute' => 'total_deduction', 'value' => 'total_deduction', 'pageSummary' => true],
@@ -621,6 +625,12 @@ $(document).on("click", "#adjust-lock-dcs-data", function(){
             }
         });
     
+    }
+});
+$(".shortage-recovery-amount").each(function(){
+    var shortRecAmount = $(this).val();
+    if(shortRecAmount > 0){
+        $("#adjust-lock-dcs-data").prop("disabled", true);
     }
 });
            ';
