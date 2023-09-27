@@ -21,37 +21,42 @@ $attribute = [
     ['attribute' => 'description', 'visible' => false, 'filter' => false],
     ['attribute' => 'address', 'visible' => true, 'filter' => false],
     ['attribute' => 'local_address', 'visible' => true, 'filter' => false],
-// Contact Detail
-    ['label' => 'Contact Person', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
+    // Contact Detail
+    [
+        'label' => 'Contact Person', 'visible' => false, 'filter' => false,
+        'value' => function ($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'mccPlant');
             isset($detail->firstname) ? $detail = $detail->firstname . ' ' . $detail->lastname . ' ' . $detail->surname : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
+    [
+        'label' => 'Contact Person Hindi Name', 'visible' => false, 'filter' => false,
+        'value' => function ($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->local_firstname) ? $detail = $detail->local_firstname . ' ' . $detail->local_lastname . ' ' . $detail->local_surname : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Email', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
+    [
+        'label' => 'Email', 'visible' => false, 'filter' => false,
+        'value' => function ($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->email) ? $detail = $detail->email : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Mobile No', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
+    [
+        'label' => 'Mobile No', 'visible' => false, 'filter' => false,
+        'value' => function ($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->mobile_no) ? $detail = $detail->mobile_no : $detail = '';
             return $detail;
         }
     ],
-    ['label' => 'Department', 'visible' => false, 'filter' => false,
-        'value' => function($model) {
+    [
+        'label' => 'Department', 'visible' => false, 'filter' => false,
+        'value' => function ($model) {
             $detail = Yii::$app->general->getDefaultContactDetail($model->area_code, 'area');
             isset($detail->department) ? $detail = $detail->department : $detail = '';
             return $detail;
@@ -68,9 +73,13 @@ $grid_option = [
         'update' => true,
         'delete' => ['option' => 'area_name,area_code,tbl-area/delete'],
         'contact-details' => function ($url, $model) {
-    $options = ['data-name' => $model->area_name, 'data-val' => $model->area_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
-    return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/geo/tbl-area/contact-details', 'id' => $model->area_code], $options);
-},
+            $options = ['data-name' => $model->area_name, 'data-val' => $model->area_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Contact Details'];
+            return GhostHtml::a('<i class="fa fa-user-circle-o"></i>', ['/geo/tbl-area/contact-details', 'id' => $model->area_code], $options);
+        },
+        'mapping' => function ($url, $model) {
+            $options = ['data-val' => $model->area_code, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Area Mapping'];
+            return GhostHtml::a('<i class="fa fa-link"></i>', ['/geo/tbl-area/area-mapping', 'id' => $model->area_code], $options);
+        },
     ]
 ];
 

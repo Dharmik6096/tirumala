@@ -4,6 +4,7 @@ namespace app\modules\geo\models;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblPlant;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_area".
@@ -83,4 +84,42 @@ class TblArea extends \app\models\ChildModel {
         return $this->hasOne(TblRegion::className(), ['region_code' => 'region_code']);
     }
 
+    public function getMCCList($plantCode, $RLS = 'TRUE') {
+        $value = $this->getMCC($plantCode, $RLS);
+        $value = ArrayHelper::map($value, 'mcc_plant_code', function($value) {
+                    return $value->name . ' - ' . $value->ref_code;
+                });
+        return $value;
+    }
+
+    public function getBMCList($plantCode, $RLS = 'TRUE', $hasBMC = false, $invert = false, $channelCode = [], $plant_bmc = []) {
+        $value = $this->getBMC($plantCode, $RLS, $hasBMC, $channelCode, $plant_bmc);
+        $value = ArrayHelper::map($value, 'bmc_code', function($value) use ($invert) {
+                    return $invert ? $value->ref_code . ' - ' . $value->bmc_name : $value->bmc_name . ' - ' . $value->ref_code;
+                });
+        return $value;
+    }
+
+    public function getBMC($plantCode = [], $RLS = 'TRUE', $hasBMC = 1, $channelCode = [], $plant_bmc = []) {
+        $query = $this->find()->select(['bmc_code', 'bmc_name', 'ref_code'])->where(['is_active' => 1]);
+        if (!empty($plantCode)) {
+            $query->andWhere(['mcc_plant_code' => $plantCode]);
+        }
+        if (!empty($channelCode)) {
+            $query->andWhere(['x_col1' => $channelCode]);
+        }
+        if (Yii::$app->session->get('BMC') !== '' && $RLS == 'TRUE') {
+            $query->andWhere(['bmc_code' => explode(',', Yii::$app->session->get('BMC'))]);
+        }
+        if (Yii::$app->session->get('Unions') !== '') {
+            $query->andFilterWhere(['union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
+        if (Yii::$app->session->get('hasBMC') == 0) {
+            $query->andFilterWhere(['is_mcc' => 1]);
+        }
+        if (!empty($plant_bmc)) {
+            $query->andWhere(['plant_code' => $plant_bmc]);
+        }
+        return $query->orderby('bmc_name asc')->all();
+    }
 }

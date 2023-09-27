@@ -35,8 +35,7 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union',$readonly); ?>
     </div>
     <div class="col-sm-2">
-        <!-- //Yii::$app->dropdown->dropdown('state_code', $model, $form, '', $model->getAttributeLabel('state_code')); -->
-        <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+        <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', $model->getAttributeLabel('state_code')); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'region_name')->textInput(['maxlength' => true]) ?>

@@ -10,6 +10,13 @@ use yii\web\NotFoundHttpException;
 use app\modules\details\models\TblContactDetails;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\controllers\ChildController;
+use yii\helpers\ArrayHelper;
+use app\modules\geo\models\TblAreaBmcMapping;
+use app\modules\geo\models\TblAreaBmcMappingHistory;
+use app\modules\geo\models\TblAreaBmcMappingSearch;
+use app\modules\organisation\models\TblDcsBmc;
+use yii\web\Response;
+use yii\helpers\Json;
 
 /**
  * TblAreaController implements the CRUD actions for TblArea model.
@@ -153,6 +160,58 @@ class TblAreaController extends ChildController {
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionAreaMapping($id) {
+        $DcsBmcModel = new TblDcsBmc();
+        $area_data = $DcsBmcModel->getBMCList([], TRUE, FALSE, TRUE);
+        unset($area_data[$id]);
+        $model = new TblAreaBmcMapping();
+        $searchModel = new TblAreaBmcMappingSearch();
+        $searchModel->area_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $exist_data = ArrayHelper::map($dataProvider->getModels(), 'bmc_code', 'bmc_code');
+        $area_data = array_diff_key($area_data, $exist_data);
+        
+        if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblAreaBmcMapping'])) {
+            $bmc_code = Yii::$app->request->post()['TblAreaBmcMapping']['bmc_code'];
+            $mcc_codes = [];
+            $master = [];
+            if (!empty($bmc_code)) {
+                foreach ($bmc_code as $mapped_bmc_code) {
+                    $model_bmc = new TblAreaBmcMapping();
+                    $model_bmc->area_code = $id;
+                    $model_bmc->bmc_code = $mapped_bmc_code;
+                    $mcc_codes[] = $model_bmc->bmcCode->mcc_plant_code;
+                    $master[] = $model_bmc;
+                    $mainBmc = $model_bmc->mainBmcCode;
+                    $groupBmc = $model_bmc->bmcCode;
+                    $main_org_data = ['union_code' => $mainBmc->union_code, 'plant_code' => $mainBmc->plant_code, 'mcc_plant_code' => $mainBmc->mcc_plant_code, 'bmc_code' => $id];
+                    $group_org_data = ['union_code' => $groupBmc->union_code, 'plant_code' => $groupBmc->plant_code, 'mcc_plant_code' => $groupBmc->mcc_plant_code, 'bmc_code' => $mapped_bmc_code];
+                    Yii::$app->general->generateGroupMappingSetBox($master, $main_org_data, $group_org_data);
+                }
+            }
+            $transaction = $this->generalModel->saveTransaction($master, ['BMC Mapping', 'create']);
+            if ($transaction == 'customRedirect') {
+                return $this->redirect(['index']);
+            }
+        }
+        return $this->render('_bmc_mapping', [
+                    'model' => $model, 
+                    'area_data' => $area_data,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
+    }
+
+    public function actionDeleteBmc() {
+        $model = TblAreaBmcMapping::findOne(Yii::$app->request->post('id'));
+        $record = [];
+        $historyModel = new TblAreaBmcMappingHistory();
+        Yii::$app->operation->history($model, $historyModel, DELETE);
+        $record = $this->generalModel->deleteTransaction([$model, $historyModel]);
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
 }
