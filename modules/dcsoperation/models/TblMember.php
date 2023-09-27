@@ -174,7 +174,7 @@ class TblMember extends ChildModel {
                 [['payment_mode'], 'string', 'max' => 10, 'skipOnEmpty' => true, 'except' => ['androidsync', 'verification']],
                 [['dob'], function ($attribute, $params) {
                     Yii::$app->general->validateAge($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification', 'ApprovalMember']],
+                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
             //   [['ex_member_code'], 'integer', 'min' => 1, 'max' => 1500, 'except' => ['androidsync']],
             //   [['ex_member_code'], 'string', 'min' => 1, 'max' => 4, 'except' => ['androidsync']],
             // [['member_code'], 'unique', 'message' => Yii::t('app', 'Ex Member Code has already been taken.'), 'except' => ['androidsync']],

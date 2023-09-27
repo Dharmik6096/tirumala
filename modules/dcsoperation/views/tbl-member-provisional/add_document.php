@@ -166,6 +166,18 @@ use yii\web\View;
                 ?>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
+                <div class="col-sm-12">
+                    <?=
+                    $this->render('/../../document/views/tbl-attachment/_attachment_grid', [
+                        'dataProvider' => $dataProvider,
+                        'attachment' => $attachment,
+                    ])
+                    ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

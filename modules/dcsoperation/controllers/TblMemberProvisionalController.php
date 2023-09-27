@@ -117,76 +117,35 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
-        if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-            $validate = 1;
-            $this->setModel();
-            $this->model->scenario = 'update_provisional_member';
-            $tblMember = new TblMember();
-            if ($this->model->provisional_from == 'mobile_app') {
-                $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code);
-            }
-            $searchModel = new TblProvisionalMilkCollectionSearch();
-            $params = Yii::$app->request->queryParams;
-            $searchModel->member_code = $this->model->dcs_code . $this->model->pro_ex_member_code;
-            $dataProvider = $searchModel->search($params);
-            if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
-                $this->model->scenario = Yii::$app->session['eiplCode'];
-            }
+        $validate = 1;
+        $this->setModel();
+        $this->model->scenario = 'update_provisional_member';
+        $tblMember = new TblMember();
+        if ($this->model->provisional_from == 'mobile_app') {
+            $this->model->ex_member_code = Yii::$app->general->getMaxCode($tblMember, 'ex_member_code', $this->model->dcs_code);
         }
-
+        if (isset($this->model->scenarios()[Yii::$app->session['eiplCode']])) {
+            $this->model->scenario = Yii::$app->session['eiplCode'];
+        }
         if (Yii::$app->request->post()) {
-            if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-                $this->model->federation_code = $this->model->unionCode->federationCode->federation_code;
-                $this->model->is_approved = 0;
-            }
             $historyModel = new TblMemberProvisionalHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-            if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-                $historyModel->provisional_member_code = $this->model->provisional_member_code;
-            }
             $this->model->load(Yii::$app->request->post());
-//            $this->setModel();
-            if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 0) {
-
-                $this->model->member_code = $this->model->getCode();
-                if ($_POST['warning'] == 0)
-                    $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
-                if ($validate == 1 && $this->model->validate()) {
-                    $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
-                    $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
-                    $master_model = [];
-                    $master_model[] = $this->model;
-                    $master_model[] = $historyModel;
-                    $transaction = $this->generalModel->saveTransaction($master_model, ['Member Provisional', 'edit']);
-                    if ($transaction == 'customRedirect') {
-                        return $this->redirect(['view', 'id' => $this->model->provisional_member_code]);
-                    } else {
-                        $ex_error = $this->model->getErrors();
-                        if (empty($ex_error)) {
-                            $main_error = $tblMember->getErrors();
-                            foreach ($main_error as $att => $err) {
-                                $this->model->addError($att, $err[0]);
-                            }
-                        }
-                    }
+            $this->model->member_code = $this->model->getCode();
+            if ($_POST['warning'] == 0)
+                $validate = Yii::$app->warning->unique_member($this->model, ['member_name', 'dcs_code', 'hamlet_code'], [$this->model->member_name, $this->model->dcs_code, $this->model->hamlet_code]);
+            if ($validate == 1 && $this->model->validate()) {
+                $this->model->registration_date = empty($this->model->registration_date) ? NULL : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
+                $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
+                $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
                 }
             }
         }
-        $updateDataArray = array(
-            'model' => $this->model,
-        );
-        $updateDataArray['searchModel'] = $searchModel;
-        $updateDataArray['dataProvider'] = $dataProvider;
-        return $this->render('update', $updateDataArray);
-
-        if (Yii::$app->general->getUnionConfiguration($this->model->union_code, 'workflow_require', 'PORTAL') == 1) {
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
-            if ($transaction !== FALSE) {
-                return $this->{$transaction}();
-            }
-
-            return $this->render('update', $updateDataArray);
-        }
+        return $this->render('update', [
+                    'model' => $this->model
+        ]);
     }
 
     /**
@@ -224,7 +183,6 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $searchModel->member_code = $_POST['member_code'];
             $dataProvider = $searchModel->search($params);
         }
-// $model = $searchModel->find()->where(['member_code' =>$_POST['member_code']])->one();
         return $this->renderAjax('provisional_milk_collection', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'model' => $model]);
     }
 
@@ -252,16 +210,14 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $error_msg = '';
                 $save_model = [];
                 Model::loadMultiple($doc_model, Yii::$app->request->post());
-
+                $msg = '';
                 foreach ($doc_model as $key => $d) {
                     $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
                     if (!empty($d->file_name)) {
                         $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
                         if (!empty($attach)) {
-                            if ($d->file_name != $attach->file_name) {
-                                $historyModel = new TblAttachmentHistory();
-                                Yii::$app->operation->history($attach, $historyModel, UPDATE);
-                                $save_model[] = $historyModel;
+                            if ($d->doc_id == $attach->doc_id) {
+                                $msg .= $d->doc_name . ',';
                             }
                         }
                         $file_name = 'provisional_member' . '_' . $id . '_' . $d->doc_id . '_' . time() . '.' . $d->file_name->extension;
@@ -278,34 +234,39 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                     }
                 }
                 if (empty($error_msg)) {
-                    $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
-                    $deleteModel = [];
-                    if ($config == 1) {
-                        $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
-                        $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
-                        $save_model[] = $model;
-                    } else {
-                        if (Yii::$app->request->post('request_button') === 'approve') {
-                            $model->provisional_status = 'Approve';
-                            $status = 'Approve';
+                    if (empty($msg)) {
+                        $config = Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL');
+                        $deleteModel = [];
+                        if ($config == 1) {
+                            $modelStages = new TblApprovalStagesDetail();
+                            $modelStages->setApprovalData($model->union_code, 'member', $model->provisional_member_code, $save_model, $approval_stages);
+                            $model->provisional_status = empty($approval_stages) ? 'Approve' : 'Register';
                             $save_model[] = $model;
-                            if ($model->provisional_status = 'Approve') {
-                                $this->memberApprove($status, $model->provisional_status, $save_model, $deleteModel, $model);
-                            }
                         } else {
-                            $model->is_approved = 0;
-                            $model->provisional_status = 'Register';
-                            $save_model[] = $model;
+                            if (Yii::$app->request->post('request_button') === 'approve') {
+                                $model->provisional_status = 'Approve';
+                                $status = 'Approve';
+                                $model->scenario = 'MemberApprove';
+                                $save_model[] = $model;
+                                if ($model->provisional_status = 'Approve') {
+                                    $this->memberApprove($status, $model->provisional_status, $save_model, $deleteModel, $model);
+                                }
+                            } else {
+                                $model->is_approved = 0;
+                                $model->provisional_status = 'Pending';
+                                $save_model[] = $model;
+                            }
                         }
-                    }
-                    $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
+                        $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
 
-                    if ($transaction == 'customRedirect') {
-                        $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                        if ($transaction == 'customRedirect') {
+                            $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                        } else {
+                            $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                            $record = ['status' => 'error', 'msg' => $msg];
+                        }
                     } else {
-                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'error', 'msg' => $msg];
+                        $record = ['status' => 'error', 'msg' => 'Documnet already available for ' . $msg];
                     }
                 } else {
                     $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
@@ -316,10 +277,15 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return Json::encode($record);
         }
-
+        $attachment = new TblAttachment();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $attachment->find()->where(['module_code' => $model->provisional_member_code, 'module_name' => 'tbl_member_provisional']),
+        ]);
         return Yii::$app->controller->render('add_document', [
                     'model' => $model,
                     'doc_model' => $doc_model,
+                    'attachment' => $attachment,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
