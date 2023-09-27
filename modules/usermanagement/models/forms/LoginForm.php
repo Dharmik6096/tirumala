@@ -65,29 +65,7 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
     }
 
     public function setSession() {
-        try {
-            $model = new \app\models\TblClientPayment();
-            $overDuePayment = $model->getOverDuePayment();
-            if (!empty($overDuePayment)) {
-                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
-                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
-                    'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $overDueDate]);
-                return false;
-            } else {
-                $pendingPayment = $model->getPendingPaymentCount();
-                if (!empty($pendingPayment)) {
-                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
-                }
-            }
-        } catch (UserException $e) {
-            
-        } catch (\yii\db\Exception $e) {
-            
-        } catch (Exception $ex) {
-            
-        }
+        
         $user = User::find()->where(['username' => $this->username, 'is_active' => 1])->one();
 
         if (!isset($user->user_code)) {
@@ -222,6 +200,29 @@ class LoginForm extends \webvimark\modules\UserManagement\models\forms\LoginForm
                     }
                 }
                 break;
+        }
+        try {
+            $model = new \app\models\TblClientPayment();
+            $overDuePayment = $model->getOverDuePayment($union);
+            if (!empty($overDuePayment)) {
+                $overDueDate = date('d.m.Y', strtotime($overDuePayment->allow_till_date));
+                Yii::$app->getSession()->setFlash('success', ['type' => 'paymentErr',
+                    'message' => 'Dear Customer, Your payment for the Solution Services are due, services are terminated on ' . $overDueDate]);
+                return false;
+            } else {
+                $pendingPayment = $model->getPendingPaymentCount($union);
+                if (!empty($pendingPayment)) {
+                    $pendigAmountDate = date('d.m.Y', strtotime($pendingPayment->allow_till_date));
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => 'Dear Customer, Your payment for the Solution Services are due, non-payment will lead to service termination on ' . $pendigAmountDate]);
+                }
+            }
+        } catch (UserException $e) {
+            
+        } catch (\yii\db\Exception $e) {
+            
+        } catch (Exception $ex) {
+            
         }
         $language_code = 'en';
         Yii::$app->session->set('Federations', $federation);
