@@ -1718,6 +1718,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Customer Category'),
                 'data' => ['small' => Yii::t('app', 'small'), 'medium' => Yii::t('app', 'medium'), 'large' => Yii::t('app', 'large')],
             ],
+            'provisional_status' => [
+                'name' => 'status',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
+            ],
         ];
         return $records[$l];
     }

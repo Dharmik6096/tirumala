@@ -1432,6 +1432,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionRmrdDataExport() {
+        $this->report = 'RmrdDataExport';
+        return $this->actionIndex();
+    }
+
     public function actionCpliabilityReport() {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
@@ -2936,6 +2941,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'sp_mis_history_tbl_dcs_master',
                 'scenario' => 'DcsHistory',
                 'title' => 'Dcs History',
+            ],
+            'RmrdDataExport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
+                'scenario' => 'RMRDDataExport',
+                'title' => 'RMRD Data Export',
             ],
             'CpliabilityReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string,to_date:string',

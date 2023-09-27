@@ -12,7 +12,7 @@ use yii\helpers\Url;
 <div class="panel panel-default panel-main hide-grid-settings">
     <div class="panel-heading">
         <ul class="progressbar">
-            <li class="inactive">Member Provisional No. <?= $model->dcs_provisional_code ?>  > </li>
+            <li class="inactive"><?= Yii::t('app', 'dcs_code') ?> Provisional No. <?= $model->dcs_provisional_code ?>  > </li>
             <li>  Upload Documents</li>
         </ul>
     </div>
@@ -21,9 +21,9 @@ use yii\helpers\Url;
 
             <?php
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'dcs_provisional_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
@@ -31,19 +31,19 @@ use yii\helpers\Url;
 //                            'attribute' => 'dcs_code',
 //                            'valueColOptions' => ['style' => 'width:15%']
 //                        ],
-                            [
+                        [
                             'attribute' => 'ref_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'dcs_code_ex',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                            [
+                        [
                             'attribute' => 'dcs_name',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
@@ -70,21 +70,24 @@ use yii\helpers\Url;
 
         <div class="col-md-12 padding_10_0 theme-box">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Document List') ?></h4>
+                <?php if (!empty($doc_model)) { ?>
+                    <h4 class="theme-box-heading"><?php echo Yii::t('app', 'Document List') ?></h4>
+                <?php } ?>
             </div>
             <div class="form-grid">
                 <?php
+                $form = ActiveForm::begin([
+                            'options' => ['id' => 'create-document-form',
+                                'enctype' => 'multipart/form-data'
+                            ],
+                            'validateOnBlur' => false,
+                            'validateOnChange' => FALSE,
+                            'enableClientValidation' => true,
+                            'validateOnSubmit' => true,
+                            'fieldConfig' => [
+                ]]);
+
                 if (!empty($doc_model)) {
-                    $form = ActiveForm::begin([
-                                'options' => ['id' => 'create-document-form',
-                                    'enctype' => 'multipart/form-data'
-                                ],
-                                'validateOnBlur' => false,
-                                'validateOnChange' => FALSE,
-                                'enableClientValidation' => true,
-                                'validateOnSubmit' => true,
-                                'fieldConfig' => [
-                    ]]);
                     ?>
                     <?= $form->errorSummary($doc_model) ?>
 
@@ -107,23 +110,26 @@ use yii\helpers\Url;
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-                            <div class="form-group">
-                                <?php
-                                AjaxSubmitButton::begin([
-                                    'label' => Yii::t('app', 'Save'),
-                                    'useWithActiveForm' => 'create-document-form',
-                                    'ajaxOptions' => [
-                                        'type' => 'POST',
-                                        'url' => Url::to(['document-upload', 'id' => $model->dcs_provisional_code]),
-                                        'processData' => false,
-                                        'contentType' => false,
-                                        'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
-                                        'beforeSend' => new JsExpression("function(data){
+                        <?php
+                    }
+                    ?>
+                    <div class="col-sm-12 shortcut-main mt10" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                        <div class="form-group">
+                            <?php
+                            AjaxSubmitButton::begin([
+                                'label' => Yii::t('app', 'Save'),
+                                'useWithActiveForm' => 'create-document-form',
+                                'ajaxOptions' => [
+                                    'type' => 'POST',
+                                    'url' => Url::to(['document-upload', 'id' => $model->dcs_provisional_code]),
+                                    'processData' => false,
+                                    'contentType' => false,
+                                    'data' => new JsExpression("new FormData($('#create-document-form')[0])"),
+                                    'beforeSend' => new JsExpression("function(data){
                                                 $('#loadercontent').show();
                                                 $('#pageloader').show();
                                                 }"),
-                                        'success' => new JsExpression('function(data){
+                                    'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();
                                                                 $("#pageloader").hide();
@@ -137,20 +143,19 @@ use yii\helpers\Url;
                                                                     bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
                                                                 }
                                                  }'),
-                                    ],
-                                    'options' => ['class' => 'btn btn-default btn-raised',
-                                        'type' => 'submit'],
-                                ]);
-                                AjaxSubmitButton::end();
-                                ?>
-                                <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
-                            </div>  
-                        </div>
+                                ],
+                                'options' => ['class' => 'btn btn-default btn-raised',
+                                    'type' => 'submit'],
+                            ]);
+                            AjaxSubmitButton::end();
+                            ?>
+                            <?= Yii::$app->controls->reset(); ?>
+                            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                        </div>  
                     </div>
-                    <?php
-                    ActiveForm::end();
-                }
+                </div>
+                <?php
+                ActiveForm::end();
                 ?>
             </div>
         </div>

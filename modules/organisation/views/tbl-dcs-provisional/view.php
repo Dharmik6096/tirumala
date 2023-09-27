@@ -554,65 +554,6 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                 ?>
             </div>
         </div>
-
-        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Bank Details</h5></div> -->
-        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Bank Details</h4>
-            </div>
-            <div class="form-grid">
-                <?php
-                $attribute = [
-                        ['attribute' => 'bank_code', 'value' => 'bankCode.bank_name', 'filter' => false],
-                        ['attribute' => 'branch_code', 'value' => 'branchCode.branch_name', 'filter' => false],
-                        ['attribute' => 'bank_account_no', 'filter' => false],
-                        ['attribute' => 'ifsc', 'filter' => false],
-                        ['attribute' => 'beneficiary_name', 'filter' => false],
-                        ['attribute' => 'is_default', 'value' => function($model) {
-                            return $model->is_default == 1 ? 'Yes' : 'No';
-                        }, 'filter' => false],
-                ];
-
-                $grid_option = [
-                    'id' => 'bank-list',
-                    'attributes' => $attribute,
-                    'active_column' => false,
-                ];
-
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
-                ?>
-            </div>
-        </div>
-        <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle">Contact Details</h5></div> -->
-        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading">Contact Details</h4>
-            </div>
-            <div class="form-grid">
-                <?php
-                $contact_person_lable = Yii::t('app', 'Society Secretory');
-                $local_contact_person_lable = Yii::t('app', 'Society Secretory Hindi Name');
-                $attribute = [
-                        ['label' => $contact_person_lable, 'value' => 'firstname', 'filter' => false],
-                        ['label' => $local_contact_person_lable, 'value' => 'local_firstname', 'filter' => false],
-                        ['attribute' => 'email', 'filter' => false],
-                        ['attribute' => 'mobile_no', 'filter' => false],
-                        ['attribute' => 'department', 'filter' => false],
-                        ['attribute' => 'is_default', 'value' => function($model) {
-                            return $model->is_default == 1 ? 'Yes' : 'No';
-                        }, 'filter' => false],
-                ];
-
-                $grid_option = [
-                    'id' => 'contact-list',
-                    'attributes' => $attribute,
-                    'active_column' => false,
-                ];
-
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, [Yii::$app->controller->action->id, 'id' => Yii::$app->request->get('id')]);
-                ?>
-            </div>       
-        </div>
         <div class="row">
             <div class="col-md-12 view-subtitle padding_10_0 theme-box ">
                 <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
