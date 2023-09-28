@@ -3499,6 +3499,7 @@ input[type="checkbox"]:after{
 }
 
 .dropdown-menu > li > a {
+    display: block;
     padding: 2px 6px !important;
 }
 
@@ -5139,6 +5140,10 @@ tr.highlightRow {
     right: 100%;
     left: auto;
 }
+.dropdown-menu .dropdown-submenu-right {
+    left: 100%;
+    right: auto;
+}
 .dropdown-menu > li:hover > .dropdown-submenu {
     display: block;
 }
@@ -5314,4 +5319,7 @@ tr.highlightRow {
 }
 .d-none-for-specific-client {
     display: none;
+}
+.dropdown{
+    margin: 7px;
 }

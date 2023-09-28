@@ -28,7 +28,8 @@ $unionArray = is_string($unions) ? explode(',', $unions) : []; // Check if $unio
 $unions = Yii::$app->session->get('Unions');
 $unionArray = is_string($unions) ? explode(',', $unions) : []; // Check if $unions is a string before using explode()
 $rateAppApproval = Yii::$app->general->getUnionConfiguration($unionArray, 'rate_approval', 'PORTAL') == 1 ? true : false;
-$batchNoWise = Yii::$app->general->getUnionConfiguration($unionArray, 'batch_no_wise_inventory', 'PORTAL') == 1 ? true : false; ?>
+$batchNoWise = Yii::$app->general->getUnionConfiguration($unionArray, 'batch_no_wise_inventory', 'PORTAL') == 1 ? true : false;
+?>
 <?php
 
 echo GhostMenu::widget([
@@ -69,7 +70,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Accounting Master <b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-item" href="#">Accounting Master <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Tax Group'), 'url' => ['/dcsaccounting/tbl-tax-group/index'], 'active' => ($cntrl == 'tbl-tax-group')],
                         ['label' => Yii::t('app', 'Basic Tax'), 'url' => ['/dcsaccounting/tbl-basic-tax/index'], 'active' => ($cntrl == 'tbl-basic-tax')],
@@ -82,7 +83,8 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Animal Inspector Request'), 'url' => ['/organisation/tbl-animal-inspector-request/index'], 'active' => ($cntrl == 'tbl-animal-inspector-request')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Document Detail<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)">Document Detail<b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
                         ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
@@ -91,7 +93,8 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'WorkFlow') . '<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)">' . Yii::t('app', 'WorkFlow') . '<b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
                     'items' => [
                         [
                             'options' => ['class' => 'dropdown-submenu'],
@@ -180,7 +183,7 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-item" href="#">Tanker Movement <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                         //                        ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
@@ -281,7 +284,7 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Data Consider in VSP Payment'), 'url' => ['/payment/tbl-vsp-payment-data-config/index'], 'active' => ($cntrl == 'tbl-vsp-payment-data-config')],
                 ['label' => Yii::t('app', 'Disburse W/O Release Payment'), 'url' => ['/payment/tbl-update-unrelease-payment/index'], 'active' => ($cntrl == 'tbl-update-unrelease-payment' && $action == 'index')],
                 ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
-                //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
+            //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
         //        ['label' => Yii::t('app', 'Update IMEI'), 'url' => ['/organisation/tbl-dcs/multi-imei-number'], 'active' => ($cntrl == 'tbl-dcs')],
@@ -1019,7 +1022,7 @@ echo GhostMenu::widget([
                         ['label' => Yii::t('app', 'Member Acknowledgement'), 'url' => ['/dcsoperation/tbl-member-download/index']],
                         ['label' => 'Rate Acknowledgement', 'url' => ['/dcsoperation/tbl-purchase-rate-applicability/index']],
                         ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/create']],
-                        //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
+                    //                            ['label' => Yii::t('app', 'Master Export'), 'url' => ['/eipldpu/pendrive-export/index']],
                     ]
                 ],
                 //                ['label' => Yii::t('app', 'Vendors'), 'url' => ['/general/tbl-society-vendor/index'], 'active' => ($cntrl == 'tbl-society-vendor')],
