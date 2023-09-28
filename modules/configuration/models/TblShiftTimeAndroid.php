@@ -30,7 +30,8 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblShiftTimeAndroid extends \app\models\ChildModel {
 
-    public $original_org_code;
+    public $original_org_code, $plant_code, $mcc_plant_code, $bmc_code;
+
     /**
      * @inheritdoc
      */
@@ -43,9 +44,10 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['org_code', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['org_code', 'org_type', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'date_shift_enable', 'grace_hr'], 'safe'],
-            [['date_shift_enable', 'grace_hr','org_code'], 'required'],
+            [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'bmc_code', 'mcc_plant_code'], 'required'],
+            [['grace_hr'], 'number'],
         ];
     }
 
@@ -54,7 +56,8 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'org_code' => Yii::t('app', 'Org Code'),
+            'org_code' => Yii::t('app', 'Organization Code'),
+            'org_type' => Yii::t('app', 'Organization Type'),
             'collection_type' => Yii::t('app', 'Collection Type'),
             'm_start_time' => Yii::t('app', 'M Start Time'),
             'e_start_time' => Yii::t('app', 'E Start Time'),

@@ -6,10 +6,11 @@ use yii\helpers\Html;
 <?php
 
 $attribute = [
-    ['attribute' => 'code', 'visible' => true],
     ['attribute' => 'org_type', 'visible' => true],
+    ['attribute' => 'org_code', 'visible' => true],
     [
-        'attribute' => 'org_code',
+        'attribute' => 'org_name',
+        'label' => 'Organization Name',
         'value' => function ($model) {
             if ($model->org_type === 'BMC') {
                 return $model->bmcCode->bmc_name;
@@ -26,7 +27,7 @@ $attribute = [
     ['attribute' => 'm_lock_time', 'filter' => false],
     ['attribute' => 'e_lock_time', 'filter' => false],
     ['attribute' => 'date_shift_enable',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('date_shift_enable', $searchModel, 'date_shift_enable'),
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'date_shift_enable'),
         'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->date_shift_enable]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->date_shift_enable] : '';
         },],

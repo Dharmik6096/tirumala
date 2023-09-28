@@ -12,12 +12,14 @@ use app\modules\configuration\models\TblShiftTimeAndroid;
  */
 class TblShiftTimeAndroidSearch extends TblShiftTimeAndroid {
 
+    public $org_name;
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-            [['org_code', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['org_code', 'org_name', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'date_shift_enable', 'grace_hr'], 'safe'],
         ];
     }
@@ -61,9 +63,10 @@ class TblShiftTimeAndroidSearch extends TblShiftTimeAndroid {
 
         $query->joinWith(['bmcCode', 'mccCode']);
 
+//        Yii::$app->general->filterByOrg($query, $this);
         // grid filtering conditions
-        $query->andFilterWhere(['or', ['like', 'tbl_bmc.bmc_name', $this->org_code], ['like', 'tbl_mcc_plant.name', $this->org_code]])
-                ->andFilterWhere(['like', 'code', $this->code])
+        $query->andFilterWhere(['or', ['like', 'tbl_bmc.bmc_name', $this->org_name], ['like', 'tbl_mcc_plant.name', $this->org_name]])
+                ->andFilterWhere(['or', ['like', 'tbl_bmc.bmc_code', $this->org_code], ['like', 'tbl_mcc_plant.plant_code', $this->org_code]])
                 ->andFilterWhere(['like', 'collection_type', $this->collection_type])
                 ->andFilterWhere(['like', 'grace_hr', $this->grace_hr]);
         return $dataProvider;

@@ -1,5 +1,6 @@
 <?php
 $this->title = Yii::t('app', Yii::$app->label->title('list', 'Bmc Android Timing'));
+$this->params['menu'][] = Yii::$app->controls->add('Bmc Android Timing');
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
