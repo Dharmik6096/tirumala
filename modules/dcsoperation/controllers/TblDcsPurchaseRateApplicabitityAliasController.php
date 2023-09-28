@@ -59,7 +59,9 @@ class TblDcsPurchaseRateApplicabitityAliasController extends \app\controllers\Ch
                         $saveModel[] = $existData;
                         $saveModel[] = $MainModel;
                         $saveModel[] = $historyModel;
-                        $saveModel[] = $dcsAppModel;
+                        if (!empty($dcsAppModel)) {
+                            $saveModel[] = $dcsAppModel;
+                        }
                     } elseif ($operation == 'reject') {
                         $succCount++;
                         $deleteModel[] = $existData;
