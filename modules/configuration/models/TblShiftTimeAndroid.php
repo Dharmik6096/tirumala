@@ -30,7 +30,7 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblShiftTimeAndroid extends \app\models\ChildModel {
 
-    public $original_org_code, $plant_code, $mcc_plant_code, $bmc_code;
+    public $plant_code, $mcc_plant_code, $bmc_code;
 
     /**
      * @inheritdoc
@@ -46,8 +46,12 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
         return [
             [['org_code', 'org_type', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'date_shift_enable', 'grace_hr'], 'safe'],
-            [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'bmc_code', 'mcc_plant_code'], 'required'],
+            [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'plant_code', 'mcc_plant_code'], 'required'],
             [['grace_hr'], 'number'],
+            [['collection_type'], 'checkUnique'],
+            [['bmc_code'], 'required', 'when' => function ($model) {
+                    return $model->org_type === 'BMC';
+                }],
         ];
     }
 
@@ -62,7 +66,7 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
             'm_start_time' => Yii::t('app', 'M Start Time'),
             'e_start_time' => Yii::t('app', 'E Start Time'),
             'm_lock_time' => Yii::t('app', 'M Lock Time'),
-            'e_lock_time' => Yii::t('app', 'M Lock Time'),
+            'e_lock_time' => Yii::t('app', 'E Lock Time'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -84,6 +88,19 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
 
     public function getMccCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'org_code']);
+    }
+
+    public function checkUnique($attribute) {
+        if ($this->org_type == 'BMC') {
+            $this->org_code = $this->bmc_code;
+        } elseif ($this->org_type == 'MCC') {
+            $this->org_code = $this->mcc_plant_code;
+        }
+        $data = $this->find()->where(['org_code' => $this->org_code, 'collection_type' => $this->collection_type])
+                ->count();
+        if ($data != 0) {
+            $this->addError($attribute, Yii::t('app/validation', 'Collection Type has already been taken.'));
+        }
     }
 
 }
