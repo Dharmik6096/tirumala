@@ -53,7 +53,7 @@ class TblUserAttendanceSearch extends TblUserAttendance
 
         $this->load($params);
 
-        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'userCode']);
+        $query->joinWith(['unionCode', 'plantCode', 'mccPlantCode', 'bmcCode', 'dcsCode', 'userCode', 'attachment']);
         Yii::$app->general->filterByOrg($query, $this, 'tbl_user_attendance', 'tbl_user_attendance', 'tbl_user_attendance');
         
         $from_date = (!empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d')) . ' 00:00:00';
