@@ -124,9 +124,9 @@ $defaultToggle = true;
                     <div class="panel-footer shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
                         <?php if (!empty($dataProvider->getModels())) { ?>
                             <?php
-                            echo GhostHtml::a(Yii::t('app', 'Save'), ['/document/tbl-document-mapping/document-mapping'], ['class' => 'btn-login btn btn-primary', 'id' => 'mapping-document']);
+                            echo Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn-login btn btn-primary', 'id' => 'mapping-document'])
                             ?>
-                            <?= Yii::$app->controls->custombutton('cancel', 'index','','btn-login'); ?>
+                            <?= Yii::$app->controls->custombutton('cancel', 'index', '', 'btn-login'); ?>
 
                         <?php } ?>
                     </div>
