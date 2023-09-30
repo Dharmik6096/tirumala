@@ -125,7 +125,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'p_date'], 'required', 'on' => ['StockTransferToDcs', 'StockAtMcc']],
                 [['union_code', 'p_date'], 'required', 'on' => ['StockAtDcs']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportFarmer']],
-                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor']],
+                [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SaleReportVendor', 'RMRDDataExport']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['SummaryReportMcc', 'SummaryReportDcs']],
                 [['union_code', 'mcc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['MemberCollectionReportForSap', 'RmrdMilkCollectionForSap']],
                 [['union_code', 'plant_code', 'from_date', 'to_date'], 'required', 'on' => ['MilkCollectionAbsent']],
