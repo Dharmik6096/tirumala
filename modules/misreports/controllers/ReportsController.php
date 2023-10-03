@@ -2946,7 +2946,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Dcs History',
             ],
             'RmrdDataExport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string:from_shift,to_date:string:to_shift',
                 'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
                 'scenario' => 'RMRDDataExport',
                 'title' => 'RMRD Data Export',
