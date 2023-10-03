@@ -12,9 +12,9 @@ $attribute = [
         'attribute' => 'org_name',
         'label' => 'Organization Name',
         'value' => function ($model) {
-            if ($model->org_type === 'BMC') {
+            if ($model->org_type === 'BMC' && isset($model->bmcCode)) {
                 return $model->bmcCode->bmc_name;
-            } elseif ($model->org_type === 'MCC') {
+            } elseif ($model->org_type === 'MCC' && isset($model->mccCode)) {
                 return $model->mccCode->name;
             } else {
                 return 'N/A';
