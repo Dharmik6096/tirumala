@@ -31,7 +31,7 @@ use app\modules\document\models\TblDocumentMapping;
  */
 class TblAttachment extends \app\models\ChildModel {
 
-    public $doc_name, $is_mandate;
+    public $doc_name, $is_mandate, $is_new_file;
 
     /**
      * @inheritdoc
@@ -45,7 +45,7 @@ class TblAttachment extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['is_mandate', 'doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name'], 'safe'],
+                [['is_mandate', 'doc_name', 'doc_id', 'parent_code', 'device_id', 'originating_org_code', 'originating_org_type', 'originating_type', 'attachment', 'thumbnail', 'created_at', 'module_code', 'attachment_type', 'created_by', 'module_name', 'lat_long', 'updated_at', 'updated_by', 'remarks', 'file_name', 'is_new_file'], 'safe'],
         ];
     }
 
