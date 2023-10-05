@@ -46,12 +46,13 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
         return [
             [['org_code', 'org_type', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'date_shift_enable', 'grace_hr'], 'safe'],
-            [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'plant_code', 'mcc_plant_code'], 'required'],
+            [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time'], 'required'],
             [['grace_hr'], 'number'],
-            [['collection_type'], 'checkUnique'],
+            [['collection_type'], 'checkUnique', 'on' => 'create'],
+            [['plant_code', 'mcc_plant_code'], 'required', 'on' => 'create'],
             [['bmc_code'], 'required', 'when' => function ($model) {
-                    return $model->org_type === 'BMC';
-                }],
+                    return $model->org_type == 'BMC';
+                }, 'enableClientValidation' => false],
         ];
     }
 

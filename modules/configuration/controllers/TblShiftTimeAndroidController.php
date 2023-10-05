@@ -36,13 +36,14 @@ class TblShiftTimeAndroidController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblShiftTimeAndroid();
         $this->viewFile = 'create';
+        $this->model->scenario = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             if ($this->model->org_type == 'BMC') {
                 $this->model->org_code = $this->model->bmc_code;
             } elseif ($this->model->org_type == 'MCC') {
                 $this->model->org_code = $this->model->mcc_plant_code;
             }
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Asset Group', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Shift Time Android', 'create']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
