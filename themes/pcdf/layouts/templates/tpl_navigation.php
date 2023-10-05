@@ -864,6 +864,7 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
                                     ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
+                                    ['label' => Yii::t('app', 'Bmc Android Timing'), 'url' => ['/configuration/tbl-shift-time-android/index'], 'active' => ($cntrl == 'tbl-shift-time-android')],
                             ]
                         ],
                             [
