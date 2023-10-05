@@ -9,6 +9,7 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblDcs;
 use app\modules\usermanagement\models\User;
+use app\modules\general\models\TblAttachment;
 /**
  * This is the model class for table "tbl_user_attendance".
  *
@@ -121,5 +122,9 @@ class TblUserAttendance extends \app\models\ChildModel
 
     public function getUserCode() {
         return $this->hasOne(User::class, ['id' => 'user_code']);
+    }
+
+    public function getAttachment() {
+        return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
     }
 }

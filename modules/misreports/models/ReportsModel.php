@@ -135,6 +135,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['to_date'], function ($attribute, $params) {
                     Yii::$app->general->dateRangeValidate($this, $attribute, $params, 'from_date', 'to_date', 16, '>', 'Day Difference can not be greater than 15.');
                 }, 'skipOnEmpty' => false, 'on' => ['MemberMilkBill']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'to_date'], 'required', 'on' => ['MemberPaymentBankFormat']],
         ];
     }
 

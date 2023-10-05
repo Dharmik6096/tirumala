@@ -321,6 +321,16 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVendorMilkBillShivPrasad() {
+        $this->report = 'VendorMilkBillShivPrasad';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberMilkBillShivPrasad() {
+        $this->report = 'MemberMilkBillShivPrasad';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -765,6 +775,18 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/VspPaymentBillAnig',
                 'scenario' => 'VendorMilkBillAnig',
                 'title' => '616 - Milk Bill',
+            ],
+            'VendorMilkBillShivPrasad' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code:type_check,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkBillShivPrasad',
+                'scenario' => 'VendorMilkBillShivPrasad',
+                'title' => '609 - Vendor Milk Bill',
+            ],
+            'MemberMilkBillShivPrasad' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_dcs_code,p_member_code:p_dcs_code,p_payment_cycle_code:default:dcs,p_language_code,p_report_name',
+                'path' => 'vsp/MemberMilkBillShivPrasad',
+                'scenario' => 'MemberMilkBillShivPrasad',
+                'title' => '610 - Member Milk Bill',
             ],
         ];
         return $label[$l];
