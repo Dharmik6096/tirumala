@@ -19,10 +19,10 @@ class TblMilkCollectionSummarySearch extends TblMilkCollectionSummary {
      */
     public function rules() {
         return [
-            [['milk_collection_summary_code', 'shift_code', 'sample_count', 'auto_count', 'manual_count'], 'integer'],
-            [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'number'],
-            [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty', 'ref_code'], 'safe'],
+                [['milk_collection_summary_code', 'shift_code', 'sample_count', 'auto_count', 'manual_count'], 'integer'],
+                [['date_time_of_collection', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount'], 'number'],
+                [['from_date', 'to_date', 'from_shift', 'to_shift', 'operator_fat', 'operator_snf', 'operator_qty', 'ref_code', 'data_inserted_from'], 'safe'],
         ];
     }
 
