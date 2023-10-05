@@ -61,13 +61,14 @@ class TblMilkCollectionSummary extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['date_time_of_collection', 'created_at', 'updated_at'], 'safe', 'on' => ['androidsync']],
-            [['milk_collection_summary_code', 'date_time_of_collection', 'created_at', 'updated_at', 'data_post_status', 'pick_datetime'], 'safe'],
-            [['shift_code', 'sample_count', 'auto_count', 'manual_count'], 'safe'],
-            [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount', 'received_timestamp'], 'safe'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['data_post_status'], 'default', 'value' => 0],
-            [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code']]
+                [['date_time_of_collection', 'created_at', 'updated_at'], 'safe', 'on' => ['androidsync']],
+                [['milk_collection_summary_code', 'date_time_of_collection', 'created_at', 'updated_at', 'data_post_status', 'pick_datetime'], 'safe'],
+                [['shift_code', 'sample_count', 'auto_count', 'manual_count', 'data_inserted_from'], 'safe'],
+                [['avg_fat', 'avg_snf', 'kg_fat', 'kg_snf', 'total_qty', 'avg_rate', 'total_amount', 'received_timestamp'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['data_post_status', 'sample_count', 'manual_count'], 'default', 'value' => 0],
+                [['dcs_code'], 'unique', 'targetAttribute' => ['date_time_of_collection', 'shift_code', 'dcs_code']],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'date_time_of_collection', 'total_amount', 'total_qty', 'auto_count', 'shift_code', 'avg_fat', 'avg_snf'], 'required', 'except' => ['androidsync']]
         ];
     }
 
