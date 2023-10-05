@@ -25,7 +25,7 @@ $shortage_amount = 0;
 
 if ($milk_short_recovery_member == '1') {
     $shortage_amount = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
-    $shortage_info = 'Shortage Amount :: '.$shortage_amount;
+    $shortage_info = 'Shortage Amount :: ' . $shortage_amount;
 //    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
 //    $shortage_info .= $shortage_amount;
     $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
@@ -151,6 +151,7 @@ $tot_amt = array_sum(array_map(function ($array) {
                                     <?php if ($milk_short_recovery_member == '1') { ?>
                                         <td class="no_padding_input hide_help_block">
                                             <?php
+                                            echo Html::activeHiddenInput($model, 'shortage_amount_old[' . $index . ']', ['class' => 'shortage-amount-old', 'value' => !empty($m['shortage_amount']) ? $m['shortage_amount'] : 0]);
                                             echo $form->field($model, 'shortage_amount[' . $index . ']')->textInput(['value' => $m['shortage_amount'], 'class' => 'shortage-amount form-control cal-amount number-validate',])->label(FALSE);
                                             echo Html::activeHiddenInput($model, 'shortage_head_code[' . $index . ']', ['class' => 'shortage_head', 'value' => $m['shortage_head_code']]);
                                             ?>
@@ -249,11 +250,11 @@ $tot_amt = array_sum(array_map(function ($array) {
                                                 if(final == "" ||  isNaN(final)){
                                                     final=0;
                                                 }
-                                                if(final < 0){
+//                                                if(final < 0){
                                                     if((!isNaN(netPay) && netPay < 0)) {
                                                         negativeVal = "Yes";
                                                     }
-                                                }
+//                                                }
                                             });
                                             var message = "' . $message . '";
                                             var negativeCount = ' . $negativeValCount . ';

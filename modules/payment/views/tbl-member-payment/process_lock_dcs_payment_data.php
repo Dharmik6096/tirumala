@@ -361,7 +361,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
     }
 
     
-    $(document).on('blur','.cal-amount',function(e){
+    $(document).on('keyup','.cal-amount',function(e){
 //    $('.cal-amount').on('blur',function(){
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');
@@ -372,7 +372,8 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
          var row_number = val[2];
         var adjustRec = parseFloat(parent.find('.adjust-recovery').val());
         var rec = parseFloat(parent.find('.recovery').val());
-        var shortage = parseFloat(parent.find('.shortage-amount').val());
+        var shortage_old = parseFloat(parent.find('.shortage-amount-old').val());
+        var shortage = shortage_old - parseFloat(parent.find('.shortage-amount').val());
         parent.find('.net-amount').val('');
         if(adjust == '' ||  isNaN(adjust)){
             adjust=0;
@@ -389,10 +390,14 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(shortage == '' ||  isNaN(shortage)){
             shortage=0;
         }
-        var net = final + adjust - hold + adjustRec - rec - shortage; 
-        if((adjust !=0  || hold !=0) && net != '' && net < 0){
+        if(shortage_old == '' ||  isNaN(shortage_old)){
+            shortage_old=0;
+        }
+        var net = final + adjust - hold + adjustRec - rec + shortage; 
+        if((adjust !=0  || hold !=0 || shortage !=0 || shortage_old !=0) && net != '' && net < 0){
             bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
+                $('#'+id).focus().val(.00);
                 $('#'+id).focus().select();
             });
             return false;
