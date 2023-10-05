@@ -24,6 +24,7 @@ use yii\db\Query;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use app\modules\geo\models\TblRegion;
 
 class DropDown extends Component {
 
@@ -906,7 +907,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1723,6 +1724,16 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
             ],
+            'org_type_shift_time' => [
+                'name' => 'org_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC')],
+            ],
+            'collection_type_shift_time' => [
+                'name' => 'collection_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
+            ],
         ];
         return $records[$l];
     }
@@ -1853,6 +1864,10 @@ class DropDown extends Component {
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
             'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
             'rate_class' => ['name' => 'rate_class', 'fields' => 'rate_class_code,rate_class', 'prompt' => 'Select Rate Class', 'model' => 'TblRateClass'],
+            'bmc_list' => ['name' => 'org_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Bmc', 'model' => 'TblDcsBmc'],
+            'mcc_list' => ['name' => 'org_code', 'fields' => 'mcc_plant_code,name', 'prompt' => 'Select Mcc', 'model' => 'TblMccPlant'],
+            'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
+            'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
         ];
         return $label[$l];
     }
@@ -1939,7 +1954,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

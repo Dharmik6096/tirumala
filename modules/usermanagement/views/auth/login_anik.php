@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var $this yii\web\View
  * @var $model webvimark\modules\UserManagement\models\forms\LoginForm
@@ -10,6 +11,7 @@ use yii\helpers\Html;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use yii\web\View;
+
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
 ?>
@@ -62,11 +64,11 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                                 ->passwordInput(['placeholder' => $model->getAttributeLabel('password'), 'autocomplete' => 'off'])
                         ?>
                     </div>
-                    <?php //if($identity['organization_type']!='NATIONAL'){  ?>
+                    <?php //if($identity['organization_type']!='NATIONAL'){   ?>
                     <div id="org" class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-6">
-                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']); ?>
+                                <?php //$form->field($model, 'type', ['options' => ['class' => 'form-group']])->dropDownList(['PCDF' => 'PCDF', 'UNION' => 'UNION'], ['prompt' => 'Select Organization']);  ?>
                             </div>
                         </div>
                         <?= Html::activeHiddenInput($model, 'organization'); ?>
@@ -148,6 +150,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         </div>
     </div>
 </div>
+<?= $this->render('paymentCheck') ?>
 <?php
 if (!empty($model->getErrors())) {
     $script = "
