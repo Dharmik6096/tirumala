@@ -24,6 +24,7 @@ use yii\db\Query;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use app\modules\geo\models\TblRegion;
 
 class DropDown extends Component {
 
@@ -906,7 +907,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1866,6 +1867,7 @@ class DropDown extends Component {
             'bmc_list' => ['name' => 'org_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Bmc', 'model' => 'TblDcsBmc'],
             'mcc_list' => ['name' => 'org_code', 'fields' => 'mcc_plant_code,name', 'prompt' => 'Select Mcc', 'model' => 'TblMccPlant'],
             'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
+            'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
         ];
         return $label[$l];
     }
@@ -1952,7 +1954,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
