@@ -24,10 +24,10 @@ $shortage_pending_info = '';
 $shortage_amount = 0;
 
 if ($milk_short_recovery_member == '1') {
-    $shortage_amount = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
+    $shortage_amount_other = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
+    $shortage_amount_mpg = Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryMpgMember, 'recovery_amount');
+    $shortage_amount = $shortage_amount_other + $shortage_amount_mpg;
     $shortage_info = 'Shortage Amount :: ' . $shortage_amount;
-//    $shortage_info .= Yii::$app->general->getforeignkey($aliasModel->shortageRecoveryOtherMember, 'recovery_amount');
-//    $shortage_info .= $shortage_amount;
     $shortage_pending_info .= '<span id="total-shortage-amount" class="ml-50">Pending Shortage Amount :: ' . $shortage_amount . '</span>';
     echo Html::hiddenInput('pending_shortage_amount', $shortage_amount, ['class' => 'pending_shortage_amount', 'id' => 'pending_shortage_amount']);
 }

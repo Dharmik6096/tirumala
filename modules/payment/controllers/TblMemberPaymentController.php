@@ -450,9 +450,6 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $negativeDcsCode = ArrayHelper::getColumn($negativeValCount, 'dcs_code');
                 $model->dcs_code = json_encode($model->dcs_code);
                 $dataProvider->query->orderBy('CASE WHEN (select COUNT(*) from tbl_member_payment_alias where tbl_member_payment_summary_alias.dcs_code=tbl_member_payment_alias.dcs_code and tbl_member_payment_summary_alias.payment_cycle_code=tbl_member_payment_alias.payment_cycle_code and final_amount < 0 ) > 0 THEN 0 ELSE 1 END');
-//                echo "<pre>";
-//                print_r($dataProvider->getModels());
-//                die;
                 return $this->render('process_lock_dcs_payment_data', [
                             'model' => $model,
                             'searchModel' => $searchModel,
