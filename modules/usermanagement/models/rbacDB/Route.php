@@ -46,4 +46,32 @@ class Route extends \webvimark\modules\UserManagement\models\rbacDB\Route {
         return ArrayHelper::getColumn($FreeActionsDB, 'name');
     }
 
+    public static function refreshRoutes($deleteUnusedRoutes = true) {
+        $allRoutes = AuthHelper::getRoutes();
+
+        $currentRoutes = ArrayHelper::map(Route::find()->asArray()->all(), 'name', 'name');
+
+        $toAdd = array_diff(array_keys($allRoutes), array_keys($currentRoutes));
+
+        foreach ($toAdd as $addItem) {
+            Route::create($addItem);
+        }
+
+        $toRemove = false;
+        if ($deleteUnusedRoutes) {
+            $toRemove = array_diff(array_keys($currentRoutes), array_keys($allRoutes));
+
+            if ($toRemove) {
+                Route::deleteAll(['in', 'name', $toRemove]);
+            }
+        }
+
+
+        if ($toAdd || $toRemove) {
+            if (Yii::$app->cache) {
+                Yii::$app->cache->delete('__commonRoutes');
+            }
+        }
+    }
+
 }

@@ -10,7 +10,7 @@ use app\modules\usermanagement\models\rbacDB\Permission;
 use app\modules\usermanagement\models\rbacDB\Route;
 
 class PermissionController extends \webvimark\modules\UserManagement\controllers\PermissionController {
-    
+
     use \app\controllers\ChildControllerTrait;
 
     public $modelClass = 'app\modules\usermanagement\models\rbacDB\Permission';
@@ -255,6 +255,11 @@ class PermissionController extends \webvimark\modules\UserManagement\controllers
         }
 //        die('done');
         return $sub_menu;
+    }
+
+    public function actionRefreshRoutes($id, $deleteUnused = null) {
+        Route::refreshRoutes($deleteUnused !== null);
+        return $this->redirect(['view', 'id' => $id]);
     }
 
 }
