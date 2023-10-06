@@ -54,7 +54,9 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
             [['bmc_code'], 'required', 'when' => function ($model) {
                     return $model->org_type == 'BMC';
                 }, 'enableClientValidation' => false],
-            [['e_start_time'], 'compareTime'],
+            [['e_start_time'], 'compareEStartTime'],
+            [['m_lock_time'], 'validateMLockTime'],
+            [['e_lock_time'], 'validateELockTime'],
         ];
     }
 
@@ -127,9 +129,25 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
         }
     }
 
-    public function compareTime($attribute) {
-        if ($this->m_start_time < $this->e_start_time) {
+    public function compareEStartTime($attribute) {
+        if ($this->m_start_time > $this->e_start_time) {
             $this->addError($attribute, Yii::t('app/validation', 'E Start Time should be greater than M Start Time.'));
+        }
+    }
+
+    public function validateMLockTime($attribute) {
+        if ($this->m_lock_time >= '14:55') {
+            $this->addError($attribute, 'M Lock Time should be Less than 14:55.');
+        } elseif ($this->m_lock_time <= '03:00') {
+            $this->addError($attribute, 'M Lock Time should be Greater than 03:00.');
+        }
+    }
+
+    public function validateELockTime($attribute) {
+        if ($this->e_lock_time >= '23:55') {
+            $this->addError($attribute, 'E Lock Time should be Less than 23:55.');
+        } elseif ($this->e_lock_time <= '15:00') {
+            $this->addError($attribute, 'E Lock Time should be Greater than 15:00.');
         }
     }
 
