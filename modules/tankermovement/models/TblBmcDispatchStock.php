@@ -3,6 +3,15 @@
 namespace app\modules\tankermovement\models;
 
 use Yii;
+use app\modules\organisation\models\TblUnions;
+use app\modules\organisation\models\TblPlant;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblDcsBmc;
+use app\modules\dcsoperation\models\TblShift;
+use app\modules\organisation\models\TblBmcSilosInfo;
+use app\modules\globalmaster\models\TblAnimalType;
+use app\modules\globalmaster\models\TblMilkQualityType;
+use app\modules\tankermovement\models\TblQtyDiffType;
 
 /**
  * This is the model class for table "tbl_bmc_dispatch_stock".
@@ -45,6 +54,8 @@ use Yii;
  */
 class TblBmcDispatchStock extends \app\models\ChildModel {
 
+    public $from_shift_code, $from_date;
+
     /**
      * @inheritdoc
      */
@@ -57,14 +68,14 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['bmc_dispatch_stock_code'], 'required'],
-            [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
-            [['transaction_date', 'to_date', 'created_at', 'updated_at'], 'safe'],
-            [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
-            [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
-            [['type'], 'default', 'value' => 'dispatch'],
-            [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
-            [['union_code'], 'required', 'except' => ['androidsync']],
+                [['bmc_dispatch_stock_code'], 'required'],
+                [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+                [['transaction_date', 'to_date', 'created_at', 'updated_at', 'from_date', 'from_shift_code'], 'safe'],
+                [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
+                [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
+                [['type'], 'default', 'value' => 'dispatch'],
+                [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
+                [['union_code'], 'required', 'except' => ['androidsync']],
         ];
     }
 
@@ -78,24 +89,24 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
             'to_date' => Yii::t('app', 'To Date'),
             'to_shift_code' => Yii::t('app', 'To Shift Code'),
             'qty_diff_type_code' => Yii::t('app', 'Qty Diff Type Code'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
-            'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'bmc_silos_info_code' => Yii::t('app', 'Bmc Silos Info Code'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
+            'milk_type_code' => Yii::t('app', 'Milk Type'),
+            'bmc_silos_info_code' => Yii::t('app', 'Bmc Silos Info'),
             'opening_bal' => Yii::t('app', 'Opening Bal'),
             'closing_bal' => Yii::t('app', 'Closing Bal'),
             'purchase_qty' => Yii::t('app', 'Purchase Qty'),
             'qty_diff' => Yii::t('app', 'Qty Diff'),
             'extra_qty' => Yii::t('app', 'Extra Qty'),
             'balance_qty' => Yii::t('app', 'Balance Qty'),
-            'fat' => Yii::t('app', 'Fat'),
-            'snf' => Yii::t('app', 'Snf'),
+            'fat' => Yii::t('app', 'FAT'),
+            'snf' => Yii::t('app', 'SNF'),
             'water' => Yii::t('app', 'Water'),
             'type' => Yii::t('app', 'Type'),
             'remarks' => Yii::t('app', 'Remarks'),
-            'union_code' => Yii::t('app', 'Union Code'),
-            'plant_code' => Yii::t('app', 'Plant Code'),
-            'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
-            'bmc_code' => Yii::t('app', 'Bmc Code'),
+            'union_code' => Yii::t('app', 'Union'),
+            'plant_code' => Yii::t('app', 'Plant'),
+            'mcc_plant_code' => Yii::t('app', 'MCC'),
+            'bmc_code' => Yii::t('app', 'BMC'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -116,6 +127,46 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
                         ->where(['bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'milk_type_code' => $this->milk_type_code,
                             'bmc_silos_info_code' => $this->bmc_silos_info_code, 'milk_quality_type_code' => $this->milk_quality_type_code])
                         ->one();
+    }
+
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPlantCode() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
+    }
+
+    public function getMccPlantCode() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
+    }
+
+    public function getBmcCode() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
+    }
+
+    public function getFromShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'from_shift_code']);
+    }
+
+    public function getToShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'to_shift_code']);
+    }
+
+    public function getSilosInfoCode() {
+        return $this->hasOne(TblBmcSilosInfo::className(), ['bmc_silos_info_code' => 'bmc_silos_info_code']);
+    }
+
+    public function getMilkType() {
+        return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
+    }
+
+    public function getMilkQualityType() {
+        return $this->hasOne(TblMilkQualityType::className(), ['milk_quality_type_code' => 'milk_quality_type_code']);
+    }
+
+    public function getQtyDiffType() {
+        return $this->hasOne(TblQtyDiffType::className(), ['qty_diff_type_code' => 'qty_diff_type_code']);
     }
 
 }
