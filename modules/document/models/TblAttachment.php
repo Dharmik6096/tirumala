@@ -83,4 +83,11 @@ class TblAttachment extends \app\models\ChildModel {
     public function getAttachment($pro_member_code) {
         return $this->find()->where(['module_code' => $pro_member_code])->all();
     }
+
+    public function getFileName($file_name) {
+        return $this->find()->select('attachment')->where(['file_name' => $file_name])
+                        ->orderBy(['tbl_attachment.attachment_code' => SORT_DESC])
+                        ->one();
+    }
+
 }

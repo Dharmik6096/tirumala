@@ -227,8 +227,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         if (Yii::$app->request->post('request_button') === 'approve' && $d->is_new_file = 1) {
                             $member_path = Yii::$app->params['document_upload'] . 'provisional_member';
                             if (Yii::$app->general->checkDirectory($member_path)) {
-                                $extension = explode('.', $d->file_name)[1];
-                                $file_name = 'member' . '_' . $model->member_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
+                                $file_name = 'member' . '_' . $model->member_code . '_' . $doc->doc_id . '_' . time() . '.' . $d->file_name->extension;
                                 $d->attachment = $member_path . '/' . $file_name;
                                 if (!$d->file_name->saveAs($d->attachment)) {
                                     $error_msg .= $d->doc_name . '<br/>';
@@ -274,7 +273,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $all_doc = [];
                                 $memberdoc = [];
                                 if ($model->provisional_status = 'Approve') {
-                                    $this->memberApprove($status, $save_model, $deleteModel, $model, 'approve', $all_doc, $memberdoc, $save_member_doc);
+                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc);
                                 }
                             } else {
                                 $model->is_approved = 0;
@@ -284,7 +283,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         }
                         $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
                         if ($transaction == 'customRedirect') {
-                            if (Yii::$app->request->post('request_button') === 'approve') {
+                            if ($model->provisional_status == 'approve') {
                                 $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                                 $memberDir = $baseDir . 'member';
                                 $proMemberDir = $baseDir . 'provisional_member';
@@ -370,12 +369,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $model_save[] = $memberModel;
                 $all_doc = [];
                 $memberdoc = [];
-                if ($memberModel->provisional_status = 'Approve') {
-                    $this->memberApprove($status, $save_model, $deleteModel, $memberModel, 'approve', $all_doc, $memberdoc, []);
+                if ($memberModel->provisional_status == 'Approve') {
+                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc);
                 }
                 $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    if ($memberModel->provisional_status == 'approve') {
+                    if ($memberModel->provisional_status == 'Approve') {
                         $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
                         $memberDir = $baseDir . 'member';
                         $proMemberDir = $baseDir . 'provisional_member';
@@ -402,7 +401,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, $type = '', &$all_attachment, &$memberdoc, $save_member_doc = []) {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = []) {
         if ($status == 'Approve' && $memberModel->provisional_status == 'Approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
@@ -436,9 +435,9 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
 
                 $tblAttachment = new TblAttachment();
                 $tblAttachment = $tblAttachment->getAttachment($memberModel->provisional_member_code);
+                $doc_path = Yii::$app->params['document_upload'] . 'member';
 
                 if (!empty($tblAttachment)) {
-                    $doc_path = Yii::$app->params['document_upload'] . 'member';
                     foreach ($tblAttachment as $key => $doc) {
                         $all_attachment[] = $doc->file_name;
                         $tblAttachments = new TblAttachment();
@@ -477,10 +476,17 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                         $all_attachment[] = $member_attach->file_name;
                         $tblAttachments = new TblAttachment();
                         $tblAttachments->attributes = $member_attach->attributes;
-                        $tblAttachments->module_name = 'tbl_member';
-                        $tblAttachments->module_code = $tblMember->member_code;
-                        $memberdoc[] = $member_attach->file_name;
-                        $model_save[] = $tblAttachments;
+                        if (Yii::$app->general->checkDirectory($doc_path)) {
+                            $tblAttachments->module_name = 'tbl_member';
+                            $tblAttachments->module_code = $tblMember->member_code;
+                            $attachment = $doc_path . '/' . $member_attach->file_name;
+                            $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                            $memberdoc[] = $member_attach->file_name;
+                            $model_save[] = $tblAttachments;
+                        } else {
+                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                'message' => 'Error while create directory.']);
+                        }
                     }
                 }
             }
