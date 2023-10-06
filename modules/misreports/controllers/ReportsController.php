@@ -1442,6 +1442,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMemberPaymentBankFormat() {
+        $this->report = 'MemberPaymentBankFormat';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -2943,7 +2948,7 @@ class ReportsController extends \app\controllers\ChildController {
                 'title' => 'Dcs History',
             ],
             'RmrdDataExport' => [
-                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
                 'scenario' => 'RMRDDataExport',
                 'title' => 'RMRD Data Export',
@@ -2953,6 +2958,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_cp_wise_liability_wdpl',
                 'scenario' => 'CpliabilityReport',
                 'title' => 'CP liability Report',
+            ],
+            'MemberPaymentBankFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_payment_bank_format',
+                'scenario' => 'MemberPaymentBankFormat',
+                'title' => '624 - Member Payment Bank Format',
             ],
         ];
         return $label[$l];

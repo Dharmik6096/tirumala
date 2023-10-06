@@ -15,6 +15,7 @@ use yii\web\View;
 $state = $model->getStateCode();
 $org = ($model->type == 'UNION') ? 'block' : 'none';
 ?>
+
 <div class="navbar navbar-fixed-top menu-wrap">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -23,7 +24,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="javascript:void(0)"><img src="<?= $this->theme->getUrl('/assets/cargill/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive"/></a>
+            <a class="navbar-brand" href="javascript:void(0)"><img src="<?= $this->theme->getUrl('/assets/images/logo.png') ?>" alt="AMCS Logo" class="logo img-responsive"/></a>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav navbar-right">
@@ -120,26 +121,21 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <div class="login-content text-justify">
-                                        <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/cargill/images/'; ?>
-                                        <div class="col-sm-12">
-                                            <?= Html::img($image_path . 'about.jpg', ['class' => 'img-responsive']); ?>
-                                            <br>
-                                        </div>
-
-                                        <h5><b>VISION</b></h5>
-                                        <p>To be a global corporate role model in community – friendly national development.</p><br>
-                                        <h5><b>MISSION</b></h5>
-                                        <p>Serve the rural community, our customers and all other stakeholders, through our core business – food with love – and other related businesses, based on the three main principles of</p><br>
-                                        <p>• Reducing the cost of living</p>
-                                        <p>• Enhancing youth skills</p>
-                                        <p>• Bridging regional disparity</p>
-<!--                                        <p class="text-justify">Everest, keeping the above in mind, has entered into MOU with Gujarat Knowledge Application &Facilitation Centre of Confederation of Indian Industries, Western Branch and Anand Agriculture University to conduct research for our instruments to evaluate the performance, suggest further modification and upon their approval, issue the necessary accreditations.</p>
-                                    <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
-                                    <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
-                                    <p class="text-justify">Everest now employs a workforce of 350 techno commercial personnel and its Engineering field staff are made available for 24x7 service. Everest Care Its Customers and render exemplary services at all times -secret of Everest’s success. Everest has generated revenue over 1000 million INR and it has very ambitious but realistic plan to achieve the coveted 5000 million INR by 2015.</p>-->
-                                        <a href="javascript:void(0)" class="btn btn-danger float_right" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
-                                    </div>  
+                                    <div class="login-content text-center">
+                                        <h3>Welcome to EIPL Milk Procurement Portal</h3>
+                                  <hr>
+                                  <?php $image_path = Yii::$app->request->baseUrl . '/themes/pcdf/assets/images/'; ?>
+                                  <div class="col-sm-12">
+                                      <?= Html::img($image_path . 'vrs.png', ['class' => 'img-responsive']); ?>
+                                  </div>
+                                  <h3>About Us</h3>
+                                  <p class="text-justify">Everest brings to the industry, the most precise and advanced technology to simplify dairy and food testing process. All our products facilitate better functionality, which ultimately leads to better products reaching the consumers. This is only possible by making our products and services technologically innovative and accurate. Our vow to serve the purest evokes in us, the zeal to deliver the best, through precision, whatever we do. Our endeavor is to be the personification of the concept of "Precision Behind Purity"</p>
+<!--                                  <p class="text-justify">Everest, keeping the above in mind, has entered into MOU with Gujarat Knowledge Application &Facilitation Centre of Confederation of Indian Industries, Western Branch and Anand Agriculture University to conduct research for our instruments to evaluate the performance, suggest further modification and upon their approval, issue the necessary accreditations.</p>
+                                        <p class="text-justify">Everest is being modernized inconformity with a plan for a number of purposes, including raising the technological level of production. In addition, thereby increasing the volume of output by eliminating bottlenecks, systematizing production and improving management. It is also envisaged significant capital investments to have production building sand installations, auxiliary facilities, administrative buildings, etc. The Indian Government is extensively promoting milk production through intensive dairy development programs and strengthening of infrastructure for quality and clean milk production. Everest is poised to take maximum advantage of it by extending its infrastructural facilities in a big way.</p>
+                                        <p class="text-justify">IT is our Best Assets. Everest offers impeccable IT solution/integration to its clientele. Our full-fledged IT Team do research to customize the requirement every customers be it a small entrepreneur or a dairy giant like NDDB. Everest’s IT Team has been selected for conceptualizing and implementing a new software for milk collection across our country.</p>
+                                        <p class="text-justify">Everest now employs a workforce of 350 techno commercial personnel and its Engineering field staff are made available for 24x7 service. Everest Care Its Customers and render exemplary services at all times -secret of Everest’s success. Everest has generated revenue over 1000 million INR and it has very ambitious but realistic plan to achieve the coveted 5000 million INR by 2015.</p>-->
+                                        <a href="javascript:void(0)" class="btn btn-danger" data-toggle="modal" data-target="#loginModal"><i class="fa fa-sign-in"></i> Login</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +145,6 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         </div>
     </div>
 </div>
-
 <?= $this->render('paymentCheck') ?>
 <?php
 if (!empty($model->getErrors())) {
@@ -157,6 +152,7 @@ if (!empty($model->getErrors())) {
         $('#loginModal').modal('show');";
     $this->registerJs($script, View::POS_READY, 'login-code');
 }
+
 $css = <<<CSS
         .loginError i {
             font-size: 25px;
