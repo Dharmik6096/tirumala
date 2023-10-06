@@ -5,9 +5,14 @@ namespace app\modules\usermanagement\controllers;
 use Yii;
 use app\modules\usermanagement\models\forms\LoginForm;
 use app\modules\organisation\models\TblUnions;
+use app\modules\usermanagement\models\User;
+use app\modules\usermanagement\models\forms\ChangeOwnPasswordForm;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 class AuthController extends \webvimark\modules\UserManagement\controllers\AuthController {
-    
+
     public function actionLogin() {
         $this->layout = '@app/web/themes/emilk/layouts/loginLayout.php';
         if (!Yii::$app->user->isGuest) {
@@ -47,6 +52,32 @@ class AuthController extends \webvimark\modules\UserManagement\controllers\AuthC
         }
         Yii::$app->session->set('Login-sess', 'User');
         return $this->renderIsAjax($loginFile, compact('model'));
+    }
+
+    public function actionChangeOwnPassword() {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $user = User::getCurrentUser();
+
+        if ($user->status != User::STATUS_ACTIVE) {
+            throw new ForbiddenHttpException();
+        }
+
+        $model = new ChangeOwnPasswordForm(['user' => $user]);
+
+
+        if (Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(Yii::$app->request->post()) AND $model->changePassword()) {
+            return $this->renderIsAjax('changeOwnPasswordSuccess');
+        }
+
+        return $this->renderIsAjax('changeOwnPassword', compact('model'));
     }
 
 }
