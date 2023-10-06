@@ -24,6 +24,14 @@ $grid_option = [
             $url = !empty($attachemnt) ? $attachemnt : '';
             return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
         },
+        'view-attachment' => function ($url, $model) {
+            $status = $model->getFileName($model->file_name);
+            if (isset($status)) {
+                $attachemnt = $status['attachment'];
+            }
+            $url = !empty($attachemnt) ? $attachemnt : '';
+            return Html::a('<i class="fa fa-eye"></i>', $url, ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'View', 'target' => '_blank']);
+        },
     ]
 ];
 
