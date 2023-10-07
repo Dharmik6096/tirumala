@@ -63,6 +63,8 @@ $appendId = !empty($appendId) ? $appendId : '';
                 <?=
                 DropZone::widget([
                     'id' => 'mainDrop' . $appendId,
+                    'dropzoneContainer' => 'mainDrop' . $appendId,
+                    'previewsContainer' => $appendId,
                     'options' => [
                         'acceptedMimeTypes' => ".csv,.xls,.xlsx",
                         'url' => Url::to(['/import/default/import-file',
@@ -108,12 +110,12 @@ $appendId = !empty($appendId) ? $appendId : '';
                                             if (obj1.status == "success"){
                                                 $("#importModal' . $appendId . '").modal("toggle");
                                                 $("#import-form' . $appendId . '")[0].reset();
-                                                //Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                Dropzone.forElement("#mainDrop' . $appendId . '").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }else{
                                                 $("#importModal' . $appendId . '").modal("toggle");
                                                 $("#import-form' . $appendId . '")[0].reset();
-                                                //Dropzone.forElement("#mainDrop").removeAllFiles(true);
+                                                Dropzone.forElement("#mainDrop' . $appendId . '").removeAllFiles(true);
                                                 bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>"+obj1.data+"</span></div></div>");
                                             }
                              }'),
@@ -127,7 +129,7 @@ $appendId = !empty($appendId) ? $appendId : '';
                                     }else{
                                         $("#importModal' . $appendId . '").modal("toggle");
                                         $("#import-form' . $appendId . '")[0].reset();
-                                        //Dropzone.forElement("#mainDrop' . $appendId . '").removeAllFiles(true);
+                                        Dropzone.forElement("#mainDrop' . $appendId . '").removeAllFiles(true);
                                         bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>You have error in your file</span></div></div>");
                                     }
                              }'),
