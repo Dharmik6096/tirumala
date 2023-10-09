@@ -10,25 +10,23 @@ use app\modules\tankermovement\models\TblBmcDispatchStock;
 /**
  * TblBmcDispatchStockSearch represents the model behind the search form about `app\modules\tankermovement\models\TblBmcDispatchStock`.
  */
-class TblBmcDispatchStockSearch extends TblBmcDispatchStock
-{
+class TblBmcDispatchStockSearch extends TblBmcDispatchStock {
+
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['bmc_dispatch_stock_code', 'transaction_date', 'to_date', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
-            [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
+                [['bmc_dispatch_stock_code', 'transaction_date', 'to_date', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
+                [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function scenarios()
-    {
+    public function scenarios() {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
@@ -40,8 +38,7 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public function search($params) {
         $query = TblBmcDispatchStock::find();
 
         // add conditions that should always apply here
@@ -51,18 +48,19 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock
         ]);
 
         $this->load($params);
+        $query->joinWith(['bmcCode']);
+        Yii::$app->general->filterByOrg($query, $this, 'tbl_bmc_dispatch_stock');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        if (!empty($this->transaction_date)) {
+            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), transaction_date, 126)', date('Y-m-d', strtotime($this->transaction_date))]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
-            'transaction_date' => $this->transaction_date,
-            'to_date' => $this->to_date,
-            'to_shift_code' => $this->to_shift_code,
             'qty_diff_type_code' => $this->qty_diff_type_code,
             'milk_quality_type_code' => $this->milk_quality_type_code,
             'milk_type_code' => $this->milk_type_code,
@@ -76,28 +74,24 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock
             'fat' => $this->fat,
             'snf' => $this->snf,
             'water' => $this->water,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'originating_type' => $this->originating_type,
         ]);
 
         $query->andFilterWhere(['like', 'bmc_dispatch_stock_code', $this->bmc_dispatch_stock_code])
-            ->andFilterWhere(['like', 'type', $this->type])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'union_code', $this->union_code])
-            ->andFilterWhere(['like', 'plant_code', $this->plant_code])
-            ->andFilterWhere(['like', 'mcc_plant_code', $this->mcc_plant_code])
-            ->andFilterWhere(['like', 'bmc_code', $this->bmc_code])
-            ->andFilterWhere(['like', 'created_by', $this->created_by])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'originating_org_code', $this->originating_org_code])
-            ->andFilterWhere(['like', 'originating_org_type', $this->originating_org_type])
-            ->andFilterWhere(['like', 'x_col1', $this->x_col1])
-            ->andFilterWhere(['like', 'x_col2', $this->x_col2])
-            ->andFilterWhere(['like', 'x_col3', $this->x_col3])
-            ->andFilterWhere(['like', 'x_col4', $this->x_col4])
-            ->andFilterWhere(['like', 'x_col5', $this->x_col5]);
+                ->andFilterWhere(['like', 'type', $this->type])
+                ->andFilterWhere(['like', 'remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_bmc.bmc_name', $this->bmc_code]);
+        return $dataProvider;
+    }
+
+    public function searchBmcStockDetail($params) {
+        $query = TblBmcDispatchStock::find()->where(['union_code' => $this->union_code, 'plant_code' => $this->plant_code, 'mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'to_date' => $this->to_date, 'to_shift_code' => $this->to_shift_code]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
 
         return $dataProvider;
     }
+
 }

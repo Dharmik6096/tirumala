@@ -76,6 +76,7 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
                 [['type'], 'default', 'value' => 'dispatch'],
                 [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
                 [['union_code'], 'required', 'except' => ['androidsync']],
+                [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
         ];
     }
 
@@ -87,8 +88,8 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
             'bmc_dispatch_stock_code' => Yii::t('app', 'Bmc Dispatch Stock Code'),
             'transaction_date' => Yii::t('app', 'Transaction Date'),
             'to_date' => Yii::t('app', 'To Date'),
-            'to_shift_code' => Yii::t('app', 'To Shift Code'),
-            'qty_diff_type_code' => Yii::t('app', 'Qty Diff Type Code'),
+            'to_shift_code' => Yii::t('app', 'To Shift'),
+            'qty_diff_type_code' => Yii::t('app', 'Qty Diff Type'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'bmc_silos_info_code' => Yii::t('app', 'Bmc Silos Info'),

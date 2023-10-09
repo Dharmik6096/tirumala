@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Json;
+use kartik\form\ActiveForm;
 
 /**
  * TblBmcDispatchStockController implements the CRUD actions for TblBmcDispatchStock model.
@@ -61,24 +62,65 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
+
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
             $this->model->to_date = $this->model->to_date . ' ' . \Yii::$app->general->getshift($this->model->to_shift_code);
             $this->model->type = 'physical';
             $this->model->closing_bal = 0;
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Dispatch Stock', 'create']);
-            if ($transaction == 'customRedirect') {
-                return $this->redirect(['index']);
-            } else {
-                $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                $record = ['status' => 'success', 'msg' => $msg];
+            $this->model->scenario = 'create';
+
+            if ($this->model->validate()) {
+                $transaction = $this->generalModel->saveTransaction([$this->model], ['BMC Dispatch Stock', 'create']);
+                if ($transaction == 'customRedirect') {
+                    $searchModel = new TblBmcDispatchStockSearch();
+                    $searchModel->setAttributes(Yii::$app->request->get('TblBmcDispatchStock'));
+                    $searchModel->union_code = $this->model->union_code;
+                    $searchModel->plant_code = $this->model->plant_code;
+                    $searchModel->mcc_plant_code = $this->model->mcc_plant_code;
+                    $searchModel->bmc_code = $this->model->bmc_code;
+                    $searchModel->to_date = $this->model->to_date;
+                    $searchModel->to_shift_code = $this->model->to_shift_code;
+                    $dataProvider = $searchModel->searchBmcStockDetail([$searchModel->union_code, $searchModel->plant_code, $searchModel->mcc_plant_code, $searchModel->bmc_code, $searchModel->to_date, $searchModel->to_shift_code]);
+                    $dataHtml = $this->renderAjax('_transaction_detail', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                    ]);
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg, 'data' => $dataHtml];
+                } else {
+                    $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                    $record = ['status' => 'success', 'msg' => $msg];
+                }
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return Json::encode($record);
+            } else {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return Json::encode(ActiveForm::validate($this->model));
             }
         }
         return $this->render('create', [
                     'model' => $this->model,
+        ]);
+    }
+
+    public function actionTransactionDetail() {
+        $searchModel = new TblBmcDispatchStockSearch();
+        $dataProvider = $searchModel->searchBmcStockDetail(Yii::$app->request->queryParams);
+        return $this->renderAjax('_transaction_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionListGrid() {
+        $searchModel = new TblBmcDispatchStockSearch();
+        $searchModel->setAttributes(Yii::$app->request->get('TblBmcCollection'));
+        $dataProvider = $searchModel->actionTransactionDetail([]);
+        return $this->renderAjax('_transaction_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider
         ]);
     }
 
