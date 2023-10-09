@@ -5,6 +5,7 @@ namespace app\modules\configuration\models;
 use Yii;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
 
 /**
  * This is the model class for table "tbl_shift_time_android".
@@ -30,7 +31,7 @@ use app\modules\organisation\models\TblMccPlant;
  */
 class TblShiftTimeAndroid extends \app\models\ChildModel {
 
-    public $plant_code, $mcc_plant_code, $bmc_code;
+    public $plant_code, $mcc_plant_code, $bmc_code, $union_code, $mcc_plant_codes;
 
     /**
      * @inheritdoc
@@ -44,7 +45,7 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['org_code', 'org_type', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type'], 'safe'],
+            [['org_code', 'org_type', 'collection_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time', 'originating_org_code', 'originating_org_type', 'plant_code', 'mcc_plant_code', 'bmc_code', 'mcc_plant_codes'], 'safe'],
             [['created_at', 'created_by', 'updated_at', 'updated_by', 'originating_type', 'date_shift_enable', 'grace_hr'], 'safe'],
             [['date_shift_enable', 'grace_hr', 'collection_type', 'org_type', 'm_start_time', 'e_start_time', 'm_lock_time', 'e_lock_time'], 'required'],
             [['grace_hr'], 'number'],
@@ -53,6 +54,9 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
             [['bmc_code'], 'required', 'when' => function ($model) {
                     return $model->org_type == 'BMC';
                 }, 'enableClientValidation' => false],
+            [['e_start_time'], 'compareEStartTime'],
+            [['m_lock_time'], 'validateMLockTime'],
+            [['e_lock_time'], 'validateELockTime'],
         ];
     }
 
@@ -83,12 +87,33 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
         ];
     }
 
+    public function getPlantCode() {
+        if ($this->org_type == 'BMC') {
+            return TblPlant::find()
+                            ->innerJoin('tbl_mcc_plant', 'tbl_plant.plant_code = tbl_mcc_plant.plant_code')
+                            ->innerJoin('tbl_bmc', 'tbl_mcc_plant.mcc_plant_code = tbl_bmc.mcc_plant_code')
+                            ->where(['tbl_bmc.bmc_code' => $this->org_code])
+                            ->one();
+        } elseif ($this->org_type == 'MCC') {
+            return TblPlant::find()
+                            ->leftJoin('tbl_mcc_plant', 'tbl_plant.plant_code = tbl_mcc_plant.plant_code')
+                            ->andWhere(['tbl_mcc_plant.mcc_plant_code' => $this->org_code])
+                            ->one();
+        }
+    }
+
     public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'org_code']);
     }
 
     public function getMccCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'org_code']);
+    }
+
+    public function getMccName() {
+        return TblMccPlant::find()
+                        ->where(['mcc_plant_code' => TblDcsBmc::findOne(['bmc_code' => $this->org_code])->mcc_plant_code])
+                        ->one();
     }
 
     public function checkUnique($attribute) {
@@ -101,6 +126,28 @@ class TblShiftTimeAndroid extends \app\models\ChildModel {
                 ->count();
         if ($data != 0) {
             $this->addError($attribute, Yii::t('app/validation', 'Collection Type has already been taken.'));
+        }
+    }
+
+    public function compareEStartTime($attribute) {
+        if ($this->m_start_time > $this->e_start_time) {
+            $this->addError($attribute, Yii::t('app/validation', 'E Start Time should be greater than M Start Time.'));
+        }
+    }
+
+    public function validateMLockTime($attribute) {
+        if ($this->m_lock_time >= '14:55') {
+            $this->addError($attribute, 'M Lock Time should be Less than 14:55.');
+        } elseif ($this->m_lock_time <= '03:00') {
+            $this->addError($attribute, 'M Lock Time should be Greater than 03:00.');
+        }
+    }
+
+    public function validateELockTime($attribute) {
+        if ($this->e_lock_time >= '23:55') {
+            $this->addError($attribute, 'E Lock Time should be Less than 23:55.');
+        } elseif ($this->e_lock_time <= '15:00') {
+            $this->addError($attribute, 'E Lock Time should be Greater than 15:00.');
         }
     }
 
