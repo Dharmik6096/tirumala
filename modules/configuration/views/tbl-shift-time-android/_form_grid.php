@@ -9,6 +9,36 @@ $attribute = [
     ['attribute' => 'org_type', 'visible' => true],
     ['attribute' => 'org_code', 'visible' => true],
     [
+        'attribute' => 'plant_code',
+        'label' => 'PLANT',
+        'value' => function ($model) {
+            return isset($model->plantCode) ? $model->plantCode['name'] : 'N/A';
+        },
+        'visible' => true,
+    ],
+    [
+        'attribute' => 'mcc_plant_code',
+        'label' => 'MCC',
+        'value' => function ($model) {
+            if ($model->org_type === 'BMC' && isset($model->mccName)) {
+                return $model->mccName['name'];
+            } elseif ($model->org_type === 'MCC' && isset($model->mccCode)) {
+                return $model->mccCode['name'];
+            } else {
+                return 'N/A';
+            } 
+        },
+        'visible' => true
+    ],
+    [
+        'attribute' => 'bmc_code',
+        'label' => 'BMC',
+        'value' => function ($model) {
+            return ($model->org_type === 'BMC' && isset($model->bmcCode)) ? $model->bmcCode['bmc_name'] : 'N/A';
+        },
+        'visible' => true
+    ],
+    [
         'attribute' => 'org_name',
         'label' => 'Organization Name',
         'value' => function ($model) {
