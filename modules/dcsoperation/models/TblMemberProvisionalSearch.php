@@ -78,7 +78,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
         $query->joinWith(['memberTypeCode', 'dcsCode']);
 
         if ($pending_approval) {
-//            $subQuery = Yii::$app->general->getApproveLavel('member');
             $approval = new TblProcessApproval();
             $subQuery = $approval->getApproveLavel('member');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_member_provisional.provisional_member_code) = convert(varchar(max),ap.process_code)');
@@ -86,8 +85,6 @@ class TblMemberProvisionalSearch extends TblMemberProvisional {
             $this->provisional_status = ['Register', 'Inprogress'];
             $query->where(['tbl_member_provisional.provisional_status' => $this->provisional_status, 'tbl_member_provisional.is_active' => 1]);
         }
-
-//        Yii::$app->general->filterByOrg($query, $this, 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional', 'tbl_member_provisional');
 
         Yii::$app->general->filterByOrg($query, $this);
 

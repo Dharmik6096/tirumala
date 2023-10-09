@@ -429,14 +429,14 @@ class CustomValidation extends Component {
                 ],
             ],
             'VRS_NEWASA' => [
-                'TblMember' => [
+                'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
                     ],
                 ],
             ],
             'VRS_GLT' => [
-                'TblMember' => [
+                'TblMemberProvisional' => [
                     'default' => [
                             [['adhar_no'], 'required'],
                     ],
