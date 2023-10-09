@@ -7,10 +7,12 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 
 $this->title = Yii::$app->label->title('view', 'provisional member');
-//$this->params['menu'][] = Yii::$app->controls->add('provisional member');
-//if ($model->is_approved != 1) {
-//    $this->params['menu'][] = Yii::$app->controls->update($model->provisional_member_code);
-//}
+if (Yii::$app->general->getUnionConfiguration($model->union_code, 'workflow_require', 'PORTAL') == 0) {
+    $this->params['menu'][] = Yii::$app->controls->add('provisional member');
+    if ($model->is_approved != 1) {
+        $this->params['menu'][] = Yii::$app->controls->update($model->provisional_member_code);
+    }
+}
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

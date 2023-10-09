@@ -121,8 +121,15 @@ class TblAttachmentController extends \app\controllers\ChildController {
                 Yii::$app->operation->history($attachmentModel, $attachmentHistoryModel, DELETE);
                 $savedelModel[] = $attachmentModel;
                 $savedelModel[] = $attachmentHistoryModel;
+
+                $record = $this->generalModel->deleteTransaction($savedelModel);
+                if ($record['status'] == 'success') {
+                    $attachmentPath = str_replace(Yii::$app->urlManager->createAbsoluteUrl(''), Yii::$app->basePath . '/', $attachmentModel->attachment);
+                    if (file_exists($attachmentPath)) {
+                        unlink($attachmentPath);
+                    }
+                }
             }
-            $record = $this->generalModel->deleteTransaction($savedelModel);
         }
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($record);
