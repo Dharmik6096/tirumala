@@ -117,7 +117,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
         return new TblFtpTxnLogQuery(get_called_class());
     }
 
-    public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false) {
+    public function exportData($data_array, $title = '', $output = [], $mccRefCode = '', $email = false, $ftp_upload = TRUE) {
         $eiplCode = Yii::$app->session->get('eiplCode');
         if (empty($eiplCode)) {
             $mccModelData = TblUnions::find()->where(['union_code' => $data_array['union_code']])->one();
@@ -162,7 +162,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                     $data->module_code = $bmc_data->bmc_code;
                     $data->mcc_plant_code = $bmc_data->mcc_plant_code;
                 }
-                $this->generateFiles($download, $FTPProcess, $data, TRUE, $title, $mccRefCode, $email);
+                $this->generateFiles($download, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email);
             }
         } else {
             $txn->ref_code = $data_array['module_code'];
@@ -172,7 +172,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
                 $data->mcc_plant_code = $bmc_data->mcc_plant_code;
                 $data->union_code = $bmc_data->union_code;
             }
-            return $this->generateFiles($output, $FTPProcess, $data, TRUE, $title, $mccRefCode, $email);
+            return $this->generateFiles($output, $FTPProcess, $data, $ftp_upload, $title, $mccRefCode, $email);
         }
     }
 
