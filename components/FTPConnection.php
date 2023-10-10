@@ -3,7 +3,7 @@
 namespace app\components;
 
 use yii\base\Component;
-use phpseclib\Net\SFTP;
+use phpseclib3\Net\SFTP;
 use Yii;
 
 class FTPConnection extends Component {
