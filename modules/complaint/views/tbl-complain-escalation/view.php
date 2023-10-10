@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use app\components\GeneralFunctions;
 use kartik\grid\GridView;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Complain Escalation');
 

@@ -450,7 +450,7 @@ class GeneralFunctions extends Component {
         $primaryKey = $model->tableSchema->primaryKey[0];
         $tableName = $model->tableName();
         $val = (new \yii\db\Query)
-                ->select("MAX(convert(int,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
+                ->select("MAX(convert(bigint,LTRIM(RTRIM(" . $primaryKey . ")))) as " . $primaryKey)
                 //->select("MAX(CAST(LTRIM(RTRIM(".$primaryKey.")) AS UNSIGNED)) as ".$primaryKey)
                 ->from($tableName)
                 ->one();

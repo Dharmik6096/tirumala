@@ -1,13 +1,14 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use yii\helpers\Url;
-use zainiafzan\widget\Dropzone;
+//use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\web\JsExpression;
 use demogorgorn\ajax\AjaxSubmitButton;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use app\modules\usermanagement\components\GhostHtml;
 
 $path = Yii::$app->params['complaint_dir_path'];
 $button_type = '';
@@ -153,7 +154,7 @@ $form = ActiveForm::begin([
 <div class="col-sm-12">
     <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
     <?=
-    Dropzone::widget([
+    DropZone::widget([
         'id' => 'mainDrop',
         'options' => [
             'url' => \yii\helpers\Url::to(['/complaint/tbl-complain/upload-file',
@@ -265,21 +266,17 @@ if ($type == 'resolve') {
                                     $("#loadercontent").hide();
                              }'),
         ],
-        'options' => ['class' => 'btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
+        'options' => ['class' => 'btn-login btn btn-primary', 'id' => 'upload-btn', 'type' => 'submit'],
     ]);
     AjaxSubmitButton::end();
     ?>
-</div>
-<div class="col-sm-2">
-    <div class="form-group">
         <?= Yii::$app->controls->reset(); ?>
         <?= Yii::$app->controls->cancel($model); ?>
     </div>
-</div>
-</div>
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+    Dropzone.autoDiscover = false;
     $('.default_hide').hide();
     hideSectionManage($('#tblcomplain-location_type').val());
     var complainFor = $('#tblcomplain-complain_for').val();
