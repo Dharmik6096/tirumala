@@ -5188,7 +5188,7 @@ tr.highlightRow {
 }
 .card{
     position: unset;
-    display: block;
+    /*display: block;*/
 }
 .form-check .form-check-input {
     float: left;
