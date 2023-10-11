@@ -9,6 +9,7 @@ use yii\widgets\MaskedInput;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
 
+$readonly = $type == 'create' ? FALSE : TRUE;
 $disabled = empty($model->milk_vehicle_entry_code) ? '' : 'disabled';
 $milk_vehicle_entry_code = $model->milk_vehicle_entry_code;
 ?>
@@ -31,34 +32,34 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
-            <div class="col-sm-2"> 
-                <?= Yii::$app->dropdown->dropdownStatic('receipt_at', $model, $form, 'form-group', $model->getAttributeLabel('receipt_at'), false, 'receipt_at', false); ?>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblmilkvehicleentry-union_code', 'plant_code', TRUE); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-2 receipt_hide">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblmilkvehicleentry-plant_code', 'mcc_plant_code', TRUE); ?>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
             </div>
-            <div class="col-sm-2 receipt_hide">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblmilkvehicleentry-mcc_plant_code', 'bmc_code', TRUE); ?>
-            </div>
-            <div class="col-sm-2 receipt_hide">
-                <?= Yii::$app->dropdown->customer_type($model, $form, 'tblmilkvehicleentry-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
-            </div>
-            <div class="col-sm-2 receipt_hide">
-                <?= Yii::$app->dropdown->customer_code($model, $form, 'tblmilkvehicleentry-bmc_code,tblmilkvehicleentry-customer_type', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
-            </div>            
             <div class="col-sm-2">
-                <?= Yii::$app->controls->date($model, $form, 'vehicle_entry_date', '', date('Y-m-d'), false, FALSE, true); ?>
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+            </div>    
+            <div class="col-sm-2">
+                <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
-            <div class="col-sm-2"> 
+            <div class="col-sm-2 shift filldata">
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
+            </div>
+            <div class="col-sm-2 disabled vehicle_code_hide"> 
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblmilkvehicleentry-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2 tanker_no_hide"> 
+                <?= $form->field($model, 'tanker_no')->textInput() ?>
+            </div>
+            <div class="col-sm-2 filldata trip-code-hide">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
                 <?= Html::hiddenInput('trip_type', 'receipt', ['id' => 'trip_type']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-vehicle_entry_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -77,8 +78,8 @@ $form = ActiveForm::begin([
             </div>
         </div>
         <div class="col-lg-12">
-            <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Summary') ?></h5>
             <div id="dispatch-detail">
+                <h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Summary') ?></h5>
                 <table class="table tab-bordered">
                     <thead>
                         <tr>
@@ -249,17 +250,57 @@ $form = ActiveForm::begin([
 </div>
 <?php
 $script = "
-    $('.receipt_hide').hide();
-    $(document).on('change','#tblmilkvehicleentry-receipt_at', function() {
-    var receipt=$('#tblmilkvehicleentry-receipt_at').val();
-        if(receipt !='' && receipt=='VENDOR'){
-         $('.receipt_hide').show();
-        } else if(receipt !='' && receipt=='PLANT'){
-            $('.receipt_hide').hide();
-            $('#tblmilkvehicleentry-mcc_plant_code').val('');
-            $('#tblmilkvehicleentry-bmc_code').val('');
-            $('#tblmilkvehicleentry-customer_type').val('');
-            $('#tblmilkvehicleentry-customer_code').val('');
+    
+    $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
+        var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
+        var ReceiptDatetime = $('#tblmilkvehicleentry-receipt_datetime').val();
+        if (vehicleCode !== '' && ReceiptDatetime !== '' && vehicleCode != null && ReceiptDatetime != null) {
+            setTimeout(function() {
+                var tripCodeDropdownLength = $('#tblmilkvehicleentry-trip_code option').length - 1;
+                if (tripCodeDropdownLength > 0) {
+                    $('.trip-code-hide').css('display', 'block');
+                }
+                else {
+                    $('.trip-code-hide').css('display', 'none');
+                }
+            }, 1000);
+        }
+        else {
+            $('.trip-code-hide').css('display', 'none');
+        }
+    });
+    
+    $(document).on('change', '#tblmilkvehicleentry-receipt_at, #tblmilkvehicleentry-dispatch_from', function() {
+        var receipt_at = $('#tblmilkvehicleentry-receipt_at').val();
+        var dispatch_from = $('#tblmilkvehicleentry-dispatch_from').val();
+        var entryTypeField = $('#tblmilkvehicleentrytransaction-entry_type');
+        var EntryType = document.querySelector('.col-sm-1.entry_type');
+        
+        if (receipt_at !== '' && dispatch_from !== '') {
+            if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
+                $('.tanker_no_hide').css('display', 'none');
+                $('.vehicle_code_hide').css('display', 'block');
+                $('#dispatch-detail').css('display', 'block');                
+                entryTypeField.val('').prop('disabled', false).trigger('change');
+            } else if(dispatch_from == 'PARTY' && receipt_at == 'PARTY') {
+               $('.tanker_no_hide').css('display', 'block');
+               $('.vehicle_code_hide').css('display', 'none');
+               $('#dispatch-detail').css('display', 'none');
+               entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
+               EntryType.classList.add('no_pointer');
+            } else {
+                $('.tanker_no_hide').css('display', 'none');
+                $('.vehicle_code_hide').css('display', 'block');
+                $('#dispatch-detail').css('display', 'none');
+                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
+                EntryType.classList.add('no_pointer');
+            }
+        } else {
+            $('.tanker_no_hide').css('display', 'none');
+            $('.vehicle_code_hide').css('display', 'block');
+            $('#dispatch-detail').css('display', 'none');
+            entryTypeField.val('').prop('disabled', false).trigger('change');
+            EntryType.classList.remove('no_pointer');
         }
     });
     
@@ -272,7 +313,7 @@ $script = "
             $('.type_hide').hide();
             $('#tblmilkvehicleentrytransaction-source_org_code').val('');
             $('#tblmilkvehicleentrytransaction-source_org_type').val('');
-            $('#tblmilkvehicleentrytransaction-source').val('');
+            $('#tblmilkvehicleentrytransaction-source').val('');    
             $('#tblmilkvehicleentrytransaction-destination_code').val('');
             $('#tblmilkvehicleentrytransaction-destination_type').val('');
             $('#tblmilkvehicleentrytransaction-destination').val('');
@@ -288,8 +329,8 @@ $script = "
             setSourseDest(challan_no,trip_code);
         } 
     });
-
-   
+    
+    
      $(document).on('change','.filldata', function() {
         var trip_code = $('#tblmilkvehicleentry-trip_code').val();
        if(trip_code != ''){
@@ -444,7 +485,7 @@ $script = "
         }
         $('#tblmilkvehicleentry-qty').val((qty).toFixed(2));
     });
-
+    
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
