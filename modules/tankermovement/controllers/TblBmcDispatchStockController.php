@@ -17,6 +17,8 @@ use kartik\form\ActiveForm;
  */
 class TblBmcDispatchStockController extends \app\controllers\ChildController {
 
+    public $freeAccessActions = ['purchase-detail', 'transaction-detail'];
+
     /**
      * Lists all TblBmcDispatchStock models.
      * @return mixed
@@ -47,28 +49,17 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-//    public function actionCreate() {
-//        $model = new TblBmcDispatchStock();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->bmc_dispatch_stock_code]);
-//        } else {
-//            return $this->render('create', [
-//                        'model' => $model,
-//            ]);
-//        }
-//    }
-
     public function actionCreate() {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
-
+        $this->setCode($this->model);
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
             $this->model->to_date = $this->model->to_date . ' ' . \Yii::$app->general->getshift($this->model->to_shift_code);
+            $this->model->from_date = ($this->model->from_date) ? Yii::$app->formatter->asDate($this->model->from_date, DATE_FORMAT) : '';
+            $this->model->from_date = $this->model->from_date . ' ' . \Yii::$app->general->getshift($this->model->from_shift_code);
             $this->model->type = 'physical';
-            $this->model->closing_bal = 0;
             $this->model->scenario = 'create';
 
             if ($this->model->validate()) {
@@ -105,23 +96,53 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionTransactionDetail() {
-        $searchModel = new TblBmcDispatchStockSearch();
-        $dataProvider = $searchModel->searchBmcStockDetail(Yii::$app->request->queryParams);
-        return $this->renderAjax('_transaction_detail', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+    public function actionPurchaseDetail() {
+        $from_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('from_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('from_shift'));
+        $to_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('to_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('to_shift'));
+        $bmc_code = Yii::$app->request->get('bmc_code');
+        $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
+                ->bindValue(':from_datetime', $from_datetime)
+                ->bindValue(':to_datetime', $to_datetime)
+                ->bindValue(':bmc_code', $bmc_code);
+        $result = $query->queryAll();
+        $stock_detail = [];
+
+        foreach ($result as $r) {
+            $key = $r['bmc_silos_info_code'] . '_' . $r['animal_type_code'] . '_' . $r['milk_quality_type_code'];
+            if (empty($stock_detail[$key])) {
+                $stock_detail[$key]['previous_qty'] = 0;
+                $stock_detail[$key]['purchase_qty'] = 0;
+            }
+            $stock_detail[$key]['previous_qty'] = $stock_detail[$key]['previous_qty'] + $r['previous_qty'];
+            $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
+        }
+        return $this->renderAjax('_purchase_detail', [
+                    'result' => $result,
+                    'stock_detail' => $stock_detail
         ]);
     }
 
-    public function actionListGrid() {
-        $searchModel = new TblBmcDispatchStockSearch();
-        $searchModel->setAttributes(Yii::$app->request->get('TblBmcCollection'));
-        $dataProvider = $searchModel->actionTransactionDetail([]);
-        return $this->renderAjax('_transaction_detail', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider
-        ]);
+    public function setCode($model) {
+        $plants = explode(',', $_SESSION['Plant']);
+        $mccs = explode(',', $_SESSION['MCC']);
+        $bmcs = explode(',', $_SESSION['BMC']);
+        count($plants) == 1 ? $model->plant_code = $plants[0] : '';
+        count($mccs) == 1 ? $model->mcc_plant_code = $mccs[0] : '';
+        if (count($bmcs) == 1) {
+            $model->bmc_code = $bmcs[0];
+            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
+//            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code, 'milk_type_code' => $model->milk_type_code, 'milk_quality_type_code' => $model->milk_quality_type_code, 'bmc_silos_info_code' => $model->bmc_silos_info_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
+            if (!empty($stock_date)) {
+                $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
+                $converted_time = date("H:i:s", strtotime($dispatch_date));
+                if ($converted_time == "06:00:00") {
+                    $model->from_shift_code = 1;
+                } elseif ($converted_time == "18:00:00") {
+                    $model->from_shift_code = 2;
+                }
+                $model->from_date = $dispatch_date;
+            }
+        }
     }
 
     /**

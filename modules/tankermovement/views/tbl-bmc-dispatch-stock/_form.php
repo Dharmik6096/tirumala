@@ -21,35 +21,62 @@ $form = ActiveForm::begin([
             'validateOnSubmit' => true,
         ]);
 ?>
-<?php echo $form->errorSummary($model); ?>
+<?php echo $form->errorSummary([$model]); ?>
+<?php
+$disabled = false;
+if ($model->bmc_code != '') {
+    $disabled = true;
+}
+?>
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
     <div class="col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Physical Stock Punching</h4>
         </div>
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
+        <div class="col-md-8 micro_form padding-bottom-20">
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcdispatchstock-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, '', $disabled); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcdispatchstock-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $disabled); ?>
+            </div>  
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $disabled); ?>
+            </div>  
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, true, true); ?>
+            </div>
+            <div class="col-sm-2 shift filldata">
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, true, 'from_shift_code'); ?>
+            </div>
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
+            </div>
+            <div class="col-sm-2 shift filldata">
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $readonly, 'to_shift_code'); ?>
+            </div>
         </div>
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcdispatchstock-union_code', 'plant_code', $model->getAttributeLabel('plant_code'), FALSE, ''); ?>
-        </div>
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcdispatchstock-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, ''); ?>
-        </div>  
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE); ?>
-        </div>  
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $readonly, true); ?>
-        </div>
-        <div class="col-sm-2 shift filldata">
-            <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $readonly, 'from_shift_code'); ?>
-        </div>
-        <div class="col-sm-2 filldata">
-            <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
-        </div>
-        <div class="col-sm-2 shift filldata">
-            <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'to_shift_code', true, $readonly, 'to_shift_code'); ?>
+
+        <div class="col-lg-4">
+            <h5 class="panel-heading mb15"><?= Yii::t('app', 'Purchase Information') ?></h5>
+            <div id="purchase-detial">
+                <table class="table tab-bordered">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Milk Type</th>
+                            <th>Quality Type</th>
+                            <th>Silo No.</th>                 
+                            <th>Purchase Qty</th>
+                            <th>Opening Balance</th>    
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -82,10 +109,10 @@ $form = ActiveForm::begin([
             <?= Yii::$app->dropdown->dropdown('qty_diff_type', $model, $form, '', true, false, 'qty_diff_type_code'); ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
-            <?= $form->field($model, 'opening_bal')->textInput() ?>
+            <?= $form->field($model, 'opening_bal')->textInput(['readOnly' => TRUE]) ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
-            <?= $form->field($model, 'purchase_qty')->textInput() ?>
+            <?= $form->field($model, 'purchase_qty')->textInput(['readOnly' => TRUE]) ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'balance_qty')->textInput() ?>
@@ -124,7 +151,11 @@ $form = ActiveForm::begin([
                                                                     $("#bmc-dispatch-stock-from .reset_field input").val("");
                                                                     $("#bmc-dispatch-stock-from .reset_field select").val("");
                                                                     $("#bmc-dispatch-stock-from .reset_field textarea").val("");
-                                                                    $(".panel-body").scrollTop(0);
+                                                                    $("#tblbmcdispatchstock-bmc_silos_info_code").change();
+                                                                    $("#tblbmcdispatchstock-milk_type_code").change();
+                                                                    $("#tblbmcdispatchstock-milk_quality_type_code").change();
+                                                                    $("#tblbmcdispatchstock-qty_diff_type_code").change();    
+                                                                   $(".panel-body").scrollTop(0);
                                                                    bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>"+data.msg+"</span></div></div>");
                                                                 }else{
                                                                     $("#loadercontent").hide();
@@ -187,33 +218,96 @@ $(document).ready(function() {
         }
     }
     });
-//    $(document).on('click','#submitBtn', function() {
-//    alert('hi');
-//        var union_code = $('#tblbmcdispatchstock-union_code').val();
-//        var plant_code = $('#tblbmcdispatchstock-plant_code').val();
-//        var mcc_code = $('#tblbmcdispatchstock-mcc_plant_code').val();
-//        var bmc_code = $('#tblbmcdispatchstock-bmc_code').val();
-//        var to_date = $('#tblbmcdispatchstock-to_date').val();
-//        var to_shift = $('#tblbmcdispatchstock-to_shift_code').val();
-//       if(to_date != '' && to_shift !='' && bmc_code != '' && union_code !=''&& plant_code !=''&& mcc_code !=''){
-//            $('#transactions-detial').html('');           
-//            BindData(union_code,plant_code,mcc_code,bmc_code,to_date,to_shift);            
-//        }      
-//    });
+
+    $(document).on('change','.filldata', function() {
+        var bmc_code = $('#tblbmcdispatchstock-bmc_code').val();
+        var union_code = $('#tblbmcdispatchstock-union_code').val();
+        var from_date = $('#tblbmcdispatchstock-from_date').val();
+        var from_shift = $('#tblbmcdispatchstock-from_shift_code').val();
+        var to_date = $('#tblbmcdispatchstock-to_date').val();
+        var to_shift = $('#tblbmcdispatchstock-to_shift_code').val();
+        var bmc_dispatch_stock_code = $('#tblbmcdispatchstock-bmc_dispatch_stock_code').val();
+       if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != ''){
+            $('#purchase-detial').html('');         
+            BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code);            
+        }      
+    });
+   
+    function BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code){
+        $.ajax({
+            type: 'get',
+            url: '" . Url::to(['purchase-detail']) . "',
+            data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code},             
+            success: function(data) {
+                $('#purchase-detial').html(data);
+            }
+        });
+    }
     
-//    function BindData(union_code,plant_code,mcc_code,bmc_code,to_date,to_shift){
-//        $.ajax({
-//                type: 'get',
-//                url: '" . Url::to(['transaction-detail']) . "',
-//                data: {'union_code' : union_code,'plant_code':plant_code,'mcc_code' : mcc_plant_code,'bmc_code':bmc_code,'to_date' : to_date,'to_shift' : to_shift_code},             
-//                success: function(data) {
-//                  $('#transactions-detial').html(data);
-//                },
-//                error: function(data) {  
-//                }
-//            });     
-//    }
+    $(document).on('change', '#tblbmcdispatchstock-milk_type_code', function() {
+        updateFields();
+    });
+    
+    $(document).on('change', '#tblbmcdispatchstock-milk_quality_type_code', function() {
+        updateFields();
+    });
+    
+    $(document).on('change', '#tblbmcdispatchstock-bmc_silos_info_code', function() {
+        updateFields();
+    });
+
+    function updateFields() {
+        var milkTypeCode = $('#tblbmcdispatchstock-milk_type_code').val();
+        var milkQualityTypeCode = $('#tblbmcdispatchstock-milk_quality_type_code').val();
+        var bmcSiloInfoCode = $('#tblbmcdispatchstock-bmc_silos_info_code').val();
+        var stockDetailArray = [];
+        var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
+        if(milkTypeCode != '' && bmcSiloInfoCode!='' && milkQualityTypeCode !='') {
+            var data = $('#stockdetail').val();
+            if(data != undefined && data != '' && isNaN(data)){
+                stockDetailArray = jQuery.parseJSON(data);
+                $('#tblbmcdispatchstock-opening_bal').val(0);
+                $('#tblbmcdispatchstock-purchase_qty').val(0);
+                if(stockDetailArray[String(check_key)] != '' && stockDetailArray[String(check_key)] != undefined){
+                    $('#tblbmcdispatchstock-opening_bal').val(stockDetailArray[String(check_key)].previous_qty);
+                    $('#tblbmcdispatchstock-purchase_qty').val(stockDetailArray[String(check_key)].purchase_qty);
+                }
+            }
+        }
+    }
+        
 ";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
+?>
+<?php
+$script = "$(document).ready(function(){
+    $(document).on('change', '#tblbmcdispatchstock-from_date, #tblbmcdispatchstock-to_date', function() {
+        var from_date = $('#tblbmcdispatchstock-from_date').val();
+        var to_date = $('#tblbmcdispatchstock-to_date').val();
+        
+        if (from_date !== '' && to_date !== '') {
+            // Split date strings and format them as yyyy-mm-dd
+            var from_date_parts = from_date.split('-');
+            var to_date_parts = to_date.split('-');
+            var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
+            var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+            
+            var fromDateObj = new Date(formatted_from_date);
+            var toDateObj = new Date(formatted_to_date);
+
+            if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
+                var errorMessage = 'must not be less than from date.';
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
+                $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+                $('.field-tblbmcdispatchstock-to_date').append(errorElement);
+            } else {
+                $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+            }
+        } else {
+            $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+        }
+    });
+});";
+$this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>
 

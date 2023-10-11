@@ -54,8 +54,6 @@ use app\modules\tankermovement\models\TblQtyDiffType;
  */
 class TblBmcDispatchStock extends \app\models\ChildModel {
 
-    public $from_shift_code, $from_date;
-
     /**
      * @inheritdoc
      */
@@ -68,15 +66,17 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['bmc_dispatch_stock_code'], 'required'],
-                [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
+                [['bmc_dispatch_stock_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'from_shift_code', 'to_date', 'to_shift_code', 'from_shift_code', 'from_date', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'fat', 'snf', 'opening_bal', 'purchase_qty', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
+                [['bmc_dispatch_stock_code', 'type', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'from_shift_code', 'from_date'], 'safe'],
                 [['transaction_date', 'to_date', 'created_at', 'updated_at', 'from_date', 'from_shift_code'], 'safe'],
                 [['to_shift_code', 'qty_diff_type_code', 'milk_quality_type_code', 'milk_type_code', 'bmc_silos_info_code', 'originating_type'], 'integer'],
                 [['opening_bal', 'closing_bal', 'purchase_qty', 'qty_diff', 'extra_qty', 'balance_qty', 'fat', 'snf', 'water'], 'number'],
                 [['type'], 'default', 'value' => 'dispatch'],
+                [['closing_bal', 'water'], 'default', 'value' => 0],
                 [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
-                [['union_code'], 'required', 'except' => ['androidsync']],
-                [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
+                [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'type'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
+                [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
+                [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
         ];
     }
 
@@ -120,6 +120,8 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
             'x_col3' => Yii::t('app', 'X Col3'),
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
+            'from_date' => Yii::t('app', 'From Date'),
+            'from_shift_code' => Yii::t('app', 'From Shift'),
         ];
     }
 
@@ -168,6 +170,38 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
 
     public function getQtyDiffType() {
         return $this->hasOne(TblQtyDiffType::className(), ['qty_diff_type_code' => 'qty_diff_type_code']);
+    }
+
+    public function CheckDateValidation() {
+        if (empty($this->getErrors())) {
+            $this->from_date = date('Y-m-d', strtotime($this->from_date)) . ' ' . \Yii::$app->general->getshift($this->from_shift_code) . '.000000';
+            $this->to_date = date('Y-m-d', strtotime($this->to_date)) . ' ' . \Yii::$app->general->getshift($this->to_shift_code) . '.000000';
+
+            if ($this->to_date < $this->from_date) {
+                $this->addError('to_date', Yii::t('app/validation', 'To Date must not be less than from date.'));
+                return FALSE;
+            } else {
+                $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code, 'milk_type_code' => $this->milk_type_code, 'milk_quality_type_code' => $this->milk_quality_type_code, 'bmc_silos_info_code' => $this->bmc_silos_info_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
+                if (!empty($stock_date)) {
+                    $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
+
+                    if ($this->from_date < $dispatch_date) {
+                        $this->addError('to_date', Yii::t('app/validation', 'Stock Punching already done for selected date.'));
+                        return FALSE;
+                    } else if ($this->from_date > $dispatch_date) {
+                        $this->addError('to_date', Yii::t('app/validation', "From Date must be  '" . $dispatch_date . "'."));
+                        return FALSE;
+                    }
+                }
+            }
+            return TRUE;
+        }
+    }
+
+    public function ValidateData() {
+        if (date('Y-m-d', strtotime($this->transaction_date)) < date('Y-m-d', strtotime($this->to_date))) {
+            $this->addError('transaction_date', Yii::t('app/validation', 'Dispatch Date can not be less than To Date.'));
+        }
     }
 
 }
