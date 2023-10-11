@@ -29,11 +29,11 @@ $form = ActiveForm::begin([
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-                if ($model['coll_count'] != $model['summary_count']) {
-                    return ['disabled' => true, 'class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id'],];
-                } else {
-                    return ['class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id']];
-                }
+//                if ($model['coll_count'] != $model['summary_count']) {
+//                    return ['disabled' => true, 'class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id'],];
+//                } else {
+                return ['class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id']];
+//                }
             }],
             ['attribute' => 'bmc_name', 'filter' => FALSE],
             ['attribute' => 'dcs_code', 'filter' => FALSE],
@@ -63,7 +63,8 @@ $form = ActiveForm::begin([
         'showPageSummary' => false,
         'actions' => [
             'ftp-upload' => function ($url, $model) use($eiplCode) {
-                $class = $eiplCode == 'DODLA' ? 'link-disable' : $model['coll_count'] != $model['summary_count'] ? 'link-disable' : '';
+//                $class = $eiplCode == 'DODLA' ? 'link-disable' : $model['coll_count'] != $model['summary_count'] ? 'link-disable' : '';
+                $class = ($eiplCode == 'DODLA') ? 'link-disable' : '';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'ftp-uploads', 'data-original-title' => 'FTP Uploads', 'data-union_code' => $model['union_code'], 'data-plant_code' => $model['plant_code'], 'data-mcc_plant_code' => $model['mcc_plant_code'], 'data-bmc_code' => $model['bmc_code'], 'data-dcs_code' => $model['dcs_code'], 'data-date_time_of_collection' => $model['date_time_of_collection'], 'data-shift_id' => $model['shift_id'], 'data-qty_difference' => $model['qty_difference'], 'class' => '' . $class];
                 return GhostHtml::a_alert('<i class="fa fa-upload"></i>', ['/collection/tbl-milk-collection/dcs-wise-ftp-upload', 'union_code' => $model['union_code'], 'plant_code' => $model['plant_code'], 'mcc_plant_code' => $model['mcc_plant_code'], 'bmc_code' => $model['bmc_code'], 'dcs_code' => $model['dcs_code'], 'date_time_of_collection' => $model['date_time_of_collection']], $options);
             },
