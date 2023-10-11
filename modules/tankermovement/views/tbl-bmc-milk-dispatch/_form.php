@@ -59,7 +59,10 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
+            </div>
+            <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
+                <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
             </div>
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_in_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
@@ -67,14 +70,6 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'vehicle_out_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
             </div>
-            <div class="clearfix"></div>
-            <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'gross_weight')->textInput() ?>
-            </div>
-            <div class="col-sm-2 number-validate"> 
-                <?= $form->field($model, 'tare_weight')->textInput() ?>
-            </div>
-
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'destination_type'); ?>
             </div>
@@ -188,12 +183,6 @@ $form = ActiveForm::begin([
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-1 number-validate"> 
-            <?= $form->field($txn_model, 'rtpl')->textInput() ?>
-        </div>
-        <div class="col-sm-1 number-validate"> 
-            <?= $form->field($txn_model, 'amount')->textInput(['readonly' => 'readonly']) ?>
-        </div>
         <div id="transactions-from">
 
         </div>
@@ -217,9 +206,61 @@ $form = ActiveForm::begin([
 
     </div>
 </div>
+<div id='trip_auto_generate_data'></div>
 <?php
 $script = "
 $(document).ready(function(){
+    $('#addTripButtonDiv').hide();
+    $('#tblbmcmilkdispatch-vehicle_code').on('change',function() {
+        setTimeout(function(){        
+            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length - 1;
+            $('#addTripButtonDiv').hide();
+            var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+            if (vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 0) {
+                $('#addTripButtonDiv').show();  
+            }
+        },2000);
+    });
+
+    $('#addTripButton').on('click', function(e) {
+        e.preventDefault();
+        
+        var vehicleName = $('#tblbmcmilkdispatch-vehicle_code option:selected').text();
+        var dispatchDate = $('#tblbmcmilkdispatch-transaction_date').val();
+
+        if (dispatchDate && vehicleName) {
+            var data = {
+                vehicleValue: $('#tblbmcmilkdispatch-vehicle_code').val(),
+                vehicleName: $('#tblbmcmilkdispatch-vehicle_code option:selected').text(),
+                dispatchDate: $('#tblbmcmilkdispatch-transaction_date').val(),
+                plantValue: $('#tblbmcmilkdispatch-plant_code').val(), 
+                plantName: $('#tblbmcmilkdispatch-plant_code option:selected').text(),
+                mccValue: $('#tblbmcmilkdispatch-mcc_plant_code').val(), 
+                mccName: $('#tblbmcmilkdispatch-mcc_plant_code option:selected').text(),
+                bmcValue: $('#tblbmcmilkdispatch-bmc_code').val(),
+                bmcName: $('#tblbmcmilkdispatch-bmc_code option:selected').text(),
+                unionValue: $('#tblbmcmilkdispatch-union_code').val(),
+                unionName: $('#tblbmcmilkdispatch-union_code option:selected').text(),
+            };
+
+            $.ajax({
+                type: 'GET',
+                url: '" . Url::to(['/tankermovement/tbl-bmc-milk-dispatch/generate-auto-trip']) . "',
+                data: data,
+                success: function(response) {
+                    $('#trip_auto_generate_data').html(response);
+                    $('#createTripModal').modal('show');
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        } else {
+            var msg = 'Dispatch Date and Vehicle are required';
+            bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+        }
+    });
+
     var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
     if(bmc_milk_dispatch_code!=''){
         $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 

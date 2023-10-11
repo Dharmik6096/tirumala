@@ -261,10 +261,13 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+            if (!empty($parents[0])) {
+                $bmc_code = isset($parents[1]) ? $parents[1] : '';
+                $transaction_date = isset($parents[2]) ? $parents[2] : '';
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
-                $trip = new TblVehicleTripDetail();
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+
+                $trip = new TblVehicleTripDetail();                
+                $data = $trip->getOpenTripList($bmc_code, $parents[0], $transaction_date, $tripCode);                
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -273,5 +276,4 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-
 }

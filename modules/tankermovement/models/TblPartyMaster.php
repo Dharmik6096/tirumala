@@ -4,6 +4,7 @@ namespace app\modules\tankermovement\models;
 
 use Yii;
 use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_party_master".
@@ -122,6 +123,16 @@ class TblPartyMaster extends \app\models\ChildModel {
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
+        $query = $this->find()->select(['party_master_code', 'party_name'])
+                ->where(['is_active' => 1]);
+        $value = $query->orderBy('party_name asc')->all();
+        $value = ArrayHelper::map($value, 'party_master_code', function($value) use ($concatCode) {
+                    return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
+                });
+        return $value;
     }
 
 }

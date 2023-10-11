@@ -24,6 +24,8 @@ use app\modules\tankermovement\models\TblConfigTxnResultSearch;
 use app\modules\tankermovement\models\TblVehicleTrip;
 use app\modules\tankermovement\models\TblBmcMilkDispatchHistory;
 use yii\data\ArrayDataProvider;
+use app\modules\tankermovement\models\TblBmcDispatchInspection;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
@@ -211,6 +213,74 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
     }
 
+    public function actionGenerateAutoTrip(){
+        if (Yii::$app->request->get()) {
+            $data = Yii::$app->request->get();
+            $bmcDispatchInspectionModel = new TblBmcDispatchInspection();
+            $config = new TblConfig();
+            $config->config_for = 'BMC';
+            $config->process_name = 'BMC_DISPATCH_INSPECTION';
+            $config->config_type = 'CONTROL';
+            $config_mapping = new TblConfigTxnResult();
+            $config_list = $config->getOrgConfigList($config->config_for, $data['bmcValue']);
+            return $this->renderAjax('trip-auto-generate', [
+                'data' => $data,
+                'bmcDispatchInspectionModel' => $bmcDispatchInspectionModel,
+                'config' => $config_mapping,
+                'config_list' => $config_list
+            ]);
+        }
+
+        if(Yii::$app->request->post()){
+            $data = !empty(Yii::$app->request->post()['TblBmcDispatchInspection']) ? Yii::$app->request->post()['TblBmcDispatchInspection'] : [];
+            $configData = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
+            $this->model = new TblVehicleTrip();
+            $this->model->scenario = 'autogeneratetrip';
+            $this->model->transaction_date = date('Y-m-d', strtotime($data['inspection_date']));
+            $this->model->vehicle_code = $data['vehicle_code'];
+            $this->model->union_code = $data['union_code'];
+            $this->model->plant_code = $data['plant_code'];
+            $this->model->bmc_code = $data['bmc_code'];
+            $this->model->mcc_plant_code = $data['mcc_plant_code'];
+            $this->model->trip_mode = 'offline';
+            $this->model->trip_status = 'generated';
+            $this->model->trip_for = 'bmcdispatch';
+            $this->model->is_active = '1';
+            $result = $this->model->setModel();
+            $save_model = $result[1];
+
+            $dispatch_inspection = new TblBmcDispatchInspection();
+            $dispatch_inspection->attributes = $this->model->attributes;
+            $dispatch_inspection->inspection_date = $this->model->transaction_date;
+            $dispatch_inspection->shift_code = $data['shift_code'];
+            $dispatch_inspection->remarks = $data['remarks'];
+            $dispatch_inspection->bmc_dispatch_inspection_code = Yii::$app->general->getPrimaryCode($dispatch_inspection);
+            $save_model[] = $dispatch_inspection;
+
+            $cnt = 1;
+            foreach ($configData as $data) {
+                $config_model = new TblConfigTxnResult();
+                $config_model->attributes = $dispatch_inspection->attributes;
+                $config_model->attributes = $data;
+                $config_model->config_for = 'BMC_DISPATCH_INSPECTION';
+                $config_model->config_txn_result_code = Yii::$app->general->getPrimaryCode($config_model, $cnt);
+                $config_model->ref_code = $dispatch_inspection->bmc_dispatch_inspection_code;
+                $config_detail = $config_model->configCode;
+                $save_model[] = $config_model;
+                $cnt++;
+            }
+            $transaction = $this->generalModel->saveTransaction($save_model, ['Trip', 'create']);
+            if ($transaction == 'customRedirect') {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'success', 'msg' => $msg];
+            } else {
+                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                $record = ['status' => 'error', 'msg' => $msg];
+            }
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return Json::encode($record);
+        }
+    }
     /**
      * Updates an existing TblBmcMilkDispatch model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -297,6 +367,9 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 } else if (strtolower($parents[0]) == 'plant') {
                     $model = new TblPlant();
                     $data = $model->getPlantList($parents[1]);
+                } else if (strtolower($parents[0]) == 'party') {
+                    $model = new TblPartyMaster();
+                    $data = $model->getPartyList($parents[1]);
                 } else {
                     $model = new TblCustomerMaster();
                     $data = $model->getCustomerCodeList($parents[2], $parents[0], $parents[1]);
