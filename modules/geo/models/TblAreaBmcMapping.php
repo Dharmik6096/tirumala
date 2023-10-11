@@ -85,4 +85,19 @@ class TblAreaBmcMapping extends \app\models\ChildModel {
         }
         return $value;
     }
+
+    public function getAreaBmcList($areaCode) {
+        $value = $this->getAreaBmc($areaCode);
+        $value = ArrayHelper::map($value, 'bmc_code', 'bmc_name');
+        return $value;
+    }
+
+    public function getAreaBmc($areaCode = []) {
+        $query = TblDcsBmc::find()
+                ->select(['tbl_bmc.bmc_name', 'tbl_bmc.bmc_code'])
+                ->leftJoin('tbl_area_bmc_mapping', 'tbl_bmc.bmc_code = tbl_area_bmc_mapping.bmc_code')
+                ->where(['tbl_area_bmc_mapping.area_code' => $areaCode]);
+        return $query->all();
+    }
+
 }
