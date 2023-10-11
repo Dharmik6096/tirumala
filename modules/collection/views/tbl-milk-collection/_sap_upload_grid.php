@@ -29,7 +29,11 @@ $form = ActiveForm::begin([
             'rowSelectedClass' => GridView::TYPE_SUCCESS,
             'headerOptions' => ['class' => 'skip-export'], 'contentOptions' => ['class' => 'skip-export'],
             'checkboxOptions' => function($model) {
-                return ['class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id']];
+                if ($model['coll_count'] != $model['summary_count']) {
+                    return ['disabled' => true, 'class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id'],];
+                } else {
+                    return ['class' => 'checkbox-collection', 'value' => $model['union_code'] . '###' . $model['plant_code'] . '###' . $model['mcc_plant_code'] . '###' . $model['bmc_code'] . '###' . $model['dcs_code'] . '###' . $model['date_time_of_collection'] . '###' . $model['shift_id']];
+                }
             }],
             ['attribute' => 'bmc_name', 'filter' => FALSE],
             ['attribute' => 'dcs_code', 'filter' => FALSE],
@@ -69,8 +73,10 @@ $form = ActiveForm::begin([
             },
         ]
     ];
-
-    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
+    $rowOptions = function ($model) {
+        return $model['coll_count'] != $model['summary_count'] ? ['class' => 'danger'] : '';
+    };
+    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false, [], [], true, $rowOptions);
     ?>
 </div>
 <div class="col-sm-12 margin-top-10 form-group" >

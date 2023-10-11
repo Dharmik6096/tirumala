@@ -10,6 +10,8 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcsBmc;
 use app\modules\payment\models\TblPaymentCycle;
 use app\modules\payment\models\TblMilkShortageRecovery;
+use app\modules\payment\models\TblMemberPaymentHeadSummary;
+//tbl_member_payment_head_summary
 
 /**
  * This is the model class for table "tbl_member_payment_summary_alias".
@@ -154,5 +156,16 @@ class TblMemberPaymentSummaryAlias extends \app\models\ChildModel {
     public function getShortageRecoveryMpgMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
     }
-
+    
+    public function getShortageRecoveredMember() {
+        $eipl_code = \Yii::$app->session->get('eiplCode');
+        $bill_head_code = '';
+        if($eipl_code == 'ITC'){
+            $bill_head_code = 4;
+        } else if($eipl_code == 'VRS_NEWASA'){
+            $bill_head_code = 8;
+        }
+        return $this->hasOne(TblMemberPaymentHeadSummary::className(), ['dcs_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['bill_head_code' => $bill_head_code]);
+    }
+    
 }

@@ -112,7 +112,7 @@ class TblMemberProvisional extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['is_download'], 'default', 'value' => '0'],
                 [['is_active'], 'default', 'value' => '1'],
                 [['is_approved'], 'default', 'value' => '0', 'on' => 'importCsv'],
@@ -202,6 +202,9 @@ class TblMemberProvisional extends ChildModel {
                 [['caste_category_code'], 'required', 'on' => ['update_provisional_member']],
                 [['provisional_status'], 'default', 'value' => 'Pending'],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblMemberProvisional', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

@@ -1139,7 +1139,7 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                     $data_array['to_date'] = $data[5];
                     if ($status == 'upload') {
                         $ftp_model = new TblFtpTxnLog();
-                        $ftp_model->exportData($data_array, $title = '', $output);
+                        $ftp_model->exportData($data_array, $title = '', $output, $mccRefCode = '', FALSE, FALSE);
                     } elseif (in_array($status, ['download', 'bulk_download', 'bulk_download_shift_wise'])) {
                         if ($eiplCode == 'DODLA') {
                             $key = date('Y-m-d', strtotime($data[5])) . '~~' . $data[6];

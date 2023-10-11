@@ -84,19 +84,20 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-//        'update' => function ($url, $model) use ($pending_approval) {
-//            if (!$pending_approval) {
-//                $name = $model->member_name;
-//                $class = ($model->is_approved == 1) ? 'link-disable' : '';
-//                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
-//                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
-//            }
-//        },
-//        'view' => true,
-        'update' => function ($url, $model) use ($pending_approval) {
-            $class = '';
-            if (!$pending_approval) {
-                $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
+        'update' => function ($url, $model)use ($pending_approval) {
+            if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 0) {
+                $name = $model->member_name;
+                $class = ($model->is_approved == 1) ? 'link-disable' : '';
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
+                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            } else {
+                $class = '';
+                if (!$pending_approval) {
+                    $class = ($model->is_active === 0 || $model->provisional_status != 'Pending') ? 'link-disable' : '';
+                }
+                $name = $model->member_name;
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
+                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
             }
             $name = $model->member_name;
             $class = ($model->is_approved == 1) ? 'link-disable' : '';
@@ -104,14 +105,19 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'views' => function($url, $model) use ($pending_approval) {
-            $icon = '<i class="fa fa-eye"></i>';
-            $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
-            if ($pending_approval) {
-                $icon = '<i class="fa fa-check"></i>';
-                $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+            if (Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1) {
+                $icon = '<i class="fa fa-eye"></i>';
+                $url = ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code];
+                if ($pending_approval) {
+                    $icon = '<i class="fa fa-check"></i>';
+                    $url = ['/dcsoperation/tbl-member-provisional/approve-member', 'id' => $model->process_approval_code];
+                }
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
+                return Html::a($icon, $url, $options);
+            } else {
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Provisional Member View'];
+                return Html::a('<i class="fa fa-eye"></i>', ['/dcsoperation/tbl-member-provisional/view', 'id' => $model->provisional_member_code], $options);
             }
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Approve Member'];
-            return Html::a($icon, $url, $options);
         },
         'milk_collection' => function ($url, $model) {
             $class = ($model->is_approved == 1 || strtolower($model->provisional_from) != 'collection') ? 'link-disable' : '';

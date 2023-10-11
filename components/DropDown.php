@@ -24,6 +24,7 @@ use yii\db\Query;
 use app\modules\organisation\models\TblRouteMappingSources;
 use yii\helpers\Html;
 use yii\helpers\Json;
+use app\modules\geo\models\TblRegion;
 
 class DropDown extends Component
 {
@@ -395,9 +396,8 @@ class DropDown extends Component
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly);
         }
     }
-
-    public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true)
-    {
+    
+    public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/dcs-list', Yii::t('app', 'Select Society'), $multiple, $extra_param, $readonly, '', true, $autoClose);
@@ -1057,6 +1057,15 @@ class DropDown extends Component
                 'initialize' => true,
             ]
         ])->label(Yii::t('app', $islable));
+    }
+    
+    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function getRecords($l)
@@ -1858,6 +1867,16 @@ class DropDown extends Component
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['Pending' => Yii::t('app', 'Pending'), 'Register' => Yii::t('app', 'Register'), 'Inprogress' => Yii::t('app', 'Inprogress'), 'Approve' => Yii::t('app', 'Approve'), 'Reject' => Yii::t('app', 'Reject')],
             ],
+            'org_type_shift_time' => [
+                'name' => 'org_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC')],
+            ],
+            'collection_type_shift_time' => [
+                'name' => 'collection_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
+            ],
         ];
         return $records[$l];
     }
@@ -1989,6 +2008,11 @@ class DropDown extends Component
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
             'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
             'rate_class' => ['name' => 'rate_class', 'fields' => 'rate_class_code,rate_class', 'prompt' => 'Select Rate Class', 'model' => 'TblRateClass'],
+            'bmc_list' => ['name' => 'org_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Bmc', 'model' => 'TblDcsBmc'],
+            'mcc_list' => ['name' => 'org_code', 'fields' => 'mcc_plant_code,name', 'prompt' => 'Select Mcc', 'model' => 'TblMccPlant'],
+            'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
+            'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
+            'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
         ];
         return $label[$l];
     }

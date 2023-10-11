@@ -132,6 +132,7 @@ $org = ($model->type == 'UNION') ? 'block' : 'none';
         </div>
     </div>
 </div>
+<?= $this->render('paymentCheck') ?>
 <?php
 if (!empty($model->getErrors())) {
     $script = "

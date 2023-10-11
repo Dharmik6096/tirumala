@@ -71,7 +71,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public $payment_cycle;
     public $otp_code;
     public $net_amount, $old_recovery, $recovery_dcs, $shortage_amount, $shortage_head_code;
-    public $payment_release_type;
+    public $payment_release_type, $shortage_amount_old;
 
     /**
      * @inheritdoc
@@ -92,7 +92,7 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
                 [['payment_cycle_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'required'],
                 [['payment_cycle_code'], 'CheckPendingDisburse', 'skipOnError' => true, 'on' => ['processpayment']],
 //            [['payment_cycle_code'], 'CheckFinalAmount', 'skipOnError' => true, 'except' => ['processpayment']],
-            [['payment_release_type'], 'safe']
+            [['payment_release_type','shortage_amount_old'], 'safe']
         ];
     }
 
@@ -343,5 +343,8 @@ class TblMemberPaymentAlias extends \app\models\ChildModel {
     public function getShortageRecoveryOtherMember() {
         return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'other_member']);
     }
-
+    
+    public function getShortageRecoveryMpgMember() {
+        return $this->hasOne(TblMilkShortageRecovery::className(), ['customer_code' => 'dcs_code', 'payment_cycle_code' => 'payment_cycle_code'])->andOnCondition(['customer_type' => 'DCS', 'recovery_type' => 'mpg_member']);
+    }
 }

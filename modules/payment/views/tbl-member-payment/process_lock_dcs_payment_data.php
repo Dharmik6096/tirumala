@@ -80,8 +80,15 @@ $allow_stop_payment_member = isset(Yii::$app->session->get('unionConfig')[$model
                         ['attribute' => 'qty', 'pageSummary' => true],
                         ['attribute' => 'shortage_amount',
                         'label' => Yii::t('app', 'Shortage Amount'),
-                        'value' => function($model) {
-                            return Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
+                        'value' => function($model, $key, $index) {
+                            $other_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryOtherMember, 'recovery_amount');
+                            $mpg_member_amount = Yii::$app->general->getforeignkey($model->shortageRecoveryMpgMember, 'recovery_amount');
+                            $member_recovered_amount = Yii::$app->general->getforeignkey($model->shortageRecoveredMember, 'amount');
+                            $total_shortage_amount = (!empty($other_member_amount) ? $other_member_amount : 0) + (!empty($mpg_member_amount) ? $mpg_member_amount : 0);
+                            $amount = $total_shortage_amount - !empty($member_recovered_amount) ? $member_recovered_amount : 0;
+                            $options = ['class' => 'shortage-recovery-amount'];
+                            echo Html::hiddenInput('shortage-recovery-amount', $amount,$options);
+                            return $total_shortage_amount;
                         }, 'visible' => $milk_short_recovery_member == '1', 'pageSummary' => true],
                         ['attribute' => 'total_amount', 'value' => 'total_amount', 'pageSummary' => true],
                         ['attribute' => 'total_addition', 'value' => 'total_addition', 'pageSummary' => true],
@@ -352,7 +359,7 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
     }
 
     
-    $(document).on('blur','.cal-amount',function(e){
+    $(document).on('keyup','.cal-amount',function(e){
 //    $('.cal-amount').on('blur',function(){
         var id = $(this).attr('id');
         var parent = $(this).parents('tr');
@@ -363,7 +370,8 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
          var row_number = val[2];
         var adjustRec = parseFloat(parent.find('.adjust-recovery').val());
         var rec = parseFloat(parent.find('.recovery').val());
-        var shortage = parseFloat(parent.find('.shortage-amount').val());
+        var shortage_old = parseFloat(parent.find('.shortage-amount-old').val());
+        var shortage = shortage_old - parseFloat(parent.find('.shortage-amount').val());
         parent.find('.net-amount').val('');
         if(adjust == '' ||  isNaN(adjust)){
             adjust=0;
@@ -380,19 +388,23 @@ function ViewMemberBillHead(payment_cycle_code, bmc_code, dcs_code, member_code)
         if(shortage == '' ||  isNaN(shortage)){
             shortage=0;
         }
-        var net = final + adjust - hold + adjustRec - rec - shortage; 
-        if((adjust !=0  || hold !=0) && net != '' && net < 0){
-         bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
+        if(shortage_old == '' ||  isNaN(shortage_old)){
+            shortage_old=0;
+        }
+        var net = final + adjust - hold + adjustRec - rec + shortage; 
+        if((adjust !=0  || hold !=0 || shortage !=0 || shortage_old !=0) && net != '' && net < 0){
+            bootbox.alert('<div class=\'bg-danger\'><i class=\'fa fa-times-circle\'></i></div><span>Net Payable should not be less than final amount.</span>',function(){
                 bootbox.hideAll();
-                    $('#'+id).focus().select();
+                $('#'+id).focus().val(.00);
+                $('#'+id).focus().select();
             });
             return false;
         } else {              
-        if(net != '' &&  !isNaN(net)){
-         parent.find('.net-amount').val(net.toFixed(2));
-          SumAmount();
+            if(net != '' &&  !isNaN(net)){
+                parent.find('.net-amount').val(net.toFixed(2));
+                SumAmount();
+            }
         }
-       }
     });
 
 
@@ -616,6 +628,12 @@ $(document).on("click", "#adjust-lock-dcs-data", function(){
             }
         });
     
+    }
+});
+$(".shortage-recovery-amount").each(function(){
+    var shortRecAmount = $(this).val();
+    if(shortRecAmount > 0){
+        $("#adjust-lock-dcs-data").prop("disabled", true);
     }
 });
            ';

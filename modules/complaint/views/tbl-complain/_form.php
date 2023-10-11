@@ -55,10 +55,10 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblcomplain-plant_code', 'mcc_plant_code', $model->getAttributeLabel('mcc_plant_code'), FALSE, '', $disabled); ?>
     </div>  
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcomplain-mcc_plant_code', 'bmc_code', Yii::t('app', 'bmc_code'), FALSE, '', '', $disabled); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblcomplain-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('bmc_code'), FALSE, '', '', $disabled); ?>
     </div>  
     <div class="col-sm-2 default_hide from_hide">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcomplain-bmc_code', 'dcs_code', Yii::t('app', 'dcs_code'), false, '', $disabled); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblcomplain-bmc_code', 'dcs_code', $model->getAttributeLabel('dcs_code'), false, '', $disabled); ?>
     </div>
     <div class="col-sm-2 contact_dis">
         <?= $form->field($model, 'contact_person')->textInput(['data-val' => $model->contact_person]) ?>

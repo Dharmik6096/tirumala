@@ -172,6 +172,7 @@ if (Yii::$app->session->hasFlash('success')) {
         </div>
     </div>
 </div>
+<?= $this->render('paymentCheck') ?>
 <?php
 if (!empty($model->getErrors())) {
     $script = "
