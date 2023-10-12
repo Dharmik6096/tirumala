@@ -3,9 +3,12 @@
 namespace app\modules\tankermovement\controllers;
 
 use Yii;
+use yii\web\Response;
+use yii\helpers\Json;
 use app\modules\tankermovement\models\TblPartyMaster;
 use app\modules\tankermovement\models\TblPartyMasterSearch;
 use yii\web\NotFoundHttpException;
+use app\modules\tankermovement\models\TblPartyMasterHistory;
 
 /**
  * TblPartyMasterController implements the CRUD actions for TblPartyMaster model.
@@ -89,6 +92,21 @@ class TblPartyMasterController extends \app\controllers\ChildController {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+    public function actionDeactivateUser($id) {
+        $this->model = $this->findModel($id);
+        $historyModel = new TblPartyMasterHistory();
+        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+        $this->model->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Party Master', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'Party Master Deactivated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'Party Master Not Deactivated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

@@ -77,17 +77,8 @@ $form = ActiveForm::begin([
     <div class="col-sm-2">
         <?= $form->field($model, 'adhar_no')->textInput() ?>
     </div>
-    <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('party_rate_type', $model, $form, 'form-group', $model->getAttributeLabel('rate_type'), false, 'rate_type', false); ?>
-    </div>
-    <div class="col-sm-1 number-validate">
-        <?= $form->field($model, 'fat')->textInput() ?>
-    </div>
-    <div class="col-sm-1  number-validate">
-        <?= $form->field($model, 'snf')->textInput() ?>
-    </div>
     <div class="clearfix"></div>
-    <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-12">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
@@ -97,5 +88,27 @@ $form = ActiveForm::begin([
 </div>
 
 <?php ActiveForm::end(); ?>
-
-
+<?php
+$script = "
+   $('#tblpartymaster-district_code').on('change',function(){
+        $('#tblpartymaster-ifsc').val('');
+    });
+    
+    $('#tblpartymaster-branch_code').on('change',function(){
+            var id = $('#tblpartymaster-branch_code').val();
+            $.ajax({
+                        type: 'post',
+                        url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
+                        data: 'id='+id,
+                        success: function(data) {
+                                var obj1 = $.parseJSON(data);
+                                $('#tblpartymaster-ifsc').val(obj1.code);
+                        },
+                        error:function(data){
+                                    //alert('Your data has not been submitted..Please try again');
+                                }
+            });
+    });
+";
+$this->registerJs($script, View::POS_END, 'bank-select');
+?>
