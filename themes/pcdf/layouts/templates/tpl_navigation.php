@@ -162,8 +162,8 @@ echo GhostMenu::widget([
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'items' => [
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
-//                        ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
-                        ['label' => 'Inspection Detail', 'url' => ['/tankermovement/tbl-bmc-dispatch-inspection/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-inspection')],
+                            ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
+                            ['label' => 'Inspection Detail', 'url' => ['/tankermovement/tbl-bmc-dispatch-inspection/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-inspection')],
                             ['label' => Yii::t('app', 'BMC Milk Dispatch'), 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
                             ['label' => 'Sample Bottle Testing', 'url' => ['/tankermovement/tbl-sample-bottle-testing/index'], 'active' => ($cntrl == 'tbl-sample-bottle-testing')],
                             ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
@@ -665,6 +665,31 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
                     'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Region Wise Report') . ' <b class="caret"></b></a>',
+                            'items' => [
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Member Collection') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                            ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection-region']],
+                                            ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary-region']],
+                                            ['label' => '113 -' . Yii::t('app', 'VLCs comparison details'), 'url' => ['/misreports/reports/milk-collection-proc-detail-region']],
+                                            ['label' => Yii::t('app', 'VLCC Transaction Data Report'), 'url' => ['/jasperreports/default/vlcc-transaction-data-report-region']],
+                                    ]
+                                ],
+                                    [
+                                    'options' => ['class' => 'dropdown-submenu'],
+                                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
+                                    'items' => [
+                                            ['label' => '214 -' . Yii::t('app', 'Loss Gain Report'), 'url' => ['/misreports/reports/center-loss-gain-report-region']],
+                                            ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation-region']],
+                                    ]
+                                ],
+                                    ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
+                            ]
+                        ],
                             [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Audit') . '<b class="caret"></b></a>',
