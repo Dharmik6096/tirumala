@@ -33,17 +33,17 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
             <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
+            </div>
+            <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>    
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
@@ -359,12 +359,13 @@ $script = "
                     $('#pageloader').hide();
                 }
             });
-          var plant_code = $('#tblmilkvehicleentry-plant_code').val();
+          var receipt_at = $('#tblmilkvehicleentry-receipt_at').val();
+          var receipt_at_code = $('#tblmilkvehicleentry-receipt_at_code').val();
           var union_code = $('#tblmilkvehicleentry-union_code').val();  
           $.ajax({
                 type: 'get',
                 url: '" . Url::to(['transaction-form']) . "',
-                data: {'plant_code' : plant_code,'union_code':union_code},             
+                data: {'receipt_at' : receipt_at,'receipt_at_code' : receipt_at_code,'union_code':union_code},             
                 success: function(data) {
                   $('#transactions-from').html(data);                                                                 
                 }

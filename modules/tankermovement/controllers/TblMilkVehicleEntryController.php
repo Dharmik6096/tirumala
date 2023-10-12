@@ -98,7 +98,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                 $txn_model->entry_type = Yii::$app->request->post()['entry_type'];
             }
             if ($this->model->validate() && $txn_model->validate()) {
-                $model->vehicle_entry_date = $model->receipt_datetime;
+                $this->model->vehicle_entry_date = $this->model->receipt_datetime;
                 if (!empty($masterPost['milk_vehicle_entry_code'])) {
                     $this->model->load(Yii::$app->request->post());
                 } else {
@@ -378,11 +378,11 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     public function actionTransactionForm() {
         $union_code = Yii::$app->request->get('union_code');
         $config = new TblConfig();
-        $config->config_for = 'PLANT';
+        $config->config_for = Yii::$app->request->get('receipt_at');
         $config->process_name = 'PLANT_RECEIPT';
         $config->config_type = 'CONTROL';
         $config_mapping = new TblConfigTxnResult();
-        $config_list = $config->getOrgConfigList($config->config_for, Yii::$app->request->get('plant_code'));
+        $config_list = $config->getOrgConfigList($config->config_for, Yii::$app->request->get('receipt_at_code'));
         $txn_model = new TblMilkVehicleEntryTransaction();
         return $this->renderAjax('_from_transaction', [
                     'txn_model' => $txn_model,
