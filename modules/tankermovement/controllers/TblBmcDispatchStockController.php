@@ -5,6 +5,7 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use app\modules\tankermovement\models\TblBmcDispatchStock;
 use app\modules\tankermovement\models\TblBmcDispatchStockSearch;
+use app\modules\tankermovement\models\TblBmcDispatchStockHistory;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -131,7 +132,6 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         if (count($bmcs) == 1) {
             $model->bmc_code = $bmcs[0];
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
-//            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code, 'milk_type_code' => $model->milk_type_code, 'milk_quality_type_code' => $model->milk_quality_type_code, 'bmc_silos_info_code' => $model->bmc_silos_info_code])->orderBy(['to_date' => SORT_DESC, 'created_at' => SORT_DESC])->one();
             if (!empty($stock_date)) {
                 $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
                 $converted_time = date("H:i:s", strtotime($dispatch_date));
@@ -152,15 +152,19 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionUpdate($id) {
-        $model = $this->findModel($id);
+        $this->model = $this->findModel($id);
+        $this->viewFile = 'update';
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->bmc_dispatch_stock_code]);
-        } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+        if (Yii::$app->request->post()) {
+            $historyModel = new TblBmcDispatchStockHistory();
+            Yii::$app->operation->history($this->model, $historyModel, UPDATE);
+            $this->model->load(Yii::$app->request->post());
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['BMC Dispatch Stock', 'edit']);
+            if ($transaction !== FALSE) {
+                return $this->{$transaction}();
+            }
         }
+        return $this->customRender();
     }
 
     /**

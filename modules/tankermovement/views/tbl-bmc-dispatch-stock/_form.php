@@ -10,6 +10,8 @@ use yii\web\JsExpression;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
+$url = $type == 'create' ? ['create'] : ['update', 'id' => $model->bmc_dispatch_stock_code];
+$label = $type == 'create' ? 'Add' : 'Update';
 ?>
 
 <?php
@@ -130,10 +132,10 @@ if ($model->bmc_code != '') {
         <div class="form-group ">
             <?php
             AjaxSubmitButton::begin([
-                'label' => Yii::t('app', 'Add'),
+                'label' => Yii::t('app', $label),
                 'ajaxOptions' => [
                     'type' => 'POST',
-                    'url' => Url::to(['create']),
+                    'url' => Url::to($url),
                     'success' => new JsExpression('function(data){
                                                                 var data=$.parseJSON(data);
                                                                 $("#loadercontent").hide();

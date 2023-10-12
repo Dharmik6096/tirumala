@@ -44,11 +44,11 @@ $attribute = [
         'attribute' => 'from_date',
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->from_date);
-        }],
+        }, 'filter' => false],
         ['attribute' => 'from_shift_code',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
-        }],
+        }, 'filter' => false],
         [
         'attribute' => 'to_date',
         'value' => function($model) {
@@ -62,16 +62,20 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
         }, 'filter' => Html::activeDropDownList($searchModel, 'milk_type_code', $milk_type, ['class' => 'form-control', 'prompt' => 'Select'])],
+        ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
+        }, 'vAlign' => 'middle', 'filter' => Yii::$app->dropdown->dropdownfilter('milk_quality_type_code', $searchModel, 'milk_quality_type_code', Yii::t('app', 'Select'))],
+        ['attribute' => 'opening_bal'],
+        ['attribute' => 'purchase_qty'],
+        ['attribute' => 'balance_qty'],
+        ['attribute' => 'fat'],
+        ['attribute' => 'snf'],
+        ['attribute' => 'bmc_silos_info_code'],
         ['attribute' => 'qty_diff_type_code', 'label' => 'Qty Diff Type',
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
         }, 'filter' => false],
-        ['attribute' => 'opening_bal'],
-        ['attribute' => 'purchase_qty'],
-        ['attribute' => 'qty_diff', 'filter' => false],
-        ['attribute' => 'balance_qty'],
-        ['attribute' => 'fat'],
-        ['attribute' => 'snf'],
+        ['attribute' => 'qty_diff'],
         ['attribute' => 'type'],
         ['attribute' => 'remarks'],
 ];

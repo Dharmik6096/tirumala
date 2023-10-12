@@ -3,6 +3,7 @@
 use yii\web\View;
 use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
+use yii\helpers\Html;
 ?>
 <div class="clearfix"></div>
 <div class="hide_toolbar_only hide_filters_only">
@@ -48,6 +49,14 @@ use yii\helpers\Url;
         'id' => 'bmc-dispatch-stock-list',
         'attributes' => $attribute,
         'active_column' => FALSE,
+        'actions' => [
+            'edit' => function($url, $model) {
+                $url = str_replace('edit', 'update', $url);
+                $url = ['/tankermovement/tbl-bmc-dispatch-stock/update', 'id' => $model->bmc_dispatch_stock_code];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update'];
+                return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
+            },
+        ]
     ];
 
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
