@@ -64,12 +64,8 @@ class TblPartyMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code',
-            'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
-            [['is_active', 'originating_type'], 'integer'],
+            [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
             [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
             [['owner_email'], 'email'],
             [['is_active'], 'default', 'value' => 1],
             [['adhar_no'], function ($attribute, $params) {
@@ -83,12 +79,12 @@ class TblPartyMaster extends \app\models\ChildModel {
                 }, 'skipOnEmpty' => true],
             [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
+                }, 'skipOnEmpty' => false],
             [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
-                }, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                },],
         ];
     }
 
