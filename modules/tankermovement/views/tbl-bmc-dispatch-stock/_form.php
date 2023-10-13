@@ -90,7 +90,7 @@ if ($model->bmc_code != '') {
         </div>
         <div class="col-sm-2 reset_field">
             <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcdispatchstock-module_name']); ?>
-            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmcdispatchstock-bmc_code,tblbmcdispatchstock-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', false, '', '', FALSE, '', TRUE); ?>
+            <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $model, $form, 'tblbmcdispatchstock-bmc_code,tblbmcdispatchstock-module_name', 'form-group col-sm-4', $model->getAttributeLabel('bmc_silos_info_code'), '', $readonly, '', '', FALSE, '', TRUE); ?>
         </div>
         <div class="col-sm-2 reset_field">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>
@@ -108,7 +108,7 @@ if ($model->bmc_code != '') {
             <?= $form->field($model, 'water')->textInput() ?>
         </div>
         <div class="col-sm-1 reset_field"> 
-            <?= Yii::$app->dropdown->dropdown('qty_diff_type', $model, $form, '', true, false, 'qty_diff_type_code'); ?>
+            <?= Yii::$app->dropdown->dropdown('qty_diff_type', $model, $form, '', true, $readonly, 'qty_diff_type_code'); ?>
         </div>
         <div class="col-sm-1 reset_field number-validate">
             <?= $form->field($model, 'opening_bal')->textInput(['readOnly' => TRUE]) ?>

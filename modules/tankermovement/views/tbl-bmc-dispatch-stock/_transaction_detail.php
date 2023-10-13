@@ -12,37 +12,37 @@ use yii\helpers\Html;
     $attribute = [
             ['attribute' => 'union_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-            }, 'visible' => true,],
+            }, 'visible' => true, 'filter' => false],
             ['attribute' => 'plant_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-            }, 'visible' => false,],
+            }, 'visible' => false, 'filter' => false],
             ['attribute' => 'mcc_plant_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-            }, 'visible' => false,],
+            }, 'visible' => false, 'filter' => false],
             ['attribute' => 'bmc_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-            }],
+            }, 'filter' => false],
             ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
-            }, 'vAlign' => 'middle'],
+            }, 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'milk_quality_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkQualityType, 'milk_quality_type_name');
-            }, 'vAlign' => 'middle'],
+            }, 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'bmc_silos_info_code',
             'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->silosInfoCode, 'silo_no');
-            }],
+            }, 'filter' => false],
             ['attribute' => 'qty_diff_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->qtyDiffType, 'qty_diff_type_name');
-            }, 'vAlign' => 'middle'],
-            ['attribute' => 'fat'],
-            ['attribute' => 'snf'],
-            ['attribute' => 'opening_bal'],
-            ['attribute' => 'purchase_qty'],
-            ['attribute' => 'balance_qty'],
-            ['attribute' => 'qty_diff'],
-            ['attribute' => 'type'],
-            ['attribute' => 'remarks'],
+            }, 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'fat', 'filter' => false],
+            ['attribute' => 'snf', 'filter' => false],
+            ['attribute' => 'opening_bal', 'filter' => false],
+            ['attribute' => 'purchase_qty', 'filter' => false],
+            ['attribute' => 'balance_qty', 'filter' => false],
+            ['attribute' => 'qty_diff', 'filter' => false],
+            ['attribute' => 'type', 'filter' => false],
+            ['attribute' => 'remarks', 'filter' => false],
     ];
 
     $grid_option = [

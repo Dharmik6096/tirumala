@@ -18,7 +18,7 @@ use kartik\form\ActiveForm;
  */
 class TblBmcDispatchStockController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['purchase-detail', 'transaction-detail'];
+    public $freeAccessActions = ['purchase-detail'];
 
     /**
      * Lists all TblBmcDispatchStock models.
