@@ -112,8 +112,8 @@ class Controls extends Component {
             } else {
                 $mappField = explode(',', $check['mapping_fields']);
                 $code = '<a href="" class="btn btn-danger btn-block dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-download"></i> Import Data <span class="caret"></span></a>
-                <ul class="dropdown-menu"><li>' . Html::a(Yii::t('app', 'Master Import'), 'javascript:void(0)', ['data-map-flag' => 0, 'class' => 'import-file']) . '</li>
-                    <li>' . Html::a(Yii::t('app', 'Mapping Import'), 'javascript:void(0)', ['data-map-flag' => 1, 'class' => 'import-file']) . '</li></ul>';
+                <ul class="dropdown-menu"><li>' . Html::a(Yii::t('app', 'Master Import'), 'javascript:void(0)', ['class' => 'import-file' . $appendId, 'data-map-flag' => 0, 'id' => 'import-file' . $appendId,]) . '</li>
+                    <li>' . Html::a(Yii::t('app', 'Mapping Import'), 'javascript:void(0)', ['class' => 'import-file' . $appendId, 'data-map-flag' => 1, 'id' => 'import-file' . $appendId]) . '</li></ul>';
 
                 return $code;
             }
