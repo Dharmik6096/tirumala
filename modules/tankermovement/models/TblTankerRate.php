@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "tbl_purchase_rate".
  *
- * @property string $purchase_rate_code
+ * @property string $tanker_rate_code
  * @property string $wef_date
  * @property string $created_at
  * @property string $description
@@ -41,13 +41,13 @@ class TblTankerRate extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['is_default',], 'default', 'value' => '1'],
-            [['is_active',], 'default', 'value' => '1'],
-            [['wef_date', 'rate_for', 'rate_gen_method_code', 'union_code', 'shift_id'], 'required'],
-            [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'is_default', 'federation_code', 'union_code', 'purchase_rate_code', 'shift_id'], 'safe'],
-            [['description', 'originating_org_code'], 'string', 'max' => 255],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+        [['is_active',], 'default', 'value' => '1'],
+        [['wef_date', 'rate_for', 'rate_gen_method_code', 'union_code', 'shift_code'], 'required'],
+        [['created_at', 'originating_org_type', 'is_active', 'updated_at', 'federation_code', 'union_code', 'tanker_rate_code', 'shift_code'], 'safe'],
+        [['description', 'originating_org_code'], 'safe'],
+        [['created_by', 'updated_by'], 'safe'],
+        [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+        ['rate_for', 'unique', 'targetAttribute' => ['wef_date', 'shift_code','rate_gen_method_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Tanker Rate Already added for selected date')],
         ];
     }
 
@@ -56,7 +56,7 @@ class TblTankerRate extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'purchase_rate_code' => Yii::t('app', 'Rate ID'),
+            'tanker_rate_code' => Yii::t('app', 'Rate ID'),
             'wef_date' => Yii::t('app', 'Wef Date'),
             'created_at' => Yii::t('app', 'Created At'),
             'description' => Yii::t('app', 'Description'),
@@ -70,17 +70,17 @@ class TblTankerRate extends \app\models\ChildModel {
             'shift_applicability' => Yii::t('app', 'Shift Applicability'),
             'updated_by' => Yii::t('app', 'Updated By'),
             'union_code' => Yii::t('app', 'Union'),
-            'shift_id' => Yii::t('app', 'Shift'),
+            'shift_code' => Yii::t('app', 'Shift'),
             'reference_code' => Yii::t('app', 'SAP Rate ID'),
-            'dcs_purchase_rate_code' => Yii::t('app', 'DCS Rate ID'),
+            'dcs_tanker_rate_code' => Yii::t('app', 'DCS Rate ID'),
         ];
     }
 
     public function getCode() {
 
 
-        $data = $this->find()->select(["MAX(purchase_rate_code) as purchase_rate_code"])->one();
-        return $data['purchase_rate_code'] + 1;
+        $data = $this->find()->select(["MAX(tanker_rate_code) as tanker_rate_code"])->one();
+        return $data['tanker_rate_code'] + 1;
     }
 
     /**
@@ -95,67 +95,59 @@ class TblTankerRate extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateAuto() {
-        return $this->hasOne(TblTankerRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasOne(TblTankerRateDetails::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateDetail() {
-        return $this->hasOne(TblTankerRateDetails::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasOne(TblTankerRateDetails::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateBased() {
-        return $this->hasMany(TblTankerRateBased::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasMany(TblTankerRateBased::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateApplicability() {
-        return $this->hasMany(TblTankerRateApplicability::className(), ['purchase_rate_code' => 'purchase_rate_code'])->where(['dcs_code' => $this->app_org_code])->orderBy('wef_date DESC');
+        return $this->hasMany(TblTankerRateApplicability::className(), ['tanker_rate_code' => 'tanker_rate_code'])->where(['dcs_code' => $this->app_org_code])->orderBy('wef_date DESC');
     }
 
     /**
      * @return \yii\db\ActiveQueryNULL
      */
     public function getShiftApplicability() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift_applicability']);
+        return 'All';
     }
 
-    public function getShiftId() {
-        return $this->hasOne(TblShift::className(), ['id' => 'shift_id']);
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRateMethod() {
-        return $this->hasOne(TblRateGenerateMethod::className(), ['code' => 'rate_gen_method_code']);
-    }
-
     public function getRecord($id) {
-        return $this->find()->select(['purchase_rate_code', 'wef_date', 'rate_gen_method_code', 'shift_applicability', 'union_code', 'shift_id'])->where(['purchase_rate_code' => $id])->one();
+        return $this->find()->select(['tanker_rate_code', 'wef_date', 'rate_gen_method_code', 'union_code', 'shift_code'])->where(['tanker_rate_code' => $id])->one();
     }
 
     public function addTankerRate($jsonData) {
 
         $this->union_code = $jsonData['union_code'];
-        $this->attributes = $jsonData;
-        $this->purchase_rate_code = $this->getCode();
+        $this->tanker_rate_code = $this->getCode();
         $this->rate_gen_method_code = $jsonData['rate_method'];
         $this->rate_for = $jsonData['rate_for'];
-        //    $this->rate_type = $jsonData['rate_type'];
-        $this->shift_applicability = $jsonData['shift'];
         $this->description = $jsonData['description'];
-        $this->shift_id = $jsonData['shift_id'];
+        $this->shift_code = $jsonData['shift_code'];
         $this->wef_date = Yii::$app->formatter->asDate($jsonData['wef_date'], DATE_FORMAT);
-        $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_id);
+        $this->wef_date = $this->wef_date . ' ' . \Yii::$app->general->getshift($this->shift_code);
         $this->is_active = 1;
-        $this->is_default = 1;
     }
 
     /**
@@ -165,12 +157,8 @@ class TblTankerRate extends \app\models\ChildModel {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getReferenceRecord() {
-        return $this->findOne(['reference_code' => $this->reference_code]);
-    }
-
     public function UpdateRateMaster($saveModel, $saveData) {
-        $rate_master = TblTankerRate::findOne($saveModel->purchase_rate_code);
+        $rate_master = TblTankerRate::findOne($saveModel->tanker_rate_code);
         if (!empty($rate_master) && empty($rate_master->union_code)) {
             $model_name = Yii::$app->path->define('TblTankerRateHistory');
             $historyModel = new $model_name();
@@ -183,66 +171,36 @@ class TblTankerRate extends \app\models\ChildModel {
         return $saveData;
     }
 
-    public function purchaseRate($data) {
-        $rtpl_data = [];
-        $model = new TblDcs();
-        $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
-
-        if (!empty($union)) {
-            $union_code = $union->union_code;
-
-            $purchase_rate_code = $this->find()
-                    ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
-                    ->andWhere(['<=', 'wef_date', $data['dt_date']])
-                    ->orderBy('wef_date desc')
-                    ->one();
-
-            if (!empty($purchase_rate_code)) {
-                $purchase_rate_code = $purchase_rate_code->purchase_rate_code;
-
-                $detail_model = new TblTankerRateDetails();
-
-                $rtpl_data = $detail_model->find()
-                        ->select(['rtpl', 'purchase_rate_code'])
-                        ->where(['purchase_rate_code' => $purchase_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
-                        ->one();
-            }
-        }
-
-        return $rtpl_data;
-    }
-
-    public function getRateRecord() {
-        return $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])->one();
-    }
-
-//    public function getRateChartList($union_code) {
-//        $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
-//        return ArrayHelper::map($data, 'purchase_rate_code', function($data) {
-//                    return $data->purchase_rate_code . ' (' . $data->description . ')';
-//                });
+//    public function purchaseRate($data) {
+//        $rtpl_data = [];
+//        $model = new TblDcs();
+//        $union = $model->find()->select(['union_code'])->where(['dcs_code' => $data['dcs_code'], 'is_active' => 1])->one();
+//
+//        if (!empty($union)) {
+//            $union_code = $union->union_code;
+//
+//            $tanker_rate_code = $this->find()
+//                    ->where(['union_code' => $union_code, 'shift_applicability' => [3, $data['shift']]])
+//                    ->andWhere(['<=', 'wef_date', $data['dt_date']])
+//                    ->orderBy('wef_date desc')
+//                    ->one();
+//
+//            if (!empty($tanker_rate_code)) {
+//                $tanker_rate_code = $tanker_rate_code->tanker_rate_code;
+//
+//                $detail_model = new TblTankerRateDetails();
+//
+//                $rtpl_data = $detail_model->find()
+//                        ->select(['rtpl', 'tanker_rate_code'])
+//                        ->where(['tanker_rate_code' => $tanker_rate_code, 'fat' => $data['fat'], 'snf' => $data['snf'], 'milk_quality_type_code' => $data['milk_quality_type'], 'milk_type_code' => $data['milk_type']])
+//                        ->one();
+//            }
+//        }
+//
+//        return $rtpl_data;
 //    }
 
-    public function getRateChartList($union_code, $showRef = FALSE) {
-        $data = $this->find()->where(['union_code' => $union_code])->orderBy('wef_date DESC')->all();
-        return ArrayHelper::map($data, 'purchase_rate_code', function ($data) use ($showRef) {
-                    $code = '';
-                    if ($showRef && !empty($data->dcs_purchase_rate_code)) {
-                        $code = $data->purchase_rate_code . ' / ' . $data->dcs_purchase_rate_code . '(' . (!empty($data->description) ? $data->description : '') . ')';
-                    } else {
-                        $code = $data->purchase_rate_code . ' (' . $data->description . ')';
-                    }
-                    return $code;
-                });
-    }
-
-    public function getValidTankerRate($code) {
-        $data = $this->find()->select('purchase_rate_code')->where(['or', ['purchase_rate_code' => $code], ['dcs_purchase_rate_code' => $code]])->all();
-        return !empty($data) && count($data) == 1 ? $data[0]->purchase_rate_code : '';
-    }
-
-    public function getDcsTankerRateCode($code) {
-        $data = $this->find()->where(['dcs_purchase_rate_code' => $code])->one();
-        return $data;
+    public function getRateRecord() {
+        return $this->find()->where(['tanker_rate_code' => $this->tanker_rate_code])->one();
     }
 }

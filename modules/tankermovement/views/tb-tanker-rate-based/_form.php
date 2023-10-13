@@ -42,7 +42,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'created_by')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'purchase_rate_code')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'tanker_rate_code')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
 

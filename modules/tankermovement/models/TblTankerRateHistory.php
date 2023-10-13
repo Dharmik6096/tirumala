@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "tbl_tanker_rate_history".
  *
  * @property integer $id
- * @property string $purchase_rate_code
+ * @property string $tanker_rate_code
  * @property string $wef_date
  * @property string $description
  * @property integer $is_excel
@@ -47,18 +47,9 @@ class TblTankerRateHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['purchase_rate_code', 'description', 'rate_method','rate_for', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default', 'union_code', 'reference_code'], 'safe'],
-//            [['purchase_rate_code'], 'required'],
-//            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
-//            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'integer'],
-//            [['purchase_rate_code', 'description', 'rate_method'], 'string', 'max' => 255],
-//            [['originating_org_type'], 'string', 'max' => 50],
-//            [['originating_org_id'], 'string', 'max' => 25],
-//            [['flg_sentbox_entry', 'sync_status'], 'string', 'max' => 1],
-//            [['operation_type'], 'string', 'max' => 10],
-//            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTankerRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
-            [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['created_by', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'rate_type', 'shift_id', 'reference_code', 'rate_category', 'is_process', 'ts_rate'], 'safe'],
+                [['tanker_rate_code', 'description', 'rate_method','rate_for', 'originating_org_id', 'originating_org_type',  'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default', 'union_code', 'reference_code'], 'safe'],
+                 [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['created_by', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'shift_code'], 'safe'],
         ];
     }
 
@@ -68,7 +59,7 @@ class TblTankerRateHistory extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
 //            'id' => Yii::t('app', 'ID'),
-//            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
+//            'tanker_rate_code' => Yii::t('app', 'Purchase Rate Code'),
 //            'wef_date' => Yii::t('app', 'Wef Date'),
 //            'description' => Yii::t('app', 'Description'),
 //            'is_excel' => Yii::t('app', 'Is Excel'),
@@ -108,7 +99,7 @@ class TblTankerRateHistory extends \yii\db\ActiveRecord {
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateCode() {
-        return $this->hasOne(TblTankerRateMaster::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasOne(TblTankerRateMaster::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
     /**

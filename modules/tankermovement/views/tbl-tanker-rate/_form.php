@@ -28,21 +28,19 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
     </div>           
     <div class="col-sm-2 change">
         <?php
-        $rate_method = array("1" => "Formula", "3" => "Import");
-        echo $form->field($model, 'rate_gen_method_code')->dropDownList($rate_method, ['prompt' => Yii::t('app', 'Select Rate Method')])->label(Yii::t('app', 'Rate Method'));
+            echo Yii::$app->dropdown->dropdownStatic('tanker_rate_gen_method', $model, $form,'', $model->getAttributeLabel('rate_gen_method_code')); 
         ?>
     </div>
     <div class="col-sm-2 change">
         <?php
-        $rate_for = array("1"=>"Purchase", "2"=>"Sale");
-        echo $form->field($model, 'rate_for')->dropDownList($rate_for, ['prompt' => Yii::t('app', 'Select Rate For')])->label(Yii::t('app', 'Rate For'));
+         echo Yii::$app->dropdown->dropdownStatic('tanker_rate_for', $model, $form,'', $model->getAttributeLabel('rate_for')); 
         ?>
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->controls->date($model, $form, 'wef_date', '', FALSE, date('Y-m-d')); ?>
     </div>
     <div class="col-sm-2 shift">
-        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_id'); ?>
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'form-group padding-right-5 col-sm-12 shift', 'Shift', false, 'shift_code'); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'description')->textArea(['rows' => 2]) ?>
@@ -71,7 +69,7 @@ $form = ActiveForm::begin(['id' => 'purchase-rate-form',
                     'success' => new JsExpression('function(data){
                                     if (data.status == "success"){
                                             var purchaseRate = [];
-                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"wef_date":data.wef_date,"description":data.description,"shift_id":data.shift_id};
+                                            purchaseRate = {"originating_org_type":data.originating_org_type,"originating_org_code":data.originating_org_code,"union_code":data.union_code,"rate_method":data.rate_method,"rate_for":data.rate_for,"wef_date":data.wef_date,"description":data.description,"shift_code":data.shift_code};
                                             localStorage.setItem("purchaseRate", JSON.stringify(purchaseRate));
                                             window.location="' . \Yii::$app->request->getHostInfo() . '"+data.url;
                                     }else{

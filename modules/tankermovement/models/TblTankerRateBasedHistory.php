@@ -27,7 +27,7 @@ use Yii;
  * @property string $formula_code
  * @property integer $milk_quality_type_code
  * @property integer $milk_type_code
- * @property integer $purchase_rate_code
+ * @property integer $tanker_rate_code
  * @property integer $quality_param_code
  */
 class TblTankerRateBasedHistory extends \yii\db\ActiveRecord
@@ -46,9 +46,8 @@ class TblTankerRateBasedHistory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-//            [['created_at', 'history_created_at', 'updated_at'], 'safe'],
-//            [['created_by', 'operation_type', 'rate_based_code', 'updated_by', 'formula_code'], 'string'],
-//            [['deduction_type', 'is_active', 'ref_type', 'milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'quality_param_code'], 'integer'],
+            [['created_at', 'history_created_at', 'updated_at','fat_ratio','snf_ratio','fat_rate','snf_rate','qty_rate'], 'safe'],
+//            [['deduction_type', 'is_active', 'ref_type', 'milk_quality_type_code', 'milk_type_code', 'tanker_rate_code', 'quality_param_code'], 'integer'],
 //            [['end_range', 'fixed_point', 'kg_rate', 'start_range', 'step', 'value'], 'number'],
        ];
     }
@@ -62,25 +61,25 @@ class TblTankerRateBasedHistory extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'created_by' => Yii::t('app', 'Created By'),
-            'deduction_type' => Yii::t('app', 'Deduction Type'),
-            'end_range' => Yii::t('app', 'End Range'),
-            'fixed_point' => Yii::t('app', 'Fixed Point'),
+            'base_rate' => Yii::t('app', 'Base Rate'),
+            'fat_rate' => Yii::t('app', 'Fat Rate'),
+            'snf_rate' => Yii::t('app', 'SNF Rate'),
+            'qty_rate' => Yii::t('app', 'Qty Rate'),
+            'fat_ratio' =>Yii::t('app', 'Fat Ratio'),
+            'snf_ratio' =>Yii::t('app', 'SNF Ratio'),
+            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
+            'std_fat' => Yii::t('app', 'Standard Fat'),
+            'std_snf' => Yii::t('app', 'Standard SNF'),
             'history_created_at' => Yii::t('app', 'History Created At'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'kg_rate' => Yii::t('app', 'Kg Rate'),
+            'start_range' => Yii::t('app', 'Start Range'),
+            'end_range' => Yii::t('app', 'End Range'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'rate_based_code' => Yii::t('app', 'Rate Based Code'),
-            'ref_type' => Yii::t('app', 'Ref Type'),
-            'start_range' => Yii::t('app', 'Start Range'),
-            'step' => Yii::t('app', 'Step'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'value' => Yii::t('app', 'Value'),
-            'formula_code' => Yii::t('app', 'Formula Code'),
-            'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
-            'quality_param_code' => Yii::t('app', 'Quality Param Code'),
+            'tanker_rate_code' => Yii::t('app', 'Purchase Rate Code'),
         ];
     }
 

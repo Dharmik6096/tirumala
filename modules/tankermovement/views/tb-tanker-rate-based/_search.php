@@ -51,7 +51,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'created_by') ?>
 
-    <?php // echo $form->field($model, 'purchase_rate_code') ?>
+    <?php // echo $form->field($model, 'tanker_rate_code') ?>
 
     <?php // echo $form->field($model, 'updated_by') ?>
 

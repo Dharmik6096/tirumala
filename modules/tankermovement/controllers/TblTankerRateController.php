@@ -50,11 +50,6 @@ class TblTankerRateController extends \app\controllers\ChildController {
                 $milk_type = $transaction[$i]['milk_type'];
                 $rate_type = $transaction[$i]['rate_type_code'];
                 $milk_quality_type = $transaction[$i]['rate_type_code'];
-                $std_fat = $transaction[$i]['std_fat'];
-                $std_snf = $transaction[$i]['std_snf'];
-                $base_rate = $transaction[$i]['base_rate'];
-                $fat_ratio = isset($transaction[$i]['fat_ratio']) ? $transaction[$i]['fat_ratio'] : 0;
-                $snf_ratio = isset($transaction[$i]['$snf_ratio']) ? $transaction[$i]['$snf_ratio'] : 0;
 
                 $rowCount = 1;
                 $column = 'A';
@@ -133,9 +128,9 @@ class TblTankerRateController extends \app\controllers\ChildController {
      */
     public function actionView($id) {
         $purchaseBasedModel = new TblTankerRateBased();
-        $purchaseBasedModel->purchase_rate_code = $id;
+        $purchaseBasedModel->tanker_rate_code = $id;
         $appsearchModel = new TblTankerRateApplicabilitySearch();
-        $appsearchModel->purchase_rate_code = $id;
+        $appsearchModel->tanker_rate_code = $id;
         $appdataProvider = $appsearchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
                     'model' => $this->findModel($id), 'purchaseBasedModel' => $purchaseBasedModel, 'appsearchModel' => $appsearchModel,
@@ -153,10 +148,11 @@ class TblTankerRateController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->wef_date = ($this->model->wef_date) ? Yii::$app->formatter->asDate($this->model->wef_date, DATE_FORMAT) : '';
-            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_id);
-            $this->model->purchase_rate_code = $this->model->getCode();
+            $this->model->wef_date = $this->model->wef_date . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
+            $this->model->rate_for = isset($this->model->rate_for) ? $this->model->rate_for : '';
+            $this->model->tanker_rate_code = $this->model->getCode();
             $this->model->is_active = 1;
-            //$this->model->originating_org_code = Yii::$app->session->get('organizations_code');
+            $this->model->originating_org_code = Yii::$app->session->get('organizations_code');
             $this->model->originating_org_type = Yii::$app->session->get('organizations_type');
             //$this->model->scenario = 'create';
             if ($this->model->validate()) {
@@ -167,7 +163,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
                 $result = 'success';
                 Yii::$app->response->format = trim(Response::FORMAT_JSON);
                 $url = \yii\helpers\Url::to(['tbl-tanker-rate-details/create-rate', 'id' => -1, 'method' => $this->model->rate_gen_method_code]);
-                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'wef_date' => $this->model->wef_date, 'description' => $this->model->description, 'shift_id' => $this->model->shift_id, 'union_code' => $this->model->union_code];
+                return ['status' => $result, 'url' => $url, 'originating_org_type' => $this->model->originating_org_type, 'originating_org_code' => $this->model->originating_org_code, 'rate_method' => $this->model->rate_gen_method_code, 'rate_for' => $this->model->rate_for, 'wef_date' => $this->model->wef_date, 'description' => $this->model->description, 'shift_code' => $this->model->shift_code, 'union_code' => $this->model->union_code];
             } else {
                 $file = [];
                 if ($_POST['file_name'] != '')
@@ -193,59 +189,56 @@ class TblTankerRateController extends \app\controllers\ChildController {
         $i = 0;
         $cnt = 0;
         $purchaseModel = new TblTankerRateDetails();
-        // $detailmaxID = $purchaseModel->getCode();
         $based = [];
         $baseCode = 0;
         $error = FALSE;
         $errorarray = [];
+        $ratearray = [];
 
-        $purchaseBasedModel = new TblTankerRateBased();
-        $basemaxID = $purchaseBasedModel->getCode();
-
-        $qualityModel = new TblQualityParam();
         $animalTypedata = $milkTypeModel->getRecords();
+        $animalTypedata = ArrayHelper::getColumn($animalTypedata, 'oldAttributes');
         $SheetNames = ArrayHelper::getColumn($animalTypedata, 'animal_type_name');
         $animalTypedata = \yii\helpers\ArrayHelper::map($animalTypedata, 'animal_type_code', 'animal_type_name');
-        $milkTypedata = $rateTypeModel->getRecords();
-        $RateTypes = ArrayHelper::getColumn($milkTypedata, 'rate_type');
+        $milkTypedata = array("1" => "FAT+SNF", "2" => "QTY");
+        $RateTypes = array("FAT+SNF", "QTY");
         $milkTypedata = \yii\helpers\ArrayHelper::map($milkTypedata, 'code', 'rate_type');
         $milkQuality = new TblMilkQualityType();
+        $QualityType = array_values($milkQuality->getActiveQualityType());
 
         foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
             $sheetTitle = strtolower($worksheet->getTitle());
-            if (in_array($sheetTitle, array_map('strtolower', $SheetNames))) {
+            $sheetTitlearray = explode('-', $sheetTitle);
+            if (count($sheetTitlearray) == 2 && in_array($sheetTitlearray[0], array_map('strtolower', $SheetNames)) && in_array($sheetTitlearray[1], array_map('strtolower', $QualityType))) {
                 $FormulaType = strtoupper($worksheet->getCell('A1')->getValue());
-                if (in_array($FormulaType, array_map('strtoupper', $RateTypes))) {
-                    $rate_type_code = array_search($FormulaType, array_map('strtoupper', $milkTypedata));
-                    $milk_type_code = array_search($sheetTitle, array_map('strtolower', $animalTypedata));
+                if (!isset($ratearray[$sheetTitlearray[0]])) {
+                    $ratearray[$sheetTitlearray[0]] = $FormulaType;
+                }
+                if (in_array($FormulaType, array_map('strtoupper', $RateTypes)) && $FormulaType == $ratearray[$sheetTitlearray[0]]) {
+                    $rate_type_code = ($FormulaType=="FAT+SNF" ?"1":"2");
+                    $milk_type_code = array_search($sheetTitlearray[0], array_map('strtolower', $animalTypedata));
+                    $milk_quality_type_code = array_search($sheetTitlearray[1], array_map('strtolower', $milkQuality->getActiveQualityType()));
                     $quality_param = explode('+', $FormulaType);
                     if (count($quality_param) == 1 && $worksheet->getHighestColumn() != 'B') {
                         return ['status' => 'error', 'message' => 'Invalid Sheet Format [' . $sheetTitle . ']'];
                     } else {
                         $purchaseBasedModel = new TblTankerRateBased();
-                        $purchaseBasedModel->purchase_rate_code = $purchaseRate->purchase_rate_code;
-                        $purchaseBasedModel->rate_based_code = $basemaxID + $baseCode;
+                        $purchaseBasedModel->tanker_rate_code = $purchaseRate->tanker_rate_code;
+                        $purchaseBasedModel->rate_based_code = $purchaseBasedModel->tanker_rate_code . ($purchaseBasedModel->getCode() + $baseCode);
                         $purchaseBasedModel->milk_type_code = $milk_type_code;
                         $purchaseBasedModel->rate_type_code = $rate_type_code;
-                        $purchaseBasedModel->quality_param_code = array_search($quality_param[0], $qualityModel->getParams());
-                        $purchaseBasedModel->start_range = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
-                        $purchaseBasedModel->end_range = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);
-                        $purchaseBasedModel->milk_quality_type_code = array_search('good', array_map('strtolower', $milkQuality->getActiveQualityType()));
+                        $purchaseBasedModel->fat_rate = number_format((float) $worksheet->getCell('A2')->getValue(), 1);
+                        $purchaseBasedModel->fat_ratio = number_format((float) $worksheet->getCell('A' . $worksheet->getHighestRow())->getValue(), 1);
+                        $purchaseBasedModel->milk_quality_type_code = $milk_quality_type_code;
+                        $purchaseBasedModel->originating_type = 2;
+                        $purchaseBasedModel->originating_org_code = Yii::$app->session->get('organizations_code');
+                        $purchaseBasedModel->originating_org_type = Yii::$app->session->get('organizations_type');
 
-                        $based[] = $purchaseBasedModel;
-                        $baseCode++;
                         if (count($quality_param) > 1) {
-                            $h = new ReflectionClass($purchaseBasedModel->className());
-                            $newModel = $h->newInstanceArgs();
-                            $attribute = $purchaseBasedModel->attributes;
-                            $newModel->setAttributes($attribute);
-                            $newModel->rate_based_code = $basemaxID + $baseCode;
-                            $newModel->quality_param_code = array_search($quality_param[1], $qualityModel->getParams());
-                            $newModel->start_range = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
-                            $newModel->end_range = number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
-                            $based[] = $newModel;
-                            $baseCode++;
+                         $purchaseBasedModel->snf_rate = number_format((float) $worksheet->getCell('B1')->getValue(), 1);
+                         $purchaseBasedModel->snf_ratio= number_format((float) $worksheet->getCell($worksheet->getHighestColumn(1) . '1')->getValue(), 1);
                         }
+                         $based[] = $purchaseBasedModel;
+                          $baseCode++;
                         for ($row = 2; $row <= $worksheet->getHighestRow(); $row++) {
 // Row range missing validation
                             if ($row != 2) {
@@ -276,34 +269,38 @@ class TblTankerRateController extends \app\controllers\ChildController {
                                     }
                                 }
                                 if (is_float($cell)) {
-//                                    $currentcell = floatval($cell);
-//                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
-//                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
-//                                    if ($row == 2) {
-//                                        if ($col != 'B' && $currentcell < $previouscell) {
-//                                            $error = TRUE;
-//                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-//                                        }
-//                                    } else {
-//                                        if ($col != 'B') {
-//                                            if ($currentcell < $previouscell) {
-//                                                $error = TRUE;
-//                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
-//                                            }
-//                                        }
-//                                    }
+                                    $currentcell = floatval($cell);
+                                    $previouscell = floatval($worksheet->getCell((PHPExcel_Cell::stringFromColumnIndex($columnIndex - 2)) . $row)->getValue());
+                                    $previousrow = floatval($worksheet->getCell($col . ($row - 1))->getValue());
+                                    if ($row == 2) {
+                                        if ($col != 'B' && $currentcell < $previouscell) {
+                                            $error = TRUE;
+                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+                                        }
+                                    } else {
+                                        if ($col == 'B' && $currentcell < $previousrow) {
+                                            $error = TRUE;
+                                            $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+                                        } else if ($col != 'B') {
+                                            if ($currentcell < $previouscell) {
+                                                $error = TRUE;
+                                                $errorarray [] = 'Wrong Value at ' . $col . $row . ' [' . $sheetTitle . ']';
+                                            }
+                                        }
+                                    }
                                     if (!$error) {
                                         $data [$i] [] = [
-                                            $purchaseRate->purchase_rate_code,
+                                            // $purchaseRate->tanker_rate_code . ($purchaseModel->getCode() + $cnt),
+                                            $purchaseRate->tanker_rate_code,
                                             $rate_type_code,
-                                            $purchaseBasedModel->milk_quality_type_code,
+                                            $milk_quality_type_code,
                                             $milk_type_code,
                                             number_format((float) $worksheet->getCell('A' . $row)->getValue(), 2),
                                             number_format((float) $worksheet->getCell($col . '1')->getValue(), 2),
                                             number_format((float) $cell, 2),
-                                            1,
-                                            \Yii::$app->user->identity->user_code,
-                                            date('Y-m-d H:i:s')
+                                            \Yii::$app->session->get('organizations_code'),
+                                            \Yii::$app->session->get('organizations_type'),
+                                            2
                                         ];
                                         $cnt++;
                                         if (count($data [$i]) == 1000) {
@@ -326,11 +323,13 @@ class TblTankerRateController extends \app\controllers\ChildController {
                 return ['status' => 'error', 'message' => 'Excel Should Contain Valid Sheet Name To Upload Data'];
             }
         }
-
         if (!$error) {
             if (!empty($data)) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
+//                    var_dump($purchaseRate);
+//                    var_dump($based);
+//                    var_dump($data);
                     $master[] = $purchaseRate->save();
                     foreach ($based as $b) {
                         $b->scenario = 'excel';
@@ -338,11 +337,11 @@ class TblTankerRateController extends \app\controllers\ChildController {
                         $master[] = $error;
                     }
                     foreach ($data as $d) {
-                        \Yii::$app->db->createCommand()->batchInsert('tbl_purchase_rate_details', ['purchase_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'is_active', 'created_by', 'created_at'], $d)->execute();
+                        \Yii::$app->db->createCommand()->batchInsert('tbl_tanker_rate_details', ['tanker_rate_code', 'rate_type_code', 'milk_quality_type_code', 'milk_type_code', 'fat', 'snf', 'rtpl', 'originating_org_code', 'originating_org_type', 'originating_type'], $d)->execute();
                     }
                     if ($transaction->isActive && !in_array(FALSE, $master)) {
                         $transaction->commit();
-                        return ['status' => 'success', 'url' => \yii\helpers\Url::to(['tbl-purchase-rate-details/rate-chart', 'id' => $purchaseRate->purchase_rate_code, 'milk_type' => 1])];
+                        return ['status' => 'success', 'url' => \yii\helpers\Url::to(['tbl-tanker-rate-details/rate-chart', 'id' => $purchaseRate->tanker_rate_code, 'milk_type' => 1, 'milk_quality' => 1])];
                     }
                     return ['status' => 'error', 'message' => 'Data not Saved Due to transaction Error'];
                 } catch (Exception $e) {
@@ -367,7 +366,7 @@ class TblTankerRateController extends \app\controllers\ChildController {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->purchase_rate_code]);
+            return $this->redirect(['view', 'id' => $model->tanker_rate_code]);
         } else {
             return $this->render('update', [
                         'model' => $model,
@@ -383,24 +382,24 @@ class TblTankerRateController extends \app\controllers\ChildController {
      */
     public function actionDelete() {
         $valueOut = $this->generalModel->callSp('sp_delete_purchase_rate ', [Yii::$app->request->post('id')], FALSE);
-        $purchase_rate_code = Yii::$app->request->post('id');
+        $tanker_rate_code = Yii::$app->request->post('id');
 
         if ($valueOut == 0 && substr($code, 0, 11) == Yii::$app->session->get('Unions')) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 $master = [];
-                $this->model = $this->findModel($purchase_rate_code);
+                $this->model = $this->findModel($tanker_rate_code);
                 $historyModel = new TblTankerRate();
                 Yii::$app->operation->history($this->model, $historyModel, DELETE);
                 $master[] = $historyModel->save();
-                $details = \app\modules\tankermovement\models\TblTankerRateBased::find()->where(['purchase_rate_code' => $purchase_rate_code])->all();
+                $details = \app\modules\tankermovement\models\TblTankerRateBased::find()->where(['tanker_rate_code' => $tanker_rate_code])->all();
                 foreach ($details as $key => $id) {
                     $detailHistory = new \app\modules\tankermovement\models\TblTankerRateBasedHistory();
                     Yii::$app->operation->history($id, $detailHistory, DELETE);
                     $master[] = $detailHistory->save();
                     $master[] = $details[$key]->delete();
                 }
-                $stateMap = TblTankerRateDetails::find()->where(['purchase_rate_code' => $purchase_rate_code])->deleteAll();
+                $stateMap = TblTankerRateDetails::find()->where(['tanker_rate_code' => $tanker_rate_code])->deleteAll();
 
                 $master[] = $this->model->delete();
                 if (in_array(FALSE, $master) && !($transaction->isActive)) {
@@ -445,145 +444,54 @@ class TblTankerRateController extends \app\controllers\ChildController {
      * @return mixed
      */
     public function actionTankerRateApplicability($id) {
-        $model = $this->findModel($id);
-        $appModel = Yii::$app->getModule('applicability');
-        $appModel->model = new TblTankerRateApplicability();
-        $appModel->model->shift_code = $model->shift_id;
-        $appModel->model->wef_date = $model->wef_date;
-        $appModel->is_union = false;
-        $appModel->union_code = $model->union_code;
-        $appModel->field_name = 'purchase_rate_code';
-        $appModel->field_value = $id;
-        $appModel->trans_label = 'purchase rate applicability';
-        $appModel->header_title = !empty($model->description) ? ' - ' . $id . ' (' . $model->description . ') ' : ' - ' . $id;
-        $appModel->fields = [
-            'bmc_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'BMC Code'), 'value' => function ($model) {
-                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'bmc_code');
-                }],
-            'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function ($model) {
-                    return Yii::$app->controls->view_date($model->wef_date);
-                }],
-            'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
-            'dcs_code' => ['view' => ['grid'], 'value' => 'dcs_code'],
-            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code'), 'value' => function ($model) {
-                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-                }],
-            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
-                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
-                }],
-            'dcs_name' => ['view' => ['grid'], 'value' => function ($model) {
-                    return \Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-                }],
-            'is_download' => ['view' => ['grid'], 'type' => 'yes-no', 'value' => function ($model) {
-                    return ($model->is_download == 0) ? Yii::t('app', 'Done') : Yii::t('app', 'Pending');
-                }],
-            'download_date_time' => ['view' => ['grid'], 'type' => 'date', 'value' => function ($model) {
-                    return Yii::$app->controls->view_date($model->download_date_time);
-                }],
-        ];
-        $username = explode('#', Yii::$app->session->get('UserName'))[1];
-        if (!in_array(strtolower($username), ['bipl', 'reil']))
-            $appModel->actions = ['delete' => ['option' => 'dcs_code,rate_app_code,tbl-purchase-rate/delete-rate-app']];
-        $appModel->shift_type = isset($model->shiftApplicability) ? strtolower($model->shiftApplicability->shift) : NULL;
-        $appModel->ratechart = true;
-        $appModel->isApproval = true;
-        $appModel->dcs_filters = ['society' => Yii::t('app', 'Society'), 'routes' => 'Routes', 'mcc' => 'MCC'];
 
-        return $appModel->createApp();
-    }
+        $this->model = new TblTankerRateApplicability();
+        $this->model->create($id);
+//        $searchModel = new TblTankerRateApplicabilitySearch();
+//        $searchModel->tanker_rate_code=$this->model->tanker_rate_code;
+//        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+//        $selected=  $this->model->getParty();
+//        if(!empty($this->model->union_code))
+//        {
+//            $party_list=  $this->loadParty($this->model->union_code);
+//        }
+//        else
+//        {
+//            $party_list=[];
+//        }
 
-    public function actionDeleteRateApp() {
-        $transaction = \Yii::$app->db->beginTransaction();
-        try {
-            $master = [];
-            $detailHistory = new TblTankerRateApplicabilityHistory();
-            $record = TblTankerRateApplicability::find()->where(['rate_app_code' => Yii::$app->request->post('id')])->one();
-            Yii::$app->operation->history($record, $detailHistory, DELETE);
-            $model = new TblDcs();
-            $model->updateAll(['updated_at' => date('Y-m-d H:i:s'), 'rate_flag' => 2, 'member_rate_code' => $record->purchase_rate_code], ['dcs_code' => $record->dcs_code]);
-            $master[] = $detailHistory->save(FALSE);
-            $master[] = $record->delete();
-            if (in_array(FALSE, $master)) {
-                $transaction->rollback();
-                $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
-            } else {
-                $transaction->commit();
-                $record = ['status' => 'success', 'msg' => 'Record is successfuly deleted.'];
-            }
-        } catch (UserException $e) {
-            $transaction->rollback();
-            $record = ['status' => 'error', 'msg' => $e->getMessage()];
-        } catch (\yii\db\Exception $e) {
-            $transaction->rollback();
-            $record = ['status' => 'error', 'msg' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')];
+        if ($this->model->load(Yii::$app->request->post())) {
+            $appmodel = new TblTankerRateApplicability();
+            $model = $this->findModel($id);
+            $appmodel->shift_code = $model->shift_code;
+            $appmodel->wef_date = $model->wef_date;
+            $is_union = false;
+            $union_code = $model->union_code;
+            $field_name = 'tanker_rate_code';
+            $field_value = $id;
+            $trans_label = 'purchase rate applicability';
+
+            $fields = [
+                'wef_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function ($model) {
+                        return Yii::$app->controls->view_date($model->wef_date);
+                    }],
+                'shift_code' => ['view' => ['grid', 'create'], 'type' => 'dropdown', 'flag' => 'shift_applicability', 'value' => 'shiftCode.shift'],
+                'party_master_code' => ['view' => ['grid'], 'value' => 'party_master_code'],
+                'party_name' => ['view' => ['grid'], 'value' => function ($model) {
+                        return \Yii::$app->general->getforeignkey($model->partyMasterCode, 'party_name');
+                    }],
+            ];
+            $username = explode('#', Yii::$app->session->get('UserName'))[1];
+            $shift_type = 'all';
+            $ratechart = true;
+            $isApproval = true;
+            // $appModel->dcs_filters = ['society' => Yii::t('app', 'Society'), 'routes' => 'Routes', 'mcc' => 'MCC'];
         }
-
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
-    }
-
-    public function actionChartList() {
-        $out = NULL;
-        if (isset($_POST['depdrop_parents'])) {
-            $value = $_POST['depdrop_parents'];
-            if (!empty($value[0]) && !empty($value[1])) {
-                if (strtolower($value[1]) == 'member') {
-                    $RateModel = new TblTankerRate();
-                    $list = $RateModel->getRateChartList($value[0], TRUE);
-                } else {
-                    $RateModel = new TblDcsTankerRate();
-                    $list = $RateModel->getRateChartList($value[0]);
-                }
-                foreach ($list as $key => $r) {
-                    $out[] = array('id' => $key,
-                        'name' => $r);
-                }
-            }
-            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-        }
-    }
-
-    public function actionGetOrgRate() {
-        $out = NULL;
-        if (isset($_POST['depdrop_parents'])) {
-            $value = $_POST['depdrop_parents'];
-            $union_code = Yii::$app->session->get('Unions');
-            $union_code = !empty($union_code) ? explode(',', $union_code) : $union_code;
-            if (!empty($value[0])) {
-                if (strtolower($value[0]) == 'dcs') {
-                    $RateModel = new TblTankerRate();
-                    $list = $RateModel->getRateChartList($union_code);
-                } else {
-                    $RateModel = new TblDcsTankerRate();
-                    $list = $RateModel->getRateChartList($union_code);
-                }
-                foreach ($list as $key => $r) {
-                    $out[] = array('id' => $key,
-                        'name' => $r);
-                }
-            }
-            return \yii\helpers\Json::encode(['output' => $out, 'selected' => '']);
-        }
-    }
-
-    public function actionActiveDeactivate($id) {
-        $this->model = $this->findModel($id);
-        $historyModel = new TblTankerRateHistory();
-        Yii::$app->operation->history($this->model, $historyModel, UPDATE);
-        $saveModel[] = $historyModel;
-        if ($this->model->is_active == 1) {
-            $this->model->is_active = 0;
-        } else {
-            $this->model->is_active = 1;
-        }
-        $saveModel[] = $this->model;
-        $transaction = $this->generalModel->saveTransaction($saveModel, ['Purchase Rate', 'edit']);
-        if ($transaction == 'customRedirect') {
-            $record = ['status' => 'success', 'msg' => 'Tanker Rate ' . (($this->model->is_active == 0) ? 'Dectivated' : 'Activated') . ' Successfully'];
-        } else {
-            $record = ['status' => 'error', 'msg' => 'Tanker Rate Not Updated.'];
-        }
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
+        return $this->render('../tbl-tanker-rate-applicability/create', [
+                    'model' => $this->model, 'purchaseRate' => $this->purchaseRate,
+                    'party_list' => $party_list, 'selected' => $selected,
+                    'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+        ]);
     }
 }

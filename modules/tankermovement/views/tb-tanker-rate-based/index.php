@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'updated_at',
             // 'milk_type_code',
             // 'created_by',
-            // 'purchase_rate_code',
+            // 'tanker_rate_code',
             // 'updated_by',
             // 'deleted_by',
             // 'is_active',

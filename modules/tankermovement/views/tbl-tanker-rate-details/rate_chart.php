@@ -18,15 +18,12 @@ $this->title = Yii::t('app', 'Rate Chart');
             <div class="col-sm-12">
                 <div class="pt5 large-search">
                     <?php $form = ActiveForm::begin(); ?>
-                    <?= Html::activeHiddenInput($model, 'purchase_rate_code', ['value' => $model->purchase_rate_code]); ?>
+                    <?= Html::activeHiddenInput($model, 'tanker_rate_code', ['value' => $model->tanker_rate_code]); ?>
                     <div class="col-sm-2">
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', false); ?>
                     </div>
                     <div class="col-sm-2">
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', false); ?>
-                    </div>
-                    <div class="col-sm-2">
-                        <?= Yii::$app->dropdown->dropdownStatic('rate_class', $model, $form, 'form-group padding-right-5', false, false, 'rate_class') ?> 
                     </div>
                     <div class="col-sm-2">
                         <?php //Yii::$app->controls->save('Submit', $model); ?>
@@ -44,9 +41,9 @@ $this->title = Yii::t('app', 'Rate Chart');
                             foreach ($fat as $key => $attr) {
                                 if ($key == 0) {
                                     if (count($snf) == 1 && $snf[0]->snf == NULL) {
-                                        echo "<tr><th>" . $attr->rateTypeCode->rate_type . "</th><th>RTPL</th></tr> ";
+                                        echo "<tr><th>" . $attr->rateTypeCode . "</th><th>RTPL</th></tr> ";
                                     } else {
-                                        echo "<tr><th class='width100px'>" . $attr->rateTypeCode->rate_type . "</th>";
+                                        echo "<tr><th class='width100px'>" . $attr->rateTypeCode . "</th>";
                                         foreach ($snf as $s) {
                                             echo "<th class='width100px'>" . $s->snf . "</th>";
                                         }
@@ -59,7 +56,7 @@ $this->title = Yii::t('app', 'Rate Chart');
                             foreach ($fat as $key => $attr) {
                                 ?>
                                 <tr>
-                                <td><?= $attr->fat; ?></td>
+                                    <td><?= $attr->fat; ?></td>
                                     <?php
                                     if (count($snf) == 1 && $snf[0]->snf == NULL) {
                                         echo "<td class='$class' id=" . $rate[$cnt]->code . ">" . round($rate[$cnt]->rtpl, 2) . "</td>";
@@ -87,13 +84,10 @@ $this->title = Yii::t('app', 'Rate Chart');
 </div>
 <?php
 $script = "
-    $('#tblpurchaseratedetails-milk_type_code').on('change', function(e){
+    $('#tbltankerratedetails-milk_type_code').on('change', function(e){
         this.form.submit()
     });
-    $('#tblpurchaseratedetails-rate_class').on('change', function(e){
-        this.form.submit()
-    });
-    $('#tblpurchaseratedetails-milk_quality_type_code').on('change', function(e){
+    $('#tbltankerratedetails-milk_quality_type_code').on('change', function(e){
         this.form.submit()
     });
     $( document ).ready(function() {

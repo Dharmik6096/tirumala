@@ -26,9 +26,8 @@ $qualityparam = '0';
 <div class="row">
     <div class="col-sm-2">
         <?php
-        $rate_type = array("1" => "FAT+SNF", "2" => "QTY");
-        echo $form->field($purchaseBasedModel, 'rate_type_code')->dropDownList($rate_type, ['prompt' => Yii::t('app', 'Select Rate Type')])->label(Yii::t('app', 'Rate Type'));
-        ?>                                  
+        echo Yii::$app->dropdown->dropdownStatic('tanker_rate_type', $purchaseBasedModel, $form, '', $purchaseBasedModel->getAttributeLabel('rate_type_code'));
+        ?>                                 
     </div>
     <div class="col-sm-2">
         <?= Yii::$app->dropdown->dropdown('milk_type_code', $purchaseBasedModel, $form, '', 'Milk Type', false, 'milk_type_code'); ?>
@@ -39,7 +38,7 @@ $qualityparam = '0';
 </div>
 <div class="row">
     <div  id="range"></div>
-
+    <?= Html::activeHiddenInput($purchaseBasedModel, 'purchase_rate') ?>
     <div class="clearfix"></div>
     <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
         <div class="form-group">
@@ -48,17 +47,18 @@ $qualityparam = '0';
         </div>
     </div>
 </div>
-<hr class="hr10">
 <?php ActiveForm::end(); ?>
-
-
+<hr class="hr10">
 <div class="row">
     <div class="form-grid">
-        <?= $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel, 'delete' => true]) ?>
+        <?= $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]) ?>
     </div>
 </div>
+
 <?php
 $script = "
+    var purchaseRate = localStorage.getItem('purchaseRate');
+    $('#tbltankerratebased-purchase_rate').val(purchaseRate);
        $('#tbltankerratebased-rate_type_code').on('change',function(e){
         $('#range').empty();       
        var rateType = $('#tbltankerratebased-rate_type_code :selected').text();     
@@ -75,9 +75,9 @@ $script = "
            $('#range').append(field_before + '<label class=\"control-label\">Fat Ratio*</label><input type=\"text\" name=\"TblTankerRateBased[fat_ratio]\" id=\"tbltankerratebased-fat_ratio\" class=\"form-control get-fat-rate\">' + field_after);
             $('#range').append(field_before + '<label class=\"control-label\">SNF Ratio*</label><input type=\"text\" name=\"TblTankerRateBased[snf_ratio]\" id=\"tbltankerratebased-snf_ratio\" class=\"form-control get-snf-rate\">' + field_after);
              
-            $('#range').append(field_before + '<label class=\"control-label\">Fat Rate*</label><input type=\"text\" name=\"TblTankerRateBased[fat_rate]\" id=\"tbltankerratebased-fat_rate\" class=\"form-control\" disabled=\"true\">' + field_after);
-            $('#range').append(field_before + '<label class=\"control-label\">SNF Rate*</label><input type=\"text\" name=\"TblTankerRateBased[snf_rate]\" id=\"tbltankerratebased-snf_rate\" class=\"form-control\" disabled=\"true\">' + field_after);
-
+            $('#range').append(field_before + '<label class=\"control-label\">Fat Rate*</label><input type=\"text\" name=\"TblTankerRateBased[fat_rate]\" id=\"tbltankerratebased-fat_rate\" class=\"form-control\" readonly=\"true\">' + field_after);
+            $('#range').append(field_before + '<label class=\"control-label\">SNF Rate*</label><input type=\"text\" name=\"TblTankerRateBased[snf_rate]\" id=\"tbltankerratebased-snf_rate\" class=\"form-control\" readonly=\"true\">' + field_after);
+       
             var specialDecimalKeys = new Array();
                 specialDecimalKeys.push(8);
                 
@@ -91,8 +91,8 @@ $script = "
              console.log(rate);
              if(rate>0 && ratio>0 && base_rate>0 && std>0)
              {
-                var inputF = document.getElementById('tbltankerratebased-fat_rate');
-                inputF.value = rate;
+                $('#tbltankerratebased-fat_rate').val(rate);
+                 
             }
             
             return ret;
@@ -108,8 +108,7 @@ $script = "
              console.log(rate);
              if(rate>0 && ratio>0 && base_rate>0 && std>0)
              {
-              var inputF = document.getElementById('tbltankerratebased-snf_rate');
-                inputF.value = rate;
+                $('#tbltankerratebased-snf_rate').val(rate);
             }
             return ret;
         });
@@ -118,7 +117,7 @@ $script = "
         if (rateType== 'QTY')
         {         
            $('#range').append(field_before + '<label class=\"control-label\">QTY Rate*</label><input type=\"text\" name=\"TblTankerRateBased[qty_rate]\" id=\"tbltankerratebased-qty_rate\" class=\"form-control number-validate\">' + field_after);
-             var specialDecimalKeys = new Array();
+            var specialDecimalKeys = new Array();
                 specialDecimalKeys.push(8);
             $('.number-validate').bind('keypress', function (e) {
             var keyCode = e.which ? e.which : e.keyCode

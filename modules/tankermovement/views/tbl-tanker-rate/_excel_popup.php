@@ -14,8 +14,6 @@ use yii\widgets\ActiveForm;
            
             <div class="modal-body">
                 <div class="modal-msg">
-                <h4><?= Yii::t('app','Upload file having fields in following manner') ?> :</h4>
-               
                 </div>
                  <?php
                     $form = ActiveForm::begin(['options' => [

@@ -2,13 +2,14 @@
 
 use yii\helpers\Html;
 
-$this->title = Yii::$app->label->title('create', 'Purchase Rate Range');
+$this->title = Yii::$app->label->title('create', 'Tanker Rate Range');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading">
         <?= $this->title ?>
         <div class="pull-right">
-            <?php //if ($purchaseBasedModel[0]->purchase_rate_code!=-1) echo Html::a('View Chart', ['rate-chart', 'id' => $purchaseBasedModel[0]->purchase_rate_code, 'milk_type' => 1], ['class' => 'btn btn-danger apply-shortcut']); ?>
+            <?= Yii::$app->controls->cancel('', ['tbl-tanker-rate/index']); ?>
+            <?php //if ($purchaseBasedModel[0]->tanker_rate_code!=-1) echo Html::a('View Chart', ['rate-chart', 'id' => $purchaseBasedModel[0]->tanker_rate_code, 'milk_type' => 1], ['class' => 'btn btn-danger apply-shortcut']); ?>
         </div>
     </div>
     <div class="panel-body">

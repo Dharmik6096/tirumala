@@ -8,7 +8,7 @@ use app\components\GeneralFunctions;
 /* @var $model app\modules\tankermovement\models\TblTankerRate */
 
 $this->title = Yii::$app->label->title('view', 'Tanker Rates');
-//$this->title = $model->purchase_rate_code;
+//$this->title = $model->tanker_rate_code;
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Purchase Rates'), 'url' => ['index']];
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -26,20 +26,24 @@ $this->title = Yii::$app->label->title('view', 'Tanker Rates');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'purchase_rate_code',
+                                'attribute' => 'tanker_rate_code',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
                             [
-                                'attribute' => 'reference_code',
-                                'valueColOptions' => ['style' => 'width:30%'],
+                                'attribute' => 'union_code',
+                                'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
                             ],
+                           
                         ],
                     ],
                     [
                         'columns' => [
-                            [
-                                'attribute' => 'union_code',
-                                'value' => isset($model->unionCode) ? $model->unionCode->union_name : '',
+                             [
+                                'attribute' => 'is_active',
+                                'label' => 'Status',
+                                'format' => 'html',
+                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
@@ -65,14 +69,13 @@ $this->title = Yii::$app->label->title('view', 'Tanker Rates');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'shift_applicability',
-                                'value' => isset($model->shiftApplicability) ? $model->shiftApplicability->shift : '',
+                                'attribute' => 'shift_code',
+                                'value' => isset($model->shiftCode) ? $model->shiftCode->shift : '',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'shift_id',
-                                'value' => isset($model->shiftId) ? $model->shiftId->shift : '',
-                                'valueColOptions' => ['style' => 'width:30%']
+                                'attribute' => 'description',
+                                'valueColOptions' => ['style' => 'width:30%'],
                             ],
                         ],
                     ],
@@ -80,28 +83,15 @@ $this->title = Yii::$app->label->title('view', 'Tanker Rates');
                         'columns' => [
                             [
                                 'attribute' => 'rate_gen_method_code',
-                                'value' => isset($model->rateMethod) ? $model->rateMethod->method : '',
+                                'value' => isset(Yii::$app->dropdown->getRecords('tanker_rate_gen_method')['data'][$model->rate_gen_method_code]) ? Yii::$app->dropdown->getRecords('tanker_rate_gen_method')['data'][$model->rate_gen_method_code] : '' ,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'is_active',
-                                'label' => 'Status',
-                                'format' => 'html',
-                                'value' => GeneralFunctions::getRecordStatus($model->is_active),
+                                'attribute' => 'rate_for',
+                                'value' => isset(Yii::$app->dropdown->getRecords('tanker_rate_for')['data'][$model->rate_for]) ? Yii::$app->dropdown->getRecords('tanker_rate_for')['data'][$model->rate_for] : '' ,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
-                                'attribute' => 'ts_rate',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
-                            [
-                                'attribute' => 'description',
-                                'valueColOptions' => ['style' => 'width:30%'],
-                            ],
+                            
                         ],
                     ],
                 ];
@@ -126,7 +116,7 @@ $this->title = Yii::$app->label->title('view', 'Tanker Rates');
         </div>
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate Transactions') ?></h4>
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Tanker Rate Transactions') ?></h4>
             </div>
             <div class="form-grid">
                 <?php echo $this->render('_manual_rate_grid', ['dataProvider' => $purchaseBasedModel->search(Yii::$app->request->queryParams), 'searchModel' => $purchaseBasedModel]); ?>
@@ -134,7 +124,7 @@ $this->title = Yii::$app->label->title('view', 'Tanker Rates');
         </div>
         <div class="col-md-12 padding_10_0 theme-box view-subtitle">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Purchase Rate Applicability') ?></h4>
+                <h4 class="theme-box-heading"><?= Yii::t('app', 'Tanker Rate Applicability') ?></h4>
             </div>
             <div class="form-grid">
                 <?php echo $this->render('_grid_applicability', ['dataProvider' => $appdataProvider, 'searchModel' => $appsearchModel]); ?>

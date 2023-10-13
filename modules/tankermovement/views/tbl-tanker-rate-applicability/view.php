@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_by',
             'wef_date',
             'dcs_code',
-            'purchase_rate_code',
+            'tanker_rate_code',
             'shift_code',
             'union_code',
         ],

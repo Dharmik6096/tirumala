@@ -21,7 +21,7 @@ use Yii;
  * @property string $updated_by
  * @property integer $milk_quality_type_code
  * @property integer $milk_type_code
- * @property integer $purchase_rate_code
+ * @property integer $tanker_rate_code
  * @property integer $rate_type_code
  */
 class TblTankerRateDetailsHistory extends \yii\db\ActiveRecord
@@ -41,7 +41,7 @@ class TblTankerRateDetailsHistory extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'code'], 'safe'],
-            [['id', 'is_active', 'milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'rate_type_code'], 'safe'],
+            [['id', 'is_active', 'milk_quality_type_code', 'milk_type_code', 'tanker_rate_code', 'rate_type_code'], 'safe'],
             [['operation_type', 'code', 'created_by', 'updated_by'], 'safe'],
             [['history_created_at', 'created_at', 'updated_at'], 'safe'],
             [['fat', 'rtpl', 'snf'], 'safe'],
@@ -68,7 +68,7 @@ class TblTankerRateDetailsHistory extends \yii\db\ActiveRecord
             'updated_by' => Yii::t('app', 'Updated By'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type Code'),
             'milk_type_code' => Yii::t('app', 'Milk Type Code'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate Code'),
+            'tanker_rate_code' => Yii::t('app', 'Purchase Rate Code'),
             'rate_type_code' => Yii::t('app', 'Rate Type Code'),
         ];
     }

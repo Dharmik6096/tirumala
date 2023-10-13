@@ -29,7 +29,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $milk_type_code
  * @property string $created_by
  * @property string $formula_code
- * @property string $purchase_rate_code
+ * @property string $tanker_rate_code
  * @property string $updated_by
  * @property string $deleted_by
  * @property integer $rate_type_code
@@ -43,8 +43,7 @@ use yii\helpers\ArrayHelper;
  */
 class TblTankerRateBased extends \app\models\ChildModel {
 
-    public $quality_param_code_name;
-    public $formula;
+    public $purchase_rate;
 
     /**
      * @inheritdoc
@@ -58,18 +57,19 @@ class TblTankerRateBased extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['milk_quality_type_code', 'milk_type_code', 'base_rate', 'std_fat', 'std_snf', 'rate_type_code'], 'required'],
-            [['fat_rate', 'snf_rate'], 'number'],
-            [['qty_rate'], 'number'],
+            [['tanker_rate_code', 'milk_quality_type_code', 'milk_type_code', 'rate_type_code'], 'required'],
+            [['base_rate', 'std_fat', 'std_snf'], 'required', 'except' => 'excel'],
+            [['fat_ratio', 'snf_ratio', 'std_fat', 'std_snf', 'qty_rate', 'fat_rate', 'snf_rate'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"'), 'except' => 'excel'],
+            [['milk_quality_type_code', 'milk_type_code'], 'integer'],
+            ['rate_type_code', 'unique', 'targetAttribute' => ['milk_quality_type_code', 'milk_type_code', 'tanker_rate_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Tanker Rate for Same milk type & quality is available.')],
+          //  [['rate_type_code'], 'rateTypeValidate'],
         ];
     }
-
 
     public function RateTypeValidate($attribute, $params) {
 
         if (!empty($this->rate_type_code) && !empty($this->milk_quality_type_code)) {
-
-            $query = $this->find()->where('purchase_rate_code=\'' . $this->purchase_rate_code . '\'  and milk_type_code=\'' . $this->milk_type_code . '\'');
+            $query = $this->find()->where('tanker_rate_code=\'' . $this->tanker_rate_code . '\'  and milk_type_code=\'' . $this->milk_type_code . '\'');
             $record = $query->one();
             if (!empty($record) && $this->rate_type_code != $record->rate_type_code) {
                 $this->addError($attribute, Yii::t('app/validation', 'Other Rate Type is not allowed.'));
@@ -89,49 +89,6 @@ class TblTankerRateBased extends \app\models\ChildModel {
         }
     }
 
-
-    public function ValidateManualRange($model) {
-        $valid = TRUE;
-        $message = '';
-        for ($i = 0; $i < count($model); $i++) {
-            $data = $this->find()->where(['milk_type_code' => $model[$i]->milk_type_code, 'purchase_rate_code' => $model[$i]->purchase_rate_code])->orderBy('quality_param_code,start_range')->all();
-            $aqcnt = ArrayHelper::map($data, 'quality_param_code', 'quality_param_code');
-            $qpcnt = explode('+', $model[$i]->rateType->rate_type);
-            if (count($aqcnt) != count($qpcnt)) {
-                $message = 'Line Missing for ' . $model[$i]->milkTypeCode->animal_type_name;
-                break;
-            }
-            $num_array = [];
-            $index = 0;
-            for ($j = 0; $j < count($data); $j++) {
-                $lowrange = $data[$j]->start_range;
-                $highrannge = $data[$j]->end_range;
-                for (; $lowrange <= $highrannge;) {
-                    $num_array[$index] [] = $lowrange;
-                    $lowrange = floatval(bcadd($lowrange, 0.1, 1));
-                }
-                if (!isset($data[$j + 1]) || $data[$j]->quality_param_code != $data[$j + 1]->quality_param_code) {
-                    $index ++;
-                }
-            }
-            for ($k = 0; $k < count($num_array); $k++) {
-                for ($a = 1; $a < count($num_array[$k]); $a++) {
-                    $diff = round(floatval($num_array[$k][$a]) - floatval($num_array[$k][$a - 1]), 1);
-                    if ($diff != 0.1) {
-                        $message = 'Range Missing for ' . $model[$i]->milkTypeCode->animal_type_name;
-                        break;
-                    }
-                }
-            }
-        }
-        if ($message != '') {
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $message]);
-            $valid = FALSE;
-        }
-        return [$valid, $message];
-    }
-
     /**
      * @inheritdoc
      */
@@ -139,24 +96,26 @@ class TblTankerRateBased extends \app\models\ChildModel {
         return [
             'rate_based_code' => Yii::t('app', 'Rate Detail ID'),
             'created_at' => Yii::t('app', 'Created At'),
-            'end_range' => Yii::t('app', 'End Range'),
             'base_rate' => Yii::t('app', 'Base Rate'),
             'fat_rate' => Yii::t('app', 'Fat Rate'),
             'snf_rate' => Yii::t('app', 'SNF Rate'),
             'qty_rate' => Yii::t('app', 'Qty Rate'),
-            'fat_ratio' =>Yii::t('app', 'Fat Ratio'),
-            'snf_ratio' =>Yii::t('app', 'SNF Ratio'),
+            'fat_ratio' => Yii::t('app', 'Fat Ratio'),
+            'snf_ratio' => Yii::t('app', 'SNF Ratio'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
             'std_fat' => Yii::t('app', 'Standard Fat'),
             'std_snf' => Yii::t('app', 'Standard SNF'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'created_by' => Yii::t('app', 'Created By'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase Rate'),
+            'tanker_rate_code' => Yii::t('app', 'Purchase Rate'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
 
+       public function getPurchaseRateCode() {
+        return $this->hasOne(TblTankerRate::className(), ['tanker_rate_code' => 'tanker_rate_code']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -174,9 +133,6 @@ class TblTankerRateBased extends \app\models\ChildModel {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getRateFormula() {
-        return $this->hasOne(TblFormulaMaster::className(), ['formula_code' => 'formula_code']);
-    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -189,14 +145,7 @@ class TblTankerRateBased extends \app\models\ChildModel {
      * @return \yii\db\ActiveQuery
      */
     public function getTankerRateCode() {
-        return $this->hasOne(TblTankerRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getQualityParamCode() {
-        return $this->hasOne(TblQualityParam::className(), ['id' => 'quality_param_code']);
+        return $this->hasOne(TblTankerRate::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
     /**
@@ -204,10 +153,6 @@ class TblTankerRateBased extends \app\models\ChildModel {
      */
     public function getUpdatedBy() {
         return $this->hasOne(User::className(), ['id' => 'updated_by']);
-    }
-
-    public function getRateType() {
-        return $this->hasOne(TblRateType::className(), ['code' => 'rate_type_code']);
     }
 
     /**
@@ -227,29 +172,17 @@ class TblTankerRateBased extends \app\models\ChildModel {
      */
     public function search($params) {
         $query = TblTankerRateBased::find();
-        $query->orderBy('milk_type_code,quality_param_code,created_at');
+        $query->orderBy('milk_type_code,milk_quality_type_code,created_at');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
-        $query->where(['purchase_rate_code' => $this->purchase_rate_code]);
+        $query->where(['tanker_rate_code' => $params['id']]);
         if (!$this->validate()) {
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'milk_quality_type_code' => $this->milk_quality_type_code,
-        ]);
-
-        $query->andFilterWhere(['like', 'kg_rate', $this->kg_rate])
-                ->andFilterWhere(['like', 'end_range', $this->end_range])
-                ->andFilterWhere(['like', 'quality_param_code', $this->quality_param_code])
-                ->andFilterWhere(['like', 'start_range', $this->start_range])
-                ->andFilterWhere(['like', 'milk_type_code', $this->milk_type_code])
-                ->andFilterWhere(['milk_quality_type_code' => $this->milk_quality_type_code,]);
 
         return $dataProvider;
     }
@@ -275,13 +208,6 @@ class TblTankerRateBased extends \app\models\ChildModel {
         return [0 => 'NA', 1 => 'Fixed Point', 2 => 'Actual'];
     }
 
-    public function getQualityParamId($name) {
-
-        $q = new TblQualityParam();
-        $name = $q->getMilkTypeId($name);
-        return $name;
-    }
-
     public function getCode() {
         $data = $this->find()->select(["MAX(convert(bigint,rate_based_code)) as rate_based_code"])->one();
         return (int) $data['rate_based_code'] + 1;
@@ -304,13 +230,12 @@ class TblTankerRateBased extends \app\models\ChildModel {
     public function setRateRangeSession($prCode, $milk_type_code) {
         $query = $this->find()
                 ->select([" MIN(start_range) as start_range", "MAX(end_range) as end_range"])
-                ->where(['purchase_rate_code' => trim($prCode), 'milk_type_code' => $milk_type_code])
+                ->where(['tanker_rate_code' => trim($prCode), 'milk_type_code' => $milk_type_code])
                 ->groupBy('quality_param_code')
                 ->all();
 
-
         foreach ($query as $k => $q) {
-            $kgRate = $this->find()->where(['purchase_rate_code' => $prCode, 'start_range' => $q['start_range']])->one();
+            $kgRate = $this->find()->where(['tanker_rate_code' => $prCode, 'start_range' => $q['start_range']])->one();
             Yii::$app->session->set('start' . ($k + 1), $q['start_range']);
             Yii::$app->session->set('end' . ($k + 1), $q['end_range']);
             Yii::$app->session->set('rate' . ($k + 1), $kgRate->kg_rate);
@@ -328,12 +253,11 @@ class TblTankerRateBased extends \app\models\ChildModel {
         foreach (explode('+', $rateType) as $param) {
             $param_list[] = array_search($param, $quality_param);
         }
-        $check = \yii\helpers\ArrayHelper::map($this->find()->select('quality_param_code')->where(['purchase_rate_code' => $this->purchase_rate_code])->groupBy(['quality_param_code'])->all(), 'quality_param_code', 'quality_param_code');
+        $check = \yii\helpers\ArrayHelper::map($this->find()->select('quality_param_code')->where(['tanker_rate_code' => $this->tanker_rate_code])->groupBy(['quality_param_code'])->all(), 'quality_param_code', 'quality_param_code');
         $diff = array_diff($param_list, $check);
         if ($diff) {
             return $quality_param[$diff];
         }
         return false;
     }
-
 }

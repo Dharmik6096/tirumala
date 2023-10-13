@@ -21,7 +21,7 @@ use app\modules\globalmaster\models\TblAnimalType;
  * @property string $updated_at
  * @property string $milk_quality_type_code
  * @property string $created_by
- * @property string $purchase_rate_code
+ * @property string $tanker_rate_code
  * @property string $updated_by
  */
 class TblTankerRateDetails extends \app\models\ChildModel {
@@ -46,11 +46,11 @@ class TblTankerRateDetails extends \app\models\ChildModel {
             [['rate_class'], 'default', 'value' => 0],
             [['milk_quality_type_code'], 'default', 'value' => 1],
             //[['milk_type_code', 'fat'/* ,'formula' */], 'required'],
-            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'purchase_rate_code', 'rate_type', 'rate_class'], 'safe'],
+            [['created_at', 'milk_quality_type_code', 'milk_type_code', 'is_active', 'fat_value', 'snf_value', 'formula', 'updated_at', 'snf', 'snf_to', 'rate_type_code', 'tanker_rate_code', 'rate_type_code', 'rate_class'], 'safe'],
             [['fat', 'rtpl', 'snf'], 'number'],
 //            [['snf_to', 'snf'], 'customValidate','skipOnEmpty'=> false],
 //            [['is_delete', 'milk_quality_type_code'], 'integer'],
-            [['rate_type_code', 'purchase_rate_code'], 'string', 'max' => 255],
+            [['rate_type_code', 'tanker_rate_code'], 'string', 'max' => 255],
                 //  [['created_by', 'updated_by'], 'string', 'max' => 14],
         ];
     }
@@ -80,7 +80,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
             'updated_at' => Yii::t('app', 'Updated At'),
             'milk_quality_type_code' => Yii::t('app', 'Animal Type'),
             'created_by' => Yii::t('app', 'Created By'),
-            'purchase_rate_code' => Yii::t('app', 'Purchase'),
+            'tanker_rate_code' => Yii::t('app', 'Purchase'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
@@ -95,9 +95,8 @@ class TblTankerRateDetails extends \app\models\ChildModel {
 
     private function baseValue($range, $quality_param) {
         return TblTankerRateBased::find()
-                        ->select('quality_param_code,kg_rate,deduction_type,fixed_point,ref_type,value,step,start_range,end_range,formula_code')
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $this->milk_type_code])
-                        ->andWhere('(' . $range . ' between start_range and end_range) and quality_param_code=' . $quality_param)
+                        ->select('base_rate,fat_rate,snf_rate,qty_rate')
+                        ->where(['tanker_rate_code' => $this->tanker_rate_code, 'milk_type_code' => $this->milk_type_code])
                         ->one();
     }
 
@@ -114,7 +113,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
     public function calulateRate($object) {
         $i = bcadd($object->start1, 0.0, 1);
         $j = bcadd($object->end1, 0.0, 1);
-        $this->purchase_rate_code = $object->purchase_rate_code;
+        $this->tanker_rate_code = $object->tanker_rate_code;
         $this->milk_type_code = $object->milk_type_code;
         $this->rate_type_code = $object->rate_type_code;
         //$key_value = $this->getCode();
@@ -130,7 +129,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
             }
             $i = bcadd($i, 0.1, 1);
         }
-        $this->deleteAll(['milk_type_code' => $object->milk_type_code, 'purchase_rate_code' => $object->purchase_rate_code]);
+        $this->deleteAll(['milk_type_code' => $object->milk_type_code, 'tanker_rate_code' => $object->tanker_rate_code]);
         $generalModel = new GeneralModel;
         $transaction = $generalModel->saveTransaction($save_array, ['Purchase Rate', 'create']);
     }
@@ -204,7 +203,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
     public function saveData($object, $fat, $snf, $rate, $incrCode) {
 
         $models = new TblTankerRateDetails();
-        $models->purchase_rate_code = $object->purchase_rate_code;
+        $models->tanker_rate_code = $object->tanker_rate_code;
         // $models->code = $incrCode;
         $models->milk_quality_type_code = $object->milk_quality_type_code;
         $models->milk_type_code = $object->milk_type_code;
@@ -230,10 +229,9 @@ class TblTankerRateDetails extends \app\models\ChildModel {
         }
     }
 
-    public function getRateTypeCode() {
-        return $this->hasOne(TblRateType::className(), ['code' => 'rate_type_code']);
+  public function getRateTypeCode() {
+        return $this->rate_type_code=="1"?"FAT+SNF" :"QTY";
     }
-
     public function getMilkTypeCode() {
         return $this->hasOne(TblAnimalType::className(), ['animal_type_code' => 'milk_type_code']);
     }
@@ -249,7 +247,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
     }
 
     public function getTankerRateCode() {
-        return $this->hasOne(TblTankerRate::className(), ['purchase_rate_code' => 'purchase_rate_code']);
+        return $this->hasOne(TblTankerRate::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
 
 //    public function getMilkType() {
@@ -259,27 +257,27 @@ class TblTankerRateDetails extends \app\models\ChildModel {
 
     public function calculateManualRate($prCode, $milkType, $rateType) {
         $QltyParam = explode('+', $rateType);
-        $this->purchase_rate_code = $prCode;
+        $this->tanker_rate_code = $prCode;
         $this->milk_type_code = $milkType;
         //$key_value = $this->getCode();
         $save_array = [];
         if (isset($QltyParam[0])) {
             $modelfat = TblTankerRateBased::find()
                             ->joinWith(['qualityParamCode'])
-                            ->where(['purchase_rate_code' => $prCode, 'milk_type_code' => $milkType, 'tbl_quality_param.param' => $QltyParam[0]])->orderBy('created_at')->all();
+                            ->where(['tanker_rate_code' => $prCode, 'milk_type_code' => $milkType, 'tbl_quality_param.param' => $QltyParam[0]])->orderBy('created_at')->all();
             for ($i = 0; $i < count($modelfat); $i++) {
                 $lowfat = $modelfat[$i]->start_range;
                 $highfat = $modelfat[$i]->end_range;
                 if (isset($QltyParam[1])) {
                     $modelsnf = TblTankerRateBased::find()
                                     ->joinWith(['qualityParamCode'])
-                                    ->where(['purchase_rate_code' => $prCode, 'milk_type_code' => $milkType, 'tbl_quality_param.param' => $QltyParam[1]])->orderBy('created_at')->all();
+                                    ->where(['tanker_rate_code' => $prCode, 'milk_type_code' => $milkType, 'tbl_quality_param.param' => $QltyParam[1]])->orderBy('created_at')->all();
                     for (; $lowfat <= $highfat;) {
                         for ($j = 0; $j < count($modelsnf); $j++) {
                             $lowsnf = $modelsnf[$j]->start_range;
                             $highsnf = $modelsnf[$j]->end_range;
                             for (; $lowsnf <= $highsnf;) {
-                                $this->purchase_rate_code = $modelfat[$i]->purchase_rate_code;
+                                $this->tanker_rate_code = $modelfat[$i]->tanker_rate_code;
                                 $this->milk_type_code = $modelfat[$i]->milk_type_code;
                                 $rate = $this->calculateManual($lowfat, $lowsnf, $modelfat[$i]->quality_param_code, $modelsnf[$j]->quality_param_code, $QltyParam[0], $QltyParam[1]);
                                 $save_array[] = $this->saveData($modelfat[$i], $lowfat, $lowsnf, $rate, 0);
@@ -291,7 +289,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
                     }
                 } else {
                     for (; $lowfat <= $highfat;) {
-                        $this->purchase_rate_code = $modelfat[$i]->purchase_rate_code;
+                        $this->tanker_rate_code = $modelfat[$i]->tanker_rate_code;
                         $this->milk_type_code = $modelfat[$i]->milk_type_code;
                         $rate = $this->calculateManual($lowfat, '', $modelfat[$i]->quality_param_code, '', $QltyParam[0], '');
                         $save_array[] = $this->saveData($modelfat[$i], $lowfat, 0, $rate, 0);
@@ -300,7 +298,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
                     }
                 }
             }
-            $this->deleteAll(['milk_type_code' => $modelfat[0]->milk_type_code, 'purchase_rate_code' => $modelfat[0]->purchase_rate_code]);
+            $this->deleteAll(['milk_type_code' => $modelfat[0]->milk_type_code, 'tanker_rate_code' => $modelfat[0]->tanker_rate_code]);
             $generalModel = new GeneralModel;
             $transaction = $generalModel->saveTransaction($save_array, ['Purchase Rate', 'create']);
         }
@@ -388,7 +386,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
     public function rtplValidate($val) {
 
         $message = 'Invalid Value';
-        $ratebased = TblTankerRateBased::find()->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $this->milk_type_code])->orderBy('purchase_rate_code')->all();
+        $ratebased = TblTankerRateBased::find()->where(['tanker_rate_code' => $this->tanker_rate_code, 'milk_type_code' => $this->milk_type_code])->orderBy('tanker_rate_code')->all();
         if ($ratebased) {
             $minfat = $ratebased[0]->start_range;
             $maxfat = $ratebased[0]->end_range;
@@ -402,7 +400,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
             $blwpointfat = round(floatval(($pointfat + 0.1)), 1);
             $fatarray = "($abvpointfat,$blwpointfat)";
             $snfarray = "($prepointsnf,$aftpointsnf)";
-            $otherpoints = $this->find()->where(['purchase_rate_code' => $this->purchase_rate_code])
+            $otherpoints = $this->find()->where(['tanker_rate_code' => $this->tanker_rate_code])
                             ->andWhere(['or', ['or', ['fat' => $this->fat, 'snf' => $prepointsnf], ['fat' => $this->fat, 'snf' => $aftpointsnf]], ['or', ['fat' => $abvpointfat, 'snf' => $this->snf], ['fat' => $blwpointfat, 'snf' => $this->snf]]])
                             ->orderBy('fat,snf')->all();
             $prepointval = 0;
@@ -479,7 +477,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
     }
 
     public function getExportData($purchaseRateCode) {
-        return $this->find()->select(['code', 'fat', 'rtpl', 'snf', 'milk_quality_type_code', 'milk_type_code', 'purchase_rate_code', 'rate_type_code'])->where(['purchase_rate_code' => $purchaseRateCode])->all();
+        return $this->find()->select(['code', 'fat', 'rtpl', 'snf', 'milk_quality_type_code', 'milk_type_code', 'tanker_rate_code', 'rate_type_code'])->where(['tanker_rate_code' => $purchaseRateCode])->all();
     }
 
     public function getPurchasseRateDetailData($data, $rate_type) {
@@ -495,7 +493,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
         }
 
         return $this->find()
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type'], 'rate_class' => $data['rate_class']])
+                        ->where(['tanker_rate_code' => $this->tanker_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type'], 'rate_class' => $data['rate_class']])
                         ->andWhere($where)
                         ->one();
     }
@@ -513,7 +511,7 @@ class TblTankerRateDetails extends \app\models\ChildModel {
         }
 
         return $this->find()
-                        ->where(['purchase_rate_code' => $this->purchase_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
+                        ->where(['tanker_rate_code' => $this->tanker_rate_code, 'milk_type_code' => $data['milk_type'], 'milk_quality_type_code' => $data['milk_quality_type']])
                         ->andWhere($where)
                         ->andWhere(['in', 'rate_class', [0, 1]])
                         ->orderBy('rate_class asc')
