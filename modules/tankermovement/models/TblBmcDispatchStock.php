@@ -65,6 +65,7 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
             [['type'], 'default', 'value' => 'dispatch'],
             [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['union_code'], 'required', 'except' => ['androidsync']],
+            [['from_date', 'from_shift_code'], 'safe'],
         ];
     }
 

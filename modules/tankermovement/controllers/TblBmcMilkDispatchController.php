@@ -114,10 +114,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $tripModel->trip_code = $model->trip_code;
                     $tripModel = $tripModel->getTripData();
                     if (!empty($tripModel)) {
-                        $tripModel->scenario = 'closetrip';
                         $tripModel->trip_status = 'open';
                         $saveModel[] = $tripModel;
                     }
+                    $tripModel->scenario = 'closetrip';
                     $trip_detail = TblVehicleTripDetail::find()
                                     ->where(['trip_code' => $model->trip_code])
                                     ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
@@ -137,8 +137,14 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $txn_model->converted_qty = $txn_model->qty_mode == 1 ? $txn_model->dispatch_qty / $conversion_const : $txn_model->dispatch_qty * $conversion_const;
                 $stock_model = new TblBmcDispatchStock();
                 $stock_model->attributes = $txn_model->attributes;
+
                 $stock_model->to_date = $model->to_date;
                 $stock_model->to_shift_code = ($model->to_shift_code == 1) ? 2 : 1;
+
+                // $stock_model->from_date = $model->from_date;
+                // $stock_model->from_shift_code = ($model->from_shift_code == 1) ? 2 : 1;
+
+
                 $stock_model->transaction_date = $model->transaction_date;
                 $stock_model->closing_bal = $txn_model->dispatch_qty;
                 $stock_data = $stock_model->getStockEntry();
@@ -176,7 +182,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
+                // $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
+                $transaction = 'customRedirect';
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
@@ -201,7 +208,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
             if (!empty($stock_date)) {
                 $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
-                $dispatch_date .= '.000000';
+             //   $dispatch_date .= '.000000';
                 $converted_time = date("H:i:s", strtotime($dispatch_date));
                 if ($converted_time == "06:00:00") {
                     $model->from_shift_code = 1;
@@ -246,6 +253,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $this->model->trip_status = 'generated';
             $this->model->trip_for = 'bmcdispatch';
             $this->model->is_active = '1';
+            $this->model->is_auto_trip = '1';
             $result = $this->model->setModel();
             $save_model = $result[1];
 
@@ -323,8 +331,20 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 ->bindValue(':to_datetime', $to_datetime)
                 ->bindValue(':bmc_code', $bmc_code);
         $result = $query->queryAll();
+
+        $stock_detail = [];
+        foreach ($result as $r) {
+            $key = $r['bmc_silos_info_code'] . '_' . $r['animal_type_code'] . '_' . $r['milk_quality_type_code'];
+            if (empty($stock_detail[$key])) {
+                $stock_detail[$key]['previous_qty'] = 0;
+                $stock_detail[$key]['purchase_qty'] = 0;
+            }
+            $stock_detail[$key]['previous_qty'] = $stock_detail[$key]['previous_qty'] + $r['previous_qty'];
+            $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
+        }
         return $this->renderAjax('_purchase_detail', [
                     'result' => $result,
+                    'stock_detail' => $stock_detail,
         ]);
     }
 

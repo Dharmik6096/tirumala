@@ -12,11 +12,11 @@ $readonly = empty($model->bmc_milk_dispatch_code) ? FALSE : TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
-            'validateOnBlur' => FALSE,
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 ?>
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
@@ -51,7 +51,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
             </div>
-            <div class="col-sm-2 filldata"> 
+            <div class="col-sm-2 filldata">
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
             </div>
             <div class="col-sm-2">
@@ -77,9 +77,10 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblbmcmilkdispatch-destination_type,tblbmcmilkdispatch-union_code,tblbmcmilkdispatch-bmc_code', 'destination_code', $model->getAttributeLabel('destination_code'), FALSE, $readonly); ?>
             </div>
             <!--        <div class="col-sm-2 mt15">
-            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();    ?>
+            <?php //$form->field($model, 'is_last_destination', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();    
+            ?>
                     </div>-->
-            <div class="col-sm-4"> 
+            <div class="col-sm-4">
                 <?= $form->field($model, 'remarks')->textInput() ?>
             </div>
         </div>
@@ -92,9 +93,9 @@ $form = ActiveForm::begin([
                             <th>Type</th>
                             <th>Milk Type</th>
                             <th>Quality Type</th>
-                            <th>Silo No.</th>                 
+                            <th>Silo No.</th>
                             <th>Purchase Qty</th>
-                            <th>Balance Qty</th>    
+                            <th>Balance Qty</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -106,80 +107,78 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Dispatch Transactions') ?></h4>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $txn_model, $form, '', true, FALSE, 'milk_type_code'); ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $txn_model, $form, '', true, FALSE, 'milk_quality_type_code'); ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?php echo Html::hiddenInput('module_name', 'BMC', ['id' => 'tblbmcmilkdispatch-module_name']); ?>
             <?= Yii::$app->dropdown->depend_dropdown('bmc_silos', $txn_model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-module_name', 'form-group col-sm-4', $txn_model->getAttributeLabel('bmc_silos_info_code'), ''); ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= Yii::$app->dropdown->dropdownStatic('chamber_no', $txn_model, $form, 'form-group', $txn_model->getAttributeLabel('chamber_no'), false, 'chamber_no', false); ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dispatch_qty')->textInput() ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= Yii::$app->dropdown->dropdown('qty_diff_type', $txn_model, $form, '', true, false, 'qty_diff_type_code'); ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'qty_diff')->textInput() ?>
         </div>
-
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'balance_qty')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'fat')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'snf')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'water')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'temperature')->textInput() ?>
         </div>
         <div class="clearfix"></div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'clr')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'protein')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'density')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'lactose')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'freezing_point')->textInput() ?>
         </div>
-
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= $form->field($txn_model, 'hsn_code')->textInput() ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= $form->field($txn_model, 'seal_no_top')->textInput() ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= $form->field($txn_model, 'seal_no_bottom')->textInput() ?>
         </div>
-        <div class="col-sm-1"> 
+        <div class="col-sm-1">
             <?= $form->field($txn_model, 'seal_no_broken')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_open')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_close')->textInput() ?>
         </div>
-        <div class="col-sm-1 number-validate"> 
+        <div class="col-sm-1 number-validate">
             <?= $form->field($txn_model, 'dip_diff')->textInput() ?>
         </div>
         <div class="clearfix"></div>
@@ -193,7 +192,7 @@ $form = ActiveForm::begin([
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
-            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?> 
+            <?= Yii::$app->controls->custombutton('Cancel', 'index'); ?>
         </div>
     </div>
 </div>
@@ -267,18 +266,25 @@ $(document).ready(function(){
     }
 
 
-    $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-qty_diff', function() {
-        var rows = $('#purchase_detail_tabel tbody tr');    
-        var totalQty = 0;
-        var totalBalanceQty = 0;
-
-        rows.each(function() {
-            var purchaseQty = parseFloat($(this).find('#purchase_qty').text()) || 0;
-            var previousQty = parseFloat($(this).find('#previous_qty').text()) || 0;
-            var rowTotalQty = purchaseQty + previousQty;
-            totalQty += rowTotalQty;
-        });        
-
+    $(document).on('change', '#tblbmcmilkdispatchtxn-milk_type_code, #tblbmcmilkdispatchtxn-milk_quality_type_code, #tblbmcmilkdispatchtxn-bmc_silos_info_code, #tblbmcmilkdispatchtxn-dispatch_qty, #tblbmcmilkdispatchtxn-qty_diff, #tblbmcmilkdispatchtxn-qty_diff_type_code', function() {        
+        var milkTypeCode = $('#tblbmcmilkdispatchtxn-milk_type_code').val();
+        var milkQualityTypeCode = $('#tblbmcmilkdispatchtxn-milk_quality_type_code').val();
+        var bmcSiloInfoCode = $('#tblbmcmilkdispatchtxn-bmc_silos_info_code').val();
+        var stockDetailArray = [];
+        var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
+        if(milkTypeCode != '' && bmcSiloInfoCode!='' && milkQualityTypeCode !='') {
+            var data = $('#stockdetail').val();
+            if(data != undefined && data != '' && isNaN(data)){
+                stockDetailArray = jQuery.parseJSON(data);
+                var stockDetail = stockDetailArray[check_key];
+                var totalQty = 0;
+                if (stockDetail) {
+                    var previousQty = stockDetail.previous_qty || 0;
+                    var purchaseQty = stockDetail.purchase_qty || 0;
+                    var totalQty = purchaseQty + previousQty;
+                }
+            }
+        }
         var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
         var qty_diff = parseFloat($('#tblbmcmilkdispatchtxn-qty_diff').val()) || 0;
         var balance_qty = parseFloat(totalQty) - (dispatch_qty + qty_diff);
