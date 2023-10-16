@@ -5188,7 +5188,7 @@ tr.highlightRow {
 }
 .card{
     position: unset;
-    /*display: block;*/
+    display: block;
 }
 .form-check .form-check-input {
     float: left;
@@ -5322,4 +5322,8 @@ tr.highlightRow {
 }
 .dropdown{
     margin: 7px;
+}
+.view-grid{
+    display: inline-block;
+    width: -webkit-fill-available;
 }
