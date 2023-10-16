@@ -47,6 +47,7 @@ class TblPaymentHeadTransactionController extends \app\controllers\ChildControll
         $this->model = new TblPaymentHeadTransaction();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
+            $this->model->applicable_date = Yii::$app->formatter->asDate($this->model->applicable_date, 'php:Y-m-d');
             $this->model->applicable_for = 'PARTY';
             $this->model->payment_head_type = Yii::$app->general->getforeignkey($this->model->paymentHeadType, 'payment_head_type');
             $this->model->union_code = Yii::$app->general->getforeignkey($this->model->paymentHeadType, 'union_code');

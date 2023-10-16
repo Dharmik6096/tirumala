@@ -7,8 +7,8 @@ $attribute = [
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
         }, 'visible' => true, 'filter' => false, 'visible' => false],
     ['attribute' => 'payment_type', 'value' => function($model) {
-            return isset($model->payment_type) ? Yii::$app->dropdown->getRecords('payment_type_transaction_head')['data'][$model->payment_type] : '';
-        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_type_transaction_head', $searchModel, 'payment_type'),],
+            return isset($model->payment_type) ? Yii::$app->dropdown->getRecords('tanker_rate_for')['data'][$model->payment_type] : '';
+        }, 'filter' => Yii::$app->dropdown->dropdownfilterStatic('tanker_rate_for', $searchModel, 'payment_type'),],
     ['attribute' => 'payment_head_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->paymentHeadType, 'payment_head_name');
         }, 'filter' => true],

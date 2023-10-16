@@ -18,8 +18,9 @@ $attribute = [
     ['attribute' => 'payment_head_name'],
 //    ['attribute' => 'transporter_code'],
     ['attribute' => 'payment_head_type',
-        'filter' => Yii::$app->dropdown->dropdownfilterStatic('payment_head_type', $searchModel), 'value' => function($model) {
-            return (Yii::$app->dropdown->getRecords('payment_head_type')['data'][$model->payment_head_type] != '') ? Yii::$app->dropdown->getRecords('payment_head_type')['data'][$model->payment_head_type] : '';
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('bill_head_type', $searchModel, 'payment_head_type'),
+        'value' => function($model) {
+            return isset($model->payment_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->payment_head_type] : 'N/A';
         },],
     ['attribute' => 'sequence_no'],
 ];
@@ -48,7 +49,6 @@ Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
 
 <?php
-
 $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-party',function(e){

@@ -1743,15 +1743,10 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
             ],
-            'payment_head_type' => [
-                'name' => 'payment_head_type',
-                'prompt' => Yii::t('app', 'Select Head Type'),
-                'data' => [0 => Yii::t('app', 'Addition'), 1 => Yii::t('app', 'Deduction')],
-            ],
-            'payment_type_transaction_head' => [
-                'name' => 'payment_type',
-                'prompt' => Yii::t('app', 'Payment Type'),
-                'data' => ['Purchase' => Yii::t('app', 'Purchase'), 'Sale' => Yii::t('app', 'Sale')],
+            'tanker_rate_for' => [
+                'name' => 'rate_for',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['purchase' => Yii::t('app', 'Purchase'), 'sale' => Yii::t('app', 'Sale')],
             ],
         ];
         return $records[$l];
@@ -1889,7 +1884,7 @@ class DropDown extends Component {
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
             'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
             'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
-            'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster', 'whereCondition' => ['is_active' => 1]],
+            'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
         ];
         return $label[$l];
     }

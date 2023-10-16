@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'payment_head_name')->textInput() ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->dropdownStatic('payment_head_type', $model, $form, '', 'Type *', $readonly, 'payment_head_type', false); ?>  
+        <?= Yii::$app->dropdown->dropdownStatic('bill_head_type', $model, $form, '', 'Type *', $readonly, 'payment_head_type', false); ?>  
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'sequence_no')->textInput() ?>
