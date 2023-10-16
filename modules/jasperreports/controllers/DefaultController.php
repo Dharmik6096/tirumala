@@ -331,6 +331,11 @@ class DefaultController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionVlccTransactionDataReportRegion() {
+        $this->report = 'VlccTransactionDataReportRegion';
+        return $this->actionIndex();
+    }
+
     /* Jasper Call */
 
     private function LoadReport($model) {
@@ -787,6 +792,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'vsp/MemberMilkBillShivPrasad',
                 'scenario' => 'MemberMilkBillShivPrasad',
                 'title' => '610 - Member Milk Bill',
+            ],
+            'VlccTransactionDataReportRegion' => [
+                'param' => 'p_union_code,state_code,region_code,area_code,p_bmc_code:area_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
+                'path' => 'milkcollection/VLCCTransactionDataFTP',
+                'scenario' => 'VlccTransactionDataReportRegion',
+                'title' => 'VLCC Transaction Data Report',
             ],
         ];
         return $label[$l];

@@ -336,7 +336,7 @@ class DropDown extends Component {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly);
         }
     }
-
+    
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -907,7 +907,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -924,6 +924,15 @@ class DropDown extends Component {
                 'initialize' => true,
             ]
         ])->label(Yii::t('app', $islable));
+    }
+    
+    public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        if ($multiple) {
+            $this->select2Dropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
+        } else {
+            $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-area/area-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $model->$name, $readonly);
+        }
     }
 
     public function getRecords($l) {
@@ -1868,6 +1877,7 @@ class DropDown extends Component {
             'mcc_list' => ['name' => 'org_code', 'fields' => 'mcc_plant_code,name', 'prompt' => 'Select Mcc', 'model' => 'TblMccPlant'],
             'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
+            'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
         ];
         return $label[$l];
     }
@@ -1954,7 +1964,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
