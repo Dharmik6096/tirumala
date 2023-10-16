@@ -33,9 +33,9 @@ class TblAreaBmcMapping extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['area_code', 'bmc_code', 'created_by', 'updated_by'], 'string'],
+            [['bmc_code', 'created_by', 'updated_by'], 'string'],
             [['is_active'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['area_code', 'created_at', 'updated_at'], 'safe'],
             [['is_active'], 'default', 'value' => '1'],
         ];
     }
