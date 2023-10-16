@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
@@ -62,27 +62,27 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'm_start_time')->textInput(['type' => 'time']) ?>
         </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'e_start_time')->textInput(['type' => 'time']) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'm_lock_time')->textInput(['type' => 'time']) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'e_lock_time')->textInput(['type' => 'time']) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('boolean_value', $model, $form, 'form-group', $model->getAttributeLabel('date_shift_enable'), false, 'date_shift_enable', false); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'grace_hr')->textInput() ?>
-        </div>
-        <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
-                <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
-                <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->cancel($model); ?>
-            </div>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'e_start_time')->textInput(['type' => 'time']) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'm_lock_time')->textInput(['type' => 'time']) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'e_lock_time')->textInput(['type' => 'time']) ?>
+    </div>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('boolean_value', $model, $form, 'form-group', $model->getAttributeLabel('date_shift_enable'), false, 'date_shift_enable', false); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'grace_hr')->textInput() ?>
+    </div>
+    <div class="col-sm-2 padding_top_20">
+        <div class="form-group">
+            <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
+            <?= Yii::$app->controls->reset(); ?>
+            <?= Yii::$app->controls->cancel($model); ?>
         </div>
     </div>
 </div>
