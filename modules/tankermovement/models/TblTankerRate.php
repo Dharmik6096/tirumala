@@ -47,7 +47,7 @@ class TblTankerRate extends \app\models\ChildModel {
         [['description', 'originating_org_code'], 'safe'],
         [['created_by', 'updated_by'], 'safe'],
         [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-        ['rate_for', 'unique', 'targetAttribute' => ['wef_date', 'shift_code','rate_gen_method_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Tanker Rate Already added for selected date')],
+       // ['rate_for', 'unique', 'targetAttribute' => ['wef_date', 'shift_code','rate_gen_method_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Tanker Rate Already added for selected date')],
         ];
     }
 

@@ -9,7 +9,6 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
-
 ?>
 
 <div class="grid-search clearfix">
@@ -21,22 +20,27 @@ use yii\web\View;
 
 <?php
 $attribute = [
-        ['attribute' => 'tanker_rate_code', 'value' => 'tanker_rate_code',],
-        [
+    ['attribute' => 'tanker_rate_code', 'value' => 'tanker_rate_code',],
+    ['attribute' => 'rate_gen_method_code', 'value' => function ($model) {
+           return isset(Yii::$app->dropdown->getRecords('tanker_rate_gen_method')['data'][$model->rate_gen_method_code]) ? Yii::$app->dropdown->getRecords('tanker_rate_gen_method')['data'][$model->rate_gen_method_code] : '';
+        },],
+    ['attribute' => 'rate_for', 'value' => function ($model) {
+      
+            return isset(Yii::$app->dropdown->getRecords('tanker_rate_for')['data'][$model->rate_for]) ? Yii::$app->dropdown->getRecords('tanker_rate_for')['data'][$model->rate_for] : '';  
+    },],
+    [
         'attribute' => 'wef_date',
         'filterType' => GridView::FILTER_DATE,
         'filterWidgetOptions' => [
             'pluginOptions' => ['format' => 'dd-mm-yyyy',
                 'autoclose' => true]
         ],
-        'value' => function($model) {
+        'value' => function ($model) {
             return Yii::$app->controls->view_date($model->wef_date);
         }],
-        ['attribute' => 'shift_code', 'value' => 'shiftCode.shift',],
-        ['attribute' => 'rate_gen_method_code', 'value' => function ($model){ return $model->rate_gen_method_code=="1"?"Formula Based":"Import";},],
-        ['attribute' => 'rate_for', 'value' => 'rate_for',],
-        ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
+    ['attribute' => 'shift_code', 'value' => 'shiftCode.shift',],
     'description',
+    ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false, 'visible' => false],
 ];
 
 $grid_option = [
@@ -59,8 +63,6 @@ $grid_option = [
             $disable = ($model->is_active == 0) ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/tankermovement/tbl-tanker-rate-applicability/create', 'id' => $model->tanker_rate_code], $options);
-        
-           // return GhostHtml::a('<i class="fa fa-plus"></i>', ['/tankermovement/tbl-tanker-rate/tanker-rate-applicability', 'id' => $model->tanker_rate_code], $options);
         },
         'view_rate' => function ($url, $model) {
             $disable = ($model->is_active == 0) ? 'disabled' : '';

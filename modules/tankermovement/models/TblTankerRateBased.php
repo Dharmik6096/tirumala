@@ -62,7 +62,7 @@ class TblTankerRateBased extends \app\models\ChildModel {
             [['fat_ratio', 'snf_ratio', 'std_fat', 'std_snf', 'qty_rate', 'fat_rate', 'snf_rate'], 'number', 'message' => Yii::t('app/validation', '{attribute} must be a digit. e.g. "7" OR "7.5"'), 'except' => 'excel'],
             [['milk_quality_type_code', 'milk_type_code'], 'integer'],
             ['rate_type_code', 'unique', 'targetAttribute' => ['milk_quality_type_code', 'milk_type_code', 'tanker_rate_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Tanker Rate for Same milk type & quality is available.')],
-          //  [['rate_type_code'], 'rateTypeValidate'],
+                //  [['rate_type_code'], 'rateTypeValidate'],
         ];
     }
 
@@ -103,19 +103,21 @@ class TblTankerRateBased extends \app\models\ChildModel {
             'fat_ratio' => Yii::t('app', 'Fat Ratio'),
             'snf_ratio' => Yii::t('app', 'SNF Ratio'),
             'milk_quality_type_code' => Yii::t('app', 'Milk Quality Type'),
-            'std_fat' => Yii::t('app', 'Standard Fat'),
-            'std_snf' => Yii::t('app', 'Standard SNF'),
+            'rate_type_code' => Yii::t('app', 'Rate Type'),
+            'std_fat' => Yii::t('app', 'Std FAT'),
+            'std_snf' => Yii::t('app', 'Std SNF'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'milk_type_code' => Yii::t('app', 'Milk Type'),
             'created_by' => Yii::t('app', 'Created By'),
-            'tanker_rate_code' => Yii::t('app', 'Purchase Rate'),
+            'tanker_rate_code' => Yii::t('app', 'Tanker Rate'),
             'updated_by' => Yii::t('app', 'Updated By'),
         ];
     }
 
-       public function getPurchaseRateCode() {
+    public function getPurchaseRateCode() {
         return $this->hasOne(TblTankerRate::className(), ['tanker_rate_code' => 'tanker_rate_code']);
     }
+
     /**
      * @return \yii\db\ActiveQuery
      */

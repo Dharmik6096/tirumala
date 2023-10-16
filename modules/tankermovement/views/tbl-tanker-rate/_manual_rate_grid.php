@@ -12,12 +12,37 @@ use yii\widgets\Pjax;
 ?>
 <?php Pjax::begin(['id' => 'manual-grid']); ?> 
 <?php
+
 $attribute = [
-    ['attribute' => 'rate_type_code', 'value' =>function($model) {
+    ['attribute' => 'rate_type_code', 'value' => function ($model) {
             return isset(Yii::$app->dropdown->getRecords('tanker_rate_type')['data'][$model->rate_type_code]) ? Yii::$app->dropdown->getRecords('tanker_rate_type')['data'][$model->rate_type_code] : '';
-    }, 'vAlign' => 'middle', 'filter' => false,'label'=>Yii::t('app','Rate Type')],
-    ['attribute' => 'milk_quality_type_code', 'value' => 'milkQualityTypeCode.milk_quality_type_name', 'vAlign' => 'middle', 'filter' => false],
+        }, 'vAlign' => 'middle', 'filter' => false, 'label' => Yii::t('app', 'Rate Type')],
     ['attribute' => 'milk_type_code', 'value' => 'milkTypeCode.animal_type_name', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'milk_quality_type_code', 'value' => 'milkQualityTypeCode.milk_quality_type_name', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'std_fat', 'value' => 'std_fat', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'std_snf', 'value' => 'std_snf', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'base_rate', 'value' => 'base_rate', 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'fat_ratio', 'value' => function ($model) {
+            return isset($model->fat_ratio) ? $model->fat_ratio : 'N/A';
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'snf_ratio', 'value' => function ($model) {
+            return isset($model->snf_ratio) ? $model->snf_ratio : 'N/A';
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'fat_rate', 'value' => function ($model) {
+            if ($model->rate_type_code == '1') {
+                $visible = true;
+                return isset($model->fat_rate) ? $model->fat_rate : 'N/A';
+            } else {
+                $visible = false;
+            }
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'snf_rate', 'value' => function ($model) {
+            return isset($model->snf_rate) ? $model->snf_rate : 'N/A';
+        }, 'vAlign' => 'middle', 'filter' => false],
+    ['attribute' => 'qty_rate', 'value' => function ($model) {
+
+            return isset($model->qty_rate) ? $model->qty_rate : 'N/A';
+        }, 'vAlign' => 'middle', 'filter' => false],
 ];
 
 $grid_option = [
