@@ -21,47 +21,45 @@ $form = ActiveForm::begin([
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
-    <div class="col-sm-12">
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('org_type_shift_time', $model, $form, '', $model->getAttributeLabel('org_type'), $readonly, 'org_type', false, false, false); ?>
+    <div class="col-sm-2">
+        <?= Yii::$app->dropdown->dropdownStatic('org_type_shift_time', $model, $form, '', $model->getAttributeLabel('org_type'), $readonly, 'org_type', false, false, false); ?>
+    </div>
+    <?php if ($type == 'create') { ?>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
         </div>
-        <?php if ($type == 'create') { ?>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), $readonly); ?>
-            </div>
-            <div class="col-sm-2 create_fields">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblshifttimeandroid-union_code', 'plant_code', $model->getAttributeLabel('plant'), FALSE, ''); ?>
-            </div>
-            <div class="col-sm-2 default_hide from_hide">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblshifttimeandroid-plant_code', 'mcc_plant_code', $model->getAttributeLabel('MCC'), false, '', $readonly); ?>
-            </div>
-            <div class="col-sm-2 default_hide from_hide">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblshifttimeandroid-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('BMC'), false, '', '', $readonly); ?>
-            </div>
-        <?php } else { ?>
+        <div class="col-sm-2 create_fields">
+            <?= Yii::$app->dropdown->union_plant($model, $form, 'tblshifttimeandroid-union_code', 'plant_code', $model->getAttributeLabel('plant'), FALSE, ''); ?>
+        </div>
+        <div class="col-sm-2 default_hide from_hide">
+            <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblshifttimeandroid-plant_code', 'mcc_plant_code', $model->getAttributeLabel('MCC'), false, '', $readonly); ?>
+        </div>
+        <div class="col-sm-2 default_hide from_hide">
+            <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblshifttimeandroid-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('BMC'), false, '', '', $readonly); ?>
+        </div>
+    <?php } else { ?>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'plant_code')->textInput(['value' => isset($model->plantCode) ? $model->plantCode['name'] : 'N/A', 'readonly' => $readonly,])->label('PLANT') ?>
+        </div>
+        <?php if ($model->org_type == 'BMC') { ?>
             <div class="col-sm-2">
-                <?= $form->field($model, 'plant_code')->textInput(['value' => isset($model->plantCode) ? $model->plantCode['name'] : 'N/A', 'readonly' => $readonly,])->label('PLANT') ?>
+                <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => isset($model->mccName) ? $model->mccName['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
             </div>
-            <?php if ($model->org_type == 'BMC') { ?>
-                <div class="col-sm-2">
-                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => isset($model->mccName) ? $model->mccName['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
-                </div>
-                <div class="col-sm-2">
-                    <?= $form->field($model, 'bmc_code')->textInput(['value' => isset($model->bmcCode) ? $model->bmcCode['bmc_name'] : 'N/A', 'readonly' => $readonly,])->label('BMC') ?>
-                </div>
-            <?php } ?>
-            <?php if ($model->org_type == 'MCC') { ?>
-                <div class="col-sm-2">
-                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => ($model->org_type === 'MCC' && isset($model->mccCode)) ? $model->mccCode['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
-                </div>
-            <?php } ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'bmc_code')->textInput(['value' => isset($model->bmcCode) ? $model->bmcCode['bmc_name'] : 'N/A', 'readonly' => $readonly,])->label('BMC') ?>
+            </div>
         <?php } ?>
-        <div class="col-sm-2 hide-qty-no">
-            <?= Yii::$app->dropdown->dropdownStatic('collection_type_shift_time', $model, $form, '', $model->getAttributeLabel('collection_type'), $readonly, 'collection_type', false, false, false); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'm_start_time')->textInput(['type' => 'time']) ?>
-        </div>
+        <?php if ($model->org_type == 'MCC') { ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => ($model->org_type === 'MCC' && isset($model->mccCode)) ? $model->mccCode['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
+            </div>
+        <?php } ?>
+    <?php } ?>
+    <div class="col-sm-2 hide-qty-no">
+        <?= Yii::$app->dropdown->dropdownStatic('collection_type_shift_time', $model, $form, '', $model->getAttributeLabel('collection_type'), $readonly, 'collection_type', false, false, false); ?>
+    </div>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'm_start_time')->textInput(['type' => 'time']) ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'e_start_time')->textInput(['type' => 'time']) ?>
