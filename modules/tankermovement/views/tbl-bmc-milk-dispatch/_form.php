@@ -364,7 +364,7 @@ $script .= "
          $.ajax({
                 type: 'get',
                 url: '" . Url::to(['purchase-detail']) . "',
-                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code},             
+                data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'union_code' : union_code},             
                 success: function(data) {
                   $('#purchase-detial').html(data);                                                                 
                 }

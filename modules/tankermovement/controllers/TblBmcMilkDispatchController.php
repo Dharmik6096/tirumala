@@ -30,7 +30,8 @@ use app\modules\tankermovement\models\TblPartyMaster;
 /**
  * TblBmcMilkDispatchController implements the CRUD actions for TblBmcMilkDispatch model.
  */
-class TblBmcMilkDispatchController extends \app\controllers\ChildController {
+class TblBmcMilkDispatchController extends \app\controllers\ChildController
+{
 
     public $freeAccessActions = ['purchase-detail', 'transaction-form', 'transaction-detail', 'destination-code-list', 'check-trip', 'view-config', 'get-trip-code', 'change-trip-code'];
 
@@ -38,12 +39,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * Lists all TblBmcMilkDispatch models.
      * @return mixed
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $searchModel = new TblBmcMilkDispatchSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -52,24 +54,26 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionView($id) {
+    public function actionView($id)
+    {
         $searchModel = new TblBmcMilkDispatchTxnSearch();
         $searchModel->bmc_milk_dispatch_code = $id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('view', [
-                    'model' => $this->findModel($id),
-                    'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+            'model' => $this->findModel($id),
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionViewConfig($id) {
+    public function actionViewConfig($id)
+    {
         $searchModel = new TblConfigTxnResultSearch();
         $searchModel->ref_code = $id;
         $searchModel->config_for = 'BMC_DISPATCH';
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->renderAjax('config-view', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -78,7 +82,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($id = '') {
+    public function actionCreate($id = '')
+    {
         $model = new TblBmcMilkDispatch();
         if ($id != '') {
             $model = $this->findModel($id);
@@ -119,10 +124,10 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     }
                     $tripModel->scenario = 'closetrip';
                     $trip_detail = TblVehicleTripDetail::find()
-                                    ->where(['trip_code' => $model->trip_code])
-                                    ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
-                                    ->andWhere(['IS', 'challan_no', NULL])
-                                    ->orderBy(['created_at' => SORT_ASC])->one();
+                        ->where(['trip_code' => $model->trip_code])
+                        ->andWhere(['lower(source_org_type)' => 'bmc', 'source_org_code' => $model->bmc_code])
+                        ->andWhere(['IS', 'challan_no', NULL])
+                        ->orderBy(['created_at' => SORT_ASC])->one();
                     if (!empty($trip_detail)) {
                         $trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $trip_detail;
@@ -139,10 +144,11 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                 $stock_model->attributes = $txn_model->attributes;
 
                 $stock_model->to_date = $model->to_date;
-                $stock_model->to_shift_code = ($model->to_shift_code == 1) ? 2 : 1;
+                $stock_model->to_shift_code = $model->to_shift_code;
+                // $stock_model->to_shift_code = ($model->to_shift_code == 1) ? 2 : 1;
 
-                // $stock_model->from_date = $model->from_date;
-                // $stock_model->from_shift_code = ($model->from_shift_code == 1) ? 2 : 1;
+                $stock_model->from_date = $model->from_date;
+                $stock_model->from_shift_code = $model->from_shift_code;
 
 
                 $stock_model->transaction_date = $model->transaction_date;
@@ -182,8 +188,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
                     $saveModel[] = $config_model;
                     $cnt++;
                 }
-                // $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
-                $transaction = 'customRedirect';
+                $transaction = $this->generalModel->saveTransaction($saveModel, ['BMC Milk Dispatch', 'create']);
                 if ($transaction != 'customRedirect' && $new_rec) {
                     $model->bmc_milk_dispatch_code = '';
                 } else if ($transaction == 'customRedirect') {
@@ -192,12 +197,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             }
         }
         return $this->render('create', [
-                    'model' => $model,
-                    'txn_model' => $txn_model,
+            'model' => $model,
+            'txn_model' => $txn_model,
         ]);
     }
 
-    public function setCode($model) {
+    public function setCode($model)
+    {
         $plants = explode(',', $_SESSION['Plant']);
         $mccs = explode(',', $_SESSION['MCC']);
         $bmcs = explode(',', $_SESSION['BMC']);
@@ -208,7 +214,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
             if (!empty($stock_date)) {
                 $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
-             //   $dispatch_date .= '.000000';
+                //   $dispatch_date .= '.000000';
                 $converted_time = date("H:i:s", strtotime($dispatch_date));
                 if ($converted_time == "06:00:00") {
                     $model->from_shift_code = 1;
@@ -220,7 +226,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionGenerateAutoTrip(){
+    public function actionGenerateAutoTrip()
+    {
         if (Yii::$app->request->get()) {
             $data = Yii::$app->request->get();
             $bmcDispatchInspectionModel = new TblBmcDispatchInspection();
@@ -238,7 +245,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             ]);
         }
 
-        if(Yii::$app->request->post()){
+        if (Yii::$app->request->post()) {
             $data = !empty(Yii::$app->request->post()['TblBmcDispatchInspection']) ? Yii::$app->request->post()['TblBmcDispatchInspection'] : [];
             $configData = !empty(Yii::$app->request->post()['TblConfigTxnResult']) ? Yii::$app->request->post()['TblConfigTxnResult'] : [];
             $this->model = new TblVehicleTrip();
@@ -295,19 +302,21 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id) {
+    public function actionUpdate($id)
+    {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->bmc_milk_dispatch_code]);
         } else {
             return $this->render('update', [
-                        'model' => $model,
+                'model' => $model,
             ]);
         }
     }
 
-    public function actionCheckTrip() {
+    public function actionCheckTrip()
+    {
         //  $from_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('from_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('from_shift'));
         //  $to_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('to_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('to_shift'));
         $model = new TblBmcMilkDispatch();
@@ -322,19 +331,23 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return Json::encode($response);
     }
 
-    public function actionPurchaseDetail() {
+    public function actionPurchaseDetail()
+    {
+        $union_code = Yii::$app->request->get('union_code');
         $from_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('from_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('from_shift'));
         $to_datetime = date('Y-m-d', strtotime(Yii::$app->request->get('to_date'))) . ' ' . \Yii::$app->general->getshift(Yii::$app->request->get('to_shift'));
         $bmc_code = Yii::$app->request->get('bmc_code');
         $query = \Yii::$app->db->createCommand("{CALL sp_portal_bmc_purchase_detail (:bmc_code,:from_datetime,:to_datetime)}")
-                ->bindValue(':from_datetime', $from_datetime)
-                ->bindValue(':to_datetime', $to_datetime)
-                ->bindValue(':bmc_code', $bmc_code);
+            ->bindValue(':from_datetime', $from_datetime)
+            ->bindValue(':to_datetime', $to_datetime)
+            ->bindValue(':bmc_code', $bmc_code);
         $result = $query->queryAll();
 
         $stock_detail = [];
+        $dispatch_with_milk_type = isset(Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_with_milk_type']) ? Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_with_milk_type'] : '0';
         foreach ($result as $r) {
-            $key = $r['bmc_silos_info_code'] . '_' . $r['animal_type_code'] . '_' . $r['milk_quality_type_code'];
+            $animal_type_code = ($dispatch_with_milk_type == '1') ? $r['animal_type_code'] : '3';
+            $key = $r['bmc_silos_info_code'] . '_' .  $animal_type_code . '_' . $r['milk_quality_type_code'];
             if (empty($stock_detail[$key])) {
                 $stock_detail[$key]['previous_qty'] = 0;
                 $stock_detail[$key]['purchase_qty'] = 0;
@@ -343,12 +356,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             $stock_detail[$key]['purchase_qty'] = $stock_detail[$key]['purchase_qty'] + $r['purchase_qty'];
         }
         return $this->renderAjax('_purchase_detail', [
-                    'result' => $result,
-                    'stock_detail' => $stock_detail,
+            'result' => $result,
+            'stock_detail' => $stock_detail,
         ]);
     }
 
-    public function actionTransactionForm() {
+    public function actionTransactionForm()
+    {
         $union_code = Yii::$app->request->get('union_code');
         $config = new TblConfig();
         $config->config_for = 'BMC';
@@ -359,24 +373,26 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         $auto_reject = isset(Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject']) ? Yii::$app->session->get('unionConfig')[$union_code]['bmc_dispatch_auto_reject'] : '0';
         $txn_model = new TblBmcMilkDispatchTxn();
         return $this->renderAjax('_from_transaction', [
-                    'txn_model' => $txn_model,
-                    'config' => $config_mapping,
-                    'config_list' => $config_list,
-                    'auto_reject' => $auto_reject
+            'txn_model' => $txn_model,
+            'config' => $config_mapping,
+            'config_list' => $config_list,
+            'auto_reject' => $auto_reject
         ]);
     }
 
-    public function actionTransactionDetail() {
+    public function actionTransactionDetail()
+    {
         $searchModel = new TblBmcMilkDispatchTxnSearch();
         $searchModel->bmc_milk_dispatch_code = Yii::$app->request->get('bmc_milk_dispatch_code');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->renderAjax('_transaction_detail', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionDestinationCodeList() {
+    public function actionDestinationCodeList()
+    {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
@@ -411,7 +427,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
      * @return TblBmcMilkDispatch the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id) {
+    protected function findModel($id)
+    {
         if (($model = TblBmcMilkDispatch::findOne($id)) !== null) {
             return $model;
         } else {
@@ -419,7 +436,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
     }
 
-    public function actionEditTripDetail() {
+    public function actionEditTripDetail()
+    {
         $searchModel = new TblBmcMilkDispatchSearch();
         $searchModel->scenario = 'changeTrip';
         $dataProvider = new ArrayDataProvider([
@@ -427,12 +445,13 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
             'pagination' => FALSE
         ]);
         return $this->render('edit_trip', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionGetTripCode() {
+    public function actionGetTripCode()
+    {
         $id = \Yii::$app->request->post()['bmc_milk_dispatch_code'];
         $model = $this->findModel($id);
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -444,7 +463,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         return ['status' => 'error', 'res' => []];
     }
 
-    public function actionChangeTripCode() {
+    public function actionChangeTripCode()
+    {
         $id = \Yii::$app->request->post()['bmc_milk_dispatch_code'];
         $trip_code = \Yii::$app->request->post()['trip_code'];
         $model = $this->findModel($id);
@@ -474,5 +494,4 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController {
         }
         return ['status' => 'error', 'msg' => $msg];
     }
-
 }

@@ -59,6 +59,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblVehicleTrip();
+        $this->model->scenario = 'createTrip';
         $this->model->transaction_date = date('Y-m-d');
         $this->viewFile = 'create';
         $bmc_array = [];
