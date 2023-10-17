@@ -1,60 +1,54 @@
 <?php
 
-
+use yii\helpers\Html;
+use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use yii\web\View;
-use webvimark\modules\UserManagement\components\GhostHtml;
 ?>
-
+<div class="grid-search">
+    <?php
+//        echo $this->render('_search', ['model' => $searchModel]);
+    ?>
+</div>
 <?php
-
 $attribute = [
     ['attribute' => 'union_code', 'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
-    ['attribute' => 'party_name'],
-    ['attribute' => 'party_contact_no'],
-    ['attribute' => 'owner_name'],
-    ['attribute' => 'owner_contact_no'],
-    ['attribute' => 'owner_email'],
-    ['attribute' => 'pan_no', 'filter' => false],
-    ['attribute' => 'adhar_no', 'filter' => false],
-    ['attribute' => 'bank_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bankCode, 'bank_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'branch_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->branchCode, 'branch_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-    ['attribute' => 'bank_account_no', 'visible' => false, 'filter' => false],
-    ['attribute' => 'ifsc', 'visible' => false, 'filter' => false],
-    ['attribute' => 'beneficiary_name', 'visible' => false, 'filter' => false],
+        }, 'filter' => false, 'visible' => false],
+    ['attribute' => 'payment_head_name'],
+//    ['attribute' => 'transporter_code'],
+    ['attribute' => 'payment_head_type',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('bill_head_type', $searchModel, 'payment_head_type'),
+        'value' => function($model) {
+            return isset($model->payment_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->payment_head_type] : 'N/A';
+        },],
+    ['attribute' => 'sequence_no'],
 ];
 
 $grid_option = [
-    'id' => 'party-master-list',
+    'id' => 'payment-head-list',
     'attributes' => $attribute,
     'active_column' => true,
     'actions' => [
-        'view' => TRUE,
         'update' => function ($url, $model) {
-            $name = $model->party_name;
+            $name = $model->payment_head_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->party_master_code, 'data-name' => $name];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
             return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
         },
         'deactive' => function ($url, $model) {
-            $name = $model->party_name;
+            $name = $model->payment_head_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
-            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-party ' . $class, 'data-val' => $model->party_master_code, 'data-name' => $name];
-            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-party-master/deactivate-party'], $options);
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Deactivate', 'class' => 'deact-party ' . $class, 'data-val' => $model->payment_head_code, 'data-name' => $name];
+            return GhostHtml::a_alert('<i class="fa fa-close"></i>', ['/tankermovement/tbl-payment-head/deactivate-payment-head'], $options);
         },
     ]
 ];
 
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
 ?>
-<?php
 
+<?php
 $script = "
 $(document).ready(function(){
     $(document).on('click','.deact-party',function(e){
@@ -77,13 +71,13 @@ $(document).ready(function(){
               $('#loader').show();
                  $.ajax({
                         type: 'get',
-                        url: '" . Url::to(['deactivate-party']) . "',
+                        url: '" . Url::to(['deactivate-payment-head']) . "',
                         data:{'id':id},
                         success: function(data) {
                             var obj1 = $.parseJSON(data);
                             if (obj1.status == 'success')
                             {
-                                $.pjax.reload({container: '#party-master-list'});
+                                $.pjax.reload({container: '#payment-head-list'});
                                 bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>\"+obj1.msg+\"</span></div></div>\");
                                 //$.snackbar({content: 'Record successfully deleted.', timeout: 8000, style: 'successbar'});
                             }
@@ -101,5 +95,5 @@ $(document).ready(function(){
     });
     });
 });";
-$this->registerJs($script, View::POS_END, 'party-master-list-index');
+$this->registerJs($script, View::POS_END, 'payment-head-list');
 ?>

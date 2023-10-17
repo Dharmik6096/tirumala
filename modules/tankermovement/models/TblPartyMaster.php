@@ -51,58 +51,48 @@ use yii\helpers\ArrayHelper;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblPartyMaster extends \app\models\ChildModel
-{
+class TblPartyMaster extends \app\models\ChildModel {
 
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_party_master';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [[
-                'union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code',
-                'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'
-            ], 'required'],
-            [['is_active', 'originating_type'], 'integer'],
-            [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['owner_email'], 'email'],
-            [['is_active'], 'default', 'value' => 1],
-            [['adhar_no'], function ($attribute, $params) {
-                Yii::$app->general->validateAadharcard($this, $attribute, $params);
-            }, 'skipOnEmpty' => true],
-            [['pan_no'], function ($attribute, $params) {
-                Yii::$app->general->validatePancard($this, $attribute, $params);
-            }, 'skipOnEmpty' => true],
-            [['party_contact_no', 'owner_contact_no'], function ($attribute, $params) {
-                Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
-            }, 'skipOnEmpty' => true],
-            [['beneficiary_name'], function ($attribute, $params) {
-                Yii::$app->general->validateBeneficiary($this, $attribute, $params);
-            }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['bank_account_no'], function ($attribute, $params) {
-                $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
-                if ($error !== TRUE)
-                    $this->addError($attribute, $error);
-            }, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
+                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['owner_email'], 'email'],
+                [['is_active'], 'default', 'value' => 1],
+                [['adhar_no'], function ($attribute, $params) {
+                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['pan_no'], function ($attribute, $params) {
+                    Yii::$app->general->validatePancard($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['party_contact_no', 'owner_contact_no'], function ($attribute, $params) {
+                    Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
+                }, 'skipOnEmpty' => true],
+                [['beneficiary_name'], function ($attribute, $params) {
+                    Yii::$app->general->validateBeneficiary($this, $attribute, $params);
+                }, 'skipOnEmpty' => false],
+                [['bank_account_no'], function ($attribute, $params) {
+                    $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
+                    if ($error !== TRUE)
+                        $this->addError($attribute, $error);
+                },],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'party_master_code' => Yii::t('app', 'Party Master Code'),
             'union_code' => Yii::t('app', 'Union'),
@@ -141,54 +131,46 @@ class TblPartyMaster extends \app\models\ChildModel
         ];
     }
 
-    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false)
-    {
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
         $query = $this->find()->select(['party_master_code', 'party_name'])
-            ->where(['is_active' => 1]);
+                ->where(['is_active' => 1]);
         $value = $query->orderBy('party_name asc')->all();
         $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
-            return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
-        });
+                    return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
+                });
         return $value;
     }
 
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getStateCode()
-    {
+    public function getStateCode() {
         return $this->hasOne(TblStates::className(), ['state_code' => 'state_code']);
     }
 
-    public function getBankCode()
-    {
+    public function getBankCode() {
         return $this->hasOne(TblBanks::className(), ['bank_code' => 'bank_code']);
     }
 
-    public function getBranchCode()
-    {
+    public function getBranchCode() {
         return $this->hasOne(TblBranch::className(), ['branch_code' => 'branch_code']);
     }
 
-    public function getDistrictCode()
-    {
+    public function getDistrictCode() {
         return $this->hasOne(TblDistricts::className(), ['district_code' => 'district_code']);
     }
 
-    public function getSubDistrictCode()
-    {
+    public function getSubDistrictCode() {
         return $this->hasOne(TblSubDistricts::className(), ['sub_district_code' => 'sub_district_code']);
     }
 
-    public function getVillageCode()
-    {
+    public function getVillageCode() {
         return $this->hasOne(TblVillages::className(), ['village_code' => 'village_code']);
     }
 
-    public function getHamletCode()
-    {
+    public function getHamletCode() {
         return $this->hasOne(TblHamlets::className(), ['hamlet_code' => 'hamlet_code']);
     }
+
 }

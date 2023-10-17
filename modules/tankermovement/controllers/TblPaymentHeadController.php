@@ -5,22 +5,24 @@ namespace app\modules\tankermovement\controllers;
 use Yii;
 use yii\web\Response;
 use yii\helpers\Json;
-use app\modules\tankermovement\models\TblPartyMaster;
-use app\modules\tankermovement\models\TblPartyMasterSearch;
+use app\modules\tankermovement\models\TblPaymentHead;
+use app\modules\tankermovement\models\TblPaymentHeadSearch;
 use yii\web\NotFoundHttpException;
-use app\modules\tankermovement\models\TblPartyMasterHistory;
+use app\modules\tankermovement\models\TblPaymentHeadHistory;
 
 /**
- * TblPartyMasterController implements the CRUD actions for TblPartyMaster model.
+ * TblPaymentHeadController implements the CRUD actions for TblTransporterPaymentHead model.
  */
-class TblPartyMasterController extends \app\controllers\ChildController {
+class TblPaymentHeadController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['payment-head-list'];
 
     /**
-     * Lists all TblPartyMaster models.
+     * Lists all TblTransporterPaymentHead models.
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new TblPartyMasterSearch();
+        $searchModel = new TblPaymentHeadSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -30,8 +32,8 @@ class TblPartyMasterController extends \app\controllers\ChildController {
     }
 
     /**
-     * Displays a single TblPartyMaster model.
-     * @param string $id
+     * Displays a single TblTransporterPaymentHead model.
+     * @param integer $id
      * @return mixed
      */
     public function actionView($id) {
@@ -41,17 +43,18 @@ class TblPartyMasterController extends \app\controllers\ChildController {
     }
 
     /**
-     * Creates a new TblPartyMaster model.
+     * Creates a new TblTransporterPaymentHead model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate() {
-        $this->model = new TblPartyMaster();
+        $this->model = new TblPaymentHead();
         $this->viewFile = 'create';
+
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->party_master_code = Yii::$app->general->getPrimaryCode($this->model);
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Party Master', 'create']);
-            if ($transaction == 'customRedirect') {
+            $this->model->payment_head_for = 'PARTY';
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Payment Head', 'create']);
+            if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
         }
@@ -59,33 +62,31 @@ class TblPartyMasterController extends \app\controllers\ChildController {
     }
 
     /**
-     * Updates an existing TblPartyMaster model.
+     * Updates an existing TblTransporterPaymentHead model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      */
     public function actionUpdate($id) {
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
+
         if (Yii::$app->request->post()) {
-            $historyModel = new TblPartyMasterHistory();
+            $historyModel = new TblPaymentHeadHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Party Master', 'edit']);
-            if ($transaction == 'customRedirect') {
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Payment Head', 'edit']);
+            if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
         }
-        return $this->render('update', [
-                    'model' => $this->model,
-        ]);
-//        return $this->customRender();
+        return $this->customRender();
     }
 
     /**
-     * Deletes an existing TblPartyMaster model.
+     * Deletes an existing TblTransporterPaymentHead model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      */
     public function actionDelete($id) {
@@ -93,16 +94,17 @@ class TblPartyMasterController extends \app\controllers\ChildController {
 
         return $this->redirect(['index']);
     }
-    public function actionDeactivateParty($id) {
+
+    public function actionDeactivatePaymentHead($id) {
         $this->model = $this->findModel($id);
-        $historyModel = new TblPartyMasterHistory();
+        $historyModel = new TblPaymentHeadHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->is_active = 0;
-        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Party Master', 'edit']);
+        $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Payment Head', 'edit']);
         if ($transaction == 'customRedirect') {
-            $record = ['status' => 'success', 'msg' => 'Party Master Deactivated Successfully.'];
+            $record = ['status' => 'success', 'msg' => 'Payment Head Deactivated Successfully.'];
         } else {
-            $record = ['status' => 'error', 'msg' => 'Party Master Not Deactivated.'];
+            $record = ['status' => 'error', 'msg' => 'Payment Head Not Deactivated.'];
         }
         Yii::$app->getSession()->setFlash('success');
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
@@ -110,14 +112,14 @@ class TblPartyMasterController extends \app\controllers\ChildController {
     }
 
     /**
-     * Finds the TblPartyMaster model based on its primary key value.
+     * Finds the TblTransporterPaymentHead model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $id
-     * @return TblPartyMaster the loaded model
+     * @param integer $id
+     * @return TblTransporterPaymentHead the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = TblPartyMaster::findOne($id)) !== null) {
+        if (($model = TblPaymentHead::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

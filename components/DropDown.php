@@ -336,7 +336,7 @@ class DropDown extends Component {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly);
         }
     }
-    
+
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -907,7 +907,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -925,7 +925,7 @@ class DropDown extends Component {
             ]
         ])->label(Yii::t('app', $islable));
     }
-    
+
     public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -1743,17 +1743,17 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
             ],
-             'tanker_rate_for' => [
+            'tanker_rate_for' => [
                 'name' => 'rate_for',
-                'prompt' => Yii::t('app', 'Select Rate For'),
+                'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['purchase' => Yii::t('app', 'Purchase'), 'sale' => Yii::t('app', 'Sale')],
             ],
-             'tanker_rate_gen_method' => [
+            'tanker_rate_gen_method' => [
                 'name' => 'rate_gen_method_code',
                 'prompt' => Yii::t('app', 'Select Rate Method'),
                 'data' => ['1' => Yii::t('app', 'Formula'), '3' => Yii::t('app', 'Import')],
             ],
-             'tanker_rate_type' => [
+            'tanker_rate_type' => [
                 'name' => 'rate_type_code',
                 'prompt' => Yii::t('app', 'Select Rate Type'),
                 'data' => ['1' => Yii::t('app', 'FAT+SNF'), '2' => Yii::t('app', 'QTY')],
@@ -1893,6 +1893,8 @@ class DropDown extends Component {
             'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
             'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
+            'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
+            'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
         ];
         return $label[$l];
     }
@@ -1979,7 +1981,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'clientOptions' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
