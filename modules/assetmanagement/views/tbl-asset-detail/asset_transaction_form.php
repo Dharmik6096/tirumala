@@ -147,12 +147,12 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
                                                                 }
                                                  }'),
                     ],
-                    'options' => ['class' => 'btn btn-default btn-save-txn disabled no_pointer',
+                    'options' => ['class' => 'btn-login btn btn-default btn-save-txn disabled no_pointer',
                         'type' => 'submit'],
                 ]);
                 AjaxSubmitButton::end();
                 ?>
-                <?= Yii::$app->controls->custombutton(Yii::t('app', ucfirst('reset')), 'asset-transaction'); ?>
+                <?= Yii::$app->controls->custombutton(Yii::t('app', ucfirst('reset')), 'asset-transaction','','btn-login'); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
                 <?php ActiveForm::end(); ?>
             </div>

@@ -107,6 +107,7 @@ $action = !empty($action) ? 'inward-asset-transaction' : 'outward-asset-transact
                     $(".kv-panel-before").hide();
                     $(".submit_btn").click(function() {
                          var len = $("input[class=\"checkbox kv-row-checkbox\"]:checked").length;
+                         
                          if(len == 0){
                             bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select at least one Asset.</span></div></div>");
                             return false;
@@ -117,6 +118,18 @@ $action = !empty($action) ? 'inward-asset-transaction' : 'outward-asset-transact
                             $("form#create-asset-transaction").attr("action", url);
                             $("#create-asset-transaction").submit();
                          }
+                         var received_date = $("#tblassettransaction-received_date").val();
+                         var received_by = $("#tblassettransaction-received_by").val();
+                         
+                         if(received_date== ""){
+                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Please select Date.</span></div></div>");
+                            return false;
+                         }
+                         if(received_by== ""){
+                            bootbox.alert("<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span> Received By cannot be blank.</span></div></div>");
+                            return false;
+                         }
+                         
                    });
                  ';
                         $this->registerJs($script, View::POS_END, 'create-detail-transaction');
