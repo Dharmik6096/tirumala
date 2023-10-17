@@ -254,7 +254,7 @@ $grid_option = [
             }
             $name = $model->dcs_name;
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->dcs_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'add-document' => function ($url, $model) use ($pending_approval) {
             if ($pending_approval) {

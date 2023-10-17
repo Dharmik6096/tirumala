@@ -36,7 +36,7 @@ $grid_option = [
         'edit' => function ($url, $model) {
             $disable = '';
             $options = ['title' => Yii::t('app', 'Edit'), 'class' => $disable];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', ['/product/tbl-indent-product/update', 'id' => $model->indent_product_code], $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', ['/product/tbl-indent-product/update', 'id' => $model->indent_product_code], $options);
         },
     ]
 ];

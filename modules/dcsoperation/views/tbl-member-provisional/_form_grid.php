@@ -89,7 +89,7 @@ $grid_option = [
                 $name = $model->member_name;
                 $class = ($model->is_approved == 1) ? 'link-disable' : '';
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->provisional_member_code];
-                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+                return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
             } else {
                 $class = '';
                 if (!$pending_approval) {
@@ -97,7 +97,7 @@ $grid_option = [
                 }
                 $name = $model->member_name;
                 $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->member_code, 'data-name' => $name];
-                return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+                return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
             }
             $name = $model->member_name;
             $class = ($model->is_approved == 1) ? 'link-disable' : '';

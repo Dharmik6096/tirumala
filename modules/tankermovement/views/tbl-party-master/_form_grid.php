@@ -37,7 +37,7 @@ $grid_option = [
             $name = $model->party_name;
             $class = $model->is_active == 0 ? 'disabled' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => '' . $class, 'data-val' => $model->party_master_code, 'data-name' => $name];
-            return GhostHtml::a('<i class="fa fa-pencil"></i>', $url, $options);
+            return GhostHtml::a('<i class="fa fa-pencil-alt"></i>', $url, $options);
         },
         'deactive' => function ($url, $model) {
             $name = $model->party_name;

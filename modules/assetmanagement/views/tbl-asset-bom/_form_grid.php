@@ -27,7 +27,7 @@ $grid_option = [
         'view' => true,
         'edit' => function ($url, $model) {
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Edit', 'class' => 'edit-record', 'data-val' => $model->asset_bom_code, 'data-code' => $model->asset_bom_code, 'data-name' => $model->asset_bom_code, 'title' => Yii::t('app', 'Edit')];
-            return GhostHtml::a_alert('<i class="fa fa-pencil"></i>', ['/assetmanagement/tbl-asset-bom/updatebom'], $options);
+            return GhostHtml::a_alert('<i class="fa fa-pencil-alt"></i>', ['/assetmanagement/tbl-asset-bom/updatebom'], $options);
         },
     ]
 ];
