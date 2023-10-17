@@ -69,7 +69,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', false, false, false); ?>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 mt25">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'in_ward'); ?>
             </div> 
             <div class="col-sm-4">
@@ -99,7 +99,7 @@ $this->title = Yii::$app->label->title('create', 'Outward/In-Use Asset');
             </div>
             <div class="col-sm-4 mt20">
                 <?=
-                Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn btn-primary add-asset-record disabled no_pointer'])
+                Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn-login btn btn-primary add-asset-record disabled no_pointer'])
                 ?>
                 <?php
 //                Html::a(Yii::t('app', 'Add Sr. No.'), 'javascript:void(0)', ['class' => 'btn btn-primary add-serial-record disabled no_pointer'])

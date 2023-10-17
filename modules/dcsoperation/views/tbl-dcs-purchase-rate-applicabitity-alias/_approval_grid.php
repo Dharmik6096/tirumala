@@ -56,11 +56,11 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
 </div>
 <div class="panel-footer" >
     <?php if (!empty($dataProvider->getModels()) && $visible) { ?>
-        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
-        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
+        <?= Html::button(Yii::t('app', 'Approve'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']); ?>
+        <?= Html::button(Yii::t('app', 'Reject'), ['class' => 'btn-login btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'applicabilty-approve'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'applicabilty-approve','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
