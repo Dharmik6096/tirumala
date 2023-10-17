@@ -392,7 +392,7 @@ $script = "$(document).ready(function(){
             var to_date_parts = to_date.split('-');
             var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
             var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
-            
+
             var fromDateObj = new Date(formatted_from_date);
             var toDateObj = new Date(formatted_to_date);
 
