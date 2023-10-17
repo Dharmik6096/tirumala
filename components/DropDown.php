@@ -1743,6 +1743,21 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
             ],
+             'tanker_rate_for' => [
+                'name' => 'rate_for',
+                'prompt' => Yii::t('app', 'Select Rate For'),
+                'data' => ['purchase' => Yii::t('app', 'Purchase'), 'sale' => Yii::t('app', 'Sale')],
+            ],
+             'tanker_rate_gen_method' => [
+                'name' => 'rate_gen_method_code',
+                'prompt' => Yii::t('app', 'Select Rate Method'),
+                'data' => ['1' => Yii::t('app', 'Formula'), '3' => Yii::t('app', 'Import')],
+            ],
+             'tanker_rate_type' => [
+                'name' => 'rate_type_code',
+                'prompt' => Yii::t('app', 'Select Rate Type'),
+                'data' => ['1' => Yii::t('app', 'FAT+SNF'), '2' => Yii::t('app', 'QTY')],
+            ],
         ];
         return $records[$l];
     }
