@@ -57,6 +57,9 @@ class TblInventoryTransferSearch extends TblInventoryTransfer {
             return $dataProvider;
         }
 
+        if (!empty(Yii::$app->session->get('Unions'))) {
+            $query->andWhere(['tbl_inventory_transfer.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
+        }
         if (!empty($this->from_code)) {
             $query->joinWith(['dcsFromCode', 'mccFromCode', 'bmcFromCode', 'dcsToCode', 'mccToCode', 'bmcToCode']);
             $query->andFilterWhere(['or', ['like', 'tbl_mcc_plant.ref_code', $this->from_code], ['like', 'tbl_dcs.ref_code', $this->from_code], ['like', 'tbl_bmc.ref_code', $this->from_code]]);
