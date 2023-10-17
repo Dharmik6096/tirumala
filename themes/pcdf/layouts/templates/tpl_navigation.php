@@ -169,6 +169,7 @@ echo GhostMenu::widget([
                     ]
                 ],
                     ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
+                    ['label' => 'AMCS - Shift Time Exceed Provision', 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
             ],
         ],
             [
