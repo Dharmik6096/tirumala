@@ -1743,6 +1743,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
             ],
+            'party_payment_type' => [
+                'name' => 'payment_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['purchase' => Yii::t('app', 'PURCHASE'), 'sale' => Yii::t('app', 'SALE')],
+            ],
         ];
         return $records[$l];
     }
@@ -1878,6 +1883,7 @@ class DropDown extends Component {
             'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
             'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
+            'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
         ];
         return $label[$l];
     }

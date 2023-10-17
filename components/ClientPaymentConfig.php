@@ -216,6 +216,10 @@ class ClientPaymentConfig extends Component {
                 'bonus_payment' => [
                     'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
                     'sp_name' => 'sp_bonus_payment_process_vrs_newasa',
+                ],
+                'party_payment' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'process_party_payment_vrs_newasa',
                 ]
             ],
             'ANIG' => [
