@@ -200,11 +200,9 @@ class TblVehicleTripDetail extends \app\models\ChildModel {
             $query->andWhere(['>=', 'tbl_vehicle_trip.transaction_date', $transaction_date]);
             $query->andWhere(['<=', 'tbl_vehicle_trip.transaction_date', $to_date]);
         } else {
-            $query->andWhere(['tbl_vehicle_trip.transaction_date' => $transaction_date]);
             if ($tripCode != 'alltrip') {
                 $query->andWhere(['tbl_vehicle_trip.trip_status' => ['generated', 'open']]);
             }
-            $query->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $bmc_code]);
         }
         if (!empty($tripCode) && $bmc_code != 'alltrip' && $tripCode != 'alltrip') {
             $query->orWhere(['tbl_vehicle_trip.trip_code' => $tripCode]);

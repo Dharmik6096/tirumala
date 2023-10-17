@@ -71,11 +71,10 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'gross_weight', 'tare_weight', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv']],
+                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv']],
                 [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
                 [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
                 [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-                [['gross_weight', 'tare_weight'], 'number'],
                 [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
             //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
@@ -213,13 +212,13 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         } else {
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
             if (!empty($stock_date)) {
-                $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
-                $dispatch_date .= '.000000';
+                $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))).'.000000' : $stock_date->to_date;
+              //  $dispatch_date .= '.000000';
                 if ($this->from_date < $dispatch_date) {
-                    $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date.'));
+                    $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date.').$dispatch_date);
                     return FALSE;
                 } else if ($this->from_date > $dispatch_date) {
-                    $this->addError('to_date', Yii::t('app/validation', 'From Date must be last stock date.'));
+                    $this->addError('to_date', Yii::t('app/validation', 'From Date must be last stock date.').$dispatch_date);
                     return FALSE;
                 }
             }
