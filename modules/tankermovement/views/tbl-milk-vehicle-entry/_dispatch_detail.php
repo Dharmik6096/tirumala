@@ -1,3 +1,4 @@
+<h5 class="panel-heading mb15"><?= Yii::t('app', 'Dispatch Summary') ?></h5>
 <table class="table table-bordered">
     <thead>
         <tr>
