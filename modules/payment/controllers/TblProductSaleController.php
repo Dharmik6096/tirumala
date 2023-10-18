@@ -531,7 +531,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
                 $result = ['product_sale_rate_applicability_code' => $app['product_sale_rate_applicability_code'], 'sale_rate' => $app['sale_rate'], 'unit_code' => $app['unit_code']];
             }
         }
-        echo json_encode($result);
+        return json_encode($result);
     }
 
     public function actionListGrid() {
