@@ -8,6 +8,9 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblPlant;
 use app\modules\organisation\models\TblUnions;
 use app\modules\organisation\models\TblDcs;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\dcsoperation\models\TblShift;
+
 /**
  * This is the model class for table "tbl_shift_time_exceed".
  *
@@ -43,6 +46,8 @@ use app\modules\organisation\models\TblDcs;
  */
 class TblShiftTimeExceed extends \app\models\ChildModel {
 
+    public $process_approval_code;
+
     /**
      * @inheritdoc
      */
@@ -56,7 +61,19 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['shift_time_exceed_code'], 'required'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'org_type', 'date_time_of_collection', 'standard_time', 'exceed_time', 'status_datetime', 'created_at', 'updated_at', 'shift_code', 'originating_type', 'status', 'created_by', 'updated_by', 'shift_time_exceed_code', 'org_code', 'remarks', 'status_remarks', 'status_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'org_type', 'date_time_of_collection', 'standard_time', 'exceed_time', 'status_datetime', 'created_at', 'updated_at', 'shift_code', 'originating_type', 'status', 'created_by', 'updated_by', 'shift_time_exceed_code', 'org_code', 'remarks', 'status_remarks', 'status_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_approval_code'], 'safe'],
+                [['shift_time_exceed_code', 'org_type', 'org_code', 'date_time_of_collection', 'standard_time', 'exceed_time', 'shift_code'], 'required', 'on' => ['create_shift_time']],
+                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'MCC' || $model->org_type == 'BMC' || $model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblshifttimeexceed-org_type').val() == 'MCC' || $('#tblshifttimeexceed-org_type').val() == 'BMC' || $('#tblshifttimeexceed-org_type').val() == 'VLC');
+                }", 'on' => ['create_shift_time']],
+                [['dcs_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblshifttimeexceed-org_type').val() == 'VLC');
+                  }", 'on' => ['create_shift_time']],
+                [['date_time_of_collection'], 'unique', 'targetAttribute' => ['org_type', 'org_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', 'Shift Time Exceed has been already taken.'), 'on' => 'create_shift_time'],
         ];
     }
 
@@ -97,13 +114,9 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
         ];
     }
 
-//    public function getBmcCode() {
-//        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'org_code']);
-//    }
-//
-//    public function getMccCode() {
-//        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'org_code']);
-//    }
+    public function getShiftCode() {
+        return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
+    }
 
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
@@ -154,6 +167,10 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
         }
 
         return ['standard_time' => null];
+    }
+
+    public function getShiftTimeExceedApproval() {
+        return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'shift_time_exceed_code'])->orderBy('level ASC');
     }
 
 }

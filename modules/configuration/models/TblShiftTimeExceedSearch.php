@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\configuration\models\TblShiftTimeExceed;
+use app\modules\general\models\TblProcessApproval;
 
 /**
  * TblShiftTimeExceedSearch represents the model behind the search form about `app\modules\configuration\models\TblShiftTimeExceed`.
@@ -36,39 +37,49 @@ class TblShiftTimeExceedSearch extends TblShiftTimeExceed {
      *
      * @return ActiveDataProvider
      */
-    public function search($params) {
+    public function search($params, $pending_approval = false) {
         $query = TblShiftTimeExceed::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['shift_time_exceed_code' => SORT_ASC]],
         ]);
 
         $this->load($params);
+
+        if ($pending_approval) {
+            $approval = new TblProcessApproval();
+            $subQuery = $approval->getApproveLavel('amcs_shift_time_exceed');
+            $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_shift_time_exceed.shift_time_exceed_code) = convert(varchar(max),ap.process_code)');
+            $query->addSelect(['tbl_shift_time_exceed.*', 'ap.process_approval_code as process_approval_code']);
+            $this->status = ['Register', 'Inprogress'];
+            $query->where(['tbl_shift_time_exceed.status' => $this->status]);
+        }
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
-
+        if (!empty($this->date_time_of_collection)) {
+            $query->andFilterWhere(['like', 'cast(tbl_shift_time_exceed.date_time_of_collection as date)', date('Y-m-d', strtotime($this->date_time_of_collection))]);
+        }
         // grid filtering conditions
         $query->andFilterWhere([
-            'date_time_of_collection' => $this->date_time_of_collection,
-            'shift_code' => $this->shift_code,
-            'standard_time' => $this->standard_time,
-            'exceed_time' => $this->exceed_time,
-            'status_datetime' => $this->status_datetime,
+            'tbl_shift_time_exceed.shift_code' => $this->shift_code,
+            'tbl_shift_time_exceed.status_datetime' => $this->status_datetime,
         ]);
 
-        $query->andFilterWhere(['like', 'shift_time_exceed_code', $this->shift_time_exceed_code])
-                ->andFilterWhere(['like', 'org_type', $this->org_type])
-                ->andFilterWhere(['like', 'org_code', $this->org_code])
-                ->andFilterWhere(['like', 'remarks', $this->remarks])
-                ->andFilterWhere(['like', 'status', $this->status])
-                ->andFilterWhere(['like', 'status_by', $this->status_by])
-                ->andFilterWhere(['like', 'status_remarks', $this->status_remarks]);
+        $query->andFilterWhere(['like', 'tbl_shift_time_exceed.shift_time_exceed_code', $this->shift_time_exceed_code])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.org_type', $this->org_type])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.org_code', $this->org_code])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.standard_time', $this->standard_time])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.exceed_time', $this->exceed_time])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.remarks', $this->remarks])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.status_by', $this->status_by])
+                ->andFilterWhere(['like', 'tbl_shift_time_exceed.status_remarks', $this->status_remarks]);
 
         return $dataProvider;
     }

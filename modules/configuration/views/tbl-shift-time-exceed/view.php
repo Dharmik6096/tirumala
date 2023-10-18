@@ -1,63 +1,160 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use kartik\detail\DetailView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\configuration\models\TblShiftTimeExceed */
+/* @var $model app\modules\organisation\models\TblPlant */
 
-$this->title = $model->shift_time_exceed_code;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tbl Shift Time Exceeds'), 'url' => ['index']];
+$this->title = Yii::$app->label->title('view', 'Shift Time Exceed Provision');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Shift Time Exceed Provision'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="tbl-shift-time-exceed-view">
+<div class="panel panel-default panel-grid panel-main tbl-complain-view hide-grid-settings">
+    <div class="panel-heading">
+        <?= Yii::$app->controls->cancel($model); ?>
+        <?= Html::encode($this->title) ?>
+    </div>
+    <div class="panel-body">
+        <div class="form-grid">
+            <div class="table-responsive">
+                <?php
+                $attributes = [
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'union_code',
+                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                ['attribute' => 'plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->plantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'mcc_plant_code',
+                                'value' => Yii::$app->general->getforeignkey($model->mccPlantCode, 'name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'bmc_code',
+                                'value' => Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'dcs_code',
+                                'value' => Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name'),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'org_type',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'shift_time_exceed_code',
+                                'value' => $model->shift_time_exceed_code,
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'shift_code',
+                                'value' => isset($model->shiftCode) ? $model->shiftCode->shift : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'org_code',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'standard_time',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'exceed_time',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'remarks',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'status',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'status_datetime',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'date_time_of_collection',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'status_by',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'status_remarks',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'created_at',
+                                'value' => Yii::$app->controls->view_date($model->created_at),
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                ];
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->shift_time_exceed_code], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->shift_time_exceed_code], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'shift_time_exceed_code',
-            'union_code',
-            'plant_code',
-            'mcc_plant_code',
-            'bmc_code',
-            'dcs_code',
-            'org_type',
-            'org_code',
-            'date_time_of_collection',
-            'shift_code',
-            'standard_time',
-            'exceed_time',
-            'remarks',
-            'status',
-            'status_datetime',
-            'status_by',
-            'status_remarks',
-            'x_col1',
-            'x_col2',
-            'x_col3',
-            'x_col4',
-            'x_col5',
-            'created_at',
-            'created_by',
-            'updated_at',
-            'updated_by',
-            'originating_org_code',
-            'originating_org_type',
-            'originating_type',
-        ],
-    ]) ?>
-
+// View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+    </div>
 </div>

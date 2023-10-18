@@ -50,14 +50,6 @@ $form = ActiveForm::begin([
         echo $form->field($model, 'shift_code')->textInput(['value' => $defaultShiftCode, 'readonly' => true]);
         ?>
     </div>
-    <!--<div class="col-sm-2 shift">-->
-    <?php
-//        $currentTime = date('H:i');
-//        $defaultShiftCode = ($currentTime >= '06:00' && $currentTime < '18:00') ? 'Morning' : 'Evening';
-//        $records = array('1' => 'Morning', '2' => 'Evening');
-//        echo $form->field($model, 'shift_code')->dropDownList([$records], ['disabled' => true, 'selected' => $defaultShiftCode])->label($model->getAttributeLabel('Shift'));
-    ?>
-    <!--</div>-->
     <div class = "col-sm-2">
         <?= $form->field($model, 'standard_time')->textInput(['type' => 'time', 'readonly' => true]) ?>
     </div>
@@ -68,18 +60,6 @@ $form = ActiveForm::begin([
         <?= $form->field($model, 'remarks')->textarea() ?>
     </div>
 
-    <?php
-    if ($type == 'resolve') {
-        ?>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('provisional_approval_status', $model, $form, 'form-group', $model->getAttributeLabel('status')); ?>
-        </div>
-        <div class = "col-sm-3">
-            <?= $form->field($model, 'status_remarks')->textarea() ?>
-        </div>
-        <?php
-    }
-    ?>
 </div>
 <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
     <div class="form-group">

@@ -10,6 +10,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use app\modules\general\models\TblApprovalStagesDetail;
+use app\modules\general\models\TblProcessApproval;
+use app\modules\configuration\models\TblShiftTimeExceedHistory;
+use app\modules\general\models\TblProcessApprovalHistory;
 
 /**
  * TblShiftTimeExceedController implements the CRUD actions for TblShiftTimeExceed model.
@@ -27,6 +30,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'pending_approval' => FALSE
         ]);
     }
 
@@ -49,6 +53,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblShiftTimeExceed();
         $this->viewFile = 'create';
+        $this->model->scenario = 'create_shift_time';
         $save_model = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->shift_time_exceed_code = Yii::$app->general->getPrimaryCode($this->model);
@@ -127,6 +132,63 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
         $model = new TblShiftTimeExceed();
         $data = $model->getStandardTimeData(Yii::$app->request->post());
         return ['standard_time' => $data,];
+    }
+
+    public function actionPendingApproval() {
+        $searchModel = new TblShiftTimeExceedSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'pending_approval' => TRUE
+        ]);
+    }
+
+    public function actionApproveShiftTimeExceed($id) {
+        $model = TblProcessApproval::findOne($id);
+        $model->scenario = 'approve';
+        $model_save = [];
+        $approvalHistoryModel = new TblProcessApprovalHistory();
+        Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
+        $model_save[] = $approvalHistoryModel;
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model_save[] = $model;
+            if (!empty($model_save)) {
+                $next_count = TblProcessApproval::find()
+                        ->where(['process_code' => $model->process_code, 'status' => 0])
+                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
+                        ->count();
+                if ($model->status == '2') {
+                    $status = 'Reject';
+                } else if ($model->status == '1' && $next_count > 0) {
+                    $status = 'Inprogress';
+                } else {
+                    $status = 'Approve';
+                }
+                $memberModel = $this->findModel($model->process_code);
+                $historyModel = new TblShiftTimeExceedHistory();
+                Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
+                $model_save[] = $historyModel;
+                $exceed_time = !empty(Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time']) ? Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time'] : $memberModel->exceed_time;
+                $memberModel->status = $status;
+                $memberModel->status_datetime = date('Y-m-d H:i:s');
+                $memberModel->status_by = Yii::$app->session['UserCode'];
+                $memberModel->status_remarks = $model->remarks . '_' . $memberModel->exceed_time . '_' . $exceed_time;
+                $memberModel->exceed_time = $exceed_time;
+                $model_save[] = $memberModel;
+                $transaction = $this->generalModel->saveTransaction($model_save, ['Shift Time Exceed Approval', 'edit']);
+
+                if ($transaction == 'customRedirect') {
+                    return $this->redirect(['index']);
+                }
+            } else {
+                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                    'message' => 'Member provisional already approved by other user.']);
+            }
+        }
+        return $this->render('approve_member', [
+                    'model' => $model,
+        ]);
     }
 
 }
