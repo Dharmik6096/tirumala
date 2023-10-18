@@ -18,7 +18,7 @@ class TblPartyPaymentHistory extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['id', 'party_payment_code', 'union_code', 'payment_type', 'party_master_code', 'from_date', 'to_date', 'disp_qty', 'disp_kg_fat'], 'safe'],
+            [['party_payment_code', 'union_code', 'payment_type', 'party_master_code', 'from_date', 'to_date', 'disp_qty', 'disp_kg_fat'], 'safe'],
             [['disp_kg_snf', 'rec_qty', 'rec_kg_fat', 'rec_kg_snf', 'rd_qty_diff', 'rd_kg_fat_diff', 'rd_kg_snf_diff', 'no_of_days'], 'safe'],
             [['total_qty', 'avg_fat', 'avg_snf', 'avg_rate', 'total_amount', 'total_deduction', 'total_addition', 'net_amount'], 'safe'],
             [['adjust_amount', 'adjust_remark', 'final_amount', 'bank_name', 'bank_code', 'branch_name', 'branch_code', 'ifsc'], 'safe'],

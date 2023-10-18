@@ -20,7 +20,7 @@ $net_amount = $model->net_amount;
                         'columns' => [
                                 [
                                 'attribute' => 'payment_type',
-                                'value' => isset($model->payment_type) ? Yii::$app->dropdown->getRecords('party_payment_type')['data'][$model->payment_type] : 'N/A',
+                                'value' => isset($model->payment_type) ? Yii::$app->dropdown->getRecords('party_payment_type')['data'][strtolower($model->payment_type)] : 'N/A',
                                 'valueColOptions' => ['style' => 'width:15%']
                             ],
                                 [
@@ -111,12 +111,12 @@ $net_amount = $model->net_amount;
                         if (!empty($rel))
                             return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                     }, 'filter' => false],
-                    ['attribute' => 'return_dest', 'value' => function($model) {
-                        $rel = Yii::$app->general->getDestRelation($model->return_type);
-                        $att = strtolower($model->return_type) == 'bmc' ? 'bmc_name' : (strtolower($model->return_type) == 'vendor' ? 'customer_name' : 'name');
-                        if (!empty($rel))
-                            return Yii::$app->general->getforeignkey($model->{$rel . 'Return'}, $att);
-                    }, 'filter' => false],
+//                    ['attribute' => 'return_dest', 'value' => function($model) {
+//                        $rel = Yii::$app->general->getDestRelation($model->return_type);
+//                        $att = strtolower($model->return_type) == 'bmc' ? 'bmc_name' : (strtolower($model->return_type) == 'vendor' ? 'customer_name' : 'name');
+//                        if (!empty($rel))
+//                            return Yii::$app->general->getforeignkey($model->{$rel . 'Return'}, $att);
+//                    }, 'filter' => false],
                     ['attribute' => 'morning_kms', 'label' => Yii::t('app', 'F.KM'), 'filter' => false, 'pageSummary' => true],
                     ['attribute' => 'extra_kms', 'label' => Yii::t('app', 'R.KM'), 'filter' => false, 'pageSummary' => true],
                     ['attribute' => 'total_kms', 'label' => Yii::t('app', 'T.KM'), 'filter' => false, 'pageSummary' => true],
@@ -147,8 +147,8 @@ $net_amount = $model->net_amount;
             <h5 class="panel-heading"><?= Yii::t('app', 'Payment Head Details') ?></h5>
             <?php
             $attribute = [
-                    ['attribute' => 'transporter_payment_head_code', 'value' => function($model) {
-                        return Yii::$app->general->getforeignkey($model->paymentHeadCode, 'transporter_payment_head');
+                    ['attribute' => 'party_payment_head_code', 'value' => function($model) {
+                        return Yii::$app->general->getforeignkey($model->paymentHeadCode, 'party_payment_head');
                     }, 'filter' => false],
                     ['attribute' => 'type', 'value' => function($model) {
                         return isset($model->type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] : '';
@@ -170,7 +170,7 @@ $net_amount = $model->net_amount;
             <?php
             $form = ActiveForm::begin([
                         'validateOnBlur' => false,
-                        'validateOnEnter' => TRUE,
+//                        'validateOnEnter' => TRUE,
                         'validateOnChange' => FALSE,
                         'enableClientValidation' => true,
                         'validateOnSubmit' => true,
@@ -183,7 +183,7 @@ $net_amount = $model->net_amount;
                     </div>
                     <div class="clearfix"></div>
                     <div class="col-sm-12">
-                        <?= $form->field($model, 'final_amount')->textInput(['disabled' => TRUE]) ?>
+                        <?= $form->field($model, 'final_amount')->textInput(['disabled' => TRUE, 'class' => 'form-control final_amount_cal']) ?>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -204,16 +204,15 @@ $net_amount = $model->net_amount;
 </div>
 
 <?php
-$script = " $('#tbltransporterpayment-adjust_amount').on('change',function(){            
+$script = "
+    $('#tblpartypayment-adjust_amount').on('change',function(){
         var net = " . $net_amount . ";
-        var adjust = $('#tbltransporterpayment-adjust_amount').val();
-         adjust = parseFloat(adjust);
-         net = parseFloat(net);
+        var adjust = $('#tblpartypayment-adjust_amount').val();
+        adjust = parseFloat(adjust);
+        net = parseFloat(net);
         var final_amount =  net + adjust;
-       $('#tbltransporterpayment-final_amount').val(parseFloat(final_amount));
-       });";
-
-
-
-$this->registerJs($script, View::POS_END, 'payment-adjust-script');
+       $('#tblpartypayment-final_amount').val(parseFloat(final_amount));
+       $('.final_amount_cal').val(parseFloat(final_amount));
+    });";
+$this->registerJs($script, View::POS_END, 'party-payment-adjust-script');
 ?>

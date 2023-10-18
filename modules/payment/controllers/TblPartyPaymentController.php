@@ -14,30 +14,31 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblPartyPaymentHeadDetailSearch;
+use app\modules\payment\models\TblPartyPaymentHistory;
+use app\modules\payment\models\TblPartyPaymentHeadDetail;
 
 class TblPartyPaymentController extends ChildController {
-    public $freeAccessActions = [];
-    
-    public function actionIndex() {
-        $searchModel = new TblPartyPaymentDetailSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+    public $freeAccessActions = [];
+
+    public function actionIndex() {
+        $searchModel = new TblPartyPaymentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     public function actionView($id) {
-        $searchModel = new TblBonusPaymentSearch();
-        $searchModel->bonus_payment_summary_code = $id;
+        $searchModel = new TblPartyPaymentSearch();
+        $searchModel->party_payment_code = $id;
         $searchModel->grid_filter = FALSE;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $headDataProvider = new ActiveDataProvider([
-            'query' => TblBonusPaymentSummaryHead::find()->where(['bonus_payment_summary_code' => $id]),
+            'query' => TblPartyPaymentHeadDetail::find()->where(['party_payment_code' => $id]),
             'pagination' => FALSE,
         ]);
-
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
@@ -45,14 +46,11 @@ class TblPartyPaymentController extends ChildController {
                     'headDataProvider' => $headDataProvider
         ]);
     }
-    
+
     public function actionCreate() {
         $model = new TblPartyPayment();
         $model->scenario = 'process';
         if ($model->load(Yii::$app->request->post())) {
-//            echo "<pre>";
-//            print_r($model);
-//            die;
             if ($model->validate()) {
                 $model->from_date = date('Y-m-d', strtotime($model->from_date));
                 $model->to_date = date('Y-m-d', strtotime($model->to_date));
@@ -73,7 +71,7 @@ class TblPartyPaymentController extends ChildController {
                         $msg = Yii::t('app', $msg);
                     } else {
                         $result = 'success';
-                        $queryParam['reGenerate'] = 1;
+//                        $queryParam['reGenerate'] = 1;
                     }
                 } else {
                     $result = 'displayPopup';
@@ -92,7 +90,7 @@ class TblPartyPaymentController extends ChildController {
                     'model' => $model,
         ]);
     }
-    
+
     public function actionProcessPayment($reGenerate = 0) {
         if (Yii::$app->request->get()) {
             $model = new TblPartyPayment();
@@ -100,104 +98,36 @@ class TblPartyPaymentController extends ChildController {
             if ($reGenerate == 1) {
                 $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
                 $data = [];
-//                $data['union_code'] = $model->union_code;
                 $data['payment_type'] = $model->payment_type;
                 $data['party_master_code'] = $model->party_master_code;
                 $data['from_date'] = $model->from_date;
                 $data['to_date'] = $model->to_date;
-//                $data['user_code'] = $user;
                 Yii::$app->ClientPaymentConfig->processPayment('party_payment', $data);
             }
-            return $this->redirect(['payment-adjust', 'TblBonusPaymentSummary' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'payment_type' => $model->payment_type, 'party_master_code' => $model->party_master_code, 'union_code' => $model->union_code]]);
+            return $this->redirect(['payment-adjust', 'TblPartyPayment' => ['from_date' => $model->from_date, 'to_date' => $model->to_date, 'payment_type' => $model->payment_type, 'party_master_code' => $model->party_master_code, 'union_code' => $model->union_code]]);
         }
     }
-    
-    public function actionPaymentAdjust1() {
-        $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
-        $model = new TblPartyPayment();
-        $model->load(Yii::$app->request->get());
-        if (Yii::$app->request->post()) {
-            $postData = Yii::$app->request->post();
-            $model->load($postData);
-            $processFlag = !empty($postData['process_lock_flag']) ? $postData['process_lock_flag'] : 'processed';
-            $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-            $updated_at = date('Y-m-d H:i:s');
-            $update_data = ['status' => $processFlag, 'updated_at' => $updated_at, 'updated_by' => $user];
-            $status = ['generated', 'processed'];
-            $updated_on = [
-                'from_date' => $model->from_date,
-                'to_date' => $model->to_date,
-                'payment_type' => $model->payment_type,
-                'party_master_code' => $model->party_master_code,
-                'union_code' => $model->union_code,
-                'status' => $status
-            ];
-            TblBonusPaymentSummary::updateAll($update_data, $updated_on);
-            $bmc_in = "'" . implode("','", $model->bmc_code) . "'";
-            $status_in = "'" . implode("','", $status) . "'";
-            Yii::$app->db->createCommand("update bp set bp.status = :status, bp.updated_at = :updated_at, bp.updated_by=:updated_by from tbl_party_payment bp
-            inner join tbl_party_payment ps on ps.party_payment_code = bp.party_payment_code where 
-            ps.from_date = :from_date and 
-            ps.to_date = :to_date and
-//            ps.bmc_code in ($bmc_in) and
-            ps.payment_type = :payment_type and
-            ps.party_master_code = :party_master_code and
-            ps.union_code = :union_code and
-            bp.status in ($status_in)")
-                    ->bindValue(':status', $processFlag)
-                    ->bindValue(':updated_at', $updated_at)
-                    ->bindValue(':updated_by', $user)
-                    ->bindValue(':from_date', $model->from_date)
-                    ->bindValue(':to_date', $model->to_date)
-                    ->bindValue(':payment_type', $model->payment_type)
-                    ->bindValue(':party_master_code', $model->party_master_code)
-                    ->bindValue(':union_code', $model->union_code)
-                    ->execute();
-            Yii::$app->response->format = trim(Response::FORMAT_JSON);
-            $msg = $model->payment_type . ' Payment of ' . Yii::$app->general->getforeignkey($model->partyMaster, 'party_name') . ' ' . $processFlag . ' succesfully';
-            Yii::$app->getSession()->setFlash('success', [
-                'type' => 'success',
-                'message' => $msg,
-            ]);
-            $url = Url::to(['index']);
-            return ['status' => 'success', 'url' => $url, 'msg' => $msg];
-        }
-        $query = $model->getRecords();
-        $title = $model->payment_type . ' Party Payment Process : Step 2';
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => FALSE,
-        ]);
-        return $this->render('payment_adjust', [
-                    'model' => $model,
-                    'dataProvider' => $dataProvider,
-                    'title' => $title,
-        ]);
-    }
+
     public function actionPaymentAdjust() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblPartyPayment();
         $model->load(Yii::$app->request->get());
-//        echo "<pre>";
-//        print_r($model);
-//        die;
         $model = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'party_master_code' => $model->party_master_code])->one();
         if (!empty($model)) {
-//            $model->vendor_code = $model->transporterCode->vendor_code;
             if (Yii::$app->request->post()) {
-                if (!empty(Yii::$app->request->post()['TblTPartyPayment']['adjust_amount'])) {
+                if (!empty(Yii::$app->request->post()['TblPartyPayment']['adjust_amount'])) {
                     $historyModel = new TblPartyPaymentHistory();
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
                     $final_amount = $model->net_amount;
                     $model->load(Yii::$app->request->post());
                     $model->final_amount = $final_amount + $model->adjust_amount;
-                    $transaction = $this->generalModel->saveTransaction([$model, $historyModel], ['Payment of ' . $model->partyMatser->party_name . '(' . $model->party_master_code . ')' . ' adjusted succesfully', 'info']);
+                    $transaction = $this->generalModel->saveTransaction([$model, $historyModel], ['Payment of ' . $model->partyMaster->party_name . '(' . $model->party_master_code . ')' . ' adjusted succesfully', 'info']);
                     if ($transaction == 'customRedirect') {
                         return $this->redirect(['index']);
                     }
                 } else {
                     Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                        'message' => 'Payment of ' . $model->partyMatser->party_name . '(' . $model->party_master_code . ')' . ' adjusted succesfully']);
+                        'message' => 'Payment of ' . $model->partyMaster->party_name . '(' . $model->party_master_code . ')' . ' adjusted succesfully']);
                     return $this->redirect(['index']);
                 }
             }
@@ -207,8 +137,8 @@ class TblPartyPaymentController extends ChildController {
 
             $searchModelHead = new TblPartyPaymentHeadDetailSearch();
             $searchModelHead->party_payment_code = $model->party_payment_code;
-            $dataProviderHead = $searchModelHead->search(Yii::$app->request->queryParams);
-            return $this->render('payment-adjust-secondary', [
+            $dataProviderHead = $searchModelHead->search([]);
+            return $this->render('payment_adjust', [
                         'model' => $model,
                         'vehicleDetail' => $dataProvider,
                         'headDetail' => $dataProviderHead,
@@ -219,6 +149,106 @@ class TblPartyPaymentController extends ChildController {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
                 'message' => 'Receipt Detail not found.']);
             return $this->redirect(['create']);
+        }
+    }
+
+    public function actionPaymentDisburse() {
+        $model = new TblPartyPayment();
+        $model->scenario = 'disburse';
+        $model->load(Yii::$app->request->get());
+        $searchModel = new TblPartyPaymentSearch();
+        $searchModel->scenario = 'disburse';        
+        $searchModel->attributes = $model->attributes;
+        $searchModel->status = 'locked';
+        $dataProvider = $searchModel->disbursesearch();
+        return $this->render('payment_disburse', [
+                    'model' => $model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'title' => 'Party Payment Disburse',
+        ]);
+    }
+
+    public function actionProcessPaymentDisburse() {
+        if (Yii::$app->request->post()) {
+            $model = new TblPartyPayment();
+            $model->load(Yii::$app->request->post());
+            if (!empty($model->payment_cycle_code)) {
+                $date_time = explode('#', $model->payment_cycle_code);
+                $model->from_datetime = $date_time[0];
+                $model->to_datetime = $date_time[1];
+                if (Yii::$app->request->post('flag') == 'disburse') {
+                    $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                    $data = [];
+                    $data['union_code'] = $model->union_code;
+                    $data['bmc_code'] = ',' . implode(',', $model->bmc_code) . ',';
+                    $data['payment_type'] = $model->payment_type;
+                    $data['customer_type'] = $model->customer_type;
+                    $data['from_datetime'] = $model->from_datetime;
+                    $data['to_datetime'] = $model->to_datetime;
+                    $data['user_code'] = $user;
+                    Yii::$app->ClientPaymentConfig->processPayment('bonus_payment_disburse', $data);
+                    $msg_content = Yii::t('app', 'Bonus Payment Successfully Disbursed.');
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                        'message' => $msg_content]);
+                    $this->redirect(['index']);
+                } else {
+                    if ($this->exportBonusCSV($model)) {
+                        return $this->redirect(\yii\helpers\Url::previous());
+                    }
+                }
+            }
+        }
+    }
+    
+    public function actionBillHead() {
+        $code = Yii::$app->request->post()['party_payment_code'];
+        $model = TblPartyPayment::findOne($code);
+        $model->grid_filter = FALSE;
+        $dataProvider = new ActiveDataProvider([
+            'query' => TblPartyPaymentHeadDetail::find()->where(['party_payment_code' => $code]),
+            'pagination' => FALSE,
+        ]);
+        return $this->renderAjax('bill_head_view', [
+                    'dataProvider' => $dataProvider,
+                    'model' => $model
+        ]);
+    }
+    
+    public function actionPartyBillHeadDetail() {
+        $code = Yii::$app->request->get()['code'];
+        $model = $this->findModel($code);
+        $model->grid_filter = FALSE;
+        $dataProvider = new ActiveDataProvider([
+            'query' => TblPartyPaymentHeadDetail::find()->where(['party_payment_code' => $code]),
+            'pagination' => FALSE,
+        ]);
+        return $this->renderAjax('bill_head_view', [
+                    'dataProvider' => $dataProvider,
+                    'model' => $model
+        ]);
+    }
+    
+    public function actionPaymentDetail($id) {
+        $searchModel = new TblPartyPaymentDetailSearch();
+        $searchModel->party_payment_code = $id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $summary_data = $searchModel->partyPaymentCode;
+        $title = $summary_data->payment_type . ' Payment';
+        $title .= Yii::$app->general->getforeignkey($summary_data->partyMaster, 'party_name') . ' > ' .
+                (Yii::$app->controls->view_date($summary_data->from_date) . ' to ' . Yii::$app->controls->view_date($summary_data->to_date) ) . ')';
+        return $this->render('payment_detail', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'title' => $title
+        ]);
+    }
+    
+    protected function findModel($id) {
+        if (($model = TblPartyPayment::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 }

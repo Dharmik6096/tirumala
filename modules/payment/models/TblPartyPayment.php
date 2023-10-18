@@ -4,6 +4,7 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\tankermovement\models\TblPartyMaster;
+use app\modules\organisation\models\TblUnions; 
 
 class TblPartyPayment extends \app\models\ChildModel {
 
@@ -28,7 +29,7 @@ class TblPartyPayment extends \app\models\ChildModel {
             [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['payment_type', 'party_master_code', 'from_date', 'to_date'], 'required', 'on' => 'process'],
+            [['payment_type', 'party_master_code', 'from_date', 'to_date'], 'required', 'on' => ['process']],
             [['from_date'], 'validateDate', 'on' => 'process'],
         ];
     }
@@ -111,6 +112,10 @@ class TblPartyPayment extends \app\models\ChildModel {
     }
     
     public function getPartyMaster() {
-        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'party_master_code', 'union_code' => 'union_code']);
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'party_master_code']);
+    }
+    
+    public function getUnionCode() {
+        return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 }

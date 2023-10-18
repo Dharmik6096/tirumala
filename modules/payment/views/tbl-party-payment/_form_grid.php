@@ -4,63 +4,50 @@ use kartik\grid\GridView;
 ?>
 
 <?php
-
-$attribute = [
-        ['attribute' => 'union_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->unionCode, 'union_name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'mcc_plant_code', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-        }, 'vAlign' => 'middle', 'filter' => false, 'visible' => false],
-        ['attribute' => 'bmc_code',
-        'label' => Yii::t('app', 'BMC Code'),
-        'vAlign' => 'middle', 'filter' => false],
-        ['attribute' => 'bmc_name',
-        'label' => Yii::t('app', 'BMC Name'),
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-        }, 'vAlign' => 'middle', 'filter' => false],
+    $attribute = [
+//        ['attribute' => 'union_code'],
+        ['attribute' => 'party_master_code', 'label' => Yii::t('app', 'Code')],
+        ['attribute' => 'party_master_code', 'label' => Yii::t('app', 'Party'), 'value' => function($model){
+//                echo "<pre>";
+//                print_r($model);
+//                die;
+            return Yii::$app->general->getforeignkey($model->partyMaster, 'party_name');
+        }],
         ['attribute' => 'payment_type'],
-        ['attribute' => 'customer_type', 'value' => 'customer_type', 'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-        },],
-        ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
-        ['attribute' => 'customer_ex_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type, TRUE);
-        }],
-        ['attribute' => 'customer_name', 'label' => Yii::t('app', 'Name'), 'value' => function($model) {
-            return Yii::$app->general->getCustomer($model, $model->customer_type);
-        }],
-        ['attribute' => 'from_datetime', 'label' => Yii::t('app', 'Period'),
-        'value' => function($model) {
-            return Yii::$app->controls->view_date($model->from_datetime) . ' to ' . Yii::$app->controls->view_date($model->to_datetime);
-        }, 'filter' => false],
-        [
-        'attribute' => 'payment_date',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
-        'value' => function($model) {
-            return Yii::$app->controls->view_date($model->payment_date);
-        }],
-        ['attribute' => 'kg_fat'],
-        ['attribute' => 'kg_snf'],
-        ['attribute' => 'qty'],
-        ['attribute' => 'amount'],
-        ['attribute' => 'addition'],
-        ['attribute' => 'deduction'],
-        ['attribute' => 'net_payable'],
-        ['attribute' => 'status', 'value' => function($model) {
-            return $model->status == 'sent' ? 'disbursed' : $model->status;
-        }]
-];
-
-
+        ['attribute' => 'from_date', 'label' => Yii::t('app', 'Period'),
+            'value' => function ($model) {
+                return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
+            }, 'filter' => false],
+//            ['attribute' => 'payment_count'],
+        ['attribute' => 'disp_kg_fat'],
+        ['attribute' => 'disp_kg_snf'],
+        ['attribute' => 'disp_qty'],
+        ['attribute' => 'rec_kg_fat'],
+        ['attribute' => 'rec_kg_snf'],
+        ['attribute' => 'rec_qty'],
+        ['attribute' => 'rd_kg_fat_diff'],
+        ['attribute' => 'rd_kg_snf_diff'],
+        ['attribute' => 'rd_qty_diff'],
+        ['attribute' => 'no_of_days'],
+        ['attribute' => 'total_qty'],
+        ['attribute' => 'avg_fat'],
+        ['attribute' => 'avg_snf'],
+        ['attribute' => 'avg_rate'],
+        ['attribute' => 'total_amount'],
+        ['attribute' => 'total_addition'],
+        ['attribute' => 'total_deduction'],
+        ['attribute' => 'final_amount'],
+        ['attribute' => 'net_amount'],
+        ['attribute' => 'adjust_remark'],
+        ['attribute' => 'bank_name'],
+        ['attribute' => 'bank_code'],
+        ['attribute' => 'branch_name'],
+        ['attribute' => 'branch_code'],
+        ['attribute' => 'ifsc'],
+        ['attribute' => 'bank_account_no'],
+        ['attribute' => 'beneficiary_name'],
+        ['attribute' => 'status'],
+    ];
 $grid_option = [
     'id' => 'party-payment-list-grid',
     'attributes' => $attribute,
