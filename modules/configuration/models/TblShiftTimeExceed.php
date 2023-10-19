@@ -63,10 +63,15 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
                 [['shift_time_exceed_code'], 'required'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'org_type', 'date_time_of_collection', 'standard_time', 'exceed_time', 'status_datetime', 'created_at', 'updated_at', 'shift_code', 'originating_type', 'status', 'created_by', 'updated_by', 'shift_time_exceed_code', 'org_code', 'remarks', 'status_remarks', 'status_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_approval_code'], 'safe'],
                 [['shift_time_exceed_code', 'org_type', 'org_code', 'date_time_of_collection', 'standard_time', 'exceed_time', 'shift_code'], 'required', 'on' => ['create_shift_time']],
-                [['plant_code', 'mcc_plant_code', 'bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                [['plant_code', 'mcc_plant_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return ($model->org_type == 'MCC' || $model->org_type == 'BMC' || $model->org_type == 'VLC');
                 }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblshifttimeexceed-org_type').val() == 'MCC' || $('#tblshifttimeexceed-org_type').val() == 'BMC' || $('#tblshifttimeexceed-org_type').val() == 'VLC');
+                }", 'on' => ['create_shift_time']],
+                [['bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'BMC' || $model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
+                      return ($('#tblshifttimeexceed-org_type').val() == 'BMC' || $('#tblshifttimeexceed-org_type').val() == 'VLC');
                 }", 'on' => ['create_shift_time']],
                 [['dcs_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
                     return ($model->org_type == 'VLC');
