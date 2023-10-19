@@ -1805,7 +1805,7 @@ class DropDown extends Component
             'complain_status' => [
                 'name' => 'complain_status',
                 'prompt' => Yii::t('app', 'Select Complain Status'),
-                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSE' => Yii::t('app', 'CLOSE'), 'RESOLVED' => Yii::t('app', 'RESOLVED')],
+                'data' => ['CREATED' => Yii::t('app', 'CREATED'), 'INPROGRESS' => Yii::t('app', 'INPROGRESS'), 'CLOSED' => Yii::t('app', 'CLOSED'), 'RESOLVED' => Yii::t('app', 'RESOLVED')],
             ],
             'resolved_status' => [
                 'name' => 'resolved_status',
