@@ -85,6 +85,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $modelSave = [];
         $txn_model = new TblMilkVehicleEntryTransaction();
+        $bmc_user = count(explode(',', $_SESSION['BMC'])) == 1 ? 'BMC' : '';
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
@@ -99,6 +100,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
             }
             if ($this->model->validate() && $txn_model->validate()) {
                 $this->model->vehicle_entry_date = $this->model->receipt_datetime;
+                $this->model->receipt_datetime = date('Y-m-d', strtotime($this->model->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->model->receipt_shift_code);
                 if (!empty($masterPost['milk_vehicle_entry_code'])) {
                     $this->model->load(Yii::$app->request->post());
                 } else {
@@ -192,6 +194,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         return $this->render('create', [
                     'model' => $this->model, 'txn_model' => $txn_model,
                     'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
+                    'bmc_user' => $bmc_user,
         ]);
     }
 

@@ -75,14 +75,15 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             [['vehicle_code'], 'validateTrip', 'skipOnError' => true],
             [['receipt_at'], 'AddBmcCode'],
             [['tanker_no'], 'required', 'when' => function ($model) {
-                    return $model->dispatch_from == 'PARTY' && $model->receipt_at == 'PARTY';
+                    return $model->dispatch_from == 'PARTY';
                 }],
             [['vehicle_code'], 'required', 'when' => function ($model) {
-                    return !($model->dispatch_from == 'PARTY' && $model->receipt_at == 'PARTY');
+                    return !($model->dispatch_from == 'PARTY');
                 }],
             [['tanker_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false,],
+            [['receipt_datetime'], 'CheckDateValidation', 'skipOnError' => true],
         ];
     }
 
@@ -240,14 +241,13 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             ($this->dispatch_from == 'BMC' && $this->receipt_at == 'PARTY'),
         ];
         if (in_array(true, $requiredConditions)) {
-
             if (empty($this->trip_code)) {
                 $this->addError($attribute, 'Trip Code required for selected Source & Destination .');
             }
         }
     }
 
-    public function AddBmcCode($attribute) {
+    public function AddBmcCode($attribute, $params) {
         if (!empty($this->receipt_at_code)) {
             if ($this->receipt_at == 'BMC') {
                 $Plant_code = TblPlant::find()
@@ -270,10 +270,21 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             } elseif ($this->receipt_at == 'PLANT') {
                 $this->plant_code = $this->receipt_at_code;
             }
-        } else
-        if (empty($this->receipt_at_code)) {
-            $this->addError($attribute, 'cannot be blank.');
         }
+    }
+
+    public function CheckDateValidation($attribute, $params) {
+        $this->receipt_datetime = date('Y-m-d', strtotime($this->receipt_datetime)) . ' ' . \Yii::$app->general->getshift($this->receipt_shift_code) . '.000000';
+        $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
+        if (!empty($stock_date) && $this->receipt_at == 'BMC') {
+            $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
+            $dispatch_date .= '.000000';
+            if ($this->receipt_datetime < $dispatch_date) {
+                $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be grater than last stock entry.'));
+                return FALSE;
+            }
+        }
+        return TRUE;
     }
 
 }
