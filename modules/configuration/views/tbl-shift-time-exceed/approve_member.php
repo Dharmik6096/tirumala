@@ -52,7 +52,8 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
-                            'attribute' => 'org_type',
+                            'attribute' => 'shift_time_exceed_code',
+                            'value' => $member_provisional->shift_time_exceed_code,
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -60,8 +61,31 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                     [
                     'columns' => [
                             [
-                            'attribute' => 'shift_time_exceed_code',
-                            'value' => $member_provisional->shift_time_exceed_code,
+                            'attribute' => 'org_type',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'org_code',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'standard_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                            [
+                            'attribute' => 'exceed_time',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                    [
+                    'columns' => [
+                            [
+                            'attribute' => 'date_time_of_collection',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                             [
@@ -74,61 +98,32 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                     [
                     'columns' => [
                             [
-                            'attribute' => 'org_code',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                            [
-                            'attribute' => 'standard_time',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'exceed_time',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                            [
                             'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'status',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
                             'attribute' => 'status_datetime',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                    ],
-                ],
-                    [
-                    'columns' => [
-                            [
-                            'attribute' => 'date_time_of_collection',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                            [
-                            'attribute' => 'status_by',
-                            'valueColOptions' => ['style' => 'width:30%']
-                        ],
-                    ],
-                ],
-                    [
-                    'columns' => [
                             [
                             'attribute' => 'status_remarks',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
+                    ],
+                ],
+                    [
+                    'columns' => [
                             [
-                            'attribute' => 'created_at',
-                            'value' => Yii::$app->controls->view_date($member_provisional->created_at),
-                            'valueColOptions' => ['style' => 'width:30%']
+                            'attribute' => 'status_by',
+                            'valueColOptions' => ['style' => 'width:80%']
                         ],
                     ],
                 ],

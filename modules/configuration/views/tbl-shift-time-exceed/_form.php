@@ -23,19 +23,19 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('org_type_exceed', $model, $form, '', $model->getAttributeLabel('org_type'), false, 'org_type', false, false, false); ?>
     </div>
     <div class="col-sm-2">
-        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', $model->getAttributeLabel('union_code'), false); ?>
+        <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', Yii::t('app', 'Union'), false); ?>
     </div>
     <div class="col-sm-2 default_hide">
-        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblshifttimeexceed-union_code', 'plant_code', $model->getAttributeLabel('plant'), FALSE, ''); ?>
+        <?= Yii::$app->dropdown->union_plant($model, $form, 'tblshifttimeexceed-union_code', 'plant_code', Yii::t('app', 'Plant'), FALSE, ''); ?>
     </div>
     <div class="col-sm-2 default_hide">
-        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblshifttimeexceed-plant_code', 'mcc_plant_code', $model->getAttributeLabel('MCC'), false, '', false); ?>
+        <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblshifttimeexceed-plant_code', 'mcc_plant_code', Yii::t('app', 'MCC'), false, '', false); ?>
     </div>
     <div class="col-sm-2 default_hide">
-        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblshifttimeexceed-mcc_plant_code', 'bmc_code', $model->getAttributeLabel('BMC'), false, '', '', false); ?>
+        <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblshifttimeexceed-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), false, '', '', false); ?>
     </div>
     <div class="col-sm-2 default_hide">
-        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblshifttimeexceed-bmc_code', 'dcs_code', $model->getAttributeLabel('DCS'), false, '', false); ?>
+        <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblshifttimeexceed-bmc_code', 'dcs_code', Yii::t('app', 'DCS'), false, '', false); ?>
     </div>
     <div class="col-sm-2">
         <?php

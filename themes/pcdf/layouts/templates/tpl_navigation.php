@@ -169,7 +169,20 @@ echo GhostMenu::widget([
                     ]
                 ],
                     ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
-                    ['label' => 'AMCS - Shift Time Exceed Provision', 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
+                    [
+                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'AMCS - Shift Time Exceed') . '<b class="caret"></b></a>',
+                    'items' => [
+                            [
+                            'options' => ['class' => 'dropdown-submenu'],
+                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Approval Data') . '<b class="caret"></b></a>',
+                            'items' => [
+                                    ['label' => Yii::t('app', 'AMCS - Shift Time Exceed Approval'), 'url' => ['/configuration/tbl-shift-time-exceed/pending-approval']],
+                            ]
+                        ],
+                            ['label' => Yii::t('app', 'AMCS - Shift Time Exceed'), 'url' => ['/configuration/tbl-shift-time-exceed/index'], 'active' => ($cntrl == 'tbl-shift-time-exceed')],
+                    ]
+                ],
             ],
         ],
             [

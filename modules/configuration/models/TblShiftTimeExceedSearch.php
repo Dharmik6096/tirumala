@@ -51,7 +51,7 @@ class TblShiftTimeExceedSearch extends TblShiftTimeExceed {
 
         if ($pending_approval) {
             $approval = new TblProcessApproval();
-            $subQuery = $approval->getApproveLavel('amcs_shift_time_exceed');
+            $subQuery = $approval->getApproveLavel('tbl_shift_time_exceed');
             $query->innerJoin(['ap' => $subQuery], 'convert(varchar(max),tbl_shift_time_exceed.shift_time_exceed_code) = convert(varchar(max),ap.process_code)');
             $query->addSelect(['tbl_shift_time_exceed.*', 'ap.process_approval_code as process_approval_code']);
             $this->status = ['Register', 'Inprogress'];

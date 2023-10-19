@@ -70,7 +70,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
             }
             if ($this->model->validate()) {
                 $modelStages = new TblApprovalStagesDetail();
-                $modelStages->setApprovalData($this->model->union_code, 'amcs_shift_time_exceed', $this->model->shift_time_exceed_code, $save_model, $approval_stages);
+                $modelStages->setApprovalData($this->model->union_code, 'tbl_shift_time_exceed', $this->model->shift_time_exceed_code, $save_model, $approval_stages);
                 $this->model->status = empty($approval_stages) ? 'Approve' : 'Register';
                 $save_model[] = $this->model;
                 $transaction = $this->generalModel->saveTransaction($save_model, ['Shift Time Exceed', 'create']);
@@ -166,20 +166,22 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
                     $status = 'Approve';
                 }
                 $memberModel = $this->findModel($model->process_code);
+                $exceed_time = !empty(Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time']) ? Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time'] : $memberModel->exceed_time;
+                $model->remarks = $model->remarks . '_' . $memberModel->exceed_time . '_' . $exceed_time;
                 $historyModel = new TblShiftTimeExceedHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
                 $model_save[] = $historyModel;
-                $exceed_time = !empty(Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time']) ? Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time'] : $memberModel->exceed_time;
                 $memberModel->status = $status;
                 $memberModel->status_datetime = date('Y-m-d H:i:s');
                 $memberModel->status_by = Yii::$app->session['UserCode'];
-                $memberModel->status_remarks = $model->remarks . '_' . $memberModel->exceed_time . '_' . $exceed_time;
+                $memberModel->status_remarks = $model->remarks;
                 $memberModel->exceed_time = $exceed_time;
                 $model_save[] = $memberModel;
+                $model_save[] = $model;
                 $transaction = $this->generalModel->saveTransaction($model_save, ['Shift Time Exceed Approval', 'edit']);
 
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['index']);
+                    return $this->redirect(['pending-approval']);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
