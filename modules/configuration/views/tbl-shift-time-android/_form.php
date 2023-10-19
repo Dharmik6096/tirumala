@@ -40,19 +40,19 @@ $form = ActiveForm::begin([
             </div>
         <?php } else { ?>
             <div class="col-sm-2">
-                <?= $form->field($model, 'plant_code')->textInput(['value' => isset($model->plantCode) ? $model->plantCode['name'] : 'N/A', 'readonly' => $readonly,])->label('PLANT') ?>
+                <?= $form->field($model, 'plant_code')->textInput(['value' => isset($model->plantCode) ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : 'N/A', 'readonly' => $readonly,])->label('PLANT') ?>
             </div>
             <?php if ($model->org_type == 'BMC') { ?>
                 <div class="col-sm-2">
-                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => isset($model->mccName) ? $model->mccName['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
+                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => isset($model->mccName) ? Yii::$app->general->getforeignkey($model->mccName, 'name') : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
                 </div>
                 <div class="col-sm-2">
-                    <?= $form->field($model, 'bmc_code')->textInput(['value' => isset($model->bmcCode) ? $model->bmcCode['bmc_name'] : 'N/A', 'readonly' => $readonly,])->label('BMC') ?>
+                    <?= $form->field($model, 'bmc_code')->textInput(['value' => isset($model->bmcCode) ? Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') : 'N/A', 'readonly' => $readonly,])->label('BMC') ?>
                 </div>
             <?php } ?>
             <?php if ($model->org_type == 'MCC') { ?>
                 <div class="col-sm-2">
-                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => ($model->org_type === 'MCC' && isset($model->mccCode)) ? $model->mccCode['name'] : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
+                    <?= $form->field($model, 'mcc_plant_codes')->textInput(['value' => ($model->org_type === 'MCC' && isset($model->mccCode)) ? Yii::$app->general->getforeignkey($model->mccCode, 'name') : 'N/A', 'readonly' => $readonly,])->label('MCC') ?>
                 </div>
             <?php } ?>
         <?php } ?>
