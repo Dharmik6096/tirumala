@@ -4,6 +4,9 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\organisation\models\TblDcsBmc;
+use app\modules\organisation\models\TblMccPlant;
+use app\modules\organisation\models\TblPlant;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 class TblPartyPaymentDetail extends \app\models\ChildModel {
 
@@ -83,8 +86,36 @@ class TblPartyPaymentDetail extends \app\models\ChildModel {
     public function getBmcCodeDest() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_dest']);
     }
+    
+    public function getMccPlantCodeDest() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_dest']);
+    }
+
+    public function getPlantCodeDest() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'to_dest']);
+    }
+    
+    public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'to_dest']);
+    }
 
     public function getPartyPaymentCode() {
         return $this->hasOne(TblPartyPayment::className(), ['party_payment_code' => 'party_payment_code']);
+    }
+    
+    public function getBmcCodeSource() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'from_dest']);
+    }
+
+    public function getMccPlantCodeSource() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'from_dest']);
+    }
+
+    public function getPlantCodeSource() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'from_dest']);
+    }
+
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'from_dest']);
     }
 }

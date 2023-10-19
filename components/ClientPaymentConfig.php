@@ -220,6 +220,10 @@ class ClientPaymentConfig extends Component {
                 'party_payment' => [
                     'param' => 'payment_type,party_master_code,from_date,to_date',
                     'sp_name' => 'process_party_payment_vrs_newasa',
+                ],
+                'party_payment_disburse' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'disburse_party_payment',
                 ]
             ],
             'ANIG' => [

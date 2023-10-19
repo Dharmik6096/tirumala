@@ -111,15 +111,28 @@ class TblPartyPaymentController extends ChildController {
     public function actionPaymentAdjust() {
         $this->layout = "@app/themes/pcdf/layouts/paymentLayout.php";
         $model = new TblPartyPayment();
-        $model->load(Yii::$app->request->get());
-        $model = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'party_master_code' => $model->party_master_code])->one();
+        $req = Yii::$app->request;
+        if ($req->isAjax) {
+            $requestData = Yii::$app->request->post();
+        } else {
+            $requestData = Yii::$app->request->get();
+        }
+        $model->load($requestData);
+        $model = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'party_master_code' => $model->party_master_code, 'payment_type' => $model->payment_type]);
+        $status = ['generated', 'processed'];
+        if ($req->isAjax) {
+            $model = $model->andWhere(['status' => $status]);
+        }
+        $model = $model->one();
         if (!empty($model)) {
             if (Yii::$app->request->post()) {
                 if (!empty(Yii::$app->request->post()['TblPartyPayment']['adjust_amount'])) {
                     $historyModel = new TblPartyPaymentHistory();
                     Yii::$app->operation->history($model, $historyModel, UPDATE);
+                    $model->load($requestData);
+                    $processFlag = !empty($requestData['process_lock_flag']) ? $requestData['process_lock_flag'] : 'processed';
+                    $model->status = $processFlag;
                     $final_amount = $model->net_amount;
-                    $model->load(Yii::$app->request->post());
                     $model->final_amount = $final_amount + $model->adjust_amount;
                     $transaction = $this->generalModel->saveTransaction([$model, $historyModel], ['Payment of ' . $model->partyMaster->party_name . '(' . $model->party_master_code . ')' . ' adjusted succesfully', 'info']);
                     if ($transaction == 'customRedirect') {
@@ -140,7 +153,7 @@ class TblPartyPaymentController extends ChildController {
             $dataProviderHead = $searchModelHead->search([]);
             return $this->render('payment_adjust', [
                         'model' => $model,
-                        'vehicleDetail' => $dataProvider,
+                        'dataProvider' => $dataProvider,
                         'headDetail' => $dataProviderHead,
                         'searchModel' => $searchModel,
                         'searchModelHead' => $searchModelHead
@@ -154,11 +167,10 @@ class TblPartyPaymentController extends ChildController {
 
     public function actionPaymentDisburse() {
         $model = new TblPartyPayment();
-        $model->scenario = 'disburse';
-        $model->load(Yii::$app->request->get());
         $searchModel = new TblPartyPaymentSearch();
-        $searchModel->scenario = 'disburse';        
-        $searchModel->attributes = $model->attributes;
+        $searchModel->scenario = 'disburse';
+        $searchModel->load(Yii::$app->request->queryParams);
+        $model->attributes = $searchModel->attributes;
         $searchModel->status = 'locked';
         $dataProvider = $searchModel->disbursesearch();
         return $this->render('payment_disburse', [
@@ -173,34 +185,26 @@ class TblPartyPaymentController extends ChildController {
         if (Yii::$app->request->post()) {
             $model = new TblPartyPayment();
             $model->load(Yii::$app->request->post());
-            if (!empty($model->payment_cycle_code)) {
-                $date_time = explode('#', $model->payment_cycle_code);
-                $model->from_datetime = $date_time[0];
-                $model->to_datetime = $date_time[1];
-                if (Yii::$app->request->post('flag') == 'disburse') {
-                    $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                    $data = [];
-                    $data['union_code'] = $model->union_code;
-                    $data['bmc_code'] = ',' . implode(',', $model->bmc_code) . ',';
-                    $data['payment_type'] = $model->payment_type;
-                    $data['customer_type'] = $model->customer_type;
-                    $data['from_datetime'] = $model->from_datetime;
-                    $data['to_datetime'] = $model->to_datetime;
-                    $data['user_code'] = $user;
-                    Yii::$app->ClientPaymentConfig->processPayment('bonus_payment_disburse', $data);
-                    $msg_content = Yii::t('app', 'Bonus Payment Successfully Disbursed.');
-                    Yii::$app->getSession()->setFlash('success', ['type' => 'success',
-                        'message' => $msg_content]);
-                    $this->redirect(['index']);
-                } else {
-                    if ($this->exportBonusCSV($model)) {
-                        return $this->redirect(\yii\helpers\Url::previous());
-                    }
+            if (Yii::$app->request->post('flag') == 'disburse') {
+                $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
+                $data = [];                
+                $data['payment_type'] = $model->payment_type;
+                $data['party_master_code'] = $model->party_master_code;
+                $data['from_date'] = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : date('Y-m-d');
+                $data['to_date'] = !empty($model->to_date) ? date('Y-m-d', strtotime($model->to_date)) : date('Y-m-d');
+                Yii::$app->ClientPaymentConfig->processPayment('party_payment_disburse', $data);
+                $msg_content = Yii::t('app', 'Party Payment Successfully Disbursed.');
+                Yii::$app->getSession()->setFlash('success', ['type' => 'success',
+                    'message' => $msg_content]);
+                $this->redirect(['index']);
+            } else {
+                if ($this->exportBonusCSV($model)) {
+                    return $this->redirect(\yii\helpers\Url::previous());
                 }
             }
         }
     }
-    
+
     public function actionBillHead() {
         $code = Yii::$app->request->post()['party_payment_code'];
         $model = TblPartyPayment::findOne($code);
@@ -214,7 +218,7 @@ class TblPartyPaymentController extends ChildController {
                     'model' => $model
         ]);
     }
-    
+
     public function actionPartyBillHeadDetail() {
         $code = Yii::$app->request->get()['code'];
         $model = $this->findModel($code);
@@ -228,7 +232,7 @@ class TblPartyPaymentController extends ChildController {
                     'model' => $model
         ]);
     }
-    
+
     public function actionPaymentDetail($id) {
         $searchModel = new TblPartyPaymentDetailSearch();
         $searchModel->party_payment_code = $id;
@@ -243,7 +247,7 @@ class TblPartyPaymentController extends ChildController {
                     'title' => $title
         ]);
     }
-    
+
     protected function findModel($id) {
         if (($model = TblPartyPayment::findOne($id)) !== null) {
             return $model;

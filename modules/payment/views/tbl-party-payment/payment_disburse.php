@@ -10,7 +10,7 @@ $this->title = $title;
         <?= $this->title; ?>           
     </div>
     <div class="panel-body">
-        <?= $this->render('_search', ['model' => $model]); ?>
+        <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
         <div class="clearfix"></div>
         <?php
         echo $this->render('_disburse_grid', ['searchModel' => $searchModel, 'model' => $model, 'dataProvider' => $dataProvider]);

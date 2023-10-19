@@ -8,14 +8,10 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = 'Party Payment Disburse';
 $action = Url::to(['process-payment-disburse']);
-//echo "<pre>";
-//print_r($model);
-//die;
-$fromDate = Yii::$app->controls->view_date($model->from_date);
-$toDate = Yii::$app->controls->view_date($model->to_date);
+$fromDate = Yii::$app->controls->view_date($searchModel->from_date);
+$toDate = Yii::$app->controls->view_date($searchModel->to_date);
 $message = Yii::t('app', 'Payment data will be Disbursed for ' . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
 $showButtons = (!empty($dataProvider->getModels())) ? TRUE : FALSE;
-//$showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) ? TRUE : FALSE;
 ?>
 <div class="" >
     <?php
@@ -26,9 +22,11 @@ $showButtons = (!empty($dataProvider->getModels())) ? TRUE : FALSE;
     ]);
     ?>
     <div class="grid-button-wrap" >
-        <?php //Html::activeHiddenInput($model, 'payment_cycle_code'); ?>
         <?= Html::activeHiddenInput($model, 'union_code'); ?>
         <?= Html::activeHiddenInput($model, 'payment_type'); ?>
+        <?= Html::activeHiddenInput($model, 'from_date'); ?>
+        <?= Html::activeHiddenInput($model, 'to_date'); ?>
+        <?= Html::activeHiddenInput($model, 'party_master_code'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
     <?php
@@ -41,12 +39,8 @@ $showButtons = (!empty($dataProvider->getModels())) ? TRUE : FALSE;
         ['attribute' => 'payment_type'],
         ['attribute' => 'from_date', 'label' => Yii::t('app', 'Period'),
             'value' => function ($model) {
-//                echo "<pre>";
-//                print_r($model);
-//                die;
                 return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
             }, 'filter' => false],
-//            ['attribute' => 'payment_count'],
         ['attribute' => 'disp_kg_fat'],
         ['attribute' => 'disp_kg_snf'],
         ['attribute' => 'disp_qty'],
@@ -107,63 +101,64 @@ $showButtons = (!empty($dataProvider->getModels())) ? TRUE : FALSE;
 </div>
 <div id='bill_head_view'></div>
 
-    <?php
-    $script = "$('.kv-panel-before').hide();";
-    $script .= "$(document).ready(function(){
-    $(document).on('click','.view-head',function(e){
-    var id= $(this).attr('data-val');
-  ViewBillHead(id);
-    });
-    function ViewBillHead(code){
-        if(code != ''){         
-        $.ajax({
-                type: 'get',
-                url: '" . Url::to(['/payment/tbl-party-payment/party-bill-head-detail']) . "',
-                data: {'code' : code},
-                beforeSend:function(data) {
-                $('#loadercontent').show();
-                $('#pageloader').show();
-                },
-                success: function(data) {
-                  $('#bill_head_view').html(data);
-                   $('#BillHeadModal').modal('toggle');              
-                   $('#loadercontent').hide();
-                   $('#pageloader').hide();                                                                  
-                },
-                error: function(data) {  
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
-                }
-            });
-        }
-    }
-$('.disburse-process').on('click',function(){
-        var flagName = $(this).prop('name');
-        $('#flag').val(flagName);
-        if(flagName == 'disburse') {
-            var message = '" . $message . "';
-    bootbox.confirm({
-                    message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
-                    buttons: {
-                        confirm: {
-                            label: '" . Yii::t('app', 'Yes') . " ',
-                            className: 'btn-primary'
-                        },
-                        cancel: {
-                            label: '" . Yii::t('app', 'No') . "' ,
-                            className: 'btn-danger'
-                        }
+<?php
+$script = "$('.kv-panel-before').hide();";
+$script .= "
+    $(document).ready(function(){
+        $(document).on('click','.view-head',function(e){
+            var id= $(this).attr('data-val');
+            ViewBillHead(id);
+        });
+        function ViewBillHead(code){
+            if(code != ''){         
+            $.ajax({
+                    type: 'get',
+                    url: '" . Url::to(['/payment/tbl-party-payment/party-bill-head-detail']) . "',
+                    data: {'code' : code},
+                    beforeSend:function(data) {
+                    $('#loadercontent').show();
+                    $('#pageloader').show();
                     },
-                    callback: function (result) {
-                        if(result){
-                            $('form#party-payment-disburse').submit();
-                        }
+                    success: function(data) {
+                      $('#bill_head_view').html(data);
+                       $('#BillHeadModal').modal('toggle');              
+                       $('#loadercontent').hide();
+                       $('#pageloader').hide();                                                                  
+                    },
+                    error: function(data) {  
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
                     }
                 });
-        } else {
-            $('form#party-payment-disburse').submit();
+            }
         }
-    });    
-});";
-    $this->registerJs($script, View::POS_END, 'party-payment-disburse-script');
+        $('.disburse-process').on('click',function(){
+            var flagName = $(this).prop('name');
+            $('#flag').val(flagName);
+            if(flagName == 'disburse') {
+                var message = '" . $message . "';
+                bootbox.confirm({
+                        message: '<div class=\'bg-danger\'><i class=\'fa fa-question-circle\'></i></div><span>'+message+'</span>',
+                        buttons: {
+                            confirm: {
+                                label: '" . Yii::t('app', 'Yes') . " ',
+                                className: 'btn-primary'
+                            },
+                            cancel: {
+                                label: '" . Yii::t('app', 'No') . "' ,
+                                className: 'btn-danger'
+                            }
+                        },
+                        callback: function (result) {
+                            if(result){
+                                $('form#party-payment-disburse').submit();
+                            }
+                        }
+                    });
+            } else {
+                $('form#party-payment-disburse').submit();
+            }
+        });    
+    });";
+$this->registerJs($script, View::POS_END, 'party-payment-disburse-script');
     
