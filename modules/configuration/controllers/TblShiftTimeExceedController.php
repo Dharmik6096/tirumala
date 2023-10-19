@@ -53,6 +53,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblShiftTimeExceed();
         $this->viewFile = 'create';
+        $this->model->shift_code = Yii::$app->general->getCurrentDateShift();
         $this->model->scenario = 'create_shift_time';
         $save_model = [];
         if ($this->model->load(Yii::$app->request->post())) {

@@ -44,11 +44,7 @@ $form = ActiveForm::begin([
         ?>
     </div>
     <div class="col-sm-2 shift">
-        <?php
-        $currentTime = date('H:i');
-        $defaultShiftCode = ($currentTime >= '06:00' && $currentTime < '18:00') ? 'Morning' : 'Evening';
-        echo $form->field($model, 'shift_code')->textInput(['value' => $defaultShiftCode, 'readonly' => true]);
-        ?>
+        <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, true, 'shift_code'); ?>
     </div>
     <div class = "col-sm-2">
         <?= $form->field($model, 'standard_time')->textInput(['type' => 'time', 'readonly' => true]) ?>
