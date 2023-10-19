@@ -75,7 +75,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
         $this->viewFile = 'create';
         $master = [];
         if ($this->model->load(Yii::$app->request->post())) {
-            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
+//            $this->model->asset_detail_code = Yii::$app->general->getCodeAutoIncrement($this->model);
             $this->setModel($this->model);
             $master[] = $this->model;
             $assetTrans->current_status = $this->model->current_status;

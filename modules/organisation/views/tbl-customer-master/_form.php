@@ -23,7 +23,7 @@ $form = ActiveForm::begin([
 <?php echo $form->errorSummary($model); ?>
 <?= Html::hiddenInput('warning', $nameWarning, ['id' => 'warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-6 padding_10_0 theme-box theme_border_right">
+    <div class="row col-md-6 padding_10_0 theme-box theme_border_right">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Customer Details') ?></h4>
         </div>
@@ -64,7 +64,6 @@ $form = ActiveForm::begin([
                 </div>
             <?php } ?>
         <?php } ?>
-        <div class="col-sm-12">
         <div class="col-sm-4">
             <?= $form->field($model, 'customer_name')->textInput() ?>
         </div>
@@ -85,7 +84,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 hidden-for-specific-client">
             <?= $form->field($model, 'gst_no')->textInput() ?>
         </div>
-        </div>
         <div class="col-sm-4">
             <?= $form->field($model, 'aadhaar_no')->textInput() ?>
         </div>
@@ -104,7 +102,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 number-validate">  
             <?= $form->field($model, 'ts_code_e')->textInput() ?>
         </div>       
-        </div>
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', false, 'animal_type_code'); ?>
         </div>
@@ -171,10 +168,9 @@ $form = ActiveForm::begin([
         ])
         ?>
     <?php } ?>
-
 </div>
 <div class="row">
-    <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+    <div class="col-sm-12">
         <div class="form-group">
             <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
             <?= Yii::$app->controls->reset(); ?>
