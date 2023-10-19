@@ -79,6 +79,7 @@ class TblPartyPaymentSearch extends TblPartyPayment {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        $query->where(['status' => $this->status]);
 //        $this->load($params);
         if (!$this->validate()) {
              $query->where('0=1');
