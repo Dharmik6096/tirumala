@@ -131,6 +131,28 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController
                     if (!empty($trip_detail)) {
                         $trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $trip_detail;
+                    } else if($tripModel->is_auto_trip == 1) {                        
+                        $exist_auto_trip_detail = TblVehicleTripDetail::find()
+                            ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
+                            ->orderBy(['created_at' => SORT_DESC])->one();
+
+                        $numeric_part = intval(substr($exist_auto_trip_detail->vehicle_trip_detail_code, -1));
+                        $updated_numeric_part = $numeric_part + 1;
+                        $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
+                        
+                        $auto_trip_detail = new TblVehicleTripDetail();
+                        $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
+                        $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
+                        $auto_trip_detail->vehicle_code = $tripModel->vehicle_code;
+                        $auto_trip_detail->trip_code = $tripModel->trip_code;
+                        $auto_trip_detail->transaction_datetime = date('Y-m-d H:i:s');
+                        $auto_trip_detail->destination_code = $model->bmc_code;
+                        $auto_trip_detail->destination_type = 'bmc';
+                        $auto_trip_detail->source_org_code = $exist_auto_trip_detail->destination_code;
+                        $auto_trip_detail->source_org_type = $exist_auto_trip_detail->destination_type;
+                        $auto_trip_detail->arrival_time = date('Y-m-d H:i:s');
+                        $auto_trip_detail->challan_no = $model->challan_no;
+                        $saveModel[] = $auto_trip_detail;
                     }
                     $saveModel[] = $model;
                 }

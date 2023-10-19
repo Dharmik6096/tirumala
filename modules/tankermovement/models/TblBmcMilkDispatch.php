@@ -55,38 +55,42 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
  * @property string $x_col4
  * @property string $x_col5
  */
-class TblBmcMilkDispatch extends \app\models\ChildModel {
+class TblBmcMilkDispatch extends \app\models\ChildModel
+{
 
     public $transporter_code;
 
     /**
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'tbl_bmc_milk_dispatch';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules()
+    {
         return [
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv']],
-                [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
-                [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
-                [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'vehicle_in_time', 'vehicle_out_time', 'transaction_date'], 'required', 'except' => ['androidsync', 'importCsv']],
+            [['bmc_milk_dispatch_code', 'challan_no', 'destination_type', 'destination_code', 'vehicle_code', 'trip_code', 'driver_name', 'driver_contact_no', 'authorizer_name', 'remarks', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
+            [['transaction_date', 'from_date', 'to_date', 'vehicle_in_time', 'vehicle_out_time', 'created_at', 'updated_at'], 'safe'],
+            [['from_shift_code', 'to_shift_code', 'is_last_destination', 'purchase_rate_code', 'originating_type'], 'safe'],
+            [['from_date', 'to_date', 'from_shift_code', 'to_shift_code'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
             //  [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
-                [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-                [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
+            [['union_code'], 'required', 'except' => ['androidsync', 'importCsv']],
+            [['bmc_code'], 'ValidateTripCode', 'skipOnError' => true, 'on' => 'importCsv'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'bmc_milk_dispatch_code' => Yii::t('app', 'Bmc Milk Dispatch Code'),
             'challan_no' => Yii::t('app', 'Challan No.'),
@@ -131,71 +135,88 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         ];
     }
 
-    public function getVehicleCode() {
+    public function getVehicleCode()
+    {
         return $this->hasOne(TblVehicleMaster::className(), ['vehicle_code' => 'vehicle_code']);
     }
 
-    public function getUnionCode() {
+    public function getUnionCode()
+    {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getBmcCode() {
+    public function getBmcCode()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getMccPlantCode() {
+    public function getMccPlantCode()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getPlantCode() {
+    public function getPlantCode()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getCustomerCodeSource() {
+    public function getCustomerCodeSource()
+    {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'source_org_code']);
     }
 
-    public function getBmcCodeSource() {
+    public function getBmcCodeSource()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'source_org_code']);
     }
 
-    public function getMccPlantCodeSource() {
+    public function getMccPlantCodeSource()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'source_org_code']);
     }
 
-    public function getPlantCodeSource() {
+    public function getPlantCodeSource()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'source_org_code']);
     }
 
-    public function getCustomerCodeDest() {
+    public function getCustomerCodeDest()
+    {
         return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'destination_code']);
     }
 
-    public function getBmcCodeDest() {
+    public function getBmcCodeDest()
+    {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'destination_code']);
     }
 
-    public function getMccPlantCodeDest() {
+    public function getMccPlantCodeDest()
+    {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'destination_code']);
     }
 
-    public function getPlantCodeDest() {
+    public function getPlantCodeDest()
+    {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
 
-    public function getFromShiftCode() {
+    public function getFromShiftCode()
+    {
         return $this->hasOne(TblShift::className(), ['id' => 'from_shift_code']);
     }
 
-    public function getToShiftCode() {
+    public function getToShiftCode()
+    {
         return $this->hasOne(TblShift::className(), ['id' => 'to_shift_code']);
     }
 
-    public function getBmcMilkDispatchTxnCode() {
+    public function getBmcMilkDispatchTxnCode()
+    {
         return $this->hasMany(TblBmcMilkDispatchTxn::className(), ['bmc_milk_dispatch_code' => 'bmc_milk_dispatch_code']);
     }
 
-    public function ValidateData() {
+    public function ValidateData()
+    {
         if (strtolower($this->destination_type) == 'bmc' && $this->bmc_code == $this->destination_code) {
             $this->addError('destination_code', Yii::t('app/validation', 'Destination can not be source BMC.'));
         } else if (date('Y-m-d', strtotime($this->transaction_date)) < date('Y-m-d', strtotime($this->to_date))) {
@@ -226,7 +247,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return TRUE;
     }
 
-    public function getTripDetail() {
+    public function getTripDetail()
+    {
         $status = 'success';
         $error_msg = '';
         $trip_code = '';
@@ -245,19 +267,21 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         return ['status' => $status, 'msg' => $error_msg, 'trip_code' => $trip_code];
     }
 
-    public function getBmcMilkDispatchTxn() {
+    public function getBmcMilkDispatchTxn()
+    {
         return $this->hasOne(TblBmcMilkDispatchTxn::className(), ['bmc_milk_dispatch_code' => 'bmc_milk_dispatch_code']);
     }
 
-    public function ValidateTripCode() {
+    public function ValidateTripCode()
+    {
         $check_record = $this->find()->where(['challan_no' => $this->challan_no, 'transaction_date' => $this->transaction_date, 'bmc_code' => $this->bmc_code])->count();
         if ($check_record == 1) {
             $check_trip = TblVehicleTripDetail::find()
-                            ->select(['tbl_vehicle_trip.trip_code', 'tbl_vehicle_trip.vehicle_code'])
-                            ->distinct()
-                            ->joinWith(['tripCode'])
-                            ->where(['tbl_vehicle_trip.trip_code' => $this->trip_code, 'tbl_vehicle_trip.transaction_date' => $this->transaction_date])
-                            ->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $this->bmc_code])->all();
+                ->select(['tbl_vehicle_trip.trip_code', 'tbl_vehicle_trip.vehicle_code'])
+                ->distinct()
+                ->joinWith(['tripCode'])
+                ->where(['tbl_vehicle_trip.trip_code' => $this->trip_code, 'tbl_vehicle_trip.transaction_date' => $this->transaction_date])
+                ->andWhere(['tbl_vehicle_trip_detail.source_org_type' => 'bmc', 'tbl_vehicle_trip_detail.source_org_code' => $this->bmc_code])->all();
             if (count($check_trip) == 0) {
                 $this->addError('to_date', Yii::t('app/validation', 'Invalid Trip Code.'));
             } else {
@@ -268,21 +292,22 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
         }
     }
 
-    public function getTripCode() {
+    public function getTripCode()
+    {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code']);
     }
 
-    public function getChallanNo() {
+    public function getChallanNo()
+    {
         $primaryKey = 'challan_no';
         $orgCode = $this->trip_code . '/' . $this->bmc_code . '/';
         $len = strlen($orgCode);
         $val = $this->find()
-                ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
-                ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
-                ->one();
+            ->select(["MAX(CONVERT(INT,substring(" . $primaryKey . ", " . $len . " +1,4))) AS " . $primaryKey])
+            ->where("SUBSTRING(" . $primaryKey . ", 1," . $len . ")='" . trim($orgCode) . "'")
+            ->one();
         $code = (int) $val[$primaryKey] + 1;
         $value = $orgCode . $code;
         return $value;
     }
-
 }
