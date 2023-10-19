@@ -249,8 +249,27 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php
+if ($bmc_user == 'BMC'):
+    $script = "
+        function removeOptions(selectBox) {
+            var options = selectBox.querySelectorAll('option');
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value !== 'BMC' && options[i].value !== 'PARTY') {
+                    options[i].remove();
+                }
+            }
+        }
+        var selectBox1 = document.getElementById('tblmilkvehicleentry-dispatch_from');
+        removeOptions(selectBox1);
+        var selectBox2 = document.getElementById('tblmilkvehicleentry-receipt_at');
+        removeOptions(selectBox2);
+    ";
+    $this->registerJs($script, View::POS_END, 'for-bmc-user');
+endif;
+?>
+
+<?php
 $script = "
-    
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
         var ReceiptDatetime = $('#tblmilkvehicleentry-receipt_datetime').val();
@@ -282,10 +301,11 @@ $script = "
                 $('.vehicle_code_hide').css('display', 'block');
                 $('#dispatch-detail').css('display', 'block');                
                 entryTypeField.val('').prop('disabled', false).trigger('change');
-            } else if(dispatch_from == 'PARTY' && receipt_at == 'PARTY') {
+            } else if(dispatch_from == 'PARTY') {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
                $('#dispatch-detail').css('display', 'none');
+               $('.trip-code-hide').css('display', 'none');
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
                EntryType.classList.add('no_pointer');
             } else {
