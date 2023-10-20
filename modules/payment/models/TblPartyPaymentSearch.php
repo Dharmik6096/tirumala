@@ -46,10 +46,20 @@ class TblPartyPaymentSearch extends TblPartyPayment {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+        $this->load($params);
+        if (!empty($this->from_date)) {
+            $from_date = date('Y-m-d', strtotime($this->from_date));
+            $query->andFilterWhere(['>=', 'CAST(tbl_party_payment.from_date as date)', $from_date]);
+        }
+        if (!empty($this->to_date)) {
+            $to_date = date('Y-m-d', strtotime($this->to_date));
+            $query->andFilterWhere(['<=', 'CAST(tbl_party_payment.to_date as date)', $to_date]);
+        }
+        
         $query->andFilterWhere(['=', 'CAST(tbl_party_payment.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
 
-        $query->andFilterWhere(['like', 'tbl_party_payment.payment_type', $this->payment_type])
+        $query->andFilterWhere(['like', 'tbl_party_payment.party_master_code', $this->party_master_code])
+                ->andFilterWhere(['like', 'tbl_party_payment.payment_type', $this->payment_type])
                 ->andFilterWhere(['like', 'tbl_party_payment.disp_kg_fat', $this->disp_kg_fat])
                 ->andFilterWhere(['like', 'tbl_party_payment.disp_kg_snf', $this->disp_kg_snf])
                 ->andFilterWhere(['like', 'tbl_party_payment.disp_qty', $this->disp_qty])
@@ -67,6 +77,7 @@ class TblPartyPaymentSearch extends TblPartyPayment {
                 ->andFilterWhere(['like', 'tbl_party_payment.total_deduction', $this->total_deduction])
                 ->andFilterWhere(['like', 'tbl_party_payment.final_amount', $this->final_amount])
                 ->andFilterWhere(['like', 'tbl_party_payment.net_amount', $this->net_amount])
+                ->andFilterWhere(['like', 'tbl_party_payment.total_qty', $this->total_qty])
                 ->andFilterWhere(['like', 'tbl_party_payment.status', $this->status]);
 
         $query->orderBy(['tbl_party_payment.from_date' => SORT_DESC]);
