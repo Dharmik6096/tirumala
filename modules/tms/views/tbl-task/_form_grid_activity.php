@@ -41,7 +41,7 @@ $grid_option = [
         'view-form' => function ($url, $model) {
             if (!empty($model->form_data)) {
                 $options = ['target' => '_blank', 'title' => Yii::t('app', 'View Form'), 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => Yii::t('app', 'View Form')];
-                return GhostHtml::a('<i class="fa fa-file-pdf-o"></i>', ['/tms/tbl-task/view-form', 'id' => $model->task_activity_code], $options);
+                return GhostHtml::a('<i class="fas fa-file-pdf"></i>', ['/tms/tbl-task/view-form', 'id' => $model->task_activity_code], $options);
             }
         },
     ]

@@ -101,7 +101,7 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
                 <h4 class="theme-box-heading"><?= Yii::t('app', 'Form Detail') ?></h4>
             </div>
-            <div class="form-grid hide-grid-settings panel_clear_both">
+            <div class="form-grid panel_clear_both">
                 <?php
                 $grid_option = [
                     'id' => 'task-activity-list',
@@ -110,6 +110,7 @@ $this->title = Yii::$app->general->getforeignkey($model->formTypeCode, 'form_nam
                             ['attribute' => 'answer',],
                     ],
                     'active_column' => FALSE,
+                    'style' => 'display: flex;'
                 ];
                 Yii::$app->grid->bind($dataProvider, $model, $grid_option, ['#'], FALSE);
                 ?>

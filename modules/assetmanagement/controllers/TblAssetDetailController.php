@@ -412,7 +412,7 @@ class TblAssetDetailController extends \app\controllers\ChildController {
                             if ($model->to_type == $model->from_type && $model->to_dest == $model->from_dest) {
                                 $out_model->status = 2;
                             }
-                            $out_model->sap_code = ($model->to_type == 3) ? $sap_code : $trn_model[$cnt]->sap_code;
+                            $out_model->sap_code = ($model->to_type == 3) ? (isset($sap_code) ? $sap_code : NULL) : $trn_model[$cnt]->sap_code;
                         } else {
                             $out_model->status = 2;
                             if (!empty($sap_code)) {
