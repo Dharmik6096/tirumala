@@ -93,7 +93,7 @@ $this->title = Yii::t('app', 'Indent Approval');
         ?>
         <div class="panel-footer">
             <?php
-            if (empty($dataProvider->getModels())) {
+            if (!empty($dataProvider->getModels())) {
                 echo Html::button(Yii::t('app', 'Approve'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'approve', 'value' => 'approve', 'name' => 'approve']);
                 echo Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit btn-login', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']);
             }
