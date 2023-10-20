@@ -2357,4 +2357,11 @@ class GeneralFunctions extends Component {
 
         return null;
     }
+
+    public function getCurrentDateShift() {
+        $currentTime = date('H:i');
+        $defaultShiftCode = ($currentTime >= '03:00' && $currentTime < '15:00') ? 1 : 2;
+        return $defaultShiftCode;
+    }
+
 }

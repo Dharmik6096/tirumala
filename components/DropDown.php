@@ -1748,6 +1748,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['purchase' => Yii::t('app', 'PURCHASE'), 'sale' => Yii::t('app', 'SALE')],
             ],
+            'org_type_exceed' => [
+                'name' => 'org_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'VLC' => Yii::t('app', 'VLC')],
+            ],
         ];
         return $records[$l];
     }

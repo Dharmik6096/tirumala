@@ -7,6 +7,7 @@ use app\modules\dcsoperation\models\TblMemberProvisional;
 use app\modules\organisation\models\TblDcsProvisional;
 use app\modules\usermanagement\models\User;
 use yii\db\Expression;
+use app\modules\configuration\models\TblShiftTimeExceed;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -43,9 +44,9 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function rules() {
         return [
 //                [['process_approval_code'], 'required'],
-            [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
-            [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['status'], 'required', 'on' => 'approve'],
+                [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
+                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['status'], 'required', 'on' => 'approve'],
         ];
     }
 
@@ -122,8 +123,8 @@ class TblProcessApproval extends \app\models\ChildModel {
                 )
                 ->where([
                     'or',
-                    ['app.login_type' => $login_type],
-                    ['app.user_code' => \Yii::$app->user->identity->user_code]
+                        ['app.login_type' => $login_type],
+                        ['app.user_code' => \Yii::$app->user->identity->user_code]
                 ])
                 ->andWhere([
             'app.level_priority' => new Expression("CASE WHEN app.approval_mode = 'strict' THEN pnd.level_priority ELSE app.level_priority END"),
@@ -131,4 +132,9 @@ class TblProcessApproval extends \app\models\ChildModel {
         ]);
         return $query;
     }
+
+    public function getShiftTimeExceedProvision() {
+        return $this->hasOne(TblShiftTimeExceed::className(), ['shift_time_exceed_code' => 'process_code']);
+    }
+
 }
