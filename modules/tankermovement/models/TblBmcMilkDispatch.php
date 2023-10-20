@@ -224,7 +224,8 @@ class TblBmcMilkDispatch extends \app\models\ChildModel
         }
     }
 
-    public function CheckDateValidation() {
+    public function CheckDateValidation()
+    {
         $this->from_date = date('Y-m-d', strtotime($this->from_date)) . ' ' . \Yii::$app->general->getshift($this->from_shift_code) . '.000000';
         $this->to_date = date('Y-m-d', strtotime($this->to_date)) . ' ' . \Yii::$app->general->getshift($this->to_shift_code) . '.000000';
         if ($this->to_date < $this->from_date) {
@@ -233,13 +234,23 @@ class TblBmcMilkDispatch extends \app\models\ChildModel
         } else {
             $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $this->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
             if (!empty($stock_date)) {
-                $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))).'.000000' : $stock_date->to_date;
-              //  $dispatch_date .= '.000000';
-                if ($this->from_date < $dispatch_date) {
-                    $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date.').$dispatch_date);
+                $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
+
+                $formatted_shift = date('H', strtotime($dispatch_date));
+                if ($formatted_shift) {
+                    $formatted_shift = $formatted_shift == 18 ? 'Evening' : 'Morning';
+                }
+                $formatted_date  = date('d-m-Y', strtotime($dispatch_date));
+
+                $trip_check = TblBmcMilkDispatch::find()
+                    ->where(['to_date' => $this->to_date, 'trip_code' => $this->trip_code, 'vehicle_code' => $this->vehicle_code])
+                    ->orderBy(['created_at' => SORT_DESC])
+                    ->one();
+                if ($this->from_date < $dispatch_date && $trip_check) {
+                    $this->addError('to_date', Yii::t('app/validation', 'Dispatch already done for selected date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                     return FALSE;
-                } else if ($this->from_date > $dispatch_date) {
-                    $this->addError('to_date', Yii::t('app/validation', 'From Date must be last stock date.').$dispatch_date);
+                } else if ($this->from_date > $dispatch_date && $trip_check) {
+                    $this->addError('to_date', Yii::t('app/validation', 'From Date must be last stock date. Please select this date: ' . $formatted_date . ' and shift ' . $formatted_shift));
                     return FALSE;
                 }
             }
