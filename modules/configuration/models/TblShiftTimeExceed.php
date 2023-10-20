@@ -154,7 +154,7 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
                         ->where(['org_type' => $postData['org_type'], 'org_code' => $postData['code']])
                         ->one();
 
-                $standardTime = ($shiftCode == 'Morning') ? $data['m_lock_time'] : $data['e_lock_time'];
+                $standardTime = ($shiftCode == '1') ? $data['m_lock_time'] : $data['e_lock_time'];
 
                 return ['standard_time' => $standardTime];
             } else if ($postData['org_type'] == 'VLC') {
@@ -165,7 +165,7 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
                         ->where(['dcs_code' => $postData['code']])
                         ->one();
 
-                $standardTime = ($shiftCode == 'Morning') ? $data['m_lock_time'] : $data['e_lock_time'];
+                $standardTime = ($shiftCode == '1') ? $data['m_lock_time'] : $data['e_lock_time'];
 
                 return ['standard_time' => $standardTime];
             }

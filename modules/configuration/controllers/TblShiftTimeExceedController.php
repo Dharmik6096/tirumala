@@ -58,7 +58,6 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
         $save_model = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->shift_time_exceed_code = Yii::$app->general->getPrimaryCode($this->model);
-            $this->model->shift_code = ($this->model->shift_code == 'Morning') ? 1 : 2;
             $this->model->date_time_of_collection = date('d-m-Y');
             $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
