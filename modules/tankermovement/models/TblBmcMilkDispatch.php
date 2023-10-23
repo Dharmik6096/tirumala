@@ -223,7 +223,7 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
                 $formatted_date = date('d-m-Y', strtotime($dispatch_date));
 
                 $dispatch_count = TblBmcMilkDispatch::find()
-                        ->where(['to_date' => $stock_date->to_date, 'trip_code' => $this->trip_code, 'vehicle_code' => $this->vehicle_code])
+                        ->where(['to_date' => $this->to_date, 'trip_code' => $this->trip_code, 'vehicle_code' => $this->vehicle_code])
                         ->andWhere(['bmc_code' => $this->bmc_code])
                         ->count();
                 if ($dispatch_count > 0) {
