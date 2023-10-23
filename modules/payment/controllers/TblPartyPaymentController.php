@@ -71,7 +71,7 @@ class TblPartyPaymentController extends ChildController {
                         $msg = Yii::t('app', $msg);
                     } else {
                         $result = 'success';
-//                        $queryParam['reGenerate'] = 1;
+                        $queryParam['reGenerate'] = 1;
                     }
                 } else {
                     $result = 'displayPopup';
