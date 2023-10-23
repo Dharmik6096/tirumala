@@ -1,10 +1,10 @@
 <?php
 $this->title = 'Upload Documents';
 
-use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use demogorgorn\ajax\AjaxSubmitButton;
+use yii\bootstrap5\ActiveForm;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 ?>
