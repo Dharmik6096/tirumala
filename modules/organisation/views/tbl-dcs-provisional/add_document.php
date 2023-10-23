@@ -91,7 +91,7 @@ use yii\helpers\Url;
                     ?>
                     <?= $form->errorSummary($doc_model) ?>
 
-                    <div class="row">
+                    <div class="row view-grid">
                         <div class="col-sm-12">
                             <table class="table table-bordered table-striped table-main table-language table-rate">
                                 <tbody>
@@ -144,13 +144,13 @@ use yii\helpers\Url;
                                                                 }
                                                  }'),
                                 ],
-                                'options' => ['class' => 'btn btn-default btn-raised',
+                                'options' => ['class' => 'btn btn-default btn-raised btn-login',
                                     'type' => 'submit'],
                             ]);
                             AjaxSubmitButton::end();
                             ?>
                             <?= Yii::$app->controls->reset(); ?>
-                            <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                            <?= Yii::$app->controls->custombutton('Cancel', 'index','','btn-login'); ?>
                         </div>  
                     </div>
                 </div>

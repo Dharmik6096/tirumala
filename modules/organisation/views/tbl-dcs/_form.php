@@ -67,7 +67,6 @@ $form = ActiveForm::begin([
 <?php Yii::$app->warning->hiddenfields($nameWarning, $codeWarning); ?>
 <?= Html::hiddenInput('bank_ac_warning', $bankWarning, ['id' => 'bank_ac_warning']); ?>
 <div class="row theme_border_left theme_border_right theme_border_bottom">
-    <div class="col-md-12 padding_10_0 theme-box ">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?= Yii::t('app', 'Society Details') ?></h4>
         </div>
@@ -114,7 +113,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= Yii::$app->controls->local($model, $form, 'local_short_name'); ?>
         </div>
-        <div class="col-sm-12">
         <div class="col-sm-2">
             <?= $form->field($model, 'vendor')->dropdownList($vendor, ['prompt' => 'Select Vendor']); ?>
         </div>
@@ -151,7 +149,6 @@ $form = ActiveForm::begin([
             </div>-->
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('dcs_type_code', $model, $form, 'form-group col-sm-2', Yii::t('app', 'Society Type')); ?>
-        </div>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->dropdown->dropdown('organisation_type', $model, $form, 'form-group col-sm-2', 'Organisation Type'); ?>
@@ -208,7 +205,7 @@ $form = ActiveForm::begin([
         </div>        
         </div>
         <div class='pull-left col-sm-4'>
-            <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
+            <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/><br/>
             <div class="col-sm-4">
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
             </div>
@@ -219,7 +216,6 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc'); ?>
             </div>
         <?php } ?>
-    </div>
     <div class="col-md-12 padding_10_0 theme-box">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Address Details</h4>
@@ -307,7 +303,6 @@ $form = ActiveForm::begin([
         <?php } ?>
         <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
         <!--</div>-->
-        <div class="col-sm-12">
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
         </div>
@@ -349,7 +344,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chiller'); ?>
         </div>
-        </div>
         <div class="clearfix"></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
@@ -366,19 +360,13 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'morning_kms')->textInput() ?>
         </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'evening_kms')->textInput() ?>
+        <div class="col-sm-2 mt-4">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>
     </div>
-
-    <?php // if ($type == 'create') {  ?>
-    <!--        <div class="col-sm-3">
-    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
-            </div>-->
-    <?php // }    ?>
     <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
     <div class="row">
-        <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+        <div class="col-sm-12 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?= Yii::$app->controls->save(Yii::$app->label->button($type), $model); ?>
                 <?= Yii::$app->controls->reset(); ?>
