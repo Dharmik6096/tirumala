@@ -273,7 +273,7 @@ $script = "
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
         var ReceiptDatetime = $('#tblmilkvehicleentry-receipt_datetime').val();
-        if (vehicleCode !== '' && ReceiptDatetime !== '' && vehicleCode != null && ReceiptDatetime != null) {
+        if (vehicleCode !== '' && ReceiptDatetime !== '') {
             setTimeout(function() {
                 var tripCodeDropdownLength = $('#tblmilkvehicleentry-trip_code option').length - 1;
                 if (tripCodeDropdownLength > 0) {
@@ -300,7 +300,7 @@ $script = "
                 $('.tanker_no_hide').css('display', 'none');
                 $('.vehicle_code_hide').css('display', 'block');
                 $('#dispatch-detail').css('display', 'block');                
-                entryTypeField.val('').prop('disabled', false).trigger('change');
+                entryTypeField.val('').prop('readonly', false).trigger('change');
             } else if(dispatch_from == 'PARTY') {
                $('.tanker_no_hide').css('display', 'block');
                $('.vehicle_code_hide').css('display', 'none');
@@ -319,7 +319,7 @@ $script = "
             $('.tanker_no_hide').css('display', 'none');
             $('.vehicle_code_hide').css('display', 'block');
             $('#dispatch-detail').css('display', 'none');
-            entryTypeField.val('').prop('disabled', false).trigger('change');
+            entryTypeField.val('').prop('readonly', false).trigger('change');
             EntryType.classList.remove('no_pointer');
         }
     });

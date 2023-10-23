@@ -280,10 +280,10 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
             $dispatch_date = ($stock_date->type == 'dispatch') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) : $stock_date->to_date;
             $dispatch_date .= '.000000';
             if ($this->receipt_datetime < $dispatch_date) {
-                $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be grater than last stock entry.'));
+                $this->addError($attribute, Yii::t('app/validation', 'Receipt Datetime & shift must be greater than last stock entry.'));
                 return FALSE;
             }
-        }
+        } 
         return TRUE;
     }
 
