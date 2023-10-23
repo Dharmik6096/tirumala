@@ -12,11 +12,11 @@ $readonly = empty($model->bmc_milk_dispatch_code) ? FALSE : TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
-    'validateOnBlur' => FALSE,
-    'validateOnChange' => FALSE,
-    'enableClientValidation' => true,
-    'validateOnSubmit' => true,
-]);
+            'validateOnBlur' => FALSE,
+            'validateOnChange' => FALSE,
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+        ]);
 ?>
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
@@ -59,7 +59,7 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2">
                 <?= Html::hiddenInput('trip_code', $model->trip_code, ['id' => 'trip_code']); ?>
-                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
+                <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'tblbmcmilkdispatch-bmc_code,tblbmcmilkdispatch-vehicle_code,tblbmcmilkdispatch-transaction_date,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, '', $readonly); ?>
             </div>
             <div id="addTripButtonDiv" class="col-sm-4 addTripButtonDiv">
                 <button id="addTripButton" class="btn btn-primary">Generate Trip</button>
@@ -210,15 +210,17 @@ $form = ActiveForm::begin([
 $script = "
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
-    $('#tblbmcmilkdispatch-vehicle_code').on('change',function() {
+    $('#tblbmcmilkdispatch-vehicle_code,#tblbmcmilkdispatch-transaction_date').on('change',function() {
+        $('#addTripButtonDiv').hide();
         setTimeout(function(){        
             var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length - 1;
             $('#addTripButtonDiv').hide();
             var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            if (vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 0) {
+            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
+            if (transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 0) {
                 $('#addTripButtonDiv').show();  
             }
-        },2000);
+        },1500);
     });
 
     $('#addTripButton').on('click', function(e) {
