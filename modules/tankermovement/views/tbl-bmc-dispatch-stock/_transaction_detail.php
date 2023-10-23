@@ -53,7 +53,7 @@ use yii\helpers\Html;
             'edit' => function($url, $model) {
                 $url = str_replace('edit', 'update', $url);
                 $url = ['/tankermovement/tbl-bmc-dispatch-stock/update', 'id' => $model->bmc_dispatch_stock_code];
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update'];
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update', 'target' => '_blank'];
                 return Html::a('<i class="fa fa-pencil"></i>', $url, $options);
             },
         ]
