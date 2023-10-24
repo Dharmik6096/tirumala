@@ -33,16 +33,16 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
             <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>
-            <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
@@ -90,9 +90,7 @@ $form = ActiveForm::begin([
                             <th>To Shift</th>                   
                             <th>Vehicle No.</th>                   
                             <th>In Time</th>                   
-                            <th>Out Time</th>                   
-                            <th>Gross Weight</th>                   
-                            <th>Tare Weight</th>     
+                            <th>Out Time</th>     
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -253,7 +251,7 @@ if ($bmc_user == 'BMC'):
     $script = "
         function removeOptions(selectBox) {
             var options = selectBox.querySelectorAll('option');
-            for (var i = 0; i < options.length; i++) {
+            for (var i = 1; i < options.length; i++) {
                 if (options[i].value !== 'BMC' && options[i].value !== 'PARTY') {
                     options[i].remove();
                 }
@@ -270,6 +268,7 @@ endif;
 
 <?php
 $script = "
+    $('.tanker_no_hide').css('display', 'none');
     $('#tblmilkvehicleentry-vehicle_code, #tblmilkvehicleentry-receipt_datetime').on('change', function() {
         var vehicleCode = $('#tblmilkvehicleentry-vehicle_code').val();
         var ReceiptDatetime = $('#tblmilkvehicleentry-receipt_datetime').val();
@@ -297,7 +296,6 @@ $script = "
         
         if (receipt_at !== '' && dispatch_from !== '') {
             if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
-                $('.tanker_no_hide').css('display', 'none');
                 $('.vehicle_code_hide').css('display', 'block');
                 $('#dispatch-detail').css('display', 'block');                
                 entryTypeField.val('').prop('readonly', false).trigger('change');
@@ -309,14 +307,12 @@ $script = "
                entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
                EntryType.classList.add('no_pointer');
             } else {
-                $('.tanker_no_hide').css('display', 'none');
                 $('.vehicle_code_hide').css('display', 'block');
                 $('#dispatch-detail').css('display', 'none');
                 entryTypeField.val('CONSOLIDATED').prop('readonly', true).trigger('change');
                 EntryType.classList.add('no_pointer');
             }
         } else {
-            $('.tanker_no_hide').css('display', 'none');
             $('.vehicle_code_hide').css('display', 'block');
             $('#dispatch-detail').css('display', 'none');
             entryTypeField.val('').prop('readonly', false).trigger('change');
