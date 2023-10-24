@@ -33,16 +33,16 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
             </div>
             <div class="col-sm-1">
-                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
-            </div>
-            <div class="col-sm-1">
                 <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'receipt_at'); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-receipt_at,tblmilkvehicleentry-union_code', 'receipt_at_code', $model->getAttributeLabel('receipt_at_code'), FALSE, $readonly); ?>
+            </div>
+            <div class="col-sm-1">
+                <?= Yii::$app->dropdown->dropdown('dispatch_destination', $model, $form, '', TRUE, $readonly, 'dispatch_from'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
@@ -90,9 +90,7 @@ $form = ActiveForm::begin([
                             <th>To Shift</th>                   
                             <th>Vehicle No.</th>                   
                             <th>In Time</th>                   
-                            <th>Out Time</th>                   
-                            <th>Gross Weight</th>                   
-                            <th>Tare Weight</th>     
+                            <th>Out Time</th>     
                         </tr>
                     </thead>
                     <tbody></tbody>
