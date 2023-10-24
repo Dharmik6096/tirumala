@@ -25,7 +25,7 @@ $this->title = Yii::$app->label->title('create', 'Approval Stages');
                     <h5 class="theme-box-heading"><?= $this->title; ?></h5>
                 </div>
                 <?php echo $form->errorSummary($model); ?>
-                <div class="row">
+                <div class="row d-block">
                     <div class="col-sm-2">
                         <?= Yii::$app->dropdown->dropdownStatic('approval_level', $model, $form, '', $model->getAttributeLabel('level') . '&nbsp;&nbsp;&nbsp;<i class="fa fa-info-circle" title="Level 1 - Primary Approval & Level 6 - Higher Approval"></i>', false, 'level', FALSE, FALSE, FALSE); ?>
                     </div>

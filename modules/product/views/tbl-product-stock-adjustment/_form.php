@@ -63,7 +63,7 @@ $form = ActiveForm::begin([
     </div>
     <div class="clearfix"></div>
     <div class="col-sm-1"></div>
-    <div class="col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
+    <div class="row col-md-10 padding_10_0 theme-box view-subtitle QltyParamDiv">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading"><?php echo $title; ?> Txn Details</h4>
         </div>
@@ -108,7 +108,7 @@ $form = ActiveForm::begin([
         ?>
         <div class="col-sm-2 padding_top_20 shortcut-main">
             <?=
-            Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn btn-primary add-asset-record disabled no_pointer', 'id' => 'add_product'])
+            Html::a(Yii::t('app', 'Add'), 'javascript:void(0)', ['class' => 'btn-login btn btn-primary add-asset-record disabled no_pointer', 'id' => 'add_product'])
             ?>
         </div>        
     </div>
