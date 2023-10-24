@@ -86,6 +86,7 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
         $modelSave = [];
         $txn_model = new TblMilkVehicleEntryTransaction();
         $bmc_user = count(explode(',', $_SESSION['BMC'])) == 1 ? 'BMC' : '';
+        $this->setCode($this->model);
         if (Yii::$app->request->post()) {
             $update = FALSE;
             $this->model->load(Yii::$app->request->post());
@@ -196,6 +197,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     'searchModel' => $searchModel, 'dataProvider' => $dataProvider,
                     'bmc_user' => $bmc_user,
         ]);
+    }
+
+    public function setCode($model) {
+        $bmcs = explode(',', $_SESSION['BMC']);
+        if (count($bmcs) == 1) {
+            $model->dispatch_from = 'BMC';
+            $this->model->dispatch_from_code = $bmcs[0];
+        }
     }
 
     /**
