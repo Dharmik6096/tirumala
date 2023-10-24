@@ -1,7 +1,7 @@
 <?php
 $this->title = 'Upload Documents';
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use kartik\detail\DetailView;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -22,33 +22,33 @@ use yii\web\View;
 
             <?php
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'provisional_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                            [
+                        [
                             'attribute' => 'member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                            [
+                        [
                             'attribute' => 'ref_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'ex_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                            [
+                        [
                             'attribute' => 'pro_ex_member_code',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
-                            [
+                        [
                             'attribute' => 'member_name',
                             'valueColOptions' => ['style' => 'width:15%']
                         ],
@@ -93,7 +93,7 @@ use yii\web\View;
                     ?>
                     <?= $form->errorSummary($doc_model) ?>
 
-                    <div class="row">
+                    <div class="row d-block">
                         <div class="col-sm-12">
                             <table class="table table-bordered table-striped table-main table-language table-rate">
                                 <tbody>
@@ -147,7 +147,7 @@ use yii\web\View;
                                                                 }
                                                  }'),
                                     ],
-                                    'options' => ['class' => 'btn btn-default btn-raised',
+                                    'options' => ['class' => 'btn-login btn btn-default btn-raised',
                                         'type' => 'submit'],
                                 ]);
                                 AjaxSubmitButton::end();
@@ -156,7 +156,7 @@ use yii\web\View;
                                 }
                                 ?>
                                 <?= Yii::$app->controls->reset(); ?>
-                                <?= Yii::$app->controls->custombutton('cancel', 'index'); ?>
+                                <?= Yii::$app->controls->custombutton('cancel', 'index', '', 'btn-login'); ?>
                             </div>  
                         </div>
                     </div>
