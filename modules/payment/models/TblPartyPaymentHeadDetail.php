@@ -3,6 +3,7 @@
 namespace app\modules\payment\models;
 
 use Yii;
+use app\modules\tankermovement\models\TblPaymentHead;
 
 class TblPartyPaymentHeadDetail extends \app\models\ChildModel {
 
@@ -23,5 +24,9 @@ class TblPartyPaymentHeadDetail extends \app\models\ChildModel {
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
+    }
+    
+    public function getPaymentHeadCode() {
+        return $this->hasOne(TblPaymentHead::className(), ['payment_head_code' => 'payment_head_code']);
     }
 }

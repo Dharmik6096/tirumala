@@ -138,10 +138,10 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
             <?php
             $attribute = [
                 ['attribute' => 'party_payment_head_code', 'value' => function ($model) {
-                        return Yii::$app->general->getforeignkey($model->paymentHeadCode, 'party_payment_head');
-                    }, 'filter' => false],
+                        return Yii::$app->general->getforeignkey($model->paymentHeadCode, 'payment_head_name');
+                    }, 'filter' => false, 'label' => Yii::t('app', 'Payment Head Name')],
                 ['attribute' => 'type', 'value' => function ($model) {
-                        return isset($model->type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->type] : '';
+                        return isset($model->payment_head_type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->payment_head_type] : '';
                     }, 'filter' => false],
                 ['attribute' => 'amount', 'filter' => false],
             ];
@@ -158,11 +158,11 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
         <div id="adjustamount">
             <?php
             $form = ActiveForm::begin([
-                'id' => 'party-payment-adjust',
-                'validateOnBlur' => TRUE,
-                'validateOnChange' => TRUE,
-                'enableClientValidation' => true,
-                'validateOnSubmit' => true,
+                        'id' => 'party-payment-adjust',
+                        'validateOnBlur' => TRUE,
+                        'validateOnChange' => TRUE,
+                        'enableClientValidation' => true,
+                        'validateOnSubmit' => true,
             ]);
             ?>
             <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
