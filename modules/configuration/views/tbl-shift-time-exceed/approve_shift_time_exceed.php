@@ -4,10 +4,9 @@ use yii\helpers\Html;
 use kartik\detail\DetailView;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use yii\widgets\MaskedInput;
 
 $this->title = Yii::$app->label->title('view', 'Shift Time Exceed Provision Approval');
-$member_provisional = $model->shiftTimeExceedProvision;
-$approval_detail = $member_provisional->shiftTimeExceedApproval;
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-body">
@@ -16,112 +15,114 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
         </div>
         <div class="table-responsive">
             <?php
+            
             $attributes = [
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'union_code',
-                            'value' => Yii::$app->general->getforeignkey($member_provisional->unionCode, 'union_name'),
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel->unionCode, 'union_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            ['attribute' => 'plant_code',
-                            'value' => Yii::$app->general->getforeignkey($member_provisional->plantCode, 'name'),
+                        [
+                            'attribute' => 'plant_code',
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel->plantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'mcc_plant_code',
-                            'value' => Yii::$app->general->getforeignkey($member_provisional->mccPlantCode, 'name'),
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel->mccPlantCode, 'name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'bmc_code',
-                            'value' => Yii::$app->general->getforeignkey($member_provisional->bmcCode, 'bmc_name'),
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel->bmcCode, 'bmc_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'dcs_code',
-                            'value' => Yii::$app->general->getforeignkey($member_provisional->dcsCode, 'dcs_name'),
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel->dcsCode, 'dcs_name'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'shift_time_exceed_code',
-                            'value' => $member_provisional->shift_time_exceed_code,
+                            'value' => Yii::$app->general->getforeignkey($shiftTimeExceedModel, 'shift_time_exceed_code'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'org_type',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'org_code',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'standard_time',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'exceed_time',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'date_time_of_collection',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'shift_code',
-                            'value' => isset($member_provisional->shiftCode) ? $member_provisional->shiftCode->shift : '',
+                            'value' => Yii::$app->general->getmultiforeignkey($shiftTimeExceedModel, ['shiftCode'], 'shift'),
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'remarks',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'status',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'status_datetime',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
-                            [
+                        [
                             'attribute' => 'status_remarks',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
                 ],
-                    [
+                [
                     'columns' => [
-                            [
+                        [
                             'attribute' => 'status_by',
                             'valueColOptions' => ['style' => 'width:80%']
                         ],
@@ -129,7 +130,7 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                 ],
             ];
             echo DetailView::widget([
-                'model' => $member_provisional,
+                'model' => $shiftTimeExceedModel,
                 'attributes' => $attributes,
                 'mode' => 'view',
                 'bordered' => true,
@@ -137,7 +138,7 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                 'responsive' => true,
                 'hAlign' => 'left',
                 'vAlign' => 'top',
-                'deleteOptions' => [// your ajax delete parameters
+                'deleteOptions' => [ // your ajax delete parameters
                     'params' => ['id' => 1000, 'kvdelete' => true],
                 ],
                 'container' => ['id' => 'kv-demo'],
@@ -153,44 +154,46 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                 <div class="col-sm-12">
                     <table class="table table-bordered table-striped table-main table-language table-rate">
                         <tbody>
-                        <thead>
-                            <tr>
-                                <th><?= Yii::t('app', 'Level') ?></th>
-                                <th><?= Yii::t('app', 'Mode') ?></th>
-                                <th><?= Yii::t('app', 'User') ?></th>
-                                <th><?= Yii::t('app', 'Status By') ?></th>
-                                <th><?= Yii::t('app', 'Status') ?></th>
-                                <th><?= Yii::t('app', 'Date') ?></th>
-                                <th><?= Yii::t('app', 'Remarks') ?></th>
-
-                            </tr>
-                        </thead>
-                        <?php foreach ($approval_detail as $approval) { ?>
-                            <tr>
-                                <td><?= $approval->level; ?></td>
-                                <td><?= $approval->approval_mode; ?></td>
-                                <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
-                                <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
-                                <td>
-                                    <?php
-                                    if ($approval->status == '1') {
-                                        $approval->status = 'Approve';
-                                    } else if ($approval->status == '2') {
-                                        $approval->status = 'Reject';
-                                    } else {
-                                        $approval->status = 'Pending';
-                                    }
-                                    echo $approval->status;
-                                    ?>
-                                </td>
-                                <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
-                                <td><?= $approval->remarks; ?></td>
-                            </tr>
-                        <?php } ?>
+                            <thead>
+                                <tr>
+                                    <th><?= Yii::t('app', 'Level') ?></th>
+                                    <th><?= Yii::t('app', 'Mode') ?></th>
+                                    <th><?= Yii::t('app', 'User') ?></th>
+                                    <th><?= Yii::t('app', 'Status By') ?></th>
+                                    <th><?= Yii::t('app', 'Status') ?></th>
+                                    <th><?= Yii::t('app', 'Date') ?></th>
+                                    <th><?= Yii::t('app', 'Remarks') ?></th>
+                                </tr>
+                            </thead>
+                            <?php
+                            if ($shiftTimeExceedModel) {
+                                foreach ($shiftTimeExceedModel->shiftTimeExceedApproval as $approval) { ?>
+                                    <tr>
+                                        <td><?= $approval->level; ?></td>
+                                        <td><?= $approval->approval_mode; ?></td>
+                                        <td><?= Yii::$app->general->getforeignkey($approval->userCode, 'name') ?></td>
+                                        <td><?= Yii::$app->general->getforeignkey($approval->updatedBy, 'name') ?></td>
+                                        <td>
+                                            <?php
+                                            if ($approval->status == '1') {
+                                                $approval->status = 'Approve';
+                                            } else if ($approval->status == '2') {
+                                                $approval->status = 'Reject';
+                                            } else {
+                                                $approval->status = 'Pending';
+                                            }
+                                            echo $approval->status;
+                                            ?>
+                                        </td>
+                                        <td><?= Yii::$app->controls->view_datetime($approval->created_at); ?></td>
+                                        <td><?= $approval->remarks; ?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>
-            </div>       
+            </div>
         </div>
 
         <div class="col-md-12 padding_10_0 theme-box mt10">
@@ -201,17 +204,17 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                 <div class="col-sm-12">
                     <?php
                     $form = ActiveForm::begin([
-                                'validateOnBlur' => false,
-                                'validateOnChange' => FALSE,
-                                'enableClientValidation' => true,
-                                'validateOnSubmit' => true,
-                                'fieldConfig' => [
-                    ]]);
+                        'validateOnBlur' => false,
+                        'validateOnChange' => FALSE,
+                        'enableClientValidation' => true,
+                        'validateOnSubmit' => true,
+                        'fieldConfig' => []
+                    ]);
                     ?>
                     <?php echo $form->errorSummary($model); ?>
                     <div class="row">
-                        <div class="col-sm-2 number-validate">
-                            <?= $form->field($member_provisional, 'exceed_time')->textInput(['type' => 'time']) ?>
+                        <div class="col-sm-2">
+                            <?= $form->field($shiftTimeExceedModel, 'exceed_time')->widget(MaskedInput::class, ['mask' => '99:99',])->textInput(['value' => $exceedTime ? $exceedTime : null]); ?>
                         </div>
                         <div class="col-sm-2">
                             <?= Yii::$app->dropdown->dropdownStatic('provisional_approval_status', $model, $form, '', $model->getAttributeLabel('status'), false, 'status', FALSE, FALSE, FALSE); ?>
@@ -224,7 +227,7 @@ $approval_detail = $member_provisional->shiftTimeExceedApproval;
                                 <?= Yii::$app->controls->save('save', $model); ?>
                                 <?= Yii::$app->controls->reset(); ?>
                                 <?= Yii::$app->controls->custombutton('cancel', 'pending-approval'); ?>
-                            </div>  
+                            </div>
                         </div>
                     </div>
                     <?php ActiveForm::end(); ?>
