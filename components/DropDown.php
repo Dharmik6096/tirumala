@@ -1748,6 +1748,7 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['purchase' => Yii::t('app', 'Purchase'), 'sale' => Yii::t('app', 'Sale')],
             ],
+<<<<<<< HEAD
             'tanker_rate_gen_method' => [
                 'name' => 'rate_gen_method_code',
                 'prompt' => Yii::t('app', 'Select Rate Method'),
@@ -1763,6 +1764,8 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select'),
                 'data' => ['purchase' => Yii::t('app', 'PURCHASE'), 'sale' => Yii::t('app', 'SALE')],
             ],
+=======
+>>>>>>> origin/eipl_dev_v
             'org_type_exceed' => [
                 'name' => 'org_type',
                 'prompt' => Yii::t('app', 'Select Type'),
