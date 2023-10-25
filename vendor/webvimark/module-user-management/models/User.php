@@ -523,7 +523,7 @@ class User extends UserIdentity {
         $identity = \app\models\IdentityMaster::find()->one();
         $federation = '00';
         $union = '000';
-        $other = '000000';
+        $other = '0000';
         if ($identity) {
             switch ($identity->organization_type) {
                 case 'Federations' :
@@ -544,7 +544,7 @@ class User extends UserIdentity {
             $newcode = (int) $val['id'] + 1;
 
 
-            $value = $code . str_pad($newcode, 3, '0', STR_PAD_LEFT);
+            $value = $code . str_pad($newcode, 5, '0', STR_PAD_LEFT);
             return $value;
         }
     }
