@@ -1758,6 +1758,12 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Rate Type'),
                 'data' => ['1' => Yii::t('app', 'FAT+SNF'), '2' => Yii::t('app', 'QTY')],
             ],
+            'org_type_exceed' => [
+                'name' => 'org_type',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'VLC' => Yii::t('app', 'VLC')],
+
+            ],
         ];
         return $records[$l];
     }
@@ -1888,9 +1894,6 @@ class DropDown extends Component {
             'task_form_type' => ['name' => 'task_type_code', 'fields' => 'task_type_code,task_type,', 'prompt' => Yii::t('app', 'Select Task Type'), 'model' => 'TblTaskType', 'depend' => 'union_code', 'dependArray' => ['has_form']],
             'hold_reason' => ['name' => 'hold_reason', 'fields' => 'hold_reason,description,', 'prompt' => Yii::t('app', 'Select Hold Reason'), 'model' => 'TblPaymentHoldReason'],
             'rate_class' => ['name' => 'rate_class', 'fields' => 'rate_class_code,rate_class', 'prompt' => 'Select Rate Class', 'model' => 'TblRateClass'],
-            'bmc_list' => ['name' => 'org_code', 'fields' => 'bmc_code,bmc_name', 'prompt' => 'Select Bmc', 'model' => 'TblDcsBmc'],
-            'mcc_list' => ['name' => 'org_code', 'fields' => 'mcc_plant_code,name', 'prompt' => 'Select Mcc', 'model' => 'TblMccPlant'],
-            'plant_list' => ['name' => 'plant_code', 'fields' => 'plant_code,name', 'prompt' => 'Select Plant', 'model' => 'TblPlant'],
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
             'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
         ];
