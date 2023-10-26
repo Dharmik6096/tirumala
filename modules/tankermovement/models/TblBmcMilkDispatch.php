@@ -182,7 +182,12 @@ class TblBmcMilkDispatch extends \app\models\ChildModel {
     public function getPlantCodeDest() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'destination_code']);
     }
-
+     public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'destination_code']);
+    }
+       public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'source_org_code']);
+    }
     public function getFromShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'from_shift_code']);
     }

@@ -131,7 +131,7 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         count($mccs) == 1 ? $model->mcc_plant_code = $mccs[0] : '';
         if (count($bmcs) == 1) {
             $model->bmc_code = $bmcs[0];
-            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['to_date' => SORT_DESC])->one();
+            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['created_at' => SORT_DESC])->one();
             if (!empty($stock_date)) {
                 $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
                 $converted_time = date("H:i:s", strtotime($dispatch_date));

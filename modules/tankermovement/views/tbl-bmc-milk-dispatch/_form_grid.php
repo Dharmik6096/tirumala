@@ -37,7 +37,7 @@ $attribute = [
     ['attribute' => 'destination_code',],
     ['attribute' => 'destination_type', 'value' => function($model) {
             $rel = Yii::$app->general->getDestRelation($model->destination_type);
-            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
+            $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : strtolower($model->destination_type) == 'party' ? 'party_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
             if (!empty($rel))
                 return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
         },],
