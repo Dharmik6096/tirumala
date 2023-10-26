@@ -2359,9 +2359,21 @@ class GeneralFunctions extends Component {
     }
 
     public function getCurrentDateShift() {
-        $currentTime = date('H:i');
-        $defaultShiftCode = ($currentTime >= '03:00' && $currentTime < '15:00') ? 1 : 2;
-        return $defaultShiftCode;
+        $currentDateTime = date('Y-m-d H:i:s');
+        $hour = date('H', strtotime($currentDateTime));
+        $hourMinute = date('H:i', strtotime($currentDateTime));
+        $currentDate = date('Y-m-d', strtotime($currentDateTime));
+        $date_time_of_collection = ($hour < 3) ? date('Y-m-d', strtotime($currentDate . " -1 days")) : $currentDate;
+        $defaultShiftCode = ($hourMinute >= '03:00' && $hourMinute < '15:00') ? 1 : 2;
+        return [$defaultShiftCode, $date_time_of_collection];
+    }
+
+    public function validateExceedTime($model, $attribute, $min, $max) {
+        $value = $model->$attribute;
+        if ($value < $min || $value > $max) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be between ' . $min . ' and ' . $max));
+            return false;
+        }
     }
 
 }
