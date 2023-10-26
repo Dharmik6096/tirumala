@@ -79,6 +79,11 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
                       return ($('#tblshifttimeexceed-org_type').val() == 'VLC');
                   }", 'on' => ['create_shift_time']],
                 [['date_time_of_collection'], 'unique', 'targetAttribute' => ['org_type', 'org_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', 'Shift Time Exceed has been already taken.'), 'on' => 'create_shift_time'],
+                [['exceed_time'], 'required', 'on' => ['approval_shift_time']],
+                [['exceed_time'], 'time', 'format' => 'H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01:30')],
+                [['exceed_time'], function ($attribute) {
+                    Yii::$app->general->validateExceedTime($this, $attribute, '00:10', '04:00');
+                }],
         ];
     }
 
@@ -176,6 +181,18 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
 
     public function getShiftTimeExceedApproval() {
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'shift_time_exceed_code'])->orderBy('level ASC');
+    }
+
+    public function validateExceedTime($attribute, $params) {
+        $min = strtotime($params['min']);
+        $max = strtotime($params['max']);
+
+        $value = $this->$attribute;
+        $time = strtotime($value);
+
+        if ($time < $min || $time > $max) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be between ' . $params['min'] . ' and ' . $params['max'] . '.'));
+        }
     }
 
 }
