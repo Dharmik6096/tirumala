@@ -2355,10 +2355,24 @@ class GeneralFunctions extends Component {
         return null;
     }
 
-    public function getCurrentDateShift() {
+    public function getCurrentDateShift($model) {
+        $currentHour = date('H');
+        if($currentHour < 3){
+            $date_time_of_collection = !empty($model->date_time_of_collection) ? $model->date_time_of_collection : date('Y-m-d',strtotime("-1 days"));
+        } else {
+            $date_time_of_collection = !empty($model->date_time_of_collection) ? $model->date_time_of_collection : date('Y-m-d');
+        }
+
+        if($model->exceed_time){
+            $exceedTime = $model->exceed_time;
+            $hourMinute = substr($exceedTime, 0, 5);
+        }else {
+            $hourMinute = "00:00";
+        }
+
         $currentTime = date('H:i');
         $defaultShiftCode = ($currentTime >= '03:00' && $currentTime < '15:00') ? 1 : 2;
-        return $defaultShiftCode;
+        return [$defaultShiftCode, $hourMinute, $date_time_of_collection];
     }
 
 }

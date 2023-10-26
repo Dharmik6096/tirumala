@@ -165,7 +165,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
         $model_save[] = $approvalHistoryModel;
         $shiftTimeExceedModel = $this->findModel($model->process_code);
         $shiftTimeExceedModel->scenario = 'approval_shift_time';
-        $exceedTime = Yii::$app->general->getCurrentDateShift($model);
+        $exceedTime = Yii::$app->general->getCurrentDateShift($shiftTimeExceedModel);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save[] = $model;
             if (!empty($model_save)) {
