@@ -7,7 +7,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::$app->label->title('view', 'Region');
 $this->params['menu'][] = Yii::$app->controls->update($model->region_code);
-$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/geo/tbl-region/contact-details', 'id' => $model->region_code], ['class' => 'btn btn-danger btn-block']);
+$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fas fa-user-circle"></i> Contact Details'), ['/geo/tbl-region/contact-details', 'id' => $model->region_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">

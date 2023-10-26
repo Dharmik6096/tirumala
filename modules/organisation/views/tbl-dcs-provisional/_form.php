@@ -398,12 +398,11 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt10">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chiller'); ?>
         </div>
-        <div class="clearfix"></div>
+        <div class="clearfix"></div></div>
         <div class="col-sm-2">
             <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
         </div>
-        </div>
-        <div class="col-sm-2 mt10">
+        <div class="col-sm-2 mt20">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff'); ?>
         </div>
         <div class="col-sm-2">
