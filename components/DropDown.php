@@ -635,8 +635,8 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-bonus-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
-    
-      public function PartyPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+
+    public function PartyPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-party-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
@@ -1747,7 +1747,7 @@ class DropDown extends Component {
                 'name' => 'collection_type',
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
-            ],  
+            ],
             'tanker_rate_for' => [
                 'name' => 'rate_for',
                 'prompt' => Yii::t('app', 'Select Type'),
