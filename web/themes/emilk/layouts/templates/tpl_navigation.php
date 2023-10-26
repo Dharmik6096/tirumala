@@ -39,7 +39,7 @@ echo GhostMenu::widget([
     //    'options' => ['class' => 'nav navbar-nav navbar-right', 'id' => 'menu-content'],
     'options' => ['class' => 'navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll float-end', 'id' => 'menu-content'],
     //    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
-    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+    'submenuTemplate' => "\n<ul class='dropdown-menu toggle_left'>\n{items}\n</ul>\n",
     'items' => [
         [
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
@@ -66,10 +66,10 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Contact Verification'), 'url' => ['/organisation/tbl-dcs/contact-verification'], 'active' => ($cntrl == 'tbl-dcs' && $action == 'contact-verification')],
                 ['label' => Yii::t('app', 'DCS Manual Collection Range'), 'url' => ['/organisation/tbl-allow-dcs-manual-collection-range/index'], 'active' => ($cntrl == 'tbl-allow-dcs-manual-collection-range')],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Accounting Master <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Accounting Master <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
+                    'template' => '<a class="dropdown-toggle" href="#">Accounting Master <b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Tax Group'), 'url' => ['/dcsaccounting/tbl-tax-group/index'], 'active' => ($cntrl == 'tbl-tax-group')],
                         ['label' => Yii::t('app', 'Basic Tax'), 'url' => ['/dcsaccounting/tbl-basic-tax/index'], 'active' => ($cntrl == 'tbl-basic-tax')],
@@ -81,9 +81,9 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Animal Inspector'), 'url' => ['/organisation/tbl-animal-inspector/index'], 'active' => ($cntrl == 'tbl-animal-inspector')],
                 ['label' => Yii::t('app', 'Animal Inspector Request'), 'url' => ['/organisation/tbl-animal-inspector-request/index'], 'active' => ($cntrl == 'tbl-animal-inspector-request')],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'template' => '<a href="javascript:void(0)">Document Detail<b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a class="dropdown-toggle" href="javascript:void(0)">Document Detail<b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
                         ['label' => Yii::t('app', 'Document Mapping'), 'url' => ['/document/tbl-document-mapping/index'], 'active' => ($cntrl == 'tbl-document-mapping')],
@@ -91,13 +91,14 @@ echo GhostMenu::widget([
                 ],
                 ['label' => Yii::t('app', 'Approval Stages'), 'url' => ['/general/tbl-approval-stages/index'], 'active' => ($cntrl == 'tbl-approval-stages')],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
-                    'template' => '<a href="javascript:void(0)">' . Yii::t('app', 'WorkFlow') . '<b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
+                    'options' => ['class' => 'dropdown-submenu'],
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'WorkFlow') . '<b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Approval Data') . '<b class="caret"></b></a>',
+                            'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                             'items' => [
                                 ['label' => Yii::t('app', 'Member Approval'), 'url' => ['/dcsoperation/tbl-member-provisional/pending-approval'], 'visible' => $workflowConfig],
                                 ['label' => Yii::t('app', 'DCS Approval'), 'url' => ['/organisation/tbl-dcs-provisional/pending-approval']],
@@ -139,13 +140,13 @@ echo GhostMenu::widget([
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
             //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="milkCollDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
-            'submenuTemplate' => "\n<ul class='dropdown-menu' aria-labelledby='milkCollDropdownToggle'>\n{items}\n</ul>\n",
+            'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
             'items' => [
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => $collectionApproval,
+                    'options' => ['class' => 'dropdown-submenu'], 'visible' => $collectionApproval,
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Approval Data <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Approval Data <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Approval Data <b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Milk Collection Approval'), 'url' => ['/collection/tbl-collection-data-alias/milk-collection-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'milk-collection-approve')],
                         ['label' => Yii::t('app', 'BMC Collection Approval'), 'url' => ['/collection/tbl-collection-data-alias/bmc-collection-approve'], 'active' => ($cntrl == 'tbl-collection-data-alias' && $action == 'bmc-collection-approve')],
@@ -179,10 +180,10 @@ echo GhostMenu::widget([
                 ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
                 ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'],
+                    'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Tanker Movement <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-right'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Tanker Movement <b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                         //                        ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
@@ -210,10 +211,10 @@ echo GhostMenu::widget([
                 ['label' => 'Scheme Rate', 'url' => ['/dcsoperation/tbl-scheme-rate/index'], 'active' => ($cntrl == 'tbl-scheme-rate' && $action == 'index')],
                 ['label' => 'Milk Cost Param', 'url' => ['/collection/tbl-milkcost-param/index'], 'active' => ($cntrl == 'tbl-milkcost-param')],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_right'], 'visible' => $rateAppApproval,
+                    'options' => ['class' => 'dropdown-submenu'], 'visible' => $rateAppApproval,
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Rate Applicability Approval<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Rate Applicability Approval <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Rate Applicability Approval <b class="caret"></b></a>',
+                    'submenuTemplate' => "\n<ul class='dropdown-menu'>\n{items}\n</ul>\n",
                     'items' => [
                         ['label' => Yii::t('app', 'Milk Purchase Rate'), 'url' => ['/dcsoperation/tbl-purchase-rate-applicability-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-purchase-rate-applicability' && $action == 'applicabilty-approve')],
                         ['label' => 'Milk Purchase Rate (' . Yii::t('app', 'BMC') . ')', 'url' => ['/dcsoperation/tbl-dcs-purchase-rate-applicabitity-alias/applicabilty-approve'], 'active' => ($cntrl == 'tbl-dcs-purchase-rate-applicability-alias' && $action == 'applicabilty-approve')],
@@ -240,10 +241,9 @@ echo GhostMenu::widget([
                 ['label' => Yii::t('app', 'Product Dispatch Without Requisition'), 'url' => ['/product/tbl-product-dispatch/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-product-dispatch' || $cntrl == 'tbl-product-dispatch-transaction') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
                 ['label' => Yii::t('app', 'PM Advance'), 'url' => ['/payment/tbl-loan-product-sale-details/index', 'flag' => 0], 'active' => (($cntrl == 'tbl-loan-product-sale-details') && Yii::$app->getRequest()->getQueryParam('flag') == 0),],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Inventory <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Inventory <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $batchNoWise],
                         ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
@@ -255,10 +255,9 @@ echo GhostMenu::widget([
                     ]
                 ],
                 [
-                    'options' => ['class' => 'dropdown-submenu toggle_left'],
+                    'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Indent <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Indent <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Indent <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Indent Product'), 'url' => ['/product/tbl-indent-product/index'], 'active' => ($cntrl == 'tbl-indent-product')],
                         ['label' => Yii::t('app', 'Indent Master'), 'url' => ['/product/tbl-indent-master/index'], 'active' => ($cntrl == 'tbl-indent-master'), 'visible' => ($eiplCode == 'DODLA') ? TRUE : FALSE],
@@ -328,8 +327,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">MCC Billing<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">MCC Billing <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">MCC Billing <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
                         ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
@@ -545,8 +543,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Master Register <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Master Register <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Master Register <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'DCS Register'), 'url' => ['/misreports/reports/dcs-master']],
                         ['label' => Yii::t('app', 'Member Register'), 'url' => ['/misreports/reports/member-master']],
@@ -563,14 +560,12 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Milk Collection') . ' <b class="caret"></b></a>',
                     'items' => [
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Member Collection') . '<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Member Collection') . ' <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Member Collection') . ' <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => '101 -' . Yii::t('app', 'Member Collection Detail'), 'url' => ['/misreports/reports/member-daily-collection']],
                                 ['label' => '102 -' . Yii::t('app', 'Society Collection Detail'), 'url' => ['/misreports/reports/dcs-coll-date-shift-summary']],
@@ -597,8 +592,7 @@ echo GhostMenu::widget([
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'BMC Collection') . '<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'BMC Collection') . ' <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'BMC Collection') . ' <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => '201 -' . Yii::t('app', 'BMC Collection Shift Report'), 'url' => ['/misreports/reports/bmc-collection-shift-report']],
                                 ['label' => '202 -' . Yii::t('app', 'BMC Collection Detail'), 'url' => ['/misreports/reports/bmc-coll-date-shift-wise-summary']],
@@ -631,8 +625,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Indent') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Indent') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Indent') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '301 -' . Yii::t('app', 'Member Indent Detail'), 'url' => ['/misreports/reports/member-wise-summary']],
                         ['label' => '302 -' . Yii::t('app', 'Vendor Indent Detail'), 'url' => ['/misreports/reports/vendor-wise-summary']],
@@ -653,8 +646,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'SAP') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'SAP') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'SAP') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '401-' . Yii::t('app', 'Status Report'), 'url' => ['/misreports/reports/sap-status-report']],
                         ['label' => '402-' . Yii::t('app', 'Comparision Report'), 'url' => ['/misreports/reports/sap-comparision-report']],
@@ -669,8 +661,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Billing') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Billing') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Billing') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '501 -' . Yii::t('app', 'Member Wise No. Of Payment Cycle'), 'url' => ['/misreports/reports/member-wise-no-of-payment-cycle']],
                         ['label' => '502 -' . Yii::t('app', 'BMC Member Payment'), 'url' => ['/misreports/reports/bmc-wise-payment-cycle-wise']],
@@ -685,8 +676,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Payment') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Payment') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '601-' . Yii::t('app', 'BMC Payment'), 'url' => ['/jasperreports/default/bmc-payment']],
                         ['label' => '602-' . Yii::t('app', 'Vendor Payment'), 'url' => ['/misreports/reports/vendor-payment']],
@@ -722,8 +712,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Staff Reports') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Staff Reports') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Staff Reports') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => '701-' . Yii::t('app', 'Staff Salary'), 'url' => ['/jasperreports/default/staff-salary']],
                     ]
@@ -731,8 +720,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Cleaning & Calibration') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Cleaning & Calibration') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Cleaning & Calibration') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', '801 - Analyzer Cleaning Review'), 'url' => ['/misreports/reports/analyzer-cleaning-review']],
                         ['label' => Yii::t('app', '802 - Analyzer Cleaning Pending Activity'), 'url' => ['/misreports/reports/analyzer-cleaning-pending-activity']],
@@ -747,8 +735,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Other MIS') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Other MIS') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Other MIS') . ' <b class="caret"></b></a>',
                     'items' => [
                         [
                             'options' => ['class' => 'dropdown-submenu'],
@@ -806,8 +793,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Trend') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Trend') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Trend') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Missing Shift'), 'url' => ['/misreports/reports/missing-shift']],
                         ['label' => Yii::t('app', 'Tracking Report'), 'url' => ['/misreports/reports/missing-collection-shift-bmc-cross-tab']],
@@ -827,8 +813,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', 'Inventory') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', 'Inventory') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', 'Inventory') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Stock Summary'), 'url' => ['/misreports/reports/stock-summary']],
                         ['label' => Yii::t('app', 'Stock Detail'), 'url' => ['/misreports/reports/stock-detail']],
@@ -852,8 +837,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">' . Yii::t('app', ' Tanker Moment') . '<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">' . Yii::t('app', ' Tanker Moment') . ' <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">' . Yii::t('app', ' Tanker Moment') . ' <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'BMC Dispatch Register'), 'url' => ['/misreports/reports/bmc-register']],
                         ['label' => Yii::t('app', 'Plant Receipt Register'), 'url' => ['/misreports/reports/plant-register']],
@@ -870,14 +854,12 @@ echo GhostMenu::widget([
             'options' => ['class' => 'nav-item dropdown'], //['class' => 'dropdown'],
             //            'template' => '<a href="#" data-target="#" data-toggle="dropdown" class="dropdown-toggle apply-shortcut" shortcut_key="shift+alt+c" >System <b class="caret"></b></a>',
             'template' => '<a  class="nav-link dropdown-toggle" href="#" id="systemDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" >System <b class="caret"></b></a>',
-            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-menu-end' aria-labelledby='systemDropdownToggle'>\n{items}\n</ul>\n",
             'items' => [
                 ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
                 [
                     'options' => ['class' => 'dropdown-submenu mtp10'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Authorization <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Authorization <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Authorization <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'User', 'url' => ['/user-management/user/index'], 'active' => ($cntrl == 'user'),],
                         ['label' => 'Role', 'url' => ['/user-management/role/index'], 'active' => ($cntrl == 'role'),],
@@ -891,8 +873,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">AMCS User <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">AMCS User <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">AMCS User <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'User', 'url' => ['/installation/tbl-user-android/index'], 'active' => ($cntrl == 'tbl-user-android')],
                         ['label' => 'Role', 'url' => ['/installation/tbl-role/index'], 'active' => ($cntrl == 'tbl-role')],
@@ -902,8 +883,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Geo Graphical <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Geo Graphical <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Geo Graphical <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'District'), 'url' => ['/geo/tbl-districts/index'], 'active' => ($cntrl == 'tbl-districts')],
                         ['label' => Yii::t('app', 'Sub District'), 'url' => ['/geo/tbl-sub-districts/index'], 'active' => ($cntrl == 'tbl-sub-districts')],
@@ -917,9 +897,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Asset <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
-                    'template' => '<a href="javascript:void(0)" class="dropdown-item">TMS<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">TMS <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Task Type'), 'url' => ['/tms/tbl-task-type/index'], 'active' => ($cntrl == 'tbl-task-type')],
                         ['label' => Yii::t('app', 'Form Type'), 'url' => ['/tms/tbl-form-type/index'], 'active' => ($cntrl == 'tbl-form-type')],
@@ -929,7 +907,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-item">Asset <b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Asset <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Asset Group'), 'url' => ['/assetmanagement/tbl-asset-group/index'], 'active' => ($cntrl == 'tbl-asset-group')],
                         ['label' => Yii::t('app', 'Asset Master'), 'url' => ['/assetmanagement/tbl-asset-master/index'], 'active' => ($cntrl == 'tbl-asset-master')],
@@ -941,8 +919,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Welfare Scheme<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Welfare Scheme <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Welfare Scheme <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Scheme Document Master'), 'url' => ['/welfarescheme/tbl-scheme-document-master/index'], 'active' => ($cntrl == 'tbl-scheme-document-master')],
                         ['label' => Yii::t('app', 'Scheme Master'), 'url' => ['/welfarescheme/tbl-scheme-master/index'], 'active' => ($cntrl == 'tbl-scheme-master')],
@@ -953,7 +930,7 @@ echo GhostMenu::widget([
                 ],
                 [
                     'options' => ['class' => 'dropdown-submenu'],
-                    'template' => '<a href="javascript:void(0)" class="dropdown-item">Complain<b class="caret"></b></a>',
+                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Complain<b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Complain Escalation'), 'url' => ['/complaint/tbl-complain-escalation/index'], 'active' => ($cntrl == 'tbl-complain-escalation')],
                         ['label' => Yii::t('app', 'Complain Type'), 'url' => ['/complaint/tbl-complain-type/index'], 'active' => ($cntrl == 'tbl-complain-type')],
@@ -963,8 +940,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Global <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Global <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Global <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Society Type'), 'url' => ['/globalmaster/tbl-dcs-types/index'], 'active' => ($cntrl == 'tbl-dcs-types')],
                         ['label' => Yii::t('app', 'Caste Category Master'), 'url' => ['/globalmaster/tbl-caste-category/index'], 'active' => ($cntrl == 'tbl-caste-category')],
@@ -985,14 +961,12 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Utility <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Utility <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Utility <b class="caret"></b></a>',
                     'items' => [
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Manual Alert<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">Manual Alert <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">Manual Alert <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => Yii::t('app', 'RMRD Collection (VSP)'), 'url' => ['/sms/manual-notification/rmrd-collection-vsp']],
                             ]
@@ -1000,8 +974,7 @@ echo GhostMenu::widget([
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Configuration<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">Configuration <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">Configuration <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => Yii::t('app', 'Interface Device Mapping'), 'url' => ['/hardwareconfigutation/tbl-interfacing-device-mapping/index']],
                                 ['label' => Yii::t('app', 'Device Configuration Template'), 'url' => ['/configuration/tbl-device-config-template/index'], 'active' => ($cntrl == 'tbl-device-config-template')],
@@ -1011,8 +984,7 @@ echo GhostMenu::widget([
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Delete Utility<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">Delete Utility <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">Delete Utility <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => Yii::t('app', 'Bulk Delete Milk Collection'), 'url' => ['/collection/tbl-milk-collection/bulk-delete-collection'], 'active' => ($cntrl == 'tbl-milk-collection' && $action == 'bulk-delete-collection')],
                                 ['label' => Yii::t('app', 'Milk Collection Cream Base Data'), 'url' => ['/collection/tbl-milk-collection-cream-base-data/index'], 'active' => ($cntrl == 'tbl-milk-collection-cream-base-data' && in_array($action, ['index', 'create', 'view', 'update']))],
@@ -1021,8 +993,7 @@ echo GhostMenu::widget([
                         [
                             'options' => ['class' => 'dropdown-submenu'],
                             //                            'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Shift Lock Exception<b class="caret"></b></a>',
-                            'template' => '<a  class="dropdown-item" href="#">Shift Lock Exception <b class="caret"></b></a>',
-                            'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                            'template' => '<a  class="dropdown-toggle" href="#">Shift Lock Exception <b class="caret"></b></a>',
                             'items' => [
                                 ['label' => Yii::t('app', 'Milk Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-milk-collection/index-allow'], 'active' => ($cntrl == 'tbl-milk-collection' && in_array($action, ['index', 'create', 'view', 'update']))],
                                 ['label' => Yii::t('app', 'BMC Collection (Except Shift Lock)'), 'url' => ['/collection/tbl-bmc-collection/index-allow'], 'active' => ($cntrl == 'tbl-bmc-collection' && $action == 'index-allow')],
@@ -1066,8 +1037,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">DPU Log <b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">DPU Log <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">DPU Log <b class="caret"></b></a>',
                     'items' => [
                         ['label' => Yii::t('app', 'Dpu Calibration'), 'url' => ['/tbl-dpu-calibration/index']],
                         ['label' => Yii::t('app', 'Dpu Cleaning'), 'url' => ['/tbl-cleaning-dpu/index']],
@@ -1091,8 +1061,7 @@ echo GhostMenu::widget([
                 [
                     'options' => ['class' => 'dropdown-submenu'],
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Collection Files<b class="caret"></b></a>',
-                    'template' => '<a  class="dropdown-item" href="#">Collection Files <b class="caret"></b></a>',
-                    'submenuTemplate' => "\n<ul class='dropdown-menu dropdown-submenu dropdown-submenu-left'>\n{items}\n</ul>\n",
+                    'template' => '<a  class="dropdown-toggle" href="#">Collection Files <b class="caret"></b></a>',
                     'items' => [
                         ['label' => 'BIPL Files Process', 'url' => ['/bkgprocess/tbl-ftp-txn-log/list']],
                         ['label' => 'EIPL Files Process - New', 'url' => ['/eipldpu/pendrive-import/create']],
