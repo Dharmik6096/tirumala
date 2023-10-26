@@ -82,7 +82,7 @@ class TblShiftTimeExceed extends \app\models\ChildModel {
                 [['exceed_time'], 'required', 'on' => ['approval_shift_time']],
                 [['exceed_time'], 'time', 'format' => 'H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01:30')],
                 [['exceed_time'], function ($attribute) {
-                    Yii::$app->general->validateExceedTime($this, $attribute, '01:00', '03:59');
+                    Yii::$app->general->validateExceedTime($this, $attribute, '00:10', '04:00');
                 }],
         ];
     }
