@@ -17,22 +17,20 @@ use app\modules\general\models\TblProcessApprovalHistory;
 /**
  * TblShiftTimeExceedController implements the CRUD actions for TblShiftTimeExceed model.
  */
-class TblShiftTimeExceedController extends \app\controllers\ChildController
-{
+class TblShiftTimeExceedController extends \app\controllers\ChildController {
 
     /**
      * Lists all TblShiftTimeExceed models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblShiftTimeExceedSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'pending_approval' => FALSE
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'pending_approval' => FALSE
         ]);
     }
 
@@ -41,10 +39,9 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -53,19 +50,16 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblShiftTimeExceed();
         $this->viewFile = 'create';
-        $dateWithShift = Yii::$app->general->getCurrentDateShift($this->model);
-        $this->model->shift_code = $dateWithShift[0];
-        $this->model->date_time_of_collection = $dateWithShift[2];
+        $currentDateShift = Yii::$app->general->getCurrentDateShift();
+        $this->model->shift_code = $currentDateShift[0];
+        $this->model->date_time_of_collection = $currentDateShift[1];
         $this->model->scenario = 'create_shift_time';
         $save_model = [];
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->shift_time_exceed_code = Yii::$app->general->getPrimaryCode($this->model);
-            $this->model->date_time_of_collection = date('d-m-Y');
-            $this->model->date_time_of_collection = ($this->model->date_time_of_collection) ? Yii::$app->formatter->asDate($this->model->date_time_of_collection, DATE_FORMAT) : '';
             $this->model->date_time_of_collection = $this->model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($this->model->shift_code);
             if ($this->model->org_type == 'BMC') {
                 $this->model->org_code = $this->model->bmc_code;
@@ -94,15 +88,14 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->shift_time_exceed_code]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -113,8 +106,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -127,8 +119,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
      * @return TblShiftTimeExceed the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblShiftTimeExceed::findOne($id)) !== null) {
             return $model;
         } else {
@@ -136,27 +127,24 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
         }
     }
 
-    public function actionGetStandardTime()
-    {
+    public function actionGetStandardTime() {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $model = new TblShiftTimeExceed();
         $data = $model->getStandardTimeData(Yii::$app->request->post());
         return ['standard_time' => $data,];
     }
 
-    public function actionPendingApproval()
-    {
+    public function actionPendingApproval() {
         $searchModel = new TblShiftTimeExceedSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, TRUE);
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'pending_approval' => TRUE
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'pending_approval' => TRUE
         ]);
     }
 
-    public function actionApproveShiftTimeExceed($id)
-    {
+    public function actionApproveShiftTimeExceed($id) {
         $model = TblProcessApproval::findOne($id);
         $model->scenario = 'approve';
         $model_save = [];
@@ -165,14 +153,20 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
         $model_save[] = $approvalHistoryModel;
         $shiftTimeExceedModel = $this->findModel($model->process_code);
         $shiftTimeExceedModel->scenario = 'approval_shift_time';
-        $exceedTime = Yii::$app->general->getCurrentDateShift($shiftTimeExceedModel);
+        if (!empty($shiftTimeExceedModel->exceed_time)) {
+            $time = $shiftTimeExceedModel->exceed_time;
+            $time = substr($time, 0, 5);
+        } else {
+            $time = "00:00";
+        }
+        $shiftTimeExceedModel->exceed_time = $time;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save[] = $model;
             if (!empty($model_save)) {
                 $next_count = TblProcessApproval::find()
-                    ->where(['process_code' => $model->process_code, 'status' => 0])
-                    ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
-                    ->count();
+                        ->where(['process_code' => $model->process_code, 'status' => 0])
+                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
+                        ->count();
                 if ($model->status == '2') {
                     $status = 'Reject';
                 } else if ($model->status == '1' && $next_count > 0) {
@@ -205,9 +199,9 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController
             }
         }
         return $this->render('approve_shift_time_exceed', [
-            'model' => $model,
-            'shiftTimeExceedModel' => $shiftTimeExceedModel,
-            'exceedTime' => $exceedTime[1],
+                    'model' => $model,
+                    'shiftTimeExceedModel' => $shiftTimeExceedModel,
         ]);
     }
+
 }

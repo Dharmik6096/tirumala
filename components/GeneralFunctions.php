@@ -2355,24 +2355,22 @@ class GeneralFunctions extends Component {
         return null;
     }
 
-    public function getCurrentDateShift($model) {
-        $currentHour = date('H');
-        if($currentHour < 3){
-            $date_time_of_collection = !empty($model->date_time_of_collection) ? $model->date_time_of_collection : date('Y-m-d',strtotime("-1 days"));
-        } else {
-            $date_time_of_collection = !empty($model->date_time_of_collection) ? $model->date_time_of_collection : date('Y-m-d');
-        }
+    public function getCurrentDateShift() {
+        $currentDateTime = date('Y-m-d H:i:s');
+        $hour = date('H', strtotime($currentDateTime));
+        $hourMinute = date('H:i', strtotime($currentDateTime));
+        $currentDate = date('Y-m-d', strtotime($currentDateTime));
+        $date_time_of_collection = ($hour < 3) ? date('Y-m-d', strtotime($currentDate . " -1 days")) : $currentDate;
+        $defaultShiftCode = ($hourMinute >= '03:00' && $hourMinute < '15:00') ? 1 : 2;
+        return [$defaultShiftCode, $date_time_of_collection];
+    }
 
-        if($model->exceed_time){
-            $exceedTime = $model->exceed_time;
-            $hourMinute = substr($exceedTime, 0, 5);
-        }else {
-            $hourMinute = "00:00";
+    public function validateExceedTime($model, $attribute, $min, $max) {
+        $value = $model->$attribute;
+        if ($value < $min || $value > $max) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be between ' . $min . ' and ' . $max));
+            return false;
         }
-
-        $currentTime = date('H:i');
-        $defaultShiftCode = ($currentTime >= '03:00' && $currentTime < '15:00') ? 1 : 2;
-        return [$defaultShiftCode, $hourMinute, $date_time_of_collection];
     }
 
 }

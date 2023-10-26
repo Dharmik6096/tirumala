@@ -44,55 +44,53 @@ use app\modules\dcsoperation\models\TblShift;
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblShiftTimeExceed extends \app\models\ChildModel
-{
+class TblShiftTimeExceed extends \app\models\ChildModel {
 
     public $process_approval_code;
 
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_shift_time_exceed';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['shift_time_exceed_code'], 'required'],
-            [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'org_type', 'date_time_of_collection', 'standard_time', 'exceed_time', 'status_datetime', 'created_at', 'updated_at', 'shift_code', 'originating_type', 'status', 'created_by', 'updated_by', 'shift_time_exceed_code', 'org_code', 'remarks', 'status_remarks', 'status_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_approval_code'], 'safe'],
-            [['shift_time_exceed_code', 'org_type', 'org_code', 'date_time_of_collection', 'standard_time', 'exceed_time', 'shift_code'], 'required', 'on' => ['create_shift_time']],
-            [['plant_code', 'mcc_plant_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
-                return ($model->org_type == 'MCC' || $model->org_type == 'BMC' || $model->org_type == 'VLC');
-            }, 'whenClient' => "function (attribute, value) { 
+                [['shift_time_exceed_code'], 'required'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'org_type', 'date_time_of_collection', 'standard_time', 'exceed_time', 'status_datetime', 'created_at', 'updated_at', 'shift_code', 'originating_type', 'status', 'created_by', 'updated_by', 'shift_time_exceed_code', 'org_code', 'remarks', 'status_remarks', 'status_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'process_approval_code'], 'safe'],
+                [['shift_time_exceed_code', 'org_type', 'org_code', 'date_time_of_collection', 'standard_time', 'exceed_time', 'shift_code'], 'required', 'on' => ['create_shift_time']],
+                [['plant_code', 'mcc_plant_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'MCC' || $model->org_type == 'BMC' || $model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblshifttimeexceed-org_type').val() == 'MCC' || $('#tblshifttimeexceed-org_type').val() == 'BMC' || $('#tblshifttimeexceed-org_type').val() == 'VLC');
                 }", 'on' => ['create_shift_time']],
-            [['bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
-                return ($model->org_type == 'BMC' || $model->org_type == 'VLC');
-            }, 'whenClient' => "function (attribute, value) { 
+                [['bmc_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'BMC' || $model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblshifttimeexceed-org_type').val() == 'BMC' || $('#tblshifttimeexceed-org_type').val() == 'VLC');
                 }", 'on' => ['create_shift_time']],
-            [['dcs_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
-                return ($model->org_type == 'VLC');
-            }, 'whenClient' => "function (attribute, value) { 
+                [['dcs_code'], 'required', 'skipOnError' => true, 'when' => function ($model) {
+                    return ($model->org_type == 'VLC');
+                }, 'whenClient' => "function (attribute, value) { 
                       return ($('#tblshifttimeexceed-org_type').val() == 'VLC');
                   }", 'on' => ['create_shift_time']],
-            [['date_time_of_collection'], 'unique', 'targetAttribute' => ['org_type', 'org_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', 'Shift Time Exceed has been already taken.'), 'on' => 'create_shift_time'],
-            [['exceed_time'], 'required', 'on' => ['approval_shift_time']],
-            [['exceed_time'], 'validateExceedTime']
-
+                [['date_time_of_collection'], 'unique', 'targetAttribute' => ['org_type', 'org_code', 'date_time_of_collection'], 'message' => Yii::t('app/validation', 'Shift Time Exceed has been already taken.'), 'on' => 'create_shift_time'],
+                [['exceed_time'], 'required', 'on' => ['approval_shift_time']],
+                [['exceed_time'], 'time', 'format' => 'H:i', 'message' => Yii::t('app/validation', 'The format of {attribute} is invalid. eg. 01:30')],
+                [['exceed_time'], function ($attribute) {
+                    Yii::$app->general->validateExceedTime($this, $attribute, '01:00', '03:59');
+                }],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'shift_time_exceed_code' => Yii::t('app', 'Shift Time Exceed Code'),
             'union_code' => Yii::t('app', 'Union'),
@@ -126,47 +124,40 @@ class TblShiftTimeExceed extends \app\models\ChildModel
         ];
     }
 
-    public function getShiftCode()
-    {
+    public function getShiftCode() {
         return $this->hasOne(TblShift::className(), ['id' => 'shift_code']);
     }
 
-    public function getUnionCode()
-    {
+    public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
 
-    public function getPlantCode()
-    {
+    public function getPlantCode() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'plant_code']);
     }
 
-    public function getMccPlantCode()
-    {
+    public function getMccPlantCode() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::className(), ['dcs_code' => 'dcs_code']);
     }
 
-    public function getBmcCode()
-    {
+    public function getBmcCode() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'bmc_code']);
     }
 
-    public function getStandardTimeData($postData)
-    {
+    public function getStandardTimeData($postData) {
         if (!empty($postData)) {
             if ($postData['org_type'] == 'BMC' || $postData['org_type'] == 'MCC') {
                 $shiftCode = $postData['shift_code'];
 
                 $data = (new \yii\db\Query)
-                    ->select(['m_lock_time', 'e_lock_time'])
-                    ->from('tbl_shift_time_android')
-                    ->where(['org_type' => $postData['org_type'], 'org_code' => $postData['code']])
-                    ->one();
+                        ->select(['m_lock_time', 'e_lock_time'])
+                        ->from('tbl_shift_time_android')
+                        ->where(['org_type' => $postData['org_type'], 'org_code' => $postData['code']])
+                        ->one();
 
                 $standardTime = ($shiftCode == '1') ? $data['m_lock_time'] : $data['e_lock_time'];
 
@@ -174,10 +165,10 @@ class TblShiftTimeExceed extends \app\models\ChildModel
             } else if ($postData['org_type'] == 'VLC') {
                 $shiftCode = $postData['shift_code'];
                 $data = (new \yii\db\Query)
-                    ->select(['m_lock_time', 'e_lock_time'])
-                    ->from('tbl_dpu_incentive_master')
-                    ->where(['dcs_code' => $postData['code']])
-                    ->one();
+                        ->select(['m_lock_time', 'e_lock_time'])
+                        ->from('tbl_dpu_incentive_master')
+                        ->where(['dcs_code' => $postData['code']])
+                        ->one();
 
                 $standardTime = ($shiftCode == '1') ? $data['m_lock_time'] : $data['e_lock_time'];
 
@@ -188,33 +179,20 @@ class TblShiftTimeExceed extends \app\models\ChildModel
         return ['standard_time' => null];
     }
 
-    public function getShiftTimeExceedApproval()
-    {
+    public function getShiftTimeExceedApproval() {
         return $this->hasMany(TblProcessApproval::className(), ['process_code' => 'shift_time_exceed_code'])->orderBy('level ASC');
     }
 
-    public function validateExceedTime($attribute, $params)
-    {
-        $maxTime = '04:00';
-        $enteredTime = strtotime($this->$attribute);
-        $maxAllowedTime = strtotime($maxTime);
+    public function validateExceedTime($attribute, $params) {
+        $min = strtotime($params['min']);
+        $max = strtotime($params['max']);
 
-        if ($enteredTime > $maxAllowedTime) {
-            $this->addError($attribute, 'The Exceed Time must not exceed 04:00.');
-        }
+        $value = $this->$attribute;
+        $time = strtotime($value);
 
-        // Additional check for minutes not exceeding 59
-        $timeComponents = explode(':', $this->$attribute);
-
-        if (count($timeComponents) != 2) {
-            $this->addError($attribute, 'Invalid time format. Please use HH:MM format.');
-        } else {
-            $hours = (int)$timeComponents[0];
-            $minutes = (int)$timeComponents[1];
-
-            if ($hours < 0 || $hours > 23 || $minutes < 0 || $minutes > 59) {
-                $this->addError($attribute, 'Invalid time format or minutes exceeding 59.');
-            }
+        if ($time < $min || $time > $max) {
+            $this->addError($attribute, Yii::t('app/validation', $this->getAttributeLabel($attribute) . ' must be between ' . $params['min'] . ' and ' . $params['max'] . '.'));
         }
     }
+
 }
