@@ -21,12 +21,8 @@ $form = ActiveForm::begin([
     <?= Yii::$app->dropdown->dropdownStatic('party_payment_type', $searchModel, $form, '', 'Payment Type'); ?>
 </div>
 <div class="col-sm-2">
-    <?= Yii::$app->controls->date($searchModel, $form, 'from_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
+    <?= Yii::$app->dropdown->PartyPaymentCycle($searchModel, $form, 'tblpartypaymentsearch-party_master_code,tblpartypaymentsearch-payment_type,tblpartypaymentsearch-union_code', 'payment_cycle_code', $searchModel->getAttributeLabel('payment_cycle_code')); ?>
 </div>
-<div class="col-sm-2">
-    <?= Yii::$app->controls->date($searchModel, $form, 'to_date', 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, true); ?>
-</div>
-
 <div class="form-group padding_top_20">
     <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
 </div>

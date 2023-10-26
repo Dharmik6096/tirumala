@@ -28,8 +28,13 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
                                 'value' => isset($model->payment_type) ? Yii::$app->dropdown->getRecords('party_payment_type')['data'][strtolower($model->payment_type)] : 'N/A',
                                 'valueColOptions' => ['style' => 'width:15%']
                             ],
-                            [
+                             [
                                 'attribute' => 'party_master_code',
+                                'value' => $model->partyMaster['party_master_code'],
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'party_master_name',
                                 'value' => $model->partyMaster['party_name'],
                                 'valueColOptions' => ['style' => 'width:15%']
                             ],
@@ -96,18 +101,15 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
                 ['attribute' => 'dispatch_datetime',
                     'value' => function ($model) {
                         return Yii::$app->controls->view_date($model->dispatch_datetime);
-                    }, 'filter' => false],
+                    }, 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
                 ['attribute' => 'receipt_datetime',
                     'value' => function ($model) {
                         return Yii::$app->controls->view_date($model->receipt_datetime);
                     }, 'filter' => false],
-                ['attribute' => 'challan_no', 'filter' => false],
-                ['attribute' => 'parsing_no', 'filter' => false],
+                ['attribute' => 'challan_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'parsing_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
                 ['attribute' => 'from_dest', 'value' => function ($model) {
                         $rel = Yii::$app->general->getDestRelation($model->from_type);
-//                        echo "hii<pre>";
-//                        print_r($rel);
-//                        die;
                         $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'party' ? 'party_name' : 'name');
                         if (!empty($rel))
                             return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
@@ -119,11 +121,15 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
                         if (!empty($rel))
                             return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
                     }, 'filter' => false],
-                ['attribute' => 'rec_qty', 'label' => Yii::t('app', 'R.WEIGHT'), 'filter' => false, 'pageSummary' => true],
-                ['attribute' => 'qty', 'label' => Yii::t('app', 'B.WEIGHT'), 'filter' => false, 'pageSummary' => true],
-                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Disp Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_fat', 'label' => Yii::t('app', 'Disp Kg FAT'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_snf', 'label' => Yii::t('app', 'Disp Kg SNF'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'rec_qty', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Qty') : Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true],
+                //   ['attribute' => 'qty', 'label' => Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) != 'sale'],
+                ['attribute' => 'rec_kg_fat', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Kg FAT') : Yii::t('app', 'Kg FAT'), 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'rec_kg_snf', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec KG SNF') : Yii::t('app', 'Kg SNF'), 'filter' => false, 'pageSummary' => true ],
+                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
             ];
-
             $grid_option = [
                 'id' => 'tpt-payment-detail',
                 'attributes' => $attribute,

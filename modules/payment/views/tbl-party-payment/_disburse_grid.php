@@ -1,138 +1,226 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
+use kartik\grid\GridView;
+use kartik\detail\DetailView;
 use yii\web\View;
 use yii\helpers\Html;
-use webvimark\modules\UserManagement\components\GhostHtml;
+use yii\helpers\Url;
 
-$this->title = 'Party Payment Disburse';
+$this->title = 'Party Payment Disburse : Step 2';
 $action = Url::to(['process-payment-disburse']);
-$fromDate = Yii::$app->controls->view_date($searchModel->from_date);
-$toDate = Yii::$app->controls->view_date($searchModel->to_date);
-$message = Yii::t('app', 'Payment data will be Disbursed for ' . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
-$showButtons = (!empty($dataProvider->getModels())) ? TRUE : FALSE;
+$fromDate = Yii::$app->controls->view_date($model->from_date);
+$toDate = Yii::$app->controls->view_date($model->to_date);
+$party_info = Yii::$app->general->getforeignkey($model->partyMaster, 'party_name') . ' > ' .
+        (Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date) );
+$message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . '). Are you sure ?');
 ?>
-<div class="" >
-    <?php
-    $form = ActiveForm::begin([
-                'id' => 'party-payment-disburse',
-                'action' => $action,
-                'method' => 'post'
-    ]);
-    ?>
-    <div class="grid-button-wrap" >
-        <?= Html::activeHiddenInput($model, 'union_code'); ?>
-        <?= Html::activeHiddenInput($model, 'payment_type'); ?>
+<?php
+$form = ActiveForm::begin([
+            'id' => 'party-payment-disburse',
+            'action' => $action,
+            'method' => 'post'
+        ]);
+?>
+<div class="panel panel-default panel-main">
+    <div class="panel-heading"><?= $this->title ?></div>
+    <div class="panel-body">
+        <div id="maincontent">
+            <div class="table-responsive">
+                <?php
+                $attributes = [
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'payment_type',
+                                'value' => isset($model->payment_type) ? Yii::$app->dropdown->getRecords('party_payment_type')['data'][strtolower($model->payment_type)] : 'N/A',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'party_master_code',
+                                'value' => $model->partyMaster['party_master_code'],
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'party_master_name',
+                                'value' => $model->partyMaster['party_name'],
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'from_date',
+                                'label' => Yii::t('app', 'Period'),
+                                'value' => Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date),
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'net_amount',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'final_amount',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'total_amount',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'total_addition',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'total_deduction',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                        ],
+                    ],
+                ];
+
+                // View file rendering the widget
+                echo DetailView::widget([
+                    'model' => $model,
+                    'attributes' => $attributes,
+                    'mode' => 'view',
+                    'bordered' => true,
+                    'striped' => false,
+                    'responsive' => true,
+                    'hAlign' => 'left',
+                    'vAlign' => 'top',
+                    'deleteOptions' => [// your ajax delete parameters
+                        'params' => ['id' => 1000, 'kvdelete' => true],
+                    ],
+                    'container' => ['id' => 'kv-demo'],
+                ]);
+                ?>
+            </div>
+        </div>
+        <div id="gridcontentvehicle" class='hide-grid-settings not_ellipsis'>
+            <h5 class="panel-heading"><?= Yii::t('app', 'Date wise Payment Details') ?></h5>
+            <?php
+            $attribute = [
+                ['attribute' => 'dispatch_datetime',
+                    'value' => function ($model) {
+                        return Yii::$app->controls->view_date($model->dispatch_datetime);
+                    }, 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'receipt_datetime',
+                    'value' => function ($model) {
+                        return Yii::$app->controls->view_date($model->receipt_datetime);
+                    }, 'filter' => false],
+                ['attribute' => 'challan_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'parsing_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'from_dest', 'value' => function ($model) {
+
+                        $rel = Yii::$app->general->getDestRelation($model->from_type);
+                        $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'party' ? 'party_name' : 'name');
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
+                    }, 'filter' => false],
+                ['attribute' => 'to_dest', 'value' => function ($model) {
+                        $rel = Yii::$app->general->getDestRelation($model->to_type);
+                        $att = strtolower($model->to_type) == 'bmc' ? 'bmc_name' : (strtolower($model->to_type) == 'party' ? 'party_name' : 'name');
+                        ;
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
+                    }, 'filter' => false],
+                ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Disp Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_fat', 'label' => Yii::t('app', 'Disp Kg FAT'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_snf', 'label' => Yii::t('app', 'Disp Kg SNF'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'rec_qty', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Qty') : Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true],
+                //   ['attribute' => 'qty', 'label' => Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) != 'sale'],
+                ['attribute' => 'rec_kg_fat', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Kg FAT') : Yii::t('app', 'Kg FAT'), 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'rec_kg_snf', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec KG SNF') : Yii::t('app', 'Kg SNF'), 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
+            ];
+
+            $grid_option = [
+                'id' => 'tpt-payment-detail',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+                'showPageSummary' => true,
+            ];
+            Yii::$app->grid->bind($dataProviderDetail, $searchModelDetail, $grid_option);
+            ?>
+        </div>
+        <div id="gridcontenthead" class='hide-grid-settings'>
+            <h5 class="panel-heading"><?= Yii::t('app', 'Payment Head Details') ?></h5>
+            <?php
+            $attribute = [
+                ['attribute' => 'party_payment_head_code', 'value' => function ($model) {
+                        return Yii::$app->general->getforeignkey($model->paymentHeadCode, 'payment_head_name');
+                    }, 'filter' => false, 'label' => Yii::t('app', 'Payment Head Name')],
+                ['attribute' => 'type', 'value' => function ($model) {
+                        return isset($model->payment_head_type) ? Yii::$app->dropdown->getRecords('calc_type')['data'][$model->payment_head_type] : '';
+                    }, 'filter' => false],
+                ['attribute' => 'amount', 'filter' => false],
+            ];
+
+            $grid_option = [
+                'id' => 'tpt-payment-head-detail',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+            ];
+            Yii::$app->grid->bind($headDetail, $searchModelHead, $grid_option);
+            ?>
+        </div>
+        <hr/>
+
+        <?= Html::hiddenInput('process_lock_flag', 'processed', ['class' => 'process_lock_flag']); ?>
         <?= Html::activeHiddenInput($model, 'from_date'); ?>
         <?= Html::activeHiddenInput($model, 'to_date'); ?>
+        <?= Html::activeHiddenInput($model, 'union_code'); ?>
+        <?= Html::activeHiddenInput($model, 'payment_type'); ?>
         <?= Html::activeHiddenInput($model, 'party_master_code'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
-    </div>
-    <?php
-    $attribute = [
-//        ['attribute' => 'union_code'],
-        ['attribute' => 'party_master_code', 'label' => Yii::t('app', 'Code')],
-        ['attribute' => 'party_master_code', 'label' => Yii::t('app', 'Party'), 'value' => function($model){
-            return Yii::$app->general->getforeignkey($model->partyMaster, 'party_name');
-        }],
-        ['attribute' => 'payment_type'],
-        ['attribute' => 'from_date', 'label' => Yii::t('app', 'Period'),
-            'value' => function ($model) {
-                return Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date);
-            }, 'filter' => false],
-        ['attribute' => 'disp_kg_fat'],
-        ['attribute' => 'disp_kg_snf'],
-        ['attribute' => 'disp_qty'],
-        ['attribute' => 'rec_kg_fat'],
-        ['attribute' => 'rec_kg_snf'],
-        ['attribute' => 'rec_qty'],
-        ['attribute' => 'rd_kg_fat_diff'],
-        ['attribute' => 'rd_kg_snf_diff'],
-        ['attribute' => 'rd_qty_diff'],
-        ['attribute' => 'no_of_days'],
-        ['attribute' => 'total_qty'],
-        ['attribute' => 'avg_fat'],
-        ['attribute' => 'avg_snf'],
-        ['attribute' => 'avg_rate'],
-        ['attribute' => 'total_amount'],
-        ['attribute' => 'total_addition'],
-        ['attribute' => 'total_deduction'],
-        ['attribute' => 'final_amount'],
-        ['attribute' => 'net_amount'],
-        ['attribute' => 'adjust_remark'],
-        ['attribute' => 'bank_name'],
-        ['attribute' => 'bank_code'],
-        ['attribute' => 'branch_name'],
-        ['attribute' => 'branch_code'],
-        ['attribute' => 'ifsc'],
-        ['attribute' => 'bank_account_no'],
-        ['attribute' => 'beneficiary_name'],
-        ['attribute' => 'status'],
-    ];
-
-    $grid_option = [
-        'id' => 'party-payment-disburse-grid',
-        'attributes' => $attribute,
-        'active_column' => false,
-        'showPageSummary' => true,
-        'actions' => [
-            'bill-head' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-val' => $model->party_payment_code];
-                return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-party-payment/party-bill-head-detail', 'id' => $model->party_payment_code], $options);
-            },
-            'payment-detail' => function ($url, $model) {
-                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'target' => '_blank', 'data-original-title' => 'View Detail', 'data-val' => $model->party_payment_code];
-                return GhostHtml::a('<i class="fa fa-users"></i>', ['/payment/tbl-party-payment/payment-detail', 'id' => $model->party_payment_code], $options);
-            },
-        ]
-    ];
-
-    Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
-    ?>
-    <?php if ($showButtons) { ?>
         <div class="col-md-12 mt10" >
-        <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary disburse-process', 'name' => 'disburse']); ?>
-        <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary disburse-process', 'name' => 'export-file']); ?>
+            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary disburse-process', 'name' => 'disburse']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary disburse-process', 'name' => 'export-file']); ?>
         </div>
-        <?php } ?>
-
         <?php ActiveForm::end(); ?>
+    </div>
 </div>
-<div id='bill_head_view'></div>
+</div>
 
 <?php
 $script = "$('.kv-panel-before').hide();";
 $script .= "
     $(document).ready(function(){
-        $(document).on('click','.view-head',function(e){
-            var id= $(this).attr('data-val');
-            ViewBillHead(id);
-        });
-        function ViewBillHead(code){
-            if(code != ''){         
-            $.ajax({
-                    type: 'get',
-                    url: '" . Url::to(['/payment/tbl-party-payment/party-bill-head-detail']) . "',
-                    data: {'code' : code},
-                    beforeSend:function(data) {
-                    $('#loadercontent').show();
-                    $('#pageloader').show();
-                    },
-                    success: function(data) {
-                      $('#bill_head_view').html(data);
-                       $('#BillHeadModal').modal('toggle');              
-                       $('#loadercontent').hide();
-                       $('#pageloader').hide();                                                                  
-                    },
-                    error: function(data) {  
-                        $('#loadercontent').hide();
-                        $('#pageloader').hide();
-                    }
-                });
-            }
-        }
+//        $(document).on('click','.view-head',function(e){
+//            var id= $(this).attr('data-val');
+//            ViewBillHead(id);
+//        });
+//        function ViewBillHead(code){
+//            if(code != ''){         
+//            $.ajax({
+//                    type: 'get',
+//                    url: '" . Url::to(['/payment/tbl-party-payment/party-bill-head-detail']) . "',
+//                    data: {'code' : code},
+//                    beforeSend:function(data) {
+//                    $('#loadercontent').show();
+//                    $('#pageloader').show();
+//                    },
+//                    success: function(data) {
+//                      $('#bill_head_view').html(data);
+//                       $('#BillHeadModal').modal('toggle');              
+//                       $('#loadercontent').hide();
+//                       $('#pageloader').hide();                                                                  
+//                    },
+//                    error: function(data) {  
+//                        $('#loadercontent').hide();
+//                        $('#pageloader').hide();
+//                    }
+//                });
+//            }
+//        }
         $('.disburse-process').on('click',function(){
+
             var flagName = $(this).prop('name');
             $('#flag').val(flagName);
             if(flagName == 'disburse') {
@@ -160,5 +248,4 @@ $script .= "
             }
         });    
     });";
-$this->registerJs($script, View::POS_END, 'party-payment-disburse-script');
-    
+$this->registerJs($script, View::POS_END, '-party-payment-disburse-script');

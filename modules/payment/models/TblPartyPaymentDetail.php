@@ -86,7 +86,7 @@ class TblPartyPaymentDetail extends \app\models\ChildModel {
     public function getBmcCodeDest() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'to_dest']);
     }
-    
+
     public function getMccPlantCodeDest() {
         return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'to_dest']);
     }
@@ -94,7 +94,7 @@ class TblPartyPaymentDetail extends \app\models\ChildModel {
     public function getPlantCodeDest() {
         return $this->hasOne(TblPlant::className(), ['plant_code' => 'to_dest']);
     }
-    
+
     public function getPartyMasterCodeDest() {
         return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'to_dest']);
     }
@@ -102,7 +102,7 @@ class TblPartyPaymentDetail extends \app\models\ChildModel {
     public function getPartyPaymentCode() {
         return $this->hasOne(TblPartyPayment::className(), ['party_payment_code' => 'party_payment_code']);
     }
-    
+
     public function getBmcCodeSource() {
         return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'from_dest']);
     }

@@ -21,79 +21,76 @@ $this->title = Yii::$app->label->title('view', 'Party Payment');
             <div class="table-responsive">
                 <?php
                 $attributes = [
-//                        [
-//                        'columns' => [
-//                                [
-//                                'attribute' => 'union_code',
-//                                'value' => Yii::$app->general->getforeignkey($model->unionCode, 'union_name'),
-//                                'valueColOptions' => ['style' => 'width:30%']
-//                            ],
-//                        ],
-//                    ],
-                        [
+                    [
                         'columns' => [
-                                [
+                              [
+                                'attribute' => 'party_master_code',
+                                'value' => $model->partyMaster['party_master_code'],
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
                                 'attribute' => 'payment_type',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'from_date',
                                 'label' => Yii::t('app', 'Period'),
                                 'value' => Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'payment_date',
                                 'value' => Yii::$app->controls->view_date($model->payment_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'disp_kg_fat',
-                                    'value' => function($model){
-                                    },
+                                'value' => function ($model) {
+                                    
+                                },
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'disp_kg_snf',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'disp_qty',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'total_amount',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'adjust_amount',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
                     ],
-                        [
+                    [
                         'columns' => [
-                                [
+                            [
                                 'attribute' => 'net_amount',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-                                [
+                            [
                                 'attribute' => 'status',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
@@ -119,89 +116,121 @@ $this->title = Yii::$app->label->title('view', 'Party Payment');
             </div>
         </div>
         <!-- <div class="col-sm-12 view-subtitle"><h5 class="panel-subtitle"></h5></div> -->
-        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Bill Head Detail') ?></h4>
-            </div>
-            <div class="form-grid">
-                <?php
-                $head_attribute = [
-                        ['attribute' => 'bill_head_code', 'value' => function($model) {
-                            return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
-                        }
-                    ],
-                        ['attribute' => 'bill_head_type',
-                        'value' => function($model) {
-                            return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
-                        },],
-                        ['attribute' => 'amount'],
-                ];
-                $head_grid_option = [
-                    'id' => 'party-detail-bill-head-summary',
-                    'attributes' => $head_attribute,
-                    'active_column' => FALSE,
-                    'default_sorting' => FALSE
-                ];
-                Yii::$app->grid->bind($headDataProvider, $searchModel, $head_grid_option, ['#'], FALSE);
-                ?>
-            </div> 
+
+        <div id="gridcontentvehicle" class='hide-grid-settings not_ellipsis'>
+            <h5 class="panel-heading"><?= Yii::t('app', 'Payment Details') ?></h5>
+            <?php
+            $attribute = [
+                ['attribute' => 'dispatch_datetime',
+                    'value' => function ($model) {
+                        return Yii::$app->controls->view_date($model->dispatch_datetime);
+                    }, 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'receipt_datetime',
+                    'value' => function ($model) {
+                        return Yii::$app->controls->view_date($model->receipt_datetime);
+                    }, 'filter' => false],
+                ['attribute' => 'challan_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'parsing_no', 'filter' => false, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'from_dest', 'value' => function ($model) {
+
+                        $rel = Yii::$app->general->getDestRelation($model->from_type);
+                        $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'party' ? 'party_name' : 'name');
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
+                    }, 'filter' => false],
+                ['attribute' => 'to_dest', 'value' => function ($model) {
+                        $rel = Yii::$app->general->getDestRelation($model->to_type);
+                        $att = strtolower($model->to_type) == 'bmc' ? 'bmc_name' : (strtolower($model->to_type) == 'party' ? 'party_name' : 'name');
+                        ;
+                        if (!empty($rel))
+                            return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
+                    }, 'filter' => false],
+                ['attribute' => 'disp_qty', 'label' => Yii::t('app', 'Disp Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_fat', 'label' => Yii::t('app', 'Disp Kg FAT'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'disp_kg_snf', 'label' => Yii::t('app', 'Disp Kg SNF'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) == 'sale'],
+                ['attribute' => 'rec_qty', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Qty') : Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true],
+                //   ['attribute' => 'qty', 'label' => Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) != 'sale'],
+                ['attribute' => 'rec_kg_fat', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Kg FAT') : Yii::t('app', 'Kg FAT'), 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'rec_kg_snf', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec KG SNF') : Yii::t('app', 'Kg SNF'), 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
+            ];
+            $grid_option = [
+                'id' => 'tpt-payment-detail',
+                'attributes' => $attribute,
+                'active_column' => FALSE,
+                'showPageSummary' => true,
+            ];
+            Yii::$app->grid->bind($detailDataProvider, $searchModel, $grid_option);
+//                $attribute = [
+//                        ['attribute' => 'payment_type', 'value' => function($model) {
+//                    return '';
+////                            return (strtolower($model->payment_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'));
+//                        }],
+//                        ['attribute' => 'party_master_code'],
+////                        ['label' => Yii::t('app', 'Code'), 'value' => function($model) {
+////                            return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, true);
+////                        }],
+////                        ['label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+////                            return Yii::$app->general->getCustomer($model, $model->customer_type, true);
+////                        }],
+////                        ['attribute' => 'customer_name'],
+//                        ['attribute' => 'kg_fat'],
+//                        ['attribute' => 'kg_snf'],
+//                        ['attribute' => 'qty'],
+//                        ['attribute' => 'amount'],
+//                        ['attribute' => 'addition'],
+//                        ['attribute' => 'deduction'],
+//                        ['attribute' => 'net_payable'],
+//                        ['attribute' => 'bank_name'],
+//                        ['attribute' => 'branch_name'],
+//                        ['attribute' => 'ifsc'],
+//                        ['attribute' => 'bank_account_no'],
+//                        ['attribute' => 'beneficiary_name'],
+//                ];
+//
+//                $grid_option = [
+//                    'id' => 'party-detail-list-index',
+//                    'attributes' => $attribute,
+//                    'active_column' => false,
+//                    'default_sorting' => FALSE,
+//                    'actions' => [
+//                        'member-bill-head' => function ($url, $model) {
+//                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-party_payment_code' => $model->party_payment_code];
+//                            return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-party-payment/bill-head', 'party_payment_code' => $model->party_payment_code], $options);
+//                        },
+//                    ]
+//                ];
+//
+//                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
+            ?>
         </div>
-        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
-                <h4 class="theme-box-heading"><?= Yii::t('app', 'Payment Detail') ?></h4>
-            </div>
-            <div class="form-grid">
-                <?php
-                $attribute = [
-                        ['attribute' => 'payment_type', 'value' => function($model) {
-                    return '';
-//                            return (strtolower($model->payment_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'));
-                        }],
-                        ['attribute' => 'party_master_code'],
-//                        ['label' => Yii::t('app', 'Code'), 'value' => function($model) {
-//                            return Yii::$app->general->getCustomer($model, $model->customer_type, FALSE, FALSE, true);
-//                        }],
-//                        ['label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
-//                            return Yii::$app->general->getCustomer($model, $model->customer_type, true);
-//                        }],
-//                        ['attribute' => 'customer_name'],
-                        ['attribute' => 'kg_fat'],
-                        ['attribute' => 'kg_snf'],
-                        ['attribute' => 'qty'],
-                        ['attribute' => 'amount'],
-                        ['attribute' => 'addition'],
-                        ['attribute' => 'deduction'],
-                        ['attribute' => 'net_payable'],
-                        ['attribute' => 'bank_name'],
-                        ['attribute' => 'branch_name'],
-                        ['attribute' => 'ifsc'],
-                        ['attribute' => 'bank_account_no'],
-                        ['attribute' => 'beneficiary_name'],
-                ];
-
-                $grid_option = [
-                    'id' => 'party-detail-list-index',
-                    'attributes' => $attribute,
-                    'active_column' => false,
-                    'default_sorting' => FALSE,
-                    'actions' => [
-                        'member-bill-head' => function ($url, $model) {
-                            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'class' => 'view-head', 'data-original-title' => 'View Bill Head', 'data-party_payment_code' => $model->party_payment_code];
-                            return GhostHtml::a_alert('<i class="fa fa-money"></i>', ['/payment/tbl-party-payment/bill-head', 'party_payment_code' => $model->party_payment_code], $options);
-                        },
-                    ]
-                ];
-
-                Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['#'], false);
-                ?>
-            </div>
+        <div id="gridcontenthead" class='hide-grid-settings'>
+            <h5 class="panel-heading"><?= Yii::t('app', 'Payment Head Details') ?></h5>
+            <?php
+            $head_attribute = [
+                ['attribute' => 'bill_head_code', 'value' => function ($model) {
+                        return Yii::$app->general->getforeignkey($model->billHeadCode, 'bill_head_name');
+                    }
+                ],
+                ['attribute' => 'bill_head_type',
+                    'value' => function ($model) {
+                        return isset($model->billHeadCode->bill_head_type) ? Yii::$app->dropdown->getRecords('bill_head_type')['data'][$model->billHeadCode->bill_head_type] : 'N/A';
+                    },],
+                ['attribute' => 'amount'],
+            ];
+            $head_grid_option = [
+                'id' => 'party-detail-bill-head-summary',
+                'attributes' => $head_attribute,
+                'active_column' => FALSE,
+                'default_sorting' => FALSE
+            ];
+            Yii::$app->grid->bind($headDataProvider, $searchModel, $head_grid_option, ['#'], FALSE);
+            ?>
         </div> 
-    </div>
-</div>
 
-<div id='bill_head_view'></div>
-<?php
-$script = " 
+        <div id='bill_head_view'></div>
+        <?php
+        $script = " 
 $(document).on('click','.view-head',function(e){
     var party_payment_code= $(this).attr('data-party_payment_code');
     ViewBillHead(party_payment_code);
@@ -230,5 +259,5 @@ function ViewBillHead(party_payment_code){
         });
     }
 }";
-$this->registerJs($script, View::POS_END, 'party-payment-head-script');
-?>
+        $this->registerJs($script, View::POS_END, 'party-payment-head-script');
+        ?>

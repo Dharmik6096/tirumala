@@ -4,9 +4,12 @@ namespace app\modules\payment\models;
 
 use Yii;
 use app\modules\tankermovement\models\TblPartyMaster;
-use app\modules\organisation\models\TblUnions; 
+use app\modules\organisation\models\TblUnions;
+use yii\helpers\ArrayHelper;
 
 class TblPartyPayment extends \app\models\ChildModel {
+
+    public $payment_cycle_code,$party_master_name;
 
     /**
      * @inheritdoc
@@ -29,11 +32,11 @@ class TblPartyPayment extends \app\models\ChildModel {
             [['updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['created_by', 'updated_by'], 'string', 'max' => 14],
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['payment_type', 'party_master_code', 'from_date', 'to_date'], 'required', 'on' => ['process']],
-            [['from_date'], 'validateDate', 'on' => 'process'],
+            [['payment_type', 'party_master_code'], 'required', 'on' => ['process']],
+                // [['from_date'], 'validateDate', 'on' => 'process'],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -42,7 +45,8 @@ class TblPartyPayment extends \app\models\ChildModel {
             'party_payment_code' => Yii::t('app', 'Party Payment Code'),
             'union_code' => Yii::t('app', 'Union'),
             'payment_type' => Yii::t('app', 'Payment Type'),
-            'party_master_code' => Yii::t('app', 'Party Master'),
+            'party_master_code' => Yii::t('app', 'Party Code'),
+            'party_master_name' => Yii::t('app', 'Party Name'),
             'from_date' => Yii::t('app', 'From Date'),
             'to_date' => Yii::t('app', 'To Date'),
             'disp_qty' => Yii::t('app', 'Disp Qty'),
@@ -94,13 +98,13 @@ class TblPartyPayment extends \app\models\ChildModel {
             'payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
         ];
     }
-    
+
     public function validateDate() {
         if (strtotime($this->from_date) > strtotime($this->to_date)) {
             $this->addError('from_date', 'From Date must not be grater than To Date.');
         }
     }
-    
+
     public function getRecords() {
         return $this->find()->where(['union_code' => $this->union_code,
                     'from_date' => $this->from_date,
@@ -110,12 +114,24 @@ class TblPartyPayment extends \app\models\ChildModel {
                     'status' => ['generated', 'processed']
                 ])->orderBy(['party_master_code' => SORT_ASC]);
     }
-    
+
     public function getPartyMaster() {
         return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'party_master_code']);
     }
-    
+
     public function getUnionCode() {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
+    }
+
+    public function PaymentCycleList($party_code, $payment_type, $union_code) {
+        $data = $this->find()->select(['from_date', 'to_date'])
+                        ->where(['union_code' => $union_code, 'party_master_code' => $party_code, 'payment_type' => $payment_type])
+                        ->andWhere(['in', 'status', ['locked']])->asArray()->all();
+
+        return ArrayHelper::map($data, function ($data) {
+                    return $data['from_date'] . '#' . $data['to_date'];
+                }, function ($data) {
+                            return date('d-m-Y', strtotime($data['from_date'])) . ' To ' . date('d-m-Y', strtotime($data['to_date']));
+                        });
     }
 }

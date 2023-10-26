@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\payment\models\TblPartyPayment;
 use app\modules\payment\models\TblPartyPaymentHeadDetail;
+
 class TblPartyPaymentHeadDetailSearch extends TblPartyPaymentHeadDetail {
     public $party_payment_code;
     /**
@@ -19,7 +20,7 @@ class TblPartyPaymentHeadDetailSearch extends TblPartyPaymentHeadDetail {
             [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
         ];
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -27,7 +28,7 @@ class TblPartyPaymentHeadDetailSearch extends TblPartyPaymentHeadDetail {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
-    
+
     /**
      * Creates data provider instance with search query applied
      *
@@ -47,9 +48,7 @@ class TblPartyPaymentHeadDetailSearch extends TblPartyPaymentHeadDetail {
         ]);
 
         $this->load($params);
-//        echo "<pre>";
-//        print_r($params);
-//        die;
+        
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -66,5 +65,5 @@ class TblPartyPaymentHeadDetailSearch extends TblPartyPaymentHeadDetail {
         $query->orderBy('head_detail_code');
         return $dataProvider;
     }
-
+    
 }

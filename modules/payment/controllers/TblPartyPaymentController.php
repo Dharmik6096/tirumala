@@ -39,10 +39,15 @@ class TblPartyPaymentController extends ChildController {
             'query' => TblPartyPaymentHeadDetail::find()->where(['party_payment_code' => $id]),
             'pagination' => FALSE,
         ]);
+        $detailDataProvider = new ActiveDataProvider([
+            'query' => TblPartyPaymentDetail::find()->where(['party_payment_code' => $id]),
+            'pagination' => FALSE,
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'detailDataProvider' => $detailDataProvider,
                     'headDataProvider' => $headDataProvider
         ]);
     }
@@ -156,7 +161,8 @@ class TblPartyPaymentController extends ChildController {
                         'dataProvider' => $dataProvider,
                         'headDetail' => $dataProviderHead,
                         'searchModel' => $searchModel,
-                        'searchModelHead' => $searchModelHead
+                        'searchModelHead' => $searchModelHead,
+                        'type' => 'adjust'
             ]);
         } else {
             Yii::$app->getSession()->setFlash('success', ['type' => 'success',
@@ -165,19 +171,59 @@ class TblPartyPaymentController extends ChildController {
         }
     }
 
+//    public function actionPaymentDisburse() {
+//        $model = new TblPartyPayment();
+//        $searchModel = new TblPartyPaymentSearch();
+//        $searchModel->scenario = 'disburse';
+//            $searchModel->load(Yii::$app->request->queryParams);
+//            $model->attributes = $searchModel->attributes;
+//        $searchModel->status = 'locked';
+//        $dataProvider = $searchModel->disbursesearch();
+//        return $this->render('payment_disburse', [
+//                    'model' => $model,
+//                    'searchModel' => $searchModel,
+//                    'dataProvider' => $dataProvider,
+//                    'title' => 'Party Payment Disburse',
+//        ]);
+//    }
+
     public function actionPaymentDisburse() {
         $model = new TblPartyPayment();
         $searchModel = new TblPartyPaymentSearch();
         $searchModel->scenario = 'disburse';
-        $searchModel->load(Yii::$app->request->queryParams);
-        $model->attributes = $searchModel->attributes;
         $searchModel->status = 'locked';
+
+        $searchModel->load(Yii::$app->request->queryParams);
         $dataProvider = $searchModel->disbursesearch();
+        $model->attributes = $searchModel->attributes;
+        if (!empty($searchModel->payment_cycle_code)) {
+            $date_time = explode('#', $searchModel->payment_cycle_code);
+            $model->from_date = $date_time[0];
+            $model->to_date = $date_time[1];
+            $model = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'party_master_code' => $model->party_master_code, 'payment_type' => $model->payment_type])->one();
+        }
+        $id = !empty($model->party_payment_code) ? $model->party_payment_code : '';
+        $dataProviderHead = new ActiveDataProvider([
+            'query' => TblPartyPaymentHeadDetail::find()->where(['party_payment_code' => $id]),
+            'pagination' => FALSE,
+        ]);
+        $dataProviderDetail = new ActiveDataProvider([
+            'query' => TblPartyPaymentDetail::find()->where(['party_payment_code' => $id]),
+            'pagination' => FALSE,
+        ]);
+        $searchModelDetail = new TblPartyPaymentDetailSearch();
+        $searchModelHead = new TblPartyPaymentHeadDetailSearch();
+
         return $this->render('payment_disburse', [
                     'model' => $model,
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
+                    'dataProviderDetail' => $dataProviderDetail,
+                    'headDetail' => $dataProviderHead,
+                    'searchModelDetail' => $searchModelDetail,
                     'title' => 'Party Payment Disburse',
+                    'searchModelHead' => $searchModelHead,
+                    'type' => 'disburse'
         ]);
     }
 
@@ -187,7 +233,7 @@ class TblPartyPaymentController extends ChildController {
             $model->load(Yii::$app->request->post());
             if (Yii::$app->request->post('flag') == 'disburse') {
                 $user = isset(\Yii::$app->user->identity->user_code) ? \Yii::$app->user->identity->user_code : null;
-                $data = [];                
+                $data = [];
                 $data['payment_type'] = $model->payment_type;
                 $data['party_master_code'] = $model->party_master_code;
                 $data['from_date'] = !empty($model->from_date) ? date('Y-m-d', strtotime($model->from_date)) : date('Y-m-d');
@@ -198,8 +244,8 @@ class TblPartyPaymentController extends ChildController {
                     'message' => $msg_content]);
                 $this->redirect(['index']);
             } else {
-                if ($this->exportBonusCSV($model)) {
-                    return $this->redirect(\yii\helpers\Url::previous());
+                if ($this->exportPartyPaymentCSV($model)) {
+                    return $this->redirect(['payment-disburse']);
                 }
             }
         }
@@ -253,6 +299,78 @@ class TblPartyPaymentController extends ChildController {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionPaymentCycleList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1])) {
+                $model = new TblPartyPayment();
+                $data = $model->PaymentCycleList($parents[0], $parents[1], $parents[2]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    protected function exportPartyPaymentCSV($model) {
+        //Export bonus File from Disburse Screen
+        $newModel = new TblPartyPayment();
+        $query = $newModel->find()
+                        // ->joinWith(['tbl_party_payment_detail','on','party_payment_code'])
+                        ->where(['from_date' => $model->from_date,
+                            'to_date' => $model->to_date,
+                            'status' => ['locked'],
+                            'payment_type' => $model->payment_type,
+                        ])->all();
+
+        $extention = 'xls';
+        $header = [
+            'mime' => 'application/ms-excel',
+            'extension' => $extention,
+            'writer' => 'Excel2007',
+        ];
+
+        $fileName = "party_payment_disburse." . $header['extension'] .
+                header('Content-Type: ' . $header['mime']);
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        header('Cache-Control: max-age=0');
+        echo "<table border='1'>";
+//        echo "<tr>";
+//        echo "<td>" . Yii::t('app', 'Party Payment Code') . "</td>";
+//
+//        echo "</tr>";
+
+        foreach ($query as $row) {
+            echo "<tr>";
+            $this->setVal($row->party_payment_code);
+            $this->setVal($row->from_date);
+            $this->setVal($row->to_date);
+            $this->setVal($row->bank_account_no);
+            $this->setVal($row->bank_name);
+            $this->setVal($row->branch_name);
+            $this->setVal($row->ifsc);
+            $this->setVal($row->avg_fat);
+            $this->setVal($row->avg_snf);
+            $this->setVal($row->total_qty);
+            $this->setVal($row->final_amount);
+            $this->setVal($row->net_payable);
+            echo "</tr>";
+        }
+        echo "</table>";
+        exit();
+    }
+
+    public function setVal($value) {
+        if (!empty($value) && is_numeric($value) && (float) $value <= 100000000 && substr($value, 0, 1) != 0) {
+            echo "<td>" . $value . "</td>";
+        } else {
+            echo "<td style=\"mso-number-format:'\@'\">" . $value . "</td>";
         }
     }
 }
