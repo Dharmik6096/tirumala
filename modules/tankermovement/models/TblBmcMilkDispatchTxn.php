@@ -88,12 +88,12 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             [['milk_quality_type_code', 'milk_type_code', 'dispatch_qty', 'fat', 'snf', 'water', 'temperature', 'bmc_silos_info_code', 'chamber_no', 'qty_diff_type_code', 'qty_diff', 'balance_qty'], 'required', 'except' => ['androidsync']],
             [['bmc_milk_dispatch_txn_code', 'bmc_milk_dispatch_code', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'milk_analyser_type_code', 'ws_code', 'adt_param', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string'],
             [['milk_quality_type_code', 'milk_type_code', 'qty_diff_type_code', 'qty_mode', 'converted_qty_mode', 'bmc_silos_info_code', 'chamber_no', 'qty_auto', 'qlty_auto', 'is_rejected', 'originating_type'], 'integer'],
-            [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'rtpl', 'amount', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
+            [['dispatch_qty', 'qty_diff', 'balance_qty', 'converted_qty', 'fat', 'snf', 'clr', 'water', 'protein', 'density', 'lactose', 'freezing_point', 'temperature', 'dip_open', 'dip_close', 'dip_diff', 'adt_value'], 'number'],
             [['qty_time', 'qlty_time', 'created_at', 'updated_at'], 'safe'],
             [['milk_type_code'], 'unique', 'targetAttribute' => ['milk_type_code', 'milk_quality_type_code', 'bmc_silos_info_code', 'chamber_no', 'bmc_milk_dispatch_code'], 'message' => Yii::t('app/validation', 'Chamber Entry for selected milk and silo has been already taken.'), 'on' => 'create'],
-            [['milk_type_code'], function ($attribute, $params) {
-            Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
-        }, 'on' => 'create'],
+        //     [['milk_type_code'], function ($attribute, $params) {
+        //     Yii::$app->general->validateOnUnionConfig($this, 'rtpl', 'bmc_dispatch_rate_required', 1);
+        // }, 'on' => 'create'],
             [['qty_time', 'qlty_time'], 'default', 'value' => date('Y-m-d H:i:s')],
             [['qty_auto', 'qlty_auto', 'is_rejected', 'clr', 'protein', 'density', 'lactose', 'freezing_point', 'hsn_code', 'seal_no_top', 'seal_no_bottom', 'seal_no_broken', 'dip_open', 'dip_close', 'dip_diff', 'rtpl', 'amount',], 'default', 'value' => '0'],
             [['milk_type_code'], 'ValidateData', 'on' => 'create'],
