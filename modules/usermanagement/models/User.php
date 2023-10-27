@@ -493,36 +493,4 @@ class User extends \webvimark\modules\UserManagement\models\User
         $user = ArrayHelper::map($userData, 'id', 'name');
         return $user;
     }
-
-    public function getCode() {
-
-        $identity = \app\models\IdentityMaster::find()->one();
-        $federation = '00';
-        $union = '000';
-        $other = '0000';
-        if ($identity) {
-            switch ($identity->organization_type) {
-                case 'Federations' :
-                    $federation = $identity->organization_code;
-                    break;
-                case 'Unions' :
-                    $federation = $identity->parent_code;
-                    $union = $identity->organization_code;
-                    break;
-            }
-
-            $code = $federation . $union . $other;
-
-            $val = (new \yii\db\Query)
-                    ->select(["MAX(convert(int,id)) as id"])
-                    ->from('user')
-                    ->one();
-            $newcode = (int) $val['id'] + 1;
-
-
-            $value = $code . str_pad($newcode, 5, '0', STR_PAD_LEFT);
-            return $value;
-        }
-    }
-
 }
