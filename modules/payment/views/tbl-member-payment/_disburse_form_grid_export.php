@@ -94,8 +94,8 @@ $showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getM
     <div class="clearfix"></div>
     <?php if ($showButtons) { ?>
         <div class="col-md-12 mt10" >
-            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary sub', 'name' => 'member']); ?>
-            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>
+            <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn-login btn btn-primary sub', 'name' => 'member']); ?>
+            <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn-login btn btn-primary sub', 'name' => 'member-file']); ?>
         </div>
     <?php } ?>
 

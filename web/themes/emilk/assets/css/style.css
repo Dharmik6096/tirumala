@@ -292,7 +292,7 @@ ul{
 }
 .dropdown-submenu .dropdown-menu {
     top: 0;
-    left: 100%;
+    left: 100% !important;
     margin-top: -1px;
 }
 .navbar-right .dropdown-submenu .dropdown-menu{
@@ -2631,8 +2631,8 @@ div.crystalstyle{
 }
 
 .dropdown-menu.toggle_left{
-    left: auto;
-    right: 100%;
+    left: auto !important;
+    right: 100% !important;
 }
 
 .micro_form  .control-label  {

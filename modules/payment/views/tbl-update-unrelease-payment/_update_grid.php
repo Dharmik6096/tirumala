@@ -110,8 +110,8 @@ $vendor_payment = ($searchParameter->payment_type == 'VENDOR') ? TRUE : FALSE;
 <div class="panel-footer">
     <?php
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'Update'), ['class' => 'btn btn-primary', 'id' => 'update-selected']);
-        echo Yii::$app->controls->custombutton('Cancel', 'index');
+        echo Html::button(Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary mr-2', 'id' => 'update-selected']);
+        echo Yii::$app->controls->custombutton('Cancel', 'index', '', 'btn-login');
     }
     ?>
 </div>
