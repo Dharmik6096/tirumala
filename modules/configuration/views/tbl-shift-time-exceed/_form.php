@@ -5,16 +5,17 @@ use yii\bootstrap\ActiveForm;
 use yii\web\View;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
+use yii\widgets\MaskedInput;
 ?>
 
 <?php
 $form = ActiveForm::begin([
-            'options' => [],
-            'validateOnBlur' => false,
-            'validateOnChange' => false,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+    'options' => [],
+    'validateOnBlur' => false,
+    'validateOnChange' => false,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 ?>
 <?php echo $form->errorSummary($model); ?>
 <div class="row">
@@ -39,18 +40,17 @@ $form = ActiveForm::begin([
     </div>
     <div class="col-sm-2">
         <?php
-        $model->date_time_of_collection = !empty($model->date_time_of_collection) ? $model->date_time_of_collection : date('Y-m-d');
         echo Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, true);
         ?>
     </div>
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, true, 'shift_code'); ?>
     </div>
-    <div class = "col-sm-2">
-        <?= $form->field($model, 'standard_time')->textInput(['type' => 'time', 'readonly' => true]) ?>
+    <div class="col-sm-2">
+        <?= $form->field($model, 'standard_time')->widget(MaskedInput::class, ['mask' => '99:99'])->textInput(['readonly' => true]) ?>
     </div>
     <div class="col-sm-2">
-        <?= $form->field($model, 'exceed_time')->textInput(['type' => 'time']) ?>
+        <?= $form->field($model, 'exceed_time')->widget(MaskedInput::class, ['mask' => '99:99',]); ?>
     </div>
     <div class="col-sm-2">
         <?= $form->field($model, 'remarks')->textarea() ?>
@@ -145,4 +145,3 @@ function showStandardTime() {
 ";
 $this->registerJs($script, View::POS_END, 'shift-time-exceed');
 ?>
-
