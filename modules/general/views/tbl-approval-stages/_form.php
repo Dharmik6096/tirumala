@@ -170,7 +170,7 @@ $script = "
         var process_name = $('#tblapprovalstages-process_name').val();
         $('.field-tblapprovalstages-approval_mode').removeClass('no_pointer');
         $('#tblapprovalstages-approval_mode').val('').trigger('change');
-        if(process_name !='' && (process_name =='member' || process_name =='society')) {
+        if(process_name !='' && (process_name =='member' || process_name =='society'|| process_name =='tbl_shift_time_exceed')) {
            $('#tblapprovalstages-approval_mode').val('strict').trigger('change');
            $('.field-tblapprovalstages-approval_mode').addClass('no_pointer');
         }

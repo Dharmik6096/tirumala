@@ -12,7 +12,7 @@ $attribute = [
         'attribute' => 'plant_code',
         'label' => 'PLANT',
         'value' => function ($model) {
-            return isset($model->plantCode) ? $model->plantCode['name'] : 'N/A';
+            return isset($model->plantCode) ? Yii::$app->general->getforeignkey($model->plantCode, 'name') : 'N/A';
         },
         'visible' => true,
     ],
@@ -21,12 +21,12 @@ $attribute = [
         'label' => 'MCC',
         'value' => function ($model) {
             if ($model->org_type === 'BMC' && isset($model->mccName)) {
-                return $model->mccName['name'];
+                return Yii::$app->general->getforeignkey($model->mccName, 'name');
             } elseif ($model->org_type === 'MCC' && isset($model->mccCode)) {
-                return $model->mccCode['name'];
+                return Yii::$app->general->getforeignkey($model->mccCode, 'name');
             } else {
                 return 'N/A';
-            } 
+            }
         },
         'visible' => true
     ],
@@ -34,7 +34,7 @@ $attribute = [
         'attribute' => 'bmc_code',
         'label' => 'BMC',
         'value' => function ($model) {
-            return ($model->org_type === 'BMC' && isset($model->bmcCode)) ? $model->bmcCode['bmc_name'] : 'N/A';
+            return ($model->org_type === 'BMC' && isset($model->bmcCode)) ? Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') : 'N/A';
         },
         'visible' => true
     ],
@@ -43,9 +43,9 @@ $attribute = [
         'label' => 'Organization Name',
         'value' => function ($model) {
             if ($model->org_type === 'BMC' && isset($model->bmcCode)) {
-                return $model->bmcCode->bmc_name;
+                return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
             } elseif ($model->org_type === 'MCC' && isset($model->mccCode)) {
-                return $model->mccCode->name;
+                return Yii::$app->general->getforeignkey($model->mccCode, 'name');
             } else {
                 return 'N/A';
             }
