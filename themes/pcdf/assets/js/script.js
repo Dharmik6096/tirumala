@@ -110,22 +110,22 @@ var initDepdropMs;
 //            $('#w4').append($('#w1-cols-list li'));
 //            $("#w4 li.divider").prev().hide();
 //        });
-//        $('form').on('submit', function (e) {
-//            var type = $(this).attr('method');
-//            if (type.toLowerCase() === 'get')
-//            {
-//                $(this).find('input[name=q]').remove();
-//                encryptData($(this));
-//                if ($(this).attr('id') != 'report-form') {
-//                    $(this).unbind().submit();
-//                }
-//            }
-//        });
-//        $(document).on('submit', 'form[data-pjax]', function (event) {
-//            $(this).find('input[name=q]').remove();
-//            encryptData($(this));
-//            $.pjax.submit(event, '.grid-content');
-//        });
+        $('form').on('submit', function (e) {
+            var type = $(this).attr('method');
+            if (type.toLowerCase() === 'get')
+            {
+                $(this).find('input[name=q]').remove();
+                encryptData($(this));
+                if ($(this).attr('id') != 'report-form') {
+                    $(this).unbind().submit();
+                }
+            }
+        });
+        $(document).on('submit', 'form[data-pjax]', function (event) {
+            $(this).find('input[name=q]').remove();
+            encryptData($(this));
+            $.pjax.submit(event, '.grid-content');
+        });
         function encryptData(frm)
         {
             var olddata = false;
