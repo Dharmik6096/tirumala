@@ -1421,6 +1421,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
     }
+    public function actionBonusReport() {
+        $this->report = 'BonusReport';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -2909,6 +2913,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_cp_wise_liability_wdpl',
                 'scenario' => 'CpliabilityReport',
                 'title' => 'CP liability Report',
+            ],
+            'BonusReport' => [
+                'param' => 'report_type,union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_bonus_payment_summary_vrs',
+                'scenario' => 'BonusReport',
+                'title' => 'Bonus Report',
+                'report_type' => ['1' => Yii::t('app', 'Member Wise Detail'), '2' => Yii::t('app', 'Member Wise Consolidate'), '3' => Yii::t('app', 'Society Wise Detail'), '4' => Yii::t('app', 'Society Wise Consolidate')],
             ],
         ];
         return $label[$l];

@@ -603,6 +603,7 @@ echo GhostMenu::widget([
                             ['label' => '620-' . Yii::t('app', 'Recovery From Different Vendor'), 'url' => ['/misreports/reports/recovery-from-different-vendor']],
                             ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
                             ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
+                            ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
                     ]
                 ],
                     [
