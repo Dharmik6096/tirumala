@@ -75,8 +75,9 @@ class TblBmcDispatchStock extends \app\models\ChildModel {
                 [['closing_bal', 'water'], 'default', 'value' => 0],
                 [['transaction_date'], 'default', 'value' => date('Y-m-d H:i:s')],
                 [['type'], 'unique', 'targetAttribute' => ['to_date', 'bmc_code', 'bmc_silos_info_code', 'milk_type_code', 'milk_quality_type_code', 'type'], 'message' => Yii::t('app/validation', 'BMC Dispatch Stock has been already taken.'), 'on' => 'create'],
-                [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
+//                [['to_date'], 'CheckDateValidation', 'skipOnError' => true, 'on' => 'create'],
                 [['bmc_code'], 'ValidateData', 'skipOnError' => true, 'on' => 'create'],
+                [['qty_diff'], 'number', 'min' => 0, 'message' => Yii::t('app/validation', '{attribute} must be greater than 0')],
         ];
     }
 
