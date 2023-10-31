@@ -1499,6 +1499,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'MilkCollectionProcDetailRegion';
         return $this->actionIndex();
     }
+    public function actionMilkShortageRecovery() {
+        $this->report = 'MilkShortageRecovery';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3102,6 +3106,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_are_wise_prabhat_loss_gain',
                 'title' => '214 - Center Loss Gain Report',
                 'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'MilkShortageRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_milk_shortage_recovery',
+                'scenario' => 'MilkShortageRecovery',
+                'title' => '626 - Milk Shortage Recovery',
             ],
         ];
         return $label[$l];
