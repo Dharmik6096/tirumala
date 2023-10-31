@@ -139,6 +139,9 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
         <div class="col-sm-2 mt15">
+            <?= $form->field($model, 'is_rented_bmc', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+        </div>
+        <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->active($model, $form); ?>
         </div>
         <?= Html::hiddenInput('from_bmc', 0, ['id' => 'bmc']); ?>

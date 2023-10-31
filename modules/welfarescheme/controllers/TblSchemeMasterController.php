@@ -11,7 +11,7 @@ use app\modules\welfarescheme\models\TblSchemeCriteriaSearch;
 use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
 use app\modules\welfarescheme\models\TblSchemeDocumentMappingSearch;
 use app\modules\welfarescheme\models\TblSchemeDocumentMappingHistory;
-use app\modules\welfarescheme\models\TblSchemeDocumentMasterSearch;
+use app\modules\welfarescheme\models\TblDocumentMasterInfoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -213,7 +213,7 @@ class TblSchemeMasterController extends \app\controllers\ChildController {
         $schemeData = $schemeModel->find()->where(['scheme_id' => $id])->one();
         $this->model->load(Yii::$app->request->queryParams);
         $searchModels = new TblSchemeDocumentMappingSearch();
-        $searchModel = new TblSchemeDocumentMasterSearch();
+        $searchModel = new TblDocumentMasterInfoSearch();
         $searchModel->load(Yii::$app->request->queryParams);
         $searchModel->doc_id = $id;
         $searchModel->is_active = 1;

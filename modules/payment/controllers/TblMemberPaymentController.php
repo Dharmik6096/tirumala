@@ -1095,6 +1095,7 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                         $param['user_code'] = $user;
                         $param['org_code'] = $originating_org_code;
                         $param['org_type'] = 'PORTAL';
+                        $param['is_without_release'] = $model->payment_release_type;
                         Yii::$app->ClientPaymentConfig->processPayment('member_payment_disburse', $param);
 
                         $param = [];

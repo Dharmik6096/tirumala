@@ -11,6 +11,7 @@ $action = Url::to(['disburse-member-payment']);
 $fromDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'from_date'));
 $toDate = Yii::$app->controls->view_date(Yii::$app->general->getforeignkey($model->paymentCycleCode, 'to_date'));
 $message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' . Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name') . ' (' . $fromDate . ' to ' . $toDate . '). Are you sure ?');
+$showButtons = (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) ? TRUE : FALSE;
 ?>
 <div class="" >
     <?php
@@ -27,6 +28,20 @@ $message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' .
         <?= Html::activeHiddenInput($model, 'bmc_code'); ?>
         <?= Html::hiddenInput('flag', '', ['id' => 'flag']); ?>
     </div>
+    <div class="col-sm-2">
+        <?php
+        if ($showButtons) {
+            $allow_disburse_without_release = isset(Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release']) ? Yii::$app->session->get('unionConfig')[$model->union_code]['allow_disburse_without_release'] : 0;
+            if ($allow_disburse_without_release == '1') {
+                echo Yii::$app->dropdown->dropdownStatic('payment_release_type', $model, $form, 'form-group', $model->getAttributeLabel('payment_release_type'), FALSE, 'payment_release_type', FALSE, FALSE, FALSE);
+            } else {
+                $model->payment_release_type = '0';
+                echo Html::activeHiddenInput($model, 'payment_release_type');
+            }
+        }
+        ?>
+    </div>
+    <div class="clearfix"></div>
     <?php
     $attribute = [
 //            ['class' => 'kartik\grid\CheckboxColumn',
@@ -35,26 +50,26 @@ $message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' .
 //            'checkboxOptions' => function($model) {
 //                return ['value' => $model['dcs_code']];
 //            }],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
-        ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'DCS Code')],
+            ['attribute' => 'dcs_code', 'label' => Yii::t('app', 'Code Ex.'), 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_code_ex');
             }],
-        ['attribute' => 'dcs_code', 'value' => function($model) {
+            ['attribute' => 'dcs_code', 'value' => function($model) {
                 return !empty($model->dcs_name) ? $model->dcs_name : Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
             }],
-        ['attribute' => 'member_count'],
-        ['attribute' => 'kg_fat'],
-        ['attribute' => 'kg_snf'],
-        ['attribute' => 'qty', 'pageSummary' => true],
-        ['attribute' => 'total_amount', 'pageSummary' => true],
-        ['attribute' => 'total_addition', 'pageSummary' => true],
-        ['attribute' => 'total_deduction', 'pageSummary' => true],
-        ['attribute' => 'previous_hold', 'pageSummary' => true],
-        ['attribute' => 'previous_due', 'pageSummary' => true],
-        ['attribute' => 'net_payable', 'pageSummary' => true,],
-        ['attribute' => 'hold_amount', 'pageSummary' => true,],
-        ['attribute' => 'additional_pay', 'pageSummary' => true,],
-        ['attribute' => 'final_amount', 'pageSummary' => true,],
+            ['attribute' => 'member_count'],
+            ['attribute' => 'kg_fat'],
+            ['attribute' => 'kg_snf'],
+            ['attribute' => 'qty', 'pageSummary' => true],
+            ['attribute' => 'total_amount', 'pageSummary' => true],
+            ['attribute' => 'total_addition', 'pageSummary' => true],
+            ['attribute' => 'total_deduction', 'pageSummary' => true],
+            ['attribute' => 'previous_hold', 'pageSummary' => true],
+            ['attribute' => 'previous_due', 'pageSummary' => true],
+            ['attribute' => 'net_payable', 'pageSummary' => true,],
+            ['attribute' => 'hold_amount', 'pageSummary' => true,],
+            ['attribute' => 'additional_pay', 'pageSummary' => true,],
+            ['attribute' => 'final_amount', 'pageSummary' => true,],
     ];
 
     $grid_option = [
@@ -77,7 +92,7 @@ $message = Yii::t('app', 'Payment data of  all society will be Disbursed for ' .
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option, ['create'], false);
     ?>
     <div class="clearfix"></div>
-    <?php if (!empty($model->payment_cycle_code) && !empty($dataProvider->getModels())) { ?>
+    <?php if ($showButtons) { ?>
         <div class="col-md-12 mt10" >
             <?= Html::button(Yii::t('app', 'Disburse Payment'), ['class' => 'btn btn-primary sub', 'name' => 'member']); ?>
             <?= Html::button(Yii::t('app', 'Export Data'), ['class' => 'btn btn-primary sub', 'name' => 'member-file']); ?>

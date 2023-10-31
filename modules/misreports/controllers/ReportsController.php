@@ -1417,12 +1417,86 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionMilkCollectionHistory() {
+        $this->report = 'MilkCollectionHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberHistory() {
+        $this->report = 'MemberHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionDcsHistory() {
+        $this->report = 'DcsHistory';
+        return $this->actionIndex();
+    }
+
+    public function actionRmrdDataExport() {
+        $this->report = 'RmrdDataExport';
+        return $this->actionIndex();
+    }
+
     public function actionCpliabilityReport() {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
     }
     public function actionBonusReport() {
         $this->report = 'BonusReport';
+        return $this->actionIndex();
+    }
+
+    public function actionMemberPaymentBankFormat() {
+        $this->report = 'MemberPaymentBankFormat';
+        return $this->actionIndex();
+    }
+    public function actionMemberDailyCollectionRegion() {
+        $this->report = 'MemberPassbookRegion';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'MemberDailyCollectionRegion';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'MemberConsolidatedRegion';
+            }
+        }
+        return $this->actionIndex();
+    }
+    public function actionDcsCollDateShiftSummaryRegion() {
+        $this->report = 'DcsCollDateShiftSummaryRegion';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'DcsCollDateWiseSummaryRegion';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'DcsCollectionConsolidateRegion';
+            }
+        }
+        return $this->actionIndex();
+    }
+    public function actionAgentWiseReconciliationRegion() {
+        $this->report = 'AgentWiseReconciliationRegion';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'AgentWiseReconciliationDateWiseRegion';
+            }
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '2') {
+                $this->report = 'AgentWiseReconciliationSummaryRegion';
+            }
+        }
+        return $this->actionIndex();
+    }
+    public function actionCenterLossGainReportRegion() {
+        $this->report = 'CenterLossGainReportRegion';
+        if (Yii::$app->request->queryParams) {
+            if (Yii::$app->request->queryParams['ReportsModel']['report_type'] == '1') {
+                $this->report = 'BMCLossGainReportRegion';
+            }
+        }
+        return $this->actionIndex();
+    }
+    public function actionMilkCollectionProcDetailRegion() {
+        $this->report = 'MilkCollectionProcDetailRegion';
         return $this->actionIndex();
     }
 
@@ -2908,6 +2982,30 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'MpgPaymentBillStatement',
                 'title' => 'MPG Payment Bill Statement',
             ],
+            'MilkCollectionHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_history_tbl_milk_collection',
+                'scenario' => 'MilkColllectionHistory',
+                'title' => 'Milk Collection History',
+            ],
+            'MemberHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,p_date:string',
+                'sp_name' => 'sp_mis_history_tbl_member_master',
+                'scenario' => 'MemberHistory',
+                'title' => 'Member History',
+            ],
+            'DcsHistory' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,p_date:string',
+                'sp_name' => 'sp_mis_history_tbl_dcs_master',
+                'scenario' => 'DcsHistory',
+                'title' => 'Dcs History',
+            ],
+            'RmrdDataExport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_bmc_collection_date_shift_wise_vrs',
+                'scenario' => 'RMRDDataExport',
+                'title' => 'RMRD Data Export',
+            ],
             'CpliabilityReport' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,customer_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_cp_wise_liability_wdpl',
@@ -2920,6 +3018,90 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'BonusReport',
                 'title' => 'Bonus Report',
                 'report_type' => ['1' => Yii::t('app', 'Member Wise Detail'), '2' => Yii::t('app', 'Member Wise Consolidate'), '3' => Yii::t('app', 'Society Wise Detail'), '4' => Yii::t('app', 'Society Wise Consolidate')],
+            ],
+            'MemberPaymentBankFormat' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_payment_bank_format',
+                'scenario' => 'MemberPaymentBankFormat',
+                'title' => '624 - Member Payment Bank Format',
+            ],
+            'MemberPassbookRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_member_collection_passbook',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+            ],
+            'MemberDailyCollectionRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_member_collection_day_report',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+            ],
+            'MemberConsolidatedRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,member_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_member_collection_summary',
+                'title' => '101 - Member Collection Detail',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+//                'download_day_differe' => '15'
+            ],
+            //102
+            'DcsCollDateShiftSummaryRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_are_wise_society_wise_milk_collection_date_shift_wise',
+                'title' => '102 - Society Collection Date And Shift Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'DcsCollDateWiseSummaryRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_are_wise_society_wise_milk_collection_date_wise',
+                'title' => '102 - Society Collection Date Wise Summary',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'DcsCollectionConsolidateRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift,report_status:static:report_status',
+                'sp_name' => 'mis_are_wise_society_wise_milk_collection_consolidated',
+                'title' => '102 - Society Collection Consolidated',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+            ],
+            'MilkCollectionProcDetailRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_are_wise_milk_collection_proc_per_detail',
+                'title' => '113 - VLCs comparison details',
+            ],
+            'AgentWiseReconciliationRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_date_shift_wise_reconcilation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'AgentWiseReconciliationDateWiseRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_details_date_wise_reconcilation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'AgentWiseReconciliationSummaryRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_agent_wise_reconcilation',
+                'title' => '219 - Agent Wise Reconciliation',
+                'report_type' => [Yii::t('app', 'Date & Shift Wise'), Yii::t('app', 'Date Wise'), Yii::t('app', 'Consolidated')],
+                'multiArray' => ['mcc_code', 'bmc_code']
+            ],
+            'CenterLossGainReportRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_CentertoCCLossGainReport',
+                'title' => '214 - Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'BMCLossGainReportRegionRegion' => [
+                'param' => 'union_code,state_code,region_code,area_code,bmc_code:area_code,dcs_code,from_date:string:from_shift,to_date:string:to_shift',
+                'sp_name' => 'mis_are_wise_prabhat_loss_gain',
+                'title' => '214 - Center Loss Gain Report',
+                'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
             ],
         ];
         return $label[$l];

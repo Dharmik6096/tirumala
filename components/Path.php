@@ -23,7 +23,7 @@ class Path extends Component {
             'TblBlocksHistory', 'TblBlocks', 'TblBlocksSearch',
             'TblSubDistrictsHistory', 'TblSubDistricts', 'TblSubDistrictsSearch',
             'TblHamletsHistory', 'TblHamlets', 'TblHamletsSearch',
-            'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport'],
+            'TblDistrictsHistory', 'TblDistricts', 'TblDistrictsSearch', 'HamletImport', 'TblArea', 'TblRegion', 'TblAreaBmcMapping'],
         '\\app\modules\globalmaster\models\\' =>
             ['TblDcsTypes', 'TblDcsTypesHistory',
             'TblCasteCategory', 'TblCasteCategoryHistory', 'TblCapacity',
@@ -37,7 +37,7 @@ class Path extends Component {
             'TblLedgerType', 'TblLedgerTypeHistory',
             'TblSalaryHeads', 'TblSalaryHeadsHistory',
             'TblVoucherType', 'TblVoucherTypeHistory', 'TblLanguages', 'TblMiscellaneous', 'TblMiscellaneousHistory', 'TblMiscellaneousSearch', 'TblCustomerType', 'TblTransferType', 'TblRejectionReason', 'TblRejectionResponsibility',
-            'TblDeviceMaster', 'TblDeviceMasterMapping'
+            'TblDeviceMaster', 'TblDeviceMasterMapping', 'TblRateClass',
         ],
         '\\app\modules\organisation\models\\' =>
             ['TblBanks', 'TblBanksDistrictsMapping', 'TblBanksDistrictsMappingHistory', 'TblBanksHistory', 'TblBanksSearch',
@@ -65,7 +65,7 @@ class Path extends Component {
         '\\app\modules\dcsoperation\models\\' =>
             ['TblRateType', 'TblRateGenerateMethod', 'TblShift',
             'TblMemberTypes', 'TblMember', 'MemberImport', 'TblMemberHistory',
-            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias'],
+            'TblMemberClassification', 'TblMemberClassificationHistory', 'MemberClassificationImport', 'TblPurchaseRateHistory', 'TblPurchaseRateApplicability', 'TblRateRecalculation', 'TblPurchaseRate', 'TblDcsPurchaseRate', 'TblPurchaseRateDetails', 'TblDcsPurchaseRateDetails', 'TblPurchaseRateBased', 'TblDcsPurchaseRateBased', 'TblPurchaseRateApplicabilityPending', 'TblMemberProvisional', 'TblMemberDeactive', 'TblSendSmsCount', 'TblDcsPurchaseRateApplicabilityAlias', 'TblPurchaseRateApplicabilityAlias', 'TblSchemeRate', 'TblSchemeRateApplicability', 'TblSchemeRateMcc', 'TblSchemeRateApplicabilityAlias'],
         '\\app\modules\product\models\\' =>
             ['TblProductGroup', 'TblProductGroupHistory', 'TblProduct', 'TblProductHistory', 'TblProductRequisition', 'TblProductRequisitionHistory', 'TblProductRequisitionTransaction', 'TblProductRequisitionTransactionHistory', 'TblProductReceipt', 'TblProductReceiptHistory', 'TblProductReceiptTransaction', 'TblProductReceiptTransactionHistory', 'TblProductReceiptTaxCalculated', 'TblProductReceiptTaxCalculatedHistory', 'TblProductDispatch', 'TblProductDispatchHistory', 'TblProductDispatchTransaction', 'TblProductDispatchTransactionHistory', 'TblProductSaleRate', 'TblProductSaleRateHistory', 'TblProductPurchaseRate', 'TblProductPurchaseRateApplicability', 'TblProductSaleRateApplicability', 'TblProductSaleRateApplicabilityHistory', 'TblProductStock', 'TblProductStockHistory', 'TblProductStockTransaction', 'TblProductStockTransactionHistory', 'TblVendorMaster', 'TblInventoryTransfer', 'TblInventoryTransferTxn',
             'TblGrn', 'TblGrnTxn', 'TblPlantDispatch', 'TblPlantDispatchTxn', 'TblIndentMaster', 'TblIndentDispatch', 'TblIndentDispatchTransaction', 'TblIndentProduct'],
@@ -81,22 +81,23 @@ class Path extends Component {
         '\\app\modules\syncutility\models\\' => ['TblSentbox', 'TblInbox', 'TblSyncLog', 'TblSentboxClone'],
         '\\app\modules\configuration\models\\' =>
             ['TblDcsGeneralConfig', 'TblMilkCollectionConfig', 'TblDcsGeneralConfigHistory', 'TblMilkCollectionConfigHistory', 'TblConfigResult', 'TblConfig', 'TblUnionConfigResult', 'TblUnionConfigResultHistory', 'TblGenerateReportParam',
-            'TblAppLockConfig', 'TblAppLockConfigDetail', 'TblAppLockConfigResult', 'TblDeviceConfigMaster', 'TblDeviceConfigMasterTxn', 'TblDeviceConfigTemplate', 'TblDeviceConfigTemplateDetails', 'TblDeviceConfigTempMapping'],
+            'TblAppLockConfig', 'TblAppLockConfigDetail', 'TblAppLockConfigResult', 'TblDeviceConfigMaster', 'TblDeviceConfigMasterTxn', 'TblDeviceConfigTemplate', 'TblDeviceConfigTemplateDetails', 'TblDeviceConfigTempMapping', 'TblShiftTimeExceed'],
         '\\app\modules\installation\models\\' => ['TblAndroidInstallation', 'TblAndroidInstallationDetails', 'TblAndroidInstallationDetailsHistory', 'TblAppStartup', 'TblAction', 'TblRole', 'TblRoleActionMapping', 'TblUserAndroid', 'TblUserRoleMapping', 'TblUserDownloadAck', 'TblAppLockPassword'],
         '\\app\modules\setting\models\\' => ['TblDpuPasswords', 'TblDPUPasswordsHistory'],
         '\\app\modules\sms\models\\' => ['TblApiMaster', 'TblBulkNotification', 'TblBulkNotificationHistory', 'TblSmsFailLog'],
         '\\app\modules\vsp\models\\' => ['TblGeneralFormula', 'TblGeneralFormulaHistory', 'TblCriteriaKeywordMapping', 'TblBillHead', 'TblBillHeadHistory', 'TblBillHeadDefault', 'TblBillHeadDetail', 'TblVspBillHeadCriteria', 'TblVspBillHeadCriteriaSlabs', 'TblVspBillHeadCriteriaApplicability', 'TblMccBillHead', 'TblMccBillHeadApplicability', 'TblMccBillHeadDefault', 'TblMccGeneralFormula', 'TblMccBillHeadDetail', 'TblBillHeadTransaction', 'TblBillHeadTransactionHistory'],
         '\\app\modules\staffmanagement\models\\' => ['TblStaffMember', 'TblStaffMemberHistory', 'TblStaffAttendance', 'TblStaffAttendanceHistory', 'TblStaffSalaryTransaction', 'TblStaffSalaryTransactionHistory', 'TblStaffSalaryHistory', 'TblStaffInstallment', 'TblStaffInstallmentHistory', 'TblStaffMemberDesignationHistory', 'TblStaffSalaryProcess', 'TblStaffSalaryProcessTransaction', 'TblStaffSalaryProcessHistory', 'TblStaffSalaryProcessTransactionHistory', 'TblStaffAdditionDeduction', 'TblStaffMemberFamilyDetails', 'TblStaffMemberFamilyDetailsHistory', 'TblStaffSalaryHoldDue', 'TblStaffSalaryHoldDueHistory', 'TblStaffLeaveMaster', 'TblStaffLeaveMasterHistory'],
-        '\\app\modules\payment\models\\' => ['TblProductSaleTransaction', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory', 'TblProductSaleTransactionHistory', 'TblProductSale', 'TblVspPaymentConfig', 'TblMemberPaymentInstallment', 'TblMemberPaymentRecovery', 'TblVehicleTollDetail', 'TblVehicleTollDetailHistory', 'TblVspPaymentDataConfig', 'TblVspPaymentDataConfigHistory', 'TblProductSaleLocking', 'TblLoanProductSaleLocking', 'TblMccRemunerationSummary', 'TblMccPayment', 'TblMccPaymentTransaction',],
+        '\\app\modules\payment\models\\' => ['TblProductSaleTransaction', 'TblLoanProductSaleDetails', 'TblLoanProduct', 'TblVspOutstanding', 'TblProductSaleTaxCalculated', 'TblProductSaleTaxCalculatedHistory', 'TblProductSaleTransactionHistory', 'TblProductSale', 'TblVspPaymentConfig', 'TblMemberPaymentInstallment', 'TblMemberPaymentRecovery', 'TblVehicleTollDetail', 'TblVehicleTollDetailHistory', 'TblVspPaymentDataConfig', 'TblVspPaymentDataConfigHistory', 'TblProductSaleLocking', 'TblLoanProductSaleLocking', 'TblMccRemunerationSummary', 'TblMccPayment', 'TblMccPaymentTransaction', 'TblMemberPaymentRestrict', 'TblPaymentHoldReason', 'TblBonusPaymentPreviousData', 'TblBonusPaymentPreviousDataSearch'],
         '\\app\modules\tankermovement\models\\' => ['TblQtyDiffType', 'TblConfigTxnResult', 'TblBmcDispatchInspection', 'TblBmcMilkDispatch', 'TblBmcMilkDispatchTxn', 'TblBmcDispatchStock', 'TblVehicleTrip', 'TblPreCollectionCheck', 'TblMilkVehicleEntry', 'TblMilkVehicleEntryTransaction', 'TblPartyMaster', 'TblBmcMilkDispatchHistory', 'TblBmcMilkDispatchTxnHistory', 'TblMilkVehicleEntryHistory'],
         '\\app\modules\assetmanagement\models\\' => ['TblAssetDetail', 'TblStoreLocation', 'TblAssetGroup', 'TblAssetMaster', 'TblAssetMasterHistory', 'TblAssetGroupHistory', 'TblAssetDetailHistory', 'TblStoreLocationHistory', 'TblStoreLocationType', 'TblAssetTransaction', 'TblAssetTransactionHistory', 'TblAssetSet', 'TblAssetSetHistory', 'TblAssetBom', 'TblAssetBomHistory', 'TblAssetBomSearch', 'TblAssetDetailBom', 'TblAssetDetailBomHistory', 'TblAssetDetailBomSearch'],
         '\\app\modules\complaint\models\\' => ['TblComplainProduct', 'TblComplainEscalation', 'TblComplainEscalationTxn', 'TblComplainType', 'TblComplain', 'TblComplainActivity', 'TblComplainProblem', 'TblComplainSpare'],
         '\\app\modules\import\models\\' => ['BackGroundDataImport'],
         '\\app\modules\bkgprocess\models\\' => ['TblDataExchangeConfig'],
         '\\app\modules\dynamicreport\models\\' => ['TblReportList'],
-        '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblSchemeDocumentMaster', 'TblSchemeMaster'],
+        '\\app\modules\welfarescheme\models\\' => ['TblSchemeApplication', 'TblSchemeApplicationApproval', 'TblSchemeApplicationDisbursement', 'TblSchemeApplicationDocuments', 'TblSchemeApprovalStages', 'TblSchemeCriteria', 'TblSchemeDocumentMapping', 'TblDocumentMasterInfo', 'TblSchemeMaster'],
         '\\webvimark\modules\UserManagement\models\\' => ['User'],
         '\\app\modules\tms\models\\' => ['TblFormType', 'TblTaskType', 'TblTask', 'TblTaskActivity'],
+        '\\app\modules\document\models\\' => ['TblDocumentMapping', 'TblAttachment'],
     ];
 
     public function get($model) {

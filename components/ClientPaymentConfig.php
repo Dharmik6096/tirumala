@@ -70,7 +70,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_primary_payment_new',
                 ],
                 'vsp_payment_disburse' => [
-                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code',
+                    'param' => 'customer_type,bmc_code,applicable_for,payment_cycle_code,user_code,is_without_release',
                     'sp_name' => 'sp_disburse_vendor_payment',
                 ],
                 'secondary_tpt_payment' => [
@@ -78,7 +78,7 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'sp_tpt_secondary_payment_cargill',
                 ],
                 'member_payment_disburse' => [
-                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type',
+                    'param' => 'union_code,bmc_code,payment_cycle_code,user_code,org_code,org_type,is_without_release',
                     'sp_name' => 'member_payment_disburse',
                 ],
                 'mcc_remuneration_payment' => [
@@ -89,6 +89,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'mcc_plant_code,bmc_code,applicable_for,from_datetime,to_datetime,user_code',
                     'sp_name' => 'sp_disburse_remuneration_payment',
                 ],
+                 'bonus_payment_disburse' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_disburse',
+                ]
             ],
             'VARDDAN' => [
                 'vsp_payment' => [
@@ -195,6 +199,24 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
                     'sp_name' => 'sp_vsp_payment_jgf',
                 ],
+            ],
+            'VRS_NEWASA' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_vrs_newasa',
+                ]
             ],
             'ANIG' => [
                 'vsp_payment' => [

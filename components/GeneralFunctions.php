@@ -49,6 +49,8 @@ use yii\db\Query;
 use app\modules\organisation\models\TblCustomerDeactive;
 use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\general\models\TblProcessApproval;
+use yii\db\Expression;
 
 class GeneralFunctions extends Component {
 
@@ -250,7 +252,7 @@ class GeneralFunctions extends Component {
     public function validateAadharcard($model, $attribute, $params) {
         if (!empty($model->$attribute))
             if (!preg_match('/^[0-9]{12}$/', $model->$attribute)) {
-                $model->addError($attribute, Yii::t('app/validation', 'Aadhar card number can only contain exactly 12 digits.'));
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' card number can only contain exactly 12 digits.'));
             }
     }
 
@@ -2351,6 +2353,24 @@ class GeneralFunctions extends Component {
         }
 
         return null;
+    }
+
+    public function getCurrentDateShift() {
+        $currentDateTime = date('Y-m-d H:i:s');
+        $hour = date('H', strtotime($currentDateTime));
+        $hourMinute = date('H:i', strtotime($currentDateTime));
+        $currentDate = date('Y-m-d', strtotime($currentDateTime));
+        $date_time_of_collection = ($hour < 3) ? date('Y-m-d', strtotime($currentDate . " -1 days")) : $currentDate;
+        $defaultShiftCode = ($hourMinute >= '03:00' && $hourMinute < '15:00') ? 1 : 2;
+        return [$defaultShiftCode, $date_time_of_collection];
+    }
+
+    public function validateExceedTime($model, $attribute, $min, $max) {
+        $value = $model->$attribute;
+        if ($value < $min || $value > $max) {
+            $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be between ' . $min . ' and ' . $max));
+            return false;
+        }
     }
 
 }

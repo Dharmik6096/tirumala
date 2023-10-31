@@ -22,6 +22,7 @@ use app\modules\organisation\models\TblMccPlantGroupMappingHistory;
 use app\modules\organisation\models\TblBmcSilosInfo;
 use app\modules\organisation\models\TblBmcSilosInfoSearch;
 use app\modules\organisation\models\TblCustomerMaster;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblMccPlantController implements the CRUD actions for TblMccPlant model.
@@ -412,6 +413,25 @@ class TblMccPlantController extends \app\controllers\ChildController {
             return;
         }
         echo Json::encode(['output' => '', 'selected' => '']);
+    }
+
+    public function actionMccDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->mcc_plant_code;
+        $module_name = 'tbl_mcc_plant';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('mcc', $id, $model, $module_code, $module_name);
+    }
+    
+    public function actionGetUnionMcc() {
+        $mccList = [];
+        if (!empty($_POST['union'])) {
+            $union = $_POST['union'];
+            $RLS = $_POST['RLS'];
+            $mccs = new TblMccPlant();
+            $mccList = $mccs->getUnionMCCList($union, $RLS);
+        }
+        return Json::encode(['status' => 'success', 'data' => $mccList]);
     }
 
 }

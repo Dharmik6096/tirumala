@@ -284,7 +284,7 @@ class TblMccPlant extends \app\models\ChildModel {
         return $query->all();
     }
 
-    public function getMccs($unionCode, $notIn = [], $concatCode = false) {
+    public function getMccs($unionCode, $notIn = [], $concatCode = false, $in = []) {
         $query = $this->find()->where(['union_code' => $unionCode, 'is_active' => 1]);
         if (Yii::$app->session->get('MCC') !== '') {
             $query->andWhere(['mcc_plant_code' => explode(',', Yii::$app->session->get('MCC'))]);
@@ -294,6 +294,9 @@ class TblMccPlant extends \app\models\ChildModel {
         }
         if (!empty($notIn)) {
             $query->andWhere(['not in', 'mcc_plant_code', $notIn]);
+        }
+        if (!empty($in)) {
+            $query->andWhere(['mcc_plant_code' => explode(',', $in)]);
         }
         $mcc = $query->all();
         if ($concatCode) {

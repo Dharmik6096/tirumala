@@ -3,7 +3,7 @@
 namespace app\modules\welfarescheme\models;
 
 use Yii;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use app\modules\welfarescheme\models\TblSchemeMaster;
 use app\modules\welfarescheme\models\TblSchemeApplicationDocuments;
 use yii\helpers\ArrayHelper;
@@ -69,7 +69,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     }
 
     public function getDocId() {
-        return $this->hasOne(TblSchemeDocumentMaster::className(), ['doc_id' => 'doc_id']);
+        return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
     public function getSchemeId() {
@@ -77,7 +77,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     }
 
     public function getExistingMapping() {
-        $model = new TblSchemeDocumentMaster();
+        $model = new TblDocumentMasterInfo();
         $config = $model->find()
                 ->select('doc_id')
                 ->where(['is_active' => 1])
@@ -98,7 +98,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     }
 
     public function getExistingMappingIsmandate() {
-        $model = new TblSchemeDocumentMaster();
+        $model = new TblDocumentMasterInfo();
         $config = $model->find()
                 ->select('doc_id')
                 ->where(['is_active' => 1])
@@ -129,7 +129,7 @@ class TblSchemeDocumentMapping extends \app\models\ChildModel {
     }
 
     public function getDocumentMaster() {
-        return $this->hasOne(TblSchemeDocumentMaster::className(), ['doc_id' => 'doc_id']);
+        return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
 }

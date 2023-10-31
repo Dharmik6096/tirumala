@@ -99,6 +99,11 @@ $attribute = [
         'value' => function($model) {
             return $model->antibiotic_check == 1 ? 'Yes' : 'No';
         }, 'visible' => false, 'filter' => false],
+        ['attribute' => 'is_rented_bmc',
+        'filter' => Yii::$app->dropdown->dropdownfilterStatic('boolean_value', $searchModel, 'is_rented_bmc'),
+        'value' => function ($model) {
+            return isset(Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_rented_bmc]) ? Yii::$app->dropdown->getRecords('boolean_value')['data'][$model->is_rented_bmc] : '';
+        },],
 ];
 
 $grid_option = [
@@ -141,7 +146,14 @@ $grid_option = [
             $class = $existCount > 0 ? '' : 'disabled';
             $options = ['title' => Yii::t('app', 'Export Sentbox'), 'class' => $class];
             return GhostHtml::a('<i class="fa fa-download" aria-hidden="true"></i>', ['/organisation/tbl-dcs-bmc/export-sentbox', 'id' => $model->bmc_code], $options);
-        }
+        },
+        'document-upload' => function ($url, $model) {
+            $id = $model->bmc_code;
+            $name = $model->bmc_name;
+            $url = ['/organisation/tbl-dcs-bmc/bmc-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $model->bmc_code, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
+        },
     ]
 ];
 

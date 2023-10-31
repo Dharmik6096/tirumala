@@ -5030,6 +5030,11 @@ tr.highlightRow {
 .pl8 {
     padding-left: 8px;
 }
+.warning-single-box {
+    border: none;
+    margin-bottom: 0px;
+    padding: 4px 15px;
+}
 .d-none-for-specific-client {
     display: none;
 }

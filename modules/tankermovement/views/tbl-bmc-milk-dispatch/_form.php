@@ -27,6 +27,18 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">BMC Milk Dispatch Detail</h4>
         </div>
         <div class="col-md-8 micro_form <?= $disabled ?> padding-bottom-20">
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
+            </div>
+            <div class="col-sm-2 filldata">
+                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
+            </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
@@ -38,20 +50,6 @@ $form = ActiveForm::begin([
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'to_shift_code'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->federation_union($model, $form, 'union_code', 'Union', FALSE); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->union_plant($model, $form, 'tblbmcmilkdispatch-union_code', 'plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->plant_mcc($model, $form, 'tblbmcmilkdispatch-plant_code', 'mcc_plant_code', TRUE, FALSE, '', $readonly); ?>
-            </div>
-            <div class="clearfix"></div>
-
-            <div class="col-sm-2 filldata">
-                <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcmilkdispatch-mcc_plant_code', 'bmc_code', TRUE, FALSE, '', '', $readonly); ?>
             </div>
             <div class="col-sm-2 filldata"> 
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
@@ -220,20 +218,57 @@ $form = ActiveForm::begin([
     </div>
 </div>
 <?php
-$script = "$(document).ready(function(){
-var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
- if(bmc_milk_dispatch_code!=''){
-$('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
-}
+$script = "
+$(document).ready(function(){
+    var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
+    if(bmc_milk_dispatch_code!=''){
+        $('#tblbmcmilkdispatchtxn-milk_type_code').focus(); 
+    }
+
+
+    $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-qty_diff', function() {
+        var rows = $('#purchase_detail_tabel tbody tr');    
+        var totalQty = 0;
+        var totalBalanceQty = 0;
+
+        rows.each(function() {
+            var purchaseQty = parseFloat($(this).find('#purchase_qty').text()) || 0;
+            var previousQty = parseFloat($(this).find('#previous_qty').text()) || 0;
+            var rowTotalQty = purchaseQty + previousQty;
+            totalQty += rowTotalQty;
+        });        
+
+        var dispatch_qty = parseFloat($('#tblbmcmilkdispatchtxn-dispatch_qty').val()) || 0;
+        var qty_diff = parseFloat($('#tblbmcmilkdispatchtxn-qty_diff').val()) || 0;
+        var balance_qty = parseFloat(totalQty) - (dispatch_qty + qty_diff);
+
+        if (!isNaN(balance_qty)) {
+            balance_qty = Math.max(0, balance_qty);
+        } else {
+            balance_qty = 0;
+        }
+        $('#tblbmcmilkdispatchtxn-balance_qty').val((balance_qty).toFixed(2));
+    });
 });
 
+$(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
+    var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
+    var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
+    if(rtpl !='' && dispatch_qty!=''){
+        $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
+    } 
+});
 
- $(document).on('change','#tblbmcmilkdispatchtxn-dispatch_qty,#tblbmcmilkdispatchtxn-rtpl', function() {
- var rtpl=$('#tblbmcmilkdispatchtxn-rtpl').val();
- var dispatch_qty=$('#tblbmcmilkdispatchtxn-dispatch_qty').val();
- if(rtpl !='' && dispatch_qty!=''){
-  $('#tblbmcmilkdispatchtxn-amount').val(parseFloat(rtpl*dispatch_qty).toFixed(2))
- } 
+$(document).on('change','#tblbmcmilkdispatchtxn-qty_diff_type_code', function() {
+    var qtyDiffTypeCode = $(this).val();
+    
+    if (qtyDiffTypeCode === '1') {
+        $('#tblbmcmilkdispatchtxn-qty_diff').prop('readonly', true);
+        $('#tblbmcmilkdispatchtxn-qty_diff').val('0');
+    } else {
+        $('#tblbmcmilkdispatchtxn-qty_diff').prop('readonly', false);
+        $('#tblbmcmilkdispatchtxn-qty_diff').val('');
+    }
 });
 
 ";
@@ -344,4 +379,35 @@ $script = "$(document).ready(function(){
     }
 });";
 $this->registerJs($script, View::POS_END, 'bmc-config-popup');
+?>
+<?php
+$script = "$(document).ready(function(){
+    $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
+        var from_date = $('#tblbmcmilkdispatch-from_date').val();
+        var to_date = $('#tblbmcmilkdispatch-to_date').val();
+        
+        if (from_date !== '' && to_date !== '') {
+            // Split date strings and format them as yyyy-mm-dd
+            var from_date_parts = from_date.split('-');
+            var to_date_parts = to_date.split('-');
+            var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
+            var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+            
+            var fromDateObj = new Date(formatted_from_date);
+            var toDateObj = new Date(formatted_to_date);
+
+            if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
+                var errorMessage = 'must not be less than from date.';
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
+                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+                $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
+            } else {
+                $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+            }
+        } else {
+            $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
+        }
+    });
+});";
+$this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>

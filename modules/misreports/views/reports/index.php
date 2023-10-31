@@ -91,7 +91,7 @@ $downloadSapFiles = json_encode($fileDownloadArr);
 
                                         if (isset($value_array[1]) && $value_array[1] == 'string') {
                                             ?>
-                                    <div class="col-sm-3 reportDate">
+                                            <div class="col-sm-3 reportDate">
                                                 <?php
                                                 echo Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-3 padding-left-5 padding-right-5', false);
                                                 ?>
@@ -140,11 +140,16 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                                     <?= Yii::$app->dropdown->channel_bmc($model, $form, 'reportsmodel-channel_code', 'bmc_code', Yii::t('app', 'BMC'), $channelmultiple); ?>
                                                 </div>
                                                 <?php
-                                            } else
-                                            if (isset($value_array[1]) && $value_array[1] == 'union_code') {
+                                            } else if (isset($value_array[1]) && $value_array[1] == 'union_code') {
                                                 ?>
                                                 <div class="col-sm-3">
                                                     <?= Yii::$app->dropdown->union_bmc($model, $form, 'reportsmodel-union_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
+                                                </div>
+                                                <?php
+                                            } else if (isset($value_array[1]) && $value_array[1] == 'area_code') {
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <?= Yii::$app->dropdown->area_bmc($model, $form, 'reportsmodel-area_code', 'bmc_code', Yii::t('app', 'BMC'), false); ?>
                                                 </div>
                                                 <?php
                                             } else {
@@ -445,6 +450,27 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                             ?>
                                             <div class="col-sm-3">
                                                 <?= Yii::$app->dropdown->year($model, $form, 'year', 'Year', '', false, true, 5, 5) ?> 
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('state_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->dropdown('state_code', $model, $form, '', 'State Name'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('region_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('region_code', $model, $form, 'reportsmodel-state_code', 'form-group col-sm-12', 'Region Name', 'region_code'); ?>
+                                            </div>
+                                            <?php
+                                        }
+                                        if (in_array($value, array('area_code'))) {
+                                            ?>
+                                            <div class="col-sm-3">
+                                                <?= Yii::$app->dropdown->depend_dropdown('area_code', $model, $form, 'reportsmodel-region_code', 'form-group col-sm-12', 'Area Name', 'area_code'); ?>
                                             </div>
                                             <?php
                                         }

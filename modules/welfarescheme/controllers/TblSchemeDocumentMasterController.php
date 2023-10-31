@@ -3,20 +3,20 @@
 namespace app\modules\welfarescheme\controllers;
 
 use Yii;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
-use app\modules\welfarescheme\models\TblSchemeDocumentMasterHistory;
-use app\modules\welfarescheme\models\TblSchemeDocumentMasterSearch;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
+use app\modules\welfarescheme\models\TblDocumentMasterInfoHistory;
+use app\modules\welfarescheme\models\TblDocumentMasterInfoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TblSchemeDocumentMasterController implements the CRUD actions for TblSchemeDocumentMaster model.
+ * TblSchemeDocumentMasterController implements the CRUD actions for TblDocumentMasterInfo model.
  */
 class TblSchemeDocumentMasterController extends \app\controllers\ChildController {
 
     public function actionIndex() {
-        $searchModel = new TblSchemeDocumentMasterSearch();
+        $searchModel = new TblDocumentMasterInfoSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -26,26 +26,15 @@ class TblSchemeDocumentMasterController extends \app\controllers\ChildController
     }
 
     /**
-     * Displays a single TblSchemeDocumentMaster model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new TblSchemeDocumentMaster model.
+     * Creates a new TblDocumentMasterInfo model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate() {
-        $this->model = new TblSchemeDocumentMaster();
+        $this->model = new TblDocumentMasterInfo();
         $this->viewFile = 'create';
         if ($this->model->load(Yii::$app->request->post())) {
-            $transaction = $this->generalModel->saveTransaction([$this->model], ['Scheme Document Master', 'create']);
+            $transaction = $this->generalModel->saveTransaction([$this->model], ['Document Master', 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->{$transaction}();
             }
@@ -54,7 +43,7 @@ class TblSchemeDocumentMasterController extends \app\controllers\ChildController
     }
 
     /**
-     * Updates an existing TblSchemeDocumentMaster model.
+     * Updates an existing TblDocumentMasterInfo model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -63,10 +52,10 @@ class TblSchemeDocumentMasterController extends \app\controllers\ChildController
         $this->model = $this->findModel($id);
         $this->viewFile = 'update';
         if (Yii::$app->request->post()) {
-            $historyModel = new TblSchemeDocumentMasterHistory();
+            $historyModel = new TblDocumentMasterInfoHistory();
             Yii::$app->operation->history($this->model, $historyModel, UPDATE);
             $this->model->load(Yii::$app->request->post());
-            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Scheme Document Master', 'edit']);
+            $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Document Master', 'edit']);
             if ($transaction !== FALSE) {
                 return $this->{$transaction}();
             }
@@ -76,14 +65,14 @@ class TblSchemeDocumentMasterController extends \app\controllers\ChildController
     }
 
     /**
-     * Finds the TblSchemeDocumentMaster model based on its primary key value.
+     * Finds the TblDocumentMasterInfo model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TblSchemeDocumentMaster the loaded model
+     * @return TblDocumentMasterInfo the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id) {
-        if (($model = TblSchemeDocumentMaster::findOne($id)) !== null) {
+        if (($model = TblDocumentMasterInfo::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\welfarescheme\models\TblSchemeDocumentMapping;
-use app\modules\welfarescheme\models\TblSchemeDocumentMaster;
+use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 
 /**
  * TblSchemeDocumentMappingSearch represents the model behind the search form about `app\modules\welfarescheme\models\TblSchemeDocumentMapping`.
