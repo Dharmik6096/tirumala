@@ -23,6 +23,7 @@ $form = ActiveForm::begin([
         ]);
 ?>
 <?php echo $form->errorSummary($model); ?>
+
 <div class="modal modal-default fade" id="apply-formula" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -50,6 +51,7 @@ $form = ActiveForm::begin([
         </div>
     </div>
 </div>
+
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
     <div class="col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">

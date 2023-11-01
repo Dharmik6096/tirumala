@@ -116,12 +116,11 @@ $script = "
 
          $(document).on('click','.add-formula',function(e){
             $('#tblmccbillheadcriteriaslabs-formula_with_val').val('');
-            
+
             var formulacode = $('#tblmccbillheadcriteria-general_formula_code').val();
              if(formulacode !=''){
              var str=$('#tblmccbillheadcriteria-general_formula_code').find(\"option:selected\").text();
              formula=str;
-             console.log(formula);
              $.ajax({
             type: 'post',
             url: '" . Url::to(['/vsp/tbl-mcc-bill-head-criteria/keyword']) . "',                    
