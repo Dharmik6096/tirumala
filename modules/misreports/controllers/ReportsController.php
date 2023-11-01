@@ -1444,6 +1444,10 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CpliabilityReport';
         return $this->actionIndex();
     }
+    public function actionBonusReport() {
+        $this->report = 'BonusReport';
+        return $this->actionIndex();
+    }
 
     public function actionMemberPaymentBankFormat() {
         $this->report = 'MemberPaymentBankFormat';
@@ -1496,6 +1500,10 @@ class ReportsController extends \app\controllers\ChildController {
     }
     public function actionMilkCollectionProcDetailRegion() {
         $this->report = 'MilkCollectionProcDetailRegion';
+        return $this->actionIndex();
+    }
+    public function actionMilkShortageRecovery() {
+        $this->report = 'MilkShortageRecovery';
         return $this->actionIndex();
     }
 
@@ -3011,6 +3019,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'scenario' => 'CpliabilityReport',
                 'title' => 'CP liability Report',
             ],
+            'BonusReport' => [
+                'param' => 'report_type,union_code,plant_code,mcc_code,bmc_code,dcs_code,member_code,from_date:string,to_date:string',
+                'sp_name' => 'mis_member_bonus_payment_summary_vrs',
+                'scenario' => 'BonusReport',
+                'title' => 'Bonus Report',
+                'report_type' => ['1' => Yii::t('app', 'Member Wise Detail'), '2' => Yii::t('app', 'Member Wise Consolidate'), '3' => Yii::t('app', 'Society Wise Detail'), '4' => Yii::t('app', 'Society Wise Consolidate')],
+            ],
             'MemberPaymentBankFormat' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
                 'sp_name' => 'mis_member_payment_bank_format',
@@ -3094,6 +3109,12 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_are_wise_prabhat_loss_gain',
                 'title' => '214 - Center Loss Gain Report',
                 'report_type' => [Yii::t('app', 'Loss Gain - Center'), Yii::t('app', 'Loss Gain - BMC')],
+            ],
+            'MilkShortageRecovery' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string',
+                'sp_name' => 'sp_mis_milk_shortage_recovery',
+                'scenario' => 'MilkShortageRecovery',
+                'title' => '626 - Milk Shortage Recovery',
             ],
         ];
         return $label[$l];
