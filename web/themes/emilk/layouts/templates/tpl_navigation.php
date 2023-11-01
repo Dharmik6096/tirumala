@@ -716,6 +716,8 @@ echo GhostMenu::widget([
                         ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
                         ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
                         ['label' => '624-' . Yii::t('app', 'Member Payment Bank Format'), 'url' => ['/misreports/reports/member-payment-bank-format']],
+                        ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
+                        ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
                     ]
                 ],
                 [
