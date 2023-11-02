@@ -78,7 +78,7 @@ class TblMccBillHeadCriteriaSlabsSearch extends TblMccBillHeadCriteriaSlabs {
     }
 
     public function createsearch($params) {
-        $query = TblVspBillHeadCriteriaSlabs::find();
+        $query = TblMccBillHeadCriteriaSlabs::find();
 
         // add conditions that should always apply here
 

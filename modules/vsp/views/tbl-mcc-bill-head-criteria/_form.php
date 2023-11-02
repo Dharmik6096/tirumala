@@ -85,7 +85,7 @@ $script = "
          var code = $('#tblmccbillheadcriteria-criteria_code').val();
          if(code !=''){
          getFromVal();
-            var url = '" . Url::to(['/vsp/tbl-mcc-bill-head-criteria/list-grid']) . "'+ '?' + $('#bill-head-criteria-from').serialize();
+            var url = '" . Url::to(['/vsp/tbl-mcc-bill-head-criteria/_slab_list']) . "'+ '?' + $('#bill-head-criteria-from').serialize();
                 $.ajax({
                     type: 'get',
                     url: url,

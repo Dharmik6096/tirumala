@@ -14,7 +14,6 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         ['attribute' => 'formula_with_val', 'filter' => FALSE],
     ];
 
-
     $grid_option = [
         'id' => 'mcc-bill-head-criteria-slab-grid',
         'attributes' => $attribute,

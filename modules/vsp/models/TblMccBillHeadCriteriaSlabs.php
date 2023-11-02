@@ -39,7 +39,7 @@ class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
     public function rules() {
         return [
             [['from_val', 'to_val', 'formula_with_val'], 'required', 'on' => ['create']],
-            [['originating_type','criteria_code','criteria_slab_code'], 'integer'],
+            [['originating_type','criteria_code'], 'integer'],
             [['from_val', 'to_val'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['general_formula_code', 'for_what'], 'string', 'max' => 20],
@@ -83,15 +83,19 @@ class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
             return false;
         }
 
-        $dateData = $this->find()
-                ->where('criteria_code = \'' . $this->criteria_code . '\'')
-                ->andWhere('((\'' . $this->from_val . '\' between from_val  and to_val) OR (\'' . $this->to_val . '\' between from_val  and to_val) OR  (from_val between \'' . $this->from_val . '\' and  \'' . $this->to_val . '\') OR (to_val between \'' . $this->from_val . '\' and \'' . $this->to_val . '\'))')
-                ->andfilterWhere(['!=', 'criteria_slab_code', $this->criteria_slab_code])
-                ->all();
-        if (!empty($dateData)) {
-            $this->addError($attribute, Yii::t('app/validation', 'Slab Range is invalid'));
-            return false;
-        }
+//        echo '<pre>';
+//        print_r($this->criteria_slab_code);
+//        die;
+//        
+//        $dateData = $this->find()
+//                ->where('criteria_code = \'' . $this->criteria_code . '\'')
+//                ->andWhere('((\'' . $this->from_val . '\' between from_val  and to_val) OR (\'' . $this->to_val . '\' between from_val  and to_val) OR  (from_val between \'' . $this->from_val . '\' and  \'' . $this->to_val . '\') OR (to_val between \'' . $this->from_val . '\' and \'' . $this->to_val . '\'))')
+//               // ->andfilterWhere(['!=', 'criteria_slab_code', $this->criteria_slab_code])
+//                ->all();
+//        if (!empty($dateData)) {
+//            $this->addError($attribute, Yii::t('app/validation', 'Slab Range is invalid'));
+//            return false;
+//        }
     }
 
     public function checkAllowDelete() {

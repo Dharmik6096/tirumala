@@ -41,9 +41,9 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-                [['criteria_code', 'mcc_bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
-                [['originating_type','criteria_code'], 'integer'],
-                [['created_at', 'updated_at', 'criteria_type', 'criteria_code', 'to_date'], 'safe'],
+                [['mcc_bill_head_code', 'general_formula_code', 'criteria_name'], 'required', 'on' => ['create']],
+                [['originating_type'], 'integer'],
+                [['created_at', 'updated_at', 'to_date'], 'safe'],
                 [['general_formula_code'], 'string', 'max' => 20],
                 [['mcc_bill_head_code'], 'string', 'max' => 10],
                 [['criteria_name'], 'string', 'max' => 100],
@@ -51,7 +51,7 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
                 [['created_by', 'updated_by'], 'string', 'max' => 14],
                 [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
                 ['criteria_name', 'unique', 'targetAttribute' => ['criteria_name', 'union_code'], 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['create']],
-                [['criteria_type'], 'default', 'value' => 'QTY/TS']
+
         ];
     }
 
@@ -60,7 +60,7 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
-            'criteria_code' => Yii::t('app', 'Vsp Criteria Code'),
+            'criteria_code' => Yii::t('app', 'Criteria Code'),
             'criteria_name' => Yii::t('app', 'Criteria Name'),
             'mcc_bill_head_code' => Yii::t('app', 'Bill Head'),
             'general_formula_code' => Yii::t('app', 'Formula'),
@@ -72,7 +72,6 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
-            'criteria_code' => Yii::t('app', 'Criteria Code'),
         ];
     }
 
