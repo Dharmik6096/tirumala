@@ -215,11 +215,8 @@ $(document).ready(function() {
         var qty_diff = $('#tblbmcdispatchstock-qty_diff');
         if (!isNaN(openingBal) && !isNaN(purchaseQty) && !isNaN(balanceQty)) {
             var qtyDifference = openingBal + purchaseQty - balanceQty;
-            qtyDif =qtyDifference;
+            qtyDif = Math.abs(qtyDifference);
             $('#tblbmcdispatchstock-qty_diff').val(qtyDif);
-            if (qtyDifference < 0) {
-                 bootbox.alert('<div class = \'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Qty Difference can not be grater than 0.</span></div></div>');
-            }
         }
     }
     });
@@ -232,88 +229,87 @@ $(document).ready(function() {
         var to_date = $('#tblbmcdispatchstock-to_date').val();
         var to_shift = $('#tblbmcdispatchstock-to_shift_code').val();
         var bmc_dispatch_stock_code = $('#tblbmcdispatchstock-bmc_dispatch_stock_code').val();
-        if(from_date != '' && from_shift != '' && to_date != '' && to_shift != '' && bmc_code != ''){
-        $('#purchase-detial').html('');
-        BindData(bmc_code, from_date, from_shift, to_date, to_shift, bmc_dispatch_stock_code, union_code);
-        }
-        });
-
-        function BindData(bmc_code, from_date, from_shift, to_date, to_shift, bmc_dispatch_stock_code, union_code){
+       if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != ''){
+            $('#purchase-detial').html('');         
+            BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code);            
+        }      
+    });
+   
+    function BindData(bmc_code,from_date,from_shift,to_date,to_shift,bmc_dispatch_stock_code,union_code){
         $.ajax({
-        type: 'get',
-        url: '" . Url::to(['purchase-detail']) . "',
-                data: {'from_date' : from_date, 'from_shift':from_shift, 'to_date' : to_date, 'to_shift':to_shift, 'bmc_code' : bmc_code},
-                success: function(data) {
+            type: 'get',
+            url: '" . Url::to(['purchase-detail']) . "',
+            data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code},             
+            success: function(data) {
                 $('#purchase-detial').html(data);
-                }
-                });
-                }
+            }
+        });
+    }
+    
+    $(document).on('change', '#tblbmcdispatchstock-milk_type_code', function() {
+        updateFields();
+    });
+    
+    $(document).on('change', '#tblbmcdispatchstock-milk_quality_type_code', function() {
+        updateFields();
+    });
+    
+    $(document).on('change', '#tblbmcdispatchstock-bmc_silos_info_code', function() {
+        updateFields();
+    });
 
-                $(document).on('change', '#tblbmcdispatchstock-milk_type_code', function() {
-                updateFields();
-                });
-
-                $(document).on('change', '#tblbmcdispatchstock-milk_quality_type_code', function() {
-                updateFields();
-                });
-
-                $(document).on('change', '#tblbmcdispatchstock-bmc_silos_info_code', function() {
-                updateFields();
-                });
-
-                function updateFields() {
-                var milkTypeCode = $('#tblbmcdispatchstock-milk_type_code').val();
-                var milkQualityTypeCode = $('#tblbmcdispatchstock-milk_quality_type_code').val();
-                var bmcSiloInfoCode = $('#tblbmcdispatchstock-bmc_silos_info_code').val();
-                var stockDetailArray =  [];
+    function updateFields() {
+        var milkTypeCode = $('#tblbmcdispatchstock-milk_type_code').val();
+        var milkQualityTypeCode = $('#tblbmcdispatchstock-milk_quality_type_code').val();
+        var bmcSiloInfoCode = $('#tblbmcdispatchstock-bmc_silos_info_code').val();
+        var stockDetailArray = [];
         var check_key = bmcSiloInfoCode+ '_' + milkTypeCode + '_' + milkQualityTypeCode;
-        if(milkTypeCode != '' && bmcSiloInfoCode != '' && milkQualityTypeCode != '') {
-        var data = $('#stockdetail').val();
-        if(data != undefined && data != '' && isNaN(data)){
-        stockDetailArray = jQuery.parseJSON(data);
-        $('#tblbmcdispatchstock-opening_bal').val(0);
-        $('#tblbmcdispatchstock-purchase_qty').val(0);
-        if(stockDetailArray[String(check_key)] != '' && stockDetailArray[String(check_key)] != undefined){
-        $('#tblbmcdispatchstock-opening_bal').val(stockDetailArray[String(check_key)].previous_qty);
-        $('#tblbmcdispatchstock-purchase_qty').val(stockDetailArray[String(check_key)].purchase_qty);
+        if(milkTypeCode != '' && bmcSiloInfoCode!='' && milkQualityTypeCode !='') {
+            var data = $('#stockdetail').val();
+            if(data != undefined && data != '' && isNaN(data)){
+                stockDetailArray = jQuery.parseJSON(data);
+                $('#tblbmcdispatchstock-opening_bal').val(0);
+                $('#tblbmcdispatchstock-purchase_qty').val(0);
+                if(stockDetailArray[String(check_key)] != '' && stockDetailArray[String(check_key)] != undefined){
+                    $('#tblbmcdispatchstock-opening_bal').val(stockDetailArray[String(check_key)].previous_qty);
+                    $('#tblbmcdispatchstock-purchase_qty').val(stockDetailArray[String(check_key)].purchase_qty);
+                }
+            }
         }
-        }
-        }
-        }
-
-        ";
+    }
+        
+";
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
 <?php
 $script = "$(document).ready(function(){
-        $(document).on('change', '#tblbmcdispatchstock-from_date, #tblbmcdispatchstock-to_date', function() {
+    $(document).on('change', '#tblbmcdispatchstock-from_date, #tblbmcdispatchstock-to_date', function() {
         var from_date = $('#tblbmcdispatchstock-from_date').val();
         var to_date = $('#tblbmcdispatchstock-to_date').val();
-
+        
         if (from_date !== '' && to_date !== '') {
-        // Split date strings and format them as yyyy-mm-dd
-        var from_date_parts = from_date.split('-');
-        var to_date_parts = to_date.split('-');
-        var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
-        var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+            // Split date strings and format them as yyyy-mm-dd
+            var from_date_parts = from_date.split('-');
+            var to_date_parts = to_date.split('-');
+            var formatted_from_date = from_date_parts[2] + '-' + from_date_parts[1] + '-' + from_date_parts[0];
+            var formatted_to_date = to_date_parts[2] + '-' + to_date_parts[1] + '-' + to_date_parts[0];
+            
+            var fromDateObj = new Date(formatted_from_date);
+            var toDateObj = new Date(formatted_to_date);
 
-        var fromDateObj = new Date(formatted_from_date);
-        var toDateObj = new Date(formatted_to_date);
-
-        if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
-        var errorMessage = 'must not be less than from date.';
-        var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
-        $('.field-tblbmcdispatchstock-to_date .error-message').remove();
-        $('.field-tblbmcdispatchstock-to_date').append(errorElement);
+            if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
+                var errorMessage = 'must not be less than from date.';
+                var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
+                $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+                $('.field-tblbmcdispatchstock-to_date').append(errorElement);
+            } else {
+                $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+            }
         } else {
-        $('.field-tblbmcdispatchstock-to_date .error-message').remove();
+            $('.field-tblbmcdispatchstock-to_date .error-message').remove();
         }
-        } else {
-        $('.field-tblbmcdispatchstock-to_date .error-message').remove();
-        }
-        });
-        });
-        ";
+    });
+});";
 $this->registerJs($script, View::POS_END, 'to-date-from-date');
 ?>
 
