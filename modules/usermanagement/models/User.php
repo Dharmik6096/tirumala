@@ -68,7 +68,7 @@ class User extends \webvimark\modules\UserManagement\models\User {
 
         $org_code = '';
 
-        switch ($login_type) {
+        switch ($location_type) {
 
             case 1:
                 if ($login_type == 'procurement_staff') {
