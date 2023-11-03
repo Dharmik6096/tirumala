@@ -9,7 +9,7 @@ use app\modules\vsp\models\TblMccBillHeadCriteria;
 //use app\modules\vsp\models\TblMccBillHeadCriteriaSlabs;
 
 /**
- * TblVspBillHeadCriteriaSearch represents the model behind the search form about `app\modules\vsp\models\TblVspBillHeadCriteria`.
+ * TblMccBillHeadCriteriaSearch represents the model behind the search form about `app\modules\vsp\models\TblMccBillHeadCriteria`.
  */
 class TblMccBillHeadCriteriaSearch extends TblMccBillHeadCriteria {
 
@@ -39,7 +39,7 @@ class TblMccBillHeadCriteriaSearch extends TblMccBillHeadCriteria {
      * @return ActiveDataProvider
      */
     public function search($params) {
-        $query = TblVspBillHeadCriteria::find();
+        $query = TblMccBillHeadCriteria::find();
 
         // add conditions that should always apply here
 
@@ -61,8 +61,8 @@ class TblMccBillHeadCriteriaSearch extends TblMccBillHeadCriteria {
 
         $query->andFilterWhere(['like', 'criteria_code', $this->criteria_code])
                 ->andFilterWhere(['like', 'criteria_name', $this->criteria_name])
-                ->andFilterWhere(['like', 'tbl_general_formula.formula', $this->general_formula_code])
-                ->andFilterWhere(['like', 'tbl_mcc_bill_head.mcc_bill_head_name', $this->mcc_bill_head_code]);
+                ->andFilterWhere(['like', 'tbl_mcc_general_formula.formula', $this->general_formula_code])
+                ->andFilterWhere(['like', 'tbl_mcc_bill_head.bill_head_name', $this->mcc_bill_head_code]);
 
         return $dataProvider;
     }

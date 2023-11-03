@@ -12,12 +12,12 @@ $this->params['menu'][] = Yii::$app->controls->add('Mcc Bill Head Criteria');
             <?= $this->title; ?>           
         </div>
         <div class="panel-body">
-           <!--
+            <?=
             $this->render('_form_grid', [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
             ])
-            --> 
+            ?>
         </div>
     </div>
 </div>

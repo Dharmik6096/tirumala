@@ -19,10 +19,10 @@ use webvimark\modules\UserManagement\components\GhostHtml;
         'attributes' => $attribute,
         'active_column' => FALSE,
         'actions' => [
-            // 'delete-slab' => function($url, $model) {
-            //     $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'class' => 'delete-slab', 'data-from' => $model->from_val, 'data-to' => $model->to_val, 'data-id' => $model->vsp_slab_code];
-            //     return GhostHtml::a_alert('<i class="fa fa-trash"></i>', ['delete-slab', 'id' => $model->vsp_slab_code], $options);
-            // }
+            'delete-slab' => function($url, $model) {
+                $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'class' => 'delete-slab', 'data-from' => $model->from_val, 'data-to' => $model->to_val, 'data-id' => $model->criteria_slab_code];
+                return GhostHtml::a_alert('<i class="fa fa-trash"></i>', ['delete-slab', 'id' => $model->criteria_slab_code], $options);
+            }
             ]
     ];
     Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);

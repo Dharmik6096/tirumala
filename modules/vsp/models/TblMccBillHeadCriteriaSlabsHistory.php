@@ -5,10 +5,11 @@ namespace app\modules\vsp\models;
 use Yii;
 
 /**
- * This is the model class for table "tbl_mcc_bill_head_criteria_slabs".
+ * This is the model class for table "tbl_mcc_bill_head_criteria_slabs_history".
  *
- * @property string $criteria_slab_code
- * @property string $criteria_code
+ * @property integer $id
+ * @property string $vsp_slab_code
+ * @property string $vsp_criteria_code
  * @property integer $bill_head_code
  * @property string $from_val
  * @property string $to_val
@@ -20,17 +21,20 @@ use Yii;
  * @property string $created_by
  * @property string $updated_at
  * @property string $updated_by
+ * @property string $history_created_at
+ * @property string $history_created_by
+ * @property string $operation_type
  * @property string $originating_org_code
  * @property string $originating_org_type
  * @property integer $originating_type
  */
-class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
+class TblMccBillHeadCriteriaSlabsHistory extends \yii\db\ActiveRecord {
 
     /**
      * @inheritdoc
      */
     public static function tableName() {
-        return 'tbl_mcc_bill_head_criteria_slabs';
+        return 'tbl_mcc_bill_head_criteria_slabs_history';
     }
 
     /**
@@ -38,18 +42,9 @@ class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['from_val', 'to_val', 'formula_with_val'], 'required', 'on' => ['create']],
-            [['originating_type','criteria_code'], 'integer'],
-            [['from_val', 'to_val'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['general_formula_code', 'for_what'], 'string', 'max' => 20],
-            [['mcc_bill_head_code'], 'string', 'max' => 10],
-            [['formula_with_val'], 'string', 'max' => 100],
-            [['union_code'], 'string', 'max' => 3],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['for_what'], 'default', 'value' => 'qty'],
-            [['from_val'], 'validateRange', 'on' => ['create']]
+            [['criteria_slab_code', 'criteria_code', 'mcc_bill_head_code', 'for_what', 'originating_org_code', 'history_created_at'], 'safe'],
+            [['from_val', 'to_val', 'general_formula_code', 'formula_with_val', 'union_code', 'originating_org_type', 'history_created_by'], 'safe'],
+            [['created_at', 'created_by','updated_at', 'updated_by','history_created_at', 'originating_type', 'operation_type'], 'safe'],
         ];
     }
 
@@ -58,6 +53,7 @@ class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
      */
     public function attributeLabels() {
         return [
+            'id' => Yii::t('app', 'ID'),
             'criteria_slab_code' => Yii::t('app', 'Criteria Slab Code'),
             'criteria_code' => Yii::t('app', 'Vsp Criteria Code'),
             'mcc_bill_head_code' => Yii::t('app', 'Mcc Bill Head Code'),
@@ -74,18 +70,10 @@ class TblMccBillHeadCriteriaSlabs extends \app\models\ChildModel {
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
             'originating_type' => Yii::t('app', 'Originating Type'),
+            'history_created_at' => Yii::t('app', 'History Created At'),
+            'history_created_by' => Yii::t('app', 'History Created By'),
+            'operation_type' => Yii::t('app', 'Operation Type'),
         ];
-    }
-
-    public function validateRange($attribute, $params) {
-        if ($this->from_val >= $this->to_val) {
-            $this->addError($attribute, Yii::t('app/validation', 'To Val Must Greater than From Val'));
-            return false;
-        }
-    }
-
-    public function checkAllowDelete() {
-        return Yii::$app->general->allowUpdateDelete($this);
     }
 
 }

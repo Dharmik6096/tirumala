@@ -81,6 +81,7 @@ $form = ActiveForm::begin([
             <h4 class="theme-box-heading">Criteria Slab</h4>
         </div>
         <?= $form->field($model, 'criteria_code')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'union_code')->hiddenInput()->label(false) ?>
 
         <div class="col-sm-2 number-validate">
             <?= $form->field($txModel, 'from_val')->textInput(['readOnly' => true]) ?>

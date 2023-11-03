@@ -8,7 +8,7 @@ use webvimark\modules\UserManagement\components\GhostHtml;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 ?>
-<div>
+<div id="maincontent">
     <?=
     $this->render('_mcc_criteria', ['model' => $model, 'type' => $type, 'txModel' => $txModel])
     ?>
@@ -17,7 +17,7 @@ use kartik\grid\GridView;
 <div id="gridcontentSet" class='hide-grid-settings panel_clear_both'>
     <div class="QltyParamDivGrid">
         <?=
-            $this->render('_slab_list', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
+        $this->render('_slab_list', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider])
         ?>
     </div>
 </div>
@@ -55,7 +55,7 @@ $script = "
     
     function gridChange(){
        $('.add-criteria').prop('disabled',true);
-       $('#bill-head-criteria-from .reset_field input').val('');
+       $('#mcc-bill-head-criteria-form .reset_field input').val('');
         if(action != 'edit'){
             $('.QltyParamDiv').hide();
         }
@@ -85,7 +85,7 @@ $script = "
          var code = $('#tblmccbillheadcriteria-criteria_code').val();
          if(code !=''){
          getFromVal();
-            var url = '" . Url::to(['/vsp/tbl-mcc-bill-head-criteria/_slab_list']) . "'+ '?' + $('#bill-head-criteria-from').serialize();
+            var url = '" . Url::to(['/vsp/tbl-mcc-bill-head-criteria/slab-list']) . "'+ '?' + $('#mcc-bill-head-criteria-form').serialize();
                 $.ajax({
                     type: 'get',
                     url: url,

@@ -84,15 +84,15 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
     }
 
     public function getGeneralFormula() {
-        return $this->hasOne(TblGeneralFormula::className(), ['general_formula_code' => 'general_formula_code']);
+        return $this->hasOne(TblMccGeneralFormula::className(), ['general_formula_code' => 'general_formula_code']);
     }
 
     public function checkAllowDelete() {
         return Yii::$app->general->allowUpdateDelete($this);
     }
 
-    public function getIsApplicability() {
-        return $this->hasOne(TblMccBillHeadCriteriaApplicability::className(), ['criteria_code' => 'criteria_code']);
-    }
+    // public function getIsApplicability() {
+    //     return $this->hasOne(TblMccBillHeadCriteriaApplicability::className(), ['criteria_code' => 'criteria_code']);
+    // }
 
 }

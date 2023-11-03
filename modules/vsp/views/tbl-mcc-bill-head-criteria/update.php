@@ -1,16 +1,14 @@
 <?php
-$this->title = Yii::$app->label->title('create', 'Mcc Bill Head Criteria');
+$this->title = Yii::$app->label->title('edit', 'Bill Head Criteria');
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
     <div class="panel-body">
         <?=
         $this->render('_form', [
-            'type' => 'create',
             'model' => $model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'txModel' => $txModel,
+            'type' => 'edit',
+            'searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'txModel' => $txModel,
         ])
         ?>
     </div>
