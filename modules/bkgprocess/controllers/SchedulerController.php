@@ -38,6 +38,8 @@ use app\components\AMQPConnection;
 use app\modules\tms\models\TblTask;
 use app\modules\complaint\models\TblComplainEscalationTxnDetail;
 use app\modules\complaint\models\TblComplainActivity;
+use app\modules\complaint\models\TblComplain;
+use app\modules\complaint\models\TblComplainHistory;
 
 class SchedulerController extends ChildController {
 
@@ -1258,6 +1260,19 @@ class SchedulerController extends ChildController {
                                     }
                                 }
                             }
+                        }
+
+                        $complain = new TblComplain();
+                        $complainModel = TblComplain::find()->where(['complain_code' => $data->complain_code])->one();
+
+                        if (!empty($complainModel)) {
+                            $complain_history = new TblComplainHistory();
+                            Yii::$app->operation->history($complainModel, $complain_history, UPDATE);
+                            $complain_history->save();
+                            $complainModel->user_code = $data->user_code;
+                            $complainModel->complain_assignment_datetime = date('Y-m-d H:i:s');
+                            $complainModel->complain_status = 'INPROGRESS';
+                            $complainModel->save();
                         }
                     }
                 } catch (\yii\db\Exception $e) {

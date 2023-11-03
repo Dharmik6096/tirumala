@@ -28,9 +28,10 @@ use app\modules\complaint\models\TblComplainActivitySearch;
 use app\modules\assetmanagement\models\TblAssetBom;
 use app\modules\complaint\models\TblComplainSpare;
 use yii\widgets\ActiveForm;
-use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\complaint\models\TblComplainEscalationTxnDetail;
-use app\modules\complaint\models\TblComplainEscalationTxn;
+
+//use app\modules\webservice\eipl\models\TblEiplAppLogin;
+//use app\modules\complaint\models\TblComplainEscalationTxn;
 
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
@@ -124,36 +125,46 @@ class TblComplainController extends \app\controllers\ChildController {
                         }
                     }
                 }
-                $modelStages = new TblComplainEscalationTxn();
-                $code = '';
-                $codes = [];
-                if (!empty($this->model->plant_code && $this->model->location_type == 1)) {
-                    $codes['plant_code'] = $this->model->plant_code;
-                } else if (!empty($this->model->bmc_code && $this->model->mcc_plant_code && $this->model->location_type == 2)) {
-                    $codes['plant_code'] = $this->model->plant_code;
-                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
-                } else if (!empty($this->model->dcs_code && $this->model->location_type == 3)) {
-                    $codes['plant_code'] = $this->model->plant_code;
-                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
-                    $codes['dcs_code'] = $this->model->dcs_code;
-                }
-                $user_code = '';
-                if ($codes != '') {
-                    $modelStages->setApprovalData($this->model->complain_type_code, $this->model->union_code, $codes, $saveModel, $user_code, $this->model->location_type);
-                    $auto_key_config['TblComplainEscalationTxnDetail'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
-                    if ($user_code != '') {
-                        $this->model->user_code = $user_code;
-                        $this->model->complain_assignment_datetime = date('Y-m-d H:i:s');
-                        $this->model->complain_status = 'INPROGRESS';
-                        $complaint_activity = new TblComplainActivity();
-                        $this->setComplaintActivityModel($complaint_activity, 'ASSIGN');
-                        $saveModel[] = $complaint_activity;
-                    }
-                }
+//                $modelStages = new TblComplainEscalationTxn();
+//                $code = '';
+//                $codes = [];
+//                if (!empty($this->model->plant_code && $this->model->location_type == 1)) {
+//                    $codes['plant_code'] = $this->model->plant_code;
+//                } else if (!empty($this->model->bmc_code && $this->model->mcc_plant_code && $this->model->location_type == 2)) {
+//                    $codes['plant_code'] = $this->model->plant_code;
+//                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
+//                } else if (!empty($this->model->dcs_code && $this->model->location_type == 3)) {
+//                    $codes['plant_code'] = $this->model->plant_code;
+//                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
+//                    $codes['dcs_code'] = $this->model->dcs_code;
+//                }
+//                $user_code = '';
+//                if ($codes != '') {
+//                    $modelStages->setApprovalData($this->model->complain_type_code, $this->model->union_code, $codes, $saveModel, $user_code, $this->model->location_type);
+//                    $auto_key_config['TblComplainEscalationTxnDetail'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
+//                    if ($user_code != '') {
+//                        $this->model->user_code = $user_code;
+//                        $this->model->complain_assignment_datetime = date('Y-m-d H:i:s');
+//                        $this->model->complain_status = 'INPROGRESS';
+//                        $complaint_activity = new TblComplainActivity();
+//                        $this->setComplaintActivityModel($complaint_activity, 'ASSIGN');
+//                        $saveModel[] = $complaint_activity;
+//                    }
+//                }
                 $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
+                    $user_code = '';
+                    $LastInsertedId = $this->model->complain_code;
+                    $sp_param = [];
+                    $sp_name = 'Proc_Insert_complain_escalation_txn_detail';
+                    $sp_param[] = $LastInsertedId;
+                    $result = \Yii::$app->general->getSpData($sp_name, $sp_param);
+                    foreach ($result as $res) {
+                        if (!empty($res['user_code'])) {
+                            $user_code = $res['user_code'];
+                        }
+                    }
                     if ($user_code != '') {
-                        $LastInsertedId = $this->model->complain_code;
                         $sp_param = [];
                         $sp_name = 'Proc_task_activity';
                         $sp_param[] = $this->model->union_code;
