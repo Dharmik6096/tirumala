@@ -804,7 +804,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'VendorMilkPaymentAnig' => [
                 'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
-                'path' => '/reports/SASS/vsp/VendorMilkPaymentAnig',
+                'path' => 'vsp/VendorMilkPaymentAnig',
                 'scenario' => 'VendorMilkPayment',
                 'title' => '604 - Vendor Milk Payment',
             ],
