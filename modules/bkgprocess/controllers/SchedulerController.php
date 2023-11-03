@@ -1237,6 +1237,8 @@ class SchedulerController extends ChildController {
                                 $complaint_activity->activity_type = 'RE-ASSIGN';
                                 $complaint_activity->entry_type = 'CRON';
                                 $complaint_activity->user_code = $data->user_code;
+                                $complaint_activity->union_code = $data->union_code;
+                                $complaint_activity->remarks = 'Auto Assign By Escalation Matrix. You have to take action on this complaint.';
                                 $complaint_activity->save();
                             }
                         }

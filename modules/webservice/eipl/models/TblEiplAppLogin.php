@@ -293,10 +293,4 @@ class TblEiplAppLogin extends \yii\db\ActiveRecord implements \yii\web\IdentityI
                         ])->andWhere(['master_code' => $data->id, 'login_type' => $data->login_type])->one();
     }
 
-//    public function getLoginDetails() {
-//        return $this->find()
-//                        ->where(['module_code' => $this->module_code, 'module_type' => $this->module_type, 'is_active' => 1, 'mobile_no' => $this->mobile_no, 'app_type' => $this->app_type])
-//                        ->andWhere(['or', ['is_block' => NULL], ['is_block' => 0]])
-//                        ->one();
-//    }
 }

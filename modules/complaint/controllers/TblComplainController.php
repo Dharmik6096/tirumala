@@ -30,9 +30,6 @@ use app\modules\complaint\models\TblComplainSpare;
 use yii\widgets\ActiveForm;
 use app\modules\complaint\models\TblComplainEscalationTxnDetail;
 
-//use app\modules\webservice\eipl\models\TblEiplAppLogin;
-//use app\modules\complaint\models\TblComplainEscalationTxn;
-
 /**
  * TblComplainController implements the CRUD actions for TblComplain model.
  */
@@ -125,32 +122,6 @@ class TblComplainController extends \app\controllers\ChildController {
                         }
                     }
                 }
-//                $modelStages = new TblComplainEscalationTxn();
-//                $code = '';
-//                $codes = [];
-//                if (!empty($this->model->plant_code && $this->model->location_type == 1)) {
-//                    $codes['plant_code'] = $this->model->plant_code;
-//                } else if (!empty($this->model->bmc_code && $this->model->mcc_plant_code && $this->model->location_type == 2)) {
-//                    $codes['plant_code'] = $this->model->plant_code;
-//                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
-//                } else if (!empty($this->model->dcs_code && $this->model->location_type == 3)) {
-//                    $codes['plant_code'] = $this->model->plant_code;
-//                    $codes['mcc_plant_code'] = $this->model->mcc_plant_code;
-//                    $codes['dcs_code'] = $this->model->dcs_code;
-//                }
-//                $user_code = '';
-//                if ($codes != '') {
-//                    $modelStages->setApprovalData($this->model->complain_type_code, $this->model->union_code, $codes, $saveModel, $user_code, $this->model->location_type);
-//                    $auto_key_config['TblComplainEscalationTxnDetail'][] = ['self_key' => 'complain_code', 'parent_key' => 'complain_code', 'parent_index' => 0];
-//                    if ($user_code != '') {
-//                        $this->model->user_code = $user_code;
-//                        $this->model->complain_assignment_datetime = date('Y-m-d H:i:s');
-//                        $this->model->complain_status = 'INPROGRESS';
-//                        $complaint_activity = new TblComplainActivity();
-//                        $this->setComplaintActivityModel($complaint_activity, 'ASSIGN');
-//                        $saveModel[] = $complaint_activity;
-//                    }
-//                }
                 $transaction = $this->generalModel->saveTransactionAutoIncForeignKey($saveModel, ['Complain', 'create'], $auto_key_config);
                 if ($transaction !== FALSE) {
                     $user_code = '';
@@ -182,14 +153,14 @@ class TblComplainController extends \app\controllers\ChildController {
                                         $txnDetail->save();
                                     }
                                 }
-                                $notificationSent = true;
-                                $this->setNotification($notificationSent, $this->model->complain_code);
-                                if (!$notificationSent) {
-                                    Yii::$app->getSession()->setFlash('success', [
-                                        'type' => 'success',
-                                        'message' => Yii::t('app', 'Complain successfully created and notification is not generated.'),
-                                    ]);
-                                }
+//                                $notificationSent = true;
+//                                $this->setNotification($notificationSent, $this->model->complain_code);
+//                                if (!$notificationSent) {
+//                                    Yii::$app->getSession()->setFlash('success', [
+//                                        'type' => 'success',
+//                                        'message' => Yii::t('app', 'Complain successfully created and notification is not generated.'),
+//                                    ]);
+//                                }
                             }
                         }
                     }
@@ -342,6 +313,8 @@ class TblComplainController extends \app\controllers\ChildController {
         $complaint_activity_model->remarks = $this->model->remarks;
         $complaint_activity_model->entry_type = 'PORTAL';
         $complaint_activity_model->user_code = $this->model->user_code;
+        $complaint_activity_model->user_code = isset($this->model->user_code) ? $this->model->user_code : Yii::$app->session['UserCode'];
+        $complaint_activity_model->union_code = $this->model->union_code;
     }
 
     public function actionProblemList() {
@@ -396,10 +369,10 @@ class TblComplainController extends \app\controllers\ChildController {
         $historyModel = new TblComplainHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);
         $this->model->scenario = 'assign_complain';
-        $notificationSent = true;
+//        $notificationSent = true;
         $complianUser = $this->model->user_code;
         if (Yii::$app->request->post() && $this->model->load(Yii::$app->request->post())) {
-            $this->setNotification($notificationSent, $this->model->complain_code);
+//            $this->setNotification($notificationSent, $this->model->complain_code);
             $complaint_activity_model = new TblComplainActivity();
             $this->setModel($this->model);
             $activityModel = TblComplainActivity::find()->where(['complain_code' => $this->model->complain_code, 'activity_type' => 'ASSIGN'])->orderBy('complain_activity_code', 'desc')->one();
@@ -432,12 +405,12 @@ class TblComplainController extends \app\controllers\ChildController {
 
             $transaction = $this->generalModel->saveTransactionWithSp($master, $spCall, ['Complain Assign', 'create']);
             if ($transaction == 'customRedirect') {
-                if (!$notificationSent) {
-                    Yii::$app->getSession()->setFlash('success', [
-                        'type' => 'success',
-                        'message' => Yii::t('app', 'Complain successfully assigned and notification is not generated.'),
-                    ]);
-                }
+//                if (!$notificationSent) {
+//                    Yii::$app->getSession()->setFlash('success', [
+//                        'type' => 'success',
+//                        'message' => Yii::t('app', 'Complain successfully assigned and notification is not generated.'),
+//                    ]);
+//                }
                 return $this->redirect(['index']);
             }
         }
