@@ -26,13 +26,11 @@ use yii\helpers\Html;
 use yii\helpers\Json;
 use app\modules\geo\models\TblRegion;
 
-class DropDown extends Component
-{
+class DropDown extends Component {
 
     private $class = 'form-group padding-right-5 col-sm-2';
 
-    public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false, $searchable = true)
-    {
+    public function state($model, $form, $name = 'state_code', $islable = false, $disable = false, $multiple = false, $searchable = true) {
 
         $this->setClass($form, $name);
         $state = new TblStates;
@@ -45,10 +43,9 @@ class DropDown extends Component
 
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $state->getActiveStates($model->$name), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple]
-                ]
+                    Select2::classname(), [
+                'data' => $state->getActiveStates($model->$name), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($state->getActiveStates($model->$name), ['prompt' => 'Select State', 'disabled' => $disable, 'multiple' => $multiple])->label($islable);
@@ -61,126 +58,108 @@ class DropDown extends Component
         }
     }
 
-    public function district($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function district($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
 
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
     }
 
-    public function uniondistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function uniondistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
 
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/district-list', Yii::t('app', 'Select District'), $multiple, $model->$name, $readonly);
     }
 
-    public function unionpaymentcycle($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function unionpaymentcycle($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-member-payment/payment-cycle-list', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
     }
 
-    public function unionpaymentcyclewithdate($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function unionpaymentcyclewithdate($model, $form, $depends, $name = 'dcs_payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-member-payment/payment-cycle-list-with-date', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
     }
 
-    public function dcsvillage($model, $form, $depends, $name = 'village_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function dcsvillage($model, $form, $depends, $name = 'village_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/village-list', 'Select Village', $multiple, $model->$name, $readonly);
     }
 
-    public function vendordcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false)
-    {
+    public function vendordcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/load-vendor-society', 'Select Society', $multiple, $model->$name);
     }
 
-    public function bankdistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false)
-    {
+    public function bankdistrict($model, $form, $depends, $name = 'district_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-banks/bank-district-list', 'Select District', $multiple, $model->$name);
     }
 
-    public function bankdepended($model, $form, $depends, $name = 'bank_code', $islable = false, $multiple = false)
-    {
+    public function bankdepended($model, $form, $depends, $name = 'bank_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-banks/bank-list', 'Select Bank', $multiple);
     }
 
-    public function federation($model, $form, $name = 'federation_code', $islable = false, $disable = false)
-    {
+    public function federation($model, $form, $name = 'federation_code', $islable = false, $disable = false) {
 
         $this->setClass($form, $name);
         $federation = new TblFederations();
         echo $form->field($model, $name)->dropDownList($federation->getActiveFederation($model->$name), ['prompt' => 'Select Federation', 'disabled' => $disable])->label($islable);
     }
 
-    public function dcsdestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false)
-    {
+    public function dcsdestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/destination-list', 'Select Destination Type', $multiple);
     }
 
-    public function routedestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false, $type = 'to')
-    {
+    public function routedestinationtype($model, $form, $depends, $name = 'destination_type', $islable = false, $multiple = false, $type = 'to') {
         $this->setClass($form, $name);
         $url = $type == 'to' ? '/organisation/tbl-route-mapping/to-destination-list' : '/organisation/tbl-route-mapping/from-destination-list';
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $url, 'Select Destination Type', $multiple);
     }
 
-    public function financialyear($model, $form, $name = 'financial_year_code', $islable = false, $disable = false, $searchable = true)
-    {
+    public function financialyear($model, $form, $name = 'financial_year_code', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $routs = new TblFinancialYear();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $routs->getLatestYear(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Year', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $routs->getLatestYear(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Year', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($routs->getLatestYear(), ['prompt' => 'Select Year', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function profile($model, $form, $name = 'profile_id', $islable = false, $disable = false, $searchable = true)
-    {
+    public function profile($model, $form, $name = 'profile_id', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $profiles = new TblProfiles();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $profiles->getAllRoles(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Profile', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $profiles->getAllRoles(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Profile', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($profiles->getAllRoles(), ['prompt' => 'Select Profile', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function shift($model, $form, $name = 'shift', $islable = false, $class = '', $disable = false, $searchable = true)
-    {
+    public function shift($model, $form, $name = 'shift', $islable = false, $class = '', $disable = false, $searchable = true) {
         $list = ['1' => 'Morning', '2' => 'Evening'];
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $list, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Shift', 'disabled' => $disable, 'class' => 'form-control ' . $class]
-                ]
+                    Select2::classname(), [
+                'data' => $list, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Shift', 'disabled' => $disable, 'class' => 'form-control ' . $class]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($list, ['prompt' => 'Select Shift', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
         }
     }
 
-    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start = '', $end = '')
-    {
+    public function year($model, $form, $name = 'year', $islable = false, $class = '', $disable = false, $searchable = true, $start = '', $end = '') {
         $yearStart = date('Y') - $start;
         $yearEnd = date('Y') + $end;
         $years = [];
@@ -190,22 +169,19 @@ class DropDown extends Component
         echo $form->field($model, $name)->dropDownList($years, ['prompt' => 'Select Year', 'disabled' => $disable, 'class' => 'form-control ' . $class])->label($islable);
     }
 
-    private function setClass($form, $name)
-    {
+    private function setClass($form, $name) {
         if (array_key_exists($name, $form->options))
             $this->class = $form->options[$name];
         else if (isset($form->options['field-class']))
             $this->class = $form->options['field-class'];
     }
 
-    public function union($model, $form, $depends, $name = 'union_code', $islable = false, $multiple = false)
-    {
+    public function union($model, $form, $depends, $name = 'union_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-unions/union-list', Yii::t('app', 'Select Union'), $multiple/* ,$model->$name */);
     }
 
-    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false, $searchable = true, $multiple = false)
-    {
+    public function federation_union($model, $form, $name = 'union_code', $islable = false, $readonly = false, $searchable = true, $multiple = false) {
         $this->setClass($form, $name);
         $disable = $readonly ? 'disabled' : false;
         $islable = $islable ? Yii::t('app', $islable) : false;
@@ -217,10 +193,9 @@ class DropDown extends Component
         $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $unionModel->getActiveUnions(1), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => Yii::t('app', 'Select Union'), 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $unionModel->getActiveUnions(1), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => Yii::t('app', 'Select Union'), 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name, ['options' => ['multiple' => $multiple]])->dropDownList($unionModel->getActiveUnions(1), ['prompt' => Yii::t('app', 'Select Union'), 'disabled' => $disable])->label($islable);
@@ -233,8 +208,7 @@ class DropDown extends Component
         }
     }
 
-    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false)
-    {
+    public function union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
         $check_list = '';
         $label = $label ? Yii::t('app', $label) : false;
         if (!empty(Yii::$app->session->get('Dcs'))) {
@@ -244,16 +218,14 @@ class DropDown extends Component
         return $this->depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
     }
 
-    public function union_routes($model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false)
-    {
+    public function union_routes($model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
         $check_list = '';
         $routes = new TblRouteMappingSources();
         $check_list = implode('-', $routes->getRoutesWithDcs());
         return $this->depend_dropdown('routemapping', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
     }
 
-    public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false)
-    {
+    public function route_dcs($model, $form, $depends, $name = '', $islable = false, $multiple = false, $multiselect = false, $id = '', $readonly = false) {
         //$this->dependedDropdown($model, $form, $depends, $name, $islable, '/geo/tbl-districts/district-list', 'Select District', $multiple, $model->$name, $readonly);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/route-dcs-list', Yii::t('app', 'Select Dcs'), $multiple, '', $readonly, '', true, TRUE);
@@ -264,91 +236,79 @@ class DropDown extends Component
         }
     }
 
-    public function bank($model, $form, $name = 'bank_code', $islable = false, $disable = false, $searchable = true)
-    {
+    public function bank($model, $form, $name = 'bank_code', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $data = $this->getLabels('bank');
         $records = $this->withLocal($data, $model);
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Bank', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Bank', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($records, ['prompt' => 'Select Bank', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function defaultlandunit($model, $form, $name = 'land_unit', $islable = false, $disable = false, $searchable = true)
-    {
+    public function defaultlandunit($model, $form, $name = 'land_unit', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $routs = new TblLandUnit();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $routs->getDefaultValues(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Data', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $routs->getDefaultValues(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Data', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($routs->getDefaultValues(), ['prompt' => 'Select Data', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function vehicle($model, $form, $name = 'vehicle_code', $islable = false, $disable = false, $km_base = false, $searchable = true)
-    {
+    public function vehicle($model, $form, $name = 'vehicle_code', $islable = false, $disable = false, $km_base = false, $searchable = true) {
         $this->setClass($form, $name);
         $vehicle = new \app\modules\transporter\models\TblVehicleMaster();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $vehicle->vehicle($km_base), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Vehicle', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $vehicle->vehicle($km_base), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Vehicle', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($vehicle->vehicle($km_base), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function bmcroutecode($model, $form, $name = 'route_code', $islable = false, $disable = false, $bmc_code = '', $searchable = true)
-    {
+    public function bmcroutecode($model, $form, $name = 'route_code', $islable = false, $disable = false, $bmc_code = '', $searchable = true) {
         $this->setClass($form, $name);
         $routes = new \app\modules\organisation\models\TblRouteMapping();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $routes->route($bmc_code), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Route Code', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $routes->route($bmc_code), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Route Code', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($routes->route($bmc_code), ['prompt' => 'Select Route Code', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function transporterpaymentcycle($model, $form, $depends, $name = 'transporter_payment_cycle', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function transporterpaymentcycle($model, $form, $depends, $name = 'transporter_payment_cycle', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/payment-cycle-list', 'Select Payment Cycle', $multiple, $model->$name, $readonly);
     }
 
-    public function vehicletransporter($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false)
-    {
+    public function vehicletransporter($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-master/depend-vehicles', 'Select Vehicle', $multiple, $model->$name);
     }
 
-    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false)
-    {
+    public function union_plant($model, $form, $depends, $name = 'plant_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-plant/plant-list', Yii::t('app', 'Select Plant'), $multiple, $extra_param, $readonly);
     }
 
-    public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '')
-    {
+    public function plant_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
         $this->setClass($form, $name);
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-mcc-plant/mcc-list');
@@ -357,8 +317,7 @@ class DropDown extends Component
         }
     }
 
-    public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false)
-    {
+    public function mcc_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
 
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly, $id);
@@ -387,8 +346,7 @@ class DropDown extends Component
         }
     }
 
-    public function channel_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '')
-    {
+    public function channel_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $multiselect = false, $id = '') {
         $this->setClass($form, $name);
         if ($multiselect) {
             $this->dependedDropdownMultiple($model, $form, $depends, $name, $id, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list');
@@ -396,7 +354,7 @@ class DropDown extends Component
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/channel-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readonly);
         }
     }
-    
+
     public function bmc_society($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -406,52 +364,45 @@ class DropDown extends Component
         }
     }
 
-    public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false)
-    {
+    public function bmcDropdown($model, $form, $depends, $name = 'bmc_code', $islable = '', $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/bmc-list-union', 'Select BMC', $multiple, $model->$name, $readonly);
     }
 
-    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false, $id = '', $searchable = true)
-    {
+    public function mccDropDown($model, $form, $name = 'mcc_code', $islable = false, $disable = false, $id = '', $searchable = true) {
         $this->setClass($form, $name);
         $mcc = new \app\modules\organisation\models\TblMccPlant();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $mcc->getMCCList(''), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select MCC', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $mcc->getMCCList(''), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select MCC', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($mcc->getMCCList(''), ['prompt' => 'Select MCC', 'id' => $id, 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function androiddevicelist($model, $form, $depends, $name = 'device_id', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function androiddevicelist($model, $form, $depends, $name = 'device_id', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/installation/tbl-android-installation/device-list', 'Select Device', $multiple, $model->$name, $readonly);
     }
 
-    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false, $notin = [], $searchable = true)
-    {
+    public function configFor($model, $form, $name = 'config_for', $islable = false, $disable = false, $notin = [], $searchable = true) {
         $this->setClass($form, $name);
         $config = new \app\modules\configuration\models\TblConfig();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $config->configForList($notin), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select App', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $config->configForList($notin), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select App', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($config->configForList($notin), ['prompt' => 'Select App', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '')
-    {
+    public function all_routes($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false, $is_return = FALSE, $input_name = '') {
         $this->setClass($form, $name);
         if ($is_return) {
             return $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-list', Yii::t('app', 'Select Route'), $multiple, $model->$name, $readonly, '', TRUE, '', $is_return, $input_name);
@@ -462,8 +413,7 @@ class DropDown extends Component
         }
     }
 
-    public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function customer_type($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-type', Yii::t('app', 'Select Type'), $multiple, $model->$name, $readonly);
         $script = "$(document).ready(function() {
@@ -486,62 +436,52 @@ class DropDown extends Component
         Yii::$app->view->registerJs($script, View::POS_END, 'customer_type_hide');
     }
 
-    public function merge_dcs_customer($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false)
-    {
+    public function merge_dcs_customer($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-dcs-customer-list', Yii::t('app', 'Select Name'), $multiple, $extra_param, $readonly);
     }
 
-    public function transfer_type($model, $form, $depends, $name = 'transfer_type', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function transfer_type($model, $form, $depends, $name = 'transfer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-master-transfer/transfer-type-list', Yii::t('app', 'Select Transfer Type'), $multiple, '', $readonly);
     }
 
-    public function memberRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false)
-    {
+    public function memberRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/chart-list', Yii::t('app', 'Select Member Rate Chart'), $multiple);
     }
 
-    public function unionpaymentcycledcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function unionpaymentcycledcs($model, $form, $depends, $name = 'dcs_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/payment-cycle-dcs-list', 'Select DCS', $multiple, $model->$name, $readonly);
     }
 
-    public function bill_head($model, $form, $depends, $name = 'bill_head_code', $islable = true, $flag = 'D')
-    {
+    public function bill_head($model, $form, $depends, $name = 'bill_head_code', $islable = true, $flag = 'D') {
         $this->setClass($form, $name);
         $action = ($flag == 'D') ? '/vsp/tbl-bill-head/list-dcswise' : '/vsp/tbl-bill-head/list-unionwise';
         $this->dependedDropdown($model, $form, $depends, $name, $islable, $action, 'Select Bill Head', false, $model->$name, false);
     }
 
-    public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
 
-    public function dcsRateChart($model, $form, $depends, $name = 'rate_chart_dcs', $islable = false, $multiple = false)
-    {
+    public function dcsRateChart($model, $form, $depends, $name = 'rate_chart_dcs', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
     }
 
-    public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function paymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    public function billHead($model, $form, $depends, $name = 'bill_head_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function billHead($model, $form, $depends, $name = 'bill_head_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
     }
 
-    public function union_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function union_mcc($model, $form, $depends, $name = 'mcc_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/union-mcc-list', Yii::t('app', 'Select MCC'), $multiple, '', $readonly);
@@ -550,8 +490,7 @@ class DropDown extends Component
         }
     }
 
-    public function union_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function union_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/union-bmc-list', Yii::t('app', 'Select BMC'), $multiple, '', $readonly);
@@ -560,100 +499,84 @@ class DropDown extends Component
         }
     }
 
-    public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function RemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
-    public function mccRemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function mccRemunerationPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-mcc-remuneration-summary/remuneration-payment-cycle', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
-    public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function destination_code_list($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-bmc-milk-dispatch/destination-code-list', Yii::t('app', 'Select Code'), $multiple, '', $readonly);
     }
 
-    public function processName($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function processName($model, $form, $depends, $name = 'destination_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/configuration/tbl-config/config-process-list', Yii::t('app', 'Select Process Name'), $multiple, '', $readonly);
     }
 
-    public function leaveType($model, $form, $depends, $name = 'leave_type', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function leaveType($model, $form, $depends, $name = 'leave_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/staffmanagement/tbl-staff-leave-master/leave-type', Yii::t('app', 'Select Leave Type'), $multiple, '', $readonly);
     }
 
-    public function org_sap_code($model, $form, $depends, $name = 'sap_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function org_sap_code($model, $form, $depends, $name = 'sap_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-set/org-sap-code-list', Yii::t('app', 'Select SAP Code'), $multiple, $model->$name, $readonly);
     }
 
-    public function datewise_bmc_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false)
-    {
+    public function datewise_bmc_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-bmc-list', Yii::t('app', 'Select BMC'), $multiple, $extra_param, $readOnly);
     }
 
-    public function payment_head($model, $form, $depends, $name = 'transporter_payment_head_code', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select')
-    {
+    public function payment_head($model, $form, $depends, $name = 'transporter_payment_head_code', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select') {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-transporter-payment-head/payment-head-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
-    public function routeVehicleDateWise($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function routeVehicleDateWise($model, $form, $depends, $name = 'route_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/transporter/tbl-vehicle-km-info/route-list', 'Select Route', $multiple, $model->$name, $readonly);
     }
 
-    public function places($model, $form, $depends, $name = 'ownmccid', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select')
-    {
+    public function places($model, $form, $depends, $name = 'ownmccid', $islable = false, $multiple = false, $readonly = false, $prompt = 'Select') {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-mcc-plant/places-list', Yii::t('app', $prompt), $multiple, '', $readonly);
     }
 
-    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false)
-    {
+    public function product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->select2Dropdown($model, $form, $depends, $name, $islable, '/product/tbl-product/product-list', Yii::t('app', 'Select Product'), $multiple, $extra_param, $readonly, $id);
     }
 
-    public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true)
-    {
+    public function moduleType($model, $form, $name = 'module_type', $islable = false, $disable = false, $searchable = true) {
         $this->setClass($form, $name);
         $alert = new \app\modules\sms\models\TblAlertNotification();
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $alert->getModuleType(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Module Type', 'disabled' => $disable]
-                ]
+                    Select2::classname(), [
+                'data' => $alert->getModuleType(), 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select Module Type', 'disabled' => $disable]
+                    ]
             )->label($islable);
         } else {
             echo $form->field($model, $name)->dropDownList($alert->getModuleType(), ['prompt' => 'Select Vehicle', 'disabled' => $disable])->label($islable);
         }
     }
 
-    public function merge_bmc_dcs($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function merge_bmc_dcs($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs/merge-bmc-dcs-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function mccBillHead($model, $form, $depends, $name = 'mcc_bill_head_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function mccBillHead($model, $form, $depends, $name = 'mcc_bill_head_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/vsp/tbl-mcc-bill-head/bill-head-list', Yii::t('app', 'Select Bill Head'), $multiple, $model->$name, $readonly);
     }
 
-    public function welfareScheme($model, $form, $depends, $name = 'scheme_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true)
-    {
+    public function welfareScheme($model, $form, $depends, $name = 'scheme_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/scheme-list', Yii::t('app', 'Select Scheme'), $multiple, $extra_param, $readonly, '', true, $autoClose);
@@ -662,8 +585,7 @@ class DropDown extends Component
         }
     }
 
-    public function welfareSchemeApplication($model, $form, $depends, $name = 'application_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true)
-    {
+    public function welfareSchemeApplication($model, $form, $depends, $name = 'application_id', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/welfarescheme/tbl-scheme-application/application-list', Yii::t('app', 'Select Application'), $multiple, $extra_param, $readonly, '', true, $autoClose);
@@ -672,14 +594,12 @@ class DropDown extends Component
         }
     }
 
-    public function all_route_transporter($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function all_route_transporter($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-route-mapping/all-route-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $model->$name, $readonly);
     }
 
-    public function vehicleOpenTrip($model, $form, $depends, $name = 'trip_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true)
-    {
+    public function vehicleOpenTrip($model, $form, $depends, $name = 'trip_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         if ($multiple) {
             $this->select2Dropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly, '', true, $autoClose);
@@ -688,71 +608,59 @@ class DropDown extends Component
         }
     }
 
-    public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false)
-    {
+    public function datewise_transporter_list($model, $form, $depends, $name = 'transporter_code', $islable = false, $multiple = false, $extra_param = '', $readOnly = FALSE, $searchable = FALSE, $multiselect = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-transporter-payment/datewise-transporter-list', Yii::t('app', 'Select Transporter'), $multiple, $extra_param, $readOnly, '', $searchable);
     }
 
-    public function approval_level($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function approval_level($model, $form, $depends, $name = 'applicable_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-approval-stages/level-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function indent_product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function indent_product($model, $form, $depends, $name = 'product_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-indent-product/product-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function bom_code($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function bom_code($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/bom-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function complain_problem($model, $form, $depends, $name = 'complain_problem', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function complain_problem($model, $form, $depends, $name = 'complain_problem', $islable = false, $multiple = false, $readonly = false) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/problem-list', Yii::t('app', 'Select Problem'), $multiple, '', $readonly);
     }
 
-    public function asset_list($model, $form, $depends, $name = 'asset_code', $islable = false, $multiple = false, $readOnly = FALSE)
-    {
+    public function asset_list($model, $form, $depends, $name = 'asset_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-master/asset-lists', Yii::t('app', 'Select Asset'), $multiple, '', $readOnly);
     }
 
-    public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE)
-    {
+    public function assign_list($model, $form, $depends, $name = 'user_code', $islable = false, $multiple = false, $readOnly = FALSE) {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/complaint/tbl-complain/assign-list', Yii::t('app', 'Select User'), $multiple, '', $readOnly);
     }
 
-    public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function asset_bom_list($model, $form, $depends, $name = 'spare_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-bom/asset-bom-list', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function old_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function old_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail-bom/old-sr-no', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function new_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function new_sr_no($model, $form, $depends, $name = 'serial_number', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/assetmanagement/tbl-asset-detail/new-sr-no', 'Select', $multiple, $model->$name, $readonly);
     }
 
-    public function BonusPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function BonusPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-bonus-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
-    public function depend_select2($model, $form, $name, $url, $dep_id = '')
-    {
+    public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
             'options' => ['placeholder' => 'Search here...', 'class' => 'form-group'],
@@ -782,8 +690,8 @@ class DropDown extends Component
         ]);
     }
 
-    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '')
-    {
+    private function dependedDropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $session = '', $is_return = FALSE, $input_name = '') {
+
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -805,43 +713,44 @@ class DropDown extends Component
             $selected = Yii::$app->session->get('Unions');
             $model->{$name} = !empty($selected) ? $selected : $model->{$name};
         }
-        //         'select2Options' => ['pluginOptions' => ['allowClear' => true,]],
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]];
         if ($is_return) {
             return $form->field($model, !empty($input_name) ? $input_name : $name)
-                ->widget(DepDrop::classname(), [
-                    'type' => $dropDownType,
-                    'data' => [$model->{$name} => $model->{$name}],
-                    'name' => !empty($input_name) ? $input_name : $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
-                    'options' => ['multiple' => $multiple],
-                    'pluginOptions' => [
-                        'depends' => $depends,
-                        'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
-                        'allParam' => ["'" . $extraParam . "'"],
-                        'initialize' => true,
-                        'allowClear' => true,
-                    ],
-                    'options' => $options
-                ])->label($islable);
+                            ->widget(DepDrop::classname(), [
+                                'type' => $dropDownType,
+                                'data' => [$model->{$name} => $model->{$name}],
+                                'name' => !empty($input_name) ? $input_name : $name,
+                                'select2Options' => $select2Options,
+                                'options' => ['multiple' => $multiple],
+                                'pluginOptions' => [
+                                    'depends' => $depends,
+                                    'placeholder' => $placeholder,
+                                    'url' => Url::to([$url]),
+                                    'allParam' => ["'" . $extraParam . "'"],
+                                    'initialize' => true,
+                                    'allowClear' => true,
+                                ],
+                                'options' => $options
+                            ])->label($islable);
         } else {
             echo $form->field($model, $name)
-                ->widget(DepDrop::classname(), [
-                    'type' => $dropDownType,
-                    'data' => [$model->{$name} => $model->{$name}],
-                    'name' => $name,
-                    'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true]],
-                    'options' => ['multiple' => $multiple],
-                    'pluginOptions' => [
-                        'depends' => $depends,
-                        'placeholder' => $placeholder,
-                        'url' => Url::to([$url]),
-                        'allParam' => ["'" . $extraParam . "'"],
-                        'initialize' => true,
-                        'allowClear' => true,
-                    ],
-                    'options' => $options
-                ])->label($islable);
+                    ->widget(DepDrop::classname(), [
+                        'type' => $dropDownType,
+                        'data' => [$model->{$name} => $model->{$name}],
+                        'name' => $name,
+                        'select2Options' => $select2Options,
+                        'options' => ['multiple' => $multiple],
+                        'pluginOptions' => [
+                            'depends' => $depends,
+                            'placeholder' => $placeholder,
+                            'url' => Url::to([$url]),
+                            'allParam' => ["'" . $extraParam . "'"],
+                            'initialize' => true,
+                            'allowClear' => true,
+                        ],
+                        'options' => $options
+                    ])->label($islable);
         }
 
         if (!empty($selected)) {
@@ -852,12 +761,12 @@ class DropDown extends Component
         }
     }
 
-    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true)
-    {
+    public function depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $multiselect = FALSE, $prompt = '', $tab = FALSE, $searchable = true) {
         if ($multiselect) {
             $this->depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList);
             return;
         }
+
         $class = $readonly ? 'depend-control' : '';
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
@@ -871,29 +780,31 @@ class DropDown extends Component
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = !empty($form_id) ? ['pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['pluginOptions' => ['allowClear' => true]];
+
         echo $form->field($model, $control_name)
-            ->widget(DepDrop::classname(), [
-                'type' => $dropDownType,
-                'data' => [$model->{$control_name} => $model->{$control_name}],
-                'name' => $control_name,
-                'select2Options' => ['pluginOptions' => ['allowClear' => true]],
-                'pluginOptions' => [
-                    'depends' => $depends,
-                    'placeholder' => $data['prompt'],
-                    'url' => Url::to(['/site/get-data']),
-                    'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray],
-                    'initialize' => true,
-                ],
-                'options' => [
-                    'readonly' => $readonly,
-                    'class' => 'form-control ' . $class,
-                    'tabindex' => $tabIndex
-                ]
-            ])->label($label);
+                ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
+                    'data' => [$model->{$control_name} => $model->{$control_name}],
+                    'name' => $control_name,
+                    'select2Options' => $select2Options,
+                    'pluginOptions' => [
+                        'depends' => $depends,
+                        'placeholder' => $data['prompt'],
+                        'url' => Url::to(['/site/get-data']),
+                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid, $dependArray],
+                        'initialize' => true,
+                    ],
+                    'options' => [
+                        'readonly' => $readonly,
+                        'class' => 'form-control ' . $class,
+                        'tabindex' => $tabIndex
+                    ]
+                ])->label($label);
     }
 
-    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true)
-    {
+    public function dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $searchable = true) {
         $data = $this->getLabels($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $this->withoutLocal($data, $model);
@@ -906,17 +817,15 @@ class DropDown extends Component
         }
         if (isset($searchable) && $searchable) {
             return $form->field($model, $control_name)->widget(
-                Select2::classname(),
-                [
-                    'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]
-                ]
-            )->label($label);
+                            Select2::classname(), [
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]
+                            ]
+                    )->label($label);
         }
         return $form->field($model, $control_name)->dropDownList($records, ['prompt' => $data['prompt'], 'disabled' => $disable])->label($label);
     }
 
-    public function withoutLocal($labelData, $old_model)
-    {
+    public function withoutLocal($labelData, $old_model) {
         $fields = explode(',', $labelData['fields']);
         $model_name = Yii::$app->path->define($labelData['model']);
         $model = new $model_name();
@@ -939,9 +848,9 @@ class DropDown extends Component
 
         if (isset($old_model->{$fields[0]}) && $old_model->{$fields[0]} != '') {
             $unionQuery = $model->find()
-                ->select($select_fields)
-                ->where([$fields[0] => $old_model->{$fields[0]}])
-                ->createCommand()->rawSql;
+                            ->select($select_fields)
+                            ->where([$fields[0] => $old_model->{$fields[0]}])
+                            ->createCommand()->rawSql;
             $tmp_query = $model->find()->select($select_fields)->where($where)->union($unionQuery);
             $query = new Query();
             $records = $query->select('*')->from(['u' => $tmp_query])->orderBy($fields[1])->all();
@@ -950,19 +859,18 @@ class DropDown extends Component
         }
 
         return ArrayHelper::map($records, $fields[0], function ($array, $key) use ($fields) {
-            if (!empty($fields[2]) && !empty($array[$fields[2]]))
-                $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
-            else
-                $value = $array[$fields[1]];
+                    if (!empty($fields[2]) && !empty($array[$fields[2]]))
+                        $value = $array[$fields[1]] . '(' . $array[$fields[2]] . ')';
+                    else
+                        $value = $array[$fields[1]];
 
-            if (!empty($fields[3]) && !empty($array[$fields[3]]))
-                $value = $value . ' - ' . $array[$fields[3]];
-            return $value;
-        });
+                    if (!empty($fields[3]) && !empty($array[$fields[3]]))
+                        $value = $value . ' - ' . $array[$fields[3]];
+                    return $value;
+                });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false)
-    {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -984,18 +892,16 @@ class DropDown extends Component
         }
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
-                Select2::classname(),
-                [
-                    'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
-                ]
-            )->label($label);
+                            Select2::classname(), [
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
+                            ]
+                    )->label($label);
         }
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
-                Select2::classname(),
-                [
-                    'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
-                ]
+                    Select2::classname(), [
+                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
+                    ]
             )->label($label);
         } else {
             $options = ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable];
@@ -1006,8 +912,7 @@ class DropDown extends Component
         }
     }
 
-    public function dropdownfilterStatic($flag, $model, $name = '', $class = 'form-control', $addAll = false)
-    {
+    public function dropdownfilterStatic($flag, $model, $name = '', $class = 'form-control', $addAll = false) {
         $data = $this->getRecords($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $data['data'];
@@ -1022,8 +927,7 @@ class DropDown extends Component
         return Html::activeDropDownList($model, $control_name, $records, ['class' => $class, 'prompt' => $data['prompt']]);
     }
 
-    private function dependedDropdownMultiple($model, $form, $depends, $name, $id = '', $islable = false, $url = '', $placeholder = '', $multiple = true, $extraParam = '', $readonly = false)
-    {
+    private function dependedDropdownMultiple($model, $form, $depends, $name, $id = '', $islable = false, $url = '', $placeholder = '', $multiple = true, $extraParam = '', $readonly = false) {
         $depends = explode(',', $depends);
         $class = $readonly ? 'depend-control' : '';
         if ($multiple)
@@ -1040,7 +944,7 @@ class DropDown extends Component
             'multiSelectOptions' => [
                 'id' => $id,
                 'options' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -1058,7 +962,7 @@ class DropDown extends Component
             ]
         ])->label(Yii::t('app', $islable));
     }
-    
+
     public function area_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         if ($multiple) {
@@ -1068,8 +972,7 @@ class DropDown extends Component
         }
     }
 
-    public function getRecords($l)
-    {
+    public function getRecords($l) {
         $records = [
             'with_and_without_milktype' => [
                 'name' => 'with_and_without_milktype',
@@ -1886,8 +1789,7 @@ class DropDown extends Component
         return $records[$l];
     }
 
-    public function getLabels($l)
-    {
+    public function getLabels($l) {
         $label = [
             'manufacture' => ['name' => 'manufacturer_code', 'fields' => 'id,manufacturer_name', 'prompt' => 'Select Manufacture', 'model' => 'TblManufacturer'],
             'bank' => ['name' => 'bank_code', 'fields' => 'bank_code,bank_name,local_name', 'prompt' => 'Select Bank', 'model' => 'TblBanks'],
@@ -2019,8 +1921,7 @@ class DropDown extends Component
         return $label[$l];
     }
 
-    public function sp_union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false)
-    {
+    public function sp_union_dcs($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false) {
         $check_list = '';
         if (!empty(Yii::$app->session->get('Dcs'))) {
             $check_list = explode(',', Yii::$app->session->get('Dcs'));
@@ -2029,8 +1930,7 @@ class DropDown extends Component
         return $this->sp_depend_dropdown('dcs', $model, $form, $depends, $class, $label, $name, $readonly, 1, $check_list);
     }
 
-    public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $searchable = true)
-    {
+    public function sp_depend_dropdown($flag, $model, $form, $depends, $class = '', $label = false, $name = '', $readonly = false, $check = 0, $checkList = [], $searchable = true) {
         $class = $readonly ? 'depend-control' : '';
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
@@ -2041,36 +1941,37 @@ class DropDown extends Component
         if (isset($searchable) && $searchable) {
             $dropDownType = DepDrop::TYPE_SELECT2;
         }
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = !empty($form_id) ? ['pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id]] : ['pluginOptions' => ['allowClear' => true]];
+
         echo $form->field($model, $control_name)
-            ->widget(DepDrop::classname(), [
-                'type' => $dropDownType,
-                'data' => [$model->{$control_name} => $model->{$control_name}],
-                'name' => $control_name,
-                'select2Options' => ['pluginOptions' => ['allowClear' => true]],
-                'pluginOptions' => [
-                    'depends' => [$depends],
-                    'placeholder' => $data['prompt'],
-                    'url' => Url::to(['/site/sp-get-data']),
-                    'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid],
-                    'initialize' => true,
-                ],
-                'options' => [
-                    'readonly' => $readonly,
-                    'class' => 'form-control ' . $class
-                ]
-            ])->label($label);
+                ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
+                    'data' => [$model->{$control_name} => $model->{$control_name}],
+                    'name' => $control_name,
+                    'select2Options' => $select2Options,
+                    'pluginOptions' => [
+                        'depends' => [$depends],
+                        'placeholder' => $data['prompt'],
+                        'url' => Url::to(['/site/sp-get-data']),
+                        'allParam' => [$data['model'], $data['depend'], $field_value, $data['fields'], $check, $checkList, $checkValid],
+                        'initialize' => true,
+                    ],
+                    'options' => [
+                        'readonly' => $readonly,
+                        'class' => 'form-control ' . $class
+                    ]
+                ])->label($label);
     }
 
-    public function dropdownfilter($flag, $model, $name = '', $prompt = '', $class = 'form-control')
-    {
+    public function dropdownfilter($flag, $model, $name = '', $prompt = '', $class = 'form-control') {
         $data = $this->getLabels($flag);
         $control_name = ($name == '') ? $data['name'] : $name;
         $records = $this->withoutLocal($data, $model);
         return Html::activeDropDownList($model, $control_name, $records, ['class' => $class, 'prompt' => empty($prompt) ? $data['prompt'] : $prompt]);
     }
 
-    public function getTableData($flag)
-    {
+    public function getTableData($flag) {
         $data = $this->getLabels($flag);
         $fields = explode(',', $data['fields']);
         $model_name = Yii::$app->path->define($data['model']);
@@ -2083,8 +1984,7 @@ class DropDown extends Component
         return $model->find()->select($select_fields)->where(['is_active' => 1])->orderBy($model->tablename() . '.' . $fields[1])->asArray()->all();
     }
 
-    private function depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList)
-    {
+    private function depend_dropdown_multiple($flag, $model, $form, $depends, $class, $label, $name, $check, $checkList) {
         $id = strtolower((new ReflectionClass($model))->getShortName() . '-' . $name);
         $depends = explode(',', $depends);
 
@@ -2104,9 +2004,9 @@ class DropDown extends Component
             'data' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [''],
             'value' => !empty($model->{$control_name}) ? array_values($model->{$control_name}) : [0],
             'multiSelectOptions' => [
-                'id' => $id, 
+                'id' => $id,
                 'options' =>
-                [
+                    [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,
@@ -2125,54 +2025,46 @@ class DropDown extends Component
         ])->label(Yii::t('app', $label));
     }
 
-    public function org_type_rate($model, $form, $depends, $name = 'p_purchase_rate_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false)
-    {
+    public function org_type_rate($model, $form, $depends, $name = 'p_purchase_rate_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false) {
         $this->setClass($form, $name); ///organisation/tbl-dcs/dcs-list
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/get-org-rate', Yii::t('app', 'Select'), $multiple, $extra_param, $readonly);
     }
 
-    public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function customerType($model, $form, $depends, $name = 'customer_type', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/get-customer-type', Yii::t('app', 'Select Customer Type'), $multiple, 'where', $readonly);
     }
 
-    public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name = '', $sp_param = [])
-    {
+    public function sp_dropdown($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $sp_name = '', $sp_param = []) {
         $records = \Yii::$app->general->getSpDropData($sp_name, $sp_param);
         $value = ArrayHelper::map($records, 'id', function ($records) {
-            return !empty($records['name']) ? $records['name'] : '';
-        });
+                    return !empty($records['name']) ? $records['name'] : '';
+                });
         echo $form->field($model, $flag)->widget(
-            Select2::classname(),
-            [
-                'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]
-            ]
+                Select2::classname(), [
+            'data' => $value, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => 'Select ' . $label]
+                ]
         )->label($label);
 
         //        return $form->field($model, $flag)->dropDownList($value, ['prompt' => 'Select ' . $label])->label($label);
     }
 
-    public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session = '')
-    {
+    public function sp_dep_dropdown($model, $form, $depends, $name = '', $islable = false, $session = '') {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dynamicreport/default/get-sp-data-drop-list', 'Select ' . $islable, FALSE, '', FALSE, '', TRUE, $session);
     }
 
-    public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false)
-    {
+    public function poured_bmc($model, $form, $depends, $name = 'bmc_code', $islable = false, $multiple = false, $id = '', $extra_param = '', $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-dcs-bmc/poured-bmc-list', Yii::t('app', 'Select Poured BMC'), $multiple, $extra_param, $readonly, $id);
     }
 
-    public function PaymentCycleUnion($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false)
-    {
+    public function PaymentCycleUnion($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-payment-cycle/union-payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, 'where', $readonly);
     }
 
-    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true)
-    {
+    private function select2Dropdown($model, $form, $depends, $name, $islable = false, $url = '', $placeholder = '', $multiple = false, $extraParam = '', $readonly = false, $id = '', $searchable = true, $autoClose = true) {
         $class = $readonly ? 'depend-control' : '';
         $depends = explode(',', $depends);
         $options = [];
@@ -2194,23 +2086,25 @@ class DropDown extends Component
         } else {
             $data = [$model->{$name} => $model->{$name}];
         }
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = !empty($form_id) ? ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'dropdownParent' => '#' . $form_id, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]] : ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]];
 
         echo $form->field($model, $name)
-            ->widget(DepDrop::classname(), [
-                'type' => $dropDownType,
-                'data' => $data,
-                'name' => $name,
-                'select2Options' => ['options' => ['placeholder' => $placeholder], 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple, 'closeOnSelect' => $autoClose]],
-                'pluginOptions' => [
-                    'depends' => $depends,
-                    'placeholder' => $placeholder,
-                    'url' => Url::to([$url]),
-                    'allParam' => ["'" . $extraParam . "'"],
-                    'initialize' => true,
-                    'allowClear' => true,
-                ],
-                'options' => $options
-            ])->label($islable);
+                ->widget(DepDrop::classname(), [
+                    'type' => $dropDownType,
+                    'data' => $data,
+                    'name' => $name,
+                    'select2Options' => $select2Options,
+                    'pluginOptions' => [
+                        'depends' => $depends,
+                        'placeholder' => $placeholder,
+                        'url' => Url::to([$url]),
+                        'allParam' => ["'" . $extraParam . "'"],
+                        'initialize' => true,
+                        'allowClear' => true,
+                    ],
+                    'options' => $options
+                ])->label($islable);
 
         // echo "<pre>";
         // print_r($depends);
@@ -2242,27 +2136,24 @@ class DropDown extends Component
         }
     }
 
-    public function DpuRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false)
-    {
+    public function DpuRateChart($model, $form, $depends, $name = 'rate_chart_member', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-purchase-rate/dpu-chart-list', Yii::t('app', 'Select Rate Chart'), $multiple);
     }
 
-    public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false)
-    {
+    public function productBatch($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
 
-    public function productBatchLstSixMonth($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false)
-    {
+    public function productBatchLstSixMonth($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-product-stock/product-batch-list-last-six-month', Yii::t('app', 'Select Batch'), $multiple);
     }
 
-    public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false)
-    {
+    public function productBatchNo($model, $form, $depends, $name = 'sap_batch_no', $islable = false, $multiple = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/product/tbl-plant-dispatch/plant-batch-list', Yii::t('app', 'Select Batch'), $multiple);
     }
+
 }
