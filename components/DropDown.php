@@ -815,11 +815,13 @@ class DropDown extends Component {
         if ($addAll) {
             $records = [0 => 'All'] + $records;
         }
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]];
+        !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
+
         if (isset($searchable) && $searchable) {
             return $form->field($model, $control_name)->widget(
-                            Select2::classname(), [
-                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable]
-                            ]
+                            Select2::classname(), $select2Options
                     )->label($label);
         }
         return $form->field($model, $control_name)->dropDownList($records, ['prompt' => $data['prompt'], 'disabled' => $disable])->label($label);
@@ -890,18 +892,18 @@ class DropDown extends Component {
                 unset($records[$value]);
             }
         }
+        $form_id = (!empty($form->options) && !empty($form->options['id'])) ? $form->options['id'] : '';
+        $select2Options = ['data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]];
+        !empty($form_id) ? ($select2Options['pluginOptions']['dropdownParent'] = '#' . $form_id) : '';
+
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
-                            Select2::classname(), [
-                        'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
-                            ]
+                            Select2::classname(), $select2Options
                     )->label($label);
         }
         if (isset($searchable) && $searchable) {
             echo $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
-                    Select2::classname(), [
-                'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]
-                    ]
+                    Select2::classname(), $select2Options
             )->label($label);
         } else {
             $options = ['prompt' => Yii::t('app', $data['prompt']), 'disabled' => $disable];
@@ -944,7 +946,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'options' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 1,
                     'disableIfEmpty' => true,
@@ -2006,7 +2008,7 @@ class DropDown extends Component {
             'multiSelectOptions' => [
                 'id' => $id,
                 'options' =>
-                    [
+                [
                     'includeSelectAllOption' => true,
                     'numberDisplayed' => 0,
                     'disableIfEmpty' => true,

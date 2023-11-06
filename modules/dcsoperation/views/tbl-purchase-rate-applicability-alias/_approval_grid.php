@@ -65,7 +65,7 @@ $visible = !empty($searchModel->status) ? FALSE : TRUE;
                                                                                                                           <!--<? Html::button(Yii::t('app', 'Reject'), ['class' => 'btn btn-primary submit', 'id' => 'reject', 'value' => 'reject', 'name' => 'reject']); ?>-->
     <?php }
     ?>
-    <?= Yii::$app->controls->custombutton('Cancel', 'applicabilty-approve'); ?> 
+    <?= Yii::$app->controls->custombutton('Cancel', 'applicabilty-approve','','btn-login'); ?> 
 </div>
 
 <?php ActiveForm::end(); ?>
