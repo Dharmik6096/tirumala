@@ -243,6 +243,9 @@ class DefaultController extends \app\controllers\ChildController {
         if ($client_code == 'VARDDAN') {
             $this->report = 'VendorMilkPaymentVarddan';
         }
+        if ($client_code == 'ANIG') {
+            $this->report = 'VendorMilkPaymentAnig';
+        }
         return $this->actionIndex();
     }
 
@@ -798,6 +801,12 @@ class DefaultController extends \app\controllers\ChildController {
                 'path' => 'milkcollection/VLCCTransactionDataFTP',
                 'scenario' => 'VlccTransactionDataReportRegion',
                 'title' => 'VLCC Transaction Data Report',
+            ],
+            'VendorMilkPaymentAnig' => [
+                'param' => 'p_union_code,p_plant_code,p_mcc_code,p_bmc_code,p_customer_type,p_customer_code,p_payment_cycle_code,p_language_code,p_report_name',
+                'path' => 'vsp/VendorMilkPaymentAnig',
+                'scenario' => 'VendorMilkPayment',
+                'title' => '604 - Vendor Milk Payment',
             ],
         ];
         return $label[$l];
