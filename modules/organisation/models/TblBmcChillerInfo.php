@@ -48,12 +48,17 @@ class TblBmcChillerInfo extends \app\models\ChildModel
     {
         return [
             [['chilling_capacity','installation_date', 'agreement_from_date', 'agreement_to_date', 'created_at', 'updated_at', 'is_active', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-            [['owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date', 'is_active'], 'required'],
+            [['owner_name', 'rate_type', 'chilling_capacity', 'min_qty', 'pan_no', 'tds_percentage', 'installation_date', 'agreement_no', 'agreement_from_date', 'agreement_to_date'], 'required'],
             [['owner_name', 'pan_no','rate_type','agreement_no','created_by', 'updated_by', 'originating_org_code', 'originating_org_type',], 'string'],
             [['is_active', 'originating_type'], 'integer'],
             [['min_qty', 'tds_percentage'], 'number'],
+            [['tds_percentage'], 'number','max'=>100],
             [['is_active'], 'default', 'value' => 1], 
+            [['pan_no'], function ($attribute, $params) {
+                Yii::$app->general->validatePancard($this, $attribute, $params);
+            }, 'skipOnEmpty' => false],
             [['is_active'], 'checkExistChillerInfo', 'on' => ['createChillerInfo']],
+            [['agreement_from_date', 'agreement_to_date'], 'ValidateData'],
         ];
     }
 
@@ -69,8 +74,8 @@ class TblBmcChillerInfo extends \app\models\ChildModel
             'rate_type' => Yii::t('app', 'Rate Type'),
             'chilling_capacity' => Yii::t('app', 'Chilling Capacity'),
             'min_qty' => Yii::t('app', 'Min Qty'),
-            'pan_no' => Yii::t('app', 'Pan No'),
-            'tds_percentage' => Yii::t('app', 'Tds Percentage'),
+            'pan_no' => Yii::t('app', 'PAN No'),
+            'tds_percentage' => Yii::t('app', 'TDS(%)'),
             'installation_date' => Yii::t('app', 'Installation Date'),
             'agreement_no' => Yii::t('app', 'Agreement No'),
             'agreement_from_date' => Yii::t('app', 'Agreement From Date'),
@@ -100,6 +105,12 @@ class TblBmcChillerInfo extends \app\models\ChildModel
             ->one();
         if ($existingChillerInfo) {
             $this->addError($attribute, 'A chiller info for this bmc already exists and is active.');
+        }
+    }
+
+    public function ValidateData() {
+        if ($this->agreement_from_date > $this->agreement_to_date) {
+            $this->addError('agreement_from_date', Yii::t('app/validation', 'From Date can not be greater than To Date.'));
         }
     }
 }

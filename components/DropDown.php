@@ -1776,7 +1776,7 @@ class DropDown extends Component {
             'chiller_rate_type' => [
                 'name' => 'rate_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['0' => Yii::t('app', 'QTY'), '1' => Yii::t('app', 'TS')],
+                'data' => ['QTY' => Yii::t('app', 'QTY'), 'TS' => Yii::t('app', 'TS')],
             ],
         ];
         return $records[$l];

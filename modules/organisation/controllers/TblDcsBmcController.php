@@ -575,11 +575,10 @@ class TblDcsBmcController extends \app\controllers\ChildController
         if (Yii::$app->request->post() && isset(Yii::$app->request->post()['TblBmcChillerInfo'])) {
             $update = FALSE;
             if (!empty(Yii::$app->request->post()['TblBmcChillerInfo']['chiller_info_code'])) {
-                $updateModel = TblBmcChillerInfo::findOne(Yii::$app->request->post()['TblBmcChillerInfo']['chiller_info_code']);
+                $model = TblBmcChillerInfo::findOne(Yii::$app->request->post()['TblBmcChillerInfo']['chiller_info_code']);
                 $historyModel = new TblBmcChillerInfoHistory();
-                Yii::$app->operation->history($updateModel, $historyModel, 'UPDATE');
-                $updateModel->load(Yii::$app->request->post());
-                $modelSave[] = $updateModel;
+                Yii::$app->operation->history($model, $historyModel, 'UPDATE');
+                $model->load(Yii::$app->request->post());
                 $modelSave[] = $historyModel;
                 $update = TRUE;
             } else {
@@ -591,11 +590,12 @@ class TblDcsBmcController extends \app\controllers\ChildController
                 $model->mcc_plant_code = $bmc_data->mcc_plant_code;
                 $model->plant_code = $bmc_data->plant_code;
                 $model->union_code = $bmc_data->union_code;
-                $model->installation_date = !empty($model->installation_date) ? date('Y-m-d', strtotime($model->installation_date)) : '';
-                $model->agreement_from_date = !empty($model->agreement_from_date) ? date('Y-m-d', strtotime($model->agreement_from_date)) : '';
-                $model->agreement_to_date = !empty($model->agreement_to_date) ? date('Y-m-d', strtotime($model->agreement_to_date)) : '';
-                $modelSave[] = $model;
             }
+            $model->installation_date = !empty($model->installation_date) ? date('Y-m-d', strtotime($model->installation_date)) : '';
+            $model->agreement_from_date = !empty($model->agreement_from_date) ? date('Y-m-d', strtotime($model->agreement_from_date)) : '';
+            $model->agreement_to_date = !empty($model->agreement_to_date) ? date('Y-m-d', strtotime($model->agreement_to_date)) : '';
+            $modelSave[] = $model;
+
             $transaction = $this->generalModel->saveTransaction($modelSave, ['BMC Chiller Info', ($update) ? 'edit' : 'create']);
             if ($transaction == 'customRedirect') {
                 return $this->redirect(['tbl-dcs-bmc/bmc-chiller-info', 'id' => $id]);
@@ -621,10 +621,28 @@ class TblDcsBmcController extends \app\controllers\ChildController
             $modelData = TblBmcChillerInfo::findOne($_POST['chiller_info_code']);
             if (!empty($modelData)) {
                 $data['status'] = 'success';
+                $modelData->installation_date = !empty($modelData->installation_date) ? date('d-m-Y', strtotime($modelData->installation_date)) : '';
+                $modelData->agreement_from_date = !empty($modelData->agreement_from_date) ? date('d-m-Y', strtotime($modelData->agreement_from_date)) : '';
+                $modelData->agreement_to_date = !empty($modelData->agreement_to_date) ? date('d-m-Y', strtotime($modelData->agreement_to_date)) : '';
             }
         }
-
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return ['data' => $data, 'modelData' => $modelData];
+    }
+
+    public function actionDeactivateBmcChiller($id) {
+        $model = TblBmcChillerInfo::findOne($id);
+        $historyModel = new TblBmcChillerInfoHistory();
+        Yii::$app->operation->history($model, $historyModel, UPDATE);
+        $model->is_active = 0;
+        $transaction = $this->generalModel->saveTransaction([$model, $historyModel], ['BMC Chiller Info', 'edit']);
+        if ($transaction == 'customRedirect') {
+            $record = ['status' => 'success', 'msg' => 'BMC Chiller Deactivated Successfully.'];
+        } else {
+            $record = ['status' => 'error', 'msg' => 'BMC Chiller Not Deactivated.'];
+        }
+        Yii::$app->getSession()->setFlash('success');
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 }

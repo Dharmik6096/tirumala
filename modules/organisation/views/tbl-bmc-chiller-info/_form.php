@@ -1,7 +1,8 @@
 <?php
-
 use yii\helpers\Html;
+use yii\web\View;
 ?>
+
 <div class="col-sm-2">
     <?= $form->field($model, 'owner_name')->textInput() ?>
 </div>
@@ -30,9 +31,16 @@ use yii\helpers\Html;
     <?= Yii::$app->controls->date($model, $form, 'agreement_from_date', '', date('Y-m-d'), false, FALSE, true); ?>
 </div>
 <div class="col-sm-2 filldata">
-    <?= Yii::$app->controls->date($model, $form, 'agreement_to_date', '', date('Y-m-d'), false, FALSE, true); ?>
-</div>
-<div class="col-sm-2">
-    <?= Yii::$app->dropdown->dropdownStatic('boolean_value', $model, $form, 'form-group', $model->getAttributeLabel('is_active'), false, 'is_active', false); ?>
+    <?= Yii::$app->controls->date($model, $form, 'agreement_to_date', '', '', false, FALSE, true); ?>
 </div>
 <?= Html::activeHiddenInput($model, 'chiller_info_code', ['value' => $model->chiller_info_code]) ?>
+
+<?php
+$script = "
+    $('#tblbmcchillerinfo-pan_no').on('input', function(evt) {
+        $(this).val(function(_, val) {
+            return val.toUpperCase();
+        });
+    });
+";
+$this->registerJs($script, View::POS_END, 'bmc-chiller-form');
