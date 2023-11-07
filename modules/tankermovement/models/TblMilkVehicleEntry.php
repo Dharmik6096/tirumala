@@ -61,7 +61,7 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return [
                 [['trip_code', 'union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'vehicle_code'], 'required', 'except' => ['androidsync', 'importCsv']],
                 [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
-                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at'], 'safe'],
+                [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'plant_code', 'mcc_plant_code'], 'safe'],
                 [['gross_weight', 'tare_weight'], 'number'],
                 [['originating_type'], 'integer'],
                 [['mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'receipt_at'], 'required', 'when' => function ($model) {
