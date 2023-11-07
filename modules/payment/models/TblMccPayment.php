@@ -108,8 +108,8 @@ class TblMccPayment extends \app\models\ChildModel {
             'p_customer_type' => Yii::t('app', 'Type'),
             'p_payment_cycle_code' => Yii::t('app', 'Payment Cycle'),
             'total_qty_amount' => Yii::t('app', 'Total Qty Amount'),
-            'minimum_qty' => Yii::t('app', 'Minimum Qty'),
-            'minimum_qty_amount' => Yii::t('app', 'Minimum Qty Amount'),
+            'minimum_qty' => Yii::t('app', 'Min Qty'),
+            'minimum_qty_amount' => Yii::t('app', 'Min Qty Amount'),
 
         ];
     }
