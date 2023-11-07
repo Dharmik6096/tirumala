@@ -20,34 +20,30 @@ use app\modules\vsp\models\TblMccBillHeadCriteriaApplicability;
 use app\modules\vsp\models\TblMccBillHeadCriteriaApplicabilityHistory;
 use app\modules\globalmaster\models\TblCustomerType;
 
-class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
-{
+class TblMccBillHeadCriteriaController extends \app\controllers\ChildController {
 
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new TblMccBillHeadCriteriaSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionView($id)
-    {
+    public function actionView($id) {
         $bsearchModel = new TblMccBillHeadCriteriaSlabsSearch();
         $bsearchModel->criteria_code = $id;
         $bdataProvider = $bsearchModel->createsearch(Yii::$app->request->queryParams);
 
         return $this->render('view', [
-            'model' => $this->findModel($id),
-            'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
+                    'model' => $this->findModel($id),
+                    'bdataProvider' => $bdataProvider, 'bsearchModel' => $bsearchModel,
         ]);
     }
 
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = TblMccBillHeadCriteria::findOne($id)) !== null) {
             return $model;
         } else {
@@ -55,8 +51,7 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         }
     }
 
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $this->model = new TblMccBillHeadCriteria();
         $searchModel = new TblMccBillHeadCriteriaSlabsSearch();
         $dataProvider = $searchModel->createsearch([]);
@@ -121,15 +116,14 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
             }
         }
         return $this->render('create', [
-            'model' => $this->model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'txModel' => $txModel,
+                    'model' => $this->model,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                    'txModel' => $txModel,
         ]);
     }
 
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $this->model = TblMccBillHeadCriteria::findOne(['criteria_code' => $id]);
 
         if (!$this->model) {
@@ -183,16 +177,15 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
             }
         } else {
             return $this->render('update', [
-                'model' => $this->model,
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'txModel' => $txModel,
+                        'model' => $this->model,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'txModel' => $txModel,
             ]);
         }
     }
 
-    public function actionMccBillHeadCriteriaApplicability($id)
-    {
+    public function actionMccBillHeadCriteriaApplicability($id) {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $appModel->model = new TblMccBillHeadCriteriaApplicability();
@@ -210,37 +203,51 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         $appModel->model->bmc_code = 'applicable_code';
         $appModel->trans_label = Yii::t('app', 'MCC bill head criteria applicabilities');
         $appModel->model->bill_head_for = 'BMC';
-        $appModel->header_title = 'Mcc Bill Head Criteria: ' . $model->criteria_name;
+        $appModel->header_title = '[ Bill Criteria: ' . $model->criteria_name. ' , type : '. Yii::$app->dropdown->getRecords('calc_type')['data'][Yii::$app->general->getforeignkey($model->mccBillHead, 'bill_head_type')] .']';
         $appModel->fields = [
-            'from_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function ($model) {
-                return Yii::$app->controls->view_date($model->from_date);
-            }],
+            'from_date' => ['view' => ['grid','create'], 'type' => 'date', 'value' => function ($model) {
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
             'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function ($model) {
-                return Yii::$app->controls->view_date($model->to_date);
-            }],
-            // 'applicable_for' => ['filter'=>false,'view' => ['grid', 'create'], 'value' => function ($model) {
-            //     return Yii::$app->general->getforeignkey($model->customerType, 'customer_desc');
-            // }],
+                    return Yii::$app->controls->view_date($model->to_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => 'applicable_for', 'filter' => false],
             'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
-
-            'mcc_name' => ['view' => ['grid'], 'value' => function ($model) {
-                if ($model->applicable_for == 'PLANT') {
-                    return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-                } else if ($model->applicable_for == 'MCC') {
-                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                } else if ($model->applicable_for == 'BMC') {
-                    return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-                }
-            }],
+            'ref_code' => ['view' => ['grid','create'], 'label' => Yii::t('app', 'Ref Code'), 'value' => function ($model) {
+                         if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+                    } 
+                }],
+            'code_ex' => ['view' => ['grid','create'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
+                     if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'plant_code_ex');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'mcc_plant_code_ex');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code_ex');
+                    }                  
+                }],
+            'mcc_name' => ['view' => ['grid','create'], 'value' => function ($model) {
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    }
+                }],
         ];
         $appModel->actions = ['delete' => ['option' => 'applicable_code,criteria_applicability_code,tbl-mcc-bill-head-criteria/delete-applicability']];
         $appModel->dcs_filters = $value;
         return $appModel->createApp();
     }
 
-    public function actionDeleteApplicability()
-    {
-     
+    public function actionDeleteApplicability() {
+
         $model = new TblMccBillHeadCriteriaApplicability();
         $model = $model->findOne(Yii::$app->request->post('id'));
         $historyModel = new TblMccBillHeadCriteriaApplicabilityHistory();
@@ -251,8 +258,7 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionSlabList()
-    {
+    public function actionSlabList() {
         $searchModel = new TblMccBillHeadCriteriaSlabsSearch();
         $searchModel->setAttributes(Yii::$app->request->get('TblMccBillHeadCriteria'));
 
@@ -260,19 +266,17 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         return $this->renderAjax('_slab_list', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]);
     }
 
-    public function actionKeyword()
-    {
+    public function actionKeyword() {
         $keyword_model = new TblCriteriaKeywordMapping();
         $keyword_data = $keyword_model->getKeywordData();
         $data = ArrayHelper::getColumn($keyword_data, function ($array) {
-            return $array["keyword"];
-        });
+                    return $array["keyword"];
+                });
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
     }
 
-    public function actionDeleteSlab()
-    {
+    public function actionDeleteSlab() {
         $deleteModel = new TblMccBillHeadCriteriaSlabs();
         $id = Yii::$app->request->get('id');
         $existData = $deleteModel::find()->where(['criteria_slab_code' => $id])->one();
@@ -292,21 +296,19 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         return Json::encode($record);
     }
 
-    public function actionGetFromValue()
-    {
+    public function actionGetFromValue() {
         $Model = new TblMccBillHeadCriteriaSlabs();
         $existdata = $Model::find()
-            ->select('max(to_val) as to_val')
-            ->where(['criteria_code' => Yii::$app->request->post('id')])
-            ->one();
+                ->select('max(to_val) as to_val')
+                ->where(['criteria_code' => Yii::$app->request->post('id')])
+                ->one();
 
         $data = !empty($existdata->to_val) ? $existdata->to_val + 0.01 : 0;
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($data);
     }
 
-    public function actionUpdateToDate($id)
-    {
+    public function actionUpdateToDate($id) {
         $model = $this->findModel($id);
         if (Yii::$app->request->post()) {
             $historyModel = new TblMccBillHeadCriteriaHistory();
@@ -319,10 +321,10 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
                 try {
                     if ($historyModel->save()) {
                         Yii::$app->db->createCommand("update tbl_mcc_bill_head_criteria_applicability set to_date = :to_date where criteria_code = :criteria_code  and from_date <= :from_date")
-                            ->bindValue(':to_date', $model->to_date)
-                            ->bindValue(':criteria_code', $model->criteria_code)
-                            ->bindValue(':from_date', $model->to_date)
-                            ->execute();
+                                ->bindValue(':to_date', $model->to_date)
+                                ->bindValue(':criteria_code', $model->criteria_code)
+                                ->bindValue(':from_date', $model->to_date)
+                                ->execute();
                         $transaction->commit();
                         Yii::$app->display->message(true, 'Mcc Criteria Applicability To Date', 'edit');
                         return $this->customRedirect();
@@ -351,12 +353,11 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
             }
         }
         return $this->render('update_to_date', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
-    public function actionUpdateToDateApplicability($id)
-    {
+    public function actionUpdateToDateApplicability($id) {
         $model = $this->findModel($id);
         $appModel = Yii::$app->getModule('applicability');
         $value['BMC'] = 'BMC';
@@ -376,26 +377,43 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
             'bill_head_for' => $billHead->bill_head_for,
             'mcc_bill_head_code' => $model->mcc_bill_head_code,
         ];
-        $appModel->header_title = ' To Date Update Criteria: ' . $model->criteria_name . '] ';
+        $appModel->header_title = ' To Date Update [ Bill Criteria: ' . $model->criteria_name. ' , type : '. Yii::$app->dropdown->getRecords('calc_type')['data'][Yii::$app->general->getforeignkey($model->mccBillHead, 'bill_head_type')] .']';
         $appModel->fields = [
             'from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function ($model) {
-                return Yii::$app->controls->view_date($model->from_date);
-            }],
+                    return Yii::$app->controls->view_date($model->from_date);
+                }],
             'to_date' => ['view' => ['grid', 'create'], 'type' => 'date', 'value' => function ($model) {
-                return Yii::$app->controls->view_date($model->to_date);
-            }],
-           // 'applicable_for' => ['view' => ['grid', 'create'], 'value' => 'applicable_for','filter'=>false],
+                    return Yii::$app->controls->view_date($model->to_date);
+                }],
+            'applicable_for' => ['view' => ['grid', 'create'], 'value' => 'applicable_for', 'filter' => false],
             'applicable_code' => ['view' => ['grid', 'create'], 'value' => 'applicable_code'],
+            'ref_code' => ['view' => ['grid'], 'label' => Yii::t('app', 'Ref Code'), 'value' => function ($model) {
+                         if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'ref_code');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'ref_code');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'ref_code');
+                    } 
+                }],
+            'code_ex' => ['view' => ['grid'], 'label' => Yii::t('app', 'Code Ex.'), 'value' => function ($model) {
+                     if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'plant_code_ex');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'mcc_plant_code_ex');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_code_ex');
+                    }                  
+                }],
             'mcc_name' => ['view' => ['grid'], 'value' => function ($model) {
-                if ($model->applicable_for == 'PLANT') {
-                    return Yii::$app->general->getforeignkey($model->plantCode, 'name');
-                } else if ($model->applicable_for == 'MCC') {
-                    return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
-                } else if ($model->applicable_for == 'BMC') {
-                    return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
-                }
-            }],
-
+                    if ($model->applicable_for == 'PLANT') {
+                        return Yii::$app->general->getforeignkey($model->plantCode, 'name');
+                    } else if ($model->applicable_for == 'MCC') {
+                        return Yii::$app->general->getforeignkey($model->mccPlantCode, 'name');
+                    } else if ($model->applicable_for == 'BMC') {
+                        return Yii::$app->general->getforeignkey($model->bmcCode, 'bmc_name');
+                    }
+                }],
         ];
 
         // if ($billHead->bill_head_for == 'MEMBER') {
@@ -408,5 +426,4 @@ class TblMccBillHeadCriteriaController extends \app\controllers\ChildController
         $appModel->dcs_filters = $value;
         return $appModel->createApp();
     }
-
 }

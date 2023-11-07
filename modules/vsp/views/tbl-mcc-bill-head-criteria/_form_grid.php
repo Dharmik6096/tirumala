@@ -33,7 +33,7 @@ $grid_option = [
             return GhostHtml::a('<i class="fa fa-plus"></i>', ['/vsp/tbl-mcc-bill-head-criteria/mcc-bill-head-criteria-applicability', 'id' => $model->criteria_code], $options);
         },
         'update_to_date_applicability' => function ($url, $model) {
-            $disable = '';
+            $disable = empty($model->isApplicability) ? 'link-disable' : '';
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Update To Date Applicability', 'class' => $disable];
             return GhostHtml::a('<i class="fa fa-share"></i>', ['/vsp/tbl-mcc-bill-head-criteria/update-to-date-applicability', 'id' => $model->criteria_code], $options);
         },

@@ -91,8 +91,8 @@ class TblMccBillHeadCriteria extends \app\models\ChildModel {
         return Yii::$app->general->allowUpdateDelete($this);
     }
 
-    // public function getIsApplicability() {
-    //     return $this->hasOne(TblMccBillHeadCriteriaApplicability::className(), ['criteria_code' => 'criteria_code']);
-    // }
+     public function getIsApplicability() {
+         return $this->hasOne(TblMccBillHeadCriteriaApplicability::className(), ['criteria_code' => 'criteria_code']);
+     }
 
 }

@@ -431,7 +431,7 @@ class TblVspBillHeadCriteriaController extends \app\controllers\ChildController
             'bill_head_for' => $billHead->bill_head_for,
             'bill_head_code' => $model->bill_head_code,
         ];
-        $appModel->header_title = ' To Date Upadte [Criteria: ' . $model->criteria_name . '] ';
+        $appModel->header_title = ' To Date Update [Criteria: ' . $model->criteria_name . '] ';
         $appModel->fields = [
             'from_date' => ['view' => ['grid'], 'type' => 'date', 'value' => function ($model) {
                 return Yii::$app->controls->view_date($model->from_date);
