@@ -1773,6 +1773,11 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'VLC' => Yii::t('app', 'VLC')],
             ],
+            'chiller_rate_type' => [
+                'name' => 'rate_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['QTY' => Yii::t('app', 'QTY'), 'TS' => Yii::t('app', 'TS')],
+            ],
         ];
         return $records[$l];
     }
