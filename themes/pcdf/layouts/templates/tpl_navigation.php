@@ -305,6 +305,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
                             ['label' => Yii::t('app', 'MCC Bill Head Transaction'), 'url' => ['/vsp/tbl-mcc-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-detail')],
+                            ['label' => Yii::t('app', 'MCC Bill Head Criteria'), 'url' => ['/vsp/tbl-mcc-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-criteria')],
                             ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
                     ]
                 ],
