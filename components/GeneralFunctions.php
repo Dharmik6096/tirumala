@@ -1242,6 +1242,9 @@ class GeneralFunctions extends Component {
             case 'dcs':
                 $rel = 'dcsCode';
                 break;
+            case 'party':
+                $rel = 'partyMasterCode';
+                break;
             default :
                 $rel = '';
         }

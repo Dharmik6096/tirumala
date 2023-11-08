@@ -161,12 +161,16 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
                     'items' => [
+                            ['label' => 'Tanker Rate', 'url' => ['/tankermovement/tbl-tanker-rate/index'], 'active' => ($cntrl == 'tbl-tanker-rate')],
                             ['label' => 'Trip Master', 'url' => ['/tankermovement/tbl-vehicle-trip/index'], 'active' => ($cntrl == 'tbl-vehicle-trip')],
                             ['label' => 'Party Master', 'url' => ['/tankermovement/tbl-party-master/index'], 'active' => ($cntrl == 'tbl-party-master')],
                             ['label' => 'Inspection Detail', 'url' => ['/tankermovement/tbl-bmc-dispatch-inspection/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-inspection')],
                             ['label' => Yii::t('app', 'BMC Milk Dispatch'), 'url' => ['/tankermovement/tbl-bmc-milk-dispatch/index'], 'active' => ($cntrl == 'tbl-bmc-milk-dispatch')],
                             ['label' => 'Sample Bottle Testing', 'url' => ['/tankermovement/tbl-sample-bottle-testing/index'], 'active' => ($cntrl == 'tbl-sample-bottle-testing')],
                             ['label' => 'Milk Receipt', 'url' => ['/tankermovement/tbl-milk-vehicle-entry/index'], 'active' => ($cntrl == 'tbl-milk-vehicle-entry')],
+                            ['label' => 'Physical Stock Punching', 'url' => ['/tankermovement/tbl-bmc-dispatch-stock/index'], 'active' => ($cntrl == 'tbl-bmc-dispatch-stock')],
+                            ['label' => 'Payment Head', 'url' => ['/tankermovement/tbl-payment-head/index'], 'active' => ($cntrl == 'tbl-payment-head')],
+                            ['label' => 'Payment Head Transaction', 'url' => ['/tankermovement/tbl-payment-head-transaction/index'], 'active' => ($cntrl == 'tbl-payment-head-transaction')],
                     ]
                 ],
                     ['label' => 'Real Time Collection ', 'url' => ['/collection/tbl-milk-collection/real-time-collection'], 'active' => ($cntrl == 'tbl-milk-collection'), 'visible' => User::canRoute(['/collection/tbl-milk-collection/real-time-collection']) ? (($eiplCode == 'UMANG') ? TRUE : FALSE) : FALSE],
@@ -260,6 +264,7 @@ echo GhostMenu::widget([
                     ['label' => Yii::t('app', 'Disburse W/O Release Payment'), 'url' => ['/payment/tbl-update-unrelease-payment/index'], 'active' => ($cntrl == 'tbl-update-unrelease-payment' && $action == 'index')],
                     ['label' => Yii::t('app', 'Bonus Payment - Previous Data'), 'url' => ['/payment/tbl-bonus-payment-previous-data/index'], 'active' => ($cntrl == 'tbl-bonus-payment-previous-data' && $action == 'index')],
                     ['label' => Yii::t('app', 'Bonus Payment'), 'url' => ['/payment/tbl-bonus-payment/index'], 'active' => ($cntrl == 'tbl-bonus-payment' && $action == 'index')],
+                    ['label' => Yii::t('app', 'Party Payment'), 'url' => ['/payment/tbl-party-payment/index'], 'active' => ($cntrl == 'tbl-party-payment' && $action == 'index')],
             //  ['label' => Yii::t('app', 'Disburse Payment'), 'url' => ['/payment/tbl-member-payment/disburse-payment'], 'active' => ($cntrl == 'tbl-member-payment1')],
             ],
         ],
@@ -645,6 +650,8 @@ echo GhostMenu::widget([
                             ['label' => '621-' . Yii::t('app', 'Payment Difference'), 'url' => ['/misreports/reports/payment-difference']],
                             ['label' => '623-' . Yii::t('app', 'MPG Payment Bill Statement'), 'url' => ['/misreports/reports/mpg-payment-bill-statement']],
                             ['label' => '624-' . Yii::t('app', 'Member Payment Bank Format'), 'url' => ['/misreports/reports/member-payment-bank-format']],
+                            ['label' => '625-' . Yii::t('app', 'Bonus Report'), 'url' => ['/misreports/reports/bonus-report']],
+                            ['label' => '626-' . Yii::t('app', 'Milk Shortage Recovery'), 'url' => ['/misreports/reports/milk-shortage-recovery']],
                     ]
                 ],
                     [

@@ -61,7 +61,7 @@ class TblMilkVehicleEntryHistory extends \yii\db\ActiveRecord {
                 [['qty'], 'safe'],
                 [['union_code'], 'safe'],
                 [['plant_code', 'mcc_plant_code', 'bmc_code'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['originating_org_code', 'originating_org_type','receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no'], 'safe'],
         ];
     }
 

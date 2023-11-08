@@ -310,6 +310,22 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdownStatic(($value == 'transfer_types') ? 'transfer_type' : $value, $model, $form, 'form-group', false, false, $value, false); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('party_master_code'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownStatic('party_payment_type', $model, $form, ''); ?>
+                                        </div>
+                                    <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('payment_type'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdown('party_master', $model, $form, ''); ?>
+                                        </div>
+                                    <?php } ?>
                                     <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
