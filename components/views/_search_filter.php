@@ -310,6 +310,16 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdownStatic(($value == 'transfer_types') ? 'transfer_type' : $value, $model, $form, 'form-group', false, false, $value, false); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('stock_date'))) {
+                                        $request = Yii::$app->request->queryParams;
+                                        $model->$value = !empty($model->$value) ? $model->$value : date('d-m-Y');
+                                        $f_cnt++;
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->controls->date($model, $form, $value, 'form-group col-sm-2 padding-left-5 padding-right-5', false, false, false, false); ?>
+                                        </div>
+                                    <?php } ?>
                                     <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
