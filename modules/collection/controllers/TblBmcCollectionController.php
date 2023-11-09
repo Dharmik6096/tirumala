@@ -247,7 +247,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
-
+    
     public function actionValidateRtpl() {
         $response = [];
         $response['status'] = 'error';

@@ -73,10 +73,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields reset_field">
-                        <?= $form->field($model, 'customer_code')->textInput() ?>
-                    </div>
-                    <div class="col-sm-2 create_fields reset_field">
-                        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
+                        <?= Yii::$app->dropdown->customer_code($model, $form, 'tblbmccollection-bmc_code,tblbmccollection-customer_type,tblbmccollection-union_code', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields">
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>

@@ -25,10 +25,6 @@ use kartik\grid\GridView;
 <?php
 $script = "
     gridChange();
-    $(document).on('change', '#tblmilkcollection-member_code', function() {  
-           $('#tblmilkcollection-member').val('');
-          setMemberCode();
-    });
     $(document).on('change', '#tblmilkcollection-plant_code', function() {  
         gridChange();
     });
@@ -71,36 +67,6 @@ $script = "
         }
     }
 
-    function setMemberCode(){
-        var dcs = $('#tblmilkcollection-dcs_code').val();
-        var member = $('#tblmilkcollection-member_code').val();
-        if(dcs != '' && dcs != null && dcs != undefined && member != ''){
-            var member_code = dcs.concat(member);
-//            $('#tblmilkcollection-member_code').val(member_code);
-             $.ajax({
-            type: 'post',
-            url:'" . Url::to(['validate-member']) . "',
-            data: {'member_code':member_code},
-            success: function(data) {                                        
-                var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
-                    $('#tblmilkcollection-member').val(obj.member_details.member_name);
-                }else{
-                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Please enter valid Member Code(Last 4 digit).') . "</span></div></div>', function(result){
-                 setTimeout(function(){
-                 $('#tblmilkcollection-member_code').focus();},100);
-                    }); 
-                    $('#tblmilkcollection-member_code').val('');
-                    $('#tblmilkcollection-member').val('');
-                }
-            },
-            error:function(data){
-		
-	    }
-	});
-        }
-    }
     amount();
     $('#tblmilkcollection-rtpl').change(function(){
         amount();
