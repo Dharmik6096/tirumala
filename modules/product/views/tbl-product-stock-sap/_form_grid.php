@@ -6,7 +6,7 @@ $attribute = [
     ['attribute' => 'mcc_name', 'value' => function($model) {
         return Yii::$app->general->getforeignkey($model->tblMccPlant, 'name');
     }, 'filter' => false],
-    ['attribute' => 'product_code', 'filter' => FALSE],
+    ['attribute' => 'product_code', 'filter' => true],
     ['attribute' => 'qty', 'filter' => FALSE],
     [
         'attribute' => 'stock_date',

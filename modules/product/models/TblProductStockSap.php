@@ -24,6 +24,10 @@ class TblProductStockSap extends ChildModel
         return [
             [['product_code', 'qty', 'stock_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['mcc_plant_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
+            [['stock_date'], 'convertDateDot', 'on' => ['importCsv']],
+            [['stock_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
+            [['stock_date'], 'convertDate', 'on' => ['importCsv']],
+            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::class, 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
             [['product_code', 'stock_date', 'mcc_plant_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
         ];
@@ -63,11 +67,25 @@ class TblProductStockSap extends ChildModel
         return $this->hasOne(TblMccPlant::class, ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
+    public function convertDateDot()
+    {
+        try {
+            $this->stock_date = Yii::$app->controls->view_date($this->stock_date, 'php:d.m.Y');
+        } catch (\Exception $e) {
+            $this->stock_date = '-';
+        }
+    }
+
+    public function convertDate()
+    {
+        if (empty($this->getErrors())) {
+            $this->stock_date = !empty($this->stock_date) ? Yii::$app->controls->view_date($this->stock_date, 'php:Y-m-d') : NULL;
+        }
+    }
+
     public function setData()
     {
-        $this->stock_date = !empty($this->stock_date) ? date('d-m-Y', strtotime($this->stock_date)) : '';
         $mccData = TblMccPlant::find()->where(['or', ['ref_code' => $this->mcc_plant_code], ['mcc_plant_code' => $this->mcc_plant_code]])->one();
-
         if (!empty($mccData)) {
             $this->union_code = $mccData->union_code;
             $this->plant_code = $mccData->plant_code;
@@ -82,11 +100,9 @@ class TblProductStockSap extends ChildModel
     public function validateUniqueStockEntry($attribute, $params)
     {
         if (!$this->hasErrors()) {
-            $stock_date = !empty($this->stock_date) ? date('Y-d-m', strtotime($this->stock_date)) : '';
             $existingRecord = $this->find()
-                ->where(['product_code' => $this->product_code, 'stock_date' => $stock_date])
-                ->Where(['mcc_plant_code' => $this->mcc_plant_code])->one();
-            if ($existingRecord !== null) {
+                ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date, 'mcc_plant_code' => $this->mcc_plant_code])->one();
+            if (!empty($existingRecord)) {
                 $this->addError($attribute, 'A record with the same product code and stock date already exists.');
                 return false;
             }
