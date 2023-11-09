@@ -93,8 +93,8 @@ $this->title = Yii::t('app', 'Create Trip');
                                                                 $("#tblbmcmilkdispatch-vehicle_code").trigger("change");
                                                                 if (data.status == "success"){ 
                                                                     $("#createTripModal").modal("hide");
-                                                                    $("#tblbmcmilkdispatch-vehicle_code").val(null).trigger("change"); 
-                                                                    $("#tblbmcmilkdispatch-transaction_date").val(""); 
+                                                                    $("#tblbmcmilkdispatch-vehicle_code").trigger("change"); 
+                                                                    $("#tblbmcmilkdispatch-vehicle_code").trigger("select2:select");
                                                                     bootbox.alert("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"bg-info\"><i class=\"fa fa-info\"></i></div><span>"+data.msg+" </span></div></div>", function(){                                                                  
                                                                     });                                                                    
                                                                  }else{
