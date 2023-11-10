@@ -127,7 +127,7 @@ class TblProductStockPhysical extends ChildModel
             $existingRecord = $this->find()
                 ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date]);
             if ($this->customer_type == 'MCC') {
-                $existingRecord->andWhere(['mcc_plant_codes' => $this->mcc_plant_code])
+                $existingRecord->andWhere(['mcc_plant_code' => $this->mcc_plant_code])
                                 ->andWhere(['is','dcs_code', null]);
             } else {
                 $existingRecord->andWhere(['dcs_code' => $this->dcs_code]);
