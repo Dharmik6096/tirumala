@@ -58,23 +58,22 @@ class TblBmcDispatchStockSearch extends TblBmcDispatchStock {
             // $query->where('0=1');
             return $dataProvider;
         }
-        if (!empty($this->transaction_date)) {
-            $query->andFilterWhere(['like', 'CONVERT(VARCHAR(25), transaction_date, 126)', date('Y-m-d', strtotime($this->transaction_date))]);
+        if (empty($this->from_date)) {
+            $this->from_date = date('Y-m-d');
         }
+        if (empty($this->to_date)) {
+            $this->to_date = date('Y-m-d');
+        }
+        $from_date = date('Y-m-d', strtotime($this->from_date));
+        $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
+        $from_date .= ' ' . $from_shift;
+        $query->andWhere(['>=', 'transaction_date', $from_date]);
 
-        if (!empty($this->from_date) || !empty($this->from_shift)) {
-            $from_date = !empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d');
-            $from_shift = !empty($this->from_shift) ? \Yii::$app->general->getshift($this->from_shift) : '06:00:00';
-            $from_date .= ' ' . $from_shift;
-            $query->andFilterWhere(['>=', 'transaction_date', $from_date]);
-        }
+        $to_date = date('Y-m-d', strtotime($this->to_date));
+        $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
+        $to_date .= ' ' . $to_shift;
+        $query->andWhere(['<=', 'transaction_date', $to_date]);
 
-        if (!empty($this->to_date) || !empty($this->to_shift)) {
-            $to_date = !empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d');
-            $to_shift = !empty($this->to_shift) ? \Yii::$app->general->getshift($this->to_shift) : '18:00:00';
-            $to_date .= ' ' . $to_shift;
-            $query->andFilterWhere(['<=', 'transaction_date', $to_date]);
-        }
         // grid filtering conditions
         $query->andFilterWhere([
             'milk_quality_type_code' => $this->milk_quality_type_code,

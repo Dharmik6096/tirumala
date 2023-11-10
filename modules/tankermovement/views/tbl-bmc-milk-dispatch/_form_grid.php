@@ -60,26 +60,26 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->general->getforeignkey($model->fromShiftCode, 'shift');
         }],
-    ['attribute' => 'qty', 'label' => 'QTY',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'dispatch_qty');
-        }],
-    ['attribute' => 'fat', 'label' => 'FAT',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'fat');
-        }],
-    ['attribute' => 'snf', 'label' => 'SNF',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'snf');
-        }],
-    ['attribute' => 'balance_qty', 'label' => 'Balance Qty',
-        'value' => function($model) {
-            return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'balance_qty');
-        }],
-    ['attribute' => 'milk_type_code', 'label' => 'Milk Type',
-        'value' => function($model) {
-            return Yii::$app->general->getmultiforeignkey($model->bmcMilkDispatchTxn, ['milkType'], 'animal_type_name');
-        }],
+    // ['attribute' => 'qty', 'label' => 'QTY',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'dispatch_qty');
+    //     }],
+    // ['attribute' => 'fat', 'label' => 'FAT',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'fat');
+    //     }],
+    // ['attribute' => 'snf', 'label' => 'SNF',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'snf');
+    //     }],
+    // ['attribute' => 'balance_qty', 'label' => 'Balance Qty',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getforeignkey($model->bmcMilkDispatchTxn, 'balance_qty');
+    //     }],
+    // ['attribute' => 'milk_type_code', 'label' => 'Milk Type',
+    //     'value' => function($model) {
+    //         return Yii::$app->general->getmultiforeignkey($model->bmcMilkDispatchTxn, ['milkType'], 'animal_type_name');
+    //     }],
     [
         'attribute' => 'to_date',
         'value' => function($model) {
@@ -108,8 +108,8 @@ $attribute = [
         'value' => function($model) {
             return Yii::$app->controls->view_time($model->vehicle_out_time);
         }],
-    ['attribute' => 'gross_weight'],
-    ['attribute' => 'tare_weight'],
+    // ['attribute' => 'gross_weight'],
+    // ['attribute' => 'tare_weight'],
     ['attribute' => 'remarks'],
     [
         'attribute' => 'is_last_destination',
