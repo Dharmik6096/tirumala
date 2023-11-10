@@ -69,12 +69,18 @@ class TblComplainController extends \app\controllers\ChildController {
         $attachmentDataProvider = new ActiveDataProvider([
             'query' => $complain_attachment->find()->where(['module_code' => $id]),
         ]);
+        $complain_escalation_txn = new TblComplainEscalationTxnDetail();
+        $escalationTxnDataProvider = new ActiveDataProvider([
+            'query' => $complain_escalation_txn->find()->where(['complain_code' => $id]),
+        ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
                     'complain_attachment' => $complain_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider,
+                    'complain_escalation_txn' => $complain_escalation_txn,
+                    'escalationTxnDataProvider' => $escalationTxnDataProvider,
         ]);
     }
 

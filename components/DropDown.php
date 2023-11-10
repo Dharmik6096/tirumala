@@ -842,7 +842,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false, $multiple = false) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -865,6 +865,11 @@ class DropDown extends Component {
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
                         'data' => $records, 'pluginOptions' => ['allowClear' => true], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
+                    )->label($label);
+        }
+        if ($multiple) {
+            return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
                     )->label($label);
         }
         if (isset($searchable) && $searchable) {
@@ -1772,6 +1777,16 @@ class DropDown extends Component {
                 'name' => 'org_type',
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'VLC' => Yii::t('app', 'VLC')],
+            ],
+            'banner_tap_operation' => [
+                'name' => 'tap_operation',
+                'prompt' => Yii::t('app', 'Select Tap Operation'),
+                'data' => ['internal' => Yii::t('app', 'Internal'), 'external' => Yii::t('app', 'External'), 'pdf' => Yii::t('app', 'PDF')],
+            ],
+            'banner_tap_event' => [
+                'name' => 'tap_event',
+                'prompt' => Yii::t('app', 'Select Tap Event'),
+                'data' => ['abc' => Yii::t('app', 'abc'), 'xyz ' => Yii::t('app', 'xyz')],
             ],
         ];
         return $records[$l];

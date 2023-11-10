@@ -476,6 +476,9 @@ class SearchFilter {
             'TblPartyPaymentSearch' => [
                 'filter' => ['party_master_code', 'payment_type', 'from_date', 'to_date'],
             ],
+            'TblBannerSearch' => [
+                'filter' => ['f_union_code', 'login_type', 'from_date', 'to_date'],
+            ],
         ];
         return isset($label[$l]) ? $label[$l] : NULL;
     }

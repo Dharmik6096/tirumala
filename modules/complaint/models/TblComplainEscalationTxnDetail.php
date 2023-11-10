@@ -75,7 +75,7 @@ class TblComplainEscalationTxnDetail extends \app\models\ChildModel {
         $subquery = $this->find()->select(['tbl_complain_escalation_txn_detail.complain_code'])->distinct();
         $query = $this->find()
                 ->innerJoin('tbl_complain', 'tbl_complain.complain_code = tbl_complain_escalation_txn_detail.complain_code')
-                ->where(['<>', 'tbl_complain.resolved_status', 'RESOLVED'])
+                ->where(['or', ['<>', 'tbl_complain.resolved_status', 'RESOLVED'], ['is', 'tbl_complain.resolved_status', NULL]])
                 ->andWhere(['status' => 'Allocated', 'cron_status' => '0'])
                 ->andWhere(['>=', 'GETDATE()', new \yii\db\Expression("DATEADD(MINUTE, escalation_time, assign_date)")])
                 ->andWhere(['in', 'tbl_complain_escalation_txn_detail.complain_code', $subquery])
