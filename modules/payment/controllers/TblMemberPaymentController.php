@@ -57,6 +57,7 @@ use app\modules\vsp\models\TblBillHeadInstallmentHistory;
 use app\modules\payment\models\TblMemberPaymentHeadSummary;
 use app\modules\payment\models\TblPaymentStop;
 use app\modules\payment\models\TblPaymentStopHistory;
+use app\modules\vsp\models\TblBillHead;
 
 /**
  * TblMemberPaymentController implements the CRUD actions for TblMemberPayment model.
@@ -1550,6 +1551,22 @@ class TblMemberPaymentController extends \app\controllers\ChildController {
                 $existSummaryData->final_amount = $existAmount + $existSummaryData->final_amount - $totalAmount;
                 $existSummaryData->net_payable = $existAmount + $existSummaryData->net_payable - $totalAmount;
                 $saveModel[] = $existSummaryData;
+                
+                   // head table update
+                $pro_sale_head = TblBillHead::find()->where(['default_bill_head_code' => 6, 'bill_head_for' => 'MEMBER', 'union_code' => $instModel->union_code])->one();
+                $headSummary = new TblMemberPaymentHeadSummary();
+                $headSummaryModel = $headSummary::find()
+                        ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
+                        ->one();
+                $headSummaryModel->amount = $headSummaryModel->amount - $existAmount + $totalAmount;
+                $saveModel[] = $headSummaryModel;
+
+                $memberHead = new TblMemberPaymentHead();
+                $memberHeadModel = $memberHead::find()
+                        ->where(['bmc_code' => $instModel->bmc_code, 'dcs_code' => $instModel->dcs_code, 'member_code' => $instModel->customer_code, 'payment_cycle_code' => $instModel->payment_cycle_code, 'bill_head_code' => $pro_sale_head->bill_head_code])
+                        ->one();
+                $memberHeadModel->amount = $memberHeadModel->amount - $existAmount + $totalAmount;
+                $saveModel[] = $memberHeadModel;
             }
             $response = [];
             $response['status'] = 'error';
