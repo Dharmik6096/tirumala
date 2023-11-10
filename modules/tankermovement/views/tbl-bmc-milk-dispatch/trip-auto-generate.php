@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 use yii\web\JsExpression;
+use yii\web\View;
 
 $this->title = Yii::t('app', 'Create Trip');
 
@@ -126,3 +127,12 @@ $this->title = Yii::t('app', 'Create Trip');
         </div>
     </div>
 </div>
+
+<?php
+$script = "
+    $(document).ready(function(){
+        $('.shift select option[value=\'3\']').remove();
+    });
+";
+$this->registerJs($script, View::POS_END, 'auto-trip-popup');
+?>
