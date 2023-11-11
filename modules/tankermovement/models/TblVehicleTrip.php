@@ -62,7 +62,7 @@ class TblVehicleTrip extends \app\models\ChildModel {
                 [['trip_mode'], 'default', 'value' => 'online'],
                 [['is_active'], 'default', 'value' => 1],
                 [['is_auto_trip'], 'default', 'value' => 0],
-                [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip']],
+                [['vehicle_code'], 'checkVehicleStatus', 'on' => ['createTrip', 'autogeneratetrip']],
         ];
     }
 

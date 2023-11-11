@@ -89,12 +89,20 @@ $script = "$('#tblvehicletrip-plant_code').on('change',function(){
         var dest_plant_code_txt=$('#tblvehicletrip-dest_plant_code option:selected').text();
         var blank_val='';
         $('#tblvehicletrip-filter_plant_code').append('<option value='+blank_val+'>All</option>');
+        var selectedValues = [];
         if(plant_code!=''){
-            $('#tblvehicletrip-filter_plant_code').append('<option value='+plant_code+'>'+plant_code_txt+'</option>');
+            selectedValues.push({ value: plant_code, text: plant_code_txt });
         }
         if(dest_plant_code!=''){
-            $('#tblvehicletrip-filter_plant_code').append('<option value='+dest_plant_code+'>'+dest_plant_code_txt+'</option>');
+            selectedValues.push({ value: dest_plant_code, text: dest_plant_code_txt });
         }
+        selectedValues = selectedValues.filter((item, index, self) =>
+            index === self.findIndex((t) => t.value === item.value)
+        );
+        
+        selectedValues.forEach(function (item) {
+            $('#tblvehicletrip-filter_plant_code').append('<option value=' + item.value + '>' + item.text + '</option>');
+        });
     setBmcList();  
     }
 

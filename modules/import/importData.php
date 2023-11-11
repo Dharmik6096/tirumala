@@ -168,6 +168,8 @@ class importData extends \yii\base\Module {
             'member-payment-restrict' => ['table_name' => 'tbl_member_payment_restrict', 'fields' => 'dcs_code,wef_date', 'scenario' => 'importCsv'],
             'scheme-rate' => ['table_name' => 'tbl_scheme_rate', 'fields' => 'union_code,from_date,from_shift,to_date,to_shift,rtpl,is_mcc_wise_rate,mcc_plant_code,description', 'increment' => 1, 'scenario' => 'importCsv', 'save_child' => true, 'default_fields' => 'originating_type:1'],
             'bonus-payment-previous-data' => ['import_class' => 'tbl_bonus_payment_previous_data', 'table_name' => 'tbl_bonus_payment_previous_data', 'fields' => 'bmc_code,dcs_code,member_code,transaction_date,bill_head_code,amount,remarks', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
+            'product-stock-physical' => ['table_name' => 'tbl_product_stock_physical', 'fields' => 'customer_type,customer_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
+            'product-stock-sap' => ['table_name' => 'tbl_product_stock_sap', 'fields' => 'mcc_plant_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
         ];
         return $label[$l];
     }
