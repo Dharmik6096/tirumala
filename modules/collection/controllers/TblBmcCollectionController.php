@@ -109,9 +109,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                     }
                 } else {
-                    $this->model->dcs_code = NULL;
-                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
-                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
+                    $this->model->dcs_code = NULL; $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                     if (!$allowRouteSelection) {
                         $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                     }
