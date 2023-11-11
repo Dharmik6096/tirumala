@@ -109,7 +109,8 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                         $this->model->route_code = Yii::$app->general->getforeignkey($this->model->dcsCode, 'route_code');
                     }
                 } else {
-                    $this->model->dcs_code = NULL; $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
+                    $this->model->dcs_code = NULL;
+                    $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                     if (!$allowRouteSelection) {
                         $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
                     }
@@ -245,7 +246,7 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
         Yii::$app->response->format = trim(Response::FORMAT_JSON);
         return Json::encode($response);
     }
-    
+
     public function actionValidateRtpl() {
         $response = [];
         $response['status'] = 'error';
