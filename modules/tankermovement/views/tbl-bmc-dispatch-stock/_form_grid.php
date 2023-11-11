@@ -32,14 +32,9 @@ $attribute = [
         ['attribute' => 'bmc_code', 'label' => (Yii::t('app', 'BMC Code')), 'value' => 'bmc_code', 'vAlign' => 'middle', 'filter' => false],
         [
         'attribute' => 'transaction_date',
-        'filterType' => GridView::FILTER_DATE,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['format' => 'dd-mm-yyyy',
-                'autoclose' => true]
-        ],
         'value' => function($model) {
             return Yii::$app->controls->view_date($model->transaction_date);
-        }],
+        }, 'filter' => false],
         [
         'attribute' => 'from_date',
         'value' => function($model) {

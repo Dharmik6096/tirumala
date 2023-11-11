@@ -89,8 +89,8 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController
             $model = $this->findModel($id);
         } else {
             $model->scenario = 'create';
+            $this->setCode($model);
         }
-        $this->setCode($model);
         $txn_model = new TblBmcMilkDispatchTxn();
         if ($model->load(Yii::$app->request->post()) && $txn_model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->from_date = date('Y-m-d', strtotime($model->from_date)) . ' ' . \Yii::$app->general->getshift($model->from_shift_code);
@@ -131,7 +131,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController
                     if (!empty($trip_detail)) {
                         $trip_detail->challan_no = $model->challan_no;
                         $saveModel[] = $trip_detail;
-                    } else if($tripModel->is_auto_trip == 1) {                        
+                    } else if ($tripModel->is_auto_trip == 1) {
                         $exist_auto_trip_detail = TblVehicleTripDetail::find()
                             ->where(['vehicle_trip_code' => $tripModel->vehicle_trip_code])
                             ->orderBy(['created_at' => SORT_DESC])->one();
@@ -139,7 +139,7 @@ class TblBmcMilkDispatchController extends \app\controllers\ChildController
                         $numeric_part = intval(substr($exist_auto_trip_detail->vehicle_trip_detail_code, -1));
                         $updated_numeric_part = $numeric_part + 1;
                         $new_vehicle_trip_detail_code = $tripModel->vehicle_trip_code . 'T' . $updated_numeric_part;
-                        
+
                         $auto_trip_detail = new TblVehicleTripDetail();
                         $auto_trip_detail->vehicle_trip_detail_code = $new_vehicle_trip_detail_code;
                         $auto_trip_detail->vehicle_trip_code = $tripModel->vehicle_trip_code;
