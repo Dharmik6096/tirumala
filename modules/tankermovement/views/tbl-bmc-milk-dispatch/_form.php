@@ -12,11 +12,11 @@ $readonly = empty($model->bmc_milk_dispatch_code) ? FALSE : TRUE;
 ?>
 <?php
 $form = ActiveForm::begin([
-            'validateOnBlur' => FALSE,
-            'validateOnChange' => FALSE,
-            'enableClientValidation' => true,
-            'validateOnSubmit' => true,
-        ]);
+    'validateOnBlur' => FALSE,
+    'validateOnChange' => FALSE,
+    'enableClientValidation' => true,
+    'validateOnSubmit' => true,
+]);
 ?>
 <?php echo $form->errorSummary([$model, $txn_model]); ?>
 
@@ -210,16 +210,20 @@ $form = ActiveForm::begin([
 $script = "
 $(document).ready(function(){
     $('#addTripButtonDiv').hide();
-    $('#tblbmcmilkdispatch-vehicle_code,#tblbmcmilkdispatch-transaction_date').on('change',function() {
+     
+    $('#tblbmcmilkdispatch-trip_code').on('change',function() {
         $('#addTripButtonDiv').hide();
-        setTimeout(function(){        
-            var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length - 1;
-            $('#addTripButtonDiv').hide();
-            var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
-            var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
-            if (transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 0) {
-                $('#addTripButtonDiv').show();  
+        var tripCodeDropdownLength = $('#tblbmcmilkdispatch-trip_code option').length;
+        var vehicleCode = $('#tblbmcmilkdispatch-vehicle_code').val();
+        var transaction_date = $('#tblbmcmilkdispatch-transaction_date').val();
+        if(transaction_date != '' && transaction_date != null && vehicleCode != '' && vehicleCode != null && tripCodeDropdownLength == 1){
+            $('#addTripButtonDiv').show();   
+        } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
+            $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
             }
+            }
+        },1500);
+        }
         },1500);
     });
 
@@ -341,6 +345,14 @@ $script .= "
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
+    });
+
+    $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
+        if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
+            $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
+        }
+    }); 
+    });  
 
     $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
         if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
@@ -348,24 +360,24 @@ $script .= "
         }
     }); 
     
-   function CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
-      $.ajax({
+    function CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
+        $.ajax({
                 type: 'get',
                 url: '" . Url::to(['check-trip']) . "',
                 data: {'from_date' : from_date,'from_shift':from_shift,'to_date' : to_date,'to_shift':to_shift,'bmc_code' : bmc_code,'vehicle_code' : vehicle_code},             
                 success: function(data) {
-                  var data=$.parseJSON(data);
-                  if (data.status == 'success'){   
-                   // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
-                    BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
-                }else {
-                    $('#loadercontent').hide();
-                    $('#pageloader').hide();
-                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
-                }
-               } 
-            });   
-   }  
+                    var data=$.parseJSON(data);
+                    if (data.status == 'success'){   
+                    // $('#tblbmcmilkdispatch-trip_code').val(data.trip_code);
+                        BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code); 
+                    }else {
+                        $('#loadercontent').hide();
+                        $('#pageloader').hide();
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>' + data.msg + '</span></div></div>');
+                    }
+                } 
+        });   
+    }  
   
     function BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
        
