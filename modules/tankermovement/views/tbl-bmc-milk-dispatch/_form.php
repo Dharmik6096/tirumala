@@ -339,18 +339,6 @@ $script .= "
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
-
-    $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
-        if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-            $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
-        }
-    });
-
-    $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
-        if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
-            $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
-        }
-    }); 
     
     function CheckTrip(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code){
         $.ajax({
