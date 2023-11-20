@@ -220,11 +220,7 @@ $(document).ready(function(){
             $('#addTripButtonDiv').show();   
         } else if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
             $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
-            }
-            }
-        },1500);
         }
-        },1500);
     });
 
     $('#addTripButton').on('click', function(e) {
@@ -336,23 +332,19 @@ $script .= "
         var to_shift = $('#tblbmcmilkdispatch-to_shift_code').val();
         var bmc_milk_dispatch_code = $('#tblbmcmilkdispatch-bmc_milk_dispatch_code').val();
         var vehicle_code = $('#tblbmcmilkdispatch-vehicle_code').val();
-       if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != '' && vehicle_code !=''){
-          //  $('#loadercontent').show();
-          //  $('#pageloader').show();
+        if(from_date != '' && from_shift !='' && to_date != '' && to_shift !='' && bmc_code != '' && vehicle_code !=''){
             $('#purchase-detial').html('');
             $('#transactions-from').html('');
             $('#transactions-detial').html('');           
             BindData(bmc_code,from_date,from_shift,to_date,to_shift,vehicle_code,bmc_milk_dispatch_code,union_code);            
         }      
     });
-    });
 
     $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
         if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
             $('#tblbmcmilkdispatch-trip_code').val($('#tblbmcmilkdispatch-trip_code option:last').val());
         }
-    }); 
-    });  
+    });
 
     $('#tblbmcmilkdispatch-trip_code').on('change', function() { 
         if ($('#tblbmcmilkdispatch-trip_code option').length === 2) {
