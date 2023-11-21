@@ -18,11 +18,14 @@ use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblBannerHistory;
 use app\modules\document\models\TblAttachmentHistory;
 use app\modules\general\models\TblBannerApplicabilityHistory;
+use app\modules\usermanagement\models\TblEiplAppMenuActionsMapping;
 
 /**
  * TblBannerController implements the CRUD actions for TblBanner model.
  */
 class TblBannerController extends \app\controllers\ChildController {
+
+    public $freeAccessActions = ['tap-event-list'];
 
     /**
      * Lists all TblBanner models.
@@ -298,6 +301,25 @@ class TblBannerController extends \app\controllers\ChildController {
         } else {
             return 0;
         }
+    }
+
+    public function actionTapEventList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+
+            $login_type = $parents[0];
+            if (!empty($login_type)) {
+                $menuModel = new TblEiplAppMenuActionsMapping();
+                $data = $menuModel->tapevent($login_type);
+
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $val['service_url'], 'name' => $val['action_name']);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

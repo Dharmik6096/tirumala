@@ -641,6 +641,11 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-party-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
+    public function tap_event($model, $form, $depends, $name = 'tap_event', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -1782,11 +1787,6 @@ class DropDown extends Component {
                 'name' => 'tap_operation',
                 'prompt' => Yii::t('app', 'Select Tap Operation'),
                 'data' => ['internal' => Yii::t('app', 'Internal'), 'external' => Yii::t('app', 'External'), 'pdf' => Yii::t('app', 'PDF')],
-            ],
-            'banner_tap_event' => [
-                'name' => 'tap_event',
-                'prompt' => Yii::t('app', 'Select Tap Event'),
-                'data' => ['abc' => Yii::t('app', 'abc'), 'xyz ' => Yii::t('app', 'xyz')],
             ],
             'chiller_rate_type' => [
                 'name' => 'rate_type',

@@ -39,7 +39,7 @@ echo $form->errorSummary($model);
         <?= Yii::$app->dropdown->dropdownStatic('banner_tap_operation', $model, $form, '', $model->getAttributeLabel('tap_operation'), FALSE, 'tap_operation'); ?>
     </div>
     <div class="col-sm-2 tap_event_internal disp_none">
-        <?= Yii::$app->dropdown->dropdownStatic('banner_tap_event', $model, $form, '', $model->getAttributeLabel('tap_event'), FALSE, 'tap_event'); ?>
+        <?= Yii::$app->dropdown->tap_event($model, $form, 'tblbannerapplicability-login_type', 'tap_event', $model->getAttributeLabel('tap_event')); ?>
     </div>
     <div class="col-sm-2 tap_event disp_none">
         <?= $form->field($model, 'tap_event')->textInput() ?>
