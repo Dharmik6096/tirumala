@@ -232,6 +232,8 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
                             ['label' => Yii::t('app', 'Good Issue'), 'url' => ['/product/tbl-product-stock-adjustment/index'], 'active' => ($cntrl == 'tbl-product-stock')],
                             ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
+                            ['label' => Yii::t('app', 'Product Stock Physical'), 'url' => ['/product/tbl-product-stock-physical/index'], 'active' => ($cntrl == 'tbl-product-stock-physical')],
+                            ['label' => Yii::t('app', 'Product Stock SAP'), 'url' => ['/product/tbl-product-stock-sap/index'], 'active' => ($cntrl == 'tbl-product-stock-sap')],
                     ]
                 ],
                     [
@@ -305,6 +307,7 @@ echo GhostMenu::widget([
                             ['label' => Yii::t('app', 'MCC Formula Master'), 'url' => ['/vsp/tbl-mcc-general-formula/index'], 'active' => ($cntrl == 'tbl-mcc-general-formula')],
                             ['label' => Yii::t('app', 'MCC Bill Head Master'), 'url' => ['/vsp/tbl-mcc-bill-head/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head')],
                             ['label' => Yii::t('app', 'MCC Bill Head Transaction'), 'url' => ['/vsp/tbl-mcc-bill-head-detail/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-detail')],
+                            ['label' => Yii::t('app', 'MCC Bill Head Criteria'), 'url' => ['/vsp/tbl-mcc-bill-head-criteria/index'], 'active' => ($cntrl == 'tbl-mcc-bill-head-criteria')],
                             ['label' => Yii::t('app', 'MCC Payment'), 'url' => ['/payment/tbl-mcc-payment/index'], 'active' => ($cntrl == 'tbl-mcc-payment')],
                     ]
                 ],

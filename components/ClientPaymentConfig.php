@@ -187,6 +187,10 @@ class ClientPaymentConfig extends Component {
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
                     'sp_name' => 'sp_remuneration_payment_itc',
                 ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_itc',
+                ],
             ],
             'SAUMYA' => [
                 'vsp_payment' => [
@@ -212,6 +216,10 @@ class ClientPaymentConfig extends Component {
                 'remuneration_payment' => [
                     'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
                     'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_vrs',
                 ],
                 'bonus_payment' => [
                     'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
