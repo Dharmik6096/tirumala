@@ -78,6 +78,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 mt15">
         <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_default'); ?>
     </div>   
+    <div class="col-sm-2 mt15">
+        <?= $form->field($model, 'has_slab', ['checkboxTemplate' => '<div class="checkbox">{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}'])->checkbox(); ?>
+    </div>
     <div class="col-sm-2" id="defaultbill">
         <?= Yii::$app->dropdown->dropdown('mcc_default_bill_head_code', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('default_bill_head_code'), false, 'default_bill_head_code'); ?>
     </div>

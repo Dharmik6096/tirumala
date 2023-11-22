@@ -660,6 +660,16 @@ class DropDown extends Component {
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-bonus-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
     }
 
+    public function PartyPaymentCycle($model, $form, $depends, $name = 'payment_cycle_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/payment/tbl-party-payment/payment-cycle-list', Yii::t('app', 'Select Payment Cycle'), $multiple, '', $readonly);
+    }
+
+    public function tap_event($model, $form, $depends, $name = 'tap_event', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/general/tbl-banner/tap-event-list', Yii::t('app', 'Select Tap Event'), $multiple, '', $readonly);
+    }
+
     public function depend_select2($model, $form, $name, $url, $dep_id = '') {
         echo $form->field($model, $name)->widget(Select2::classname(), [
             'initValueText' => 'Products', // set the initial display text
@@ -872,7 +882,7 @@ class DropDown extends Component {
                 });
     }
 
-    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false) {
+    public function dropdownStatic($flag, $model, $form, $class = 'form-group padding-right-5 col-sm-2', $label = false, $disable = false, $name = '', $addAll = false, $removeKey = false, $searchable = true, $return = false, $multiple = false) {
         if (in_array($flag, ['organizations_type'])) {
             (Yii::$app->session->get('organizations_type') == 'UNION') ? $flag = 'organizations_type_union' : $flag = 'organizations_type_federation';
         }
@@ -899,6 +909,11 @@ class DropDown extends Component {
         if ($return) {
             return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(
                             Select2::classname(), $select2Options
+                    )->label($label);
+        }
+        if ($multiple) {
+            return $form->field($model, $control_name, ['options' => ['class' => $class]])->widget(Select2::classname(), [
+                        'data' => $records, 'pluginOptions' => ['allowClear' => true, 'multiple' => $multiple], 'options' => ['placeholder' => $data['prompt'], 'disabled' => $disable, 'class' => $class]]
                     )->label($label);
         }
         if (isset($searchable) && $searchable) {
@@ -1627,7 +1642,7 @@ class DropDown extends Component {
             'user_login_type' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer')],
+                'data' => ['all' => Yii::t('app', 'All'), 'farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
                 'remove_key' => ['all']
             ],
             'receiver_type' => [
@@ -1689,7 +1704,7 @@ class DropDown extends Component {
             'login_type_ho_flutter' => [
                 'name' => 'login_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION')],
+                'data' => ['farmer' => Yii::t('app', 'Farmer'), 'vsp' => Yii::t('app', 'Village Superviser'), 'az_manager' => Yii::t('app', 'A/Z Manager'), 'service_engineer' => Yii::t('app', 'Service Engineer'), 'route_supervisor' => Yii::t('app', 'Route Supervisor'), 'mcc_incharge' => Yii::t('app', 'MCC Incharge'), 'procurement_staff' => Yii::t('app', 'Head Office User'), 'gyan_dhara_plant' => Yii::t('app', 'Inventory User'), 'MCC' => Yii::t('app', 'MCC'), 'BMC' => Yii::t('app', 'BMC'), 'PLANT' => Yii::t('app', 'PLANT'), 'ROUTE' => Yii::t('app', 'ROUTE'), 'UNION' => Yii::t('app', 'UNION'), 'zonal_manager' => Yii::t('app', 'Zonal Manager')],
                 'remove_key' => ['all']
             ],
             'asset_detail_status' => [
@@ -1782,10 +1797,40 @@ class DropDown extends Component {
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['WEIGHT' => Yii::t('app', 'WEIGHT'), 'QUALITY' => Yii::t('app', 'QUALITY'), 'BMC' => Yii::t('app', 'BMC'), 'MEMBER' => Yii::t('app', 'MEMBER')],
             ],
+            'tanker_rate_for' => [
+                'name' => 'rate_for',
+                'prompt' => Yii::t('app', 'Select Type'),
+                'data' => ['purchase' => Yii::t('app', 'Purchase'), 'sale' => Yii::t('app', 'Sale')],
+            ],
+            'tanker_rate_gen_method' => [
+                'name' => 'rate_gen_method_code',
+                'prompt' => Yii::t('app', 'Select Rate Method'),
+                'data' => ['1' => Yii::t('app', 'Formula'), '3' => Yii::t('app', 'Import')],
+            ],
+            'tanker_rate_type' => [
+                'name' => 'rate_type_code',
+                'prompt' => Yii::t('app', 'Select Rate Type'),
+                'data' => ['1' => Yii::t('app', 'FAT+SNF'), '2' => Yii::t('app', 'QTY')],
+            ],
+            'party_payment_type' => [
+                'name' => 'payment_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['purchase' => Yii::t('app', 'PURCHASE'), 'sale' => Yii::t('app', 'SALE')],
+            ],
             'org_type_exceed' => [
                 'name' => 'org_type',
                 'prompt' => Yii::t('app', 'Select Type'),
                 'data' => ['BMC' => Yii::t('app', 'BMC'), 'MCC' => Yii::t('app', 'MCC'), 'VLC' => Yii::t('app', 'VLC')],
+            ],
+            'banner_tap_operation' => [
+                'name' => 'tap_operation',
+                'prompt' => Yii::t('app', 'Select Tap Operation'),
+                'data' => ['internal' => Yii::t('app', 'Internal'), 'external' => Yii::t('app', 'External'), 'pdf' => Yii::t('app', 'PDF')],
+            ],
+            'chiller_rate_type' => [
+                'name' => 'rate_type',
+                'prompt' => Yii::t('app', 'Select'),
+                'data' => ['QTY' => Yii::t('app', 'QTY'), 'TS' => Yii::t('app', 'TS')],
             ],
         ];
         return $records[$l];
@@ -1895,6 +1940,7 @@ class DropDown extends Component {
             //            'union_trip' => ['name' => 'trip_code', 'fields' => 'trip_code,trip_code,', 'prompt' => Yii::t('app', 'Select Trip'), 'model' => 'TblVehicleTrip', 'depend' => 'union_code', 'dependArray' => ['trip_status']],
             'vendor' => ['name' => 'vendor_master_code', 'fields' => 'vendor_master_code,vendor_name,vendor_code', 'prompt' => 'Select Vendor', 'model' => 'TblVendorMaster', 'depend' => 'union_code'],
             'channel' => ['name' => 'channel_master_code', 'fields' => 'channel_master_code,channel_desc', 'prompt' => 'Select Channel', 'model' => 'TblChannelMaster'],
+            'mcc_bill_head' => ['name' => 'mcc_bill_head_code', 'fields' => 'mcc_bill_head_code,bill_head_name', 'prompt' => 'Select Bill head ', 'model' => 'TblMccBillHead', 'whereCondition' => ['has_slab' => 1]],
             'mcc_default_bill_head_code' => ['name' => 'default_bill_head_code', 'fields' => 'default_bill_head_code,default_bill_head_name', 'prompt' => 'Select Default Bill head Type', 'model' => 'TblMccBillHeadDefault'],
             'mcc_general_formula_code' => ['name' => 'general_formula_code', 'fields' => 'general_formula_code,formula,', 'prompt' => 'Select Formula', 'model' => 'TblMccGeneralFormula', 'depend' => 'union_code'],
             'rejection_responsibility' => ['name' => 'rejection_responsibility_code', 'fields' => 'rejection_responsibility_code,responsibility_name', 'prompt' => Yii::t('app', 'Select Responsibility'), 'model' => 'TblRejectionResponsibility'],
@@ -1919,6 +1965,9 @@ class DropDown extends Component {
             'rate_class' => ['name' => 'rate_class', 'fields' => 'rate_class_code,rate_class', 'prompt' => 'Select Rate Class', 'model' => 'TblRateClass'],
             'region_code' => ['name' => 'region_code', 'fields' => 'region_code,region_name,local_name', 'prompt' => 'Select Region', 'model' => 'TblRegion', 'depend' => 'state_code'],
             'area_code' => ['name' => 'area_code', 'fields' => 'area_code,area_name,local_name', 'prompt' => 'Select Area', 'model' => 'TblArea', 'depend' => 'region_code'],
+            'payment_head_code' => ['name' => 'payment_head_code', 'fields' => 'payment_head_code,payment_head_name', 'prompt' => 'Payment Head Name', 'model' => 'TblPaymentHead'],
+            'party_master_code' => ['name' => 'party_name', 'fields' => 'party_master_code,party_name', 'prompt' => 'Applicable Name', 'model' => 'TblPartyMaster'],
+            'party_master' => ['name' => 'party_master_code', 'fields' => 'party_master_code,party_name,owner_name', 'prompt' => 'Select Party', 'model' => 'TblPartyMaster'],
         ];
         return $label[$l];
     }

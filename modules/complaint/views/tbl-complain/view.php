@@ -101,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                                 [
                                 'attribute' => 'complain_status',
-                                'value' => function($model){
+                                'value' => function($model) {
                                     return !empty($model->complain_status) ? Yii::$app->dropdown->getRecords('complain_status')['data'][$model->complain_status] : '';
                                 },
                                 'valueColOptions' => ['style' => 'width:30%']
@@ -179,6 +179,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 $this->render('_attachment_list', [
                     'complain_attachment' => $complain_attachment,
                     'attachmentDataProvider' => $attachmentDataProvider
+                ])
+                ?>
+            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box view-subtitle">
+            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 margin-bottom-10 clearfix">
+                <h4 class="theme-box-heading mt_0">Complain Escalation Transaction Detail</h4>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-grid">
+                <?=
+                $this->render('_escalation_txn_grid', [
+                    'complain_escalation_txn' => $complain_escalation_txn,
+                    'escalationTxnDataProvider' => $escalationTxnDataProvider
                 ])
                 ?>
             </div>

@@ -59,6 +59,7 @@ class TblVehicleTripController extends \app\controllers\ChildController {
      */
     public function actionCreate() {
         $this->model = new TblVehicleTrip();
+        $this->model->scenario = 'createTrip';
         $this->model->transaction_date = date('Y-m-d');
         $this->viewFile = 'create';
         $bmc_array = [];
@@ -263,8 +264,9 @@ class TblVehicleTripController extends \app\controllers\ChildController {
             $parents = $_POST['depdrop_parents'];
             if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $tripCode = isset($parents[3]) ? $parents[3] : '';
-                $trip = new TblVehicleTripDetail();
-                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);
+
+                $trip = new TblVehicleTripDetail();                
+                $data = $trip->getOpenTripList($parents[0], $parents[1], $parents[2], $tripCode);            
                 foreach ($data as $key => $val) {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
@@ -273,5 +275,4 @@ class TblVehicleTripController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
-
 }

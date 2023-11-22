@@ -110,7 +110,7 @@ class TblMccPaymentHistory extends \yii\db\ActiveRecord {
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['route_code'], 'safe'],
             [['address'], 'safe'],
-            [['pin_code', 'aadhaar_no', 'contact_person_name', 'mobile_no', 'beneficiary_name', ' pan_no', 'gst_no', 'bmc_collection_amount', 'state_code', 'sub_district_code', 'village_code', 'hamlet_code', 'district_code'], 'safe'],
+            [['pin_code', 'aadhaar_no', 'contact_person_name', 'mobile_no', 'beneficiary_name', ' pan_no', 'gst_no', 'bmc_collection_amount', 'state_code', 'sub_district_code', 'village_code', 'hamlet_code', 'district_code', 'minimum_qty', 'minimum_qty_amount', 'total_qty_amount', 'transfered_qty', 'billing_qty', 'received_qty', 'bmc_collection_qty', 'received_amount', 'transfered_amount', 'billing_qty_amount'], 'safe'],
         ];
     }
 
@@ -191,7 +191,9 @@ class TblMccPaymentHistory extends \yii\db\ActiveRecord {
             'pan_no' => Yii::t('app', 'Pan No'),
             'gst_no' => Yii::t('app', 'Gst No'),
             'address' => Yii::t('app', 'Address'),
+            'total_qty_amount' => Yii::t('app', 'Total Qty Amount'),
+            'minimum_qty' => Yii::t('app', 'Minimum Qty'),
+            'minimum_qty_amount' => Yii::t('app', 'Minimum Qty Amount'),
         ];
     }
-
 }
