@@ -1,8 +1,8 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\web\View;
-use zainiafzan\widget\Dropzone;
+use kato\DropZone;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
@@ -59,7 +59,7 @@ echo $form->errorSummary($model);
     <div class="col-sm-12">
         <?php echo Html::hiddenInput('attachment', '', ['id' => 'attachment']); ?>
         <?=
-        Dropzone::widget([
+        DropZone::widget([
             'id' => 'mainDrop',
             'options' => [
                 'acceptedMimeTypes' => ".jpg,.jpeg,.png,.mp4",
@@ -151,7 +151,7 @@ echo $form->errorSummary($model);
                                                                 }
                                                  }'),
                 ],
-                'options' => ['class' => 'btn btn-default btn-raised',
+                'options' => ['class' => 'btn-login btn btn-default btn-raised',
                     'type' => 'submit'],
             ]);
             AjaxSubmitButton::end();
@@ -164,6 +164,7 @@ echo $form->errorSummary($model);
 <?php ActiveForm::end(); ?>
 <?php
 $script = "
+Dropzone.autoDiscover = false;
 $(document).ready(function() {
 
     setTimeout(function() {
