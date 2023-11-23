@@ -2764,14 +2764,14 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_farmer_product_sale_report',
                 'scenario' => 'SaleReportFarmer',
                 'title' => 'Farmer Sale Report',
-                'report_type' => [Yii::t('app', 'Unlock'), Yii::t('app', 'Lock'), Yii::t('app', 'All')],
+                'lock_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],
             ],
             'SaleReportVendor' => [
                 'param' => 'union_code,plant_code,mcc_code,bmc_code,customer_type,vendor_code,product_code,from_date:string,to_date:string,report_type',
                 'sp_name' => 'mis_vendor_product_sale_report',
                 'scenario' => 'SaleReportVendor',
                 'title' => 'Vendor Sale Report',
-                'report_type' => [Yii::t('app', 'Unlock'), Yii::t('app', 'Lock'), Yii::t('app', 'All')],
+                'lock_type' => ['2' => Yii::t('app', 'All'), '0' => Yii::t('app', 'Unlock'), '1' => Yii::t('app', 'Lock')],    
             ],
             'SummaryReportMcc' => [
                 'param' => 'union_code,plant_code,mcc_code,from_date:string,to_date:string',
