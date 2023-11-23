@@ -476,6 +476,9 @@ class SearchFilter {
             'TblPartyPaymentSearch' => [
                 'filter' => ['party_master_code', 'payment_type', 'from_date', 'to_date'],
             ],
+            'TblBannerSearch' => [
+                'filter' => ['f_union_code', 'login_type', 'from_date', 'to_date'],
+            ],
             'TblProductStockPhysicalSearch' => [
                 'filter' => ['f_union_code', 'f_plant_code', 'f_mcc_code', 'f_bmc_code', 'f_dcs_code', 'from_date', 'to_date'],
             ],

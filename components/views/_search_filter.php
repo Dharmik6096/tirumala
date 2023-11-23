@@ -326,7 +326,15 @@ if (!empty($filter_data)) {
                                             <?= Yii::$app->dropdown->dropdown('party_master', $model, $form, ''); ?>
                                         </div>
                                     <?php } ?>
+                                    <?php
+                                    if (in_array($value, array('login_type'))) {
+                                        $f_cnt++
+                                        ?>
+                                        <div class="col-sm-3">
+                                            <?= Yii::$app->dropdown->dropdownStatic('user_login_type', $model, $form, ''); ?>
+                                        </div>
                                     <?php } ?>
+                                <?php } ?>
 
                                 <div class="modal-footer mt10 col-sm-12">
                                     <?php if ($f_cnt > 0) { ?>
