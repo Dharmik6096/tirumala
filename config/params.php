@@ -43,6 +43,7 @@ $eipl_params = [
     'data_exchange_un' => 'umang-admin',
     'data_exchange_pw' => 'P@1234',
     'document_upload' => 'web/document_upload/',
+    'banner_upload' => 'web/uploads/banner_upload/',
 ];
 /* Application Server wise custom param file changes - asmita - 15/06/2023 */
 

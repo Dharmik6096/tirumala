@@ -70,4 +70,14 @@ class TblEiplAppMenuActionsMapping extends \app\models\ChildModel {
                         ->one();
     }
 
+    public function tapEvent($login_type) {
+
+        return $this->find()->select(['tbl_eipl_app_menu_actions.action_name', 'tbl_eipl_app_menu_actions.service_url'])
+                        ->join('INNER JOIN', 'tbl_eipl_app_menu_actions', 'tbl_eipl_app_menu_actions.action_code = tbl_eipl_app_menu_actions_mapping.action_code')
+                        ->where(['in', 'tbl_eipl_app_menu_actions_mapping.login_type', $login_type])
+                        ->andWhere(['IS NOT', 'tbl_eipl_app_menu_actions.service_url', NULL])
+                        ->andWhere(['IS', 'tbl_eipl_app_menu_actions_mapping.department', NULL])
+                        ->asArray()->all();
+    }
+
 }

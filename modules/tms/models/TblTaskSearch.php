@@ -53,7 +53,7 @@ class TblTaskSearch extends TblTask {
         Yii::$app->general->filterByOrg($query, $this, 'tbl_task', 'tbl_task', 'tbl_task');
 
         $from_date = (!empty($this->from_date) ? date('Y-m-d', strtotime($this->from_date)) : date('Y-m-d')) . ' 00:00:00';
-        $to_date = (!empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d')) . ' 00:00:00';
+        $to_date = (!empty($this->to_date) ? date('Y-m-d', strtotime($this->to_date)) : date('Y-m-d')) . ' 23:59:00';
 
         $query->andFilterWhere(['>=', 'tbl_task.task_datetime', $from_date]);
         $query->andFilterWhere(['<=', 'tbl_task.task_datetime', $to_date]);
