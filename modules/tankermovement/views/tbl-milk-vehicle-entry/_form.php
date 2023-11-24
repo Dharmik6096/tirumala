@@ -297,6 +297,7 @@ $script = "
         if (receipt_at !== '' && dispatch_from !== '') {
             if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
                 $('.vehicle_code_hide').css('display', 'block');
+                 $('.tanker_no_hide').css('display', 'none');
                 $('#dispatch-detail').css('display', 'block');                
                 entryTypeField.val('').prop('readonly', false).trigger('change');
             } else if(dispatch_from == 'PARTY') {

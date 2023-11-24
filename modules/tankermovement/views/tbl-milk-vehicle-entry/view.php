@@ -14,6 +14,11 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
         <div class="form-grid">
             <div class="table-responsive">
                 <?php
+                $reldest = Yii::$app->general->getDestRelation(strtolower($model->receipt_at));
+                $attdest = strtolower($model->receipt_at) == 'bmc' ? 'bmc_name' : (strtolower($model->receipt_at) == 'vendor' ? 'customer_name' : (strtolower($model->receipt_at) == 'party' ? 'party_name' : 'name'));
+
+                $relsource = Yii::$app->general->getDestRelation(strtolower($model->dispatch_from));
+                $attsource = strtolower($model->dispatch_from) == 'bmc' ? 'bmc_name' : (strtolower($model->dispatch_from) == 'vendor' ? 'customer_name' : (strtolower($model->dispatch_from) == 'party' ? 'party_name' : 'name'));
                 $attributes = [
                     [
                         'columns' => [
@@ -52,9 +57,8 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'customer_type',
-                                'label' => Yii::t('app', 'Type'),
-                                'value' => Yii::$app->general->getforeignkey($model->customerType, 'customer_desc'),
+                                'attribute' => 'vehicle_entry_date',
+                                'value' => Yii::$app->controls->view_date($model->vehicle_entry_date),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
@@ -62,14 +66,25 @@ $this->title = Yii::$app->label->title('view', 'Milk Receipt');
                     [
                         'columns' => [
                             [
-                                'attribute' => 'customer_code',
-                                'label' => Yii::t('app', 'Name'),
-                                'value' => Yii::$app->general->getCustomer($model, $model->customer_type),
+                                'attribute' => 'receipt_at',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                             [
-                                'attribute' => 'vehicle_entry_date',
-                                'value' => Yii::$app->controls->view_date($model->vehicle_entry_date),
+                                'attribute' => 'receipt_at_code',
+                                'value' => !empty($reldest) ? Yii::$app->general->getforeignkey($model->{$reldest . 'Dest'}, $attdest) . '-' . strtoupper($model->receipt_at_code) : $model->receipt_at_code,
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'dispatch_from',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                            [
+                                'attribute' => 'dispatch_from_code',
+                                'value' => !empty($relsource) ? Yii::$app->general->getforeignkey($model->{$relsource . 'Source'}, $attsource) . '-' . strtoupper($model->dispatch_from_code) : $model->dispatch_from_code,
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
