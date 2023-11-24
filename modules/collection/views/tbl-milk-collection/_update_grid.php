@@ -94,6 +94,18 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
                 return $form->field($model, '[' . $index . ']clr')->textInput(['value' => $model->clr, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
             },
         ],
+            ['attribute' => 'scheme_rate',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']scheme_rate')->textInput(['value' => $model->scheme_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
+            ['attribute' => 'actual_rate',
+            'format' => 'raw',
+            'value' => function ($model, $key, $index) use ($form) {
+                return $form->field($model, '[' . $index . ']actual_rate')->textInput(['value' => $model->actual_rate, 'class' => 'form-control number-validate', 'readonly' => TRUE])->label(FALSE);
+            },
+        ],
             ['attribute' => 'rtpl',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
@@ -107,10 +119,10 @@ echo Html::hiddenInput('collectionCodes', json_encode($collCodes), ['id' => 'col
                 return $form->field($model, '[' . $index . ']amount')->textInput(['class' => 'form-control', 'readonly' => TRUE])->label(FALSE);
             },
         ],
-        ['attribute' => 'antibiotic',
+            ['attribute' => 'antibiotic',
             'format' => 'raw',
             'value' => function ($model, $key, $index) use ($form) {
-                return '<span class=\' antibiotic\'>' .Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', false, false, '[' . $index . ']antibiotic', false, false, true, true). '</span>';
+                return '<span class=\' antibiotic\'>' . Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', false, false, '[' . $index . ']antibiotic', false, false, true, true) . '</span>';
             },
         ],
     ];
@@ -162,7 +174,8 @@ $script = "
         $('#tblmilkcollection-'+tr_key+'-rtpl').val('');
         $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val('');
         $('#tblmilkcollection-'+tr_key+'-amount').val('');
-     
+        $('#tblmilkcollection-'+tr_key+'-actual_rate').val('');
+
          var dcs = $('#tblmilkcollection-'+tr_key+'-dcs_code').val();
          var milk_type = $('#tblmilkcollection-'+tr_key+'-milk_type_code').val();
          var milk_quality_type = $('#tblmilkcollection-'+tr_key+'-milk_quality_type_code').val();
@@ -179,13 +192,16 @@ $script = "
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
                       {
-                            $('#tblmilkcollection-'+tr_key+'-rtpl').val(obj.data.list.rtpl);
+                            var rtpl = parseFloat(obj.data.list.rtpl) + parseFloat($('#tblmilkcollection-'+tr_key+'-scheme_rate').val());
+                            $('#tblmilkcollection-'+tr_key+'-rtpl').val(rtpl);
+                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val(obj.data.list.rtpl);
                             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val(obj.data.list.purchase_rate_code);
                             $('#tblmilkcollection-'+tr_key+'-rtpl').trigger('change');
                         }else{
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
                             $('#tblmilkcollection-'+tr_key+'-rtpl').val('');
                             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val('');
+                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val('');
                       }
                 },
                 error:function(data){
@@ -195,6 +211,7 @@ $script = "
         }else{
             $('#tblmilkcollection-'+tr_key+'-rtpl').val('');
             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val('');
+            $('#tblmilkcollection-'+tr_key+'-actual_rate').val('');
         }
     }
 

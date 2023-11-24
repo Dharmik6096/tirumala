@@ -189,4 +189,15 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
                         ->one();
     }
 
+    public function getSchemeRateApplicableList($data) {
+        return $this->find()
+                        ->select(['tbl_scheme_rate_applicability.rtpl', 'tbl_scheme_rate_applicability.scheme_rate_code'])
+                        ->joinWith(['schemeRateCode'])
+                        ->where(['tbl_scheme_rate_applicability.is_active' => 1, 'tbl_scheme_rate_applicability.applicable_code' => $data['dcs_code']])
+                        ->andWhere(['<=', 'tbl_scheme_rate_applicability.from_date', $data['dt_date']])
+                        ->andWhere(['>=', 'tbl_scheme_rate_applicability.to_date', $data['dt_date']])
+                        ->orderBy('tbl_scheme_rate_applicability.from_date desc')
+                        ->one();
+    }
+
 }

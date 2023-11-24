@@ -123,6 +123,7 @@ $script = "
     }
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
+        schemeRate();
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
@@ -204,12 +205,17 @@ $script = "
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
                       {
-                            $('#tblmilkcollection-rtpl').val(obj.data.list.rtpl);
+                      
+                        var rtpl = parseFloat(obj.data.list.rtpl) + parseFloat($('#tblmilkcollection-scheme_rate').val());
+                            $('#tblmilkcollection-rtpl').val(rtpl);
+                            $('#tblmilkcollection-actual_rate').val(obj.data.list.rtpl);
                             $('#tblmilkcollection-purchase_rate_code').val(obj.data.list.purchase_rate_code);
                             $('#tblmilkcollection-rtpl').trigger('change');
+                            $('#tblmilkcollection-actual_rate').trigger('change');
                       }else{
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
                             $('#tblmilkcollection-rtpl').val('');
+                            $('#tblmilkcollection-actual_rate').val('');
                             $('#tblmilkcollection-rate_code').val('');
                       }
                 },
@@ -284,6 +290,37 @@ $script = "
                             bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+obj.msg+'</span></div></div>');
                             $('#tblmilkcollection-milk_type_code').val(obj.data);
                             $('#tblmilkcollection-milk_type_code').trigger('change');
+                        }
+                    },
+                    error:function(data){
+
+                    }
+                });
+            }
+    };
+    
+    $('.scheme_rate select').change(function(){
+        schemeRate();
+    });
+    $('.scheme_rate input').change(function(){
+        schemeRate();
+    });
+    function schemeRate(){
+        var dcs = $('#tblmilkcollection-dcs_code').val();
+        var shift = $('#tblmilkcollection-shift_code').val();
+        var dt_date = $('#tblmilkcollection-date_time_of_collection').val();
+            if(dcs !='' && shift !='' && dt_date !=''){
+                $.ajax({
+                    type: 'post',
+                    url:'" . Url::to(['scheme-rate']) . "',
+                    data: {'dcs_code':dcs,'shift_code':shift,'dt_date':dt_date},
+                    success: function(data) {                                        
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            $('#tblmilkcollection-scheme_rate').val(obj.data.list.rtpl);
+                            $('#tblmilkcollection-scheme_rate_code').val(obj.data.list.scheme_rate_code)
+                            $('#tblmilkcollection-scheme_rate').trigger('change');
                         }
                     },
                     error:function(data){

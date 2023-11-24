@@ -26,13 +26,14 @@ use app\modules\collection\models\OnlineCollectionModel;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use PHPExcel;
+use app\modules\dcsoperation\models\TblSchemeRateApplicability;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
  */
 class TblMilkCollectionController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'qlty-type-config', 'check-fat-range'];
+    public $freeAccessActions = ['validate-rtpl', 'validate-member', 'calculate-clr', 'list-grid', 'qlty-type-config', 'check-fat-range', 'scheme-rate'];
     public $fileDownloadArr = [];
 
     /**
@@ -1346,6 +1347,25 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             return $this->renderAjax('_real_time_collection_details', ['mcc_weight_data' => $mcc_weight_data, 'mcc_quality_data' => $mcc_quality_data]);
         }
         return $this->render('real_time_collection');
+    }
+
+    public function actionSchemeRate() {
+        $response = [];
+        $response['status'] = 'error';
+        $data['dcs_code'] = Yii::$app->request->post('dcs_code');
+        $data['dt_date'] = Yii::$app->request->post('dt_date');
+        $data['dt_date'] = (Yii::$app->request->post('dt_date')) ? Yii::$app->formatter->asDate(Yii::$app->request->post('dt_date'), DATE_FORMAT) : '';
+        $data['shift'] = Yii::$app->request->post('shift_code');
+        $data['dt_date'] = $data['dt_date'] . ' ' . \Yii::$app->general->getshift($data['shift']);
+        $model = new TblSchemeRateApplicability();
+        $model_data = $model->getSchemeRateApplicableList($data);
+
+        if (!empty($model_data)) {
+            $response['status'] = 'success';
+            $schme_rate_data['list'] = $model_data;
+            $response['data'] = $schme_rate_data;
+        }
+        return Json::encode($response);
     }
 
 }
