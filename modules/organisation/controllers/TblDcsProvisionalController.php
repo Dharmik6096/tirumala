@@ -64,7 +64,7 @@ class TblDcsProvisionalController extends ChildController {
 
     public $bankDetails;
     public $contactDetails;
-//    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
+    //    public $freeAccessActions = ['dcs-list', 'get-bmc-dcs', 'merge-dcs-customer-list', 'payment-cycle-dcs-list', 'merge-bmc-dcs-list'];
     public $freeAccessActions = [];
     public $showIsBMC;
 
@@ -99,7 +99,7 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->getCode();
-//            $this->model->cutoff_val = (double) $this->model->cutoff_val;
+            //            $this->model->cutoff_val = (double) $this->model->cutoff_val;
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -308,7 +308,8 @@ class TblDcsProvisionalController extends ChildController {
     }
 
     protected function customRender() {
-        return $this->render($this->viewFile, ['model' => $this->model,
+        return $this->render($this->viewFile, [
+                    'model' => $this->model,
                     'bankDetails' => $this->bankDetails,
                     'contactDetails' => $this->contactDetails,
                     'showIsBMC' => $this->showIsBMC
@@ -370,8 +371,22 @@ class TblDcsProvisionalController extends ChildController {
             if (!empty($model_save)) {
                 $next_count = TblProcessApproval::find()
                         ->where(['process_code' => $model->process_code, 'status' => 0])
-                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
-                        ->count();
+                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
+                if ($model->approval_mode == 'flexi') {
+                    $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
+                    $all_level = TblProcessApproval::find()
+                                    ->where(['process_code' => $model->process_code, 'status' => 0])
+                                    ->andWhere(['level' => $model->level])->all();
+
+                    foreach ($all_level as $level) {
+                        $approvalHistoryModel = new TblProcessApprovalHistory();
+                        Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
+                        $model_save[] = $approvalHistoryModel;
+                        $level->status = $model->status;
+                        $model_save[] = $level;
+                    }
+                }
+                $next_count = $next_count->count();
                 if ($model->status == '2') {
                     $status = 'Reject';
                 } else if ($model->status == '1' && $next_count > 0) {
@@ -387,17 +402,38 @@ class TblDcsProvisionalController extends ChildController {
                 $dcsModel->remarks = $model->remarks;
                 $dcsModel->scenario = 'approveDcs';
                 $model_save[] = $dcsModel;
+                $all_doc = [];
+                $dcsdoc = [];
                 if ($status == 'Approve') {
-                    $transaction = $this->createDcs($dcsModel, $model_save);
+                    $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc);
                 } else {
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
                 if ($transaction == 'customRedirect') {
+
+                    if ($status == 'Approve') {
+                        $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                        $dcsDir = $baseDir . 'dcs';
+                        $proDcsDir = $baseDir . 'provisional_dcs';
+                        for ($i = 0; $i < count($all_doc); $i++) {
+                            $fileName = basename($dcsdoc[$i]);
+                            $file = $dcsDir . '/' . $fileName;
+                            $upload = copy($proDcsDir . '/' . $all_doc[$i], $file);
+                            if ($upload) {
+                                if (file_exists($proDcsDir . '/' . $all_doc[$i])) {
+                                    unlink($proDcsDir . '/' . $all_doc[$i]);
+                                }
+                            }
+                        }
+                    }
+
                     return $this->redirect(['pending-approval']);
                 }
             } else {
-                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                    'message' => 'Dcs provisional already approved by other user.']);
+                Yii::$app->getSession()->setFlash('success', [
+                    'type' => 'error',
+                    'message' => 'Dcs provisional already approved by other user.'
+                ]);
             }
         }
         return $this->render('approve_dcs', [
@@ -405,7 +441,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc) {
         if (!empty($dcsProvisional)) {
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
@@ -424,7 +460,7 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->vendor = $dcsProvisional->vendor;
             $this->model->milk_type_code = $dcsProvisional->milk_type_code;
 
-//            $this->model->load($dcsProvisional->attributes);
+            //            $this->model->load($dcsProvisional->attributes);
             $this->model->dcs_code = $this->model->getCode();
             //set mapping data
             $mapList = [];
@@ -440,7 +476,7 @@ class TblDcsProvisionalController extends ChildController {
             $modelCodes->union_code = $this->model->union_code;
             $modelCodes->bmc_code = $this->model->bmc_code;
             array_push($mapList, $modelCodes);
-//            $this->bankDetails->load($dcsProvisional);
+            //            $this->bankDetails->load($dcsProvisional);
             $this->bankDetails->attributes = $dcsProvisional->attributes;
             $bankValidate = 1;
             if (!empty($this->bankDetails->bank_code)) {
@@ -449,7 +485,7 @@ class TblDcsProvisionalController extends ChildController {
                 array_push($mapList, $this->bankDetails);
                 $bankValidate = Yii::$app->warning->codeWarningBankAc($this->bankDetails);
             }
-//            $this->contactDetails->load($dcsProvisional);
+            //            $this->contactDetails->load($dcsProvisional);
             $this->contactDetails->attributes = $dcsProvisional->attributes;
             if (!empty($this->contactDetails->mobile_no)) {
                 $this->contactDetails->setModel('society', $this->model->dcs_code);
@@ -459,33 +495,75 @@ class TblDcsProvisionalController extends ChildController {
             if ($this->model->default_milk_type == 8) {
                 $this->model->milk_type_auto = 1;
             }
-//            $this->model->milk_type_code = !empty($dcsProvisional['milk_type']) ? explode(',', $dcsProvisional['milk_type']) : [];
+            //            $this->model->milk_type_code = !empty($dcsProvisional['milk_type']) ? explode(',', $dcsProvisional['milk_type']) : [];
             $modelMilkType = $this->setMilk();
-//            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
+            //            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
             //set vendor applicability
             if ($this->model->vendor != 'NA') {
                 $vendorModel = new TblSocietyVendor();
                 $vendorModel->dcs_code = $this->model->dcs_code;
-//                $vendorModel->vendor_code = $this->model->vendor;
+                //                $vendorModel->vendor_code = $this->model->vendor;
                 $vendorModel->vendor_code = $this->model->vendor_code;
                 array_push($mapList, $vendorModel);
             }
             if ($bankValidate == 1) {
-//            if ($bankValidate == 1 && $_POST['warning'] == 0) {
+                //            if ($bankValidate == 1 && $_POST['warning'] == 0) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
-//                $this->model->cutoff = '0000';
+                //                $this->model->cutoff = '0000';
                 if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
                     $val = str_replace('.', '', $this->model->cutoff_val);
                     $val = str_pad($val, 3, '0', STR_PAD_LEFT);
                     $milkType = Yii::$app->general->getforeignkey($this->model->lowerMilkType, 'short_name');
                     $cutOffVal = $val . strtoupper($milkType);
                     $this->model->cutoff = substr($cutOffVal, -4);
+                }
+
+
+                $tblAttachment = new TblAttachment();
+                $tblAttachment = $tblAttachment->getAttachment((string) $dcsProvisional->dcs_provisional_code);
+                $doc_path = Yii::$app->params['document_upload'] . 'dcs';
+                if (!empty($tblAttachment)) {
+                    foreach ($tblAttachment as $key => $doc) {
+                        $all_attachment[] = $doc->file_name;
+                        $tblAttachments = new TblAttachment();
+                        $tblAttachments->attributes = $doc->attributes;
+                        if (Yii::$app->general->checkDirectory($doc_path)) {
+                            if (!empty($doc->file_name)) {
+                                $dcsProvisionalCode = (string) $dcsProvisional->dcs_provisional_code;
+                                $attach = TblAttachment::find()
+                                        ->where(['module_code' => $dcsProvisionalCode, 'module_name' => 'tbl_dcs_provisional', 'doc_id' => $doc->doc_id])
+                                        ->one();
+                                $extension = explode('.', $doc->file_name)[1];
+                                $file_name = 'dcs' . '_' . $this->model->dcs_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
+                                $attachment = $doc_path . '/' . $file_name;
+                                if (!empty($attach)) {
+                                    $attachHistoryModel = new TblAttachmentHistory();
+                                    Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
+                                    $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                                    $attach->file_name = $file_name;
+                                    $model_save[] = $attach;
+                                    $model_save[] = $attachHistoryModel;
+                                }
+                                $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                                $tblAttachments->module_name = 'tbl_dcs';
+                                $tblAttachments->module_code = $this->model->dcs_code;
+                                $tblAttachments->file_name = $file_name;
+                                $dcsdoc[] = $file_name;
+                                $model_save[] = $tblAttachments;
+                            }
+                        } else {
+                            Yii::$app->getSession()->setFlash('success', [
+                                'type' => 'error',
+                                'message' => 'Error while create directory.'
+                            ]);
+                        }
+                    }
                 }
                 $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create']);
                 if ($transaction !== FALSE) {
@@ -604,20 +682,25 @@ class TblDcsProvisionalController extends ChildController {
                 $child->decryptModel($m);
             }
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => 'Your transaction is not saved successfully']);
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => 'Your transaction is not saved successfully'
+            ]);
             return 'customRender';
         } catch (UserException $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => $e->getMessage()]);
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => $e->getMessage()
+            ]);
             return false;
         } catch (\yii\db\Exception $e) {
             $transaction->rollback();
-            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')]);
+            Yii::$app->getSession()->setFlash('success', [
+                'type' => 'error',
+                'message' => htmlspecialchars($e->errorInfo[2], ENT_QUOTES, 'UTF-8')
+            ]);
             return false;
         }
     }
-
 }
