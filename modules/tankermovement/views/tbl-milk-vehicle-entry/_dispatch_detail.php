@@ -23,7 +23,7 @@
                 <td><?= Yii::$app->controls->view_date($data->to_date) ?></td>                
                 <td><?= Yii::$app->general->getforeignkey($data->toShiftCode, 'shift') ?></td>                
                 <td><?= Yii::$app->general->getforeignkey($data->vehicleCode, 'parsing_no') ?></td> 
-                <td><?=$data->total_dispatch_qty?></td>
+                <td><?=$data->gross_weight?></td>
                 <td><?= Yii::$app->controls->view_time($data->vehicle_in_time) ?></td>                
                 <td><?= Yii::$app->controls->view_time($data->vehicle_out_time) ?></td>                               
             </tr>
