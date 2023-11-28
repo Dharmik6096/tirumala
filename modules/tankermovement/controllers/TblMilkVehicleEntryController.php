@@ -13,6 +13,7 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use kartik\widgets\ActiveForm;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -253,7 +254,12 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionDispatchDetail() {
-        $existData = TblBmcMilkDispatch::find()->where(['trip_code' => Yii::$app->request->get('trip_code')])->all();
+         $subquery = TblBmcMilkDispatchTxn::find()->select(['total_dispatch_qty = sum(dispatch_qty)', 'bmc_milk_dispatch_code'])->groupBy(['bmc_milk_dispatch_code']);
+        $existData = TblBmcMilkDispatch::find()
+                ->alias('bmd')
+                ->select(['bmd.*','a.total_dispatch_qty'])
+                ->InnerJoin(['a' => $subquery],'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
+                ->where(['trip_code' => Yii::$app->request->get('trip_code')])->all();
         return $this->renderAjax('_dispatch_detail', [
                     'existData' => $existData,
         ]);

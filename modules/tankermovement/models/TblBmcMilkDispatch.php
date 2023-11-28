@@ -57,7 +57,7 @@ use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
  */
 class TblBmcMilkDispatch extends \app\models\ChildModel {
 
-    public $transporter_code;
+    public $transporter_code,$total_dispatch_qty;
 
     /**
      * @inheritdoc
