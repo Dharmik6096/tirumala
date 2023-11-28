@@ -429,10 +429,9 @@ $this->registerJs($script, View::POS_END, 'bmc-config-popup');
 ?>
 <?php
 $script = "$(document).ready(function(){
-    $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date,  #tblbmcmilkdispatch-transaction_date', function() {
+    $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
         var to_date = $('#tblbmcmilkdispatch-to_date').val();
-        var dispatch_date = $('#tblbmcmilkdispatch-transaction_date').val();
         if (from_date !== '' && to_date !== '') {
             // Split date strings and format them as yyyy-mm-dd
             var from_date_parts = from_date.split('-');
@@ -450,23 +449,6 @@ $script = "$(document).ready(function(){
                 $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
             } else {
                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-            }
-            if(dispatch_date !== ''){
-                var dis_parts = dispatch_date.split('-');
-                var formatted_dispatch_date = dis_parts[2] + '-' + dis_parts[1] + '-' + dis_parts[0];
-                var disDateObj = new Date(formatted_dispatch_date);
-                var date = new Date(formatted_to_date);
-                date.setDate(date.getDate() + 1);
-                if(!(disDateObj >= toDateObj && disDateObj <= date)){
-                    var errorMessage = 'dispatch date should be to_date/+1';
-                    var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
-                    $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
-                    $('.field-tblbmcmilkdispatch-transaction_date').append(errorElement);
-                } else {
-                    $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
-                }
-            }else{
-                 $('.field-tblbmcmilkdispatch-transaction_date .error-message').remove();
             }
         } else {
             $('.field-tblbmcmilkdispatch-to_date .error-message').remove();

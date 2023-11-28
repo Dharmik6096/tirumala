@@ -223,7 +223,7 @@ class TblBmcMilkDispatchTxn extends \app\models\ChildModel {
             $this->current_dispatch_qty = $result[0]['current_dispatch_qty'];
             $bal = ($this->opening_bal + $this->purchase_qty) - ($this->current_dispatch_qty + $this->dispatch_qty);
            // $balance = abs($bal);
-            $balance = number_format((float)$bal, 2, '.', '');
+            $balance = number_format((float)abs($bal), 2, '.', '');
             $this->balance_qty = number_format((float)$this->balance_qty, 2, '.', '');
             if ($this->qty_diff_type_code == 1) {
                 if ($bal < 0) {
