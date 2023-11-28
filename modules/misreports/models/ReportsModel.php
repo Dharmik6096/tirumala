@@ -163,6 +163,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'route_type_trans' => \Yii::t('app', 'Route Type'),
             'member' => \Yii::t('app', 'Member'),
             'channel_code' => \Yii::t('app', 'Channel'),
+            'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : \Yii::t('app', 'Report Type'),
         ];
     }
 
