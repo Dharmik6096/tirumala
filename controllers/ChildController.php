@@ -35,9 +35,7 @@ class ChildController extends Controller {
         }
 
         parent::init();
-//        $language = (!empty(Yii::$app->session->get('organizations_code')) && Yii::$app->session->get('organizations_type') == 'UNION' && count(explode(',', Yii::$app->session->get('organizations_code')) == 1)) ? Yii::$app->session->get('organizations_code') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
-        $language = (!empty(Yii::$app->session->get('eiplCode'))) ? Yii::$app->session->get('eiplCode') . '/' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
-        $language = Yii::$app->session->get('LanguageCode');
+        $language = (!empty(Yii::$app->session->get('eiplCode'))) ? Yii::$app->session->get('eiplCode') . '_' . Yii::$app->session->get('LanguageCode') : Yii::$app->session->get('LanguageCode');
         \Yii::$app->language = $language;
         $path = Yii::$app->basePath . '/messages/' . $language;
         if (!file_exists($path)) {
@@ -71,7 +69,7 @@ class ChildController extends Controller {
             'access' => [
                 'class' => 'yii\filters\AccessControl',
                 'rules' => [
-                        [
+                    [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
