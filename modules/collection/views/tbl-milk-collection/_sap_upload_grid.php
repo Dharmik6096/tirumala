@@ -85,10 +85,10 @@ $form = ActiveForm::begin([
         echo Html::button(Yii::t('app', 'PUSH To FTP'), ['class' => 'btn btn-primary', 'id' => 'upload', 'value' => 'upload', 'name' => 'upload']);
     }
     if (!empty($dataProvider->getModels())) {
-        echo Html::button(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'download', 'value' => 'download', 'name' => 'download']);
+        echo Html::button(Yii::t('app', 'DOWNLOAD'), ['class' => 'btn-login btn btn-primary', 'id' => 'download', 'value' => 'download', 'name' => 'download']);
         if ($eiplCode == 'DODLA') {
-            echo Html::button(Yii::t('app', 'BULK DOWNLOAD'), ['class' => 'btn btn-primary', 'id' => 'bulk_download', 'value' => 'bulk_download', 'name' => 'bulk_download']);
-            echo Html::button(Yii::t('app', 'BULK DOWNLOAD(SHIFT)'), ['class' => 'btn btn-primary', 'id' => 'bulk_download_shift_wise', 'value' => 'bulk_download_shift_wise', 'name' => 'bulk_download_shift_wise']);
+            echo Html::button(Yii::t('app', 'BULK DOWNLOAD'), ['class' => 'btn-login btn btn-primary', 'id' => 'bulk_download', 'value' => 'bulk_download', 'name' => 'bulk_download']);
+            echo Html::button(Yii::t('app', 'BULK DOWNLOAD(SHIFT)'), ['class' => 'btn-login btn btn-primary', 'id' => 'bulk_download_shift_wise', 'value' => 'bulk_download_shift_wise', 'name' => 'bulk_download_shift_wise']);
         }
     }
     ?>
