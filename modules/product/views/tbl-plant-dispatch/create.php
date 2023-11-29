@@ -56,8 +56,12 @@ $script = "
     $('#tblplantdispatchtxn-amount').on('change', function(){
         addBtnEnable();
     });
+    
+    $('#tblplantdispatchtxn-sap_batch_no').on('change', function(){
+        checkPlantBatchNoExist();
+        addBtnEnable();
+    });
    
-  
     function setUnit(){
         var product = $('#tblplantdispatchtxn-product_code').val();
          if(setData(product)){
@@ -124,8 +128,9 @@ $script = "
         var rate = $('#tblplantdispatchtxn-rate').val();
         var qty = $('#tblplantdispatchtxn-qty').val();
         var amount = $('#tblplantdispatchtxn-amount').val();
+        var sap_batch_no = $('#tblplantdispatchtxn-sap_batch_no').val();
         
-        if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '') {
+        if(dispatch_date != '' && plant_code != '' && mcc_plant_code != '' && document_no != '' && document_date != '' && product_code != '' && unit_code != '' && qty != '' && rate != '' && amount != '' && sap_batch_no != '') {
             $('.add-asset-record').removeClass('disabled no_pointer');
         } else {
             $('.add-asset-record').addClass('disabled no_pointer');
@@ -151,7 +156,17 @@ $script = "
                 return false;
             }
         }
-        if(product_code != '' && qty != ''){
+        var flag=true;
+        if(sap_batch_no != ''){
+            $('.added_sap_batch_no').each(function (index, field){
+                if(field.value == sap_batch_no){
+                    var msg = '" . Yii::t('app', 'SAP batch no already exists for another product') . "';
+                    bootbox.alert(\"<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-danger\'><i class=\'fa fa-times\'></i></div><span>\"+msg+\"</span></div></div>\");
+                    flag=false;
+                }
+            });       
+        }
+        if(product_code != '' && qty != '' && flag){
             var add_row = '';
             var add_class = 'test';
             add_class = 'disabled';
@@ -240,7 +255,32 @@ $script = "
                     }
                 });
         } 
-    
+        
+    }
+    function checkPlantBatchNoExist() {
+        var sapNo = $('#tblplantdispatchtxn-sap_batch_no').val();
+
+        if (setData(sapNo)) {
+            $.ajax({
+                type: 'post',
+                url: '" . Url::to(['check-unique-sap-no']) . "',
+                data: {'sapNo': sapNo},
+                success: function(data) {
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'error') {
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>" . Yii::t('app', 'Sap No. Is Already available.') . "</span></div></div>', function(result) {
+                            setTimeout(function() {
+                                $('#tblplantdispatchtxn-sap_batch_no').focus();
+                            }, 100);
+                        });
+                        $('#tblplantdispatchtxn-sap_batch_no').val('');
+                    }
+                },
+                error: function(data) {
+                    // Handle error if needed
+                }
+            });
+        }
     }
 ";
 $this->registerJs($script, View::POS_END, 'create-plant-dispatch');
