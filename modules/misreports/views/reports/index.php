@@ -478,9 +478,6 @@ $downloadSapFiles = json_encode($fileDownloadArr);
                                     if (isset($data['report_type'])) {
                                         echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['report_type']);
                                     }
-                                    if (isset($data['lock_type'])) {
-                                        echo $form->field($model, 'report_type', ['options' => ['class' => 'form-group col-sm-3']])->dropDownList($data['lock_type'])->label('Lock Type');
-                                    }
                                     if (isset($data['dynamic'])) {
                                         echo Html::hiddenInput('dynamic_report', $data['dynamic']);
                                     }
