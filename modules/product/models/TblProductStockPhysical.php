@@ -8,22 +8,21 @@ use app\modules\organisation\models\TblMccPlant;
 use app\modules\organisation\models\TblDcs;
 use app\modules\product\models\TblProduct;
 
-class TblProductStockPhysical extends ChildModel
-{
+class TblProductStockPhysical extends ChildModel {
+
     public $customer_type, $customer_code;
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_stock_physical';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['product_code', 'qty', 'stock_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['customer_type', 'customer_code'], 'safe'],
@@ -31,7 +30,7 @@ class TblProductStockPhysical extends ChildModel
             [['stock_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['stock_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['stock_date'], 'convertDate', 'on' => ['importCsv']],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::class, 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
+            [['product_code'], 'validProductCode', 'on' => ['importCsv']],
             [['customer_type', 'customer_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
             [['product_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
@@ -41,8 +40,7 @@ class TblProductStockPhysical extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'product_stock_physical_code' => Yii::t('app', 'Product Stock Physical Code'),
             'product_code' => Yii::t('app', 'Product Code'),
@@ -68,18 +66,19 @@ class TblProductStockPhysical extends ChildModel
         ];
     }
 
-    public function getDcsCode()
-    {
+    public function getDcsCode() {
         return $this->hasOne(TblDcs::class, ['dcs_code' => 'dcs_code']);
     }
 
-    public function getTblMccPlant()
-    {
+    public function getTblMccPlant() {
         return $this->hasOne(TblMccPlant::class, ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function convertDateDot()
-    {
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::class, ['product_code' => 'product_code']);
+    }
+
+    public function convertDateDot() {
         try {
             $this->stock_date = Yii::$app->controls->view_date($this->stock_date, 'php:d.m.Y');
         } catch (\Exception $e) {
@@ -87,15 +86,13 @@ class TblProductStockPhysical extends ChildModel
         }
     }
 
-    public function convertDate()
-    {
+    public function convertDate() {
         if (empty($this->getErrors())) {
             $this->stock_date = !empty($this->stock_date) ? Yii::$app->controls->view_date($this->stock_date, 'php:Y-m-d') : NULL;
         }
     }
 
-    public function setData()
-    {
+    public function setData() {
         if ($this->customer_type == 'MCC') {
             $mccData = TblMccPlant::find()->where(['ref_code' => $this->customer_code])->one();
             if (!empty($mccData)) {
@@ -121,22 +118,33 @@ class TblProductStockPhysical extends ChildModel
         }
     }
 
-    public function validateUniqueStockEntry($attribute, $params)
-    {
+    public function validateUniqueStockEntry($attribute, $params) {
         if (!$this->hasErrors()) {
             $existingRecord = $this->find()
-                ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date]);
+                    ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date]);
             if ($this->customer_type == 'MCC') {
                 $existingRecord->andWhere(['mcc_plant_code' => $this->mcc_plant_code])
-                                ->andWhere(['is','dcs_code', null]);
+                        ->andWhere(['is', 'dcs_code', null]);
             } else {
                 $existingRecord->andWhere(['dcs_code' => $this->dcs_code]);
             }
-            $existingRecord =  $existingRecord->one();
+            $existingRecord = $existingRecord->one();
             if (!empty($existingRecord)) {
                 $this->addError($attribute, 'A record with the same product code and stock date already exists.');
                 return false;
             }
         }
     }
+
+    public function validProductCode($attribute, $params) {
+        $product = new TblProduct();
+        $data = $product->find()->select('product_code')->where(['or', ['product_code' => $this->product_code], ['item_code' => $this->product_code]])->all();
+        if (count($data) == 1) {
+            $this->product_code = $data[0]->product_code;
+        } else {
+            $this->addError($attribute, 'Product Code is invalid.');
+            return false;
+        }
+    }
+
 }
