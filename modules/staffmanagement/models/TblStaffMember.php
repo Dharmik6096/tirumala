@@ -127,7 +127,7 @@ class TblStaffMember extends \app\models\ChildModel {
             [['aadhar_card_no'], 'string', 'max' => 16],
             [['address'], 'string', 'max' => 500],
             [['email_id', 'mobile_no'], 'string', 'max' => 255],
-            [['pincode', 'branch_code', 'village_code'], 'string', 'max' => 6],
+            [['branch_code', 'village_code'], 'string', 'max' => 6],
             [['staff_member_name'], 'string', 'max' => 200],
             [['bank_code'], 'string', 'max' => 4],
             [['district_code'], 'string', 'max' => 3],
