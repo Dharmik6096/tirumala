@@ -432,7 +432,6 @@ $script = "$(document).ready(function(){
     $(document).on('change', '#tblbmcmilkdispatch-from_date, #tblbmcmilkdispatch-to_date', function() {
         var from_date = $('#tblbmcmilkdispatch-from_date').val();
         var to_date = $('#tblbmcmilkdispatch-to_date').val();
-        
         if (from_date !== '' && to_date !== '') {
             // Split date strings and format them as yyyy-mm-dd
             var from_date_parts = from_date.split('-');
@@ -442,7 +441,7 @@ $script = "$(document).ready(function(){
 
             var fromDateObj = new Date(formatted_from_date);
             var toDateObj = new Date(formatted_to_date);
-
+           
             if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                 var errorMessage = 'must not be less than from date.';
                 var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
