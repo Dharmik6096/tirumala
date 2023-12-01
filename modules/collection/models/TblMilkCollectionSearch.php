@@ -29,7 +29,7 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 [['fat', 'snf', 'water', 'qty', 'rtpl', 'amount', 'milk_type_code', 'operator_fat', 'operator_snf', 'operator_qty', 'operator_amount', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_collection_type', 'sap_data_post_status', 'mcc_plant_code', 'bmc_code', 'ref_code', 'dcs_name'], 'safe'],
                 [['sap_collection_type'], 'required', 'on' => 'repostSapData'],
                 [['protein', 'density', 'lactose', 'incentive', 'deduction', 'total_amount', 'qty_mode', 'originating_org_type', 'originating_type'], 'safe'],
-                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'safe'],
+                [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'scheme_rate', 'actual_rate', 'scheme_rate_code'], 'safe'],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'dcs_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['updateMilkCollection']],
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection', 'bulkdeleteMilkCollection']],
                 [['to_date'], 'validateToDate', 'on' => ['bulkdeleteMilkCollection']],
@@ -165,11 +165,11 @@ class TblMilkCollectionSearch extends TblMilkCollection {
         $this->load($params);
 //        $query = Collectionfarmer::find();
 
-        $ApprovalData = TblCollectionDataAlias::find()->select(['mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Not Verified'")])
+        $ApprovalData = TblCollectionDataAlias::find()->select(['mcc_plant_code', 'bmc_code', 'dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'scheme_rate', 'actual_rate', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Not Verified'")])
                 ->where(['mcc_plant_code' => $this->mcc_plant_code, 'bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'dcs_code' => $this->dcs_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_milk_collection'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
+        $query = $this->find()->select(['tbl_milk_collection.mcc_plant_code', 'tbl_milk_collection.bmc_code', 'tbl_milk_collection.dcs_code', 'member_code', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr',  'scheme_rate', 'actual_rate','rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'status' => new Expression("'Verified'")]);
 
 
         $unionQuery = (new ActiveQuery(TblMilkCollection::className()))->from([

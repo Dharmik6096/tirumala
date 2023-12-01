@@ -42,10 +42,10 @@ $form = ActiveForm::begin([
         <div class="col-sm-2  create_fields">
             <?= Yii::$app->dropdown->bmc_society($model, $form, 'tblmilkcollection-bmc_code', 'dcs_code', Yii::t('app', 'Society')); ?>
         </div>
-        <div class="col-sm-1 rtpl_validate create_fields">
+        <div class="col-sm-1 rtpl_validate create_fields scheme_rate">
             <?= Yii::$app->controls->date($model, $form, 'date_time_of_collection', '', date('Y-m-d'), false, $readonly, true); ?>
         </div>
-        <div class="col-sm-1 shift rtpl_validate create_fields">
+        <div class="col-sm-1 shift rtpl_validate create_fields scheme_rate">
             <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'shift_code', true, $readonly, 'shift_code'); ?>
         </div>
         <div class="col-sm-1 Button disabled mb25 ml15 padding_top_20">
@@ -83,6 +83,13 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-1  reset_field  number-validate">
             <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'scheme_rate')->textInput(['readOnly' => true]) ?>
+            <?= $form->field($model, 'scheme_rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
+        </div>
+        <div class="col-sm-1 reset_field">
+            <?= $form->field($model, 'actual_rate')->textInput(['readOnly' => true]) ?>
         </div>
         <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
