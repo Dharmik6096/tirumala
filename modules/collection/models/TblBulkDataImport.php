@@ -53,7 +53,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 [['customer_type'], 'default', 'value' => 'DCS'],
                 [['shift_code', 'sample_no', 'date_time_of_collection'],  'required'],
                 [['bmc_code'],  'required', 'except' => 'milk_collection_dpu_data'],
-
+                [['qlty_auto', 'qty_auto'], 'default', 'value' => 0],
                 [['fat', 'snf'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','milk_collection_dpu_data']],
 
                 [['milk_type_code'], 'required', 'on' => ['bmc_collection', 'bmc_collection_antibiotic', 'milk_collection', 'milk_collection_qlty', 'bmc_collection_mapped', 'milk_collection_allow', 'bmc_collection_allow', 'milk_collection_qlty_allow', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can','bmc_collection_bmc_route','bmc_collection_bmc_can','bmc_collection_route_can','bmc_collection_bmc_route_can','milk_collection_dpu_data']],
@@ -143,14 +143,9 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
             $this->milk_type_code = 'M';
         }
 
-        if (in_array($this->shift_code, $shiftCode)) {
-            $this->shift_code = 1;
-        } else {
-            $this->shift_code = 0;
-        }
-
+        $this->shift_code = in_array($this->shift_code, $shiftCode) ? 1 : 2;
         $this->bmc_code = 0;
-        $this->own_bmc_code = $this->own_bmc_code;
+        $this->own_bmc_code = $this->bmc_code;
         $this->qlty_auto = (strtoupper($this->qlty_auto) == 'AUTOMATIC') ? 1 : 0;
         $this->qty_auto = (strtoupper($this->qty_auto) == 'AUTOMATIC') ? 1 : 0;
     }
