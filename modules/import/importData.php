@@ -170,6 +170,7 @@ class importData extends \yii\base\Module {
             'bonus-payment-previous-data' => ['import_class' => 'tbl_bonus_payment_previous_data', 'table_name' => 'tbl_bonus_payment_previous_data', 'fields' => 'bmc_code,dcs_code,member_code,transaction_date,bill_head_code,amount,remarks', 'default_fields' => 'originating_type:1', 'scenario' => 'importCsv'],
             'product-stock-physical' => ['table_name' => 'tbl_product_stock_physical', 'fields' => 'customer_type,customer_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
             'product-stock-sap' => ['table_name' => 'tbl_product_stock_sap', 'fields' => 'mcc_plant_code,stock_date,product_code,qty', 'scenario' => 'importCsv'],
+            'import-shagun-dpu-data' => ['table_name' => 'tbl_bulk_data_import', 'import_main_class' => 'BulkImportStrategy', 'fields' => 'dcs_code,date_time_of_collection,member_code,shift_code,qty,fat,snf,rtpl,amount,milk_type_code,qty_auto,qlty_auto,calibration_value_fat,calibration_value_snf,sample_no', 'scenario' => 'milk_collection_dpu_data', 'validate_length' => FALSE, 'accept_old_template' => TRUE],
         ];
         return $label[$l];
     }
