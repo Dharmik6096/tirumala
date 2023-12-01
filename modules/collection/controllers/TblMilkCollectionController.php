@@ -26,7 +26,6 @@ use app\modules\collection\models\OnlineCollectionModel;
 use app\modules\organisation\models\TblBmcMilkType;
 use app\modules\bkgprocess\models\TblFtpTxnLog;
 use PHPExcel;
-use app\modules\dcsoperation\models\TblSchemeRateApplicability;
 
 /**
  * TblMilkCollectionController implements the CRUD actions for TblMilkCollection model.
@@ -1348,4 +1347,5 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
         }
         return $this->render('real_time_collection');
     }
+
 }
