@@ -98,6 +98,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-1 reset_field">
             <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', $model->getAttributeLabel('antibiotic'), false, 'antibiotic', false); ?>
         </div>
