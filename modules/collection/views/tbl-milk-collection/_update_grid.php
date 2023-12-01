@@ -189,13 +189,18 @@ $script = "
                 url:'" . Url::to(['validate-rtpl']) . "',
                 data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success')
-                      {
-                            var actual_rate = parseFloat(obj.data.list.rtpl);
-                            var rtpl = actual_rate + parseFloat($('#tblmilkcollection-'+tr_key+'-scheme_rate').val());
-                            $('#tblmilkcollection-'+tr_key+'-rtpl').val(rtpl);
-                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val(actual_rate.toFixed(2));
+                        var obj = $.parseJSON(data);
+                        if (obj.status == 'success')
+                        {
+                            var rtpl = parseFloat(obj.data.list.rtpl);
+                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val(rtpl.toFixed(2));
+                            if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
+                                var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
+                                rtpl = rtpl + scheme_rate_rtpl;
+                                $('#tblmilkcollection-'+tr_key+'-scheme_rate').val(scheme_rate_rtpl.toFixed(2));
+                                $('#tblmilkcollection-'+tr_key+'-scheme_rate_code').val(obj.data.list.scheme_rate_code);
+                            }
+                            $('#tblmilkcollection-'+tr_key+'-rtpl').val(rtpl);                            
                             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val(obj.data.list.purchase_rate_code);
                             $('#tblmilkcollection-'+tr_key+'-rtpl').trigger('change');
                         }else{
@@ -203,6 +208,7 @@ $script = "
                             $('#tblmilkcollection-'+tr_key+'-rtpl').val('');
                             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val('');
                             $('#tblmilkcollection-'+tr_key+'-actual_rate').val('');
+                            $('#tblmilkcollection-'+tr_key+'-scheme_rate').val('');
                       }
                 },
                 error:function(data){
