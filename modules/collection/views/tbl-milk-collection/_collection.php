@@ -132,7 +132,6 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
                                                                     milkQualityType();
-                                                                    schemeRate();
                                                                     $("#milk-collection-from .reset_field input").val("");
                                                                     $("#milk-collection-from .reset_field select").val("");
                                                                     $("#milk-collection-from .reset_field textarea").val("");

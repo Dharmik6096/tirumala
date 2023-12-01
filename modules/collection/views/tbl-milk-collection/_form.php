@@ -123,7 +123,6 @@ $script = "
     }
     $(document).on('click','.add-collection',function(e){
         reloadGrid();
-        // schemeRate();
         $('.QltyParamDiv').show();
     });
     function reloadGrid(){
