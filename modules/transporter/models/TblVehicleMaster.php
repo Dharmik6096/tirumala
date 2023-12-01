@@ -78,8 +78,8 @@ class TblVehicleMaster extends \app\models\ChildModel {
                     Yii::$app->general->validateGlobalStatic($this, $attribute, 'billing_qty_flag');
                 }, 'on' => ['importCsv', 'vehicleWiseFlag']],
                 [['transporter_code'], 'fieldValidate', 'on' => 'importCsv'],
-                [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
-                [['driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
+                [['driver_name', 'transporter_code', 'wef_date', 'union_code', 'parsing_no', 'billing_method', 'vehicle_use_type'], 'required', 'except' => ['importCsv', 'customImport', 'activation']],
+                [['parsing_no', 'driver_name', 'transporter_code', 'wef_date', 'billing_method'], 'required', 'on' => 'importCsv'],
                 [['vehicle_type_code', 'fuel_type_code', 'capacity_code'], 'required', 'except' => ['activation']],
 //                [['vehicle_type_code', 'capacity_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'transporter_code', 'wef_date', 'fuel_type_code', 'parsing_no', 'average', 'rent', 'billing_method'], 'required', 'except' => ['activation']],
 //                [['union_code'], 'required', 'except' => ['importCsv', 'activation']],
@@ -93,13 +93,13 @@ class TblVehicleMaster extends \app\models\ChildModel {
                 [['driver_name'], function ($attribute, $params) {
                     Yii::$app->general->validateName($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['activation']],
-                [['driving_license_number'], function ($attribute, $params) {
+                [['driving_license_number', 'parsing_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['activation']],
                 [['registration_no', 'rc_book_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['customImport', 'activation']],
-                [['rc_book_no'], 'unique', 'except' => ['activation']],
+                [['parsing_no', 'rc_book_no'], 'unique', 'except' => ['activation']],
                 [['transporter_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblTransporter::className(), 'targetAttribute' => ['transporter_code' => 'transporter_code'], 'except' => ['activation']],
                 [['vehicle_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblVehicleType::className(), 'targetAttribute' => ['vehicle_type_code' => 'vehicle_type_code'], 'except' => ['activation']],
                 [['fuel_type_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFuelTypeMaster::className(), 'targetAttribute' => ['fuel_type_code' => 'fuel_type_code'], 'except' => ['activation']],

@@ -126,12 +126,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -153,14 +147,15 @@ class CustomValidation extends Component {
                         [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
                 ],
                 'TblDcs' => [
-                        [['hamlet_code', 'dcs_type_code'], 'required'],
-                        [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
-                        [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
-                        [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
-                        [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
-                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']],
+                    [['hamlet_code', 'dcs_type_code'], 'required'],
+                    [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
+                    [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
+                    [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
+                    [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
+                    [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
+                    ],
                 ],
                 'TblContactDetails' => [
                         [['firstname', 'mobile_no'], 'required'],
@@ -195,42 +190,30 @@ class CustomValidation extends Component {
                         [['bank_account_no'], 'CheckDuplicate'],
                 ],
                 'TblDcsProvisional' => [
-                        [['pincode'], 'required'],
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'uploadDoc']],
-                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'uploadDoc']
-                        ],
+                    [['pincode'], 'required'],
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'uploadDoc']],
+                    [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'uploadDoc']
+                    ],
                 ],
                 'TblUnions' => [
-                    'default' => [
-                        [['pincode'], 'required'],
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
-                        ],
+                    [['pincode'], 'required'],
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+                    [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
                 ],
                 'TblStaffMember' => [
-                    'default' => [
-                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
-                        ],
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+                    [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
                 ],
                 'TblVehicleMaster' => [
-                    'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validVehicleNumber($this, $attribute, $params);
-                        }, 'except' => ['activation']],
-                        [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
-                    ],
+                    [['parsing_no'], function ($attribute, $params) {
+                        Yii::$app->general->validVehicleNumber($this, $attribute, $params);
+                    }, 'except' => ['activation']],
+                    [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
                 ],
             ],
             'NIFPL' => [
@@ -316,12 +299,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -384,12 +361,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -452,12 +423,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -521,12 +486,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -630,12 +589,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -707,12 +660,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -812,12 +759,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -867,12 +808,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -921,12 +856,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -975,12 +904,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
@@ -1056,13 +979,7 @@ class CustomValidation extends Component {
                         ],
                     ],
                 ],
-                'TblVehicleMaster' => [
-                    'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                    ],
-                ],
+                'TblVehicleMaster' => [],
             ],
             'KOTMALE' => [
                 'TblContactDetails' => [
@@ -1134,12 +1051,6 @@ class CustomValidation extends Component {
                 ],
                 'TblVehicleMaster' => [
                     'default' => [
-                        [['parsing_no'], 'required', 'except' => ['customImport', 'activation']],
-                        [['parsing_no'], 'required', 'on' => 'importCsv'],
-                        [['parsing_no'], 'unique', 'except' => ['activation']],
-                        [['parsing_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAlphaNumber($this, $attribute, $params);
-                        }, 'skipOnEmpty' => false, 'except' => ['activation']],
                         [['parsing_no'], function ($attribute, $params) {
                             Yii::$app->general->validVehicleNumber($this, $attribute, $params);
                         }, 'except' => ['activation']],
