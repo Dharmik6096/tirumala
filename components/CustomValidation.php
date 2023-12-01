@@ -113,7 +113,7 @@ class CustomValidation extends Component {
                         [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => 'importCsv'],
                 ],
                 'TblDcs' => [
-                    [['hamlet_code', 'dcs_type_code'], 'required'],
+                    [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
                     [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                     [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
                     [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
@@ -455,7 +455,7 @@ class CustomValidation extends Component {
             'UMANG' => [
                 'TblDcs' => [
                     'default' => [
-                        [['hamlet_code', 'dcs_type_code'], 'required'],
+                        [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
                         [['district_code', 'sub_district_code', 'village_code'], 'required', 'except' => ['importCsv', 'customImport']],
                         [['contact_person', 'mobile_no'], 'required', 'on' => ['importCsv']],
                         [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
