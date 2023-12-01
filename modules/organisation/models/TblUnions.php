@@ -91,7 +91,7 @@ class TblUnions extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-            [['federation_code', 'union_code_ex', 'union_name', 'address', 'registration_no', 'hamlet_code', 'registration_date', 'city', 'union_short_name'], 'required'],
+            [['federation_code', 'union_code_ex', 'union_name', 'address', 'registration_no', 'hamlet_code', 'pincode', 'registration_date', 'city', 'union_short_name'], 'required'],
             [['union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => ['importCsv']],
             [['created_at', 'updated_at', 'districts', 'union_code_ex', 'is_active', 'name', 'fax_no', 'upi_no', 'union_short_name', 'registration_date', 'valid_from', 'logo', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
             [['union_code', 'union_code_ex', 'registration_no', 'union_short_name', 'contact_person_mobile_no', 'gst_no'], 'unique'],
