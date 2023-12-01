@@ -322,8 +322,7 @@ class TblDcsProvisional extends ChildModel {
                     }
                 }, 'except' => ['uploadDoc']],
         ];
-//        $client_rules = Yii::$app->customvalidation->getRules('tbldcsprovisional', $this->form_validation_type);
-        $client_rules = [];
+        $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }

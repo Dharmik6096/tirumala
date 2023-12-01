@@ -97,7 +97,7 @@ class TblStaffMember extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['department'], function ($attribute, $params) {
             Yii::$app->general->validateGlobalData($this, $attribute, 'department');
         }, 'on' => 'importCsv'],
@@ -194,6 +194,9 @@ class TblStaffMember extends \app\models\ChildModel {
             [['is_on_role'], 'required'],
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblStaffMember', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
