@@ -272,6 +272,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection') {
                 $flag = 'milk-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'milk_collection_dpu_data') {
+                $flag = 'import-shagun-dpu-data';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
             } else if ($row->file_type == 'milk_collection_qlty') {
                 $flag = 'milk-collection-qlty-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
@@ -351,12 +354,16 @@ class SchedulerController extends ChildController {
                     $model->attributes = $data;
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
+                    $model->bmc_code = ($row->file_type == 'milk_collection_dpu_data') ? 0 : $model->bmc_code;
                     $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
                     $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                    $model->milk_type_code = $model->ValidateMilkType($model->milk_type_code);
+                    $model->shift_code = (in_array($model->shift_code, ['m', 'M','06:00','06:00:00'])) ? 1 : 2;
+                    $model->qlty_auto = (strtoupper($model->qlty_auto) == 'AUTOMATIC') ? 1 : 0;
+                    $model->qty_auto = (strtoupper($model->qty_auto) == 'AUTOMATIC') ? 1 : 0;
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
-                    if ($model->save()) {
+                    if ($model->save()) {  
                         $success++;
                     } else {
                         $data['response_msg'] = 'File Record error.';
