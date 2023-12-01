@@ -192,9 +192,10 @@ $script = "
                       var obj = $.parseJSON(data);
                       if (obj.status == 'success')
                       {
-                            var rtpl = parseFloat(obj.data.list.rtpl) + parseFloat($('#tblmilkcollection-'+tr_key+'-scheme_rate').val());
+                            var actual_rate = parseFloat(obj.data.list.rtpl);
+                            var rtpl = actual_rate + parseFloat($('#tblmilkcollection-'+tr_key+'-scheme_rate').val());
                             $('#tblmilkcollection-'+tr_key+'-rtpl').val(rtpl);
-                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val(obj.data.list.rtpl);
+                            $('#tblmilkcollection-'+tr_key+'-actual_rate').val(actual_rate.toFixed(2));
                             $('#tblmilkcollection-'+tr_key+'-purchase_rate_code').val(obj.data.list.purchase_rate_code);
                             $('#tblmilkcollection-'+tr_key+'-rtpl').trigger('change');
                         }else{
