@@ -59,8 +59,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">Collection Details</h4>
         </div>
-        <div class="col-sm-2 type_hide"> 
-            <?= Yii::$app->dropdown->depend_dropdown('member', $model, $form, 'tblmilkcollection-dcs_code', 'form-group', $model->getAttributeLabel('member_code'), '', FALSE); ?>
+        <div class="col-sm-2 type_hide">
+            <?= Yii::$app->dropdown->activate_member_code($model, $form, 'tblmilkcollection-union_code,tblmilkcollection-dcs_code,tblmilkcollection-date_time_of_collection', 'member_code', $model->getAttributeLabel('member_code'), FALSE); ?>
         </div>
         <div class="col-sm-1  rtpl_validate create_fields">
             <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', $model->getAttributeLabel('milk_type_code'), $readonly, 'milk_type_code'); ?>

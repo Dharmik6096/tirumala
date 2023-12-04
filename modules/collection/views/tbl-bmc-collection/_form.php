@@ -235,7 +235,7 @@ $script = "
         rtpl();
     });
       function rtpl(){
-        var customer_code = $('#tblbmccollection-customer_code').val();
+        var dcs = $('#tblbmccollection-customer_code').val();
         var milk_type = $('#tblbmccollection-milk_type_code').val();
         var milk_quality_type = $('#tblbmccollection-milk_quality_type_code').val();
         var dt_date = $('#tblbmccollection-date_time_of_collection').val();
@@ -246,8 +246,7 @@ $script = "
         var type = $('#tblbmccollection-customer_type').val();
         var union = $('#tblbmccollection-union_code').val();
         var bmc = $('#tblbmccollection-bmc_code').val();
-        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != '' && customer_code && customer_code.length > 0){
-        var dcs = customer_code.substr(-4);
+        if(dcs != '' && milk_type != '' && milk_quality_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && union != '' && clr != '' && bmc != ''){
             $.ajax({
                 type: 'post',
                 url:'" . Url::to(['validate-rtpl']) . "',
@@ -302,38 +301,6 @@ $script = "
             }
     };
      
-     $('#tblbmccollection-customer_code').change(function(){
-        var customer_code = $(this).val();
-        var type= $('#tblbmccollection-customer_type').val(); 
-        var union= $('#tblbmccollection-union_code').val(); 
-        var bmc= $('#tblbmccollection-bmc_code').val(); 
-        var plant= $('#tblbmccollection-plant_code').val(); 
-        var mcc= $('#tblbmccollection-mcc_plant_code').val(); 
-        var date= $('#tblbmccollection-date_time_of_collection').val(); 
-        if(customer_code && customer_code.length > 0){
-        var dcs = customer_code.substr(-4);
-        $.ajax({
-            type: 'post',
-            url:'" . Url::to(['validate-dcs']) . "',
-            data: {'dcs_code':dcs,'customer_type':type,'union_code':union,'bmc_code':bmc,'mcc':mcc,'plant':plant,'date':date},
-            success: function(data) {                                        
-                var obj = $.parseJSON(data);
-                if (obj.status == 'success')
-                {
-                    $('#tblbmccollection-customer_name').val(obj.data); 
-                }else{
-                    bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>Selected code is deactivated.</span></div></div>');
-                        $('#tblbmccollection-customer_code').val('').trigger('change');                    
-                        $('#tblbmccollection-customer_code').focus();
-                }
-            },
-            error:function(data){
-		
-	    }
-	});
-      }
-    });
-    
     $('#tblbmccollection-milk_type_code').change(function(){
         checkFatRange();
     });

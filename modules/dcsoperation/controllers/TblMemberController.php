@@ -356,5 +356,22 @@ class TblMemberController extends \app\controllers\ChildController {
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('member', $id, $model, $module_code, $module_name);
     }
+    
+    public function actionActivateMemberCodeList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[1]) && !empty($parents[2])) {
+                $member = new TblMember();
+                $data = $member->getActivateMemberCode($parents[0], $parents[1], $parents[2]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
 
 }

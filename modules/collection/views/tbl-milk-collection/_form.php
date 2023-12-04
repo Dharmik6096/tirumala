@@ -158,9 +158,8 @@ $script = "
         var fat = $('#tblmilkcollection-fat').val();
         var snf = $('#tblmilkcollection-snf').val();
         var milk_quality_type = $('#tblmilkcollection-milk_quality_type_code').val();
-
-        var member = $('#tblmilkcollection-member_code').val();
-        var member_code = dcs.concat(member);
+        var member_code = $('#tblmilkcollection-member_code').val();
+        
         if(dcs != '' && milk_type != '' && dt_date!= '' && shift != '' && fat != '' && snf != '' && milk_quality_type != ''){
             $.ajax({
                 type: 'post',

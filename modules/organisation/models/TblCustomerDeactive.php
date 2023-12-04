@@ -243,5 +243,15 @@ class TblCustomerDeactive extends \app\models\ChildModel {
             $this->from_date = !empty($this->from_date) ? Yii::$app->controls->view_date($this->from_date, 'php:Y-m-d') : NULL;
         }
     }
+    
+    public function getDeactiveCustomer($type, $dateFilter) {
+        $checkdate = date('Y-m-d', strtotime($dateFilter));
+        $deactivateList = $this->find()
+                ->select('customer_code')
+                ->where(['customer_type' => $type])
+                ->andWhere('((:checkdate between cast(from_date as date) and coalesce(cast(to_date as date), \'9999-12-31\')))', [':checkdate' => $checkdate])
+                ->column();
+        return $deactivateList;
+    }
 
 }
