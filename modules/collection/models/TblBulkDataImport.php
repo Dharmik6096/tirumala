@@ -136,7 +136,7 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
         $cValues = ['C', 'COW'];
         $bValues = ['B', 'BUF', 'BUFFALO'];
         $mValues = ['M', 'MIXED', 'MIX'];
-        $shiftCode = ['m', 'M', '06:00', '06:00:00', 'morning', 'MORNING', 'Morning'];
+        $shiftCode = ['M', '06:00', '06:00:00', 'MORNING'];
 
         if (in_array($this->milk_type_code, $cValues)) {
             $this->milk_type_code = 'C';
