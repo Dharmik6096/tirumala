@@ -12,17 +12,6 @@ use yii\helpers\Url;
             ['attribute' => 'entry_type', 'filter' => false],
             ['attribute' => 'grn_no', 'filter' => false],
             ['attribute' => 'challan_no', 'filter' => false],
-            ['attribute' => 'source_org_code', 'filter' => false],
-            ['attribute' => 'source_org_type', 'value' => function($model) {
-                return Yii::$app->general->getforeignkey($model->bmcCodeSource, 'bmc_name') . '-' . strtoupper($model->source_org_type);
-            }, 'filter' => false],
-            ['attribute' => 'destination_code', 'filter' => false],
-            ['attribute' => 'destination_type', 'value' => function($model) {
-                $rel = Yii::$app->general->getDestRelation($model->destination_type);
-                $att = strtolower($model->destination_type) == 'bmc' ? 'bmc_name' : (strtolower($model->destination_type) == 'vendor' ? 'customer_name' : 'name');
-                if (!empty($rel))
-                    return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att) . '-' . strtoupper($model->destination_type);
-            }, 'filter' => false],
             ['attribute' => 'milk_type_code', 'value' => function($model) {
                 return Yii::$app->general->getforeignkey($model->milkType, 'animal_type_name');
             }, 'vAlign' => 'middle', 'filter' => false],
