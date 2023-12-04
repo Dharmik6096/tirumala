@@ -52,7 +52,7 @@ class TblOrgFileLog extends \app\models\ChildModel {
         return [
                 [['file_type', 'file_path', 'module_name', 'module_code', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'created_by', 'actual_file'], 'safe'],
                 [['total_count', 'success_count', 'error_count', 'file_status', 'status'], 'safe'],
-                [['updated_at', 'pick_datetime', 'created_at', 'ref_code'], 'safe'],
+                [['updated_at', 'pick_datetime', 'created_at', 'ref_code', 'ftp_mode'], 'safe'],
         ];
     }
 
