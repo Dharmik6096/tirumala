@@ -45,7 +45,7 @@ class TblProcessApproval extends \app\models\ChildModel {
         return [
 //                [['process_approval_code'], 'required'],
                 [['level', 'status', 'process_code', 'process_name', 'approval_mode', 'level_priority', 'login_type', 'user_code', 'master_approval_mode', 'remarks'], 'safe'],
-                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type', 'status_date', 'status_by'], 'safe'],
                 [['status'], 'required', 'on' => 'approve'],
         ];
     }
@@ -135,6 +135,41 @@ class TblProcessApproval extends \app\models\ChildModel {
 
     public function getShiftTimeExceedProvision() {
         return $this->hasOne(TblShiftTimeExceed::className(), ['shift_time_exceed_code' => 'process_code']);
+    }
+
+    public function approvalList($model, &$model_save, &$next_count, &$status) {
+
+        $next_count = TblProcessApproval::find()
+                ->where(['process_code' => $model->process_code, 'status' => 0])
+                ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
+        if ($model->approval_mode == 'flexi') {
+            $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
+            $all_level = TblProcessApproval::find()
+                            ->where(['process_code' => $model->process_code, 'status' => 0])
+                            ->andWhere(['level' => $model->level])->all();
+
+            foreach ($all_level as $level) {
+                $approvalHistoryModel = new TblProcessApprovalHistory();
+                Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
+                $model_save[] = $approvalHistoryModel;
+                $level->status_date = date('Y-m-d H:i:s');
+                $level->status_by = \Yii::$app->user->identity->user_code;
+                $level->status = $model->status;
+                $model_save[] = $level;
+            }
+        } else {
+            $model->status_date = date('Y-m-d H:i:s');
+            $model->status_by = \Yii::$app->user->identity->user_code;
+            $model_save[] = $model;
+        }
+        $next_count = $next_count->count();
+        if ($model->status == '2') {
+            $status = 'Reject';
+        } else if ($model->status == '1' && $next_count > 0) {
+            $status = 'Inprogress';
+        } else {
+            $status = 'Approve';
+        }
     }
 
 }
