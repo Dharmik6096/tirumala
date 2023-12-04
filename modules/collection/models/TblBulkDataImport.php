@@ -73,8 +73,11 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
                 [['fat', 'snf', 'qty', 'rtpl', 'amount', 'sample_no'], 'number'],
                 ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_quality_test','bmc_weight_collection']],
                 ['milk_type_code', 'in', 'range' => ['C', 'B', 'M', 'c', 'b', 'm'], 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic']],
-                ['shift_code', 'in', 'range' => ['M', 'E', 'm', 'e','06:00','18:00','06:00:00','18:00:00'], 'on' => ['milk_collection_dpu_data']],
-                ['milk_type_code', 'in', 'range' => ['C', 'c', 'COW', 'cow', 'B', 'b', 'buff', 'buffalo', 'BUF', 'BUFFALO', 'M', 'm', 'MIXED', 'MIX', 'mixed', 'mix'], 'on' => ['milk_collection_dpu_data']], 
+                [['milk_type_code', 'shift_code'], function ($attribute) {
+                    $this->$attribute = strtoupper($this->$attribute);
+                }, 'on' => ['milk_collection_dpu_data']],    
+                ['shift_code', 'in', 'range' => ['M', 'E', '06:00', '18:00', '06:00:00', '18:00:00', 'MORNING', 'EVENING'], 'on' => ['milk_collection_dpu_data']],
+                ['milk_type_code', 'in', 'range' => ['C', 'COW', 'B', 'BUF', 'BUFFALO', 'M', 'MIXED', 'MIX'], 'on' => ['milk_collection_dpu_data']],
                 ['milk_quality_type_code', 'in', 'range' => ['Good', 'Curd', 'Sour', 'Drain', 'good', 'curd', 'sour', 'drain'], 'on' => ['bmc_collection', 'milk_collection', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_allow', 'milk_collection_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic', 'milk_collection_dpu_data']],
                 [['route_arrival_time'], 'match', 'pattern' => '/^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$/'],
                 [['date_time_of_collection'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['bmc_collection', 'milk_collection', 'bmc_collection_allow', 'milk_collection_allow', 'milk_collection_qlty', 'milk_collection_qlty_allow', 'bmc_collection_mapped', 'bmc_collection_mapped_allow', 'bmc_collection_route', 'bmc_collection_can', 'bmc_collection_bmc_route', 'bmc_collection_bmc_can', 'bmc_collection_route_can', 'bmc_collection_bmc_route_can', 'bmc_collection_antibiotic','bmc_weight_collection','bmc_quality_test', 'milk_collection_dpu_data']],
@@ -130,10 +133,10 @@ class TblBulkDataImport extends \yii\db\ActiveRecord {
     }
     
     public function SetDataForShagunDPU() {
-        $cValues = ['C', 'c', 'COW', 'cow'];
-        $bValues = ['B', 'b', 'buff', 'buffalo', 'BUF', 'BUFFALO'];
-        $mValues = ['M', 'm', 'MIXED', 'MIX', 'mixed', 'mix'];
-        $shiftCode = ['m', 'M', '06:00', '06:00:00'];
+        $cValues = ['C', 'COW'];
+        $bValues = ['B', 'BUF', 'BUFFALO'];
+        $mValues = ['M', 'MIXED', 'MIX'];
+        $shiftCode = ['M', '06:00', '06:00:00', 'MORNING'];
 
         if (in_array($this->milk_type_code, $cValues)) {
             $this->milk_type_code = 'C';
