@@ -519,26 +519,27 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 foreach ($deletedata as $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblMilkCollection::find()->where($where)->one();
-                    if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
-                        $ApprovalModel = new TblCollectionDataAlias();
-                        $ApprovalModel->attributes = $existData->attributes;
-                        $ApprovalModel->setOldAttributesValues($ApprovalModel);
-                        $ApprovalModel->table_name = 'tbl_milk_collection';
-                        $ApprovalModel->action_perform = 'DELETE';
-                        $saveModel[] = $ApprovalModel;
-                    } else {
-                        $historyModel = new TblMilkCollectionHistory();
-                        Yii::$app->operation->history($existData, $historyModel, DELETE);
-                        $saveModel[] = $historyModel;
-                        $deleteModel[] = $existData;
-                        $message = 'Milk Collection';
-                        $type = 'delete';
+                    if(!empty($existData)){
+                        if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $ApprovalModel = new TblCollectionDataAlias();
+                            $ApprovalModel->attributes = $existData->attributes;
+                            $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                            $ApprovalModel->table_name = 'tbl_milk_collection';
+                            $ApprovalModel->action_perform = 'DELETE';
+                            $saveModel[] = $ApprovalModel;
+                        } else {
+                            $historyModel = new TblMilkCollectionHistory();
+                            Yii::$app->operation->history($existData, $historyModel, DELETE);
+                            $saveModel[] = $historyModel;
+                            $deleteModel[] = $existData;
+                            $message = 'Milk Collection';
+                            $type = 'delete';
+                        }
                     }
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-//                if ($transaction == 'customRedirect') {
-//                    return $this->redirect(['index']);
-//                }
+                if(!empty($saveModel) || !empty($deleteModel)){
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                }
             }
         }
 

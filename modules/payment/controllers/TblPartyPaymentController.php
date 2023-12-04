@@ -126,7 +126,7 @@ class TblPartyPaymentController extends ChildController {
         $model = $model->find()->where(['from_date' => $model->from_date, 'to_date' => $model->to_date, 'party_master_code' => $model->party_master_code, 'payment_type' => $model->payment_type]);
         $status = ['generated', 'processed'];
         if ($req->isAjax) {
-            $model = $model->andWhere(['status' => $status]);
+            $model = $model->andFilterWhere(['status' => $status]);
         }
         $model = $model->one();
         if (!empty($model)) {
@@ -341,25 +341,44 @@ class TblPartyPaymentController extends ChildController {
         header('Content-Disposition: attachment;filename=' . $fileName);
         header('Cache-Control: max-age=0');
         echo "<table border='1'>";
-//        echo "<tr>";
-//        echo "<td>" . Yii::t('app', 'Party Payment Code') . "</td>";
-//
-//        echo "</tr>";
+        echo "<tr>";
+        echo "<td>" . Yii::t('app', 'Party Payment Code') . "</td>";
+        echo "<td>" . Yii::t('app', 'From Date') . "</td>";
+        echo "<td>" . Yii::t('app', 'To Date') . "</td>";
+        echo "<td>" . Yii::t('app', 'Qty') . "</td>";
+        echo "<td>" . Yii::t('app', 'Avg Fat') . "</td>";
+        echo "<td>" . Yii::t('app', 'Avg SNF') . "</td>";
+        echo "<td>" . Yii::t('app', 'RTPL') . "</td>";
+        echo "<td>" . Yii::t('app', 'Net Amount') . "</td>";
+        echo "<td>" . Yii::t('app', 'Total Addition') . "</td>";
+        echo "<td>" . Yii::t('app', 'Total Deduction') . "</td>";
+        echo "<td>" . Yii::t('app', 'Adjust Amount') . "</td>";
+        echo "<td>" . Yii::t('app', 'Final Amount') . "</td>";
+        echo "<td>" . Yii::t('app', 'Bank Ac No.') . "</td>";
+        echo "<td>" . Yii::t('app', 'Bank Name') . "</td>";
+        echo "<td>" . Yii::t('app', 'Branch Name') . "</td>";
+        echo "<td>" . Yii::t('app', 'IFSC') . "</td>";
+        echo "</tr>";
 
         foreach ($query as $row) {
             echo "<tr>";
             $this->setVal($row->party_payment_code);
             $this->setVal($row->from_date);
             $this->setVal($row->to_date);
+            $this->setVal($row->total_qty);
+            $this->setVal($row->avg_fat);
+            $this->setVal($row->avg_snf);
+            $this->setVal($row->avg_rate);
+            $this->setVal($row->net_amount);
+            $this->setVal($row->total_addition);
+            $this->setVal($row->total_deduction);
+            $this->setVal($row->adjust_amount);
+            $this->setVal($row->final_amount);
             $this->setVal($row->bank_account_no);
             $this->setVal($row->bank_name);
             $this->setVal($row->branch_name);
             $this->setVal($row->ifsc);
-            $this->setVal($row->avg_fat);
-            $this->setVal($row->avg_snf);
-            $this->setVal($row->total_qty);
-            $this->setVal($row->final_amount);
-            $this->setVal($row->net_payable);
+
             echo "</tr>";
         }
         echo "</table>";

@@ -40,7 +40,7 @@ class TblPartyPaymentDetailSearch extends TblPartyPaymentDetail {
      */
     public function search($params) {
         $query = TblPartyPaymentDetail::find();
-
+        $query->where(['party_payment_code' => $this->party_payment_code]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -64,20 +64,7 @@ class TblPartyPaymentDetailSearch extends TblPartyPaymentDetail {
 
 
 //        $query->andFilterWhere(['=', 'CAST(tbl_bonus_payment_summary.payment_date as date)', !empty($this->payment_date) ? date('Y-m-d', strtotime($this->payment_date)) : NULL]);
-//
-//        $query->andFilterWhere(['like', 'tbl_bonus_payment_summary.payment_type', $this->payment_type])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.kg_fat', $this->kg_fat])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.kg_snf', $this->kg_snf])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.qty', $this->qty])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.amount', $this->amount])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.addition', $this->addition])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.deduction', $this->deduction])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.net_payable', $this->net_payable])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.customer_code', $this->customer_code])
-//                ->andFilterWhere(['like', 'tbl_customer_type.customer_desc', $this->customer_type])
-//                ->andFilterWhere(['like', 'tbl_bonus_payment_summary.status', $this->status]);
-//
-//        $query->orderBy(['tbl_bonus_payment_summary.from_datetime' => SORT_DESC]);
+
 
         return $dataProvider;
     }
