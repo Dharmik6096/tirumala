@@ -368,7 +368,6 @@ class TblMemberController extends \app\controllers\ChildController {
                     $out[] = array('id' => $key, 'name' => $val);
                 }
                 return Json::encode(['output' => $out, 'selected' => '']);
-                return;
             }
         }
         return Json::encode(['output' => '', 'selected' => '']);

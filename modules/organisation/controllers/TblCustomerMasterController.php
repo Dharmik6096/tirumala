@@ -257,7 +257,6 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                     'name' => $r);
             }
             return Json::encode(['output' => $out]);
-            return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
     }
