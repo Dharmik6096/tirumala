@@ -32,7 +32,6 @@ class CustomValidation extends Component {
                     'default' => [
                         [['valid_from'], 'required', 'except' => ['importCsv', 'deactivate', 'routeMapping', 'saveCreamyData', 'customImport', 'customImportUpdate']],
                         [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
-                        [['pincode'], 'required'],
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
@@ -185,7 +184,7 @@ class CustomValidation extends Component {
             'NIFPL' => [
                 'TblDcs' => [
                     'default' => [
-                            [['dcs_type_code', 'pincode'], 'required'],
+                            [['dcs_type_code'], 'required'],
                             [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.')],
                             [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping']],
                             [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
@@ -585,6 +584,39 @@ class CustomValidation extends Component {
                             [['mobile_no'], 'required', 'on' => 'additional'],
                     ],
                 ],
+                'TblDcs' => [
+                    'default' => [
+                        [['pincode'], 'required'],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping']],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping']],
+                    ],
+                ],
+                'TblDcsProvisional' => [
+                    'default' => [    
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['routeMapping', 'uploadDoc']],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping', 'uploadDoc']
+                        ],
+                    ],
+                ],
+                'TblUnions' => [
+                    'default' => [    
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"')],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
+                        ],
+                    ],
+                ],
+                'TblStaffMember' => [
+                    'default' => [
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"')],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
+                        ],
+                    ],
+                ],
+                'TblVehicleMaster' => [],
             ],
         ];
     }
