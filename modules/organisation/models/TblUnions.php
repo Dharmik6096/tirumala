@@ -90,7 +90,7 @@ class TblUnions extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['federation_code', 'union_code_ex', 'union_name', 'address', 'registration_no', 'hamlet_code', 'pincode', 'registration_date', 'city', 'union_short_name'], 'required'],
             [['union_code', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'valid_from'], 'required', 'except' => ['importCsv']],
             [['created_at', 'updated_at', 'districts', 'union_code_ex', 'is_active', 'name', 'fax_no', 'upi_no', 'union_short_name', 'registration_date', 'valid_from', 'logo', 'has_bmc', 'eipl_token', 'eipl_code'], 'safe'],
@@ -121,9 +121,7 @@ class TblUnions extends ChildModel {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
             [['union_code_ex'], 'integer'],
-            [['pincode', 'registration_no'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-            [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
+            [['registration_no'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
             [['ifsc', 'contact_person_pan_no'], 'trim'],
             //[['bank_code'], 'string', 'max' => 4],
             [['federation_code', 'state_code'], 'string', 'max' => 2],
@@ -142,8 +140,10 @@ class TblUnions extends ChildModel {
             [['gst_no'], 'string', 'min' => 15, 'max' => 15],
             [['originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'allow_member_create'], 'safe'],
             [['contact_person_pan_no'], 'setPanNumber', 'on' => ['importCsv']],
-
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblUnions', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     public function validateAccountNo($bankCode, $attribute) {
