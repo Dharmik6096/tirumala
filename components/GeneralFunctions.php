@@ -1738,6 +1738,7 @@ class GeneralFunctions extends Component {
             $ftp->ftp_username = $ftpData->ftp_username;
             $ftp->ftp_password = $ftpData->ftp_password;
             $ftp->ftp_port = $ftpData->ftp_port;
+            $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
             $ftpDir = $this->getFTPDirStructure($cp_code);
             foreach ($ftpDir as $dir) {
                 $ftp->ftp_path = $ftpData->ftp_path . $dir;

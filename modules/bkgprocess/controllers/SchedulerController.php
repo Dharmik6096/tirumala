@@ -184,6 +184,7 @@ class SchedulerController extends ChildController {
                 $ftp->conn_init = FALSE;
                 $ftp->conn_close = FALSE;
                 $ftp->make_dir = FALSE;
+                $ftp->isPassiveFtp = !empty($row->ftp_mode) && $row->ftp_mode == 'active' ? false : true;
                 $connection = $ftp->ConnectServer();
             }
             if ($connection) {
