@@ -369,31 +369,7 @@ class TblDcsProvisionalController extends ChildController {
             $model_save[] = $historyApproval;
             $model_save[] = $model;
             if (!empty($model_save)) {
-                $next_count = TblProcessApproval::find()
-                        ->where(['process_code' => $model->process_code, 'status' => 0])
-                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
-                if ($model->approval_mode == 'flexi') {
-                    $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
-                    $all_level = TblProcessApproval::find()
-                                    ->where(['process_code' => $model->process_code, 'status' => 0])
-                                    ->andWhere(['level' => $model->level])->all();
-
-                    foreach ($all_level as $level) {
-                        $approvalHistoryModel = new TblProcessApprovalHistory();
-                        Yii::$app->operation->history($level, $approvalHistoryModel, UPDATE);
-                        $model_save[] = $approvalHistoryModel;
-                        $level->status = $model->status;
-                        $model_save[] = $level;
-                    }
-                }
-                $next_count = $next_count->count();
-                if ($model->status == '2') {
-                    $status = 'Reject';
-                } else if ($model->status == '1' && $next_count > 0) {
-                    $status = 'Inprogress';
-                } else {
-                    $status = 'Approve';
-                }
+                $model->ApprovalList($model, $model_save, $status);
                 $dcsModel = $this->findModel($model->process_code);
                 $historyModel = new TblDcsProvisionalHistory();
                 Yii::$app->operation->history($dcsModel, $historyModel, UPDATE);
@@ -703,4 +679,5 @@ class TblDcsProvisionalController extends ChildController {
             return false;
         }
     }
+
 }
