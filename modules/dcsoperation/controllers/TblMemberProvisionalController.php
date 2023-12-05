@@ -348,7 +348,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save[] = $model;
             if (!empty($model_save)) {
-                $model->ApprovalList($model, $model_save, $next_count, $status);
+                $model->ApprovalList($model, $model_save, $status);
                 $memberModel = $this->findModel($model->process_code);
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);

@@ -137,7 +137,7 @@ class TblProcessApproval extends \app\models\ChildModel {
         return $this->hasOne(TblShiftTimeExceed::className(), ['shift_time_exceed_code' => 'process_code']);
     }
 
-    public function approvalList($model, &$model_save, &$next_count, &$status) {
+    public function approvalList($model, &$model_save, &$status) {
 
         $next_count = TblProcessApproval::find()
                 ->where(['process_code' => $model->process_code, 'status' => 0])
