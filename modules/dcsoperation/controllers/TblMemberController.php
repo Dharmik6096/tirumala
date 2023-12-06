@@ -361,7 +361,7 @@ class TblMemberController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3])) {
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
                 $member = new TblMember();
                 $data = $member->getActivateMemberCode($parents[0], $parents[1], $parents[2]);
                 foreach ($data as $key => $val) {
