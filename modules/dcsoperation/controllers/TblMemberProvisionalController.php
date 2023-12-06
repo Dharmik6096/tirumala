@@ -210,6 +210,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
             $doc_path = Yii::$app->params['document_upload'] . 'provisional_member';
 
             if (Yii::$app->general->checkDirectory($doc_path)) {
+                $member_error = '';
+                $message = '';
                 $error_msg = '';
                 $save_model = [];
                 $save_member_doc = [];
@@ -273,7 +275,12 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $all_doc = [];
                                 $memberdoc = [];
                                 if ($model->provisional_status = 'Approve') {
-                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc);
+                                    $this->memberApprove($status, $save_model, $deleteModel, $model, $all_doc, $memberdoc, $save_member_doc, $message);
+                                }
+                                if (!empty($message)) {
+                                    foreach ($message as $msg) {
+                                        $member_error .= $msg;
+                                    }
                                 }
                             } else {
                                 $model->is_approved = 0;
@@ -281,27 +288,31 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                                 $save_model[] = $model;
                             }
                         }
-                        $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
-                        if ($transaction == 'customRedirect') {
-                            if ($model->provisional_status == 'approve') {
-                                $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
-                                $memberDir = $baseDir . 'member';
-                                $proMemberDir = $baseDir . 'provisional_member';
-                                for ($i = 0; $i < count($all_doc); $i++) {
-                                    $fileName = basename($memberdoc[$i]);
-                                    $file = $memberDir . '/' . $fileName;
-                                    $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
-                                    if ($upload) {
-                                        if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
-                                            unlink($proMemberDir . '/' . $all_doc[$i]);
+                        if (empty($member_error)) {
+                            $transaction = $this->generalModel->saveDeleteTransaction($save_model, [], $deleteModel, ['Document Upload', 'create']);
+                            if ($transaction == 'customRedirect') {
+                                if ($model->provisional_status == 'approve') {
+                                    $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                                    $memberDir = $baseDir . 'member';
+                                    $proMemberDir = $baseDir . 'provisional_member';
+                                    for ($i = 0; $i < count($all_doc); $i++) {
+                                        $fileName = basename($memberdoc[$i]);
+                                        $file = $memberDir . '/' . $fileName;
+                                        $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
+                                        if ($upload) {
+                                            if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
+                                                unlink($proMemberDir . '/' . $all_doc[$i]);
+                                            }
                                         }
                                     }
                                 }
+                                $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
+                            } else {
+                                $msg = Yii::$app->getSession()->getFlash('success')['message'];
+                                $record = ['status' => 'error', 'msg' => $msg];
                             }
-                            $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
                         } else {
-                            $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                            $record = ['status' => 'error', 'msg' => $msg];
+                            $record = ['status' => 'error', 'msg' => $member_error . ' in Member'];
                         }
                     } else {
                         $record = ['status' => 'error', 'msg' => 'Documnet already available for ' . $msg];
@@ -342,6 +353,8 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         $model->scenario = 'approve';
         $model_save = [];
         $deleteModel = [];
+        $member_error = '';
+        $message = '';
         $approvalHistoryModel = new TblProcessApprovalHistory();
         Yii::$app->operation->history($model, $approvalHistoryModel, 'UPDATE');
         $model_save[] = $approvalHistoryModel;
@@ -360,26 +373,36 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $all_doc = [];
                 $memberdoc = [];
                 if ($memberModel->provisional_status == 'Approve') {
-                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc);
+                    $this->memberApprove($status, $model_save, $deleteModel, $memberModel, $all_doc, $memberdoc, $save_member_doc = [], $message);
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
-                if ($transaction == 'customRedirect') {
-                    if ($memberModel->provisional_status == 'Approve') {
-                        $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
-                        $memberDir = $baseDir . 'member';
-                        $proMemberDir = $baseDir . 'provisional_member';
-                        for ($i = 0; $i < count($all_doc); $i++) {
-                            $fileName = basename($memberdoc[$i]);
-                            $file = $memberDir . '/' . $fileName;
-                            $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
-                            if ($upload) {
-                                if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
-                                    unlink($proMemberDir . '/' . $all_doc[$i]);
+                if (!empty($message)) {
+                    foreach ($message as $msg) {
+                        $member_error .= $msg;
+                    }
+                }
+                if (empty($member_error)) {
+                    $transaction = $this->generalModel->saveDeleteTransaction([], $model_save, $deleteModel, ['Member Provisional Approval', 'edit']);
+                    if ($transaction == 'customRedirect') {
+                        if ($memberModel->provisional_status == 'Approve') {
+                            $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
+                            $memberDir = $baseDir . 'member';
+                            $proMemberDir = $baseDir . 'provisional_member';
+                            for ($i = 0; $i < count($all_doc); $i++) {
+                                $fileName = basename($memberdoc[$i]);
+                                $file = $memberDir . '/' . $fileName;
+                                $upload = copy($proMemberDir . '/' . $all_doc[$i], $file);
+                                if ($upload) {
+                                    if (file_exists($proMemberDir . '/' . $all_doc[$i])) {
+                                        unlink($proMemberDir . '/' . $all_doc[$i]);
+                                    }
                                 }
                             }
                         }
+                        return $this->redirect(['index']);
                     }
-                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => $member_error . ' in Member']);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', ['type' => 'error',
@@ -391,7 +414,7 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = []) {
+    public function memberApprove($status, &$model_save, &$deleteModel, $memberModel, &$all_attachment, &$memberdoc, $save_member_doc = [], &$message) {
         if ($status == 'Approve' && $memberModel->provisional_status == 'Approve') {
             $memberModel->is_approved = 1;
             $memberModel->approved_at = date('Y-m-d H:i:s');
@@ -403,80 +426,86 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $tblMember->member_code = $tblMember->getCode();
                 $historyModel = new TblMemberProvisionalHistory();
                 Yii::$app->operation->history($memberModel, $historyModel, UPDATE);
-                $model_save[] = $tblMember;
-                $model_save[] = $memberModel;
-                $model_save[] = $historyModel;
+                if ($tblMember->validate()) {
+                    $model_save[] = $tblMember;
+                    $model_save[] = $memberModel;
+                    $model_save[] = $historyModel;
 
-                $milkCollectionData = new TblProvisionalMilkCollection();
-                $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
-                if (!empty($milkCollectionData)) {
-                    foreach ($milkCollectionData as $key => $value) {
-                        $deleteModel[] = $value;
-                        $tblMilkCollection = new TblMilkCollection();
-                        $tblMilkCollection->attributes = $value->attributes;
-                        $tblMilkCollection->member_code = $tblMember->member_code;
-                        $tblMilkCollection->is_provisional = 1;
-                        $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
-                        Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
-                        $model_save[] = $tblMilkCollection;
-                        $model_save[] = $tblProvisionalMilkCollectionHistory;
+                    $milkCollectionData = new TblProvisionalMilkCollection();
+                    $milkCollectionData = $milkCollectionData->getMilkCollectionData($memberModel->dcs_code . $memberModel->pro_ex_member_code);
+                    if (!empty($milkCollectionData)) {
+                        foreach ($milkCollectionData as $key => $value) {
+                            $deleteModel[] = $value;
+                            $tblMilkCollection = new TblMilkCollection();
+                            $tblMilkCollection->attributes = $value->attributes;
+                            $tblMilkCollection->member_code = $tblMember->member_code;
+                            $tblMilkCollection->is_provisional = 1;
+                            $tblProvisionalMilkCollectionHistory = new TblProvisionalMilkCollectionHistory();
+                            Yii::$app->operation->history($value, $tblProvisionalMilkCollectionHistory, DELETE);
+                            $model_save[] = $tblMilkCollection;
+                            $model_save[] = $tblProvisionalMilkCollectionHistory;
+                        }
                     }
-                }
 
-                $tblAttachment = new TblAttachment();
-                $tblAttachment = $tblAttachment->getAttachment($memberModel->provisional_member_code);
-                $doc_path = Yii::$app->params['document_upload'] . 'member';
+                    $tblAttachment = new TblAttachment();
+                    $tblAttachment = $tblAttachment->getAttachment($memberModel->provisional_member_code);
+                    $doc_path = Yii::$app->params['document_upload'] . 'member';
 
-                if (!empty($tblAttachment)) {
-                    foreach ($tblAttachment as $key => $doc) {
-                        $all_attachment[] = $doc->file_name;
-                        $tblAttachments = new TblAttachment();
-                        $tblAttachments->attributes = $doc->attributes;
-                        if (Yii::$app->general->checkDirectory($doc_path)) {
-                            if (!empty($doc->file_name)) {
-                                $attach = TblAttachment::find()
-                                        ->where(['module_code' => $memberModel->provisional_member_code, 'module_name' => 'tbl_member_provisional', 'doc_id' => $doc->doc_id])
-                                        ->one();
-                                $extension = explode('.', $doc->file_name)[1];
-                                $file_name = 'member' . '_' . $tblMember->member_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
-                                $attachment = $doc_path . '/' . $file_name;
-                                if (!empty($attach)) {
-                                    $attachHistoryModel = new TblAttachmentHistory();
-                                    Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
-                                    $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                                    $attach->file_name = $file_name;
-                                    $model_save[] = $attach;
-                                    $model_save[] = $attachHistoryModel;
+                    if (!empty($tblAttachment)) {
+                        foreach ($tblAttachment as $key => $doc) {
+                            $all_attachment[] = $doc->file_name;
+                            $tblAttachments = new TblAttachment();
+                            $tblAttachments->attributes = $doc->attributes;
+                            if (Yii::$app->general->checkDirectory($doc_path)) {
+                                if (!empty($doc->file_name)) {
+                                    $attach = TblAttachment::find()
+                                            ->where(['module_code' => $memberModel->provisional_member_code, 'module_name' => 'tbl_member_provisional', 'doc_id' => $doc->doc_id])
+                                            ->one();
+                                    $extension = explode('.', $doc->file_name)[1];
+                                    $file_name = 'member' . '_' . $tblMember->member_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
+                                    $attachment = $doc_path . '/' . $file_name;
+                                    if (!empty($attach)) {
+                                        $attachHistoryModel = new TblAttachmentHistory();
+                                        Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
+                                        $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                                        $attach->file_name = $file_name;
+                                        $model_save[] = $attach;
+                                        $model_save[] = $attachHistoryModel;
+                                    }
+                                    $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                                    $tblAttachments->module_name = 'tbl_member';
+                                    $tblAttachments->module_code = $tblMember->member_code;
+                                    $tblAttachments->file_name = $file_name;
+                                    $memberdoc[] = $file_name;
+                                    $model_save[] = $tblAttachments;
                                 }
-                                $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                            } else {
+                                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                    'message' => 'Error while create directory.']);
+                            }
+                        }
+                    }
+                    if (!empty($save_member_doc)) {
+                        foreach ($save_member_doc as $key => $member_attach) {
+                            $all_attachment[] = $member_attach->file_name;
+                            $tblAttachments = new TblAttachment();
+                            $tblAttachments->attributes = $member_attach->attributes;
+                            if (Yii::$app->general->checkDirectory($doc_path)) {
                                 $tblAttachments->module_name = 'tbl_member';
                                 $tblAttachments->module_code = $tblMember->member_code;
-                                $tblAttachments->file_name = $file_name;
-                                $memberdoc[] = $file_name;
+                                $attachment = $doc_path . '/' . $member_attach->file_name;
+                                $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                                $memberdoc[] = $member_attach->file_name;
                                 $model_save[] = $tblAttachments;
+                            } else {
+                                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                                    'message' => 'Error while create directory.']);
                             }
-                        } else {
-                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                                'message' => 'Error while create directory.']);
                         }
                     }
-                }
-                if (!empty($save_member_doc)) {
-                    foreach ($save_member_doc as $key => $member_attach) {
-                        $all_attachment[] = $member_attach->file_name;
-                        $tblAttachments = new TblAttachment();
-                        $tblAttachments->attributes = $member_attach->attributes;
-                        if (Yii::$app->general->checkDirectory($doc_path)) {
-                            $tblAttachments->module_name = 'tbl_member';
-                            $tblAttachments->module_code = $tblMember->member_code;
-                            $attachment = $doc_path . '/' . $member_attach->file_name;
-                            $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                            $memberdoc[] = $member_attach->file_name;
-                            $model_save[] = $tblAttachments;
-                        } else {
-                            Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                                'message' => 'Error while create directory.']);
-                        }
+                } else {
+                    foreach ($tblMember->getErrors() as $errorkey => $value) {
+                        $message = $value;
                     }
                 }
             }
