@@ -2385,17 +2385,6 @@ class GeneralFunctions extends Component {
         $mccs == 1 ? $model->mcc_plant_code = explode(',', Yii::$app->session->get('MCC'))[0] : NULL;
         if ($bmcs == 1) {
             $model->bmc_code = explode(',', Yii::$app->session->get('BMC'))[0];
-            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['created_at' => SORT_DESC])->one();
-            if (!empty($stock_date)) {
-                $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
-                $converted_time = date("H:i:s", strtotime($dispatch_date));
-                if ($converted_time == "06:00:00") {
-                    $model->from_shift_code = 1;
-                } elseif ($converted_time == "18:00:00") {
-                    $model->from_shift_code = 2;
-                }
-                $model->from_date = $dispatch_date;
-            }
         }
     }
 
