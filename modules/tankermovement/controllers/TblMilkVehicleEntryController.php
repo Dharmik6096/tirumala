@@ -13,6 +13,7 @@ use app\modules\tankermovement\models\TblMilkVehicleEntryTransaction;
 use yii\web\Response;
 use yii\helpers\Json;
 use app\modules\tankermovement\models\TblBmcMilkDispatch;
+use app\modules\tankermovement\models\TblBmcMilkDispatchTxn;
 use kartik\widgets\ActiveForm;
 use app\modules\tankermovement\models\TblMilkVehicleEntryTransactionHistory;
 use app\modules\tankermovement\models\TblVehicleTrip;
@@ -253,7 +254,14 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
     }
 
     public function actionDispatchDetail() {
-        $existData = TblBmcMilkDispatch::find()->where(['trip_code' => Yii::$app->request->get('trip_code')])->all();
+          $existData = TblBmcMilkDispatch::find()
+                        ->alias('bmd')
+                        ->select(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code', 'gross_weight' => 'sum(a.dispatch_qty)'])
+                        ->join('INNER JOIN', 'tbl_bmc_milk_dispatch_txn a', 'a.bmc_milk_dispatch_code=bmd.bmc_milk_dispatch_code')
+                        ->where(['trip_code' => Yii::$app->request->get('trip_code')])
+                        ->groupBy(['bmd.challan_no','bmd.from_date','bmd.from_shift_code','bmd.to_date','bmd.to_shift_code','bmd.vehicle_code','bmd.vehicle_in_time','bmd.vehicle_out_time','bmd.bmc_milk_dispatch_code'])
+                        ->all();
+
         return $this->renderAjax('_dispatch_detail', [
                     'existData' => $existData,
         ]);
@@ -402,5 +410,5 @@ class TblMilkVehicleEntryController extends \app\controllers\ChildController {
                     'config_list' => $config_list,
         ]);
     }
-
+    
 }

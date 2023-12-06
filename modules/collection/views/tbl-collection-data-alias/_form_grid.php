@@ -86,6 +86,8 @@ use webvimark\modules\UserManagement\components\GhostHtml;
             ['attribute' => 'qty', 'filter' => false],
             ['attribute' => 'fat', 'filter' => false],
             ['attribute' => 'snf', 'filter' => false],
+            ['attribute' => 'scheme_rate', 'filter' => false],
+            ['attribute' => 'actual_rate', 'filter' => false],
             ['attribute' => 'rtpl', 'filter' => false],
             ['attribute' => 'amount', 'filter' => false, 'format' => Yii::$app->general->CurrencyFormat(),],
             ['attribute' => 'old_antibiotic', 'filter' => false, 'visible' => !empty($showFarmer) ? FALSE : TRUE],
