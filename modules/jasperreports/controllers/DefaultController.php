@@ -798,7 +798,7 @@ class DefaultController extends \app\controllers\ChildController {
             ],
             'VlccTransactionDataReportRegion' => [
                 'param' => 'p_union_code,state_code,region_code,area_code,p_bmc_code:area_code,p_dcs_code,p_from_date:string:from_shift,p_to_date:string:to_shift',
-                'path' => 'milkcollection/VLCCTransactionDataFTP',
+                'path' => 'milkcollection/VLCCTransactionDataFTPRegion',
                 'scenario' => 'VlccTransactionDataReportRegion',
                 'title' => 'VLCC Transaction Data Report',
             ],

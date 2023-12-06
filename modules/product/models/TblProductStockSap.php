@@ -6,28 +6,26 @@ use Yii;
 use app\models\ChildModel;
 use app\modules\organisation\models\TblMccPlant;
 
-class TblProductStockSap extends ChildModel
-{
+class TblProductStockSap extends ChildModel {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_product_stock_sap';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['product_code', 'qty', 'stock_date', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
             [['mcc_plant_code', 'product_code', 'qty', 'stock_date'], 'required', 'on' => ['importCsv']],
             [['stock_date'], 'convertDateDot', 'on' => ['importCsv']],
             [['stock_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
             [['stock_date'], 'convertDate', 'on' => ['importCsv']],
-            [['product_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblProduct::class, 'targetAttribute' => ['product_code' => 'product_code'], 'on' => ['importCsv']],
+            [['product_code'], 'validProductCode', 'on' => ['importCsv']],
             [['product_code', 'stock_date', 'mcc_plant_code'], 'setData', 'on' => ['importCsv']],
             [['product_code', 'stock_date'], 'validateUniqueStockEntry', 'on' => ['importCsv']],
         ];
@@ -36,8 +34,7 @@ class TblProductStockSap extends ChildModel
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'product_stock_sap_code' => Yii::t('app', 'Product Stock SAP Code'),
             'product_code' => Yii::t('app', 'Product Code'),
@@ -62,13 +59,15 @@ class TblProductStockSap extends ChildModel
         ];
     }
 
-    public function getTblMccPlant()
-    {
+    public function getProductCode() {
+        return $this->hasOne(TblProduct::class, ['product_code' => 'product_code']);
+    }
+
+    public function getTblMccPlant() {
         return $this->hasOne(TblMccPlant::class, ['mcc_plant_code' => 'mcc_plant_code']);
     }
 
-    public function convertDateDot()
-    {
+    public function convertDateDot() {
         try {
             $this->stock_date = Yii::$app->controls->view_date($this->stock_date, 'php:d.m.Y');
         } catch (\Exception $e) {
@@ -76,15 +75,13 @@ class TblProductStockSap extends ChildModel
         }
     }
 
-    public function convertDate()
-    {
+    public function convertDate() {
         if (empty($this->getErrors())) {
             $this->stock_date = !empty($this->stock_date) ? Yii::$app->controls->view_date($this->stock_date, 'php:Y-m-d') : NULL;
         }
     }
 
-    public function setData()
-    {
+    public function setData() {
         $mccData = TblMccPlant::find()->where(['or', ['ref_code' => $this->mcc_plant_code], ['mcc_plant_code' => $this->mcc_plant_code]])->one();
         if (!empty($mccData)) {
             $this->union_code = $mccData->union_code;
@@ -97,15 +94,26 @@ class TblProductStockSap extends ChildModel
         }
     }
 
-    public function validateUniqueStockEntry($attribute, $params)
-    {
+    public function validateUniqueStockEntry($attribute, $params) {
         if (!$this->hasErrors()) {
             $existingRecord = $this->find()
-                ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date, 'mcc_plant_code' => $this->mcc_plant_code])->one();
+                            ->where(['product_code' => $this->product_code, 'stock_date' => $this->stock_date, 'mcc_plant_code' => $this->mcc_plant_code])->one();
             if (!empty($existingRecord)) {
                 $this->addError($attribute, 'A record with the same product code and stock date already exists.');
                 return false;
             }
         }
     }
+
+    public function validProductCode($attribute, $params) {
+        $product = new TblProduct();
+        $data = $product->find()->select('product_code')->where(['or', ['product_code' => $this->product_code], ['item_code' => $this->product_code]])->all();
+        if (count($data) == 1) {
+            $this->product_code = $data[0]->product_code;
+        } else {
+            $this->addError($attribute, 'Product Code is invalid.');
+            return false;
+        }
+    }
+
 }

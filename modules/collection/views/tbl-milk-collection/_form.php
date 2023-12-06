@@ -201,16 +201,27 @@ $script = "
                 url:'" . Url::to(['validate-rtpl']) . "',
                 data: {'dcs_code':dcs,'milk_type':milk_type,'milk_quality_type':milk_quality_type,'dt_date':dt_date,'shift_code':shift,'fat':fat,'snf':snf,'member':member_code},
                 success: function(data) {   
-                      var obj = $.parseJSON(data);
-                      if (obj.status == 'success')
-                      {
-                            $('#tblmilkcollection-rtpl').val(obj.data.list.rtpl);
-                            $('#tblmilkcollection-purchase_rate_code').val(obj.data.list.purchase_rate_code);
-                            $('#tblmilkcollection-rtpl').trigger('change');
-                      }else{
-                            bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
-                            $('#tblmilkcollection-rtpl').val('');
-                            $('#tblmilkcollection-rate_code').val('');
+                    var obj = $.parseJSON(data);
+                    if (obj.status == 'success')
+                    {
+                        var rtpl = parseFloat(obj.data.list.rtpl);
+                        $('#tblmilkcollection-actual_rate').val(rtpl.toFixed(2));
+                        if(obj.data.list.scheme_rate_rtpl != '' && obj.data.list.scheme_rate_rtpl != null){
+                            var scheme_rate_rtpl = parseFloat(obj.data.list.scheme_rate_rtpl);
+                            rtpl = rtpl + scheme_rate_rtpl;
+                            $('#tblmilkcollection-scheme_rate').val(scheme_rate_rtpl);
+                            $('#tblmilkcollection-scheme_rate_code').val(obj.data.list.scheme_rate_code);
+                        }
+                        $('#tblmilkcollection-rtpl').val(rtpl);
+                        $('#tblmilkcollection-purchase_rate_code').val(obj.data.list.purchase_rate_code);
+                        $('#tblmilkcollection-rtpl').trigger('change');
+                    } else {
+                        bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>RTPL Not Available</span></div></div>');
+                        $('#tblmilkcollection-rtpl').val('');
+                        $('#tblmilkcollection-scheme_rate').val('');
+                        $('#tblmilkcollection-scheme_rate_code').val('');
+                        $('#tblmilkcollection-actual_rate').val('');
+                        $('#tblmilkcollection-rate_code').val('');
                       }
                 },
                 error:function(data){
