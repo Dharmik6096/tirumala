@@ -196,11 +196,9 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
-                                                                    $(".master_fields").addClass("disabled");
+                                                                    $(".master_fields input, .master_fields select, .master_fields textarea").prop("disabled", true);
                                                                     $(".entry_type").addClass("disabled");
-                                                                    $(".ReceiptDatetime").addClass("no_pointer");
                                                                     $("#entry_type").val($("#tblmilkvehicleentrytransaction-entry_type" ).val());
-                                                                    $("#milk-vehicle-form .master_fields select").attr("disabled", true);
                                                                     $("#tblmilkvehicleentrytransaction-entry_type" ).prop("disabled", true);
                                                                     $("#milk-vehicle-form .reset_field input").val("");                                                                    
                                                                     $("#transactions-from input[type=radio]").prop("checked",true);
