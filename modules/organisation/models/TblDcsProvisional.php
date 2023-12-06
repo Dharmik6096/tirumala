@@ -229,11 +229,6 @@ class TblDcsProvisional extends ChildModel {
                 [['state_code'], 'required', 'message' => Yii::t('app/validation', 'State cannot be blank'), 'except' => ['importCsv', 'saveCreamyData', 'customImport', 'updateDcs', 'routeMapping', 'customImportUpdate', 'uploadDoc']],
                 [['gst_no'], 'unique', 'except' => ['routeMapping']],
                 [['allow_multi_family_member'], 'integer', 'except' => ['routeMapping']],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['routeMapping', 'uploadDoc']],
-                [
-                    ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'uploadDoc']
-            ],
                 [['sap_vendor_code'], 'unique', 'targetAttribute' => ['sap_vendor_code', 'union_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['routeMapping', 'uploadDoc']],
                 [['address', 'dcs_name'], 'string', 'max' => 500],
                 [['registration_code'], 'string', 'max' => 20],
@@ -327,8 +322,7 @@ class TblDcsProvisional extends ChildModel {
                     }
                 }, 'except' => ['uploadDoc']],
         ];
-//        $client_rules = Yii::$app->customvalidation->getRules('tbldcsprovisional', $this->form_validation_type);
-        $client_rules = [];
+        $client_rules = Yii::$app->customvalidation->getRules('TblDcsProvisional', $this->form_validation_type);
         $rules = array_merge($client_rules, $main_rules);
         return $rules;
     }

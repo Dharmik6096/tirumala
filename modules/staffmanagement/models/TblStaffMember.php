@@ -97,7 +97,7 @@ class TblStaffMember extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
             [['department'], function ($attribute, $params) {
             Yii::$app->general->validateGlobalData($this, $attribute, 'department');
         }, 'on' => 'importCsv'],
@@ -127,7 +127,7 @@ class TblStaffMember extends \app\models\ChildModel {
             [['aadhar_card_no'], 'string', 'max' => 16],
             [['address'], 'string', 'max' => 500],
             [['email_id', 'mobile_no'], 'string', 'max' => 255],
-            [['pincode', 'branch_code', 'village_code'], 'string', 'max' => 6],
+            [['branch_code', 'village_code'], 'string', 'max' => 6],
             [['staff_member_name'], 'string', 'max' => 200],
             [['bank_code'], 'string', 'max' => 4],
             [['district_code'], 'string', 'max' => 3],
@@ -194,6 +194,9 @@ class TblStaffMember extends \app\models\ChildModel {
             [['is_on_role'], 'required'],
             [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblStaffMember', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
