@@ -11,6 +11,7 @@ use app\modules\geo\models\TblDistricts;
 use app\modules\geo\models\TblSubDistricts;
 use app\modules\geo\models\TblVillages;
 use app\modules\geo\models\TblHamlets;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_party_master".
@@ -64,31 +65,27 @@ class TblPartyMaster extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code',
-            'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
-            [['is_active', 'originating_type'], 'integer'],
-            [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['created_by', 'updated_by'], 'string', 'max' => 14],
-            [['originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-            [['owner_email'], 'email'],
-            [['is_active'], 'default', 'value' => 1],
-            [['adhar_no'], function ($attribute, $params) {
+                [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
+                [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['owner_email'], 'email'],
+                [['is_active'], 'default', 'value' => 1],
+                [['adhar_no'], function ($attribute, $params) {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-            [['pan_no'], function ($attribute, $params) {
+                [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-            [['party_contact_no', 'owner_contact_no'], function ($attribute, $params) {
+                [['party_contact_no', 'owner_contact_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildateMobileNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
-            [['beneficiary_name'], function ($attribute, $params) {
+                [['beneficiary_name'], function ($attribute, $params) {
                     Yii::$app->general->validateBeneficiary($this, $attribute, $params);
-                }, 'skipOnEmpty' => false, 'except' => ['androidsync']],
-            [['bank_account_no'], function ($attribute, $params) {
+                }, 'skipOnEmpty' => false],
+                [['bank_account_no'], function ($attribute, $params) {
                     $error = TblBanks::validateAccountNo($this->bank_code, $this->$attribute);
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
-                }, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                },],
         ];
     }
 
@@ -132,6 +129,16 @@ class TblPartyMaster extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
         ];
+    }
+
+    public function getPartyList($unionCode, $RLS = 'TRUE', $notIn = [], $concatCode = false) {
+        $query = $this->find()->select(['party_master_code', 'party_name'])
+                ->where(['is_active' => 1]);
+        $value = $query->orderBy('party_name asc')->all();
+        $value = ArrayHelper::map($value, 'party_master_code', function ($value) use ($concatCode) {
+                    return $value->party_name . ($concatCode ? ' - ' . $value->party_master_code : '');
+                });
+        return $value;
     }
 
     public function getUnionCode() {

@@ -93,7 +93,7 @@ class TblPartyMasterController extends \app\controllers\ChildController {
 
         return $this->redirect(['index']);
     }
-    public function actionDeactivateUser($id) {
+    public function actionDeactivateParty($id) {
         $this->model = $this->findModel($id);
         $historyModel = new TblPartyMasterHistory();
         Yii::$app->operation->history($this->model, $historyModel, UPDATE);

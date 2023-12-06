@@ -5038,3 +5038,9 @@ tr.highlightRow {
 .d-none-for-specific-client {
     display: none;
 }
+.create-trip-modal .modal-dialog {
+    width: 90% !important;
+}
+.addTripButtonDiv {
+    margin: 17px 0px 0px 0px !important;
+}

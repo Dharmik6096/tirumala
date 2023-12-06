@@ -36,10 +36,14 @@ use app\modules\webservice\eipl\models\TblEiplAppLogin;
 use app\modules\webservice\eipl\models\TblEiplAppLoginHistory;
 use app\components\AMQPConnection;
 use app\modules\tms\models\TblTask;
+use app\modules\complaint\models\TblComplainEscalationTxnDetail;
+use app\modules\complaint\models\TblComplainActivity;
+use app\modules\complaint\models\TblComplain;
+use app\modules\complaint\models\TblComplainHistory;
 
 class SchedulerController extends ChildController {
 
-    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert'];
+    public $freeAccessActions = ['update-complete-data', 'generate-file', 'upload-files', 'dcs-sentbox-generate', 'process-import-files', 'process-import-files-background', 'sap-file-upload', 'alert-queue-post', 'generate-activity-alert', 'auto-complain-assign'];
     public $errorPath = '';
     public $attachment_folder = '/web/alert-data/';
 
@@ -269,6 +273,9 @@ class SchedulerController extends ChildController {
             } else if ($row->file_type == 'milk_collection') {
                 $flag = 'milk-collection-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
+            } else if ($row->file_type == 'milk_collection_dpu_data') {
+                $flag = 'import-shagun-dpu-data';
+                $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
             } else if ($row->file_type == 'milk_collection_qlty') {
                 $flag = 'milk-collection-qlty-bulk';
                 $sp_name = 'DB_JOB_PORTAL_Milk_Collection';
@@ -348,12 +355,16 @@ class SchedulerController extends ChildController {
                     $model->attributes = $data;
                     $model->uuid = $uuid;
                     $model->union_code = $row->union_code;
-                    $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
                     $model->route_code = !empty($model->route_code) ? $model->route_code : NULL;
-                    $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                    if ($row->file_type == 'milk_collection_dpu_data') {
+                        $model->SetDataForShagunDPU();
+                    } else {
+                        $model->shift_code = (strtoupper($model->shift_code) == 'M') ? 1 : 2;
+                        $model->own_bmc_code = !empty($model->own_bmc_code) ? $model->own_bmc_code : $model->bmc_code;
+                    }
                     $model->date_time_of_collection = !empty($model->date_time_of_collection) ? date('Y-m-d', strtotime($model->date_time_of_collection)) : '';
                     $model->date_time_of_collection = $model->date_time_of_collection . ' ' . \Yii::$app->general->getshift($model->shift_code);
-                    if ($model->save()) {
+                    if ($model->save()) {  
                         $success++;
                     } else {
                         $data['response_msg'] = 'File Record error.';
@@ -1189,6 +1200,96 @@ class SchedulerController extends ChildController {
                     $row->updateProcessStatus();
                 } catch (\Throwable $e) {
                     $row->resp_status = 3;
+                    $row->updateProcessStatus();
+                }
+            }
+        }
+    }
+
+    public function actionAutoComplainAssign() {
+        $model = new TblComplainEscalationTxnDetail();
+        $model->cron_status = 0;
+        $modelData = $model->getPickRecords();
+
+        if (!empty($modelData)) {
+            $ids = array_map(function($e) {
+                return $e->complain_escalation_txn_detail_code;
+            }, $modelData);
+            $model->updatePickStatus($ids);
+
+            foreach ($modelData as $row) {
+                try {
+                    $row->updateStatusDiscard();
+
+                    $data = $model->find()
+                            ->where(['complain_code' => $row->complain_code])
+                            ->andWhere(['>', 'level', $row->level])
+                            ->andWhere('user_code is not null')
+                            ->andWhere(['<>', 'status', 'Discard'])
+                            ->orderBy(['level' => SORT_ASC])
+                            ->one();
+
+                    $row->cron_status = 2;
+                    $row->updateStatus();
+
+
+                    if (!empty($data)) {
+                        $data->cron_status = 0;
+                        $data->updateRecords();
+                        if ($data->user_code != '') {
+                            $complaint_activity = new TblComplainActivity();
+                            $activityModel = TblComplainActivity::find()->where(['complain_code' => $data->complain_code, 'activity_type' => 'ASSIGN'])->orderBy('complain_activity_code', 'desc')->one();
+
+                            if (!empty($activityModel)) {
+                                $complaint_activity->complain_code = $data->complain_code;
+                                $complaint_activity->activity_type = 'RE-ASSIGN';
+                                $complaint_activity->entry_type = 'CRON';
+                                $complaint_activity->user_code = $data->user_code;
+                                $complaint_activity->union_code = $data->union_code;
+                                $complaint_activity->remarks = 'Auto Assign By Escalation Matrix. You have to take action on this complaint.';
+                                $complaint_activity->save();
+                            }
+                        }
+                        $sp_param = [];
+                        $sp_name = 'Proc_task_activity';
+                        $sp_param[] = $data->union_code;
+                        $sp_param[] = $data->complain_code;
+                        $sp_param[] = !empty($row->user_code) ? $row->user_code : NULL;
+                        $sp_param[] = $data->user_code;
+                        $sp_param[] = NULL;
+
+                        $result = \Yii::$app->general->getSpData($sp_name, $sp_param);
+
+                        foreach ($result as $res) {
+                            if ($res['retuns_value'] == 1 || $res['retuns_value'] == true) {
+                                if (!empty($res['task_activity_code'])) {
+                                    $txnDetail = TblComplainEscalationTxnDetail::find()->where(['complain_code' => $data->complain_code, 'status' => 'Allocated'])->one();
+                                    if (!empty($txnDetail)) {
+                                        $txnDetail->task_activity_code = $res['task_activity_code'];
+                                        $txnDetail->save();
+                                    }
+                                }
+                            }
+                        }
+
+                        $complain = new TblComplain();
+                        $complainModel = TblComplain::find()->where(['complain_code' => $data->complain_code])->one();
+
+                        if (!empty($complainModel)) {
+                            $complain_history = new TblComplainHistory();
+                            Yii::$app->operation->history($complainModel, $complain_history, UPDATE);
+                            $complain_history->save();
+                            $complainModel->user_code = $data->user_code;
+                            $complainModel->complain_assignment_datetime = date('Y-m-d H:i:s');
+                            $complainModel->complain_status = 'INPROGRESS';
+                            $complainModel->save();
+                        }
+                    }
+                } catch (\yii\db\Exception $e) {
+                    $row->cron_status = 3;
+                    $row->updateProcessStatus();
+                } catch (\Throwable $e) {
+                    $row->cron_status = 3;
                     $row->updateProcessStatus();
                 }
             }
