@@ -119,11 +119,11 @@ $form = ActiveForm::begin([
                             <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', 'Antibiotic', $readonly, 'antibiotic') ?> 
                         </div>
                     <?php } ?>
-                    <div class="col-sm-3 reset_field">
+                        <div class="col-sm-3 reset_field">
                         <?= $form->field($model, 'remarks')->textarea() ?>
                     </div>
-                    <!-- <div class="clearfix"></div> -->
-                    <div class="col-sm-2 reset_field">
+                     <div class="clearfix"></div> 
+                    <div class="col-sm-2 reset_field mt_-55">
                         <?= Yii::$app->dropdown->dropdownStatic('collection_type', $model, $form, 'form-group', $model->getAttributeLabel('collection_type'), false, 'collection_type', false); ?>
                     </div>
                 </div>
