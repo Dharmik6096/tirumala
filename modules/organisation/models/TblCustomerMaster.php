@@ -401,7 +401,7 @@ class TblCustomerMaster extends \app\models\ChildModel {
         return $data;
     }
     
-    public function getActivateCustomerCodeList($bmc, $type, $dateFilter, $union_code) {
+    public function getActivateCustomerCodeList($union_code, $bmc, $type, $dateFilter) {
         $deactivateList = new TblCustomerDeactive();
         $deactivatedCustomer = $deactivateList->getDeactiveCustomer($type, $dateFilter);
 

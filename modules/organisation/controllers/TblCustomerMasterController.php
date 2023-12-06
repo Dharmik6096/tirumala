@@ -23,7 +23,7 @@ use yii\web\Response;
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix'];
+    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix', 'activate-customer-code-list'];
     public $bankDetails;
     public $contactDetails;
 
@@ -224,10 +224,10 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];
-            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
-                if (strtolower($parents[1]) == 'dcs') {
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3])) {
+                if (strtolower($parents[2]) == 'dcs') {
                     $mccs = new TblDcs();
-                    $data = $mccs->getBMCDCSList($parents[0], 'TRUE', '', $parents[2]);
+                    $data = $mccs->getBMCDCSList($parents[1], 'TRUE', '', $parents[3]);
                 } else {
                     $model = new TblCustomerMaster();
                     $data = $model->getActivateCustomerCodeList($parents[0], $parents[1], $parents[2], $parents[3]);
