@@ -98,7 +98,7 @@ $form = ActiveForm::begin([
         <div class="col-sm-1 reset_field">
             <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, 'form-group', $model->getAttributeLabel('antibiotic'), false, 'antibiotic', false); ?>
         </div>
-        <div class="clearfix"></div>
+        <!--<div class="clearfix"></div>-->
         <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
