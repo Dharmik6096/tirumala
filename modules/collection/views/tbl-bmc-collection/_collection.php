@@ -61,8 +61,8 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
             <h4 class="theme-box-heading">BMC Collection Details</h4>
         </div>
-        <div class="col-sm-10">
-            <div class="row">
+        <div class="col-sm-12 container">
+            <div class="col-sm-10">
                 <div class="QltyParamDiv">
                     <?php if ($allowRouteSelection) { ?>
                         <div class="col-sm-2">
@@ -73,10 +73,7 @@ $form = ActiveForm::begin([
                         <?= Yii::$app->dropdown->customer_type($model, $form, 'tblbmccollection-bmc_code', 'customer_type', $model->getAttributeLabel('customer_type'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields reset_field">
-                        <?= $form->field($model, 'customer_code')->textInput() ?>
-                    </div>
-                    <div class="col-sm-2 create_fields reset_field">
-                        <?= $form->field($model, 'customer_name')->textInput(['disabled' => TRUE])->label(Yii::t('app', 'Name')) ?>
+                        <?= Yii::$app->dropdown->activate_customer_code($model, $form, 'tblbmccollection-union_code,tblbmccollection-bmc_code,tblbmccollection-customer_type,tblbmccollection-date_time_of_collection', 'customer_code', $model->getAttributeLabel('customer_code'), FALSE); ?>
                     </div>
                     <div class="col-sm-2 rtpl_validate create_fields">
                         <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Milk Type', $readonly); ?>
@@ -88,10 +85,6 @@ $form = ActiveForm::begin([
                     <div class="col-sm-2 rtpl_validate create_fields">
                         <?= Yii::$app->dropdown->dropdown('milk_quality_type_code', $model, $form, '', $model->getAttributeLabel('milk_quality_type_code'), $readonly, 'milk_quality_type_code'); ?>
                     </div>
-
-                    <?php if (!$allowRouteSelection) { ?>
-                        <div class="clearfix"></div>
-                    <?php } ?>
                     <div class="col-sm-1 reset_field number-validate">
                         <?= $form->field($model, 'qty')->textInput() ?>
                     </div>
@@ -118,15 +111,11 @@ $form = ActiveForm::begin([
                         <?= $form->field($model, 'amount')->textInput(['readOnly' => true]) ?>
                     </div>
                     <?php if (Yii::$app->session->get('eiplCode') == 'PRABHAT') { ?>
-                        <div class="col-sm-1 create_fields">
+                        <div class="col-sm-2 create_fields">
                             <?= Yii::$app->dropdown->dropdownStatic('antibiotic', $model, $form, '', 'Antibiotic', $readonly, 'antibiotic') ?> 
                         </div>
                     <?php } ?>
-                    <div class="col-sm-3 reset_field">
-                        <?= $form->field($model, 'remarks')->textarea() ?>
-                    </div>
-                    <!-- <div class="clearfix"></div> -->
-                    <div class="col-sm-2 reset_field">
+                    <div class="col-sm-2 reset_field ">
                         <?= Yii::$app->dropdown->dropdownStatic('collection_type', $model, $form, 'form-group', $model->getAttributeLabel('collection_type'), false, 'collection_type', false); ?>
                     </div>
                 </div>
@@ -145,8 +134,11 @@ $form = ActiveForm::begin([
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-2 padding_top_20 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+            <div class="col-sm-2 reset_field">
+                <?= $form->field($model, 'remarks')->textarea() ?>
+            </div>
+        </div>   
+        <div class="col-sm-2 padding_top_20 shortcut-main ml15" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?php
                 AjaxSubmitButton::begin([

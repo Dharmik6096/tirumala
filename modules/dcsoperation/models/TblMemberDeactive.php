@@ -233,5 +233,15 @@ class TblMemberDeactive extends \app\models\ChildModel {
     public function updateFileStatus($value, $status) {
         return $this->updateAll(['data_post_status' => $status, 'picked_datetime' => date('Y-m-d H:i:s')], ['member_deactive_code' => $value]);
     }
+    
+    public function getDeactiveMember($union_code, $dcs, $dateFilter) {
+        $checkdate = date('Y-m-d', strtotime($dateFilter));
+        $deactivateMemberList = $this->find()
+                ->select('member_code')
+                ->where(['dcs_code' => $dcs])
+                ->andWhere('((:checkdate between cast(from_date as date) and coalesce(cast(to_date as date), \'9999-12-31\')))', [':checkdate' => $checkdate])
+                ->column();
+        return $deactivateMemberList;
+    }
 
 }

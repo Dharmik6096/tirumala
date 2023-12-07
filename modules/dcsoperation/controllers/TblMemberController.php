@@ -29,7 +29,7 @@ use app\modules\document\controllers\TblAttachmentController;
 class TblMemberController extends \app\controllers\ChildController {
 
     public $bankDetails;
-    public $freeAccessActions = ['import-file'];
+    public $freeAccessActions = ['import-file', 'activate-member-code-list'];
 
     /**
      * Lists all TblMember models.
@@ -355,6 +355,22 @@ class TblMemberController extends \app\controllers\ChildController {
         $module_name = 'tbl_member';
         $val = new TblAttachmentController($this->id, $this->module);
         return $val->actiondocumentUpload('member', $id, $model, $module_code, $module_name);
+    }
+    
+    public function actionActivateMemberCodeList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2])) {
+                $member = new TblMember();
+                $data = $member->getActivateMemberCode($parents[0], $parents[1], $parents[2]);
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
 }

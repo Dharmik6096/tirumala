@@ -443,6 +443,16 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
+    
+    public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
+    }
+
+    public function activate_member_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
+        $this->setClass($form, $name);
+        $this->dependedDropdown($model, $form, $depends, $name, $islable, '/dcsoperation/tbl-member/activate-member-code-list', Yii::t('app', 'Select Member'), $multiple, $model->$name, $readonly);
+    }
 
     public function dcsRateChart($model, $form, $depends, $name = 'rate_chart_dcs', $islable = false, $multiple = false) {
         $this->setClass($form, $name);

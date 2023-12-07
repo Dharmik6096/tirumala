@@ -24,6 +24,7 @@ use app\modules\verification\models\TblKycRecord;
 use app\modules\syncutility\models\TblSentbox;
 use yii\db\Query;
 use app\modules\organisation\models\TblDcsVendorStatus;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_member".
@@ -665,6 +666,21 @@ class TblMember extends ChildModel {
 
     public function getActiveStatus() {
         return $this->hasOne(TblDcsVendorStatus::className(), ['customer_code' => 'member_code'])->andOnCondition(['customer_type' => 'Member']);
+    }
+    
+    public function getActivateMemberCode($union_code, $dcs, $dateFilter) {
+        $deactivateList = new TblMemberDeactive();
+        $deactivatedMember = $deactivateList->getDeactiveMember($union_code, $dcs, $dateFilter);
+
+        $value = $this->find()
+                ->where(['is_active' => 1])
+                ->andFilterWhere(['dcs_code' => $dcs, 'union_code' => $union_code])
+                ->andWhere(['not in', 'member_code', $deactivatedMember])
+                ->all();
+
+        return ArrayHelper::map($value, 'member_code', function($value) {
+                    return $value->member_name . ' - ' . $value->ref_code;
+                });
     }
 
 }
