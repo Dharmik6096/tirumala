@@ -168,7 +168,7 @@ $form = ActiveForm::begin([
                                                                     reloadGrid();
                                                                     $(".transporter").hide();
                                                                     $("#bmc-coll-form .reset_field input").val("");
-                                                                    $("#bmc-coll-form .reset_field select").val("");
+                                                                    $("#bmc-coll-form .reset_field select").val("").trigger("change");
                                                                     $("#bmc-coll-form .reset_field textarea").val("");
 
                                                                     $(".panel-body").scrollTop(0);                                                                    
