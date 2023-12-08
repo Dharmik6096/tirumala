@@ -402,7 +402,8 @@ class TblMilkCollectionSearch extends TblMilkCollection {
                 'sort' => [
                     'defaultOrder' => [],
                     'attributes' => [
-                        $attr
+                        'milk_type',
+                        'qty',                 
                     ],
                 ],
             ]);
