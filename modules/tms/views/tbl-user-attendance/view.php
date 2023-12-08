@@ -92,8 +92,20 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                         [
-                            'attribute' => 'total_hours',
+                            'attribute' => 'Attendance_hours',
                             'value' => Yii::$app->controls->timeDifference($model->in_time, $model->out_time),
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                    ],
+                ],
+                [
+                    'columns' => [
+                        [
+                            'attribute' => 'in_lat_long',
+                            'valueColOptions' => ['style' => 'width:30%']
+                        ],
+                        [
+                            'attribute' => 'out_lat_long',
                             'valueColOptions' => ['style' => 'width:30%']
                         ],
                     ],
@@ -145,11 +157,6 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
             </div>
             <div class="clearfix"></div>
             <div class="form-grid">
-                <?php
-//                echo '<pre>';
-//                    print_r($model->module_code);
-//                    die;
-                ?>
                 <?=
                 $this->render('_attachment_list', [
                     'model' => $model,

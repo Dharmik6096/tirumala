@@ -40,7 +40,7 @@ use app\modules\general\models\TblAttachment;
  */
 class TblUserAttendance extends \app\models\ChildModel
 {
-    public $mobile_no, $total_hours;
+    public $mobile_no, $Attendance_hours;
     /**
      * @inheritdoc
      */

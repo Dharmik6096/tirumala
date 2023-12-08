@@ -39,7 +39,11 @@ class TblUserAttendanceController extends ChildController
         $user_attachment = new TblAttachment();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $user_attachment->find()->where(['module_code' => $id]),
+            'query' => $user_attachment->find()
+                    ->where([
+                        'module_code' => $id,
+                        'module_name' => ['tbl_user_attendance_in', 'tbl_user_attendance_out']
+                    ]),
         ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
