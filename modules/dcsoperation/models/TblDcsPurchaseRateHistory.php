@@ -51,15 +51,15 @@ class TblDcsPurchaseRateHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['purchase_rate_code'], 'safe'],
-                [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default'], 'safe'],
-                [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'safe'],
-                [['purchase_rate_code', 'description', 'rate_method'], 'safe'],
-                [['originating_org_type'], 'safe'],
-                [['originating_org_id'], 'safe'],
-                [['flg_sentbox_entry', 'sync_status'], 'safe'],
-                [['operation_type'], 'safe'],
-                [['created_by', 'is_delete', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'shift_id', 'originating_type', 'union_code', 'qty_mode', 'reference_code', 'is_process', 'for_member', 'ts_rate', 'rate_type', 'rate_value'], 'safe'],
+            [['purchase_rate_code'], 'safe'],
+            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default'], 'safe'],
+            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'safe'],
+            [['purchase_rate_code', 'description', 'rate_method'], 'safe'],
+            [['originating_org_type'], 'safe'],
+            [['originating_org_id'], 'safe'],
+            [['flg_sentbox_entry', 'sync_status'], 'safe'],
+            [['operation_type'], 'safe'],
+            [['created_by', 'is_delete', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'shift_id', 'originating_type', 'union_code', 'qty_mode', 'reference_code', 'is_process', 'for_member', 'ts_rate', 'rate_type', 'rate_value', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
         ];
     }
 
