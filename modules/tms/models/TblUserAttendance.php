@@ -40,6 +40,7 @@ use app\modules\general\models\TblAttachment;
  */
 class TblUserAttendance extends \app\models\ChildModel
 {
+    public $mobile_no, $total_hours;
     /**
      * @inheritdoc
      */
@@ -79,15 +80,15 @@ class TblUserAttendance extends \app\models\ChildModel
             'mcc_plant_code' => Yii::t('app', 'Mcc Plant Code'),
             'bmc_code' => Yii::t('app', 'Bmc Code'),
             'dcs_code' => Yii::t('app', 'Dcs Code'),
-            'user_code' => Yii::t('app', 'User Code'),
+            'user_code' => Yii::t('app', 'User Name'),
             'attendance_date' => Yii::t('app', 'Attendance Date'),
             'in_time' => Yii::t('app', 'In Time'),
             'out_time' => Yii::t('app', 'Out Time'),
             'day_count' => Yii::t('app', 'Day Count'),
             'in_lat_long' => Yii::t('app', 'In Lat Long'),
             'out_lat_long' => Yii::t('app', 'Out Lat Long'),
-            'in_desc' => Yii::t('app', 'In Desc'),
-            'out_desc' => Yii::t('app', 'Out Desc'),
+            'in_desc' => Yii::t('app', 'Check In Address'),
+            'out_desc' => Yii::t('app', 'Check Out Address'),
             'status' => Yii::t('app', 'Status'),
             'remarks' => Yii::t('app', 'Remarks'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -127,4 +128,9 @@ class TblUserAttendance extends \app\models\ChildModel
     public function getAttachment() {
         return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
     }
+
+    public function getUserAttendance() {
+        return $this->find()->where(['attendance_code' => $this->attendance_code])->one();
+    }
+
 }

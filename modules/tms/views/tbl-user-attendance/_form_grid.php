@@ -43,34 +43,7 @@ $grid_option = [
     'attributes' => $attribute,
     'active_column' => false,
     'actions' => [
-        'Attachment_In' => function ($url, $model) {
-            $inAttachmentUrl = Yii::$app->general->getAttachmentUrl('tbl_user_attendance_in', $model->attendance_code);
-            $outAttachmentUrl = Yii::$app->general->getAttachmentUrl('tbl_user_attendance_out', $model->attendance_code);
-            $inAttachmentIcon = '';
-            if ($inAttachmentUrl) {
-                $inAttachmentIcon = Html::a(
-                    '<span class="glyphicon glyphicon-picture"></span>',
-                    $inAttachmentUrl[0],
-                    [
-                        'title' => Yii::t('yii', 'In Attachment'),
-                        'target' => '_blank',
-                    ]
-                );
-            }
-        
-            $outAttachmentIcon = '';
-            if ($outAttachmentUrl) {
-                $outAttachmentIcon = Html::a(
-                    '<span class="glyphicon glyphicon-picture"></span>',
-                    $outAttachmentUrl[0],
-                    [
-                        'title' => Yii::t('yii', 'Out Attachment'),
-                        'target' => '_blank',
-                    ]
-                );
-            }        
-            return $inAttachmentIcon . ' ' . $outAttachmentIcon;
-        },        
+        'view' => true,   
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
