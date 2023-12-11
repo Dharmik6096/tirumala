@@ -43,6 +43,7 @@ $form = ActiveForm::begin([
                 return Yii::$app->controls->view_date($model['date_time_of_collection']);
             }, 'filter' => false],
         ['label' => 'Shift', 'attribute' => 'shift_code', 'filter' => FALSE],
+        ['attribute' => 'milk_type', 'filter' => false],
         ['attribute' => 'qty', 'filter' => FALSE],
         ['attribute' => 'fat', 'label' => 'Avg FAT', 'filter' => FALSE],
         ['attribute' => 'snf', 'label' => 'Avg SNF', 'filter' => FALSE],
