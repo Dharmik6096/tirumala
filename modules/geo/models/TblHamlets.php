@@ -53,7 +53,7 @@ class TblHamlets extends ChildModel {
             [[ 'state', 'district', 'sub_district'], 'required', 'message' => Yii::t('app/validation', '{attribute} cannot be blank.'),'on'=>'add','except'=>'importCsv'],
             [['hamlet_code'], 'unique'],
             [['created_at', 'updated_at', 'state', 'district', 'sub_district', 'is_active'], 'safe'],
-            [['hamlet_code'], 'string', 'max' => 8, 'min' => 8],
+            [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['hamlet_name'], 'string', 'max' => 100],
             //[['hamlet_name'], 'match', 'pattern' => '/^[a-zA-Z\/]*$/'],
             [['hamlet_name'], function ($attribute, $params) {
@@ -148,9 +148,10 @@ class TblHamlets extends ChildModel {
     }
 
     public function getMaxVillageCode($code) {
-        $data=  $this->find()->select(["convert(int,MAX(substring(hamlet_code,7,2))) as hamlet_code"])->where(['village_code'=>trim($code)])->one();
+        $data=  $this->find()->select(["MAX(convert(int,substring(hamlet_code,7,3))) as hamlet_code"])->where(['village_code'=>trim($code)])->one();
         $new_code = isset($data['hamlet_code']) ? ($data['hamlet_code'] + 1) : 1;
-        return trim($code).str_pad($new_code,2,'0',STR_PAD_LEFT);
+        $final_code = $new_code<10 ? str_pad($new_code,2,'0',STR_PAD_LEFT): $new_code;
+        return trim($code).$final_code ;
     }
 
 }

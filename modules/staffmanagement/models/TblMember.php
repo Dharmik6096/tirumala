@@ -100,7 +100,7 @@ class TblMember extends \yii\db\ActiveRecord
             [['dcs_code'], 'string', 'max' => 9],
             [['district_code', 'union_code'], 'string', 'max' => 3],
             [['federation_code', 'state_code'], 'string', 'max' => 2],
-            [['hamlet_code'], 'string', 'max' => 8],
+            [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['sub_center_code'], 'string', 'max' => 11],
             [['sub_district_code'], 'string', 'max' => 5],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => TblUsers::className(), 'targetAttribute' => ['updated_by' => 'user_id']],

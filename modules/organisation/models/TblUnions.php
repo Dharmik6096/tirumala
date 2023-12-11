@@ -125,7 +125,7 @@ class TblUnions extends ChildModel {
             [['ifsc', 'contact_person_pan_no'], 'trim'],
             //[['bank_code'], 'string', 'max' => 4],
             [['federation_code', 'state_code'], 'string', 'max' => 2],
-            [['hamlet_code'], 'string', 'max' => 8],
+            [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['sub_district_code'], 'string', 'max' => 5],
             //[['branch_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblBranch::className(), 'targetAttribute' => ['branch_code' => 'branch_code']],
             [['federation_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblFederations::className(), 'targetAttribute' => ['federation_code' => 'federation_code']],
