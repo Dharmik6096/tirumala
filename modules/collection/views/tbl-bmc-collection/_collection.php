@@ -63,7 +63,7 @@ $form = ActiveForm::begin([
         </div>
         <div class="col-sm-12 container">
             <div class="col-sm-10">
-                <div class="QltyParamDiv">
+                <div class="QltyParamDiv inline_block">
                     <?php if ($allowRouteSelection) { ?>
                         <div class="col-sm-2">
                             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblbmccollection-plant_code,tblbmccollection-mcc_plant_code,tblbmccollection-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
@@ -102,7 +102,7 @@ $form = ActiveForm::begin([
                     <div class="col-sm-1 reset_field rtpl_validate ">
                         <?= $form->field($model, 'clr')->textInput(['readOnly' => true]) ?>
                     </div>
-                    <div class="col-sm-1 reset_field">
+                    <div class="col-sm-1 reset_field hide_help_block">
                         <?= $form->field($model, 'rtpl')->textInput(['readOnly' => true]) ?>
                         <?= $form->field($model, 'rate_code')->hiddenInput(['readOnly' => true])->label(false) ?>
                     </div>
