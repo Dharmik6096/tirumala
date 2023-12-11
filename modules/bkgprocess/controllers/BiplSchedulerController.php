@@ -129,6 +129,7 @@ class BiplSchedulerController extends ChildController {
                                                         $ftp_txn_model->ftp_password = $records['ftp_password'];
                                                         $ftp_txn_model->ftp_port = $records['ftp_port'];
                                                         $ftp_txn_model->ftp_path = $records['ftp_path'];
+                                                        $ftp_txn_model->ftp_mode = $records['ftp_mode'];
                                                         $ftp_txn_model->file_status = 1;
                                                         $ftp_txn_model->status = 0;
                                                         $ftp_txn_model->save();
@@ -257,6 +258,7 @@ class BiplSchedulerController extends ChildController {
                     $ftp->conn_init = FALSE;
                     $ftp->conn_close = FALSE;
                     $ftp->make_dir = FALSE;
+                    $ftp->isPassiveFtp = !empty($row->ftp_mode) && $row->ftp_mode == 'active' ? false : true;
                     $connection = $ftp->ConnectServer();
                 }
                 $cnt++;

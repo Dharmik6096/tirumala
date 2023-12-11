@@ -12,6 +12,7 @@ $readonly = $type == 'create' ? FALSE : TRUE;
 $disable = $readonly ? 'disabled' : '';
 $url = $type == 'create' ? ['create'] : ['update', 'id' => $model->bmc_dispatch_stock_code];
 $label = $type == 'create' ? 'Add' : 'Update';
+$disabled = ($model->bmc_code != '') ? TRUE : FALSE;
 ?>
 
 <?php
@@ -24,12 +25,6 @@ $form = ActiveForm::begin([
         ]);
 ?>
 <?php echo $form->errorSummary([$model]); ?>
-<?php
-$disabled = false;
-if ($model->bmc_code != '') {
-    $disabled = true;
-}
-?>
 <div class="row table_form theme-box theme_border_right theme_border_left theme_border_bottom">
     <div class="col-sm-12 padding_10_0 DisableAferAdd">
         <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -49,10 +44,10 @@ if ($model->bmc_code != '') {
                 <?= Yii::$app->dropdown->mcc_bmc($model, $form, 'tblbmcdispatchstock-mcc_plant_code', 'bmc_code', Yii::t('app', 'BMC'), FALSE, '', '', $disabled); ?>
             </div>  
             <div class="col-sm-2 filldata">
-                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, true, true); ?>
+                <?= Yii::$app->controls->date($model, $form, 'from_date', '', date('Y-m-d'), false, $disabled, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
-                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, true, 'from_shift_code'); ?>
+                <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'from_shift_code', true, $disabled, 'from_shift_code'); ?>
             </div>
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->controls->date($model, $form, 'to_date', '', date('Y-m-d'), false, $readonly, true); ?>
@@ -219,7 +214,7 @@ $(document).ready(function() {
             $('#tblbmcdispatchstock-qty_diff').val(qtyDif);
         }
     }
-    });
+});
 
     $(document).on('change','.filldata', function() {
         var bmc_code = $('#tblbmcdispatchstock-bmc_code').val();
@@ -282,7 +277,8 @@ $(document).ready(function() {
 $this->registerJs($script, View::POS_END, 'panel-before-hide');
 ?>
 <?php
-$script = "$(document).ready(function(){
+$script = "
+$(document).ready(function(){
     $(document).on('change', '#tblbmcdispatchstock-from_date, #tblbmcdispatchstock-to_date', function() {
         var from_date = $('#tblbmcdispatchstock-from_date').val();
         var to_date = $('#tblbmcdispatchstock-to_date').val();
