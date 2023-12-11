@@ -11,7 +11,6 @@ use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
 $furl = Url::to(['/organisation/tbl-mcc-plant/get-union-mcc']);
-
 ?>
 
 <?php
@@ -40,9 +39,9 @@ $form = ActiveForm::begin([
     <div class="col-sm-2 shift">
         <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('to_shift'), false, 'to_shift'); ?>
     </div>
-<!--    <div class="col-sm-2">
-        <?php //Yii::$app->dropdown->dropdown('rate_class', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class'); ?>
-    </div> -->
+    <!--    <div class="col-sm-2">
+    <?php //Yii::$app->dropdown->dropdown('rate_class', $model, $form, 'col-sm-3 form-group', $model->getAttributeLabel('rate_class'), false, 'rate_class');  ?>
+        </div> -->
     <div class="col-sm-2 number-validate ">
         <?= $form->field($model, 'rtpl')->textInput() ?>
     </div>
@@ -50,20 +49,21 @@ $form = ActiveForm::begin([
         <?= Yii::$app->dropdown->dropdownStatic('boolean_value', $model, $form, 'form-group', $model->getAttributeLabel('is_mcc_wise_rate'), false, 'is_mcc_wise_rate', false); ?>
     </div>
     <div class="clearfix"></div>
-    <div class="col-sm-3 padding_left_0 padding_right_0 mcc_div">
-        <h4 class="theme-box-heading mb10"><?= Yii::t('app', 'MCC') ?></h4>
-
+    <div class="col-sm-4 padding_left_0 padding_right_0 mcc_div">
         <div class="col-sm-12 bmc_codes-list height_100-284 overflow_auto">
-            <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => 'bmc_codes', 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
-            <div class="form-group">
-                <div class="checkbox app-check-all-mcc app-check-list-padding">
-                    <label class="route-text">
-                        <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
-                        <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL') ?></label>
-                    </label>
+            <h4 class="theme-box-heading padding_left_0 padding_right_0"><?= Yii::t('app', 'MCC List') ?></h4>
+            <div class="app-check-list-mcc ">
+                <div class="form-group">
+                    <div class="checkbox app-check-all-mcc app-check-list-padding">
+                        <?= Html::textInput('filter', '', ['class' => 'col-sm-12 margin_bottom_10', 'id' => 'bmc_codes', 'onkeyup' => 'checkBoxFilter(this)', 'placeholder' => "Search"]); ?>
+                        <label class="route-text">
+                            <?= Html::checkbox('checkall', false, ['id' => 'checkAllBmcList', 'class' => 'bmc-list-checkbox']) ?>
+                            <label for="checkAllBmcList"><?= Yii::t('app', 'Check ALL') ?></label>
+                        </label>
+                    </div>
                 </div>
+                <div class="col-sm-12 padding_left_0 padding_right_0" id="bmc_codes-list"></div>
             </div>
-            <div class="col-sm-12 padding_left_0 padding_right_0" id="bmc_codes-list"></div>
         </div>
     </div>
     <div class="col-sm-2">
