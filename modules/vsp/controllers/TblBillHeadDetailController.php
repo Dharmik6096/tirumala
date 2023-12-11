@@ -14,6 +14,7 @@ use app\modules\organisation\models\TblDcs;
 use app\modules\vsp\models\TblBillHead;
 use yii\widgets\ActiveForm;
 use app\modules\dcsoperation\models\TblMember;
+use app\modules\vsp\models\TblBillHeadDetailHistory;
 
 /**
  * TblBillHeadDetailController implements the CRUD actions for TblBillHeadDetail model.
@@ -212,10 +213,22 @@ class TblBillHeadDetailController extends ChildController {
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id) {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+    public function actionDelete() {
+        $this->model = $this->findModel(Yii::$app->request->post('id'));
+        $hasRelatedInstallments = $this->model->hasInstallmentsToPreventDeletion();
+        if($hasRelatedInstallments) {
+            $historyModel = new TblBillHeadDetailHistory();
+            Yii::$app->operation->history($this->model, $historyModel, DELETE);
+            $record = $this->generalModel->deleteTransaction(
+                [$this->model, $historyModel],
+                ['TblBillHeadInstallment', 'TblBillHeadInstallmentHistory'],
+                'bill_head_detail_code'
+            );
+        } else {
+            $record = ['status' => 'error', 'msg' => 'This record cannot be deleted because installment already deducted.'];
+        }       
+        Yii::$app->response->format = trim(Response::FORMAT_JSON);
+        return Json::encode($record);
     }
 
     /**

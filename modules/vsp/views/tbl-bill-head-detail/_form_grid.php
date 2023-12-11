@@ -53,6 +53,7 @@ $grid_option = [
     'default_sorting' => FALSE,
     'actions' => [
         'view' => true,
+        'delete' => ['option' => 'bill_head_detail_code,bill_head_detail_code,tbl-bill-head-detail/delete,hasInstallmentsToPreventDeletion()'],
     ]
 ];
 Yii::$app->grid->bind($dataProvider, $searchModel, $grid_option);
