@@ -118,7 +118,7 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment->load(Yii::$app->request->post());
                             $complain_attachment->module_name = 'tbl_complain';
                             $ext = (explode(".", $atta));
-                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['complaint_dir_path'] . $atta;
                             $complain_attachment->attachment = $file;
                             $complain_attachment->file_name = $atta;
                             $complain_attachment->attachment_type = $ext[1];
@@ -222,7 +222,7 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment->module_name = 'tbl_complain';
                             $complain_attachment->module_code = $this->model->complain_code;
                             $ext = (explode(".", $atta));
-                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['complaint_dir_path'] . $atta;
                             $complain_attachment->attachment = $file;
                             $complain_attachment->file_name = $atta;
                             $complain_attachment->attachment_type = $ext[1];
@@ -536,7 +536,7 @@ class TblComplainController extends \app\controllers\ChildController {
                             $complain_attachment->module_name = 'tbl_complain';
                             $complain_attachment->module_code = $this->model->complain_code;
                             $ext = (explode(".", $atta));
-                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/complaint-docs/' . $atta;
+                            $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['complaint_dir_path'] . $atta;
                             $complain_attachment->attachment = $file;
                             $complain_attachment->file_name = $atta;
                             $complain_attachment->attachment_type = $ext[1];
