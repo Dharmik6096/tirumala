@@ -52,7 +52,7 @@ class TblBannerController extends \app\controllers\ChildController {
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $banner_attachment = new TblAttachment();
         $attachmentDataProvider = new ActiveDataProvider([
-            'query' => $banner_attachment->find()->where(['module_code' => $id, 'module_name' => 'tbl_banner']),
+            'query' => $banner_attachment->find()->where(['module_code' => (string) $id, 'module_name' => 'tbl_banner']),
         ]);
         return $this->render('view', [
                     'model' => $this->findModel($id),
@@ -109,7 +109,7 @@ class TblBannerController extends \app\controllers\ChildController {
                     $attachment->load(Yii::$app->request->post());
                     $attachment->module_name = 'tbl_banner';
                     $ext = (explode(".", $attachment_file));
-                    $file = Yii::$app->urlManager->createAbsoluteUrl('') . 'web/uploads/banner_upload/' . $attachment_file;
+                    $file = Yii::$app->urlManager->createAbsoluteUrl('') . Yii::$app->params['banner_upload'] . $attachment_file;
                     $attachment->attachment = $file;
                     $attachment->file_name = $attachment_file;
                     $attachment->attachment_type = $ext[1];
@@ -189,7 +189,7 @@ class TblBannerController extends \app\controllers\ChildController {
             $saveModel[] = $bannerApplicabilityHistory;
         }
 
-        $attachment_data = TblAttachment::find()->where(['module_code' => $this->model->banner_code, 'module_name' => 'tbl_banner'])->one();
+        $attachment_data = TblAttachment::find()->where(['module_code' => (string) $this->model->banner_code, 'module_name' => 'tbl_banner'])->one();
         if (!empty($attachment_data)) {
             $attachmentHistoryModel = new TblAttachmentHistory();
             Yii::$app->operation->history($attachment_data, $attachmentHistoryModel, DELETE);
