@@ -400,6 +400,21 @@ class TblCustomerMaster extends \app\models\ChildModel {
         asort($data, SORT_NATURAL | SORT_FLAG_CASE);
         return $data;
     }
+    
+    public function getActivateCustomerCodeList($union_code, $bmc, $type, $dateFilter) {
+        $deactivateList = new TblCustomerDeactive();
+        $deactivatedCustomer = $deactivateList->getDeactiveCustomer($type, $dateFilter);
+
+        $value = $this->find()
+                ->where(['is_active' => 1])
+                ->andFilterWhere(['bmc_code' => $bmc, 'customer_type' => $type, 'union_code' => $union_code])
+                ->andWhere(['not in', 'customer_code', $deactivatedCustomer])
+                ->all();
+
+        return ArrayHelper::map($value, 'customer_code', function($value) {
+                    return $value->customer_name . ' - ' . $value->ref_code;
+                });
+    }
 
     public function getBMCCustomerList($bmc, $customer_type = NULL) {
         $query = $this->find()->where(['is_active' => 1]);

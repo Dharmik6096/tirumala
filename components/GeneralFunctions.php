@@ -51,6 +51,7 @@ use yii\imagine\Image;
 use app\modules\organisation\models\TblCustomerMaster;
 use app\modules\general\models\TblProcessApproval;
 use yii\db\Expression;
+use app\modules\tankermovement\models\TblBmcDispatchStock;
 
 class GeneralFunctions extends Component {
 
@@ -1741,6 +1742,7 @@ class GeneralFunctions extends Component {
             $ftp->ftp_username = $ftpData->ftp_username;
             $ftp->ftp_password = $ftpData->ftp_password;
             $ftp->ftp_port = $ftpData->ftp_port;
+            $ftp->isPassiveFtp = !empty($ftpData->ftp_mode) && $ftpData->ftp_mode == 'active' ? false : true;
             $ftpDir = $this->getFTPDirStructure($cp_code);
             foreach ($ftpDir as $dir) {
                 $ftp->ftp_path = $ftpData->ftp_path . $dir;
@@ -2373,6 +2375,17 @@ class GeneralFunctions extends Component {
         if ($value < $min || $value > $max) {
             $model->addError($attribute, Yii::t('app/validation', $model->getAttributeLabel($attribute) . ' must be between ' . $min . ' and ' . $max));
             return false;
+        }
+    }
+    
+    public function setCode($model) {
+        $plants = !empty(Yii::$app->session->get('Plant')) ? count(explode(',', Yii::$app->session->get('Plant'))) : 0;
+        $mccs = !empty(Yii::$app->session->get('MCC')) ? count(explode(',', Yii::$app->session->get('MCC'))) : 0;
+        $bmcs = !empty(Yii::$app->session->get('BMC')) ? count(explode(',', Yii::$app->session->get('BMC'))) : 0;
+        $plants == 1 ? $model->plant_code = explode(',', Yii::$app->session->get('Plant'))[0] : NULL;
+        $mccs == 1 ? $model->mcc_plant_code = explode(',', Yii::$app->session->get('MCC'))[0] : NULL;
+        if ($bmcs == 1) {
+            $model->bmc_code = explode(',', Yii::$app->session->get('BMC'))[0];
         }
     }
 

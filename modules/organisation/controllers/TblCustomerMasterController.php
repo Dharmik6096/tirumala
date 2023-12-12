@@ -23,7 +23,7 @@ use yii\web\Response;
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix'];
+    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix', 'activate-customer-code-list'];
     public $bankDetails;
     public $contactDetails;
 
@@ -219,6 +219,28 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         }
         return Json::encode(['output' => '', 'selected' => '']);
     }
+    
+    public function actionActivateCustomerCodeList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3])) {
+                if (strtolower($parents[2]) == 'dcs') {
+                    $mccs = new TblDcs();
+                    $data = $mccs->getBMCDCSList($parents[1], 'TRUE', '', $parents[3]);
+                } else {
+                    $model = new TblCustomerMaster();
+                    $data = $model->getActivateCustomerCodeList($parents[0], $parents[1], $parents[2], $parents[3]);
+                }
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
 
     public function actionGetCustomerType() {
         $out = null;
@@ -235,7 +257,6 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                     'name' => $r);
             }
             return Json::encode(['output' => $out]);
-            return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
     }

@@ -54,7 +54,7 @@ $form = ActiveForm::begin([
             <div class="col-sm-2 filldata">
                 <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblbmcmilkdispatch-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', $readonly); ?>
             </div>
-            <div class="col-sm-2 filldata">
+            <div class="col-sm-2 filldata" id='transactionDate'>
                 <?= Yii::$app->controls->date($model, $form, 'transaction_date', '', date('Y-m-d'), false, $readonly, true); ?>
             </div>
             <div class="col-sm-2 filldata">
@@ -441,7 +441,11 @@ $script = "$(document).ready(function(){
 
             var fromDateObj = new Date(formatted_from_date);
             var toDateObj = new Date(formatted_to_date);
-           
+            var date = new Date(formatted_to_date);
+            date.setDate(date.getDate() + 1);
+            date = date.toISOString().split('T')[0];
+            format_date = date.split('-');
+            date = format_date[2]+'-'+format_date[1]+'-'+format_date[0];
             if (isNaN(fromDateObj) || isNaN(toDateObj) || toDateObj < fromDateObj) {
                 var errorMessage = 'must not be less than from date.';
                 var errorElement = '<div class=\"error-message\" style=\"font-size: 8px; margin-bottom: -12px; color:rgb(122, 35, 28);\">' + errorMessage + '</div>';
@@ -449,7 +453,14 @@ $script = "$(document).ready(function(){
                 $('.field-tblbmcmilkdispatch-to_date').append(errorElement);
             } else {
                 $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
-            }
+                $('#tblbmcmilkdispatch-transaction_date').kvDatepicker({
+                        format: 'dd-mm-yyyy', // Set your desired date format
+                        todayHighlight: true,
+                        autoclose: true,
+                        endDate: date,
+                        startDate: to_date
+                    });
+                 }  
         } else {
             $('.field-tblbmcmilkdispatch-to_date .error-message').remove();
         }
