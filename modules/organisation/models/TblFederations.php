@@ -137,7 +137,7 @@ class TblFederations extends ChildModel {
 //            [['bank_code','branch_code','bank_account_no','ifsc'], function ($attribute, $params) {
 //                    Yii::$app->general->validateBankDetail($this, $attribute,$params);
 //                },'skipOnEmpty'=> false],
-            [['hamlet_code'], 'string', 'max' => 8],
+            [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['sub_district_code'], 'string', 'max' => 5]
         ];
     }

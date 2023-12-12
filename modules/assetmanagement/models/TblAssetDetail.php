@@ -63,7 +63,7 @@ class TblAssetDetail extends \app\models\ChildModel {
                 [['asset_code'], 'assignAutoData', 'skipOnError' => true, 'on' => 'importCsv'],
                 [['asset_code', 'store_location_code', 'put_to_use_date', 'purchase_date'], 'required'],
                 [['asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'created_by', 'updated_by'], 'string'],
-                [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date'], 'safe'],
+                [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'is_serial_number', 'store_location_type', 'qty', 'make', 'to_plant', 'to_mcc', 'to_bmc', 'to_dcs', 'current_status', 'is_verified', 'verification_date', 'other_info'], 'safe'],
                 [['warranty_period', 'maintanance_duration_in_days', 'capacity', 'qty'], 'number'],
                 [['is_active'], 'default', 'value' => 1],
                 [['put_to_use_date'], 'usedDateValidate'],
@@ -84,8 +84,8 @@ class TblAssetDetail extends \app\models\ChildModel {
                 [['asset_code'], 'checkUnique', 'skipOnError' => true],
             //    ['asset_code', 'unique', 'targetAttribute' => (Yii::$app->general->getforeignkey($this->assetCode, 'is_serial_number') == '1') ? ['serial_number', 'asset_code'] : ['purchase_date', 'asset_code', 'store_location_code'], 'skipOnEmpty' => TRUE, 'message' => Yii::t('app/validation', 'Asset/Serial No. has already been taken.')],
             [['qty'], 'default', 'value' => 1],
-                [['make'], 'string', 'max' => 100],
-                [['verification_date'], 'required', 'when' => function ($model) {
+            [['make', 'other_info'], 'string', 'max' => 100],
+            [['verification_date'], 'required', 'when' => function ($model) {
                     return $model->is_verified == '1';
                 }, 'whenClient' => "function (attribute, value) { 
                             return $('#tblassetdetail-is_verified').val() == '1'; 
@@ -122,6 +122,7 @@ class TblAssetDetail extends \app\models\ChildModel {
             'to_dcs' => Yii::t('app', 'To DCS'),
             'is_verified' => Yii::t('app', 'Is Verified'),
             'verification_date' => Yii::t('app', 'Verification Date'),
+            'other_info' => Yii::t('app', 'Other Info'),
         ];
     }
 
