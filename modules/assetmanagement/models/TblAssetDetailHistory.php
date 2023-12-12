@@ -45,7 +45,7 @@ class TblAssetDetailHistory extends \yii\db\ActiveRecord {
             [['asset_detail_code', 'asset_group_code', 'asset_code', 'store_location_code', 'serial_number', 'manufacturer_code', 'capacity', 'created_by', 'updated_by', 'operation_type', 'history_created_by'], 'safe'],
             [['purchase_date', 'put_to_use_date', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
             [['warranty_period', 'maintanance_duration_in_days', 'union_code'], 'safe'],
-            [['is_active', 'qty', 'make'], 'safe'],
+            [['is_active', 'qty', 'make', 'other_info'], 'safe'],
         ];
     }
 
