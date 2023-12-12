@@ -131,7 +131,7 @@ class TblStaffMember extends \app\models\ChildModel {
             [['staff_member_name'], 'string', 'max' => 200],
             [['bank_code'], 'string', 'max' => 4],
             [['district_code'], 'string', 'max' => 3],
-            [['hamlet_code'], 'string', 'max' => 8],
+            [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['state_code'], 'string', 'max' => 2],
             [['sub_district_code'], 'string', 'max' => 5],
             [['is_active'], 'default', 'value' => 1],
