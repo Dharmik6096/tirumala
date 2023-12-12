@@ -20,6 +20,8 @@ if ($master_type == 'member') {
     $urls = ['/transporter/tbl-transporter/transporter-document-upload', 'id' => $model->transporter_code];
 } else if ($master_type == 'vehicle') {
     $urls = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $model->vehicle_code];
+} else if ($master_type == 'provisional_customer') {
+    $urls = ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code];
 } else {
     $urls = ['/organisation/tbl-plant/plant-document-upload', 'id' => $model->plant_code];
 }
@@ -27,7 +29,7 @@ if ($master_type == 'member') {
 
 <div class="panel-heading">
     <ul class="progressbar">
-        <li>Upload Documents</li>
+        <li><?= $this->title ?></li>
     </ul>
 </div>
 <?php
@@ -73,6 +75,11 @@ if (!empty($doc_model)) {
         $wef_date = $model['wef_date'];
         $billing_method = $model['billing_method'];
         $parsing_no = $model['parsing_no'];
+    } else if ($master_type == 'provisional_customer') {
+        $code = $model['customer_provisional_code'];
+        $ex_code = $model['customer_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['customer_name'];
     } else {
         $code = $model['plant_code'];
         $ex_code = $model['plant_code_ex'];

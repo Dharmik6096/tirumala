@@ -12,6 +12,7 @@ use app\modules\document\models\TblAttachmentHistory;
 use yii\web\Response;
 use yii\helpers\Json;
 use yii\web\UploadedFile;
+use app\modules\general\models\TblApprovalStagesDetail;
 
 /**
  * TblAttachmentController implements the CRUD actions for TblAttachment model.
@@ -34,7 +35,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name) {
+    public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name, $approval_satges = false) {
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
@@ -60,6 +61,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
 
                 foreach ($doc_model as $key => $d) {
                     $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
+                    $id = (string) $id;
                     if (!empty($d->file_name)) {
                         $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
                         if (!empty($attach)) {
@@ -82,6 +84,12 @@ class TblAttachmentController extends \app\controllers\ChildController {
                 }
 
                 if (empty($error_msg)) {
+                    if ($approval_satges) {
+                        $modelStages = new TblApprovalStagesDetail();
+                        $modelStages->setApprovalData($model->union_code, 'tbl_customer_master_provisional', $model->customer_provisional_code, $save_model, $approval_stages);
+                        $model->status = empty($approval_stages) ? 'Approve' : 'Register';
+                        $save_model[] = $model;
+                    }
                     $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
                     if ($transaction == 'customRedirect') {
                         $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
@@ -99,6 +107,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
             return Json::encode($record);
         }
         $attachment = new TblAttachment();
+        $module_code = (string) $module_code;
         $dataProvider = new ActiveDataProvider([
             'query' => $attachment->find()->where(['module_code' => $module_code, 'module_name' => $module_name]),
         ]);

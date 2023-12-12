@@ -13,11 +13,13 @@ use yii\web\View;
             'master_type' => $master_type,
         ])
         ?>
-        <?=
-        $this->render('_attachment_grid', [
-            'dataProvider' => $dataProvider,
-            'attachment' => $attachment,
-        ])
+        <?php
+        if ($master_type != 'provisional_customer') {
+            echo $this->render('_attachment_grid', [
+                'dataProvider' => $dataProvider,
+                'attachment' => $attachment,
+            ]);
+        }
         ?>
     </div>
 </div>
