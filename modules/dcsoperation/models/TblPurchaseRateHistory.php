@@ -47,7 +47,7 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default', 'union_code', 'reference_code'], 'safe'],
+            [['purchase_rate_code', 'description', 'rate_method', 'originating_org_id', 'originating_org_type', 'is_excel', 'rate_type', 'flg_sentbox_entry', 'sync_status', 'operation_type', 'is_active', 'is_delete', 'shift_applicability', 'wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at', 'is_default', 'union_code', 'reference_code'], 'safe'],
 //            [['purchase_rate_code'], 'required'],
 //            [['wef_date', 'created_at', 'deleted_at', 'history_created_at', 'sync_timestamp', 'updated_at','is_default'], 'safe'],
 //            [['is_excel', 'rate_type', 'is_active', 'is_delete', 'shift_applicability'], 'integer'],
@@ -58,7 +58,7 @@ class TblPurchaseRateHistory extends \yii\db\ActiveRecord {
 //            [['operation_type'], 'string', 'max' => 10],
 //            [['purchase_rate_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblPurchaseRateMaster::className(), 'targetAttribute' => ['purchase_rate_code' => 'purchase_rate_code']],
             [['originating_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-                [['created_by', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'rate_type', 'shift_id', 'reference_code', 'rate_category', 'is_process', 'ts_rate'], 'safe'],
+            [['created_by', 'originating_org_code', 'updated_by', 'rate_gen_method_code', 'rate_type', 'shift_id', 'reference_code', 'rate_category', 'is_process', 'ts_rate', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
         ];
     }
 
