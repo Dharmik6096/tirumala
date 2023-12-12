@@ -97,7 +97,7 @@ class TblBannerController extends \app\controllers\ChildController {
                         $saveModel[] = $applicability_model;
                         $auto_key_config['TblBannerApplicability'][] = ['self_key' => 'banner_code', 'parent_key' => 'banner_code', 'parent_index' => 0];
                     } else {
-                        $msg = $msg . 'Already uploaded  more than 5 ' . $login_type . ' login type <br>';
+                        $msg = $msg . 'More than 5 ' . $login_type . ' login type not allowed. <br>';
                     }
                 }
             }
