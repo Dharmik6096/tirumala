@@ -115,8 +115,7 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                         [
                             'attribute' => 'in_desc',
                             'format' => 'raw',
-                            $in_lat_long = Yii::$app->general->getforeignkey($model->userAttendance, 'in_lat_long'),
-                            'value' => Yii::$app->controls->openInGoogleMaps($model->in_desc, $in_lat_long),
+                            'value' => Yii::$app->controls->openInGoogleMaps($model->in_desc, $model->in_lat_long),
                             'valueColOptions' => ['style' => 'width:100%']
                         ],
                     ],
@@ -126,8 +125,7 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                         [
                             'attribute' => 'out_desc',
                             'format' => 'raw',
-                            $out_lat_long = Yii::$app->general->getforeignkey($model->userAttendance, 'out_lat_long'),
-                            'value' => Yii::$app->controls->openInGoogleMaps($model->out_desc, $out_lat_long),
+                            'value' => Yii::$app->controls->openInGoogleMaps($model->out_desc, $model->out_lat_long),
                             'valueColOptions' => ['style' => 'width:100%']
                         ]
                     ],
@@ -156,7 +154,7 @@ $this->title = Yii::$app->label->title('view', 'Attendance');
                 <h4 class="theme-box-heading mt_0">User Attachment</h4>
             </div>
             <div class="clearfix"></div>
-            <div class="form-grid">
+            <div class="form-grid center_text">
                 <?=
                 $this->render('_attachment_list', [
                     'model' => $model,

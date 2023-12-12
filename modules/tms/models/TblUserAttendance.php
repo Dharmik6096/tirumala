@@ -128,8 +128,4 @@ class TblUserAttendance extends \app\models\ChildModel {
         return $this->hasOne(TblAttachment::class, ['module_code' => 'attendance_code']);
     }
 
-    public function getUserAttendance() {
-        return $this->find()->where(['attendance_code' => $this->attendance_code])->one();
-    }
-
 }
