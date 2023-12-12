@@ -53,7 +53,7 @@ class TblBranchHistory extends \yii\db\ActiveRecord
     {
         return [
             [['created_at','created_by','updated_by', 'operation_type', 'history_created_at', 'updated_at','is_active'], 'safe'],
-            [['branch_code', 'state_code', 'district_code','ifsc','bank_code','sub_district_code', 'union_code','address', 'pincode', 'village_code','branch_name'], 'safe'],
+            [['branch_code', 'state_code', 'district_code','ifsc','bank_code','sub_district_code', 'union_code','address', 'pincode', 'village_code','branch_name','hamlet_code'], 'safe'],
             [['created_at', 'branch_code', 'state_code', 'district_code','ifsc', 'history_created_at', 'updated_at','union_code'], 'safe'],
             [['is_active','local_name', 'valid_from'], 'safe'],
         ];
