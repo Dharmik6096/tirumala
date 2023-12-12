@@ -151,8 +151,7 @@ class TblCustomerMasterProvisional extends \app\models\ChildModel {
                     Yii::$app->general->validateAadharcard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
                 [['aadhaar_no'], 'unique', 'skipOnError' => TRUE],
-                [['ts_code_m', 'ts_code_e'], 'string', 'max' => 10],
-                [['ts_code_m', 'ts_code_e'], 'number'],
+                [['ts_code_m', 'ts_code_e'], 'number', 'max' => 10],
         ];
     }
 

@@ -102,29 +102,7 @@ class TblCustomerMasterProvisionalHistory extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-                [['customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'integer'],
-                [['customer_code'], 'required'],
-                [['morning_kms', 'evening_kms'], 'number'],
-                [['picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'history_created_at'], 'safe'],
-                [['union_code', 'district_code'], 'string', 'max' => 3],
-                [['plant_code', 'mcc_plant_code', 'village_code', 'old_mcc_plant_code'], 'string', 'max' => 6],
-                [['bmc_code', 'customer_code', 'customer_code_ex', 'old_bmc_code'], 'string', 'max' => 12],
-                [['address', 'local_address', 'gst_no', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'bank_account_no', 'ifsc', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'string', 'max' => 255],
-                [['route_code', 'old_route_code', 'operation_type'], 'string', 'max' => 10],
-                [['customer_name', 'email'], 'string', 'max' => 50],
-                [['customer_type', 'sap_code', 'refference_code', 'customer_category', 'distance_from_mcc', 'status'], 'string', 'max' => 20],
-                [['local_name', 'local_contact_person', 'local_firstname', 'local_lastname', 'local_surname'], 'string', 'max' => 200],
-                [['state_code'], 'string', 'max' => 2],
-                [['sub_district_code'], 'string', 'max' => 5],
-                [['hamlet_code'], 'string', 'max' => 8],
-                [['ref_code', 'originating_org_code', 'originating_org_type'], 'string', 'max' => 25],
-                [['vendor_code', 'ts_code_m', 'ts_code_e', 'beneficiary_name', 'contact_person', 'department', 'firstname', 'lastname', 'surname'], 'string', 'max' => 100],
-                [['data_post_id'], 'string', 'max' => 55],
-                [['sap_vendor_code'], 'string', 'max' => 225],
-                [['bank_code'], 'string', 'max' => 4],
-                [['branch_code'], 'string', 'max' => 9],
-                [['remarks'], 'string', 'max' => 1000],
-                [['created_by', 'updated_by', 'history_created_by'], 'string', 'max' => 14],
+                [['morning_kms', 'union_code', 'state_code', 'ref_code', 'bank_code', 'branch_code', 'remarks', 'originating_org_code', 'sap_vendor_code', 'vendor_code', 'created_by', 'updated_by', 'history_created_by', 'data_post_id', 'ts_code_m', 'ts_code_e', 'beneficiary_name', 'contact_person', 'department', 'firstname', 'lastname', 'surname', 'originating_org_type', 'hamlet_code', 'sub_district_code', 'plant_code', 'local_name', 'local_contact_person', 'local_firstname', 'local_lastname', 'local_surname', 'customer_name', 'customer_type', 'sap_code', 'refference_code', 'customer_category', 'distance_from_mcc', 'status', 'email', 'route_code', 'old_route_code', 'operation_type', 'bmc_code', 'address', 'local_address', 'gst_no', 'rate_chart_code', 'billing_payment_cycle', 'over_head', 'ccenter_code', 'resp_status', 'resp_desc', 'aadhaar_no', 'bank_account_no', 'ifsc', 'mobile_no', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'customer_code', 'customer_code_ex', 'old_bmc_code', 'mcc_plant_code', 'village_code', 'old_mcc_plant_code', 'district_code', 'picked_datetime', 'response_datetime', 'created_at', 'updated_at', 'history_created_at', 'evening_kms', 'customer_provisional_code', 'auto_code', 'data_post_status', 'animal_type_code', 'originating_type'], 'safe'],
         ];
     }
 

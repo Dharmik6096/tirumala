@@ -29,8 +29,7 @@ use app\modules\document\models\TblAttachmentHistory;
  */
 class TblCustomerMasterProvisionalController extends \app\controllers\ChildController {
 
-    public $bankDetails;
-    public $contactDetails;
+    public $bankDetails, $contactDetails;
     public $freeAccessActions = ['excode-prefix'];
 
     /**
@@ -348,14 +347,12 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
         ]);
     }
 
-    public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, $message) {
+    public function createCustomer($customerProvisional, &$model_save, &$all_attachment, &$customerdoc, &$message) {
         if (!empty($customerProvisional)) {
             $customerModel = new TblCustomerMaster();
             $this->bankDetails = new TblBankDetails();
             $this->contactDetails = new TblContactDetails();
             $this->contactDetails->form_validation_type = 'customer-create';
-            $validate = 1;
-
             $customerModel->scenario = 'createFront';
             $customerModel->attributes = $customerProvisional->attributes;
             $customerModel->customer_code = $customerModel->getCode();
@@ -381,10 +378,8 @@ class TblCustomerMasterProvisionalController extends \app\controllers\ChildContr
                     array_push($model_save, $this->contactDetails);
                 }
 
-                if ($bankValidate == 1 && empty($customerModel->getErrors())) {
+                if ($bankValidate == 1) {
                     $customerModel->customer_code_ex = !empty($customerModel->prefix . $exCode) ? $customerModel->prefix . $exCode : $customerModel->customer_code_ex;
-                }
-                if ($bankValidate == 1 && $validate == 1 && empty($customerModel->getErrors())) {
                     $tblAttachment = new TblAttachment();
                     $customerProvisionalCode = (string) $customerProvisional->customer_provisional_code;
                     $tblAttachment = $tblAttachment->getAttachment($customerProvisionalCode, 'tbl_customer_master_provisional');

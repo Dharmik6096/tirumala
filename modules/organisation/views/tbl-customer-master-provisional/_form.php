@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\web\View;
-use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 $readonly = $type == 'create' ? FALSE : TRUE;
@@ -42,7 +41,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4 DCS">
             <?= Yii::$app->dropdown->all_routes($model, $form, 'tblcustomermasterprovisional-plant_code,tblcustomermasterprovisional-mcc_plant_code,tblcustomermasterprovisional-bmc_code', 'route_code', $model->getAttributeLabel('route_code'), FALSE); ?>
         </div>
-        <!-- <div class="clearfix"></div> -->
         <div class="col-sm-4 ">
             <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
         </div>
@@ -67,16 +65,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= $form->field($model, 'customer_name')->textInput() ?>
         </div>
-
-        <!-- <div class="col-sm-4 ">
-        <?= Yii::$app->dropdown->dropdown('customer_type', $model, $form, 'form-group col-sm-4', $model->getAttributeLabel('customer_type'), $readonly); ?>
-        </div>
-        <div class="col-sm-4">
-        <?= $form->field($model, 'customer_code_ex')->textInput() ?>
-        </div>
-        <div class="col-sm-4">
-        <?= $form->field($model, 'customer_name')->textInput() ?>
-        </div> -->
 
         <div class="col-sm-4">
             <?= $form->field($model, 'local_name')->textInput() ?>
@@ -124,7 +112,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-4">
             <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
         </div>
-
         <div class="col-sm-4">
             <?= Yii::$app->dropdown->state($model, $form, 'state_code', $model->getAttributeLabel('state_code'), FALSE); ?>
         </div>
@@ -177,7 +164,6 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
             </div>
 
-
             <div class="clearfix"></div>
 
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
@@ -213,8 +199,6 @@ $form = ActiveForm::begin([
     </div>
 
     <?php ActiveForm::end(); ?>
-
-
 
     <?php
     $script = "
