@@ -184,6 +184,7 @@ class TblBmcCollection extends \app\models\ChildModel {
                 [['route_code'], 'required', 'when' => function ($model) {
                     return Yii::$app->general->getUnionConfiguration(Yii::$app->session->get('Unions'), 'allow_route_selection', 'PORTAL') == 1;
                 }, 'on' => ['create']],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
@@ -247,6 +248,9 @@ class TblBmcCollection extends \app\models\ChildModel {
             'qty_time' => Yii::t('app', 'Qty. Time'),
             'created_at' => Yii::t('app', 'Receive Time'),
             'route_code' => Yii::t('app', 'Route'),
+            'scheme_rate' => Yii::t('app', 'Scheme Rate'),
+            'scheme_rate_code' => Yii::t('app', 'Scheme Rate'),
+            'actual_rate' => Yii::t('app', 'Actual Rate'),
         ];
     }
 

@@ -48,7 +48,7 @@ class TblSchemeRate extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['union_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'rtpl'], 'required'],
-                [['from_date', 'to_date', 'created_at', 'updated_at', 'scheme_rate_code', 'is_active'], 'safe'],
+                [['from_date', 'to_date', 'created_at', 'updated_at', 'scheme_rate_code', 'is_active', 'is_member_rate'], 'safe'],
                 [['from_shift', 'to_shift', 'is_mcc_wise_rate', 'originating_type'], 'integer'],
                 [['rtpl'], 'number'],
                 [['rate_class', 'union_code'], 'string', 'max' => 3],
@@ -105,6 +105,7 @@ class TblSchemeRate extends \app\models\ChildModel {
             'originating_type' => Yii::t('app', 'Originating Type'),
             'originating_org_code' => Yii::t('app', 'Originating Org Code'),
             'originating_org_type' => Yii::t('app', 'Originating Org Type'),
+            'is_member_rate' => Yii::t('app', 'Is Member Rate'),
         ];
     }
 

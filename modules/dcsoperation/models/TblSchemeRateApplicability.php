@@ -56,7 +56,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
                 [['scheme_rate_code', 'applicable_for', 'applicable_code'], 'safe'],
                 [['union_code', 'rate_class'], 'safe'],
                 [['created_by', 'updated_by'], 'safe'],
-                [['originating_org_code', 'originating_org_type'], 'safe'],
+                [['originating_org_code', 'originating_org_type', 'is_member_rate'], 'safe'],
                 [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5', 'tab_download_datetime'], 'safe'],
                 [['is_active'], 'default', 'value' => 1],
 //                [['applicable_code'], 'unique', 'targetAttribute' => ['applicable_code', 'from_date', 'to_date', 'applicable_for'], 'message' => Yii::t('app/validation', 'Record Is Alredy Exist.'), 'on' => ['approval']],
@@ -92,6 +92,7 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
             'x_col4' => Yii::t('app', 'X Col4'),
             'x_col5' => Yii::t('app', 'X Col5'),
             'mcc_name' => Yii::t('app', 'Applicable Name'),
+            'is_member_rate' => Yii::t('app', 'Is Member Rate'),
         ];
     }
 

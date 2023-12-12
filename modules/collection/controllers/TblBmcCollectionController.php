@@ -294,7 +294,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
             $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
             $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-
             if (!empty($detail_data)) {
                 $response['status'] = 'success';
                 $rtpl_data['list'] = $detail_data;
