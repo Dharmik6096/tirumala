@@ -35,7 +35,7 @@ class TblAttachmentController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name, $approval_satges = false) {
+    public function actionDocumentUpload($master_type, $id, $model, $module_code, $module_name, $approval_satge = false) {
         $doc_mapping = TblDocumentMapping::find()->where(['master_type' => $master_type])->all();
         $doc_model = [];
         foreach ($doc_mapping as $doc) {
@@ -84,9 +84,12 @@ class TblAttachmentController extends \app\controllers\ChildController {
                 }
 
                 if (empty($error_msg)) {
-                    if ($approval_satges) {
+                    if ($approval_satge) {
                         $modelStages = new TblApprovalStagesDetail();
-                        $modelStages->setApprovalData($model->union_code, 'tbl_customer_master_provisional', $model->customer_provisional_code, $save_model, $approval_stages);
+                        if ($master_type == 'provisional_dcs') {
+                            $module_name = 'society';
+                        }
+                        $modelStages->setApprovalData($model->union_code, $module_name, $module_code, $save_model, $approval_stages);
                         $model->status = empty($approval_stages) ? 'Approve' : 'Register';
                         $save_model[] = $model;
                     }

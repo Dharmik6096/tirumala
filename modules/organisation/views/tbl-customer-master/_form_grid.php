@@ -35,13 +35,13 @@ $attribute = [
         ['attribute' => 'customer_name'],
         ['attribute' => 'local_name', 'filter' => FALSE],
         [
-            'attribute' => 'gst_no',
-            'headerOptions' => ['class' => 'hidden-for-specific-client'],
-        ],
+        'attribute' => 'gst_no',
+        'headerOptions' => ['class' => 'hidden-for-specific-client'],
+    ],
         [
-            'attribute' => 'customer_category',
-            'headerOptions' => ['class' => 'd-none-for-specific-client'],
-        ],
+        'attribute' => 'customer_category',
+        'headerOptions' => ['class' => 'd-none-for-specific-client'],
+    ],
         ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
         ['label' => Yii::t('app', 'Contact Person'), 'visible' => false, 'filter' => false,
@@ -158,6 +158,13 @@ $grid_option = [
             $url = ['/organisation/tbl-customer-master/import-attachements', 'id' => $id];
             $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Upload', 'class' => 'upload-photo' . $class, 'data-val' => $id, 'data-name' => $type];
             return GhostHtml::a_alert('<i class="fa fa-cloud-upload"></i>', $url, $options);
+        },
+        'document-upload' => function ($url, $model) {
+            $id = $model->customer_code;
+            $name = $model->customer_name;
+            $url = ['/organisation/tbl-customer-master/customer-document-upload', 'id' => $id];
+            $options = ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'data-original-title' => 'Document Upload', 'data-val' => $id, 'data-name' => $name];
+            return GhostHtml::a('<i class="fa fa-link"></i>', $url, $options);
         },
     ]
 ];

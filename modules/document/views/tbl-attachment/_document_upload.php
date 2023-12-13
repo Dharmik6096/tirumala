@@ -22,6 +22,10 @@ if ($master_type == 'member') {
     $urls = ['/transporter/tbl-vehicle-master/vehicle-document-upload', 'id' => $model->vehicle_code];
 } else if ($master_type == 'provisional_customer') {
     $urls = ['/organisation/tbl-customer-master-provisional/document-upload', 'id' => $model->customer_provisional_code];
+} else if ($master_type == 'provisional_dcs') {
+    $urls = ['/organisation/tbl-dcs-provisional/document-upload', 'id' => $model->dcs_provisional_code];
+} else if ($master_type == 'customer') {
+    $urls = ['/organisation/tbl-customer-master/customer-document-upload', 'id' => $model->customer_code];
 } else {
     $urls = ['/organisation/tbl-plant/plant-document-upload', 'id' => $model->plant_code];
 }
@@ -77,6 +81,16 @@ if (!empty($doc_model)) {
         $parsing_no = $model['parsing_no'];
     } else if ($master_type == 'provisional_customer') {
         $code = $model['customer_provisional_code'];
+        $ex_code = $model['customer_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['customer_name'];
+    } else if ($master_type == 'provisional_dcs') {
+        $code = $model['dcs_provisional_code'];
+        $ex_code = $model['dcs_code_ex'];
+        $ref_code = $model['ref_code'];
+        $name = $model['dcs_name'];
+    } else if ($master_type == 'customer') {
+        $code = $model['customer_code'];
         $ex_code = $model['customer_code_ex'];
         $ref_code = $model['ref_code'];
         $name = $model['customer_name'];

@@ -14,7 +14,7 @@ use yii\web\View;
         ])
         ?>
         <?php
-        if ($master_type != 'provisional_customer') {
+        if ($master_type != 'provisional_customer' && $master_type != 'provisional_dcs') {
             echo $this->render('_attachment_grid', [
                 'dataProvider' => $dataProvider,
                 'attachment' => $attachment,

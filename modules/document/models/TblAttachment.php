@@ -96,7 +96,7 @@ class TblAttachment extends \app\models\ChildModel {
                         ->one();
     }
 
-    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$customerdoc) {
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc) {
 
         $tblAttachment = $this->getAttachment($provisional_code, $module_name);
         $doc_path = Yii::$app->params['document_upload'] . $process_name;
@@ -126,7 +126,7 @@ class TblAttachment extends \app\models\ChildModel {
                         $tblAttachments->module_name = $master_module_name;
                         $tblAttachments->module_code = $master_module_code;
                         $tblAttachments->file_name = $file_name;
-                        $customerdoc[] = $file_name;
+                        $process_doc[] = $file_name;
                         $model_save[] = $tblAttachments;
                     }
                 }
