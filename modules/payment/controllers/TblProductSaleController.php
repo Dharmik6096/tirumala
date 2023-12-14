@@ -826,8 +826,8 @@ class TblProductSaleController extends \app\controllers\ChildController {
 
     public function actionDeleteProductSale() {
         $searchModel = new TblProductSaleSearch();
-        $searchModel->scenario = 'bulkdelete';
         $type=Yii::$app->request->get('type');
+        $searchModel->scenario = $type;
         $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
