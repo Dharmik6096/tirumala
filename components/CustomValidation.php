@@ -221,6 +221,18 @@ class CustomValidation extends Component {
                         }, 'except' => ['activation']],
                     [['parsing_no'], 'string', 'min' => 8, 'max' => 11, 'except' => ['activation']],
                 ],
+                'TblFederations' => [
+                    [['pincode'], 'required'],
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
+                    [
+                        ['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
+                        'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                    [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
+                ],
             ],
             'NIFPL' => [
                 'TblDcs' => [
@@ -529,6 +541,8 @@ class CustomValidation extends Component {
                 'TblMemberProvisional' => [
                     'default' => [
                         [['adhar_no'], 'required'],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                     ],
                 ],
             ],
@@ -536,6 +550,8 @@ class CustomValidation extends Component {
                 'TblMemberProvisional' => [
                     'default' => [
                         [['adhar_no'], 'required'],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
+                        [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                     ],
                 ],
             ],
@@ -643,6 +659,22 @@ class CustomValidation extends Component {
                         ],
                     ],
                 ],
+                'TblFederations' => [
+                    'default' => [
+                        [['pincode'], 'required'],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"')],
+                        [
+                            ['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
+                        ],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
+                    ],
+                ],
                 'TblVehicleMaster' => [],
             ],
             'KOTMALE' => [
@@ -747,6 +779,22 @@ class CustomValidation extends Component {
                             ['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
                         ],
+                    ],
+                ],
+                'TblFederations' => [
+                    'default' => [
+                        [['pincode'], 'required'],
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"')],
+                        [
+                            ['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '),
+                            'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
+                        ],
+                    ],
+                ],
+                'TblMemberProvisional' => [
+                    'default' => [
+                        [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
+                        [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
                     ],
                 ],
                 'TblVehicleMaster' => [],
