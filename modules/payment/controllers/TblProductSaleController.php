@@ -821,67 +821,19 @@ class TblProductSaleController extends \app\controllers\ChildController {
         } else {
             $record = ['status' => 'error', 'msg' => 'This record cannot be deleted due to some reference Error.'];
         }
-
-        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-        return Json::encode($record);
-    }
-
-    public function actionDeleteProductSaleToMember() {
-        $searchModel = new TblProductSaleSearch();
-        $searchModel->scenario = 'bulkdeletemember';
-        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
-
-        if (Yii::$app->request->post()) {
-            if (isset($_REQUEST['selection'])) {
-                $selectedIds = $_REQUEST['selection'];
-                $total = count($_REQUEST['selection']);
-                if (!empty($selectedIds)) {
-                    $deleteModel = [];
-                    $saveModel = [];
-                    $cnt = 0;
-                    $failed_cnt = 0;
-                    $result = [];
-                    $failed = [];
-                    foreach ($selectedIds as $id) {
-                        $result = $this->bulkdelete($id);
-                        if ($result['status'] == 'success') {
-                            $cnt++;
-                        } else {
-                            $failed['id'] = $id;
-                            $failed['result'] = $result;
-                            $failed_cnt++;
-                        }
-                    }
-                    if ($total == $cnt) {
-                        Yii::$app->response->format = trim(Response::FORMAT_JSON);
-                        return true;
-                    }
-                    else if($total < $cnt && $failed>0)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return $this->render('_bulk_delete',
-                        [
-                            'searchModel' => $searchModel,
-                            'dataProvider' => $dataProvider,
-                            'type' => 'memberBulkDelete',
-        ]);
+        return $record;
     }
 
     public function actionDeleteProductSale() {
         $searchModel = new TblProductSaleSearch();
+        $searchModel->scenario = 'bulkdelete';
+        $type=Yii::$app->request->get('type');
         $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
-        $searchModel->scenario = 'bulkdeletevendor';
         if (Yii::$app->request->post()) {
             if (isset($_REQUEST['selection'])) {
                 $selectedIds = $_REQUEST['selection'];
                 $total = count($_REQUEST['selection']);
                 if (!empty($selectedIds)) {
-                    $deleteModel = [];
-                    $saveModel = [];
                     $cnt = 0;
                     $failed_cnt = 0;
                     $failed = [];
@@ -890,27 +842,32 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         if ($result['status'] == 'success') {
                             $cnt++;
                         } else {
-                            $failed['id'] = $id;
-                            $failed['result'] = $result;
+                            $failed[] = $id;
                             $failed_cnt++;
                         }
                     }
-                     if ($total == $cnt) {
-                        return true;
+                    if ($total == $cnt) {
+                        $msg = 'Records are successfully deleted.';
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                        
+                    } else if ($total > $cnt && $failed_cnt > 0) {
+                         $msg = ''.$failed_cnt.'records failed out of'.$total;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                  
                     }
-                    else if($total < $cnt && $failed>0)
-                    {
-                        return false;
-                    }
+                    return $this->redirect(['index']);
                 }
             }
+        } else {
+            return $this->render('_bulk_delete',
+                            [
+                                'searchModel' => $searchModel,
+                                'dataProvider' => $dataProvider,
+                                'type' => $type,
+            ]);
         }
-        return $this->render('_bulk_delete',
-                        [
-                            'searchModel' => $searchModel,
-                            'dataProvider' => $dataProvider,
-                            'type' => 'memberBulkDelete',
-        ]);
     }
 
     public function createProductSaleData($model, $detailModel, $message = 'Product Sale') {

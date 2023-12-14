@@ -1,5 +1,6 @@
 <?php
-$this->title = Yii::t('app', 'Product Sale Delete');
+$title = (($type=='memberBulkDelete') ? 'Member' : 'Vendor');
+$this->title = Yii::t('app', 'Product Sale Delete '.$title);
 ?>
 <div class="panel panel-default panel-grid panel-main">
     <div class="panel-heading">
@@ -17,7 +18,7 @@ $this->title = Yii::t('app', 'Product Sale Delete');
                 <div class="clearfix"></div>
                 <div class="large-search hidden-print">
                     <?php
-                    echo $this->render('_bulk_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'type' => $type, 'procustsaleModel' => $procustsaleModel]);
+                        echo $this->render('_bulk_delete_grid', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'type' => $type]);
                     ?>
                 </div>
             </div>

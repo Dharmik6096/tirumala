@@ -66,12 +66,15 @@ class Controls extends Component {
         // }
     }
 
-    public function custombutton($name, $action = 'create', $sideButton = false, $class = '', $icon = '') {
+    public function custombutton($name, $action = 'create', $sideButton = false, $class = '', $icon = '', $queryparams = []) {
         if (is_array($action))
             $url_path = $action;
         else
             $url_path[] = $action;
         $url = Url::to(array_values($url_path));
+        if (!empty($queryparams)) {
+            $url = Url::to(array_merge(array_values($url_path), $queryparams));
+        }
         $sideclass = $sideButton ? 'btn-block' : '';
         $class = empty($class) ? '' : $class . ' ';
         //$url=str_replace('1%5B', '%5B', $url);
@@ -350,10 +353,9 @@ class Controls extends Component {
                     'item' =>
                     function ($index, $label, $name, $checked, $value) {
                         return Html::checkbox($name, $checked, [
-                                    'value' => $value,
-                                    'id' => $value,
-                                ]) . '<label for=' . $value . '>' . $label . '</label>';
+                            'value' => $value,
+                            'id' => $value,
+                        ]) . '<label for=' . $value . '>' . $label . '</label>';
                     },]);
     }
-
 }

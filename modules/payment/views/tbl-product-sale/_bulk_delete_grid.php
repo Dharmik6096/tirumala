@@ -9,9 +9,7 @@ use yii\helpers\Url;
 use webvimark\modules\UserManagement\components\GhostHtml;
 
 $this->title = Yii::t('app', 'Product Sale Delete');
-						
-					   
-   
+					  
 ?>
 <div class=" no-effect">
     <?php
@@ -40,10 +38,10 @@ $this->title = Yii::t('app', 'Product Sale Delete');
             ['attribute' => 'union_code', 'value' => 'unionCode.union_name', 'filter' => false],
             ['attribute' => 'bmc_code', 'value' => function ($searchModel) {
                     return Yii::$app->general->getforeignkey($searchModel->bmcCode, 'bmc_name');
-                }, 'vAlign' => 'middle'],
+                }, 'vAlign' => 'middle','filter' => false],
             ['attribute' => 'customer_type', 'value' => function ($searchModel) {
                     return isset($searchModel->customer_type) ? (strtolower($searchModel->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($searchModel->customerType, 'customer_desc') ) : '';
-                }, 'vAlign' => 'middle'],
+                }, 'vAlign' => 'middle','filter' => false],
             ['attribute' => 'customer_code', 'label' => Yii::t('app', 'Code')],
             ['label' => Yii::t('app', 'Code Ex.'), 'value' => function ($searchModel) {
                     return isset($searchModel->customer_type) ? Yii::$app->general->getCustomer($searchModel, $searchModel->customer_type, true) : '';
@@ -64,14 +62,11 @@ $this->title = Yii::t('app', 'Product Sale Delete');
                 'value' => function ($searchModel) {
                     return Yii::$app->controls->view_date($searchModel->invoice_date);
                 }],
-            ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'other_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(),],
-            ['attribute' => 'bmc_code', 'label' => Yii::t('app', 'Channel'), 'value' => function ($searchModel) {
-                    return Yii::$app->general->getmultiforeignkey($searchModel->bmcCode, ['channelMaster'], 'channel_desc');
-                }, 'visible' => true, 'filter' => false],
+            ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(),'filter' => false],
+            ['attribute' => 'other_amount', 'format' => Yii::$app->general->CurrencyFormat(),'filter' => false],
+            ['attribute' => 'discount', 'format' => Yii::$app->general->CurrencyFormat(),'filter' => false],
+            ['attribute' => 'amount_due', 'format' => Yii::$app->general->CurrencyFormat(),'filter' => false],
+            ['attribute' => 'paid_amount', 'format' => Yii::$app->general->CurrencyFormat(),'filter' => false],
         ];
 
         $grid_option = [
