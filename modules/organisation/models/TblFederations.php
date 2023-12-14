@@ -81,8 +81,8 @@ class TblFederations extends ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['federation_code','federation_code_ex', 'federation_name', 'registration_no', 'registration_date', 'district_code','city','sub_district_code','village_code','hamlet_code','state_code','address','pincode'], 'required'],
+        $main_rules = [
+            [['federation_code','federation_code_ex', 'federation_name', 'registration_no', 'registration_date', 'district_code','city','sub_district_code','village_code','hamlet_code','state_code','address'], 'required'],
             [['federation_code', 'federation_code_ex', 'federation_name'], 'unique'],
             ['contact_person_email', 'email', 'message' => Yii::t('app/validation', 'You have entered invalid email address.e.g. "abc@xyz.com"')],
             [['federation_name','contact_person'], function ($attribute, $params) {
@@ -111,9 +111,6 @@ class TblFederations extends ChildModel {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute,$params);
                 },'skipOnEmpty'=> false],
             [[ 'bank_account_no'], 'integer'],
-            [['pincode'], 'integer','message'=> Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-            [['pincode'], 'string', 'max' => 6,'min'=>6,'tooLong' =>  Yii::t('app/validation', '{attribute} must contain 6 digit '),
-            'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
             [['federation_code', 'state_code'], 'string', 'max' => 2],
             [['address'], 'string', 'max' => 500],
             [['ifsc','contact_person_pan_no'],'trim'],
@@ -140,6 +137,9 @@ class TblFederations extends ChildModel {
             [['hamlet_code'], 'string', 'max' => 9, 'min' => 8],
             [['sub_district_code'], 'string', 'max' => 5]
         ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblFederations', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
