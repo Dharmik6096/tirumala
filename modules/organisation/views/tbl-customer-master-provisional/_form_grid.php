@@ -39,10 +39,14 @@ $attribute = [
         [
         'attribute' => 'gst_no',
         'headerOptions' => ['class' => 'hidden-for-specific-client'],
+        'contentOptions' => ['class' => 'hidden-for-specific-client'],
+        'filterOptions' => ['class' => 'hidden-for-specific-client'],
     ],
         [
         'attribute' => 'customer_category',
         'headerOptions' => ['class' => 'd-none-for-specific-client'],
+        'contentOptions' => ['class' => 'd-none-for-specific-client'],
+        'filterOptions' => ['class' => 'd-none-for-specific-client'],
     ],
         ['attribute' => 'address', 'filter' => FALSE, 'visible' => FALSE],
         ['attribute' => 'local_address', 'filter' => FALSE, 'visible' => FALSE],
