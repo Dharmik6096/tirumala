@@ -355,5 +355,27 @@ class Controls extends Component {
                                 ]) . '<label for=' . $value . '>' . $label . '</label>';
                     },]);
     }
+    
+    function openInGoogleMaps($address, $latlong) {
+        if (!empty($address) && !empty($latlong)) {
+            return "<a href='https://www.google.com/maps/search/?api=1&query=" . urlencode($latlong) . "' target='_blank'>" . $address . "</a>";
+        }
+    }
+
+    public function timeDifference($inTime, $outTime) {
+        if (empty($inTime) || empty($outTime)) {
+            return "0 hour 0 min";
+        }
+
+        $in_time = Yii::$app->controls->view_time($inTime);
+        $out_time = Yii::$app->controls->view_time($outTime);
+
+        $timeDifference = strtotime($out_time) - strtotime($in_time);
+
+        $hours = floor($timeDifference / 3600);
+        $minutes = floor(($timeDifference % 3600) / 60);
+
+        return "$hours hour $minutes min";
+    }
 
 }
