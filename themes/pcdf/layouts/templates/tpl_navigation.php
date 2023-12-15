@@ -567,6 +567,7 @@ echo GhostMenu::widget([
                                     ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
                                     ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                                     ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
+                                    ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
