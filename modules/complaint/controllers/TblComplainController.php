@@ -393,6 +393,10 @@ class TblComplainController extends \app\controllers\ChildController {
             $master[] = $this->model;
             $master[] = $complaint_activity_model;
             $master[] = $historyModel;
+
+            $escalationModel = new TblComplainEscalationTxnDetail();
+            $escalationMatrix = $escalationModel->updateAll(['escalation_message' => 'Not Escalated'], ['complain_code' => $this->model->complain_code, 'status' => 'pending']);
+
             $spCall = [];
             if (!empty($this->model->user_code)) {
                 $sp_param = [];

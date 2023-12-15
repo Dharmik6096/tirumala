@@ -17,6 +17,7 @@ $attribute = [
         ['attribute' => 'user_code', 'filter' => false],
         ['attribute' => 'status', 'filter' => false],
         ['attribute' => 'assign_date', 'filter' => false],
+        ['attribute' => 'escalation_message', 'filter' => false],
 ];
 
 $grid_option = [

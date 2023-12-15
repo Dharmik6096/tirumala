@@ -12,14 +12,14 @@ use kartik\detail\DetailView;
 $location_type = $model->location_type;
 $location_type_name = 'DCS';
 if ($location_type == 2) {
-    $code = $model->bmc_code;
-    $location_type_name = 'BMC';
+    $code = $model->mcc_plant_code;
+    $location_type_name = 'MCC';
 } else if ($location_type == 1) {
     $code = $model->plant_code;
     $location_type_name = 'PLANT';
 } else {
-    $code = $model->dcs_code;
-    $location_type_name = 'DCS';
+    $code = $model->mcc_plant_code;
+    $location_type_name = 'MCC';
 }
 $url = Url::to(['/complaint/tbl-complain/index']);
 ?>
