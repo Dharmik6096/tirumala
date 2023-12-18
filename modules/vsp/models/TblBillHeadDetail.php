@@ -228,4 +228,17 @@ class TblBillHeadDetail extends \app\models\ChildModel {
         return $this->hasOne(TblMember::className(), ['member_code' => 'customer_code']);
     }
 
+    public function getInstallments()
+    {
+        return $this->hasMany(TblBillHeadInstallment::class, ['bill_head_detail_code' => 'bill_head_detail_code']);
+    }
+
+    public function hasInstallmentsToPreventDeletion()
+    {
+        return !$this->getInstallments()
+            ->andWhere(['not', ['installment_date' => null]])
+            ->andWhere(['!=', 'installment_status', 0])
+            ->exists();
+    }
+
 }
