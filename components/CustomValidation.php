@@ -35,8 +35,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['post_sap_data', 'from_mcc']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
                     ],
                 ],
                 'TblDcs' => [
@@ -49,8 +49,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ]
                 ],
                 'TblContactDetails' => [
@@ -93,8 +93,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
                 'TblBranch' => [
@@ -147,8 +147,8 @@ class CustomValidation extends Component {
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['post_sap_data', 'from_mcc']
                     ],
                     [['aadhaar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
                 ],
                 'TblDcs' => [
                     [['hamlet_code', 'pincode', 'dcs_type_code'], 'required'],
@@ -162,8 +162,8 @@ class CustomValidation extends Component {
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                     ],
                     [['aadhaar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                 ],
                 'TblContactDetails' => [
                     [['firstname', 'mobile_no'], 'required'],
@@ -189,8 +189,8 @@ class CustomValidation extends Component {
                     [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                     [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                     [['adhar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                 ],
                 'TblBranch' => [
                     [['hamlet_code', 'pincode'], 'required'],
@@ -214,8 +214,8 @@ class CustomValidation extends Component {
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping', 'uploadDoc']
                     ],
                     [['aadhaar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
                 ],
                 'TblUnions' => [
                     [['pincode'], 'required'],
@@ -232,8 +232,8 @@ class CustomValidation extends Component {
                         'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')
                     ],
                     [['aadhar_card_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharCard($this, $attribute, 'aadhar_card_no');
-                    }, 'skipOnEmpty' => TRUE],
+                            Yii::$app->general->validateAadharCard($this, $attribute, 'aadhar_card_no');
+                        }, 'skipOnEmpty' => TRUE],
                 ],
                 'TblTransporter' => [
                     [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['activation']],
@@ -257,23 +257,23 @@ class CustomValidation extends Component {
                     [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                     [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                     [['adhar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                 ],
                 'TblCustomerMaster' => [
                     [['aadhaar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                 ],
                 'TblVendorMaster' => [
                     [['aadhaar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }],
                 ],
                 'TblPartyMaster' => [
                     [['adhar_no'], function ($attribute, $params) {
-                        Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                    }, 'skipOnEmpty' => true],
+                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                        }, 'skipOnEmpty' => true],
                 ],
             ],
             'NIFPL' => [
@@ -287,8 +287,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ]
                 ],
                 'TblContactDetails' => [
@@ -331,8 +331,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ]
                 ],
                 'BackGroundDataImport' => [],
@@ -363,8 +363,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -389,8 +389,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -416,8 +416,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -480,8 +480,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -512,8 +512,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -575,8 +575,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
             ],
@@ -595,8 +595,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['routeMapping']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ],
                 ],
             ],
@@ -607,8 +607,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                     ],
                 ],
             ],
@@ -619,8 +619,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
+                                Yii::$app->general->validateAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                     ],
                 ],
             ],
@@ -668,8 +668,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -680,8 +680,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping', 'uploadDoc']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
                     ],
                 ],
                 'TblUnions' => [
@@ -702,8 +702,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
                         ],
                         [['aadhar_card_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, 'aadhar_card_no');
-                        }, 'skipOnEmpty' => TRUE],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, 'aadhar_card_no');
+                            }, 'skipOnEmpty' => TRUE],
                     ],
                 ],
                 'TblMember' => [
@@ -711,8 +711,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
                 'TblTransporter' => [
@@ -729,8 +729,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['post_sap_data', 'from_mcc']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
                     ],
                 ],
                 'TblBranch' => [
@@ -758,29 +758,29 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                     ],
                 ],
                 'TblCustomerMaster' => [
                     'default' => [
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                     ],
                 ],
                 'TblVendorMaster' => [
                     'default' => [
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }],
                     ],
                 ],
                 'TblPartyMaster' => [
                     'default' => [
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true],
                     ],
                 ],
                 'TblVehicleMaster' => [],
@@ -829,8 +829,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs', 'importCsv']],
                     ],
                 ],
                 'TblDcsProvisional' => [
@@ -841,8 +841,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['routeMapping', 'uploadDoc']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'on' => ['createDcs', 'updateDcs']],
                     ],
                 ],
                 'TblUnions' => [
@@ -863,8 +863,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit ')
                         ],
                         [['aadhar_card_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, 'aadhar_card_no');
-                        }, 'skipOnEmpty' => TRUE],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, 'aadhar_card_no');
+                            }, 'skipOnEmpty' => TRUE],
                     ],
                 ],
                 'TblMember' => [
@@ -872,8 +872,8 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'verification']],
                     ],
                 ],
                 'TblTransporter' => [
@@ -890,8 +890,8 @@ class CustomValidation extends Component {
                             'tooShort' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['post_sap_data', 'from_mcc']
                         ],
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
                     ],
                 ],
                 'TblBranch' => [
@@ -919,29 +919,29 @@ class CustomValidation extends Component {
                         [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."12345"'), 'except' => ['androidsync']],
                         [['pincode'], 'string', 'max' => 5, 'min' => 5, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 5 digit '), 'except' => ['androidsync']],
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                     ],
                 ],
                 'TblCustomerMaster' => [
                     'default' => [
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true, 'except' => ['deleteRouteMapping']],
                     ],
                 ],
                 'TblVendorMaster' => [
                     'default' => [
                         [['aadhaar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }],
                     ],
                 ],
                 'TblPartyMaster' => [
                     'default' => [
                         [['adhar_no'], function ($attribute, $params) {
-                            Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
-                        }, 'skipOnEmpty' => true],
+                                Yii::$app->general->validateCargillAadharcard($this, $attribute, $params);
+                            }, 'skipOnEmpty' => true],
                     ],
                 ],
                 'TblVehicleMaster' => [],
