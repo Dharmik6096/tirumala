@@ -2389,4 +2389,18 @@ class GeneralFunctions extends Component {
         }
     }
 
+    public function validateCargillAadharcard($model, $attribute, $params) {
+        $aadharNumber = $model->$attribute;    
+        if (!empty($aadharNumber)) {
+            if (strlen($aadharNumber) < 10) {
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 9 digits and 1 character.'));
+            } elseif (strlen($aadharNumber) == 10) {
+                if (!preg_match('/^[0-9]{9}[vx]$/i', $aadharNumber)) {
+                    $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 9 digits and 1 character.'));
+                }
+            } elseif (!preg_match('/^[0-9]{12}$/', $aadharNumber)) {
+                $model->addError($attribute, Yii::t('app/validation', $attribute . ' can only contain exactly 12 digits.'));
+            }
+        }
+    }
 }

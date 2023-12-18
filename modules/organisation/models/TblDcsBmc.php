@@ -113,9 +113,6 @@ class TblDcsBmc extends \app\models\ChildModel {
                     $this->validateGstNo($attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['post_sap_data', 'from_mcc']],
             [['address'], 'string', 'max' => 500],
-            [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['post_sap_data', 'from_mcc']],
             [['aadhaar_no'], 'unique', 'skipOnError' => TRUE, 'on' => ['importCsv']],
         ];
         $client_rules = Yii::$app->customvalidation->getRules('TblDcsBmc', $this->form_validation_type);
