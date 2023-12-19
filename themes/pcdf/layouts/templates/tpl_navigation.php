@@ -86,10 +86,12 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => Yii::t('app', 'Member Approval'), 'url' => ['/dcsoperation/tbl-member-provisional/pending-approval'], 'visible' => $workflowConfig],
                                     ['label' => Yii::t('app', 'DCS Approval'), 'url' => ['/organisation/tbl-dcs-provisional/pending-approval']],
+                                    ['label' => Yii::t('app', 'Vendor/Customer Approval'), 'url' => ['/organisation/tbl-customer-master-provisional/pending-customer-approval']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Provisional Member'), 'url' => ['/dcsoperation/tbl-member-provisional/index'], 'active' => ($cntrl == 'tbl-member-provisional')],
                             ['label' => Yii::t('app', 'Provisional Society'), 'url' => ['/organisation/tbl-dcs-provisional/index'], 'active' => ($cntrl == 'tbl-dcs-provisional' || (Yii::$app->request->get('type') == 'dcs' || Yii::$app->request->get('type') == 'DCS'))],
+                            ['label' => Yii::t('app', 'Provisional Vendor/Customer'), 'url' => ['/organisation/tbl-customer-master-provisional/index'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
                     ]
                 ],
             ],

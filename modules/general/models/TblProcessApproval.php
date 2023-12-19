@@ -8,6 +8,7 @@ use app\modules\organisation\models\TblDcsProvisional;
 use app\modules\usermanagement\models\User;
 use yii\db\Expression;
 use app\modules\configuration\models\TblShiftTimeExceed;
+use app\modules\organisation\models\TblCustomerMasterProvisional;
 
 /**
  * This is the model class for table "tbl_process_approval".
@@ -140,7 +141,7 @@ class TblProcessApproval extends \app\models\ChildModel {
     public function approvalList($model, &$model_save, &$status) {
 
         $next_count = TblProcessApproval::find()
-                ->where(['process_code' => $model->process_code, 'status' => 0])
+                ->where(['process_code' => $model->process_code, 'process_name' => $model->process_name, 'status' => 0])
                 ->andWhere(['<>', 'process_approval_code', $model->process_approval_code]);
         if ($model->approval_mode == 'flexi') {
             $next_count = $next_count->andWhere(['<>', 'level', $model->level]);
@@ -170,6 +171,10 @@ class TblProcessApproval extends \app\models\ChildModel {
         } else {
             $status = 'Approve';
         }
+    }
+
+    public function getCustomerProvisional() {
+        return $this->hasOne(TblCustomerMasterProvisional::className(), ['customer_provisional_code' => 'process_code']);
     }
 
 }
