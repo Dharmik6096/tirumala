@@ -350,12 +350,12 @@ class Controls extends Component {
                     'item' =>
                     function ($index, $label, $name, $checked, $value) {
                         return Html::checkbox($name, $checked, [
-                                    'value' => $value,
-                                    'id' => $value,
-                                ]) . '<label for=' . $value . '>' . $label . '</label>';
+                            'value' => $value,
+                            'id' => $value,
+                        ]) . '<label for=' . $value . '>' . $label . '</label>';
                     },]);
     }
-    
+
     function openInGoogleMaps($address, $latlong) {
         if (!empty($address) && !empty($latlong)) {
             return "<a href='https://www.google.com/maps/search/?api=1&query=" . urlencode($latlong) . "' target='_blank'>" . $address . "</a>";
@@ -377,5 +377,4 @@ class Controls extends Component {
 
         return "$hours hour $minutes min";
     }
-
 }
