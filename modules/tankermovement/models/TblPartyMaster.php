@@ -64,14 +64,11 @@ class TblPartyMaster extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['union_code', 'state_code', 'party_master_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_address', 'beneficiary_name', 'pan_no', 'adhar_no', 'bank_account_no'], 'required'],
                 [['party_master_code', 'union_code', 'party_name', 'party_contact_no', 'party_address', 'owner_name', 'owner_contact_no', 'owner_email', 'owner_address', 'state_code', 'district_code', 'sub_district_code', 'village_code', 'hamlet_code', 'bank_code', 'branch_code', 'bank_account_no', 'ifsc', 'beneficiary_name', 'pan_no', 'adhar_no', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
                 [['owner_email'], 'email'],
                 [['is_active'], 'default', 'value' => 1],
-                [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true],
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => true],
@@ -86,7 +83,10 @@ class TblPartyMaster extends \app\models\ChildModel {
                     if ($error !== TRUE)
                         $this->addError($attribute, $error);
                 },],
-        ];
+            ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblPartyMaster', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**

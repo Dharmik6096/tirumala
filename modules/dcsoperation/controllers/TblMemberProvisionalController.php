@@ -446,45 +446,10 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                             $model_save[] = $tblProvisionalMilkCollectionHistory;
                         }
                     }
-
                     $tblAttachment = new TblAttachment();
-                    $tblAttachment = $tblAttachment->getAttachment($memberModel->provisional_member_code);
-                    $doc_path = Yii::$app->params['document_upload'] . 'member';
+                    $memberProvisionalCode = (string) $memberModel->provisional_member_code;
+                    $tblAttachment->AttachmentSave($memberProvisionalCode, 'tbl_member_provisional', 'member', $tblMember->member_code, 'tbl_member', $all_attachment, $model_save, $memberdoc);
 
-                    if (!empty($tblAttachment)) {
-                        foreach ($tblAttachment as $key => $doc) {
-                            $all_attachment[] = $doc->file_name;
-                            $tblAttachments = new TblAttachment();
-                            $tblAttachments->attributes = $doc->attributes;
-                            if (Yii::$app->general->checkDirectory($doc_path)) {
-                                if (!empty($doc->file_name)) {
-                                    $attach = TblAttachment::find()
-                                            ->where(['module_code' => $memberModel->provisional_member_code, 'module_name' => 'tbl_member_provisional', 'doc_id' => $doc->doc_id])
-                                            ->one();
-                                    $extension = explode('.', $doc->file_name)[1];
-                                    $file_name = 'member' . '_' . $tblMember->member_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
-                                    $attachment = $doc_path . '/' . $file_name;
-                                    if (!empty($attach)) {
-                                        $attachHistoryModel = new TblAttachmentHistory();
-                                        Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
-                                        $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                                        $attach->file_name = $file_name;
-                                        $model_save[] = $attach;
-                                        $model_save[] = $attachHistoryModel;
-                                    }
-                                    $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                                    $tblAttachments->module_name = 'tbl_member';
-                                    $tblAttachments->module_code = $tblMember->member_code;
-                                    $tblAttachments->file_name = $file_name;
-                                    $memberdoc[] = $file_name;
-                                    $model_save[] = $tblAttachments;
-                                }
-                            } else {
-                                Yii::$app->getSession()->setFlash('success', ['type' => 'error',
-                                    'message' => 'Error while create directory.']);
-                            }
-                        }
-                    }
                     if (!empty($save_member_doc)) {
                         foreach ($save_member_doc as $key => $member_attach) {
                             $all_attachment[] = $member_attach->file_name;

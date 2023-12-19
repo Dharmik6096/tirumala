@@ -39,21 +39,21 @@ class TblApprovalStagesDetail extends \app\models\ChildModel {
      */
     public function rules() {
         return [
-            [['approval_stages_code'], 'integer'],
-            [['approval_type', 'level', 'approval_mode'], 'required'],
-            [['approval_type', 'login_type', 'user_code', 'level', 'level_priority', 'approval_mode'], 'safe'],
-            [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
-            [['user_code'], 'required', 'when' => function ($model) {
+                [['approval_stages_code'], 'integer'],
+                [['approval_type', 'level', 'approval_mode'], 'required'],
+                [['approval_type', 'login_type', 'user_code', 'level', 'level_priority', 'approval_mode'], 'safe'],
+                [['created_at', 'updated_at', 'created_by', 'updated_by', 'originating_type', 'originating_org_code', 'originating_org_type'], 'safe'],
+                [['user_code'], 'required', 'when' => function ($model) {
                     return $model->approval_type == 1;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblapprovalstagesdetail-approval_type').val() == '1' }"
             ],
-            [['login_type'], 'required', 'when' => function ($model) {
+                [['login_type'], 'required', 'when' => function ($model) {
                     return $model->approval_type == 2;
                 },
                 'whenClient' => "function (attribute, value) { return $('#tblapprovalstagesdetail-approval_type').val() == '2' }"
             ],
-            [['approval_mode'], 'validatePaymentMode'],
+                [['approval_mode'], 'validatePaymentMode'],
         ];
     }
 

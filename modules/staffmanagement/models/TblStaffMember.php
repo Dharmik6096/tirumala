@@ -150,9 +150,6 @@ class TblStaffMember extends \app\models\ChildModel {
             if ($error !== TRUE)
                 $this->addError($attribute, $error);
         }],
-            [['aadhar_card_no'], function ($attribute, $params) {
-            Yii::$app->general->validateAadharCard($this, $attribute, 'aadhar_card_no');
-        }, 'skipOnEmpty' => TRUE],
             [['address'], function ($attribute, $params) {
             Yii::$app->general->validateDescription($this, $attribute);
         }, 'skipOnEmpty' => TRUE],

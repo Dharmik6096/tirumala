@@ -56,6 +56,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\general\models\TblProcessApproval;
 use app\modules\organisation\models\TblDcs;
 use app\modules\general\models\TblProcessApprovalHistory;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblDcsController implements the CRUD actions for TblDcs model.
@@ -230,81 +231,10 @@ class TblDcsProvisionalController extends ChildController {
     public function actionDocumentUpload($id) {
         $model = $this->findModel($id);
         $model->scenario = 'uploadDoc';
-        $doc_mapping = TblDocumentMapping::find()->where(['master_type' => 'provisional_dcs'])->all();
-        $doc_model = [];
-        foreach ($doc_mapping as $doc) {
-            $attachments = $doc->uploadedDocument($doc->doc_id, $id, 'provisional_dcs');
-            $master_doc = $doc->docId;
-            if (empty($attachments)) {
-                $attachments = new TblAttachment();
-                $attachments->module_code = $model->dcs_provisional_code;
-                $attachments->doc_id = $doc->doc_id;
-            }
-            $attachments->is_mandate = $doc->is_mandate;
-            $attachments->attachment_type = $master_doc->doc_ext;
-            $attachments->doc_name = $master_doc->doc_name .= ($doc->is_mandate == 1) ? ' *' : '';
-            $doc_model[] = $attachments;
-        }
-        if (Yii::$app->request->post()) {
-            $doc_path = Yii::$app->params['document_upload'] . 'provisional_dcs';
-
-            if (Yii::$app->general->checkDirectory($doc_path)) {
-                $error_msg = '';
-                $save_model = [];
-                Model::loadMultiple($doc_model, Yii::$app->request->post());
-
-                foreach ($doc_model as $key => $d) {
-                    $d->file_name = UploadedFile::getInstance($d, '[' . $key . ']file_name');
-                    $id = (string) $id;
-                    if (!empty($d->file_name)) {
-                        $attach = TblAttachment::find()->where(['module_code' => $id, 'doc_id' => $d->doc_id])->one();
-                        if (!empty($attach)) {
-                            if ($d->file_name != $attach->file_name) {
-                                $historyModel = new TblAttachmentHistory();
-                                Yii::$app->operation->history($attach, $historyModel, UPDATE);
-                                $save_model[] = $historyModel;
-                            }
-                        }
-                        $file_name = 'provisional_dcs' . '_' . $id . '_' . $d->doc_id . '_' . time() . '.' . $d->file_name->extension;
-                        $d->attachment = $doc_path . '/' . $file_name;
-                        if (!$d->file_name->saveAs($d->attachment)) {
-                            $error_msg .= $d->doc_name . '<br/>';
-                        }
-                        $d->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $d->attachment;
-                        $d->module_name = 'tbl_dcs_provisional';
-                        $d->file_name = $file_name;
-                        $save_model[] = $d;
-                    } else if ($d->is_mandate == 1) {
-                        $error_msg .= $d->doc_name . '<br/>';
-                    }
-                }
-
-                if (empty($error_msg)) {
-                    $modelStages = new TblApprovalStagesDetail();
-                    $modelStages->setApprovalData($model->union_code, 'society', $model->dcs_provisional_code, $save_model, $approval_stages);
-                    $model->status = empty($approval_stages) ? 'Approve' : 'Register';
-                    $save_model[] = $model;
-                    $transaction = $this->generalModel->saveTransaction($save_model, ['Document Upload', 'create']);
-                    if ($transaction == 'customRedirect') {
-                        $record = ['status' => 'success', 'msg' => $this->redirect(['index'])];
-                    } else {
-                        $msg = Yii::$app->getSession()->getFlash('success')['message'];
-                        $record = ['status' => 'error', 'msg' => $msg];
-                    }
-                } else {
-                    $record = ['status' => 'error', 'msg' => 'Please Upload Following Document <br/><br/>' . $error_msg];
-                }
-            } else {
-                $record = ['status' => 'error', 'msg' => 'Error while create directory.'];
-            }
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return Json::encode($record);
-        }
-
-        return Yii::$app->controller->render('add_document', [
-                    'model' => $model,
-                    'doc_model' => $doc_model,
-        ]);
+        $module_code = $model->dcs_provisional_code;
+        $module_name = 'tbl_dcs_provisional';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('provisional_dcs', $id, $model, $module_code, $module_name, true);
     }
 
     protected function customRender() {
@@ -499,48 +429,10 @@ class TblDcsProvisionalController extends ChildController {
                     $cutOffVal = $val . strtoupper($milkType);
                     $this->model->cutoff = substr($cutOffVal, -4);
                 }
-
-
                 $tblAttachment = new TblAttachment();
-                $tblAttachment = $tblAttachment->getAttachment((string) $dcsProvisional->dcs_provisional_code);
-                $doc_path = Yii::$app->params['document_upload'] . 'dcs';
-                if (!empty($tblAttachment)) {
-                    foreach ($tblAttachment as $key => $doc) {
-                        $all_attachment[] = $doc->file_name;
-                        $tblAttachments = new TblAttachment();
-                        $tblAttachments->attributes = $doc->attributes;
-                        if (Yii::$app->general->checkDirectory($doc_path)) {
-                            if (!empty($doc->file_name)) {
-                                $dcsProvisionalCode = (string) $dcsProvisional->dcs_provisional_code;
-                                $attach = TblAttachment::find()
-                                        ->where(['module_code' => $dcsProvisionalCode, 'module_name' => 'tbl_dcs_provisional', 'doc_id' => $doc->doc_id])
-                                        ->one();
-                                $extension = explode('.', $doc->file_name)[1];
-                                $file_name = 'dcs' . '_' . $this->model->dcs_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
-                                $attachment = $doc_path . '/' . $file_name;
-                                if (!empty($attach)) {
-                                    $attachHistoryModel = new TblAttachmentHistory();
-                                    Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
-                                    $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                                    $attach->file_name = $file_name;
-                                    $model_save[] = $attach;
-                                    $model_save[] = $attachHistoryModel;
-                                }
-                                $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
-                                $tblAttachments->module_name = 'tbl_dcs';
-                                $tblAttachments->module_code = $this->model->dcs_code;
-                                $tblAttachments->file_name = $file_name;
-                                $dcsdoc[] = $file_name;
-                                $model_save[] = $tblAttachments;
-                            }
-                        } else {
-                            Yii::$app->getSession()->setFlash('success', [
-                                'type' => 'error',
-                                'message' => 'Error while create directory.'
-                            ]);
-                        }
-                    }
-                }
+                $dcsProvisionalCode = (string) $dcsProvisional->dcs_provisional_code;
+                $tblAttachment->AttachmentSave($dcsProvisionalCode, 'tbl_dcs_provisional', 'dcs', $this->model->dcs_code, 'tbl_dcs', $all_attachment, $model_save, $dcsdoc);
+
                 $transaction = $this->saveDcs($this->model, $mapList, $model_save, ['society', 'create']);
                 if ($transaction !== FALSE) {
                     if ($transaction == 'customRedirect') {

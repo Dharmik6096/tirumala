@@ -165,9 +165,6 @@ class TblMemberProvisional extends ChildModel {
                 [['pan_no'], function ($attribute, $params) {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
-                [['adhar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }, 'skipOnEmpty' => true, 'except' => ['saveCreamyData', 'androidsync', 'MemberApprove']],
                 [['ifsc'], function ($attribute, $params) {
                     Yii::$app->general->validateIfsc($this, $attribute, $params);
                 }, 'skipOnEmpty' => false, 'when' => function() {

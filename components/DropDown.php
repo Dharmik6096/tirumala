@@ -443,7 +443,7 @@ class DropDown extends Component {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
     }
-    
+
     public function activate_customer_code($model, $form, $depends, $name = 'customer_code', $islable = false, $multiple = false, $readonly = false) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-customer-master/activate-customer-code-list', Yii::t('app', 'Select Name'), $multiple, $model->$name, $readonly);
@@ -593,7 +593,7 @@ class DropDown extends Component {
             $this->dependedDropdown($model, $form, $depends, $name, $islable, '/tankermovement/tbl-vehicle-trip/open-trip-list', Yii::t('app', 'Select Trip Code'), $multiple, $extra_param, $readonly);
         }
     }
-    
+
     public function vehicleMasterOpen($model, $form, $depends, $name = 'vehicle_code', $islable = false, $multiple = false, $extra_param = '', $readonly = false, $autoClose = true) {
         $this->setClass($form, $name);
         $this->dependedDropdown($model, $form, $depends, $name, $islable, '/organisation/tbl-vehicle-master/vehicle-open-list', Yii::t('app', 'Select Vehicle'), $multiple, $extra_param, $readonly);
@@ -1553,7 +1553,7 @@ class DropDown extends Component {
             'calc_based_on' => [
                 'name' => 'type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance'), 'defined_amount_only' => Yii::t('app', 'Defined Amount Only')],
+                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance'), 'defined_amount_only' => Yii::t('app', 'Defined Amount Only'), 'final_addition' => Yii::t('app', 'Final Addition')],
             ],
             'sap_file' => [
                 'name' => 'sap_file',
@@ -1731,7 +1731,7 @@ class DropDown extends Component {
             'master_types' => [
                 'name' => 'master_type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle'), 'provisional_member' => Yii::t('app', 'Provisional Member'), 'provisional_dcs' => Yii::t('app', 'Provisional DCS')],
+                'data' => ['plant' => Yii::t('app', 'Plant'), 'bmc' => Yii::t('app', 'BMC'), 'dcs' => Yii::t('app', 'DCS'), 'member' => Yii::t('app', 'Member'), 'mcc' => Yii::t('app', 'MCC'), 'transporter' => Yii::t('app', 'Transporter'), 'vehicle' => Yii::t('app', 'Vehicle'), 'provisional_member' => Yii::t('app', 'Provisional Member'), 'provisional_dcs' => Yii::t('app', 'Provisional DCS'), 'provisional_customer' => Yii::t('app', 'Provisional Customer'), 'customer' => Yii::t('app', 'Customer Master')],
             ],
             'payment_release_type' => [
                 'name' => 'payment_release_type',
