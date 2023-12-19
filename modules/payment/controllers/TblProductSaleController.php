@@ -826,7 +826,52 @@ class TblProductSaleController extends \app\controllers\ChildController {
 
     public function actionDeleteProductSale() {
         $searchModel = new TblProductSaleSearch();
-        $type=Yii::$app->request->get('type');
+        $type='vendorBulkDelete';
+        $searchModel->scenario = $type;
+        $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
+        if (Yii::$app->request->post()) {
+            if (isset($_REQUEST['selection'])) {
+                $selectedIds = $_REQUEST['selection'];
+                $total = count($_REQUEST['selection']);
+                if (!empty($selectedIds)) {
+                    $cnt = 0;
+                    $failed_cnt = 0;
+                    $failed = [];
+                    foreach ($selectedIds as $id) {
+                        $result = $this->bulkdelete($id);
+                        if ($result['status'] == 'success') {
+                            $cnt++;
+                        } else {
+                            $failed[] = $id;
+                            $failed_cnt++;
+                        }
+                    }
+                    if ($total == $cnt) {
+                        $msg = 'Records are successfully deleted.';
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                        
+                    } else if ($total > $cnt && $failed_cnt > 0) {
+                         $msg = ''.$failed_cnt.'records failed out of'.$total;
+                        Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                            'message' => Yii::t('app', $msg)]);
+                  
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+        } else {
+            return $this->render('_bulk_delete',
+                            [
+                                'searchModel' => $searchModel,
+                                'dataProvider' => $dataProvider,
+                                'type' => $type,
+            ]);
+        }
+    }
+    public function actionDeleteProductSaleToMember() {
+        $searchModel = new TblProductSaleSearch();
+        $type='memberBulkDelete';
         $searchModel->scenario = $type;
         $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {

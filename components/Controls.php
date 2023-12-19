@@ -66,15 +66,12 @@ class Controls extends Component {
         // }
     }
 
-    public function custombutton($name, $action = 'create', $sideButton = false, $class = '', $icon = '', $queryparams = []) {
+    public function custombutton($name, $action = 'create', $sideButton = false, $class = '', $icon = '') {
         if (is_array($action))
             $url_path = $action;
         else
             $url_path[] = $action;
         $url = Url::to(array_values($url_path));
-        if (!empty($queryparams)) {
-            $url = Url::to(array_merge(array_values($url_path), $queryparams));
-        }
         $sideclass = $sideButton ? 'btn-block' : '';
         $class = empty($class) ? '' : $class . ' ';
         //$url=str_replace('1%5B', '%5B', $url);
