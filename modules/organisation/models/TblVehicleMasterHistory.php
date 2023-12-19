@@ -35,33 +35,30 @@ use Yii;
  * @property string $operation_type
  * @property integer $is_active
  */
-class TblVehicleMasterHistory extends \yii\db\ActiveRecord
-{
+class TblVehicleMasterHistory extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'tbl_vehicle_master_history';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by', 'delete_by', 'operation_type'], 'safe'],
-            [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active'], 'safe'],
-            [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'delete_at','history_created_at'], 'safe'],
+                [['vehicle_code', 'registration_no', 'applicable_rto', 'driver_name', 'driver_contact_no', 'driving_license_number', 'transporter_code', 'mapped_route', 'rc_book_no', 'average', 'union_code', 'created_by', 'updated_by', 'delete_by', 'operation_type'], 'safe'],
+                [['vehicle_type_code', 'capacity_code', 'pollution_certificate', 'insurance', 'rent', 'is_active'], 'safe'],
+                [['wef_date', 'expiry_date', 'created_at', 'updated_at', 'delete_at', 'history_created_at', 'history_created_by'], 'safe'],
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => Yii::t('app', 'ID'),
             'vehicle_code' => Yii::t('app', 'Vehicle Code'),
@@ -92,4 +89,5 @@ class TblVehicleMasterHistory extends \yii\db\ActiveRecord
             'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
+
 }
