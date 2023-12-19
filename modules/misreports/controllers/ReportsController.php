@@ -1508,6 +1508,11 @@ class ReportsController extends \app\controllers\ChildController {
         $this->report = 'CdaReport';
         return $this->actionIndex();
     }
+    
+    public function actionVehicleMasterHistory() {
+        $this->report = 'VehicleMasterHistory';
+        return $this->actionIndex();
+    }
 
     /* Reports Configuration */
 
@@ -3125,6 +3130,11 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_cda_date_shift_wise_shivprasad',
                 'scenario' => 'CDAReport',
                 'title' => '626 - CDA Report',
+            ],
+            'VehicleMasterHistory' => [
+                'param' => 'transporter_code',
+                'sp_name' => 'portal_history_tbl_vehicle_master',
+                'title' => 'Vehicle Master History',
             ],
         ];
         return $label[$l];
