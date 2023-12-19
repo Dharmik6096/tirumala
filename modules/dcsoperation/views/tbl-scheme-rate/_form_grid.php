@@ -47,9 +47,10 @@ $attribute = [
             return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_mcc_wise_rate');
         },],
         ['attribute' => 'description', 'vAlign' => 'middle'],
-        ['attribute' => 'is_member_rate', 'vAlign' => 'middle', 'value' => function($model) {
-            return ($model->is_member_rate) ? 'Yes' : 'No';
-        }, 'filter' => FALSE],
+        ['attribute' => 'is_member_rate', 'filter' => FALSE,
+        'value' => function ($model) {
+            return Yii::$app->general->getStaticDropdownVal('boolean_value', $model, 'is_member_rate');
+        },],
 ];
 
 $grid_option = [
