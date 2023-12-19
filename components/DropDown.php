@@ -1553,7 +1553,7 @@ class DropDown extends Component {
             'calc_based_on' => [
                 'name' => 'type',
                 'prompt' => Yii::t('app', 'Select'),
-                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance'), 'defined_amount_only' => Yii::t('app', 'Defined Amount Only')],
+                'data' => ['milk_collection' => Yii::t('app', 'Farmer Collection'), 'bmc_collection' => Yii::t('app', 'BMC Collection'), 'milk_collection_attendance' => Yii::t('app', 'Farmer Collection Attendance'), 'bmc_collection_attendance' => Yii::t('app', 'BMC Collection Attendance'), 'defined_amount_only' => Yii::t('app', 'Defined Amount Only'), 'final_addition' => Yii::t('app', 'Final Addition')],
             ],
             'sap_file' => [
                 'name' => 'sap_file',

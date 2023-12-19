@@ -43,7 +43,7 @@ class TblVendorMaster extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
+        $main_rules = [
                 [['vendor_code', 'vendor_name'], 'required'],
                 [['created_at', 'updated_at', 'vendor_name', 'pan_no', 'aadhaar_no', 'department', 'surname', 'local_surname', 'contact_person', 'local_contact_person', 'local_middlename', 'middle_name', 'mobile_no', 'email', 'union_code'], 'safe'],
                 [['contact_person', 'mobile_no'], 'required', 'on' => 'importCsv'],
@@ -52,12 +52,12 @@ class TblVendorMaster extends \app\models\ChildModel {
                     Yii::$app->general->validatePancard($this, $attribute, $params);
                 }],
                 [['union_code'], 'exist', 'skipOnError' => true, 'targetClass' => TblUnions::className(), 'targetAttribute' => ['union_code' => 'union_code'], 'on' => 'importCsv'],
-                [['aadhaar_no'], function ($attribute, $params) {
-                    Yii::$app->general->validateAadharcard($this, $attribute, $params);
-                }],
                 [['pan_no'], 'setPanNumber', 'on' => ['importCsv']],
                 [['pan_no', 'aadhaar_no', 'vendor_code'], 'unique'],
-        ];
+            ];
+        $client_rules = Yii::$app->customvalidation->getRules('TblVendorMaster', $this->form_validation_type);
+        $rules = array_merge($client_rules, $main_rules);
+        return $rules;
     }
 
     /**
