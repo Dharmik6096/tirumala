@@ -135,6 +135,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2">
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= $form->field($model, 'rate_calculate_on_merge', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
         </div>
