@@ -52,6 +52,8 @@ $eipl_code = \Yii::$app->session->get('eiplCode') == 'PRABHAT' ? TRUE : FALSE;
             ['attribute' => 'fat', 'value' => 'fat', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'snf', 'value' => 'snf', 'vAlign' => 'middle', 'filter' => false],
             ['attribute' => 'clr', 'value' => 'clr', 'vAlign' => 'middle', 'filter' => false],
+            ['attribute' => 'scheme_rate', 'vAlign' => 'middle', 'filter' => FALSE,],
+            ['attribute' => 'actual_rate', 'vAlign' => 'middle', 'filter' => FALSE],
             ['attribute' => 'qty_mode',
             'filter' => FALSE,
             'value' => function ($model) {

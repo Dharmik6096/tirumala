@@ -501,6 +501,7 @@ class TblPurchaseRateDetails extends \app\models\ChildModel {
                             ['<=', 'sra.from_date', $data['dt_date']],
                             ['>=', 'sra.to_date', $data['dt_date']],
                             ['=', 'sra.is_active', 1],
+                            ['=', 'sra.is_member_rate', 1],
                             ['=', 'sra.applicable_code', $data['dcs_code']]
                         ])
                         ->leftJoin('tbl_scheme_rate sr', 'sra.scheme_rate_code = sr.scheme_rate_code')

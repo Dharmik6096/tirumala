@@ -32,6 +32,7 @@ class TblBmcCollectionSearch extends TblBmcCollection {
                 [['union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['deleteMilkCollection']],
                 [['f_union_code', 'f_plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift'], 'required', 'on' => ['shiftLock']],
                 [['f_union_code', 'f_plant_code', 'f_mcc_code'], 'safe'],
+                [['scheme_rate', 'scheme_rate_code', 'actual_rate'], 'safe'],
         ];
     }
 
@@ -186,11 +187,11 @@ class TblBmcCollectionSearch extends TblBmcCollection {
 
     public function createsearch($params) {
         $this->load($params);
-        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Not Verified'"), 'route_code', 'can_no', 'antibiotic'])
+        $ApprovalData = TblCollectionDataAlias::find()->select(['union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Not Verified'"), 'route_code', 'can_no', 'antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate'])
                 ->where(['bmc_code' => $this->bmc_code, 'shift_code' => $this->shift_code, 'action_perform' => 'CREATE', 'table_name' => 'tbl_bmc_collection'])
                 ->andFilterWhere(['CAST(date_time_of_collection as date)' => date('Y-m-d', strtotime($this->date_time_of_collection))]);
 
-        $query = $this->find()->select(['tbl_bmc_collection.union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Verified'"), 'route_code', 'can_no', 'antibiotic']);
+        $query = $this->find()->select(['tbl_bmc_collection.union_code', 'bmc_code', 'dcs_code', 'customer_code', 'customer_type', 'milk_type_code', 'milk_quality_type_code', 'sample_no', 'qty', 'fat', 'snf', 'clr', 'rtpl', 'date_time_of_collection', 'shift_code', 'amount', 'no_of_can', 'qty_mode', 'converted_qty', 'doc_no', 'status' => new Expression("'Verified'"), 'route_code', 'can_no', 'antibiotic', 'scheme_rate', 'scheme_rate_code', 'actual_rate']);
 
         $unionQuery = (new ActiveQuery(TblBmcCollection::className()))->from([
                     'tbl_bmc_collection' => $query->union($ApprovalData, TRUE)

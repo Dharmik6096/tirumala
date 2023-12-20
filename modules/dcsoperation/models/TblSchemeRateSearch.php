@@ -18,7 +18,7 @@ class TblSchemeRateSearch extends TblSchemeRate {
     public function rules() {
         return [
                 [['scheme_rate_code', 'from_shift', 'to_shift', 'is_mcc_wise_rate', 'originating_type'], 'integer'],
-                [['from_date', 'to_date', 'rate_class', 'description', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'is_active'], 'safe'],
+                [['from_date', 'to_date', 'rate_class', 'description', 'union_code', 'created_at', 'created_by', 'updated_at', 'updated_by', 'originating_org_code', 'originating_org_type', 'is_active', 'is_member_rate'], 'safe'],
                 [['rtpl'], 'number'],
         ];
     }
