@@ -718,6 +718,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Member History'), 'url' => ['/misreports/reports/member-history']],
                                     ['label' => Yii::t('app', 'DCS history'), 'url' => ['/misreports/reports/dcs-history']],
                                     ['label' => Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
+                                    ['label' => Yii::t('app', 'Vehicle Master History'), 'url' => ['/misreports/reports/vehicle-master-history']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'All Reports - List'), 'url' => ['/dynamicreport/default/index'], 'active' => ($cntrl == 'default' && $action == 'index')],
