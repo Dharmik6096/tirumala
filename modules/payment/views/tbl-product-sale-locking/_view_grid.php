@@ -6,7 +6,8 @@
  */
 
 use yii\helpers\Html;
-
+$batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+$visible = $batchNoWiseInventory == 1 ? TRUE : FALSE;
 $attribute = [
     ['attribute' => 'customer_type', 'value' => function($model) {
             return isset($model->productSaleCode->customer_type) ? (strtolower($model->productSaleCode->customer_type) == 'member' ? 'Member' : Yii::$app->general->getforeignkey($model->productSaleCode->customerType, 'customer_desc') ) : '';
@@ -24,7 +25,7 @@ $attribute = [
             return isset($model->productSaleCode->customer_type) ? Yii::$app->general->getCustomer($model->productSaleCode, $model->productSaleCode->customer_type) : '';
         }, 'vAlign' => 'middle'],
     ['attribute' => 'product_code', 'value' => 'productCode.product_name', 'filter' => false],
-    ['attribute' => 'sap_batch_no', 'filter' => false],
+    ['attribute' => 'sap_batch_no','visible'=>$visible, 'filter' => false],
     ['attribute' => 'rate', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],
     ['attribute' => 'quantity', 'filter' => false],
     ['attribute' => 'amount', 'format' => Yii::$app->general->CurrencyFormat(), 'filter' => false],

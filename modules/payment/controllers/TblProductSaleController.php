@@ -492,10 +492,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
             $checkMccStock = FALSE;
 
-            if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+            if (strtoupper($sale_type) == 'BMC') {
                 $checkMccStock = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
             }
-            if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+            if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
                 $isBmc = Yii::$app->general->getforeignkey($this->model->mainDcsCode, 'is_bmc');
                 $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
@@ -879,10 +879,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $batchNoWiseInventory == '1' ? TRUE : FALSE;
                     $checkMccStock = FALSE;
 
-                    if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+                    if (strtoupper($sale_type) == 'BMC') {
                         $checkMccStock = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
                     }
-                    if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+                    if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
                         $isBmc = Yii::$app->general->getforeignkey($model->mainDcsCode, 'is_bmc');
                         $isBmcMcc = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc');
                         $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
@@ -1043,10 +1043,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
         $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         $batchNoWiseInventory == '1' ? TRUE : FALSE;
         $checkMccStock = FALSE;
-        if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+        if (strtoupper($sale_type) == 'BMC') {
             $checkMccStock = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
         }
-        if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+        if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
             $isBmc = Yii::$app->general->getforeignkey($stockModel->dcsCode, 'is_bmc');
             $isBmcMcc = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc');
             $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;

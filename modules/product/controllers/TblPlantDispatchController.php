@@ -95,7 +95,6 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $saveModel[] = $txModel;
                 $i++;
             }
-
             if ($model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($saveModel, $HisModel, ['Plant Dispatch', 'create']);
                 if ($transaction == 'customRedirect') {

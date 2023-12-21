@@ -28,6 +28,7 @@ $batchNoWise = Yii::$app->general->getUnionConfiguration($unionArray, 'batch_no_
 $rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
 $workflowConfig = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1 ? TRUE : FALSE;
+$withoutDispatchGrn = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL') == 1 ? FALSE : TRUE;
 ?>
 <?php
 
@@ -251,11 +252,11 @@ echo GhostMenu::widget([
                     //                    'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
                     'template' => '<a  class="dropdown-toggle" href="#">Inventory <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $withoutDispatchGrn],
                             ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
-                            ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking'), 'visible' => $batchNoWise],
-                            ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking')],
+                            ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking')],
                             ['label' => Yii::t('app', 'Good Issue'), 'url' => ['/product/tbl-product-stock-adjustment/index'], 'active' => ($cntrl == 'tbl-product-stock')],
                             ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
                             ['label' => Yii::t('app', 'Product Stock Physical'), 'url' => ['/product/tbl-product-stock-physical/index'], 'active' => ($cntrl == 'tbl-product-stock-physical')],

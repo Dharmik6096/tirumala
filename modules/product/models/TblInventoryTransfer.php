@@ -115,7 +115,10 @@ class TblInventoryTransfer extends \app\models\ChildModel {
                     return $batchNoWiseInventory == 1;
                 },
             ],
-                [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['importCsv']],
+                [['sap_batch_no'], 'validateSapBatchNo', 'on' => ['importCsv'],'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    return $batchNoWiseInventory == 1;
+                }],
                 [['transaction_date'], 'convertDateDot', 'on' => ['importCsv']],
                 [['transaction_date'], 'date', 'format' => 'php:d.m.Y', 'message' => Yii::t('app/validation', 'Please enter date in valid format e.g. 01.12.2018'), 'on' => ['importCsv']],
                 [['transaction_date'], 'convertDate', 'on' => ['importCsv']],

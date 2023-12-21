@@ -62,7 +62,12 @@ class TblProductStockAdjustmentTransaction extends \app\models\ChildModel
             [['unit', 'created_by', 'updated_by', 'stock', 'qty'], 'safe'],
             [['originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['union_code', 'product_code', 'sap_batch_no', 'unit', 'stock', 'qty'], 'required'],
+            [['union_code', 'product_code', 'unit', 'stock', 'qty'], 'required'],
+             [['sap_batch_no'], 'required', 'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                    return $batchNoWiseInventory == 1 ;
+                },
+            ],
             [['stock', 'qty'], 'number'],
             [['remarks'], 'string'],
             [['originating_type'], 'integer'],          
