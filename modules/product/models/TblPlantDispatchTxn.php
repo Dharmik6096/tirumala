@@ -46,15 +46,26 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         return [
             [['plant_dispatch_txn_code'], 'required'],
-            [['product_code', 'sap_batch_no', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
+            [['product_code', 'unit_code', 'rate', 'amount', 'qty'], 'required'],
             [['plant_dispatch_txn_code', 'plant_dispatch_code', 'received_qty', 'rejected_qty', 'grn_missing_qty', 'missing_qty', 'rejection_remarks', 'missing_remarks'], 'safe'],
             [['union_code', 'unit_code', 'rate', 'amount', 'qty', 'product_code', 'sap_batch_no', 'lr_no'], 'safe'],
             [['originating_type', 'created_at', 'updated_at', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'safe'],
             [['x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],
-            [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv']],
-            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv']],
+            [['sap_batch_no'], 'required', 'when' => function ($model) use ($batchNoWiseInventory) {
+                      return $batchNoWiseInventory == 1;
+                }],
+            [['sap_batch_no'], 'unique', 'targetAttribute' => ['sap_batch_no', 'product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'except' => ['importCsv'], 'when' => function ($model) use ($batchNoWiseInventory) {
+                    return $batchNoWiseInventory == 1;
+                }],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
+                    return $batchNoWiseInventory == 0;
+                }],
+            [['product_code'], 'unique', 'targetAttribute' => ['product_code','sap_batch_no', 'plant_dispatch_code'], 'skipOnEmpty' => true, 'message' => Yii::t('app/validation', '{attribute} has already been taken.'), 'on' => ['importCsv'], 'when' => function ($model)use ($batchNoWiseInventory) {
+                    return $batchNoWiseInventory == 1;
+                }],
         ];
     }
 
@@ -107,5 +118,4 @@ class TblPlantDispatchTxn extends \app\models\ChildModel {
         }
         return $data;
     }
-
 }

@@ -487,15 +487,15 @@ class TblProductSaleController extends \app\controllers\ChildController {
             $fstockModel->product_code = $details[$key]->product_code;
             $fstockModel->union_code = $this->model->union_code;
             $txn_type = strtoupper($this->model->customer_type) == 'MEMBER' ? 'DELETE PRODUCT SALE TO MEMBER' : 'DELETE PRODUCT SALE';
-            $batch = $details[$key]->sap_batch_no;
             $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
+            $batch = $batchNoWiseInventory ? $details[$key]->sap_batch_no : '';
             $checkMccStock = FALSE;
 
-            if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+            if (strtoupper($sale_type) == 'BMC') {
                 $checkMccStock = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
             }
-            if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+            if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
                 $isBmc = Yii::$app->general->getforeignkey($this->model->mainDcsCode, 'is_bmc');
                 $isBmcMcc = Yii::$app->general->getforeignkey($this->model->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
@@ -647,7 +647,7 @@ class TblProductSaleController extends \app\controllers\ChildController {
 
     public function actionDeleteProductSale() {
         $searchModel = new TblProductSaleSearch();
-        $type='vendorBulkDelete';
+        $type = 'vendorBulkDelete';
         $searchModel->scenario = $type;
         $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {
@@ -671,12 +671,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $msg = 'Records are successfully deleted.';
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
-                        
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                         $msg = ''.$failed_cnt.'records failed out of'.$total;
+                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
-                  
                     }
                     return $this->redirect(['index']);
                 }
@@ -690,9 +688,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
             ]);
         }
     }
+
     public function actionDeleteProductSaleToMember() {
         $searchModel = new TblProductSaleSearch();
-        $type='memberBulkDelete';
+        $type = 'memberBulkDelete';
         $searchModel->scenario = $type;
         $dataProvider = $searchModel->searchForDelete(Yii::$app->request->queryParams);
         if (Yii::$app->request->post()) {
@@ -716,12 +715,10 @@ class TblProductSaleController extends \app\controllers\ChildController {
                         $msg = 'Records are successfully deleted.';
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
-                        
                     } else if ($total > $cnt && $failed_cnt > 0) {
-                         $msg = ''.$failed_cnt.'records failed out of'.$total;
+                        $msg = '' . $failed_cnt . 'records failed out of' . $total;
                         Yii::$app->getSession()->setFlash('success', ['type' => 'error',
                             'message' => Yii::t('app', $msg)]);
-                  
                     }
                     return $this->redirect(['index']);
                 }
@@ -874,15 +871,15 @@ class TblProductSaleController extends \app\controllers\ChildController {
                     $fstockModel->product_code = $detailModel->product_code;
                     $fstockModel->union_code = $model->union_code;
                     $txn_type = strtoupper($model->customer_type) == 'MEMBER' ? 'PRODUCT SALE TO MEMBER' : 'PRODUCT SALE';
-                    $batch = $detailModel->sap_batch_no;
                     $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
                     $batchNoWiseInventory == '1' ? TRUE : FALSE;
+                    $batch = $batchNoWiseInventory ? $detailModel->sap_batch_no : '';
                     $checkMccStock = FALSE;
 
-                    if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+                    if (strtoupper($sale_type) == 'BMC') {
                         $checkMccStock = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
                     }
-                    if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+                    if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
                         $isBmc = Yii::$app->general->getforeignkey($model->mainDcsCode, 'is_bmc');
                         $isBmcMcc = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc');
                         $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;
@@ -1029,24 +1026,24 @@ class TblProductSaleController extends \app\controllers\ChildController {
     }
 
     public function actionGetAvailableStock() {
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+        $batchNoWiseInventory == '1' ? TRUE : FALSE;
         $product = Yii::$app->request->post('product');
         $from_type = Yii::$app->request->post('type');
         $from_code = Yii::$app->request->post('code');
         $union_code = Yii::$app->request->post('union_code');
-        $sap_batch_no = Yii::$app->request->post('sap_batch_no');
+        $sap_batch_no = $batchNoWiseInventory ? Yii::$app->request->post('sap_batch_no') : '';
         $sale_type = strtoupper($from_type) == 'MEMBER' ? 'DCS' : 'BMC';
 
         $stockModel = new TblProductStock();
         $stockModel->setCodes(strtoupper($sale_type), $from_code);
         $stockModel->product_code = $product;
         $stockModel->union_code = $union_code;
-        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
-        $batchNoWiseInventory == '1' ? TRUE : FALSE;
         $checkMccStock = FALSE;
-        if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+        if (strtoupper($sale_type) == 'BMC') {
             $checkMccStock = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
         }
-        if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+        if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
             $isBmc = Yii::$app->general->getforeignkey($stockModel->dcsCode, 'is_bmc');
             $isBmcMcc = Yii::$app->general->getforeignkey($stockModel->bmcCode, 'is_mcc');
             $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;

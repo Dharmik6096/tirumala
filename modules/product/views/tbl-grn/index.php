@@ -12,7 +12,11 @@ if ($batchNoWiseInventory == 1) {
     }
 //    $this->params['menu'][] = Yii::$app->controls->import('grn-other', $this);
 } else {
-    $this->params['menu'][] = Yii::$app->controls->add('grn');
+    if ($withoutDispatch == 1) {
+        $this->params['menu'][] = Yii::$app->controls->add('grn');
+    } else {
+        $this->params['menu'][] = Yii::$app->controls->add('grn', 'create-other');
+    }
     $this->params['menu'][] = Yii::$app->controls->import('grn', $this);
 }
 ?>
