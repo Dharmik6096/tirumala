@@ -364,12 +364,17 @@ class TblInventoryTransfer extends \app\models\ChildModel {
     }
 
     public function validateSapBatchNo($attribute, $param) {
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
         $type = $this->from_type;
         $code = $this->from_code;
         $stockModel = new TblProductStock();
         $query = $stockModel->find()->where([
-                    'product_code' => $this->product_code, 'sap_batch_no' => $this->sap_batch_no])
+                    'product_code' => $this->product_code])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0]);
+        if($batchNoWiseInventory)
+        {
+           $query->andWhere(['sap_batch_no' => $this->sap_batch_no]);
+        }
         $query->andWhere(['tbl_product_stock.union_code' => explode(',', Yii::$app->session->get('Unions'))]);
         if (strtoupper($type) == 'MCC') {
             $query->andWhere(['mcc_plant_code' => $code])
