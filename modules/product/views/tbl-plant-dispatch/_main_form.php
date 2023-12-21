@@ -65,9 +65,13 @@ $form = ActiveForm::begin([
             <?= Html::hiddenInput('x_col3', '2', ['id' => 'x_col3']); ?>
             <?php Yii::$app->dropdown->depend_dropdown('product', $txModel, $form, 'tblplantdispatch-union_code,x_col3', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Product', 'product_code', FALSE); ?>
         </div>
-        <div class="col-sm-2 sap_batch_no <?= $sapBatchDisable ?>">
+        <?php
+         if ($batchNoWiseInventory == 1) { 
+        ?>
+        <div class="col-sm-2 sap_batch_no">
             <?= $form->field($txModel, 'sap_batch_no')->textInput() ?>
         </div>
+         <?php } ?>
         <div class=" col-sm-1 reset_field unit disabledDiv">
             <?= Yii::$app->dropdown->dropdown('unit_code', $txModel, $form, 'form-group col-sm-2', $txModel->getAttributeLabel('unit_code'), FALSE, 'unit_code'); ?>    
         </div>
