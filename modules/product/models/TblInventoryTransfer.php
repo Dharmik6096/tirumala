@@ -371,7 +371,7 @@ class TblInventoryTransfer extends \app\models\ChildModel {
         $query = $stockModel->find()->where([
                     'product_code' => $this->product_code])
                 ->andWhere(['>', 'tbl_product_stock.stock', 0]);
-        if($batchNoWiseInventory)
+        if($batchNoWiseInventory==1)
         {
            $query->andWhere(['sap_batch_no' => $this->sap_batch_no]);
         }
