@@ -80,6 +80,8 @@ class TblAttachmentController extends \app\controllers\ChildController {
                         $d->module_name = $module_name;
                         $d->file_name = $file_name;
                         $save_model[] = $d;
+                    } else if ($d->is_mandate == 1) {
+                        $error_msg .= $d->doc_name . '<br/>';
                     }
                 }
 

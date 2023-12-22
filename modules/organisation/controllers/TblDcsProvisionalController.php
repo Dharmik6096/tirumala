@@ -100,7 +100,6 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->is_bmc = $is_bmc;
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->getCode();
-            //            $this->model->cutoff_val = (double) $this->model->cutoff_val;
             if ($this->model->street1 != '' && $this->model->street2 != '') {
                 $this->model->address = $this->model->fullAddress();
             } elseif ($this->model->street1 == '' && $this->model->street2 != '') {
@@ -184,7 +183,11 @@ class TblDcsProvisionalController extends ChildController {
             $this->model->vendor_code = $this->model->vendor;
             $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['society', 'edit']);
             if ($transaction == 'customRedirect') {
-                return $this->{$transaction}();
+                if ($this->model->status == 'Pending') {
+                    return $this->redirect(['document-upload', 'id' => $this->model->dcs_provisional_code]);
+                } else {
+                    return $this->redirect(['pending-approval']);
+                }
             }
         }
         return $this->customRender();
@@ -270,13 +273,13 @@ class TblDcsProvisionalController extends ChildController {
         $this->model->dcs_name = ucwords($this->model->dcs_name);
         $this->model->pan_no = strtoupper($this->model->pan_no);
         $this->model->dcs_short_name = ucwords($this->model->dcs_short_name);
-        //$this->model->route_code = empty($this->model->route_code) ? null : $this->model->route_code;
         $this->model->registration_date = ($this->model->registration_date == '') ? null : Yii::$app->formatter->asDate($this->model->registration_date, DATE_FORMAT);
         $this->model->effective_date = ($this->model->effective_date == '') ? null : Yii::$app->formatter->asDate($this->model->effective_date, DATE_FORMAT);
         $this->model->valid_from = ($this->model->valid_from == '') ? null : Yii::$app->formatter->asDate($this->model->valid_from, DATE_FORMAT);
         $this->model->mcc_plant_code = Yii::$app->general->getforeignkey($this->model->bmcCode, 'mcc_plant_code');
         $this->model->plant_code = Yii::$app->general->getforeignkey($this->model->mccPlantCode, 'plant_code');
         $this->model->x_col1 = $this->model->same_milk_type . '#' . $this->model->diff_milk_type;
+        $this->model->gender = $this->model->gender_code;
     }
 
     public function actionPendingApproval() {
@@ -401,27 +404,22 @@ class TblDcsProvisionalController extends ChildController {
             if ($this->model->default_milk_type == 8) {
                 $this->model->milk_type_auto = 1;
             }
-            //            $this->model->milk_type_code = !empty($dcsProvisional['milk_type']) ? explode(',', $dcsProvisional['milk_type']) : [];
             $modelMilkType = $this->setMilk();
-            //            $this->model->default_milk_type = !empty($this->model->milk_type_auto) ? 8 : $this->model->setDefaultMilkType($modelMilkType);
             if (!empty($modelMilkType))
                 $mapList = array_merge($mapList, $modelMilkType);
             //set vendor applicability
             if ($this->model->vendor != 'NA') {
                 $vendorModel = new TblSocietyVendor();
                 $vendorModel->dcs_code = $this->model->dcs_code;
-                //                $vendorModel->vendor_code = $this->model->vendor;
                 $vendorModel->vendor_code = $this->model->vendor_code;
                 array_push($mapList, $vendorModel);
             }
             if ($bankValidate == 1) {
-                //            if ($bankValidate == 1 && $_POST['warning'] == 0) {
                 $msg = $this->model->dcs_name . ' for dcs/subcenter/collection center';
                 $validate = Yii::$app->warning->unique($this->model, 'dcs_name', $this->model->dcs_name, $msg);
             }
             if ($bankValidate == 1 && $validate == 1 && empty($this->model->getErrors())) {
                 $this->model->setModelData($this->model, $mapList);
-                //                $this->model->cutoff = '0000';
                 if (!empty($this->model->lower_milk_type) && !empty($this->model->cutoff_val)) {
                     $val = str_replace('.', '', $this->model->cutoff_val);
                     $val = str_pad($val, 3, '0', STR_PAD_LEFT);

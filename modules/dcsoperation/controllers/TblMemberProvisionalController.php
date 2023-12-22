@@ -139,7 +139,11 @@ class TblMemberProvisionalController extends \app\controllers\ChildController {
                 $this->model->dob = empty($this->model->dob) ? NULL : Yii::$app->formatter->asDate($this->model->dob, DATE_FORMAT);
                 $transaction = $this->generalModel->saveTransaction([$this->model, $historyModel], ['Member Provisional', 'edit']);
                 if ($transaction == 'customRedirect') {
-                    return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
+                    if ($this->model->provisional_status == 'Pending') {
+                        return $this->redirect(['document-upload', 'id' => $this->model->provisional_member_code]);
+                    } else {
+                        return $this->redirect(['pending-approval']);
+                    }
                 }
             }
         }

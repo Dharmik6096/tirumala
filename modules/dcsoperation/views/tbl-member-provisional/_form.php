@@ -131,6 +131,9 @@ if ($model->isNewRecord) {
         <div class="col-sm-4">
             <?= $form->field($model, 'total_land')->textInput() ?>
         </div>
+        <div class="col-sm-4 number-validate">
+            <?= $form->field($model, 'vendor_code')->textInput(['maxlength' => 12]) ?>   
+        </div>
     </div>
 
     <div class="col-md-6 padding_10_0 theme-box ">
@@ -165,7 +168,7 @@ if ($model->isNewRecord) {
             <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tblmemberprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Hamlet'); ?>
         </div>
         <div class="col-sm-4">
-            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'pincode')->textInput()                                                                                                                           ?>-->
             <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
@@ -211,7 +214,7 @@ if ($model->isNewRecord) {
             <?= $form->field($model, 'bank_account_no')->textInput() ?>
         </div>
         <div class="col-sm-2">
-            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                   ?>-->
+            <!--<?php //$form->field($model, 'ifsc')->textInput(['readonly' => $disable_ifsc])                                                                                                                           ?>-->
             <?= $form->field($model, 'ifsc')->textInput(['readonly' => true]) ?>        
         </div>
         <div class="col-sm-2">

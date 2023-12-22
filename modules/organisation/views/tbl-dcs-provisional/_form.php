@@ -183,7 +183,7 @@ $form = ActiveForm::begin([
             <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-2">
-            <?= $form->field($model, 'gender')->textInput() ?>
+            <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
         </div>
         <div class="col-sm-2">
             <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
@@ -338,7 +338,6 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'bank_account_no')->textInput() ?>
             </div>
             <div class="col-sm-2">
-                <!--<? = $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => !empty($model->ifsc) ? true : false]) ?>-->
                 <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
             </div>
             <div class="col-sm-2">
@@ -428,7 +427,6 @@ $form = ActiveForm::begin([
         <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
             <div class="form-group">
                 <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
-                <?php //Yii::$app->controls->save(Yii::$app->label->button($btn_name), $model); ?>
                 <?= Yii::$app->controls->reset(); ?>
                 <?= Yii::$app->controls->cancel($model); ?>
             </div>
@@ -438,11 +436,7 @@ $form = ActiveForm::begin([
 
     <?php
     $script = "
-    //$('#district_section').hide();
-//    $('#tbldcsprovisional-bank_code').on('change',function(){
-//    $('#tbldcs-branch_code,#tbldcsprovisional-bank_account_no,#tbldcsprovisional-ifsc').trigger('change');
-//    });
-
+    var delay=2000;
     securityCheque($('#tbldcsprovisional-is_security_cheque').prop('checked'));	
     $('#tbldcsprovisional-is_security_cheque').on('change', function() {
         securityCheque($(this).prop('checked'));
@@ -523,10 +517,6 @@ $form = ActiveForm::begin([
     function lowerMilkTypeVal(){
         $('#tbldcsprovisional-lower_milk_type option').removeAttr('disabled'); 
         var milktype = $('#tbldcsprovisional-milk_type_code').val();
-//        console.log(typeof milktype);
-//        console.log(typeof Object.values(milktype));
-//        console.log(Object.values(milktype).includes('2'));
-//        console.log(Object.values(milktype).includes('3'));
         var remove = 1;
         if(milktype.length == 2) {
             if(!Object.values(milktype).includes('2')) {
@@ -534,11 +524,6 @@ $form = ActiveForm::begin([
             } else if(!Object.values(milktype).includes('3')) {
                 remove = 3;
             }
-//            console.log(milktype.indexOf('2'));
-//            console.log(milktype.indexOf(2));
-//            console.log(milktype.indexOf('3'));
-//            console.log(milktype.indexOf(3));
-//            console.log(remove);
             $('#tbldcsprovisional-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
             var select2Instance = $('#tbldcsprovisional-lower_milk_type').data('select2');
             var resetOptions = select2Instance.options.options;
@@ -581,35 +566,9 @@ $form = ActiveForm::begin([
             $('#tbldcsprovisional-cutoff_val').parent('div').addClass('disabledDiv');
         }
     }
-";
-    $this->registerJs($script, View::POS_END, 'union-select');
-
-    $script = "var delay=2000;";
-    $this->registerJs($script, View::POS_HEAD, 'time-loader');
-    $script = "
-   $('#tbldcsprovisional-bank_code').on('change',function(){
+    $('#tbldcsprovisional-bank_code').on('change',function(){
         $('#tbldcsprovisional-ifsc').val('');
     });
-    
-    $('#tbldcsprovisional-branch_code').on('change',function(){
-            var id = $('#tbldcsprovisional-branch_code').val();
-            $.ajax({
-                        type: 'post',
-                        url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
-                        data: 'id='+id,
-                        success: function(data) {
-                                var obj1 = $.parseJSON(data);
-                                $('#tbldcsprovisional-ifsc').val(obj1.code);
-//                                if(obj1.code!='')
-//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
-//                                else
-//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
-                        },
-                        error:function(data){
-                                    //alert('Your data has not been submitted..Please try again');
-                                }
-            });
-    });
 ";
-$this->registerJs($script, View::POS_END, 'bank-select');
+    $this->registerJs($script, View::POS_END, 'union-select');
     
