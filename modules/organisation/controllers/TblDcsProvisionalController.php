@@ -313,12 +313,19 @@ class TblDcsProvisionalController extends ChildController {
                 $model_save[] = $dcsModel;
                 $all_doc = [];
                 $dcsdoc = [];
+                $message = '';
+                $dcs_error = '';
                 if ($status == 'Approve') {
-                    $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc);
+                    $transaction = $this->createDcs($dcsModel, $model_save, $all_doc, $dcsdoc, $message);
+                    if (!empty($message)) {
+                        foreach ($message as $msg) {
+                            $dcs_error .= $msg;
+                        }
+                    }
                 } else {
                     $transaction = $this->generalModel->saveTransaction($model_save, ['Dcs Provisional Approval', 'edit']);
                 }
-                if ($transaction == 'customRedirect') {
+                if ($transaction == 'customRedirect' && empty($message)) {
 
                     if ($status == 'Approve') {
                         $baseDir = Yii::$app->basePath . '/' . Yii::$app->params['document_upload'];
@@ -337,6 +344,9 @@ class TblDcsProvisionalController extends ChildController {
                     }
 
                     return $this->redirect(['pending-approval']);
+                } else {
+                    Yii::$app->getSession()->setFlash('success', ['type' => 'error',
+                        'message' => $dcs_error . ' in DCS.']);
                 }
             } else {
                 Yii::$app->getSession()->setFlash('success', [
@@ -350,7 +360,7 @@ class TblDcsProvisionalController extends ChildController {
         ]);
     }
 
-    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc) {
+    public function createDcs($dcsProvisional, $model_save, &$all_attachment, &$dcsdoc, &$message) {
         if (!empty($dcsProvisional)) {
             $this->model = new TblDcs();
             $this->model->scenario = 'createDcs';
@@ -464,7 +474,12 @@ class TblDcsProvisionalController extends ChildController {
                     }
                 }
                 return $transaction;
+            } else {
+                foreach ($this->model->getErrors() as $errorkey => $value) {
+                    $message = $value;
+                }
             }
+
             return 'customRender';
         }
     }
