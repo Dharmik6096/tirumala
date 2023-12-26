@@ -7,7 +7,13 @@ use zainiafzan\widget\Dropzone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 
-$this->title = 'BIPL Files Process';
+$this->title = strtolower($type)=='ekomilk' ? 'EKOMILK Zip File Process'  : 'BIPL File Process' ;
+$accepttype= strtolower($type)=='ekomilk' ? ".ZIP" : ".BDF";
+$maxfiles = strtolower($type)=='ekomilk' ? 1 : 50;
+$maxsize = strtolower($type)=='ekomilk' ? 10 : 2;
+$url = strtolower($type)=='ekomilk' ? 'ekomilk-pendrive-collection' : 'bipl-pendrive-collection';
+$importurl = strtolower($type)=='ekomilk' ? 'import-zip-file' : 'import-file';
+$countrestriction = strtolower($type)=='ekomilk' ? 10 : 0;
 ?>
 <div class="panel panel-default panel-main">
     <div class="panel-heading"><?= $this->title ?></div>
@@ -32,12 +38,12 @@ $this->title = 'BIPL Files Process';
                     Dropzone::widget([
                         'id' => 'mainDrop',
                         'options' => [
-                            'acceptedMimeTypes' => ".BDF",
-                            'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/import-file']),
+                            'acceptedMimeTypes' => $accepttype,
+                            'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/'.$importurl]),
                             'addRemoveLinks' => true,
                             'autoDiscover' => false,
-                            'maxFiles' => 50,
-                            'maxFilesize' => 2,
+                            'maxFiles' => $maxfiles,
+                            'maxFilesize' => $maxsize,
                             //  'maxTotalSize' => 0.0009,
                         ],
                         'clientEvents' => [
@@ -55,6 +61,8 @@ $this->title = 'BIPL Files Process';
                                             } else {
                                                 $(file.previewElement).remove();
                                                 bootbox.alert('<div class=\'row\'><div class=\'col-sm-12\'><div class=\'bg-info\'><i class=\'fa fa-info\'></i></div><span>'+data.msg+'</span></div></div>');
+                                                mainDrop.removeAllFiles();
+                                                mainDrop.enable();
                                             }
                                                 
                                         }",
@@ -66,6 +74,8 @@ $this->title = 'BIPL Files Process';
                                 var datefile_str = $('#date_file_name').val();
                                 var reslt = datefile_str.replace(','+file.name,''); 
                                 $('#date_file_name').val(reslt);
+                                mainDrop.removeAllFiles();
+                                mainDrop.enable();
                             }",
                             'sending' => "function(file, xhr, formData){formData.append('" . Yii::$app->request->csrfParam . "','" . Yii::$app->request->getCsrfToken() . "')}"
                         ]
@@ -76,12 +86,12 @@ $this->title = 'BIPL Files Process';
         </div>
         <div class="modal-footer">
             <?php
-            if ($matchingRecordsExist <= 0) {
+            if ($matchingRecordsExist <= $countrestriction) {
                 AjaxSubmitButton::begin([
                     'label' => Yii::t('app', 'Upload'),
                     'ajaxOptions' => [
                         'type' => 'POST',
-                        'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/bipl-pendrive-collection']),
+                        'url' => \yii\helpers\Url::to(['/bkgprocess/tbl-ftp-txn-log/'.$url]),
                         'beforeSend' => new \yii\web\JsExpression('function(data){
                                     var file = $("#date_file_name").val(); 
                                 
