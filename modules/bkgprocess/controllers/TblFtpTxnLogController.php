@@ -147,8 +147,6 @@ class TblFtpTxnLogController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
         } catch (\Exception $e) {
-            echo '<pre>';
-            print_r($e->getMessage());
             $record = ['status' => 'error', 'msg' => 'File Not Uploaded Due to Error'];
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
