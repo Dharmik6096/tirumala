@@ -234,6 +234,96 @@ class ClientPaymentConfig extends Component {
                     'sp_name' => 'disburse_party_payment',
                 ]
             ],
+            'VRS_GLT' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_vrs',
+                ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_vrs_newasa',
+                ],
+                'party_payment' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'process_party_payment_vrs_newasa',
+                ],
+                'party_payment_disburse' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'disburse_party_payment',
+                ]
+            ],
+            'VRS_MLP' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_vrs',
+                ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_vrs_newasa',
+                ],
+                'party_payment' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'process_party_payment_vrs_newasa',
+                ],
+                'party_payment_disburse' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'disburse_party_payment',
+                ]
+            ],
+            'VRS_SBD' => [
+                'member_payment' => [
+                    'param' => 'from_datetime,to_datetime,union_code,bmc_code,payment_cycle_code,process_stop_payment,user_code',
+                    'sp_name' => 'sp_member_payment_vrs_newasa',
+                ],
+                'vsp_payment' => [
+                    'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type,process_stop_payment,user_code',
+                    'sp_name' => 'sp_vsp_payment_vrs_newasa',
+                ],
+                'remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime,calculate_milk_recovey,calculate_other_head,process_stop_payment,user_code',
+                    'sp_name' => 'sp_remuneration_payment_vrs_newasa',
+                ],
+                'mcc_remuneration_payment' => [
+                    'param' => 'union_code,plant_code,mcc_plant_code,bmc_code,from_datetime,to_datetime',
+                    'sp_name' => 'sp_mcc_remuneration_payment_vrs',
+                ],
+                'bonus_payment' => [
+                    'param' => 'union_code,bmc_code,payment_type,customer_type,from_datetime,to_datetime,user_code',
+                    'sp_name' => 'sp_bonus_payment_process_vrs_newasa',
+                ],
+                'party_payment' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'process_party_payment_vrs_newasa',
+                ],
+                'party_payment_disburse' => [
+                    'param' => 'payment_type,party_master_code,from_date,to_date',
+                    'sp_name' => 'disburse_party_payment',
+                ]
+            ],
             'ANIG' => [
                 'vsp_payment' => [
                     'param' => 'union_code,from_datetime,from_shift,to_datetime,to_shift,payment_cycle_code,bmc_code,customer_type',
