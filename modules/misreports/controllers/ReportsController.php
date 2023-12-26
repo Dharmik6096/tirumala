@@ -1509,6 +1509,11 @@ class ReportsController extends \app\controllers\ChildController {
         return $this->actionIndex();
     }
 
+    public function actionTallyReport() {
+        $this->report = 'TallyReport';
+        return $this->actionIndex();
+    }
+
     /* Reports Configuration */
 
     public function getLabels($l) {
@@ -3125,6 +3130,13 @@ class ReportsController extends \app\controllers\ChildController {
                 'sp_name' => 'mis_cda_date_shift_wise_shivprasad',
                 'scenario' => 'CDAReport',
                 'title' => '626 - CDA Report',
+            ],
+            'TallyReport' => [
+                'param' => 'union_code,plant_code,mcc_code,bmc_code,dcs_code,from_date:string,to_date:string,report_type',
+                'sp_name' => 'mis_milk_collection_bill_shivprasad',
+                'scenario' => 'TallyReport',
+                'title' => '916 - TallyReport',
+                'report_type' => [Yii::t('app', 'Milk Collection'), Yii::t('app', 'Bmc Collection')],
             ],
         ];
         return $label[$l];
