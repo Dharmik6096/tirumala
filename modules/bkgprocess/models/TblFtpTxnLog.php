@@ -458,8 +458,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
-    public function UserMatchingRecords($user)
+    public function UserMatchingRecords($user,$txntype)
     {
-        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => 'BIPL', 'module_name' => 'TblMilkCollection' ])->count();
+        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection' ])->count();
     }
 }
