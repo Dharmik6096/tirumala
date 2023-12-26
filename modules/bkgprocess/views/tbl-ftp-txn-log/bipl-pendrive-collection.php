@@ -7,7 +7,7 @@ use zainiafzan\widget\Dropzone;
 use yii\helpers\Url;
 use demogorgorn\ajax\AjaxSubmitButton;
 
-$this->title = strtolower($type)=='ekomilk' ? 'EKOMILK File Process'  : 'BIPL File Process' ;
+$this->title = strtolower($type)=='ekomilk' ? 'EKOMILK Zip File Process'  : 'BIPL File Process' ;
 $accepttype= strtolower($type)=='ekomilk' ? ".ZIP" : ".BDF";
 $maxfiles = strtolower($type)=='ekomilk' ? 1 : 50;
 $maxsize = strtolower($type)=='ekomilk' ? 10 : 2;

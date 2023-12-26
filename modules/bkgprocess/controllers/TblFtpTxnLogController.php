@@ -16,7 +16,7 @@ use yii\web\Response;
  */
 class TblFtpTxnLogController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['import-file'];
+    public $freeAccessActions = ['import-file','import-zip-file'];
 
     /**
      * Lists all TblFtpTxnLog models.
