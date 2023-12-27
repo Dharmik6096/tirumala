@@ -28,10 +28,7 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Dcs Provisional Ap
                     <?php
                     $attr = [
                             ['attribute' => 'dcs_provisional_code', 'value' => 'dcs_provisional_code'],
-//                            ['attribute' => 'dcs_code', 'value' => 'dcsCode.dcs_name', 'filter' => false],
-//                            ['attribute' => 'pro_ex_member_code', 'value' => 'pro_ex_member_code', 'filter' => false],
                             ['attribute' => 'dcs_code_ex', 'value' => 'dcs_code_ex', 'filter' => false],
-//                            ['attribute' => 'member_code', 'value' => 'member_code', 'filter' => false],
                             ['attribute' => 'dcs_name', 'value' => 'dcs_name', 'filter' => false],
                             ['attribute' => 'state_code', 'value' => 'stateCode.state_name', 'visible' => false, 'filter' => false],
                             ['attribute' => 'district_code', 'value' => 'districtCode.district_name', 'visible' => false, 'filter' => false],
@@ -65,5 +62,3 @@ $this->title = Yii::t('app', Yii::$app->label->title('list', 'Dcs Provisional Ap
         </div>
     </div>
 </div>
-<!--<div id="approvalDetails"></div>
-<div id="milkCollectionDetails"></div>-->

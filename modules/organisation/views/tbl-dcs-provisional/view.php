@@ -8,9 +8,6 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 
 $this->title = Yii::$app->label->title('view', 'Provisional Society');
-//$this->params['menu'][] = Yii::$app->controls->update($model->dcs_code);
-//$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-university"></i> Bank Details'), ['/organisation/tbl-dcs/bank-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
-//$this->params['menu'][] = GhostHtml::a(Yii::t('app', '<i class="fa fa-user-circle-o"></i> Contact Details'), ['/organisation/tbl-dcs/contact-details', 'id' => $model->dcs_code], ['class' => 'btn btn-danger btn-block']);
 ?>
 
 <div class="panel panel-default panel-grid panel-main">
@@ -51,21 +48,7 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
-//                    [
-//                        'columns' => [
-//                            [
-//                                'attribute' => 'is_bmc',
-//                                'value' => $model->isBmcValue(),
-//                                'valueColOptions' => ['style' => 'width:80%']
-//                            ],
-////                            [
-////                                'attribute' => 'destination_code',
-////                                'value' => isset($model->tblDcsBmc) ? $model->tblDcsBmc->bmc_name : '',
-////                                'valueColOptions' => ['style' => 'width:30%']
-////                            ],
-//                        ],
-//                    ],
-                    [
+                        [
                         'columns' => [
                                 [
                                 'attribute' => 'dcs_code',
@@ -89,28 +72,7 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
-                    /* [
-                      'columns' => [
-                      [
-                      'attribute' => 'villages',
-                      'label' => 'Mapped Villages',
-                      'format' => 'html',
-                      'value' => $model->getVillageList(),
-                      'valueColOptions' => ['style' => 'width:80%'],
-                      ],
-                      ],
-                      ], */
-//                        [
-//                        'columns' => [
-//                                [
-//                                'label' => 'Milk Type',
-//                                'format' => 'html',
-//                                'value' => $model->milkType(),
-//                                'valueColOptions' => ['style' => 'width:80%'],
-//                            ],
-//                        ],
-//                    ],
-                    [
+                        [
                         'columns' => [
                                 [
                                 'attribute' => 'dcs_short_name',
@@ -189,20 +151,7 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
-//                        [
-//                        'columns' => [
-//                                [
-//                                'label' => 'Pours To BMC',
-//                                'value' => Yii::$app->general->getmultiforeignkey($model->societyCodes, ['bmcCode'], 'bmc_name'),
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
-//                                [
-//                                'attribute' => 'pan_no',
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
-//                        ],
-//                    ],
-                    [
+                        [
                         'columns' => [
                                 [
                                 'attribute' => 'secretory_info',
@@ -267,66 +216,6 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                         ],
                     ],
-                    /* [
-                      'group' => true,
-                      'label' => 'Contact Details',
-                      'rowOptions' => ['class' => 'bg-default']
-                      ],
-                      [
-                      'columns' => [
-                      [
-                      'attribute' => 'contact_person',
-                      'valueColOptions' => ['style' => 'width:30%']
-                      ],
-                      [
-                      'attribute' => 'local_contact_person',
-                      'valueColOptions' => ['style' => 'width:30%']
-                      ],
-                      ],
-                      ],
-                      [
-                      'columns' => [
-                      [
-                      'attribute' => 'mobile_no',
-                      'valueColOptions' => ['style' => 'width:30%'],
-                      ],
-                      [
-                      'attribute' => 'email',
-                      'valueColOptions' => ['style' => 'width:30%']
-                      ],
-                      ],
-                      ],
-                      [
-                      'group' => true,
-                      'label' => 'Bank Details',
-                      'rowOptions' => ['class' => 'bg-default']
-                      ],
-                      [
-                      'columns' => [
-                      [
-                      'attribute' => 'bank_code',
-                      'value' => $model->bankCode->bank_name,
-                      'valueColOptions' => ['style' => 'width:30%'],
-                      ],
-                      [
-                      'attribute' => 'branch_code',
-                      'value' => $model->branchCode->branch_name,
-                      'valueColOptions' => ['style' => 'width:30%'],
-                      ],
-                      ],
-                      ],
-                      [
-                      'columns' => [
-                      [
-                      'attribute' => 'bank_account_no',
-                      'valueColOptions' => ['style' => 'width:30%']
-                      ],
-                      [
-                      'attribute' => 'ifsc',
-                      'valueColOptions' => ['style' => 'width:30%'],
-                      ],
-                      ],
-                      ], */
                         [
                         'columns' => [
                                 [
@@ -338,10 +227,6 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                                 'attribute' => 'pincode',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-//                            [
-//                                'attribute' => 'upi_no',
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
                         ],
                     ],
                         [
@@ -353,11 +238,6 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                                 'value' => $model->allow_multi_family_member == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
-//                                [
-//                                'attribute' => 'bipl_code',
-//                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
                         ],
                     ],
                         [
@@ -383,17 +263,6 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                                 'value' => $model->is_active === 0 ? 'In Active' : 'Active',
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-//                                [
-//                                'attribute' => 'bipl_code',
-//                                'label' => Yii::t('app', 'Reference Code'),
-//                                'value' => Yii::$app->general->getforeignkey($model->societyCodes, 'bipl_code'),
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
-//                            [
-//                                'label' => 'IMEI Number',
-//                                'value' => isset($model->societyCodes) ? $model->societyCodes->imei_no : '',
-//                                'valueColOptions' => ['style' => 'width:30%']
-//                            ],
                         ],
                     ],
                         [
@@ -410,25 +279,9 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                                 'value' => $model->is_bmc == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
                                 'valueColOptions' => ['style' => 'width:30%'],
                             ],
-//                            [
-//                                'attribute' => 'is_weight_manual',
-//                                'format' => 'html',
-//                                'value' => $model->is_weight_manual == 1 ? Yii::t('app', 'Yes') : Yii::t('app', 'No'),
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
                         ],
                     ],
-//                    [
-//                        'columns' => [
-//                            [
-//                                'attribute' => 'is_quality_manual',
-//                                'format' => 'html',
-//                                'value' => $model->is_quality_manual == 1 ? 'Yes' : 'No',
-//                                'valueColOptions' => ['style' => 'width:30%'],
-//                            ],
-//                        ],
-//                    ],
-                    [
+                        [
                         'columns' => [
                                 [
                                 'attribute' => 'credit_sale_allow',
@@ -530,6 +383,32 @@ $this->title = Yii::$app->label->title('view', 'Provisional Society');
                             ],
                                 [
                                 'attribute' => 'evening_kms',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'bank_code',
+                                'value' => !empty($model->bankCode) ? $model->bankCode->bank_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'branch_code',
+                                'value' => !empty($model->branchCode) ? $model->branchCode->branch_name : '',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                        ],
+                    ],
+                        [
+                        'columns' => [
+                                [
+                                'attribute' => 'bank_account_no',
+                                'valueColOptions' => ['style' => 'width:30%']
+                            ],
+                                [
+                                'attribute' => 'ifsc',
                                 'valueColOptions' => ['style' => 'width:30%']
                             ],
                         ],
