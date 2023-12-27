@@ -110,29 +110,42 @@ class TblSchemeRateApplicability extends \app\models\ChildModel {
 
     public function afterSave($insert, $changedAttributes) {
         $sentboxArray = [];
-//        $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', '', '', $this->applicable_code);
-        $sentboxArray = [];
-        $array = [];
-        $dcsDetails = $this->dcsCode;
-        if (!empty($dcsDetails) && ((!empty($dcsDetails->is_bmc) && $dcsDetails->is_bmc == 1) || $this->is_member_rate == 0)) {
-            $bmcCode = $dcsDetails->bmc_code;
-            $array['code'] = $bmcCode;
-            $array['type'] = 'BMC';
-            $sentboxArray[] = $array;
-        } else {
-            $array['code'] = $this->applicable_code;
-            $array['type'] = 'VLC';
-            $sentboxArray[] = $array;
-        }
-        foreach ($sentboxArray as $sent) {
-            $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
-            if ($this->is_active == 0) {
-                $flag = 'DELETE';
+        $generateSentbox = false;
+        // $dcs_code = '';
+        // $appendDcs = false; 
+        if ($this->applicable_for == 'DCS') {
+            $generateSentbox = true;
+            if ($this->is_member_rate == 0) {
+                $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+            } else {
+                $bmc_code = Yii::$app->general->getforeignkey($this->dcsCode, 'bmc_code');
+                // $dcs_code = $this->applicable_code;
+                // $appendDcs = true;
             }
-            $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
-            if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
-                if (!($sentbox->setSentbox($this, $flag))) {
-                    throw new UserException("SentBox Entry is not created so transaction is rollback!");
+        } else {
+            $generateSentbox = true;
+            $bmc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'bmc_code');
+            // $mcc_code = Yii::$app->general->getforeignkey($this->customerMasterCode, 'mcc_plant_code');
+        }
+        if ($generateSentbox) {
+            $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', '', false);
+            // $sentboxArray = Yii::$app->general->getSentBoxCodes('', '', $bmc_code, '', $dcs_code, $appendDcs);
+            if ($this->applicable_for == 'DCS') {
+                $sentboxArray[] = [
+                    'code' => $this->applicable_code,
+                    'type' => 'VLC'
+                ];
+            }
+            foreach ($sentboxArray as $sent) {
+                $flag = (isset($this->operation) && $this->operation == true) ? $this->operation : ($insert) ? 'INSERT' : 'UPDATE';
+                if ($this->is_active == 0) {
+                    $flag = 'DELETE';
+                }
+                $sentbox = $this->sentboxModel($sent['code'], $sent['type']);
+                if (!isset($this->is_sentbox) || (isset($this->is_sentbox) && $this->is_sentbox === TRUE)) {
+                    if (!($sentbox->setSentbox($this, $flag))) {
+                        throw new UserException("SentBox Entry is not created so transaction is rollback!");
+                    }
                 }
             }
         }
