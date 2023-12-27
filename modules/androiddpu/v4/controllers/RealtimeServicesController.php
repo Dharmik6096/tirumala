@@ -156,6 +156,7 @@ class RealtimeServicesController extends \app\modules\androiddpu\v3\controllers\
                     $model_name = str_replace(' ', '', ucwords(str_replace('_', ' ', $transaction_data['table_name'])));
                     $model_name = Yii::$app->path->define($model_name);
                     $json = $transaction_data['json'];
+                    $json['originating_type'] = 23;
                     $model = new $model_name();
                     $model->setAttributes($json);
                     $masterModel = [];

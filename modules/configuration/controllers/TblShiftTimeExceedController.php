@@ -163,17 +163,7 @@ class TblShiftTimeExceedController extends \app\controllers\ChildController {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model_save[] = $model;
             if (!empty($model_save)) {
-                $next_count = TblProcessApproval::find()
-                        ->where(['process_code' => $model->process_code, 'status' => 0])
-                        ->andWhere(['<>', 'process_approval_code', $model->process_approval_code])
-                        ->count();
-                if ($model->status == '2') {
-                    $status = 'Reject';
-                } else if ($model->status == '1' && $next_count > 0) {
-                    $status = 'Inprogress';
-                } else {
-                    $status = 'Approve';
-                }
+                $model->ApprovalList($model, $model_save, $status);
                 $exceed_time = !empty(Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time']) ? Yii::$app->request->post()['TblShiftTimeExceed']['exceed_time'] : $shiftTimeExceedModel->exceed_time;
                 $model->remarks = $model->remarks . '_' . $shiftTimeExceedModel->exceed_time . '_' . $exceed_time;
                 $historyModel = new TblShiftTimeExceedHistory();

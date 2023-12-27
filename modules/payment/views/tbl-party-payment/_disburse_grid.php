@@ -51,24 +51,6 @@ $form = ActiveForm::begin([
                     [
                         'columns' => [
                             [
-                                'attribute' => 'from_date',
-                                'label' => Yii::t('app', 'Period'),
-                                'value' => Yii::$app->controls->view_date($model->from_date) . ' to ' . Yii::$app->controls->view_date($model->to_date),
-                                'valueColOptions' => ['style' => 'width:15%']
-                            ],
-                            [
-                                'attribute' => 'net_amount',
-                                'valueColOptions' => ['style' => 'width:15%']
-                            ],
-                            [
-                                'attribute' => 'final_amount',
-                                'valueColOptions' => ['style' => 'width:15%']
-                            ],
-                        ],
-                    ],
-                    [
-                        'columns' => [
-                            [
                                 'attribute' => 'total_amount',
                                 'valueColOptions' => ['style' => 'width:15%']
                             ],
@@ -78,6 +60,22 @@ $form = ActiveForm::begin([
                             ],
                             [
                                 'attribute' => 'total_deduction',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                        ],
+                    ],
+                    [
+                        'columns' => [
+                            [
+                                'attribute' => 'net_amount',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                             [
+                                'attribute' => 'adjust_amount',
+                                'valueColOptions' => ['style' => 'width:15%']
+                            ],
+                            [
+                                'attribute' => 'final_amount',
                                 'valueColOptions' => ['style' => 'width:15%']
                             ],
                         ],
@@ -119,13 +117,13 @@ $form = ActiveForm::begin([
                 ['attribute' => 'from_dest', 'value' => function ($model) {
 
                         $rel = Yii::$app->general->getDestRelation($model->from_type);
-                        $att = strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'party' ? 'party_name' : 'name');
+                        $att =  strtolower($model->to_type) == 'plant' ? 'plant_name' : strtolower($model->from_type) == 'bmc' ? 'bmc_name' : (strtolower($model->from_type) == 'party' ? 'party_name' : 'name');
                         if (!empty($rel))
                             return Yii::$app->general->getforeignkey($model->{$rel . 'Source'}, $att);
                     }, 'filter' => false],
                 ['attribute' => 'to_dest', 'value' => function ($model) {
                         $rel = Yii::$app->general->getDestRelation($model->to_type);
-                        $att = strtolower($model->to_type) == 'bmc' ? 'bmc_name' : (strtolower($model->to_type) == 'party' ? 'party_name' : 'name');
+                        $att =  strtolower($model->to_type) == 'plant' ? 'plant_name' : strtolower($model->to_type) == 'bmc' ? 'bmc_name' : (strtolower($model->to_type) == 'party' ? 'party_name' : 'name');
                         ;
                         if (!empty($rel))
                             return Yii::$app->general->getforeignkey($model->{$rel . 'Dest'}, $att);
@@ -192,33 +190,6 @@ $form = ActiveForm::begin([
 $script = "$('.kv-panel-before').hide();";
 $script .= "
     $(document).ready(function(){
-//        $(document).on('click','.view-head',function(e){
-//            var id= $(this).attr('data-val');
-//            ViewBillHead(id);
-//        });
-//        function ViewBillHead(code){
-//            if(code != ''){         
-//            $.ajax({
-//                    type: 'get',
-//                    url: '" . Url::to(['/payment/tbl-party-payment/party-bill-head-detail']) . "',
-//                    data: {'code' : code},
-//                    beforeSend:function(data) {
-//                    $('#loadercontent').show();
-//                    $('#pageloader').show();
-//                    },
-//                    success: function(data) {
-//                      $('#bill_head_view').html(data);
-//                       $('#BillHeadModal').modal('toggle');              
-//                       $('#loadercontent').hide();
-//                       $('#pageloader').hide();                                                                  
-//                    },
-//                    error: function(data) {  
-//                        $('#loadercontent').hide();
-//                        $('#pageloader').hide();
-//                    }
-//                });
-//            }
-//        }
         $('.disburse-process').on('click',function(){
 
             var flagName = $(this).prop('name');

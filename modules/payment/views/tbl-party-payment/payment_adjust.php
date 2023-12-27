@@ -128,7 +128,7 @@ $message = Yii::t('app', 'Payment data will be Locked for (' . $party_info . ').
                 //   ['attribute' => 'qty', 'label' => Yii::t('app', 'Purchase Qty'), 'filter' => false, 'pageSummary' => true, 'visible' => strtolower($model->payment_type) != 'sale'],
                 ['attribute' => 'rec_kg_fat', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec Kg FAT') : Yii::t('app', 'Kg FAT'), 'filter' => false, 'pageSummary' => true],
                 ['attribute' => 'rec_kg_snf', 'label' => strtolower($model->payment_type) == 'sale' ? Yii::t('app', 'Rec KG SNF') : Yii::t('app', 'Kg SNF'), 'filter' => false, 'pageSummary' => true ],
-                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
+                ['attribute' => 'amount', 'filter' => false, 'pageSummary' => true],
             ];
             $grid_option = [
                 'id' => 'tpt-payment-detail',

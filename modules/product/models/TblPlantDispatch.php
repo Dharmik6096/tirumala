@@ -53,7 +53,11 @@ class TblPlantDispatch extends \app\models\ChildModel {
                 [['plant_dispatch_code', 'union_code'], 'required', 'except' => ['importCsv']],
                 [['product_code', 'rate', 'qty', 'sap_batch_no', 'lr_no'], 'safe'],
                 [['mcc_plant_code', 'plant_code', 'document_no', 'document_date', 'dispatch_date'], 'required'],
-                [['product_code', 'rate', 'qty', 'sap_batch_no'], 'required', 'on' => ['importCsv']],
+                [['product_code', 'rate', 'qty'], 'required', 'on' => ['importCsv']],
+                [['sap_batch_no'],'required','on' => ['importCsv'],'when' => function ($model) {
+                    $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL');
+                     return $batchNoWiseInventory == 1;
+                }],
                 [['dispatch_date', 'document_date', 'created_at', 'updated_at', 'remarks'], 'safe'],
                 [['plant_dispatch_code', 'union_code', 'mcc_plant_code', 'plant_code', 'document_no'], 'safe'],
                 [['originating_type', 'status', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type', 'x_col1', 'x_col2', 'x_col3', 'x_col4', 'x_col5'], 'safe'],

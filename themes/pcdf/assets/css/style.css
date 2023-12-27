@@ -5044,3 +5044,6 @@ tr.highlightRow {
 .addTripButtonDiv {
     margin: 17px 0px 0px 0px !important;
 }
+.inline_block {
+    display: inline-block;
+}

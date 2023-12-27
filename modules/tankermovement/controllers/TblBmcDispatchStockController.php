@@ -53,7 +53,8 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
     public function actionCreate() {
         $this->model = new TblBmcDispatchStock();
         $this->viewFile = 'create';
-        $this->setCode($this->model);
+        Yii::$app->general->setCode($this->model);
+        $this->setFromDate($this->model);
         if ($this->model->load(Yii::$app->request->post())) {
             $this->model->bmc_dispatch_stock_code = Yii::$app->general->getPrimaryCode($this->model);
             $this->model->to_date = ($this->model->to_date) ? Yii::$app->formatter->asDate($this->model->to_date, DATE_FORMAT) : '';
@@ -123,28 +124,6 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
         ]);
     }
 
-    public function setCode($model) {
-        $plants = explode(',', $_SESSION['Plant']);
-        $mccs = explode(',', $_SESSION['MCC']);
-        $bmcs = explode(',', $_SESSION['BMC']);
-        count($plants) == 1 ? $model->plant_code = $plants[0] : '';
-        count($mccs) == 1 ? $model->mcc_plant_code = $mccs[0] : '';
-        if (count($bmcs) == 1) {
-            $model->bmc_code = $bmcs[0];
-            $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['created_at' => SORT_DESC])->one();
-            if (!empty($stock_date)) {
-                $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
-                $converted_time = date("H:i:s", strtotime($dispatch_date));
-                if ($converted_time == "06:00:00") {
-                    $model->from_shift_code = 1;
-                } elseif ($converted_time == "18:00:00") {
-                    $model->from_shift_code = 2;
-                }
-                $model->from_date = $dispatch_date;
-            }
-        }
-    }
-
     /**
      * Updates an existing TblBmcDispatchStock model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -191,6 +170,20 @@ class TblBmcDispatchStockController extends \app\controllers\ChildController {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function setFromDate($model) {
+        $stock_date = TblBmcDispatchStock::find()->where(['bmc_code' => $model->bmc_code])->orderBy(['created_at' => SORT_DESC])->one();
+        if (!empty($stock_date)) {
+            $dispatch_date = ($stock_date->type == 'physical') ? date('Y-m-d H:i:s', strtotime('+12 hours', strtotime($stock_date->to_date))) . '.000000' : $stock_date->to_date;
+            $converted_time = date("H:i:s", strtotime($dispatch_date));
+            if ($converted_time == "06:00:00") {
+                $model->from_shift_code = 1;
+            } elseif ($converted_time == "18:00:00") {
+                $model->from_shift_code = 2;
+            }
+            $model->from_date = $dispatch_date;
         }
     }
 

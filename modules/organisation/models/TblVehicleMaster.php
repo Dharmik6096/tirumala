@@ -3,6 +3,7 @@
 namespace app\modules\organisation\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "tbl_vehicle_master".
@@ -108,7 +109,7 @@ class TblVehicleMaster extends \yii\db\ActiveRecord
     {
         return new TblVehicleMasterQuery(get_called_class());
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -116,7 +117,7 @@ class TblVehicleMaster extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TblUnions::className(), ['union_code' => 'union_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -124,7 +125,7 @@ class TblVehicleMaster extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TblCapacity::className(), ['capacity_code' => 'capacity_code']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -132,10 +133,22 @@ class TblVehicleMaster extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TblTransporter::className(), ['transporter_code' => 'transporter_code']);
     }
-    
+
     public function getVehicleType()
     {
         return $this->hasOne(TblVehicleType::className(), ['vehicle_type_code' => 'vehicle_type_code']);
     }
-    
+
+    public function getVehicleMaster($unionCode) {
+        $query = $this->find()
+                ->where(['tbl_vehicle_master.union_code' => $unionCode])
+                ->innerJoin('tbl_vehicle_trip', 'tbl_vehicle_master.vehicle_code = tbl_vehicle_trip.vehicle_code')
+                ->andWhere(['NOT', ['tbl_vehicle_trip.trip_status' => 'closed']]);
+        $data = $query->all();
+        $data = ArrayHelper::map($data, 'vehicle_code', function($value) {
+                    return $value->parsing_no;
+                });
+        return $data;
+    }
+
 }

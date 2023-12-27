@@ -94,7 +94,6 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
             $this->model->qty_auto = 0;
             $this->model->setModel($this->model);
             $this->model->scenario = 'create';
-            $this->model->member_code = $this->model->dcs_code . str_pad($this->model->member_code, 4, '0', STR_PAD_LEFT);
             $this->model->qty_mode = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'collection_qty_mode', 'BMC');
             $conversion_const = Yii::$app->general->getUnionConfiguration($this->model->union_code, 'ltr_to_kg_constant', 'BMC');
             $this->model->converted_qty_mode = $this->model->qty_mode == 1 ? 0 : 1;
@@ -521,26 +520,27 @@ class TblMilkCollectionController extends \app\controllers\ChildController {
                 foreach ($deletedata as $code) {
                     $where['milk_collection_code'] = $code;
                     $existData = TblMilkCollection::find()->where($where)->one();
-                    if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
-                        $ApprovalModel = new TblCollectionDataAlias();
-                        $ApprovalModel->attributes = $existData->attributes;
-                        $ApprovalModel->setOldAttributesValues($ApprovalModel);
-                        $ApprovalModel->table_name = 'tbl_milk_collection';
-                        $ApprovalModel->action_perform = 'DELETE';
-                        $saveModel[] = $ApprovalModel;
-                    } else {
-                        $historyModel = new TblMilkCollectionHistory();
-                        Yii::$app->operation->history($existData, $historyModel, DELETE);
-                        $saveModel[] = $historyModel;
-                        $deleteModel[] = $existData;
-                        $message = 'Milk Collection';
-                        $type = 'delete';
+                    if(!empty($existData)){
+                        if (Yii::$app->general->getUnionConfiguration($existData->union_code, 'collection_approval', 'PORTAL') == 1) {
+                            $ApprovalModel = new TblCollectionDataAlias();
+                            $ApprovalModel->attributes = $existData->attributes;
+                            $ApprovalModel->setOldAttributesValues($ApprovalModel);
+                            $ApprovalModel->table_name = 'tbl_milk_collection';
+                            $ApprovalModel->action_perform = 'DELETE';
+                            $saveModel[] = $ApprovalModel;
+                        } else {
+                            $historyModel = new TblMilkCollectionHistory();
+                            Yii::$app->operation->history($existData, $historyModel, DELETE);
+                            $saveModel[] = $historyModel;
+                            $deleteModel[] = $existData;
+                            $message = 'Milk Collection';
+                            $type = 'delete';
+                        }
                     }
                 }
-                $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
-//                if ($transaction == 'customRedirect') {
-//                    return $this->redirect(['index']);
-//                }
+                if(!empty($saveModel) || !empty($deleteModel)){
+                    $transaction = $this->generalModel->saveDeleteTransaction($saveModel, [], $deleteModel, [$message, $type]);
+                }
             }
         }
 

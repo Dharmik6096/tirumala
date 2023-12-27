@@ -44,14 +44,14 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= Yii::$app->dropdown->destination_code_list($model, $form, 'tblmilkvehicleentry-dispatch_from,tblmilkvehicleentry-union_code', 'dispatch_from_code', $model->getAttributeLabel('dispatch_from_code'), FALSE, $readonly); ?>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 ReceiptDatetime">
                 <?= Yii::$app->controls->date($model, $form, 'receipt_datetime', '', date('Y-m-d'), false, FALSE, true); ?>
             </div>
             <div class="col-sm-2 shift filldata">
                 <?= Yii::$app->dropdown->dropdown('shift_applicability', $model, $form, '', true, $readonly, 'receipt_shift_code'); ?>
             </div>
             <div class="col-sm-2 disabled vehicle_code_hide"> 
-                <?= Yii::$app->dropdown->depend_dropdown('union_vehicle', $model, $form, 'tblmilkvehicleentry-union_code', 'form-group col-sm-4', $model->getAttributeLabel('vehicle_code'), '', FALSE); ?>
+                <?= Yii::$app->dropdown->vehicleMasterOpen($model, $form, 'tblmilkvehicleentry-union_code', 'vehicle_code', $model->getAttributeLabel('vehicle_code'), false, false); ?>
             </div>
             <div class="col-sm-2 tanker_no_hide"> 
                 <?= $form->field($model, 'tanker_no')->textInput() ?>
@@ -62,7 +62,7 @@ $form = ActiveForm::begin([
                 <?= Yii::$app->dropdown->vehicleOpenTrip($model, $form, 'trip_type,tblmilkvehicleentry-vehicle_code,tblmilkvehicleentry-receipt_datetime,trip_code', 'trip_code', $model->getAttributeLabel('trip_code'), false, false); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?>
+                <?= $form->field($model, 'arrival_time')->widget(MaskedInput::className(), ['mask' => '99:99',]); ?> 
             </div>
             <div class="col-sm-12">
             <div class="col-sm-2 number-validate"> 
@@ -200,10 +200,9 @@ $form = ActiveForm::begin([
                                                                     $(".error-summary").hide();
                                                                     $(".error-summary li").remove();
                                                                     reloadGrid();
-                                                                    $(".master_fields").addClass("disabled");
+                                                                    $(".master_fields input, .master_fields select, .master_fields textarea").prop("disabled", true);
                                                                     $(".entry_type").addClass("disabled");
                                                                     $("#entry_type").val($("#tblmilkvehicleentrytransaction-entry_type" ).val());
-                                                                    $("#milk-vehicle-form .master_fields select").attr("disabled", true);
                                                                     $("#tblmilkvehicleentrytransaction-entry_type" ).prop("disabled", true);
                                                                     $("#milk-vehicle-form .reset_field input").val("");                                                                    
                                                                     $("#transactions-from input[type=radio]").prop("checked",true);
@@ -301,6 +300,7 @@ $script = "
         if (receipt_at !== '' && dispatch_from !== '') {
             if ((dispatch_from == 'BMC' && receipt_at == 'PLANT') || (dispatch_from == 'BMC' && receipt_at == 'BMC') || (dispatch_from == 'BMC' && receipt_at == 'PARTY')) {
                 $('.vehicle_code_hide').css('display', 'block');
+                 $('.tanker_no_hide').css('display', 'none');
                 $('#dispatch-detail').css('display', 'block');                
                 entryTypeField.val('').prop('readonly', false).trigger('change');
             } else if(dispatch_from == 'PARTY') {

@@ -70,7 +70,7 @@ class TblFtpTxnLog extends \app\models\ChildModel {
             [['txn_type'], 'default', 'value' => 'EIPL'],
             [['txn_type', 'file_path', 'module_name', 'module_code', 'mcc_plant_code', 'union_code', 'created_by', 'local_path', 'ftp_type', 'ftp_host', 'ftp_username', 'ftp_password', 'ftp_port', 'ftp_path', 'updated_by', 'file_name', 'old_file_path', 'old_local_path'], 'safe'],
             [['total_count', 'success_count', 'error_count', 'file_status', 'status', 'file_creator_id'], 'safe'],
-            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime'], 'safe'],
+            [['txn_datetime', 'created_at', 'updated_at', 'ref_code', 'pick_datetime', 'ftp_mode'], 'safe'],
         ];
     }
 
@@ -459,8 +459,8 @@ class TblFtpTxnLog extends \app\models\ChildModel {
 //        $htmlContent .= '<br/>Everest Instrument Pvt. Ltd.</p>';
     }
 
-    public function UserMatchingRecords($user)
+    public function UserMatchingRecords($user,$txntype)
     {
-        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => 'BIPL', 'module_name' => 'TblMilkCollection' ])->count();
+        return $this->find()->Where(['status' => 0, 'created_by' => $user, 'txn_type' => $txntype, 'module_name' => 'TblMilkCollection' ])->count();
     }
 }

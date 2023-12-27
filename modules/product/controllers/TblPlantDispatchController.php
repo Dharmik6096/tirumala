@@ -59,6 +59,7 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
         $model = new TblPlantDispatch();
         $txModel = new TblPlantDispatchTxn();
         $model->dispatch_date = date('d-m-Y');
+        $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
         if (Yii::$app->request->post()) {
             $saveModel = [];
             $HisModel = [];
@@ -68,7 +69,8 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
             $model->document_date = Yii::$app->formatter->asDate($model->document_date, DATE_FORMAT);
 
             $txnData = Yii::$app->request->post()['TblPlantDispatchTxn'];
-            $batchNo = $txnData['sap_batch_no'];
+            if($batchNoWiseInventory)
+                  $batchNo = $txnData['sap_batch_no'];
 //            $model->sap_batch_no = $batchNo;
             $saveModel[] = $model;
             unset($txnData['product_code']);
@@ -87,7 +89,8 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $txModel->rate = $product['rate'];
                 $txModel->amount = $product['amount'];
                 $txModel->unit_code = $product['unit_code'];
-                $txModel->sap_batch_no = $product['sap_batch_no'];
+                if($batchNoWiseInventory)
+                    $txModel->sap_batch_no = $product['sap_batch_no'];
                 $txModel->lr_no = $product['lr_no'];
                 $txModel->plant_dispatch_txn_code = Yii::$app->general->getCodeAutoIncrement($txModel, $i);
                 $txModel->plant_dispatch_code = $model->plant_dispatch_code;
@@ -95,7 +98,6 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
                 $saveModel[] = $txModel;
                 $i++;
             }
-
             if ($model->validate()) {
                 $transaction = $this->generalModel->saveTransaction($saveModel, $HisModel, ['Plant Dispatch', 'create']);
                 if ($transaction == 'customRedirect') {
@@ -199,6 +201,17 @@ class TblPlantDispatchController extends \app\controllers\ChildController {
         $docNo = Yii::$app->request->post('docNo');
         $Model = new TblPlantDispatch();
         $data = $Model->find()->where(['document_no' => $docNo])->one();
+        if (empty($data)) {
+            return Json::encode(['status' => 'success']);
+        } else {
+            return Json::encode(['status' => 'error']);
+        }
+    }
+
+    public function actionCheckUniqueSapNo() {
+        $sapNo = Yii::$app->request->post('sapNo');
+        $Model = new TblPlantDispatchTxn();
+        $data = $Model->find()->where(['sap_batch_no' => $sapNo])->one();
         if (empty($data)) {
             return Json::encode(['status' => 'success']);
         } else {

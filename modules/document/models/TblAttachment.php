@@ -5,6 +5,7 @@ namespace app\modules\document\models;
 use Yii;
 use app\modules\welfarescheme\models\TblDocumentMasterInfo;
 use app\modules\document\models\TblDocumentMapping;
+use app\modules\document\models\TblAttachmentHistory;
 
 /**
  * This is the model class for table "tbl_attachment".
@@ -80,14 +81,57 @@ class TblAttachment extends \app\models\ChildModel {
         return $this->hasOne(TblDocumentMasterInfo::className(), ['doc_id' => 'doc_id']);
     }
 
-    public function getAttachment($pro_member_code) {
-        return $this->find()->where(['module_code' => $pro_member_code])->all();
+    public function getAttachment($provisional_code, $model_name = '') {
+        $result = $this->find()->where(['module_code' => $provisional_code]);
+        if ($model_name != '') {
+            $result = $result->andWhere(['module_name' => $model_name]);
+        }
+        $result = $result->all();
+        return $result;
     }
 
     public function getFileName($file_name) {
         return $this->find()->select('attachment')->where(['file_name' => $file_name])
                         ->orderBy(['tbl_attachment.attachment_code' => SORT_DESC])
                         ->one();
+    }
+
+    public function attachmentSave($provisional_code, $module_name, $process_name, $master_module_code, $master_module_name, &$all_attachment, &$model_save, &$process_doc) {
+
+        $tblAttachment = $this->getAttachment($provisional_code, $module_name);
+        $doc_path = Yii::$app->params['document_upload'] . $process_name;
+
+        if (!empty($tblAttachment)) {
+            foreach ($tblAttachment as $key => $doc) {
+                $all_attachment[] = $doc->file_name;
+                $tblAttachments = new TblAttachment();
+                $tblAttachments->attributes = $doc->attributes;
+                if (Yii::$app->general->checkDirectory($doc_path)) {
+                    if (!empty($doc->file_name)) {
+                        $attach = $this->find()
+                                ->where(['module_code' => $provisional_code, 'module_name' => $module_name, 'doc_id' => $doc->doc_id])
+                                ->one();
+                        $extension = explode('.', $doc->file_name)[1];
+                        $file_name = $process_name . '_' . $master_module_code . '_' . $doc->doc_id . '_' . time() . '.' . $extension;
+                        $attachment = $doc_path . '/' . $file_name;
+                        if (!empty($attach)) {
+                            $attachHistoryModel = new TblAttachmentHistory();
+                            Yii::$app->operation->history($attach, $attachHistoryModel, UPDATE);
+                            $attach->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                            $attach->file_name = $file_name;
+                            $model_save[] = $attach;
+                            $model_save[] = $attachHistoryModel;
+                        }
+                        $tblAttachments->attachment = Yii::$app->urlManager->createAbsoluteUrl('') . $attachment;
+                        $tblAttachments->module_name = $master_module_name;
+                        $tblAttachments->module_code = $master_module_code;
+                        $tblAttachments->file_name = $file_name;
+                        $process_doc[] = $file_name;
+                        $model_save[] = $tblAttachments;
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -110,7 +110,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
                     }
                 } else {
                     $this->model->dcs_code = NULL;
-                    $this->model->customer_code = $this->model->validateCustomer($this->model->union_code, $this->model->customer_code, $this->model->customer_type, $this->model->bmc_code);
                     $this->model->village_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'village_code');
                     if (!$allowRouteSelection) {
                         $this->model->route_code = Yii::$app->general->getforeignkey($this->model->mainCustomerCode, 'route_code');
@@ -295,7 +294,6 @@ class TblBmcCollectionController extends \app\controllers\ChildController {
             $detail_model->purchase_rate_code = $model_data->purchase_rate_code;
             $rate_type = !empty($detail_model->rateTypeCode) ? $detail_model->rateTypeCode->rate_type : '';
             $detail_data = $detail_model->getDcsPurchasseRateDetailData($data, $rate_type);
-
             if (!empty($detail_data)) {
                 $response['status'] = 'success';
                 $rtpl_data['list'] = $detail_data;

@@ -14,6 +14,7 @@ use app\modules\tankermovement\models\TblSampleBottleTesting;
 use app\modules\globalmaster\models\TblCustomerType;
 use app\modules\organisation\models\TblDcs;
 use app\modules\tankermovement\models\TblVehicleTripDetail;
+use app\modules\tankermovement\models\TblPartyMaster;
 
 /**
  * This is the model class for table "tbl_milk_vehicle_entry".
@@ -58,9 +59,8 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
      * @inheritdoc
      */
     public function rules() {
-        return [
-            [['trip_code','union_code', 'plant_code', 'vehicle_entry_date', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'vehicle_code'], 'required', 'except' => ['androidsync', 'importCsv']],
-            [['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
+        return [    
+            [['union_code', 'receipt_at', 'arrival_time', 'tare_weight_time', 'gross_weight', 'tare_weight', 'qty', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code'], 'required', 'except' => ['androidsync', 'importCsv']],[['milk_vehicle_entry_code', 'trip_code', 'grn_no', 'receipt_at', 'vehicle_code', 'qty', 'union_code', 'plant_code', 'mcc_plant_code', 'bmc_code', 'customer_code', 'customer_type', 'created_by', 'updated_by', 'originating_org_code', 'originating_org_type'], 'string'],
             [['vehicle_entry_date', 'arrival_time', 'tare_weight_time', 'created_at', 'updated_at', 'receipt_at_code', 'dispatch_from', 'dispatch_from_code', 'receipt_datetime', 'receipt_shift_code', 'tanker_no', 'plant_code', 'mcc_plant_code'], 'safe'],
             [['gross_weight', 'tare_weight'], 'number'],
             [['originating_type'], 'integer'],
@@ -153,6 +153,46 @@ class TblMilkVehicleEntry extends \app\models\ChildModel {
         return $this->hasOne(TblVehicleTrip::className(), ['trip_code' => 'trip_code'])->andOnCondition(['IN', 'trip_status', ['open', 'tankerfull']]);
     }
 
+    public function getCustomerCodeSource() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'dispatch_from_code']);
+    }
+    
+    public function getCustomerCodeDest() {
+        return $this->hasOne(TblCustomerMaster::className(), ['customer_code' => 'receipt_at_code']);
+    }
+
+    public function getBmcCodeSource() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'dispatch_from_code']);
+    }
+    
+    public function getBmcCodeDest() {
+        return $this->hasOne(TblDcsBmc::className(), ['bmc_code' => 'receipt_at_code']);
+    }
+
+    public function getMccPlantCodeSource() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'dispatch_from_code']);
+    }
+    
+     public function getMccPlantCodeDest() {
+        return $this->hasOne(TblMccPlant::className(), ['mcc_plant_code' => 'receipt_at_code']);
+    }
+
+    public function getPlantCodeSource() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'dispatch_from_code']);
+    }
+
+    public function getPlantCodeDest() {
+        return $this->hasOne(TblPlant::className(), ['plant_code' => 'receipt_at_code']);
+    }
+    
+    public function getPartyMasterCodeSource() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'dispatch_from_code']);
+    }
+    
+    public function getPartyMasterCodeDest() {
+        return $this->hasOne(TblPartyMaster::className(), ['party_master_code' => 'receipt_at_code']);
+    }
+    
     public function validateBottle($attribute, $params) {
         $bottleCount = Yii::$app->general->getUnionConfiguration($this->union_code, 'receipt_sample_testing_count', 'PORTAL');
         $sampleBottle = TblSampleBottleTesting::find()->where(['trip_code' => $this->trip_code])->count();

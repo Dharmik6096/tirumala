@@ -1,18 +1,22 @@
 <?php
+
 $attribute = [
     ['attribute' => 'mcc_ref_code', 'value' => function($model) {
-        return Yii::$app->general->getforeignkey($model->tblMccPlant, 'ref_code');
-    }, 'filter' => false],
+            return Yii::$app->general->getforeignkey($model->tblMccPlant, 'ref_code');
+        }, 'filter' => false],
     ['attribute' => 'mcc_name', 'value' => function($model) {
-        return Yii::$app->general->getforeignkey($model->tblMccPlant, 'name');
-    }, 'filter' => false],
+            return Yii::$app->general->getforeignkey($model->tblMccPlant, 'name');
+        }, 'filter' => false],
     ['attribute' => 'dcs_ref_code', 'value' => function($model) {
-        return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
-    }, 'filter' => false],
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'ref_code');
+        }, 'filter' => false],
     ['attribute' => 'dcs_name', 'value' => function($model) {
-        return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
-    }, 'filter' => false],
+            return Yii::$app->general->getforeignkey($model->dcsCode, 'dcs_name');
+        }, 'filter' => false],
     ['attribute' => 'product_code', 'filter' => true],
+    ['attribute' => 'item_code', 'value' => function($model) {
+            return Yii::$app->general->getforeignkey($model->productCode, 'item_code');
+        }, 'filter' => false],
     ['attribute' => 'qty', 'filter' => FALSE],
     [
         'attribute' => 'stock_date',
@@ -21,7 +25,6 @@ $attribute = [
             return Yii::$app->controls->view_date($model->stock_date);
         },
     ],
-    
 ];
 
 $grid_option = [

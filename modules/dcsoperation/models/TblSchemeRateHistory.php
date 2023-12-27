@@ -54,7 +54,7 @@ class TblSchemeRateHistory extends \yii\db\ActiveRecord {
                 [['created_by', 'updated_by'], 'safe'],
                 [['originating_org_code', 'originating_org_type'], 'safe'],
                 [['operation_type'], 'safe'],
-                [['history_created_by'], 'safe'],
+                [['history_created_by','is_member_rate'], 'safe'],
         ];
     }
 
@@ -85,6 +85,7 @@ class TblSchemeRateHistory extends \yii\db\ActiveRecord {
             'history_created_at' => Yii::t('app', 'History Created At'),
             'operation_type' => Yii::t('app', 'Operation Type'),
             'history_created_by' => Yii::t('app', 'History Created By'),
+            'is_member_rate' => Yii::t('app', 'Is Member Rate'),
         ];
     }
 

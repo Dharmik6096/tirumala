@@ -771,10 +771,10 @@ class TblProductSale extends \app\models\ChildModel {
             $batchNoWiseInventory = Yii::$app->general->getUnionConfiguration($this->union_code, 'batch_no_wise_inventory', 'PORTAL');
             $batchNoWiseInventory == '1' ? TRUE : FALSE;
             $checkMccStock = FALSE;
-            if ($batchNoWiseInventory && strtoupper($sale_type) == 'BMC') {
+            if (strtoupper($sale_type) == 'BMC') {
                 $checkMccStock = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc') == '1' ? TRUE : FALSE;
             }
-            if ($batchNoWiseInventory && (strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
+            if ((strtoupper($sale_type) == 'DCS' || strtoupper($sale_type) == 'VLC')) {
                 $isBmc = Yii::$app->general->getforeignkey($model->mainDcsCode, 'is_bmc');
                 $isBmcMcc = Yii::$app->general->getforeignkey($model->bmcCode, 'is_mcc');
                 $checkMccStock = ($isBmc == 1 && $isBmcMcc == 1) ? TRUE : FALSE;

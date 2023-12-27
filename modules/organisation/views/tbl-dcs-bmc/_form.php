@@ -147,6 +147,9 @@ $form = ActiveForm::begin([
         <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_rented_bmc'); ?>
         </div>
+        <div class="col-sm-2">
+            <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
+        </div>
         <div class="col-sm-2 mt15">
             <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
         </div>

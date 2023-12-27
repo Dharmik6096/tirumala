@@ -17,13 +17,14 @@ use app\modules\details\models\TblBankDetailsSearch;
 use app\modules\details\models\TblContactDetailsSearch;
 use app\modules\organisation\models\TblCustomerDeactiveSearch;
 use yii\web\Response;
+use app\modules\document\controllers\TblAttachmentController;
 
 /**
  * TblCustomerMasterController implements the CRUD actions for TblCustomerMaster model.
  */
 class TblCustomerMasterController extends \app\controllers\ChildController {
 
-    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix'];
+    public $freeAccessActions = ['customer-type', 'customer-code-list', 'get-customer-type', 'excode-prefix', 'activate-customer-code-list'];
     public $bankDetails;
     public $contactDetails;
 
@@ -224,6 +225,28 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
         return Json::encode(['output' => '', 'selected' => '']);
     }
 
+    public function actionActivateCustomerCodeList() {
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if (!empty($parents[0]) && !empty($parents[1]) && !empty($parents[2]) && !empty($parents[3])) {
+                if (strtolower($parents[2]) == 'dcs') {
+                    $mccs = new TblDcs();
+                    $data = $mccs->getBMCDCSList($parents[1], 'TRUE', '', $parents[3]);
+                } else {
+                    $model = new TblCustomerMaster();
+                    $data = $model->getActivateCustomerCodeList($parents[0], $parents[1], $parents[2], $parents[3]);
+                }
+                foreach ($data as $key => $val) {
+                    $out[] = array('id' => $key, 'name' => $val);
+                }
+                return Json::encode(['output' => $out, 'selected' => '']);
+                return;
+            }
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
+    }
+
     public function actionGetCustomerType() {
         $out = null;
 
@@ -239,7 +262,6 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
                     'name' => $r);
             }
             return Json::encode(['output' => $out]);
-            return;
         }
         return Json::encode(['output' => '', 'selected' => $selected]);
     }
@@ -330,6 +352,14 @@ class TblCustomerMasterController extends \app\controllers\ChildController {
             Yii::$app->response->format = trim(Response::FORMAT_JSON);
             return Json::encode($record);
         }
+    }
+
+    public function actionCustomerDocumentUpload($id) {
+        $model = $this->findModel($id);
+        $module_code = $model->customer_code;
+        $module_name = 'tbl_customer_master';
+        $val = new TblAttachmentController($this->id, $this->module);
+        return $val->actiondocumentUpload('customer', $id, $model, $module_code, $module_name);
     }
 
 }

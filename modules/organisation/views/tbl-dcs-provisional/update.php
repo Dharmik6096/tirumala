@@ -10,8 +10,7 @@ $this->title .= ' > ' . $model->dcs_code_ex . ' > ' . $model->ref_code;
     <div class="panel-body">
         <?=
         $this->render('_form', [
-            'model' => $model, 'type' => 'edit'//,'milkType'=>$milkType',village_list'=>$village_list,
-            , 'showIsBMC' => $showIsBMC,
+            'model' => $model, 'type' => 'edit', 'showIsBMC' => $showIsBMC,
         ])
         ?>
     </div>

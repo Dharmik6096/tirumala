@@ -48,7 +48,7 @@ class ReportsModel extends Model {
                 [['union_code', 'plant_code', 'mcc_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_type'], 'required', 'on' => ['MemberPayment', 'MemberPaymentDrafted']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['VendorBankPayment']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'bank_type', 'payment_cycle_code'], 'required', 'on' => ['MemberBankPayment']],
-                [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport']],
+                [['union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['MemberOutstandingDetail', 'MemberData', 'MilkColllectionHistory', 'MemberHistory', 'DcsHistory', 'CpliabilityReport', 'TallyReport']],
                 [['union_code'], 'required', 'on' => ['RateApplicabilityDetails']],
                 [['p_organization_type', 'rate_type', 'union_code', 'plant_code', 'mcc_code', 'bmc_code'], 'required', 'on' => ['RateAcknowledgement']],
                 [['p_organization_type', 'union_code', 'plant_code'], 'required', 'on' => ['AmcsSyncPending']],
@@ -116,7 +116,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
                 [['union_code', 'plant_code', 'from_date', 'to_date', 'from_shift', 'to_shift', 'sap_file'], 'required', 'on' => 'SapUploadSummary'],
                 [['union_code', 'from_date', 'from_shift', 'to_date', 'to_shift', 'report_status', 'report_type'], 'required', 'on' => ['AutoManualMilkCollection']],
                 [['union_code', 'plant_code', 'mcc_code', 'bmc_code', 'from_date', 'from_shift', 'to_date', 'to_shift'], 'required', 'on' => ['SocietyWiseRateDifferenceReport']],
-                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MccBilling']],
+                [['union_code', 'plant_code', 'mcc_code', 'from_date', 'to_date'], 'required', 'on' => ['MccBilling', 'CDAReport']],
                 [['from_date', 'to_date'], 'required', 'on' => ['BmcRegister']],
                 [['union_code', 'plant_register_type', 'from_date', 'to_date'], 'required', 'on' => ['PlantRegister']],
                 [['union_code', 'from_date', 'to_date'], 'required', 'on' => ['TankerReceiptNote']],
@@ -163,6 +163,7 @@ return $('#reportsmodel-org_type').val() == 'DCS';
             'route_type_trans' => \Yii::t('app', 'Route Type'),
             'member' => \Yii::t('app', 'Member'),
             'channel_code' => \Yii::t('app', 'Channel'),
+            'report_type' => (in_array($this->scenario, ['SaleReportFarmer', 'SaleReportVendor'])) ? \Yii::t('app', 'Lock Type') : \Yii::t('app', 'Report Type'),
         ];
     }
 

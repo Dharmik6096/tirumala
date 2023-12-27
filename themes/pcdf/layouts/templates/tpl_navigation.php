@@ -23,6 +23,7 @@ $collectionApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii
 $eiplCode = Yii::$app->session->get('eiplCode');
 $rateAppApproval = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'rate_approval', 'PORTAL') == 1 ? TRUE : FALSE;
 $batchNoWise = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'batch_no_wise_inventory', 'PORTAL') == 1 ? TRUE : FALSE;
+$withoutDispatchGrn = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'without_dispatch_grn', 'PORTAL') == 1 ? FALSE : TRUE;
 $workflowConfig = Yii::$app->general->getUnionConfiguration(explode(',', Yii::$app->session->get('Unions')), 'workflow_require', 'PORTAL') == 1 ? TRUE : FALSE;
 ?>
 <?php
@@ -86,10 +87,12 @@ echo GhostMenu::widget([
                             'items' => [
                                     ['label' => Yii::t('app', 'Member Approval'), 'url' => ['/dcsoperation/tbl-member-provisional/pending-approval'], 'visible' => $workflowConfig],
                                     ['label' => Yii::t('app', 'DCS Approval'), 'url' => ['/organisation/tbl-dcs-provisional/pending-approval']],
+                                    ['label' => Yii::t('app', 'Vendor/Customer Approval'), 'url' => ['/organisation/tbl-customer-master-provisional/pending-customer-approval']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'Provisional Member'), 'url' => ['/dcsoperation/tbl-member-provisional/index'], 'active' => ($cntrl == 'tbl-member-provisional')],
                             ['label' => Yii::t('app', 'Provisional Society'), 'url' => ['/organisation/tbl-dcs-provisional/index'], 'active' => ($cntrl == 'tbl-dcs-provisional' || (Yii::$app->request->get('type') == 'dcs' || Yii::$app->request->get('type') == 'DCS'))],
+                            ['label' => Yii::t('app', 'Provisional Vendor/Customer'), 'url' => ['/organisation/tbl-customer-master-provisional/index'], 'active' => ($cntrl == 'tbl-customer-master-provisional')],
                     ]
                 ],
             ],
@@ -156,7 +159,7 @@ echo GhostMenu::widget([
                     ['label' => 'Shift Lock', 'url' => ['/collection/tbl-mcc-shift-lock/index-other'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-other'), 'visible' => User::canRoute(['/collection/tbl-mcc-shift-lock/index-other']) ? ($eiplCode == 'MMD' ? FALSE : TRUE) : FALSE],
                     ['label' => Yii::t('app', 'Shift Lock (Member Data)'), 'url' => ['/collection/tbl-mcc-shift-lock/index-member'], 'active' => ($cntrl == 'tbl-mcc-shift-lock' && $action == 'index-member')],
                     ['label' => 'Weigh Bridge Data', 'url' => ['/collection/tbl-weigh-bridge-data/index'], 'active' => ($cntrl == 'tbl-weigh-bridge-data' && $action == 'index'), 'visible' => TRUE],
-                    ['label' => 'Milk Tranfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
+                    ['label' => 'Milk Transfer', 'url' => ['/collection/tbl-milk-transfer/index'], 'active' => ($cntrl == 'tbl-milk-transfer' && $action == 'index'), 'visible' => TRUE],
                     [
                     'options' => ['class' => 'dropdown-submenu toggle_right'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Tanker Movement <b class="caret"></b></a>',
@@ -225,11 +228,11 @@ echo GhostMenu::widget([
                     'options' => ['class' => 'dropdown-submenu toggle_left'],
                     'template' => '<a href="javascript:void(0)" class="dropdown-toggle">Inventory <b class="caret"></b></a>',
                     'items' => [
-                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Plant Dispatch'), 'url' => ['/product/tbl-plant-dispatch/index'], 'active' => ($cntrl == 'tbl-plant-dispatch'), 'visible' => $withoutDispatchGrn],
                             ['label' => Yii::t('app', 'GRN'), 'url' => ['/product/tbl-grn/index'], 'active' => ($cntrl == 'tbl-grn')],
                             ['label' => Yii::t('app', 'Inventory Transfer'), 'url' => ['/product/tbl-inventory-transfer/index'], 'active' => ($cntrl == 'tbl-inventory-transfer')],
-                            ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking'), 'visible' => $batchNoWise],
-                            ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking'), 'visible' => $batchNoWise],
+                            ['label' => Yii::t('app', 'Product Sale Lock'), 'url' => ['/payment/tbl-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-product-sale-locking')],
+                            ['label' => Yii::t('app', 'PM Sale Lock'), 'url' => ['/payment/tbl-loan-product-sale-locking/index'], 'active' => ($cntrl == 'tbl-loan-product-sale-locking')],
                             ['label' => Yii::t('app', 'Good Issue'), 'url' => ['/product/tbl-product-stock-adjustment/index'], 'active' => ($cntrl == 'tbl-product-stock')],
                             ['label' => Yii::t('app', 'Good Receipt'), 'url' => ['/product/tbl-product-stock-adjustment/receipt-index'], 'active' => ($cntrl == 'tbl-product-stock')],
                             ['label' => Yii::t('app', 'Product Stock Physical'), 'url' => ['/product/tbl-product-stock-physical/index'], 'active' => ($cntrl == 'tbl-product-stock-physical')],
@@ -567,6 +570,7 @@ echo GhostMenu::widget([
                                     ['label' => '219 -' . Yii::t('app', 'Agent Wise Reconciliation'), 'url' => ['/misreports/reports/agent-wise-reconciliation']],
                                     ['label' => '220 -' . Yii::t('app', 'Route Wise Reconciliation'), 'url' => ['/misreports/reports/route-wise-reconciliation']],
                                     ['label' => '221 -' . Yii::t('app', 'RMRD Data Export'), 'url' => ['/misreports/reports/rmrd-data-export']],
+                                    ['label' => '222 -' . Yii::t('app', 'CDA Report'), 'url' => ['/misreports/reports/cda-report']],
                             ]
                         ],
                             ['label' => '', 'url' => 'javascript:void(0)', 'visible' => true],
@@ -715,6 +719,7 @@ echo GhostMenu::widget([
                                     ['label' => Yii::t('app', 'Member History'), 'url' => ['/misreports/reports/member-history']],
                                     ['label' => Yii::t('app', 'DCS history'), 'url' => ['/misreports/reports/dcs-history']],
                                     ['label' => Yii::t('app', 'BMC Collection History'), 'url' => ['/misreports/reports/bmc-collection-history']],
+                                    ['label' => Yii::t('app', 'Vehicle Master History'), 'url' => ['/misreports/reports/vehicle-master-history']],
                             ]
                         ],
                             ['label' => Yii::t('app', 'All Reports - List'), 'url' => ['/dynamicreport/default/index'], 'active' => ($cntrl == 'default' && $action == 'index')],
@@ -733,6 +738,7 @@ echo GhostMenu::widget([
                             ['label' => '913-' . Yii::t('app', 'Rate Applicability Detail History'), 'url' => ['/misreports/reports/rate-applicability-details-history']],
                             ['label' => '914-' . Yii::t('app', 'File Generate Status'), 'url' => ['/misreports/reports/file-generate-status']],
                             ['label' => '915-' . Yii::t('app', 'Society Wise Rate Difference Report'), 'url' => ['/misreports/reports/society-wise-rate-difference-report']],
+                            ['label' => '916-' . Yii::t('app', 'Tally Report'), 'url' => ['/misreports/reports/tally-report']],
                     ]
                 ],
                     [

@@ -66,7 +66,7 @@ class TblBranch extends ChildModel {
      */
     public function rules() {
         $main_rules = [
-                [['bank_code', 'branch_name', 'ifsc', 'address', 'pincode'], 'required'],
+                [['bank_code', 'branch_name', 'ifsc', 'address'], 'required'],
                 [['created_at', 'updated_at', 'district_code', 'state_code', 'union_code', 'local_address', 'valid_from'], 'safe'],
                 [['is_active'], 'safe'],
                 [['branch_code', 'state_code', 'valid_from'], 'required', 'except' => 'importCsv'],
@@ -92,9 +92,6 @@ class TblBranch extends ChildModel {
                 [['contact_no'], function ($attribute, $params) {
                     Yii::$app->general->vaildatePhoneNumbers($this, $attribute, $params);
                 }, 'skipOnEmpty' => false],
-                [['pincode'], 'integer', 'message' => Yii::t('app/validation', '{attribute} must be a digit.e.g."123456"')],
-                [['pincode'], 'string', 'max' => 6, 'min' => 6, 'tooLong' => Yii::t('app/validation', '{attribute} must contain 6 digit '),
-                'tooShort' => Yii::t('app/validation', '{attribute} must contain 6 digit ')],
                 [['address'], 'string', 'max' => 250],
                 [['branch_name'], 'string', 'max' => 100],
                 [['created_by', 'updated_by'], 'string', 'max' => 14],

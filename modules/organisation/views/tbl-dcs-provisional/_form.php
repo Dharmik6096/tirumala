@@ -186,7 +186,7 @@ $form = ActiveForm::begin([
                 <?= $form->field($model, 'fssi')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'gender')->textInput() ?>
+                <?= Yii::$app->dropdown->dropdown('gender', $model, $form, '', $model->getAttributeLabel('gender')); ?>
             </div>
             <div class="col-sm-2">
                 <?= Yii::$app->controls->date($model, $form, 'dob'); ?>
@@ -200,256 +200,249 @@ $form = ActiveForm::begin([
             <div class="col-sm-2">
                 <?= $form->field($model, 'password')->passwordInput(['maxlength' => 255, 'autocomplete' => 'off']) ?>
             </div>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
-        </div>
-        <div class="col-sm-2 number-validate">  
-            <?= $form->field($model, 'ts_code_m')->textInput() ?>
-        </div>
-        <div class="col-sm-2 number-validate">  
-            <?= $form->field($model, 'ts_code_e')->textInput() ?>
-        </div>
-        <div class='pull-left col-sm-4'>
-            <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
-            <div class="col-sm-4">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'secretory_info')->textarea(['maxlength' => true]) ?>
             </div>
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
-        </div>
-        <?php if ($showIsBMC == 0) { ?>
-            <div class="col-sm-2 mt15">
-                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc'); ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdownStatic('is_type', $model, $form, '', 'Antibiotic Check', false, 'antibiotic_check', false); ?>    
             </div>
-        <?php } ?>
-    </div>
-    <div class="col-md-12 padding_10_0 theme-box">
-        <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Address Details</h4>
-        </div>
-        <!--    <div class="col-sm-2">
-                <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
-            </div>-->
-        <div class="col-sm-2">
-            <div class="col-sm-12">
-                <?= $form->field($model, 'street1')->textInput(['maxlength' => true]) ?>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdownStatic('collection', $model, $form, '', $model->getAttributeLabel('x_col2'), false, 'x_col2', false); ?>    
             </div>
-            <div class="col-sm-12">
-                <?= $form->field($model, 'street2')->textInput(['maxlength' => true]) ?>
+            <div class="col-sm-2 number-validate">  
+                <?= $form->field($model, 'ts_code_m')->textInput() ?>
             </div>
+            <div class="col-sm-2 number-validate">  
+                <?= $form->field($model, 'ts_code_e')->textInput() ?>
+            </div>
+            <div class='pull-left col-sm-4'>
+                <?= Yii::t('app', 'Allow multiple collection entry for shift') ?><br/>
+                <div class="col-sm-4">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'same_milk_type'); ?>
+                </div>
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'diff_milk_type'); ?>
+            </div>
+            <?php if ($showIsBMC == 0) { ?>
+                <div class="col-sm-2 mt15">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_bmc'); ?>
+                </div>
+            <?php } ?>
         </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
-        </div>
-
-        <?php
-        //Yii::$app->dropdown->state($model, $form, 'state_code', 'State');
-        ?>
-        <?php // if($type=='create') { ?>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
-        </div>
-        <div class="col-sm-2" id="district_section">
-            <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsprovisional-union_code,tbldcsprovisional-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
-        </div>
-        <!--    <div class="col-sm-3">
-        <?php //Yii::$app->dropdown->district($model, $form, 'tbldcsprovisional-state_code', 'district_code', 'District');    ?>
-            </div>-->
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsprovisional-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District'), ''); ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
-        </div>
-        <?php // }    ?>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'aadhaar_no')->textInput() ?>
-        </div>
-    </div>
-    <div class="col-md-12 padding_10_0 theme-box theme_border_top">
-        <!-- <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-            <h4 class="theme-box-heading">Address Details</h4>
-        </div> -->
-
-        <div class="clearfix"></div>
-        <?php if ($type == 'create') { ?>
+        <div class="col-md-12 padding_10_0 theme-box">
             <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading">Contact Details</h4>
+                <h4 class="theme-box-heading">Address Details</h4>
+            </div>
+            <!--    <div class="col-sm-2">
+                    <? = $form->field($model, 'address')->textArea(['maxlength' => true]) ?>
+                </div>-->
+            <div class="col-sm-2">
+                <div class="col-sm-12">
+                    <?= $form->field($model, 'street1')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-sm-12">
+                    <?= $form->field($model, 'street2')->textInput(['maxlength' => true]) ?>
+                </div>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'firstname')->textInput() ?>
+                <?= Yii::$app->controls->local_textarea($model, $form, 'local_address'); ?>
+            </div>
+
+            <?php
+            //Yii::$app->dropdown->state($model, $form, 'state_code', 'State');
+            ?>
+            <?php // if($type=='create') { ?>
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->state($model, $form, 'state_code', 'State', $readonly); ?>
+            </div>
+            <div class="col-sm-2" id="district_section">
+                <?= Yii::$app->dropdown->uniondistrict($model, $form, 'tbldcsprovisional-union_code,tbldcsprovisional-state_code', 'district_code', Yii::t('app', 'District'), FALSE); ?>
+            </div>
+            <!--    <div class="col-sm-3">
+            <?php //Yii::$app->dropdown->district($model, $form, 'tbldcsprovisional-state_code', 'district_code', 'District');    ?>
+                </div>-->
+            <div class="col-sm-2">
+                <?php Yii::$app->dropdown->depend_dropdown('sub_district_code', $model, $form, 'tbldcsprovisional-district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Sub District'), ''); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'lastname')->textInput() ?>
+                <?php Yii::$app->dropdown->depend_dropdown('village_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Village'), ''); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'surname')->textInput() ?>
+                <?php Yii::$app->dropdown->depend_dropdown('block_code', $model, $form, 'tbldcsprovisional-sub_district_code', 'form-group col-sm-2 padding-right-5 padding-left-0', 'Block'); ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'email')->textInput() ?>
+                <?php Yii::$app->dropdown->depend_dropdown('hamlet_code', $model, $form, 'tbldcsprovisional-village_code', 'form-group col-sm-2 padding-right-5 padding-left-0', Yii::t('app', 'Hamlet')); ?>
             </div>
-            <!--<div class="col-sm-2">
-                <? = $form->field($model, 'local_contact_person')->textInput() ?>
-            </div>-->
+            <?php // }    ?>
             <div class="col-sm-2">
-                <?= $form->field($model, 'local_firstname')->textInput() ?>
+                <?= $form->field($model, 'pincode')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'local_lastname')->textInput() ?>
+                <?= $form->field($model, 'phone_no')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-sm-2">
-                <?= $form->field($model, 'local_surname')->textInput() ?>
+                <?= $form->field($model, 'aadhaar_no')->textInput() ?>
             </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
-                <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
-            </div>
+        </div>
+        <div class="col-md-12 padding_10_0 theme-box theme_border_top">
+            <!-- <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                <h4 class="theme-box-heading">Address Details</h4>
+            </div> -->
 
             <div class="clearfix"></div>
+            <?php if ($type == 'create') { ?>
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Contact Details</h4>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'firstname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'lastname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'surname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'email')->textInput() ?>
+                </div>
+                <!--<div class="col-sm-2">
+                    <? = $form->field($model, 'local_contact_person')->textInput() ?>
+                </div>-->
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'local_firstname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'local_lastname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'local_surname')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'mobile_no')->textInput(['class' => 'form-control check_mobile_length']) ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Html::activeHiddenInput($model, 'detail_code', ['value' => $model->detail_code]) ?>
+                    <?= Yii::$app->dropdown->dropdown('department', $model, $form, '', $model->getAttributeLabel('department'), false, 'department'); ?>
+                </div>
 
-            <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
-                <h4 class="theme-box-heading">Bank Details</h4>
-            </div>
-            <?php if (!empty($dist)) { ?>
-                <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
+                <div class="clearfix"></div>
+
+                <div class="col-sm-12 col-md-12 padding_left_0 padding_right_0 clearfix">
+                    <h4 class="theme-box-heading">Bank Details</h4>
+                </div>
+                <?php if (!empty($dist)) { ?>
+                    <?= Html::hiddenInput('union-dist', $dist, ['id' => 'tbldcsprovisional-district_code']) ?>
+                <?php } ?>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'bank_account_no')->textInput() ?>
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
+                </div>
+                <div class="col-sm-2">
+                    <?= $form->field($model, 'beneficiary_name')->textInput() ?>
+                </div>
+                <!--<div class="col-sm-2">
+                <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
+                </div>-->
             <?php } ?>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->bankdepended($model, $form, 'tbldcsprovisional-district_code', 'bank_code', 'Bank'); ?>
-            </div>
-            <div class="col-sm-2">
-                <?= Yii::$app->dropdown->depend_dropdown('branch', $model, $form, 'tbldcsprovisional-bank_code', '', 'Branch', 'branch_code'); ?>                        
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'bank_account_no')->textInput() ?>
-            </div>
-            <div class="col-sm-2">
-                <!--<? = $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => !empty($model->ifsc) ? true : false]) ?>-->
-                <?= $form->field($model, 'ifsc')->textInput(['maxlength' => true, 'readonly' => true]) ?>    
-            </div>
-            <div class="col-sm-2">
-                <?= $form->field($model, 'beneficiary_name')->textInput() ?>
-            </div>
-            <!--<div class="col-sm-2">
-            <? $form->field($model, 'is_default', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}",])->checkbox(); ?>
-            </div>-->
-        <?php } ?>
-        <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
-        <!--</div>-->
-        <div class="col-sm-12">
-        <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
-        </div>
-        <!--<div class="col-sm-3">-->
-        <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
-        <!--</div>-->
-        <!--        <div class="col-sm-2 mt10">
-        <? $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-                </div>-->
-        <!--        <div class="col-sm-2 mt10">
-        <? $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
-                </div>-->
-        <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'credit_sale_allow'); ?>
-        </div>
-        <?php
-        if ($type == 'edit') {
-            $model->milk_type_auto = $model->default_milk_type == 7 ? 1 : 0;
-        }
-        ?>
+            <?= Yii::$app->dropdown->dropdownStatic('is_dispatch_mandate', $model, $form, 'col-sm-2 form-group', $model->getAttributeLabel('is_dispatch_mandate'), false); ?>
+            <!--</div>-->
+            <div class="col-sm-12">
+                <div class="col-sm-2 mt10">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'allow_multi_family_member'); ?>
+                </div>
+                <!--<div class="col-sm-3">-->
+                <?php // $form->field($model, 'is_dispatch_mandate', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox();   ?>
+                <!--</div>-->
+                <!--        <div class="col-sm-2 mt10">
+                <? $form->field($model, 'is_weight_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                        </div>-->
+                <!--        <div class="col-sm-2 mt10">
+                <? $form->field($model, 'is_quality_manual', ['checkboxTemplate' => "<div class='checkbox'>{input}{beginLabel}{labelTitle}{endLabel}</div>{error}{hint}"])->checkbox(); ?>
+                        </div>-->
+                <div class="col-sm-2 mt10">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'credit_sale_allow'); ?>
+                </div>
+                <?php
+                if ($type == 'edit') {
+                    $model->milk_type_auto = $model->default_milk_type == 7 ? 1 : 0;
+                }
+                ?>
 
-        <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'milk_type_auto'); ?>
-        </div>
+                <div class="col-sm-2 mt10">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'milk_type_auto'); ?>
+                </div>
 
-        <?php // if ($type == 'create') {    ?>
-        <!--        <div class="col-sm-3">
-        <? Yii::$app->controls->active($model, $form); ?>
-                </div>-->
-        <?php // }   ?>
+                <?php // if ($type == 'create') {    ?>
+                <!--        <div class="col-sm-3">
+                <? Yii::$app->controls->active($model, $form); ?>
+                        </div>-->
+                <?php // }   ?>
+                <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
+                <!-- <div class="clearfix"></div> -->
+                <?php // if ($type == 'create') {     ?>
+                <?php if ($type == 'create') { ?>
+                    <div class="col-sm-2 mt10">
+                        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'auto_member_create'); ?>
+                    </div>
+                <?php } ?>
+                <div class="col-sm-2 mt10">
+                    <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chiller'); ?>
+                </div>
+                <div class="clearfix"></div></div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
+            </div>
+            <div class="col-sm-2 mt20">
+                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'cutoff_val')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'morning_kms')->textInput() ?>
+            </div>
+            <div class="col-sm-2">
+                <?= $form->field($model, 'evening_kms')->textInput() ?>
+            </div>
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_security_cheque'); ?>
+        </div>
+        <div class="col-sm-2 mt10 security_cheque">
+            <?= $form->field($model, 'cheque_number')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10 number-validate security_cheque">
+            <?= $form->field($model, 'cheque_amount')->textInput() ?>   
+        </div>
+        <div class="col-sm-2 mt10">
+            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
+        </div>
         <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
-        <!-- <div class="clearfix"></div> -->
-        <?php // if ($type == 'create') {     ?>
-        <?php if ($type == 'create') { ?>
-            <div class="col-sm-2 mt10">
-                <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'auto_member_create'); ?>
-            </div>
-        <?php } ?>
-        <div class="col-sm-2 mt10">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_chiller'); ?>
-        </div>
-        <div class="clearfix"></div></div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'milk_type_code')->listBox($milkType['value'], ['multiple' => 'multiple', 'size' => '10', 'options' => $milkType['selected']]); ?>
-        </div>
-        <div class="col-sm-2 mt20">
-            <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'cutoff'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= Yii::$app->dropdown->dropdown('milk_type_code', $model, $form, '', 'Lower Milk Type', FALSE, 'lower_milk_type'); ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'cutoff_val')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'morning_kms')->textInput() ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'evening_kms')->textInput() ?>
-        </div>
-    </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form, 'is_security_cheque'); ?>
-    </div>
-    <div class="col-sm-2 mt10 security_cheque">
-        <?= $form->field($model, 'cheque_number')->textInput() ?>   
-    </div>
-    <div class="col-sm-2 mt10 number-validate security_cheque">
-        <?= $form->field($model, 'cheque_amount')->textInput() ?>   
-    </div>
-    <div class="col-sm-2 mt10">
-        <?= Yii::$app->controls->checkTemplateBootstrap5($model, $form); ?>
-    </div>
-    <?= Html::hiddenInput('bmc', '', ['id' => 'bmc-data']); ?>
-    <div class="row">
-        <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
-            <div class="form-group">
-                <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
-                <?php //Yii::$app->controls->save(Yii::$app->label->button($btn_name), $model); ?>
-                <?= Yii::$app->controls->reset(); ?>
-                <?= Yii::$app->controls->cancel($model); ?>
+        <div class="row">
+            <div class="col-sm-12 margin-top-10 shortcut-main" shortcut="true" display_shortcut="false" hilight_shortcut="false">
+                <div class="form-group">
+                    <?= Html::submitButton($type == 'create' ? Yii::t('app', 'NEXT') : Yii::t('app', 'Update'), ['class' => 'btn-login btn btn-primary apply-shortcut', 'name' => 'submitBtn', 'value' => 'save']) ?>
+                    <?= Yii::$app->controls->reset(); ?>
+                    <?= Yii::$app->controls->cancel($model); ?>
+                </div>
             </div>
         </div>
-    </div>
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
-    <?php
-    $script = "
-    //$('#district_section').hide();
-//    $('#tbldcsprovisional-bank_code').on('change',function(){
-//    $('#tbldcs-branch_code,#tbldcsprovisional-bank_account_no,#tbldcsprovisional-ifsc').trigger('change');
-//    });
-
+        <?php
+        $script = "
+    var delay=2000;
     securityCheque($('#tbldcsprovisional-is_security_cheque').prop('checked'));	
     $('#tbldcsprovisional-is_security_cheque').on('change', function() {
         securityCheque($(this).prop('checked'));
@@ -530,10 +523,6 @@ $form = ActiveForm::begin([
     function lowerMilkTypeVal(){
         $('#tbldcsprovisional-lower_milk_type option').removeAttr('disabled'); 
         var milktype = $('#tbldcsprovisional-milk_type_code').val();
-//        console.log(typeof milktype);
-//        console.log(typeof Object.values(milktype));
-//        console.log(Object.values(milktype).includes('2'));
-//        console.log(Object.values(milktype).includes('3'));
         var remove = 1;
         if(milktype.length == 2) {
             if(!Object.values(milktype).includes('2')) {
@@ -541,11 +530,6 @@ $form = ActiveForm::begin([
             } else if(!Object.values(milktype).includes('3')) {
                 remove = 3;
             }
-//            console.log(milktype.indexOf('2'));
-//            console.log(milktype.indexOf(2));
-//            console.log(milktype.indexOf('3'));
-//            console.log(milktype.indexOf(3));
-//            console.log(remove);
             $('#tbldcsprovisional-lower_milk_type option[value=\''+remove+'\']').prop('disabled', true); 
             var select2Instance = $('#tbldcsprovisional-lower_milk_type').data('select2');
             var resetOptions = select2Instance.options.options;
@@ -588,35 +572,9 @@ $form = ActiveForm::begin([
             $('#tbldcsprovisional-cutoff_val').parent('div').addClass('disabledDiv');
         }
     }
-";
-    $this->registerJs($script, View::POS_END, 'union-select');
-
-    $script = "var delay=2000;";
-    $this->registerJs($script, View::POS_HEAD, 'time-loader');
-    $script = "
-   $('#tbldcsprovisional-bank_code').on('change',function(){
+    $('#tbldcsprovisional-bank_code').on('change',function(){
         $('#tbldcsprovisional-ifsc').val('');
     });
-    
-    $('#tbldcsprovisional-branch_code').on('change',function(){
-            var id = $('#tbldcsprovisional-branch_code').val();
-            $.ajax({
-                        type: 'post',
-                        url: '" . Url::to(['/organisation/tbl-branch/get-ifsc-code']) . "',
-                        data: 'id='+id,
-                        success: function(data) {
-                                var obj1 = $.parseJSON(data);
-                                $('#tbldcsprovisional-ifsc').val(obj1.code);
-//                                if(obj1.code!='')
-//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
-//                                else
-//                                    $('#tbldcsprovisional-ifsc').prop('readonly', true);
-                        },
-                        error:function(data){
-                                    //alert('Your data has not been submitted..Please try again');
-                                }
-            });
-    });
 ";
-    $this->registerJs($script, View::POS_END, 'bank-select');
-    
+        $this->registerJs($script, View::POS_END, 'union-select');
+        

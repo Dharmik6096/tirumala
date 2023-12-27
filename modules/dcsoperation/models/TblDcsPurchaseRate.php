@@ -42,7 +42,7 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
     public function rules() {
         return [
                 [['wef_date', 'shift_applicability', 'rate_gen_method_code', 'shift_id'], 'required', 'except' => ['stellapps']],
-                [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate', 'rate_type', 'rate_value'], 'safe'],
+                [['created_at', 'updated_at', 'wef_date', 'reference_code', 'for_member', 'ts_rate', 'rate_type', 'rate_value', 'kg_fat_rate', 'kg_snf_rate'], 'safe'],
                 [['created_by', 'description', 'originating_org_code', 'originating_org_type', 'updated_by', 'union_code'], 'string'],
                 [['is_active', 'is_delete', 'rate_gen_method_code', 'shift_applicability', 'shift_id', 'originating_type'], 'integer'],
                 [['rate_value'], 'number', 'min' => 1],
@@ -77,6 +77,8 @@ class TblDcsPurchaseRate extends \app\models\ChildModel {
             'union_code' => Yii::t('app', 'Union'),
             'reference_code' => Yii::t('app', 'SAP Rate ID'),
             'ts_rate' => Yii::t('app', 'TS Rate'),
+            'kg_fat_rate' => Yii::t('app', 'Kg Fat Rate'),
+            'kg_snf_rate' => Yii::t('app', 'Kg Snf Rate'),
             'for_member' => Yii::t('app', 'For Member'),
         ];
     }
